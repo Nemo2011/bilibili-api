@@ -148,3 +148,6 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
 -
 + V1.0.0 2020/01/27
     + 发布第一版本，只能操作用户上传视频，后续会慢慢更新其他功能233。
+    
++ V1.0.1 2020/01/27
+    + 修正README文档错误
