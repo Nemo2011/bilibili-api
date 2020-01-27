@@ -8,7 +8,7 @@ bilibili_api
 
 作者b站空间：[Passkou](https://space.bilibili.com/12440199)
 
-API列表 [点我](https://github.com/Passkou/bilibili_api/bilibili_api/api.json)
+API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_api/api.json)
 
 安装方法
 -
