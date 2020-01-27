@@ -34,7 +34,8 @@ def use_headers(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                          "Chrome/79.0.3945.130 Safari/537.36 "
         }
         ret = func(*args, **kwargs, headers=headers)
         return ret

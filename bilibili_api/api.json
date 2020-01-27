@@ -86,7 +86,7 @@
                     "avid": "av号",
                     "cid": "分P编号"
                 },
-                "comment": "视频下载的信息，下载链接需要提供headers伪装浏览器请求（Referer和User-Agent）"
+                "comment": "视频下载的信息，下载链接需要提供headers伪装浏览器请求（Referer和User-Agent）（清晰度太差已作废）"
             },
             "related": {
                 "url": "https://api.bilibili.com/x/web-interface/archive/related",

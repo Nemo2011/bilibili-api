@@ -4,6 +4,7 @@ import json
 from xml.dom.minidom import parseString
 import math
 from .utils import Danmaku
+from bs4 import BeautifulSoup as bs
 
 verify = utils.verify
 use_headers = utils.use_headers
@@ -45,6 +46,7 @@ class VideoInfo(Video):
                     return con["data"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     # sort=0 按弹幕出现时间正序排序，其他按发送时间正序排序
@@ -88,6 +90,7 @@ class VideoInfo(Video):
                 return py_danmaku
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     def get_history_danmaku(self, page, date, sort=0):
@@ -139,6 +142,7 @@ class VideoInfo(Video):
                 return py_danmaku
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     def get_tags(self):
@@ -157,6 +161,7 @@ class VideoInfo(Video):
                     return con["data"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrappers()
 
     def get_history_danmaku_index(self, page, month):
@@ -183,6 +188,7 @@ class VideoInfo(Video):
                     return con["data"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrappers()
 
     def get_chargers(self):
@@ -204,6 +210,7 @@ class VideoInfo(Video):
                     return con["data"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrappers()
 
     def get_pages(self):
@@ -222,24 +229,35 @@ class VideoInfo(Video):
                     return con["data"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrappers()
 
-    def get_playurl(self, page):
+    def get_playurl(self):
         @use_headers
         def wrappers(headers):
-            api = apis["video"]["info"]["playurl"]
-            cid = self.get_pages()[page]["cid"]
-            params = {
-                "avid": self.aid,
-                "cid": cid
-            }
-            req = requests.get(api["url"], params=params, headers=headers)
+            headers["Referer"] = "https://www.bilibili.com"
+            url = "https://www.bilibili.com/video/av%s" % self.aid
+            if self.__sessdata != "False":
+                cookies = {
+                    "SESSDATA": self.__sessdata
+                }
+                req = requests.get(url, cookies=cookies, headers=headers)
+            else:
+                req = requests.get(url)
             if req.ok:
-                con = req.json()
-                if con["code"] != 0:
-                    raise psk_exception.BiliException(con["code"], con["message"])
+                html = bs(req.text.replace("\n", ""), "html.parser")
+                script = html.select("script")
+                for s in script:
+                    if "playinfo" in s.text:
+                        tmp = s.text.replace("window.__playinfo__=", "")
+                        video_info = json.loads(tmp)
+                        break
                 else:
-                    return con["data"]
+                    raise Exception("下载链接获取出错")
+                if video_info["code"] != 0:
+                    raise psk_exception.BiliException(video_info["code"], video_info["message"])
+                else:
+                    return video_info["data"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
 
@@ -266,6 +284,7 @@ class VideoInfo(Video):
                         return con["data"]
                 else:
                     raise psk_exception.NetworkException(req.status_code)
+
             first_get = get_page(1)
             page_num = math.ceil(first_get["page"]["count"] / first_get["page"]["size"])
             replies = first_get["replies"]
@@ -278,6 +297,7 @@ class VideoInfo(Video):
             else:
                 replies.sort(key=lambda x: x["like"], reverse=True)
             return replies
+
         return wrappers()
 
     def get_related(self):
@@ -296,6 +316,7 @@ class VideoInfo(Video):
                     return con["data"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrappers()
 
     def is_liked(self):
@@ -303,7 +324,7 @@ class VideoInfo(Video):
             raise psk_exception.NoPermissionException("需要验证：SESSDATA")
 
         @use_headers
-        @verify(sessdata=sessdata)
+        @verify(sessdata=self.__sessdata)
         def wrappers(headers, cookies):
             api = apis["video"]["info"]["is_liked"]
             params = {
@@ -321,6 +342,7 @@ class VideoInfo(Video):
                         return False
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrappers()
 
     def get_added_coins(self):
@@ -328,7 +350,7 @@ class VideoInfo(Video):
             raise psk_exception.NoPermissionException("需要验证：SESSDATA")
 
         @use_headers
-        @verify(sessdata=sessdata)
+        @verify(sessdata=self.__sessdata)
         def wrappers(headers, cookies):
             api = apis["video"]["info"]["is_coins"]
             params = {
@@ -343,6 +365,7 @@ class VideoInfo(Video):
                     return con["data"]["multiply"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrappers()
 
     def is_favoured(self):
@@ -350,7 +373,7 @@ class VideoInfo(Video):
             raise psk_exception.NoPermissionException("需要验证：SESSDATA")
 
         @use_headers
-        @verify(sessdata=sessdata)
+        @verify(sessdata=self.__sessdata)
         def wrappers(headers, cookies):
             api = apis["video"]["info"]["is_favoured"]
             params = {
@@ -394,6 +417,7 @@ class VideoInfo(Video):
                     return con["data"]["list"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
 
@@ -428,6 +452,7 @@ class VideoOperate(Video):
                     raise psk_exception.BiliException(con["code"], con["message"])
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     def coin(self, num=2, like=False):
@@ -454,6 +479,7 @@ class VideoOperate(Video):
                     raise psk_exception.BiliException(con["code"], con["message"])
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     # mode=0，添加到收藏夹，其他从收藏夹移除
@@ -491,6 +517,7 @@ class VideoOperate(Video):
                     raise psk_exception.BiliException(con["code"], con["message"])
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     def send_comment(self, text):
@@ -511,6 +538,7 @@ class VideoOperate(Video):
                     raise psk_exception.BiliException(con["code"], con["message"])
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     # 评论操作，mode：like, hate, top, del。action: 1是0否（del没有）
@@ -540,6 +568,7 @@ class VideoOperate(Video):
                     raise psk_exception.BiliException(con["code"], con["message"])
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     def send_danmaku(self, page, danmaku):
@@ -559,7 +588,7 @@ class VideoOperate(Video):
                 "msg": danmaku.text,
                 "aid": self.aid,
                 "bvid": "",
-                "progress": int(danmaku.dm_time.seconds*1000),
+                "progress": int(danmaku.dm_time.seconds * 1000),
                 "color": danmaku.color,
                 "fontsize": danmaku.font_size,
                 "pool": pool,
@@ -574,6 +603,7 @@ class VideoOperate(Video):
                     raise psk_exception.BiliException(con["code"], con["message"])
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     def add_tag(self, tag_name):
@@ -594,6 +624,7 @@ class VideoOperate(Video):
                     return con["tid"]
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()
 
     def del_tag(self, tag_id):
@@ -612,4 +643,5 @@ class VideoOperate(Video):
                     raise psk_exception.BiliException(con["code"], con["message"])
             else:
                 raise psk_exception.NetworkException(req.status_code)
+
         return wrapper()

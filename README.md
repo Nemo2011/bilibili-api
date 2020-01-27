@@ -15,6 +15,7 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
 本模块用到的第三方库： 
 
 + requests
++ beautifulsoup4
 
 仅支持 **Python3**，使用以下代码安装本模块  
 
@@ -151,3 +152,8 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
     
 + V1.0.1 2020/01/27
     + 修正README文档错误
+    
++ V1.1.0 2020/01/27
+    + 修正一些BUG（语法错误太丢人了）
+    + get_playurl重写，现在能获得高清的下载链接了
+    + 一天三次更新我哭了QAQ
