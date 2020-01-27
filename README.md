@@ -10,7 +10,7 @@ bilibili_api
 
 API列表 [点我](./blob/master/bilibili_api/api.json)
 
-开发文档及所有功能请见 [Wiki](./wiki)
+开发文档及所有功能请见 [Wiki](https://github.com/Passkou/bilibili_api/wiki)
 
 安装方法
 -
@@ -145,7 +145,7 @@ API列表 [点我](./blob/master/bilibili_api/api.json)
     
 接下来，就可以根据自己的实际需求对数据进行处理了。~~懒得写了.jpg~~
  
-更详细的教程请见 [Wiki](./wiki)
+更详细的教程请见 [Wiki](https://github.com/Passkou/bilibili_api/wiki)
 
 没人看的更新日志
 -
