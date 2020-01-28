@@ -159,3 +159,7 @@ API列表 [点我](./bilibili_api/api.json)
     + 修正一些BUG（语法错误太丢人了）
     + get_playurl重写，现在能获得高清的下载链接了
     + 一天三次更新我哭了QAQ
+    
++ V1.1.1 2020/01/28
+    + 补上了漏掉的sessdata值判断
+    + Danmaku类的映射表改为私有
