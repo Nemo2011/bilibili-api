@@ -393,6 +393,8 @@ class VideoInfo(Video):
 
     # 获取收藏夹列表以及当视频收藏情况，供对视频收藏操作用
     def get_media_list(self):
+        if self.__sessdata == "False":
+            raise psk_exception.NoPermissionException("需要验证：SESSDATA")
 
         @use_headers
         @verify(sessdata=self.__sessdata)

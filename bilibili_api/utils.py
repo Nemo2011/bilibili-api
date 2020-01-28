@@ -53,12 +53,12 @@ class Danmaku:
         self.font_size = int(font_size)
         self.is_sub = is_sub
         self.text = text
-        self.font_size_map = {
+        self.__font_size_map = {
             "small": 18,
             "normal": 25,
             "big": 36
         }
-        self.mode_map = {
+        self.__mode_map = {
             "fly": 1,
             "top": 5,
             "bottom": 4
@@ -76,10 +76,10 @@ class Danmaku:
         self.color = dec
 
     def set_mode(self, mode):
-        self.mode = self.mode_map[mode]
+        self.mode = self.__mode_map[mode]
 
     def set_font_size(self, font_size):
-        self.font_size = self.font_size_map[font_size]
+        self.font_size = self.__font_size_map[font_size]
 
     def get_hex_color(self):
         return hex(self.color)
