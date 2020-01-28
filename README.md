@@ -8,7 +8,7 @@ bilibili_api
 
 作者b站空间：[Passkou](https://space.bilibili.com/12440199)
 
-API列表 [点我](./bilibili_api/api.json)
+API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_api/api.json)
 
 开发文档及所有功能请见 [Wiki](https://github.com/Passkou/bilibili_api/wiki)
 
@@ -43,6 +43,8 @@ API列表 [点我](./bilibili_api/api.json)
 
 需要注意的是，部分视频信息需要登录后才能使用（如历史弹幕获取），
 我们需要手动从浏览器中的 **F12 开发者工具** 中在 **Cookies** 里面找到 **SESSDATA** ，复制它的值传入对象即可。
+
+关于SESSDATA和csrf获取的详细方法，[点我](https://www.bilibili.com/read/cv4495682)
 
 接下来我们获取视频的详细信息：
 
