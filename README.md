@@ -31,25 +31,48 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
 -
 以获取视频 [av40473736](https://www.bilibili.com/av40473736) 信息为例
 
-首先，我们要导入 `video` 模块：
+首先，我们要导入 `video` 模块和 [Verify](https://github.com/Passkou/bilibili_api/wiki/Verify%E7%B1%BB) 验证类：
 
-    from bilibili_api import video
+    from bilibili_api import video, Verify
 
-该模块有两个类，分别是 `VideoInfo` 和 `VideoOperate`，前者用于获取视频信息，后者用于操作视频（点赞、投币等）
+该模块有三个类，分别是 [VideoInfo](https://github.com/Passkou/bilibili_api/wiki/VideoInfo%E7%B1%BB) 和
+[VideoOperate](https://github.com/Passkou/bilibili_api/wiki/VideoOperate%E7%B1%BB)，前者用于获取视频信息，后者用于操作视频（点赞、投币等）。
+还有一个 [Danmaku](https://github.com/Passkou/bilibili_api/wiki/Danmaku%E7%B1%BB) 类，用于获取弹幕和发送弹幕。
 
 然后我们使用以下代码初始化这个类：
 
-    my_video = video.VideoInfo(aid="40473736", sessdata="YourSESSDATA")
+    verify = Verify(sessdata="your sessdata", csrf="your csrf")
+    my_video = video.VideoInfo(aid="40473736", verify=verify)
 
-需要注意的是，部分视频信息需要登录后才能使用（如历史弹幕获取），
-我们需要手动从浏览器中的 **F12 开发者工具** 中在 **Cookies** 里面找到 **SESSDATA** ，复制它的值传入对象即可。
+对于 [Verify](https://github.com/Passkou/bilibili_api/wiki/Verify%E7%B1%BB) 类，可用可不用。
 
-关于SESSDATA和csrf获取的详细方法，[点我](https://www.bilibili.com/read/cv4495682)
+但是，部分视频信息需要登录（即需要 SESSDATA ）后才能使用（如历史弹幕获取）。
+
+对视频进行点赞、投币等用户操作则需要 SESSDATA 和 csrf 。
+
+关于 SESSDATA 和 csrf 获取的详细方法，[点我](https://www.bilibili.com/read/cv4495682)
 
 接下来我们获取视频的详细信息：
 
     video_info = my_video.get_video_info()
     print(video_info)
+    
+完整代码：
+
+    from bilibili_api import video, Verify
+    import json
+    
+    # 设置验证
+    verify = Verify(sessdata="your sessdata", csrf="your csrf")
+    
+    # 初始化VideoInfo类
+    my_video = video.VideoInfo(aid="40473736", verify=verify)
+    
+    # 获取视频信息
+    video_info = my_video.get_video_info()
+    
+    # 转换成格式化JSON并打印
+    print(json.dumps(video_info, indent=4, ensure_ascii=False))
     
 会得到类似下面的返回值（返回的是Python对象，为方便阅读已转换为JSON）：
 
@@ -159,9 +182,21 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
     
 + V1.1.0 2020/01/27
     + 修正一些BUG（语法错误太丢人了）
-    + get_playurl重写，现在能获得高清的下载链接了
+    + [VideoInfo.get_playurl()](https://github.com/Passkou/bilibili_api/wiki/VideoInfo%E7%B1%BB#get_playurl) 重写，现在能获得高清的下载链接了
     + 一天三次更新我哭了QAQ
     
 + V1.1.1 2020/01/28
     + 补上了漏掉的sessdata值判断
-    + Danmaku类的映射表改为私有
+    + [Danmaku](https://github.com/Passkou/bilibili_api/wiki/Danmaku%E7%B1%BB) 类的映射表改为私有
+    
++ V1.2.0 2020/01/31
+    + 重写验证方式，新增 [Verify](https://github.com/Passkou/bilibili_api/wiki/Verify%E7%B1%BB) 类（写法稍微变了一下，具体看教程）
+    + 减少 `video` 模块冗余请求代码，集合到了一个类中（减少了150行左右）
+    + 新增 `user` 模块（[Wiki](https://github.com/Passkou/bilibili_api/wiki)）
+    + 新增 `dynamic` 模块（[Wiki](https://github.com/Passkou/bilibili_api/wiki)）
+    + [VideoInfo.get_comments()](https://github.com/Passkou/bilibili_api/wiki/VideoInfo%E7%B1%BB#get_comments) 新增limit参数，可限制获取的数量
+    + 改写 `__init__` ，使导入结构更清楚（免得显示其他你们用不上的东西太乱）
+    + 所有模块传参强制变量类型
+    + 修改 [VideoInfo.get_playurl()](https://github.com/Passkou/bilibili_api/wiki/VideoInfo%E7%B1%BB#get_playurl) 用正则表达式获取链接信息，
+      用不着为了这个去多装一个依赖库
+    + 加了一个小彩蛋(=・ω・=)
