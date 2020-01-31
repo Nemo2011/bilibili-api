@@ -17,7 +17,6 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
 本模块用到的第三方库： 
 
 + requests
-+ beautifulsoup4
 
 仅支持 **Python3**，使用以下代码安装本模块  
 
