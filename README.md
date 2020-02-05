@@ -199,3 +199,8 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
     + 修改 [VideoInfo.get_playurl()](https://github.com/Passkou/bilibili_api/wiki/VideoInfo%E7%B1%BB#get_playurl) 用正则表达式获取链接信息，
       用不着为了这个去多装一个依赖库
     + 加了一个小彩蛋(=・ω・=)
+    
++ V1.2.1 2020/01/31
+    + 部分获取内容补上limit参数
+    + 部分类的方法更改了参数名字和类型
+    + OperateDynamic 类新增 repost 方法（转发）
