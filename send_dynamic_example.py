@@ -1,4 +1,4 @@
-from bilibili_api.dynamic import DrawDynamic, TextDynamic, InstantDynamic, UploadImages
+from bilibili_api.dynamic import DrawDynamic, TextDynamic, InstantDynamic, UploadImages, ScheduleDynamic
 from bilibili_api import Verify
 
 # 验证类
@@ -21,5 +21,10 @@ text = TextDynamic(text="这是文字内容", verify=verify)
 # 立即发送动态类
 instant = InstantDynamic(draw)
 
+# 定时发送动态类（timestamp是时间戳）
+sche = ScheduleDynamic(dynamic=text, timestamp=1111111)
+
 # 发送动态，图片会自动上传
 instant.send()
+
+sche.send()
