@@ -38,7 +38,7 @@ class UserInfo:
         return con
 
     # sort: 0-上传日期，1-播放量，2-收藏量
-    def get_video(self, sort: int = 0):
+    def get_video(self, sort: int = 0, limit: int = 114514):
         def get(page):
             if sort == 0:
                 sort_str = "pubdate"
@@ -58,17 +58,22 @@ class UserInfo:
             get1 = Get(url=api["url"], params=params)
             con = get1()
             return con
-
         first_page = get(1)
+        count = 0
         if first_page["page"]["count"] > first_page["page"]["ps"]:
             pages = math.ceil(first_page["page"]["count"] / first_page["page"]["ps"])
             video_list = first_page["list"]
-            for page in range(2, pages + 1):
-                data = get(page)["list"]["vlist"]
-                video_list["vlist"] += data
-            return video_list
+            count += len(video_list)
+            if count < limit:
+                for page in range(2, pages + 1):
+                    data = get(page)["list"]["vlist"]
+                    video_list["vlist"] += data
+                    count += len(data)
+                    if count > limit:
+                        break
+            return video_list[:limit]
         else:
-            return first_page["list"]
+            return first_page["list"][:limit]
 
     # sort: 0-上传日期，1-播放量，2-收藏量
     def get_audio(self, sort: int = 0):
@@ -221,7 +226,7 @@ class UserInfo:
         else:
             return first["list"]
 
-    def get_media_list_content(self, media_id: int, sort: int = 0):
+    def get_media_list_content(self, media_id: int, sort: int = 0, limit=114514):
         def get(page):
             if sort == 0:
                 sort_str = "mtime"
@@ -247,13 +252,19 @@ class UserInfo:
             return con
         first = get(1)
         ret = first
+        count = 0
         if first["info"]["media_count"] > 20:
             pages = math.ceil(first["info"]["media_count"] / 20.0)
             me = first["medias"]
-            for p in range(2, pages + 1):
-                g = get(p)
-                me += g["medias"]
-            ret["medias"] = me
+            count += len(first["medias"])
+            if count < limit:
+                for p in range(2, pages + 1):
+                    g = get(p)
+                    me += g["medias"]
+                    count += len(g["medias"])
+                    if count >= limit:
+                        break
+                ret["medias"] = me[:limit]
             return ret
         else:
             return ret
@@ -265,8 +276,7 @@ class UserOperate:
         self.verify = verify
         self.__my_info = Get(url=apis["user"]["info"]["my_info"]["url"], cookies=self.verify.get_cookies())()
 
-    # mode=0取关其他关注
-    def subscribe(self, mode: int = 1):
+    def subscribe(self, mode: bool = True):
         api = apis["user"]["operate"]["modify"]
         if mode == 0:
             act = 2
@@ -298,7 +308,7 @@ class UserOperate:
         post = Post(url=api["url"], data=data, cookies=self.verify.get_cookies())
         post()
 
-    def set_black(self, mode: int = 1):
+    def set_black(self, mode: bool = True):
         api = apis["user"]["operate"]["modify"]
         if mode == 0:
             act = 6

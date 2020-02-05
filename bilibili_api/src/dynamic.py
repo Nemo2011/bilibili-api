@@ -242,6 +242,7 @@ class DynamicInfo:
         data = get()
         data["card"]["card"] = json.loads(data["card"]["card"])
         data["card"]["extend_json"] = json.loads(data["card"]["extend_json"])
+        self.info = data["card"]
         return data["card"]
 
     def get_reposts(self, limit: int = 560):
@@ -332,12 +333,12 @@ class DynamicOperate:
             else:
                 self.__is_draw = False
 
-    def like(self, set_like: bool = True):
+    def like(self, mode: bool = True):
         api = apis["dynamic"]["operate"]["like"]
         if self.__uid is None:
             my_info = Get(url=apis["user"]["info"]["my_info"]["url"], cookies=self.verify.get_cookies())
             self.__uid = my_info()["mid"]
-        if set_like:
+        if mode:
             up = 1
         else:
             up = 2
@@ -373,6 +374,17 @@ class DynamicOperate:
         api = apis["dynamic"]["operate"]["delete"]
         data =  {
             "dynamic_id": self.dyid
+        }
+        post = Post(url=api["url"], data=data, cookies=self.verify.get_cookies())
+        post()
+
+    def repost(self, text: str):
+        api = apis["dynamic"]["operate"]["repost"]
+        data = {
+            "dynamic_id": self.dyid,
+            "content": text,
+            "extension": "{\"emoji_type\":1}",
+            "csrf_token": self.verify.csrf
         }
         post = Post(url=api["url"], data=data, cookies=self.verify.get_cookies())
         post()

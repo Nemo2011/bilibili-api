@@ -28,7 +28,7 @@ class VideoInfo(Video):
         if self.info is None:
             self.info = self.get_video_info()
 
-    def get_video_info(self, is_simple=False):
+    def get_video_info(self, is_simple: bool = False):
         if is_simple:
             api = apis["video"]["info"]["info_simple"]
         else:
