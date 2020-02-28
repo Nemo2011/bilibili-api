@@ -187,7 +187,8 @@ class ScheduleDynamic:
         data = {"type": type_, "publish_time": self.timestamp, "request": json.dumps(self.dynamic.get_data()),
                 "csrf_token": self.dynamic.verify.csrf}
         api = apis["dynamic"]["send"]["schedule"]
-        Post(url=api["url"], data=data, cookies=self.dynamic.verify.get_cookies())
+        post = Post(url=api["url"], data=data, cookies=self.dynamic.verify.get_cookies())
+        post()
 
 
 class InstantDynamic:
@@ -199,11 +200,9 @@ class InstantDynamic:
 
     def send(self):
         if type(self.dynamic) == DrawDynamic:
-            print("draw")
             api = apis["dynamic"]["send"]["instant_draw"]
             self.dynamic.upload()
         else:
-            print("text")
             api = apis["dynamic"]["send"]["instant_text"]
         request = self.dynamic.get_data()
         setting = {
@@ -215,7 +214,8 @@ class InstantDynamic:
             "setting": json.dumps(setting)
         }
         data.update(request)
-        Post(url=api["url"], data=data, cookies=self.dynamic.verify.get_cookies())
+        post = Post(url=api["url"], data=data, cookies=self.dynamic.verify.get_cookies())
+        post()
 
 
 class DynamicInfo:

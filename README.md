@@ -204,3 +204,7 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
     + 部分获取内容补上limit参数
     + 部分类的方法更改了参数名字和类型
     + OperateDynamic 类新增 repost 方法（转发）
+    
++ V1.2.2 2020/02/14
+    + 部分获取内容补上limit参数
+    + 修正不能发送动态的BUG

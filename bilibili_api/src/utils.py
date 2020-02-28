@@ -5,6 +5,9 @@ import os
 import requests
 from bilibili_api.src import exception
 import base64
+import urllib3
+
+urllib3.disable_warnings()
 
 __path = os.path.dirname(__file__)
 default_headers = {
@@ -133,7 +136,7 @@ class Get:
         self.url = url
 
     def __call__(self):
-        req = requests.get(url=self.url, params=self.params, headers=self.headers, cookies=self.cookies)
+        req = requests.get(url=self.url, params=self.params, headers=self.headers, cookies=self.cookies, verify=False)
         if req.ok:
             con = json.loads(req.text)
             if con["code"] != 0:
@@ -161,7 +164,8 @@ class Post:
         self.url = url
 
     def __call__(self):
-        req = requests.post(url=self.url, data=self.data, headers=self.headers, cookies=self.cookies)
+
+        req = requests.post(url=self.url, data=self.data, headers=self.headers, cookies=self.cookies, verify=False)
         if req.ok:
             con = json.loads(req.text)
             if con["code"] != 0:
