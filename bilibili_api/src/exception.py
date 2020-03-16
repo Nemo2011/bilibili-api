@@ -1,4 +1,4 @@
-class NoPermissionException(Exception):
+class bilibiliApiException(Exception):
     def __init__(self, msg):
         self.msg = msg
 
@@ -6,7 +6,12 @@ class NoPermissionException(Exception):
         return self.msg
 
 
-class BiliException(Exception):
+class NoPermissionException(bilibiliApiException):
+    def __init__(self, msg="无操作权限"):
+        self.msg = msg
+
+
+class BiliException(bilibiliApiException):
     def __init__(self, code, msg):
         self.code = code
         self.msg = msg
@@ -15,7 +20,7 @@ class BiliException(Exception):
         return "返回code不为0。错误代码：%s, 信息：%s" % (self.code, self.msg)
 
 
-class NetworkException(Exception):
+class NetworkException(bilibiliApiException):
     def __init__(self, code):
         self.code = code
 
