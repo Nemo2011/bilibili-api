@@ -208,3 +208,7 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
 + V1.2.2 2020/02/28
     + 部分获取内容补上limit参数
     + 修正不能发送动态的BUG
+    
++ V1.2.3 2020/03/16
+    + 修改异常基类为bilibiliApiException，其他异常均基于此类
+    + 修正VideoInfo类中get_playurl()只能获取P1视频的BUG
