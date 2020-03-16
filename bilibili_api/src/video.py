@@ -41,7 +41,7 @@ class VideoInfo(Video):
         return get()
 
     # sort=0 按弹幕出现时间正序排序，其他按发送时间正序排序
-    def get_danmaku(self, page: int, sort: int = 0):
+    def get_danmaku(self, sort: int = 0, page: int = 0):
         api = apis["video"]["info"]["danmaku"]
         self.__get_self_info()
         page_id = self.info["pages"][page]["cid"]
@@ -80,7 +80,7 @@ class VideoInfo(Video):
         else:
             raise exception.NetworkException(req.status_code)
 
-    def get_history_danmaku(self, page: int, date: str, sort: int = 0):
+    def get_history_danmaku(self, date: str, sort: int = 0, page: int = 0):
         if not self.verify.has_sess():
             raise exception.NoPermissionException("需要验证：SESSDATA")
 
@@ -135,7 +135,7 @@ class VideoInfo(Video):
         get = Get(url=api["url"], params=params)
         return get()
 
-    def get_history_danmaku_index(self, page: int, month: str):
+    def get_history_danmaku_index(self, month: str, page: int = 0):
         if not self.verify.has_sess():
             raise exception.NoPermissionException("需要验证：SESSDATA")
 
@@ -169,13 +169,16 @@ class VideoInfo(Video):
         get = Get(url=api["url"], params=params)
         return get()
 
-    def get_playurl(self):
+    def get_playurl(self, page=0):
+        self.__get_self_info()
+        if page + 1 > len(self.info["pages"]):
+            raise exception.bilibiliApiException("不存在该分P（page）")
         headers["Referer"] = "https://www.bilibili.com"
         url = "https://www.bilibili.com/video/av%s" % self.aid
         if self.verify.has_sess():
-            req = requests.get(url, cookies=self.verify.get_cookies(), headers=headers)
+            req = requests.get(url, cookies=self.verify.get_cookies(), headers=headers, params={"p": page + 1})
         else:
-            req = requests.get(url, headers=headers)
+            req = requests.get(url, headers=headers, params={"p": page + 1})
         if req.ok:
             match = re.search("<script>window.__playinfo__=(.*?)</script>", req.text)
             text = match.group(1)
