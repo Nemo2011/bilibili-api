@@ -439,6 +439,17 @@
                     "plat": 1
                 },
                 "comment": "回复"
+            },
+            "repost": {
+                "url": "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "dynamic_id": "动态ID",
+                    "content": "内容",
+                    "extension": "{\"emoji_type\":1}"
+                },
+                "comment": "转发"
             }
         },
         "info": {
@@ -646,5 +657,8 @@
             "verify": false,
             "comment": "获取在线人数"
         }
+    },
+    "bangumi": {
+
     }
 }
