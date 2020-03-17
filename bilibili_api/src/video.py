@@ -37,8 +37,8 @@ class VideoInfo(Video):
             "aid": self.aid
         }
         get = Get(url=api["url"], params=params)
-        self.info = get
-        return get()
+        self.info = get()
+        return self.info
 
     # sort=0 按弹幕出现时间正序排序，其他按发送时间正序排序
     def get_danmaku(self, sort: int = 0, page: int = 0):

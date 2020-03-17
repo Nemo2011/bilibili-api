@@ -212,3 +212,6 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
 + V1.2.3 2020/03/16
     + 修改异常基类为bilibiliApiException，其他异常均基于此类
     + 修正VideoInfo类中get_playurl()只能获取P1视频的BUG
+    
++ V1.2.4 2020/03/17
+    + VideoInfo中少写一对括号导致返回值不正确，修了修了QAQ
