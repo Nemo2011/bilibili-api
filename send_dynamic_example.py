@@ -12,6 +12,7 @@ img_path = [
 # 上传图片类
 upload = UploadImages(images_path=img_path, verify=verify)
 
+# 如果要@人，格式为 “@用户UID@ ”
 # 画册动态类
 draw = DrawDynamic(text="这是文字内容", upload_images=upload, verify=verify)
 
