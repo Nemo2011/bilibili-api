@@ -215,3 +215,6 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
     
 + V1.2.4 2020/03/17
     + VideoInfo中少写一对括号导致返回值不正确，修了修了QAQ
+    
++ V1.2.5 2020/03/20
+    + 修复User模块中UserInfo的get_video()出错的bug

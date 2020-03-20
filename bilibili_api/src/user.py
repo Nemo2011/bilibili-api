@@ -62,12 +62,12 @@ class UserInfo:
         count = 0
         if first_page["page"]["count"] > first_page["page"]["ps"]:
             pages = math.ceil(first_page["page"]["count"] / first_page["page"]["ps"])
-            video_list = first_page["list"]
+            video_list = first_page["list"]["vlist"]
             count += len(video_list)
             if count < limit:
                 for page in range(2, pages + 1):
                     data = get(page)["list"]["vlist"]
-                    video_list["vlist"] += data
+                    video_list += data
                     count += len(data)
                     if count > limit:
                         break
@@ -76,7 +76,7 @@ class UserInfo:
             return first_page["list"][:limit]
 
     # sort: 0-上传日期，1-播放量，2-收藏量
-    def get_audio(self, sort: int = 0):
+    def get_audio(self, sort: int = 0, limit: int = 114514):
         def get(page):
             if sort == 0:
                 sort_str = 1
@@ -94,19 +94,23 @@ class UserInfo:
             get1 = Get(url=api["url"], params=params)
             con = get1()
             return con
-
+        count = 0
         first_page = get(1)
         page_count = first_page["pageCount"]
-        if first_page["pageCount"] > 1:
+        count += page_count
+        if first_page["pageCount"] > 1 and count < limit:
             audio_list = first_page["data"]
             for page in range(2, page_count + 1):
                 data = get(page)["data"]
+                count += len(data)
                 audio_list += data
-            return audio_list
+                if count >= limit:
+                    break
+            return audio_list[:limit]
         else:
-            return first_page["data"]
+            return first_page["data"][:limit]
 
-    def get_article(self, sort: int = 0):
+    def get_article(self, sort: int = 0, limit: int = 114514):
         def get(page):
             if sort == 0:
                 sort_str = "publish_time"
@@ -127,14 +131,18 @@ class UserInfo:
 
         first_page = get(1)
         page_count = math.ceil(first_page["count"] / first_page["ps"])
-        if page_count > 1:
+        count = len(first_page["articles"])
+        if page_count > 1 and count < limit:
             article_list = first_page["articles"]
             for page in range(2, page_count + 1):
                 data = get(page)["articles"]
                 article_list += data
-            return article_list
+                count += len(data)
+                if count >= limit:
+                    break
+            return article_list[:limit]
         else:
-            return first_page["articles"]
+            return first_page["articles"][:limit]
 
     # sort: 0最近更新，1最多阅读
     def get_article_list(self, sort: int = 0):
