@@ -11,18 +11,30 @@ apis = utils.get_apis()
 
 
 class Video:
-    def __init__(self, aid):
+    def __init__(self, aid: int, bvid: str):
         self.aid = aid
+        self.bvid = bvid
 
 
+# 优先bvid
 class VideoInfo(Video):
-    def __init__(self, aid: int, verify: Verify = Verify()):
-        Video.__init__(self, aid)
+    def __init__(self, bvid: str = "", aid: int = 0, verify: Verify = Verify()):
+        Video.__init__(self, aid, bvid)
         if type(verify) != utils.Verify:
-            raise Exception("请传入Verify类")
+            raise exception.bilibiliApiException("请传入Verify类")
         else:
             self.verify = verify
         self.info = None
+        if bvid == "" and aid == 0:
+            raise exception.bilibiliApiException("bvid和aid至少指定其中一个")
+
+    def __bvid2aid(self):
+        self.__get_self_info()
+        self.aid = self.info["aid"]
+
+    def __aid2bvid(self):
+        self.__get_self_info()
+        self.bvid = self.info["bvid"]
 
     def __get_self_info(self):
         if self.info is None:
@@ -34,9 +46,13 @@ class VideoInfo(Video):
         else:
             api = apis["video"]["info"]["info_detail"]
         params = {
-            "aid": self.aid
+            "aid": self.aid,
+            "bvid": self.bvid
         }
-        get = Get(url=api["url"], params=params)
+        if self.verify.has_sess():
+            get = Get(url=api["url"], params=params, cookies=self.verify.get_cookies())
+        else:
+            get = Get(url=api["url"], params=params)
         self.info = get()
         return self.info
 
@@ -55,19 +71,19 @@ class VideoInfo(Video):
             danmaku = xml.getElementsByTagName("d")
             py_danmaku = []
             for d in danmaku:
-                self.info = d.getAttribute("p").split(",")
+                info = d.getAttribute("p").split(",")
                 text = d.childNodes[0].data
-                if self.info[5] == '0':
+                if info[5] == '0':
                     is_sub = False
                 else:
                     is_sub = True
                 dm = Danmaku(
-                    dm_time=self.info[0],
-                    send_time=self.info[4],
-                    id=self.info[6],
-                    color=self.info[3],
-                    mode=self.info[1],
-                    font_size=self.info[2],
+                    dm_time=float(info[0]),
+                    send_time=int(info[4]),
+                    id=info[6],
+                    color=info[3],
+                    mode=info[1],
+                    font_size=info[2],
                     is_sub=is_sub,
                     text=text
                 )
@@ -102,19 +118,19 @@ class VideoInfo(Video):
             danmaku = xml.getElementsByTagName("d")
             py_danmaku = []
             for d in danmaku:
-                self.info = d.getAttribute("p").split(",")
+                info = d.getAttribute("p").split(",")
                 text = d.childNodes[0].data
-                if self.info[5] == '0':
+                if info[5] == '0':
                     is_sub = False
                 else:
                     is_sub = True
                 dm = Danmaku(
-                    dm_time=self.info[0],
-                    send_time=self.info[4],
-                    id=self.info[6],
-                    color=self.info[3],
-                    mode=self.info[1],
-                    font_size=self.info[2],
+                    dm_time=float(info[0]),
+                    send_time=int(info[4]),
+                    id=info[6],
+                    color=info[3],
+                    mode=info[1],
+                    font_size=info[2],
                     is_sub=is_sub,
                     text=text
                 )
@@ -130,7 +146,8 @@ class VideoInfo(Video):
     def get_tags(self):
         api = apis["video"]["info"]["tags"]
         params = {
-            "aid": self.aid
+            "aid": self.aid,
+            "bvid": self.bvid
         }
         get = Get(url=api["url"], params=params)
         return get()
@@ -156,7 +173,8 @@ class VideoInfo(Video):
         mid = self.info["owner"]["mid"]
         params = {
             "aid": self.aid,
-            "mid": mid
+            "mid": mid,
+            "bvid": self.bvid
         }
         get = Get(url=api["url"], params=params)
         return get()
@@ -164,7 +182,8 @@ class VideoInfo(Video):
     def get_pages(self):
         api = apis["video"]["info"]["pages"]
         params = {
-            "aid": self.aid
+            "aid": self.aid,
+            "bvid": self.bvid
         }
         get = Get(url=api["url"], params=params)
         return get()
@@ -174,7 +193,10 @@ class VideoInfo(Video):
         if page + 1 > len(self.info["pages"]):
             raise exception.bilibiliApiException("不存在该分P（page）")
         headers["Referer"] = "https://www.bilibili.com"
-        url = "https://www.bilibili.com/video/av%s" % self.aid
+        if self.bvid != "":
+            url = "https://www.bilibili.com/video/%s" % self.bvid
+        else:
+            url = "https://www.bilibili.com/video/av%s" % self.aid
         if self.verify.has_sess():
             req = requests.get(url, cookies=self.verify.get_cookies(), headers=headers, params={"p": page + 1})
         else:
@@ -197,11 +219,13 @@ class VideoInfo(Video):
     def get_comments(self, sort: int = 0, limit: int = 1919810):
         def get_page(page):
             api = apis["video"]["info"]["comments"]
+            if self.aid == 0:
+                self.__bvid2aid()
             params = {
                 "oid": self.aid,
                 "type": 1,
                 "sort": 2,
-                "pn": page
+                "pn": page,
             }
             get = Get(url=api["url"], params=params)
             return get()
@@ -227,7 +251,8 @@ class VideoInfo(Video):
     def get_related(self):
         api = apis["video"]["info"]["related"]
         params = {
-            "aid": self.aid
+            "aid": self.aid,
+            "bvid": self.bvid
         }
         get = Get(url=api["url"], params=params)
         return get()
@@ -238,7 +263,8 @@ class VideoInfo(Video):
 
         api = apis["video"]["info"]["is_liked"]
         params = {
-            "aid": self.aid
+            "aid": self.aid,
+            "bvid": self.bvid
         }
         get = Get(url=api["url"], params=params, cookies=self.verify.get_cookies())
         value = get()
@@ -253,7 +279,8 @@ class VideoInfo(Video):
 
         api = apis["video"]["info"]["is_coins"]
         params = {
-            "aid": self.aid
+            "aid": self.aid,
+            "bvid": self.bvid
         }
         get = Get(url=api["url"], params=params, cookies=self.verify.get_cookies())
         value = get()["multiply"]
@@ -265,7 +292,8 @@ class VideoInfo(Video):
 
         api = apis["video"]["info"]["is_favoured"]
         params = {
-            "aid": self.aid
+            "aid": self.aid,
+            "bvid": self.bvid
         }
         get = Get(url=api["url"], params=params, cookies=self.verify.get_cookies())
         value = get()["favoured"]
@@ -284,7 +312,8 @@ class VideoInfo(Video):
             "up_mid": up_mid,
             "type": 2,
             "ps": 100,
-            "pn": 1
+            "pn": 1,
+            "bvid": self.bvid
         }
         my_headers = headers
         my_headers["Referer"] = "https://www.bilibili.com/av%s" % self.aid
@@ -294,8 +323,8 @@ class VideoInfo(Video):
 
 
 class VideoOperate(Video):
-    def __init__(self, aid: int, verify: Verify):
-        Video.__init__(self, aid=aid)
+    def __init__(self, verify: Verify, bvid: str="", aid: int=0):
+        Video.__init__(self, aid=aid, bvid=bvid)
         if type(verify) != Verify:
             raise Exception("请传入Verify类")
         else:
@@ -306,7 +335,8 @@ class VideoOperate(Video):
         data = {
             "aid": self.aid,
             "like": 0,
-            "csrf": self.verify.csrf
+            "csrf": self.verify.csrf,
+            "bvid": self.bvid
         }
         if is_like:
             data["like"] = 1
@@ -327,7 +357,8 @@ class VideoOperate(Video):
             "aid": self.aid,
             "multiply": num,
             "select_like": l,
-            "csrf": self.verify.csrf
+            "csrf": self.verify.csrf,
+            "bvid": self.bvid
         }
         post = Post(url=api["url"], data=data, cookies=self.verify.get_cookies())
         post()
@@ -350,7 +381,8 @@ class VideoOperate(Video):
             "type": 2,
             "add_media_ids": "",
             "del_media_ids": "",
-            "csrf": self.verify.csrf
+            "csrf": self.verify.csrf,
+            "bvid": self.bvid
         }
         if mode == 0:
             data["add_media_ids"] = m
@@ -363,12 +395,17 @@ class VideoOperate(Video):
 
     def send_comment(self, text: str):
         api = apis["video"]["operate"]["send_comment"]
+        if self.aid == 0:
+            vi = VideoInfo(bvid=self.bvid)
+            vinfo = vi.get_video_info()
+            self.aid = vinfo["aid"]
         data = {
             "oid": self.aid,
             "type": 1,
             "message": text,
             "plat": 1,
-            "csrf": self.verify.csrf
+            "csrf": self.verify.csrf,
+            "bvid": self.bvid
         }
         post = Post(url=api["url"], data=data, cookies=self.verify.get_cookies())
         post()
@@ -376,6 +413,10 @@ class VideoOperate(Video):
     # 评论操作，mode：like, hate, top, del。action: 1是0否（del没有）
     def operate_comment(self, rpid: int, mode: str, action: int):
         api = apis["video"]["operate"][mode + "_comment"]
+        if self.aid == 0:
+            vi = VideoInfo(bvid=self.bvid)
+            vinfo = vi.get_video_info()
+            self.aid = vinfo["aid"]
         if mode == "del":
             data = {
                 "rpid": rpid,
@@ -389,7 +430,8 @@ class VideoOperate(Video):
                 "oid": self.aid,
                 "type": 1,
                 "action": action,
-                "csrf": self.verify.csrf
+                "csrf": self.verify.csrf,
+            "bvid": self.bvid
             }
         post = Post(url=api["url"], data=data, cookies=self.verify.get_cookies())
         post()
@@ -402,12 +444,16 @@ class VideoOperate(Video):
             pool = 1
         else:
             pool = 0
+        if self.aid == 0:
+            vi = VideoInfo(bvid=self.bvid)
+            vinfo = vi.get_video_info()
+            self.aid = vinfo["aid"]
         data = {
             "type": 1,
             "oid": oid,
             "msg": danmaku.text,
             "aid": self.aid,
-            "bvid": "",
+            "bvid": self.bvid,
             "progress": int(danmaku.dm_time.seconds * 1000),
             "color": danmaku.color,
             "fontsize": danmaku.font_size,
@@ -421,10 +467,15 @@ class VideoOperate(Video):
 
     def add_tag(self, tag_name: str):
         api = apis["video"]["operate"]["add_tag"]
+        if self.aid == 0:
+            vi = VideoInfo(bvid=self.bvid)
+            vinfo = vi.get_video_info()
+            self.aid = vinfo["aid"]
         data = {
             "aid": self.aid,
             "tag_name": tag_name,
-            "csrf": self.verify.csrf
+            "csrf": self.verify.csrf,
+            "bvid": self.bvid
         }
         post = Post(url=api["url"], data=data, cookies=self.verify.get_cookies())
         value = post()
@@ -432,10 +483,15 @@ class VideoOperate(Video):
 
     def del_tag(self, tag_id: int):
         api = apis["video"]["operate"]["del_tag"]
+        if self.aid == 0:
+            vi = VideoInfo(bvid=self.bvid)
+            vinfo = vi.get_video_info()
+            self.aid = vinfo["aid"]
         data = {
             "aid": self.aid,
             "tag_id": tag_id,
-            "csrf": self.verify.csrf
+            "csrf": self.verify.csrf,
+            "bvid": self.bvid
         }
         post = Post(url=api["url"], data=data, cookies=self.verify.get_cookies())
         post()
