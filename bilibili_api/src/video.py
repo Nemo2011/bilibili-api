@@ -203,9 +203,15 @@ class VideoInfo(Video):
             req = requests.get(url, headers=headers, params={"p": page + 1})
         if req.ok:
             match = re.search("<script>window.__playinfo__=(.*?)</script>", req.text)
-            text = match.group(1)
-            if text is not None:
+            if match != None:
+                text = match.group(1)
                 video_info = json.loads(text)
+            elif match == None:
+                self.__get_self_info()
+                page_id = self.info["pages"][page]["cid"]
+                url = "https://api.bilibili.com/x/player/playurl?avid=%s&cid=%d&qn=112" % (self.aid, page_id)
+                video_info = requests.get(url,cookies=self.verify.get_cookies(), headers=headers).text
+                return video_info
             else:
                 raise Exception("出现错误")
             if video_info["code"] != 0:
