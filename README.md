@@ -218,3 +218,8 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
     
 + V1.2.5 2020/03/20
     + 修复User模块中UserInfo的get_video()出错的bug
+    
++ V1.3.0 2020/03/23
+    + 重大更新，b站正在把视频标识从av逐渐改为bv，本模块已进行更新video模块中的各类可传入bvid参数
+    + 修复无法获取弹幕的bug
+    + 将verify用于视频信息获取验证，用于获取部分只有注册会员才能看的视频的信息
