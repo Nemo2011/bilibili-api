@@ -1,5 +1,10 @@
 bilibili_api
 =
+
+公告
+-
+2020/03/23 重大更新，b站正在把视频标识从av逐渐改为bv，本模块已进行更新video模块中的各类可传入bvid参数
+
 本项目地址：
 
 [https://github.com/Passkou/bilibili_api](https://github.com/Passkou/bilibili_api)
