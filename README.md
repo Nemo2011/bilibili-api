@@ -1,13 +1,5 @@
 bilibili_api
 =
-
-公告
--
-
-2020/03/23 重大更新，b站正在把视频标识从av逐渐改为bv，本模块已进行更新video模块中的各类可传入bvid参数
-
-***
-
 本项目地址：
 
 [https://github.com/Passkou/bilibili_api](https://github.com/Passkou/bilibili_api)
@@ -231,3 +223,6 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
     + 重大更新，b站正在把视频标识从av逐渐改为bv，本模块已进行更新video模块中的各类可传入bvid参数
     + 修复无法获取弹幕的bug
     + 将verify用于视频信息获取验证，用于获取部分只有注册会员才能看的视频的信息
+    
++ V1.3.1 2020/03/23
+    + 修复无法获取仅限注册会员观看的视频地址
