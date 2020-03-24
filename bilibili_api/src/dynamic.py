@@ -3,7 +3,7 @@ from . import exception, utils
 import requests
 import re
 import json
-from .utils import Get, Post
+from .utils import Get, Post, logger
 import math
 
 headers = utils.default_headers
@@ -68,26 +68,26 @@ class SendDynamic:
 class UploadImages:
     def __init__(self, images_path: list, verify: utils.Verify):
         if type(verify) != utils.Verify:
-            raise Exception("请传入Verify类")
+            raise exception.bilibiliApiException("请传入Verify类")
         else:
             self.verify = verify
         if len(images_path) > 9:
-            raise Exception("图片最多 9 张")
+            raise exception.bilibiliApiException("图片最多 9 张")
         elif type(images_path) != list:
-            raise Exception("图片必须传入list")
+            raise exception.bilibiliApiException("图片必须传入list")
         else:
             self.__images_path = images_path
         self.bilibili_path = []
 
     def add_image(self, image_path: str):
         if len(self.__images_path) >= 9:
-            raise Exception("图片最多 9 张")
+            raise exception.bilibiliApiException("图片最多 9 张")
         else:
             self.__images_path.append(image_path)
 
     def del_image(self, image_path: str):
         if len(self.__images_path) == 0:
-            raise Exception("没有图片")
+            raise exception.bilibiliApiException("没有图片")
         else:
             self.__images_path.remove(image_path)
 
@@ -110,7 +110,7 @@ class UploadImages:
             files = {
                 "file_up": open(img, "rb")
             }
-            print("Uploading", img)
+            logger.debug("正在上传图片", img)
             req = requests.post(url=api["url"], data=data, files=files, cookies=self.verify.get_cookies())
             if req.ok:
                 con = req.json()
@@ -183,7 +183,7 @@ class ScheduleDynamic:
         elif type(self.dynamic) == TextDynamic:
             type_ = 2
         else:
-            raise Exception("未知的动态类型")
+            raise exception.bilibiliApiException("未知的动态类型")
         data = {"type": type_, "publish_time": self.timestamp, "request": json.dumps(self.dynamic.get_data()),
                 "csrf_token": self.dynamic.verify.csrf}
         api = apis["dynamic"]["send"]["schedule"]
@@ -196,7 +196,7 @@ class InstantDynamic:
         if isinstance(dynamic, (DrawDynamic, TextDynamic)):
             self.dynamic = dynamic
         else:
-            raise Exception("传入参数非法")
+            raise exception.bilibiliApiException("传入参数非法")
 
     def send(self):
         if type(self.dynamic) == DrawDynamic:
