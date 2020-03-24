@@ -210,8 +210,8 @@ class VideoInfo(Video):
                 self.__get_self_info()
                 page_id = self.info["pages"][page]["cid"]
                 url = "https://api.bilibili.com/x/player/playurl?avid=%s&cid=%d&qn=112" % (self.aid, page_id)
-                video_info = requests.get(url,cookies=self.verify.get_cookies(), headers=headers).text
-                return video_info
+                video_info = json.loads(requests.get(url,cookies=self.verify.get_cookies(), headers=headers).text)
+                return video_info['data']
             else:
                 raise Exception("出现错误")
             if video_info["code"] != 0:
