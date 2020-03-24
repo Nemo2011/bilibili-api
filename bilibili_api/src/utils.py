@@ -6,6 +6,7 @@ import requests
 from bilibili_api.src import exception
 import base64
 import urllib3
+import logging
 
 urllib3.disable_warnings()
 
@@ -15,6 +16,9 @@ default_headers = {
                   "Chrome/79.0.3945.130 Safari/537.36",
     "Referer": "https://www.bilibili.com"
 }
+logger = logging.getLogger("bilibili_api")
+logger.setLevel(logging.WARNING)
+logger.addHandler(logging.StreamHandler())
 
 
 def get_apis():

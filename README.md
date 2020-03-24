@@ -226,3 +226,7 @@ API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_
     
 + V1.3.1 2020/03/23
     + 修复无法获取仅限注册会员观看的视频地址
+	
++ V1.3.2 2020/03/24
+    + 修复get_playurl()返回值不是Python对象的bug，并对bvid做了支持
+    + 把全部抛出异常改为了bilibiliApiException
