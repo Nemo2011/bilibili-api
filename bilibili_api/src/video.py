@@ -203,21 +203,28 @@ class VideoInfo(Video):
             req = requests.get(url, headers=headers, params={"p": page + 1})
         if req.ok:
             match = re.search("<script>window.__playinfo__=(.*?)</script>", req.text)
-            if match != None:
+            if match is not None:
                 text = match.group(1)
                 video_info = json.loads(text)
-            elif match == None:
+            elif match is None:
                 self.__get_self_info()
                 page_id = self.info["pages"][page]["cid"]
-                url = "https://api.bilibili.com/x/player/playurl?avid=%s&cid=%d&qn=112" % (self.aid, page_id)
-                video_info = requests.get(url,cookies=self.verify.get_cookies(), headers=headers).text
+                url = apis["video"]["info"]["playurl"]["url"]
+                params = {
+                    "bvid": self.bvid,
+                    "avid": self.aid,
+                    "qn": 112,
+                    "cid": page_id
+                }
+                if self.verify.has_sess():
+                    get = Get(url=url, params=params, cookies=self.verify.get_cookies())
+                else:
+                    get = Get(url=url, params=params)
+                video_info = get()
                 return video_info
             else:
-                raise Exception("出现错误")
-            if video_info["code"] != 0:
-                raise exception.BiliException(video_info["code"], video_info["message"])
-            else:
-                return video_info["data"]
+                raise exception.bilibiliApiException("出现错误")
+            return video_info
         else:
             raise exception.NetworkException(req.status_code)
 
@@ -332,7 +339,7 @@ class VideoOperate(Video):
     def __init__(self, verify: Verify, bvid: str="", aid: int=0):
         Video.__init__(self, aid=aid, bvid=bvid)
         if type(verify) != Verify:
-            raise Exception("请传入Verify类")
+            raise exception.bilibiliApiException("请传入Verify类")
         else:
             self.verify = verify
 
@@ -353,7 +360,7 @@ class VideoOperate(Video):
 
     def coin(self, num: int = 2, like: bool = False):
         if num not in (1, 2):
-            raise Exception("硬币必须是1个或2个")
+            raise exception.bilibiliApiException("硬币必须是1个或2个")
         if like:
             l = 1
         else:
