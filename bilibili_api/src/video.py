@@ -27,14 +27,16 @@ class VideoInfo(Video):
         self.info = None
         if bvid == "" and aid == 0:
             raise exception.bilibiliApiException("bvid和aid至少指定其中一个")
+        if bvid == "":
+            self.__aid2bvid()
+        elif aid == 0:
+            self.__bvid2aid()
 
     def __bvid2aid(self):
-        self.__get_self_info()
-        self.aid = self.info["aid"]
+        self.aid = utils.bv2aid(self.bvid)
 
     def __aid2bvid(self):
-        self.__get_self_info()
-        self.bvid = self.info["bvid"]
+        self.bvid = utils.aid2bv(self.aid)
 
     def __get_self_info(self):
         if self.info is None:
@@ -336,12 +338,24 @@ class VideoInfo(Video):
 
 
 class VideoOperate(Video):
-    def __init__(self, verify: Verify, bvid: str="", aid: int=0):
+    def __init__(self, verify: Verify, bvid: str = "", aid: int = 0):
         Video.__init__(self, aid=aid, bvid=bvid)
         if type(verify) != Verify:
             raise exception.bilibiliApiException("请传入Verify类")
         else:
             self.verify = verify
+        if bvid == "" and aid == 0:
+            raise exception.bilibiliApiException("bvid和aid至少指定其中一个")
+        if bvid == "":
+            self.__aid2bvid()
+        elif aid == 0:
+            self.__bvid2aid()
+
+    def __bvid2aid(self):
+        self.aid = utils.bv2aid(self.bvid)
+
+    def __aid2bvid(self):
+        self.bvid = utils.aid2bv(self.aid)
 
     def like(self, is_like: bool = True):
         api = apis["video"]["operate"]["like"]
@@ -394,8 +408,7 @@ class VideoOperate(Video):
             "type": 2,
             "add_media_ids": "",
             "del_media_ids": "",
-            "csrf": self.verify.csrf,
-            "bvid": self.bvid
+            "csrf": self.verify.csrf
         }
         if mode == 0:
             data["add_media_ids"] = m
@@ -444,7 +457,7 @@ class VideoOperate(Video):
                 "type": 1,
                 "action": action,
                 "csrf": self.verify.csrf,
-            "bvid": self.bvid
+                "bvid": self.bvid
             }
         post = Post(url=api["url"], data=data, cookies=self.verify.get_cookies())
         post()
