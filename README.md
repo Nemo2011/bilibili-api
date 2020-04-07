@@ -244,3 +244,7 @@ print(json.dumps(video_info, indent=4, ensure_ascii=False))
 + V1.3.2 2020/03/24
     + 修复get_playurl()返回值不是Python对象的bug，并对bvid做了支持
     + 把全部抛出异常改为了bilibiliApiException
+
++ V1.3.3 2020/04/07
+    + 修复不能收藏的问题（b站的收藏API还在使用aid，服了）
+    + 从知乎大佬那嫖了bvid和aid互相转换的代码过来（滑稽）[原出处](https://www.zhihu.com/question/381784377/answer/1099438784)
