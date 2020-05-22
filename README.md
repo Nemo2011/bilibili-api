@@ -1,6 +1,5 @@
 bilibili_api
 =
-### 很抱歉大家，我实在是没精力来维护这个项目了，已弃坑。但是接受pull requests，如果有想接手这个项目的可以fork下来自己加新功能。。
 本项目地址：
 
 [https://github.com/Passkou/bilibili_api](https://github.com/Passkou/bilibili_api)
@@ -249,3 +248,7 @@ print(json.dumps(video_info, indent=4, ensure_ascii=False))
 + V1.3.3 2020/04/07
     + 修复不能收藏的问题（b站的收藏API还在使用aid，服了）
     + 从知乎大佬那嫖了bvid和aid互相转换的代码过来（滑稽）[原出处](https://www.zhihu.com/question/381784377/answer/1099438784)
+    
++ V1.3.4 2020/05/22
+    + 修复获取用户动态有时候报错的bug
+    + 修复获取用户视频较少时报错的bug
