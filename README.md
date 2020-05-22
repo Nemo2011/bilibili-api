@@ -1,5 +1,6 @@
 bilibili_api
 =
+### 很抱歉大家，我实在是没精力来维护这个项目了，已弃坑。但是接受pull requests，如果有想接手这个项目的可以fork下来自己加新功能。。
 本项目地址：
 
 [https://github.com/Passkou/bilibili_api](https://github.com/Passkou/bilibili_api)
