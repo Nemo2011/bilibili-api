@@ -73,7 +73,7 @@ class UserInfo:
                         break
             return video_list[:limit]
         else:
-            return first_page["list"][:limit]
+            return first_page["list"]["vlist"][:limit]
 
     # sort: 0-上传日期，1-播放量，2-收藏量
     def get_audio(self, sort: int = 0, limit: int = 114514):
@@ -176,9 +176,9 @@ class UserInfo:
             p += 1
             this = get(next_offset)
             next_offset = this["next_offset"]
-            cards += this["cards"]
+            cards += this.get("cards", [])
             has_more = this["has_more"]
-            count -= len(this["cards"])
+            count -= len(this.get("cards", []))
         return cards[:limit]
 
     # "type": "1追番，2追剧"
