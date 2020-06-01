@@ -192,7 +192,7 @@ def nyanpass(这是一个毫无用处的参数="nyanpass"):
 
 
 # 代码来源：https://www.zhihu.com/question/381784377/answer/1099438784
-def bv2aid(bv: str):
+def bvid2aid(bv: str):
     table = 'fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF'
     tr = {}
     for i in range(58):
@@ -211,7 +211,7 @@ def bv2aid(bv: str):
 
 
 # 代码来源：https://www.zhihu.com/question/381784377/answer/1099438784
-def aid2bv(aid: int):
+def aid2bvid(aid: int):
     table = 'fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF'
     tr = {}
     for i in range(58):
