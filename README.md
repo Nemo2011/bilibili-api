@@ -2,7 +2,7 @@ bilibili_api
 =
 本项目地址：
 
-[https://github.com/Passkou/bilibili_api](https://github.com/Passkou/bilibili_api)
+<https://github.com/Passkou/bilibili_api>
 
 本模块可调用 [哔哩哔哩](https://www.bilibili.com) （下称b站）的API，使用这些API可对视频、动态等进行一系列的操作，详细功能请见帮助文档。
 
@@ -57,7 +57,7 @@ my_video = video.VideoInfo(aid="40473736", verify=verify)
 
 对视频进行点赞、投币等用户操作则需要 SESSDATA 和 csrf 。
 
-关于 SESSDATA 和 csrf 获取的详细方法，[点我](https://www.bilibili.com/read/cv4495682)
+关于 SESSDATA 和 csrf 获取的详细方法，[点我](https://github.com/Passkou/bilibili_api/wiki/SESSDATA%E5%92%8CCSRF%E8%8E%B7%E5%8F%96%E6%96%B9%E6%B3%95%EF%BC%88Chrome%E4%B8%BA%E4%BE%8B%EF%BC%89)
 
 接下来我们获取视频的详细信息：
 
@@ -185,70 +185,4 @@ print(json.dumps(video_info, indent=4, ensure_ascii=False))
  
 更详细的教程请见 [Wiki](https://github.com/Passkou/bilibili_api/wiki)
 
-没人看的更新日志
--
-+ V1.0.0 2020/01/27
-    + 发布第一版本，只能操作用户上传视频，后续会慢慢更新其他功能233。
-    
-+ V1.0.1 2020/01/27
-    + 修正README文档错误
-    
-+ V1.1.0 2020/01/27
-    + 修正一些BUG（语法错误太丢人了）
-    + [VideoInfo.get_playurl()](https://github.com/Passkou/bilibili_api/wiki/VideoInfo%E7%B1%BB#get_playurl) 重写，现在能获得高清的下载链接了
-    + 一天三次更新我哭了QAQ
-    
-+ V1.1.1 2020/01/28
-    + 补上了漏掉的sessdata值判断
-    + [Danmaku](https://github.com/Passkou/bilibili_api/wiki/Danmaku%E7%B1%BB) 类的映射表改为私有
-    
-+ V1.2.0 2020/01/31
-    + 重写验证方式，新增 [Verify](https://github.com/Passkou/bilibili_api/wiki/Verify%E7%B1%BB) 类（写法稍微变了一下，具体看教程）
-    + 减少 `video` 模块冗余请求代码，集合到了一个类中（减少了150行左右）
-    + 新增 `user` 模块（[Wiki](https://github.com/Passkou/bilibili_api/wiki)）
-    + 新增 `dynamic` 模块（[Wiki](https://github.com/Passkou/bilibili_api/wiki)）
-    + [VideoInfo.get_comments()](https://github.com/Passkou/bilibili_api/wiki/VideoInfo%E7%B1%BB#get_comments) 新增limit参数，可限制获取的数量
-    + 改写 `__init__` ，使导入结构更清楚（免得显示其他你们用不上的东西太乱）
-    + 所有模块传参强制变量类型
-    + 修改 [VideoInfo.get_playurl()](https://github.com/Passkou/bilibili_api/wiki/VideoInfo%E7%B1%BB#get_playurl) 用正则表达式获取链接信息，
-      用不着为了这个去多装一个依赖库
-    + 加了一个小彩蛋(=・ω・=)
-    
-+ V1.2.1 2020/01/31
-    + 部分获取内容补上limit参数
-    + 部分类的方法更改了参数名字和类型
-    + OperateDynamic 类新增 repost 方法（转发）
-    
-+ V1.2.2 2020/02/28
-    + 部分获取内容补上limit参数
-    + 修正不能发送动态的BUG
-    
-+ V1.2.3 2020/03/16
-    + 修改异常基类为bilibiliApiException，其他异常均基于此类
-    + 修正VideoInfo类中get_playurl()只能获取P1视频的BUG
-    
-+ V1.2.4 2020/03/17
-    + VideoInfo中少写一对括号导致返回值不正确，修了修了QAQ
-    
-+ V1.2.5 2020/03/20
-    + 修复User模块中UserInfo的get_video()出错的bug
-    
-+ V1.3.0 2020/03/23
-    + 重大更新，b站正在把视频标识从av逐渐改为bv，本模块已进行更新video模块中的各类可传入bvid参数
-    + 修复无法获取弹幕的bug
-    + 将verify用于视频信息获取验证，用于获取部分只有注册会员才能看的视频的信息
-    
-+ V1.3.1 2020/03/23
-    + 修复无法获取仅限注册会员观看的视频地址
-	
-+ V1.3.2 2020/03/24
-    + 修复get_playurl()返回值不是Python对象的bug，并对bvid做了支持
-    + 把全部抛出异常改为了bilibiliApiException
-
-+ V1.3.3 2020/04/07
-    + 修复不能收藏的问题（b站的收藏API还在使用aid，服了）
-    + 从知乎大佬那嫖了bvid和aid互相转换的代码过来（滑稽）[原出处](https://www.zhihu.com/question/381784377/answer/1099438784)
-    
-+ V1.3.4 2020/05/22
-    + 修复获取用户动态有时候报错的bug
-    + 修复获取用户视频较少时报错的bug
+[更新日志](https://github.com/Passkou/bilibili_api/changelog.md)

@@ -33,10 +33,10 @@ class VideoInfo(Video):
             self.__bvid2aid()
 
     def __bvid2aid(self):
-        self.aid = utils.bv2aid(self.bvid)
+        self.aid = utils.bvid2aid(self.bvid)
 
     def __aid2bvid(self):
-        self.bvid = utils.aid2bv(self.aid)
+        self.bvid = utils.aid2bvid(self.aid)
 
     def __get_self_info(self):
         if self.info is None:
@@ -352,10 +352,10 @@ class VideoOperate(Video):
             self.__bvid2aid()
 
     def __bvid2aid(self):
-        self.aid = utils.bv2aid(self.bvid)
+        self.aid = utils.bvid2aid(self.bvid)
 
     def __aid2bvid(self):
-        self.bvid = utils.aid2bv(self.aid)
+        self.bvid = utils.aid2bvid(self.aid)
 
     def like(self, is_like: bool = True):
         api = apis["video"]["operate"]["like"]

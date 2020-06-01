@@ -308,7 +308,7 @@ class DynamicInfo:
         replies += first["replies"]
         sum_ = len(first["replies"])
         if sum_ < limit and total_pages > 1:
-            for page in range(2, total_pages):
+            for page in range(2, total_pages + 1):
                 data = get(page)
                 replies += data["replies"]
                 sum_ += len(data["replies"])
