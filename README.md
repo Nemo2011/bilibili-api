@@ -185,4 +185,4 @@ print(json.dumps(video_info, indent=4, ensure_ascii=False))
  
 更详细的教程请见 [Wiki](https://github.com/Passkou/bilibili_api/wiki)
 
-[更新日志](https://github.com/Passkou/bilibili_api/changelog.md)
+[更新日志](https://github.com/Passkou/bilibili_api/blob/master/changelog.md)
