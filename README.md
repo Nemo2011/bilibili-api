@@ -6,7 +6,7 @@ bilibili_api
 
 本模块可调用 [哔哩哔哩](https://www.bilibili.com) （下称b站）的API，使用这些API可对视频、动态等进行一系列的操作，详细功能请见帮助文档。
 
-作者b站空间：[Passkou](https://space.bilibili.com/12440199)
+我的个人网站：[喵帕斯小窝](https://passkou.com)
 
 API列表 [点我](https://github.com/Passkou/bilibili_api/blob/master/bilibili_api/src/api.json)
 
