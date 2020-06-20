@@ -146,7 +146,14 @@ class Get:
             if con["code"] != 0:
                 raise exception.BiliException(con["code"], con["message"])
             else:
-                return con["data"]
+                #take care of new api
+                if 'data' in con.keys():  
+                    return con['data']
+                else :
+                    if 'result' in con.keys() :
+                        return con["result"]
+                    else :
+                        raise exception.BiliException('data key error',con)
         else:
             raise exception.NetworkException(req.status_code)
 

@@ -1,0 +1,1 @@
+from .src.bangumi import bangumiInfo
