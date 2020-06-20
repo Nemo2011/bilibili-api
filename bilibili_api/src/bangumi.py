@@ -11,10 +11,10 @@ apis = utils.get_apis()
 
 
 class bangumiInfo():
-    def __init__(self,mid: str = "",sid: str = "",verify: Verify = Verify()):
+    def __init__(self,media_id: str = "",season_id: str = "",verify: Verify = Verify()):
         self.info = None
-        self.media_id = mid
-        self.season_id = sid
+        self.media_id = media_id
+        self.season_id = season_id
         self.verify = verify
         # TODO：add get danmuku info
 
@@ -33,7 +33,7 @@ class bangumiInfo():
         return self.info
     def get_bangumi_stat(self):
         if self.season_id == "":
-            raise exception.bilibiliApiException('请自行设置season_id')
+            raise exception.bilibiliApiException('请传入season_id')
         api = apis['bangumi']['bangumi_status']
         params = {
             'season_id':self.season_id
@@ -46,7 +46,7 @@ class bangumiInfo():
         return self.info
     def get_bangumi_list(self):
         if self.season_id == "":
-            raise exception.bilibiliApiException('请自行设置season_id')
+            raise exception.bilibiliApiException('请传入season_id')
         api = apis['bangumi']['bangumi_list']
         params = {
             'season_id':self.season_id
