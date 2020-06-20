@@ -27,6 +27,8 @@ class VideoInfo(Video):
         self.info = None
         if bvid == "" and aid == 0:
             raise exception.bilibiliApiException("bvid和aid至少指定其中一个")
+        if isinstance(aid,int) == False :
+            raise exception.bilibiliApiException('aid必须为int类型')
         if bvid == "":
             self.__aid2bvid()
         elif aid == 0:
