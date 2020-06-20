@@ -660,6 +660,32 @@
         }
     },
     "bangumi": {
-
+        "bangumi_info":{
+            "url": "https://api.bilibili.com/pgc/review/user",
+            "method": "GET",
+            "verify": false,
+            "params": {
+                "media_id": "番剧的media_id"
+            },
+            "comment": "获取番剧信息"
+        },
+        "bangumi_list":{
+            "url":"https://api.bilibili.com/pgc/web/season/section",
+            "method": "GET",
+            "verify": false,
+            "params": {
+                "season_id": "番剧的season_id"
+            },
+            "comment": "获取番剧剧集列表"
+        },
+        "bangumi_status":{
+            "url":"https://api.bilibili.com/pgc/web/season/stat",
+            "method": "GET",
+            "verify": false,
+            "params": {
+                "season_id": "番剧的season_id"
+            },
+            "comment": "获取番剧播放量，追番等信息"
+        }
     }
 }
