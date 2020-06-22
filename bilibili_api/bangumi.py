@@ -1,1 +1,1 @@
-from .src.bangumi import bangumiInfo
+from .src.bangumi import BangumiInfo
