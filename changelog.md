@@ -70,3 +70,7 @@
     + 修复获取动态评论时会少获取一页的BUG
     + 将bvid和aid互转的方法加入了video模块（bvid2aid(bvid), aid2bvid(aid)）
     + **儿童节快乐**
+
++ V1.4.0 2020/06/22
+    + 添加了番剧相关的3个API
+    + 修正了aid2bvid会报错的bug
