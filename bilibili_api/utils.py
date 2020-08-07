@@ -6,7 +6,7 @@ r"""
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
  |  ___/    / /\ \    \___ \   \___ \  |  <   | |  | | | |  | |
  | |       / ____ \   ____) |  ____) | | . \  | |__| | | |__| |
- |_|      /_/    \_\ |_____/  |_____/  |_|\_\  \____/   \____/
+ |_|      /_/    \_\ |_____/  |_____/  |_|\_\  \____/   \____/4
 """
 import json
 import datetime
@@ -128,6 +128,8 @@ class Verify:
         cookies = {}
         if self.has_sess():
             cookies["SESSDATA"] = self.sessdata
+        if self.has_csrf():
+            cookies["bili_jct"] = self.csrf
         return cookies
 
     def has_sess(self):
