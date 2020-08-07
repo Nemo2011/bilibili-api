@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='bilibili_api',
-    version='1.3.5',
+    version='2.0.0',
     url='https://github.com/Passkou/bilibili_api',
     license='MIT License',
     author='Passkou',
@@ -15,6 +15,10 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
+    keywords=[
+        "bilibili",
+        "api"
+    ],
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Natural Language :: Chinese (Simplified)",
@@ -24,7 +28,7 @@ setuptools.setup(
         "requests"
     ],
     package_data={
-        'bilibili_api.src':[
+        'bilibili_api.src': [
             "api.json"
         ]
     }

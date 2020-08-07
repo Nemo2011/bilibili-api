@@ -1,1 +1,593 @@
-from .src.user import UserInfo, UserOperate
+r"""
+模块：user
+功能：获取用户各种信息以及操作用户
+  _____                _____    _____   _  __   ____    _    _
+ |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
+ | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
+ |  ___/    / /\ \    \___ \   \___ \  |  <   | |  | | | |  | |
+ | |       / ____ \   ____) |  ____) | | . \  | |__| | | |__| |
+ |_|      /_/    \_\ |_____/  |_____/  |_|\_\  \____/   \____/
+"""
+import json
+from . import utils, exceptions
+
+API = utils.get_api()
+
+
+def get_user_info(uid: int, verify: utils.Verify = None):
+    """
+    获取用户信息（昵称，性别，生日，签名，头像URL，空间横幅URL等）
+    :param uid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["user"]["info"]["info"]
+    params = {
+        "mid": uid
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_self_info(verify: utils.Verify = None):
+    if verify is None:
+        verify = utils.Verify()
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException("需要验证：SESSDATA")
+    url = "https://api.bilibili.com/x/web-interface/nav"
+    resp = utils.get(url, cookies=verify.get_cookies())
+    return resp
+
+
+def get_relation_info(uid: int, verify: utils.Verify = None):
+    """
+    获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
+    B站API太乱了。。。
+    :param uid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["user"]["info"]["relation"]
+    params = {
+        "vmid": uid
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_up_info(uid: int, verify: utils.Verify = None):
+    """
+    获取UP主数据信息（视频总播放量，文章总阅读量，总点赞数）
+    B站API太乱了。。。
+    :param uid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["user"]["info"]["upstat"]
+    params = {
+        "mid": uid
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_live_info(uid: int, verify: utils.Verify = None):
+    """
+    获取用户直播间信息
+    :param uid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["user"]["info"]["live"]
+    params = {
+        "mid": uid
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_videos(uid: int, order: str = "pubdate", limit: int = 114514, callback=None, verify: utils.Verify = None):
+    """
+    自动循环获取用户投稿视频信息
+    :param callback: 回调函数
+    :param uid:
+    :param order: 排序，接受"pubdate", "view", "favorite"
+    :param limit: 限制数量
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    count = 0
+    page = 1
+    videos = []
+    while count < limit:
+        data = get_videos_raw(uid=uid, order=order, pn=page, verify=verify)
+        if not data["list"]["vlist"]:
+            break
+        count += len(data["list"]["vlist"])
+        videos += data["list"]["vlist"]
+        if callable(callback):
+            callback(data["list"]["vlist"])
+        page += 1
+    return videos[:limit]
+
+
+def get_videos_raw(uid: int, ps: int = 30, tid: int = 0, pn: int = 1, keyword: str = "",
+                   order: str = "pubdate", verify: utils.Verify = None):
+    """
+    低层级API，获取视频信息API的原始返回
+    :param uid:
+    :param ps: 每页最多几个视频，保持默认30即可
+    :param tid: 分区ID
+    :param pn: 第几页，从1开始
+    :param keyword: 搜索关键词
+    :param order: 排序，接受"pubdate", "view", "favorite"
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    ORDER_MAP = {
+        "pubdate": "pubdate",
+        "view": "click",
+        "favorite": "stow"
+    }
+    if order not in ORDER_MAP:
+        raise exceptions.BilibiliApiException("排序方式无效，可用值：pubdate（上传日期）、view（播放量）、favorite（收藏量）")
+
+    api = API["user"]["info"]["video"]
+    params = {
+        "mid": uid,
+        "ps": ps,
+        "tid": tid,
+        "pn": pn,
+        "keyword": keyword,
+        "order": ORDER_MAP[order]
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_audios(uid: int, order: str = "pubdate", limit: int = 114514, callback=None, verify: utils.Verify = None):
+    """
+    获取用户音频投稿
+    :param callback:
+    :param uid:
+    :param order: 排序，接受"pubdate", "view", "favorite"
+    :param limit: 数量限制
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    count = 0
+    page = 1
+    audios = []
+    while count < limit:
+        data = get_audios_raw(uid=uid, order=order, pn=page, verify=verify)
+        if not data["data"]:
+            break
+        count += len(data["data"])
+        audios += data["data"]
+        if callable(callback):
+            callback(data["data"])
+        page += 1
+    return audios[:limit]
+
+
+def get_audios_raw(uid: int, order: str = "pubdate", ps: int = 30,
+                   pn: int = 1, verify: utils.Verify = None):
+    """
+    低层级API，获取用户音频投稿API原始返回
+    :param uid:
+    :param order:
+    :param ps:
+    :param pn:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    ORDER_MAP = {
+        "pubdate": 1,
+        "view": 2,
+        "favorite": 3
+    }
+    if order not in ORDER_MAP:
+        raise exceptions.BilibiliApiException("排序方式无效，可用值：pubdate（上传日期）、view（播放量）、favorite（收藏量）")
+    api = API["user"]["info"]["audio"]
+    params = {
+        "uid": uid,
+        "ps": ps,
+        "pn": pn,
+        "order": ORDER_MAP[order]
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_articles(uid: int, order: str = "pubdate", limit: int = 114514, callback=None, verify: utils.Verify = None):
+    """
+    自动循环获取专栏投稿
+    :param callback: 回调函数
+    :param uid:
+    :param order: 排序方式，pubdate（上传日期）、view（播放量）、favorite（收藏量）
+    :param limit: 限制数量
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    count = 0
+    page = 1
+    articles = []
+    while count < limit:
+        data = get_articles_raw(uid=uid, order=order, verify=verify, pn=page)
+        if "articles" not in data:
+            break
+        else:
+            articles += data["articles"]
+            if callable(callback):
+                callback(data["articles"])
+            count += len(data["articles"])
+            page += 1
+    return articles[:limit]
+
+
+def get_articles_raw(uid: int, pn: int = 1, ps: int = 30, order: str = "pubdate", verify: utils.Verify = None):
+    """
+    低层级API，获取专栏投稿API原始返回
+    :param ps: 一页多少，保持30默认即可
+    :param pn: 页码
+    :param uid:
+    :param order: 排序方式，pubdate（上传日期）、view（播放量）、favorite（收藏量）
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    ORDER_MAP = {
+        "pubdate": "publish_time",
+        "view": "view",
+        "favorite": "fav"
+    }
+    if order not in ORDER_MAP:
+        raise exceptions.BilibiliApiException("排序方式无效，可用值：pubdate（上传日期）、view（播放量）、favorite（收藏量）")
+
+    api = API["user"]["info"]["article"]
+    params = {
+        "mid": uid,
+        "ps": ps,
+        "pn": pn,
+        "sort": ORDER_MAP[order]
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_article_list(uid: int, order: str = "latest", verify: utils.Verify = None):
+    """
+    获取专栏文集
+    :param uid:
+    :param order: 排序方式，接受 "latest"（最近更新），"view"（最多阅读）
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    ORDER_MAP = {
+        "latest": 0,
+        "view": 1
+    }
+    if order not in ORDER_MAP:
+        raise exceptions.BilibiliApiException("排序方式无效，可用值：\"latest\"（最近更新），\"view\"（最多阅读）")
+
+    api = API["user"]["info"]["article_lists"]
+    params = {
+        "mid": uid,
+        "sort": ORDER_MAP[order]
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_dynamic(uid: int, limit: int = 114514, verify: utils.Verify = None):
+    """
+    自动循环获取用户动态
+    :param uid:
+    :param limit: 限制数量
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["user"]["info"]["dynamic"]
+    offset = "0"
+    count = 0
+    dynamic = []
+    while count < limit:
+        params = {
+            "host_uid": uid,
+            "offset_dynamic_id": offset,
+            "need_top": 0
+        }
+        data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+        dynamic.append(data["cards"])
+        if data["has_more"] != 1:
+            break
+        count += len(data["cards"])
+        offset = data["next_offset"]
+
+    return dynamic[:limit]
+
+
+def get_bangumi(uid: int, type_: str = "bangumi", limit: int = 114514, callback=None, verify: utils.Verify = None):
+    """
+    自动循环获取追番/追剧列表
+    :param callback: 回调函数
+    :param uid:
+    :param type_:
+    :param limit:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    bangumi = []
+    page = 1
+    count = 0
+    while count < limit:
+        data = get_bangumi_raw(uid=uid, pn=page, type_=type_, verify=verify)
+        if len(data["list"]) == 0:
+            break
+        bangumi += data["list"]
+        if callable(callback):
+            callback(data["list"])
+        count += len(data["list"])
+        page += 1
+    return bangumi[:limit]
+
+
+def get_bangumi_raw(uid: int, pn: int = 1, ps: int = 15, type_: str = "bangumi", verify: utils.Verify = None):
+    """
+    低层级API，获取追番/追剧列表原始API返回
+    :param uid:
+    :param pn: 页码
+    :param ps: 每页多少，保持默认15
+    :param type_: 类型：bangumi（番剧），drama（追剧）
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    TYPE_MAP = {
+        "bangumi": 1,
+        "drama": 2
+    }
+    if type_ not in TYPE_MAP:
+        raise exceptions.BilibiliApiException("type_类型错误。接受：bangumi（番剧），drama（追剧）")
+
+    api = API["user"]["info"]["bangumi"]
+    params = {
+        "vmid": uid,
+        "pn": pn,
+        "ps": ps,
+        "type": TYPE_MAP[type_]
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_media_list(uid: int, limit: int = 114514, callback=None, verify: utils.Verify = None):
+    """
+    获取收藏夹分类列表
+    :param callback: 回调函数
+    :param uid:
+    :param limit:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    count = 0
+    page = 1
+    media_list = []
+    while count < limit:
+        data = get_media_list_raw(uid=uid, pn=page, verify=verify)
+        if not data:
+            break
+        if "list" not in data:
+            break
+        count += len(data["list"])
+        media_list += data["list"]
+        if callable(callback):
+            callback(data["list"])
+        page += 1
+    return media_list
+
+
+def get_media_list_raw(uid: int, pn: int = 1, ps: int = 100, verify: utils.Verify = None):
+    """
+    低层级API，获取收藏夹分类列表原始返回
+    :param uid:
+    :param pn:
+    :param ps:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["user"]["info"]["media_list"]
+    params = {
+        "up_mid": uid,
+        "pn": pn,
+        "ps": ps,
+        "is_space": 0
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_media_list_content(media_id: int, order: str = "mtime",
+                           limit: int = 114514, callback=None, verify: utils.Verify = None):
+    """
+    自动循环获取收藏夹内容
+    :param callback: 回调函数
+    :param media_id: 收藏夹分类ID
+    :param order: 排序方式，接受值：mtime（最近收藏）、view（最多播放）、pubtime（最近投稿）
+    :param limit: 限制数量
+    :param verify:
+    :return:
+    """
+    count = 0
+    page = 1
+    content = []
+    while count < limit:
+        data = get_media_list_content_raw(media_id=media_id, order=order, pn=page, verify=verify)
+        if "medias" not in data:
+            break
+        count += len(data["medias"])
+        content += data["medias"]
+        if callable(callback):
+            callback(data["medias"])
+        page += 1
+    return content[:limit]
+
+
+def get_media_list_content_raw(media_id: int, order: str = "mtime", pn: int = 1, ps: int = 20, tid: int = 0,
+                               keyword: str = "", verify: utils.Verify = None):
+    """
+    低层级API，获取收藏夹内容
+    :param media_id: 收藏夹分类ID
+    :param order: 排序方式，接受值：mtime（最近收藏）、view（最多播放）、pubtime（最近投稿）
+    :param pn: 页码
+    :param ps: 单页最大数量，默认20即可
+    :param tid: 分区ID
+    :param keyword: 搜索关键词
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    if order not in ("mtime", "view", "pubtime"):
+        raise exceptions.BilibiliApiException("order参数错误，接受值：mtime（最近收藏）、view（最多播放）、pubtime（最近投稿）")
+
+    api = API["user"]["info"]["media_list_content"]
+    params = {
+        "media_id": media_id,
+        "pn": pn,
+        "ps": ps,
+        "order": order,
+        "keyword": keyword,
+        "type": 0,
+        "tid": tid
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+# 操作用户
+
+
+def set_subscribe(uid: int, status: bool = True, verify: utils.Verify = None):
+    """
+    设置用户关注状态
+    :param uid:
+    :param status: 状态，True or False
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    api = API["user"]["operate"]["modify"]
+    data = {
+        "fid": uid,
+        "act": 1 if status else 2,
+        "re_src": 11,
+        "csrf": verify.csrf
+    }
+    data = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
+    return data
+
+
+def set_black(uid: int, status: bool = True, verify: utils.Verify = None):
+    """
+    设置用户拉黑状态
+    :param uid:
+    :param status: 状态，True or False
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    api = API["user"]["operate"]["modify"]
+    data = {
+        "fid": uid,
+        "act": 5 if status else 6,
+        "re_src": 11,
+        "csrf": verify.csrf
+    }
+    data = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
+    return data
+
+
+def send_msg(uid: int, text: str, self_uid: int = None, verify: utils.Verify = None):
+    if verify is None:
+        verify = utils.Verify()
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    api = API["user"]["operate"]["send_msg"]
+    if self_uid is None:
+        self_info = get_self_info(verify)
+        sender_uid = self_info["mid"]
+    else:
+        sender_uid = self_uid
+    data = {
+        "msg[sender_uid]": sender_uid,
+        "msg[receiver_id]": uid,
+        "msg[receiver_type]": 1,
+        "msg[msg_type]": 1,
+        "msg[msg_status]": 0,
+        "msg[content]": json.dumps({"content": text}),
+        "csrf_token": verify.csrf
+    }
+    data = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
+    return data
+
+
+"""
+もしかしてうちは、田舎に住んでいるん？
+"""

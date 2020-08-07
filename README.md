@@ -1,5 +1,8 @@
 bilibili_api
 =
+
+# 当前正在开发中，一切功能、说明以之后正式发布的版本为准！
+
 本项目地址：
 
 <https://github.com/Passkou/bilibili_api>
