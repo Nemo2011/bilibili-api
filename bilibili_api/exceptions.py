@@ -43,3 +43,8 @@ class NetworkException(BilibiliApiException):
 class NoIdException(BilibiliApiException):
     def __init__(self):
         self.msg = "aid和bvid请至少提供一个"
+
+
+class LiveException(BilibiliApiException):
+    def __init__(self, msg: str):
+        super().__init__(msg)

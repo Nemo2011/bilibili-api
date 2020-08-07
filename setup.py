@@ -25,7 +25,8 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8"
     ],
     install_requires=[
-        "requests"
+        "requests",
+        "websockets"
     ],
     package_data={
         'bilibili_api.src': [
