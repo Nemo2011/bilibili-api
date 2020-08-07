@@ -138,15 +138,13 @@
                 "comment": "是否已收藏"
             },
             "get_media_list": {
-                "url": "https://api.bilibili.com/medialist/gateway/base/created",
+                "url": "https://api.bilibili.com/x/v3/fav/folder/created/list-all",
                 "method": "GET",
                 "verify": true,
                 "params": {
                     "rid": "av号",
                     "up_mid": "up的uid",
-                    "type": "2",
-                    "ps": 100,
-                    "pn": "页码，1即可"
+                    "type": 2
                 },
                 "comment": "获取收藏夹列表信息，用于收藏操作"
             }
@@ -252,8 +250,7 @@
                     "type": "1",
                     "oid": "分P编号",
                     "msg": "弹幕内容",
-                    "aid": "av号",
-                    "bvid": "空",
+                    "bvid": "bvid",
                     "progress": "发送时间（毫秒）",
                     "color": "颜色（十六进制转十进制）",
                     "fontsize": "字体大小（小18普通25大36）",
@@ -345,8 +342,8 @@
                 "data": {
                     "type": "4为有图动态，2为无图动态",
                     "publish_time": "发布时间戳",
-                    "request(type=4)": "见 instant_dynamic_draw.data，无setting",
-                    "request(type=2)": "见 instant_dynamic.data"
+                    "request(type=4)": "见 instant_draw.data，无setting",
+                    "request(type=2)": "见 instant_text.data"
                 },
                 "comment": "发布定时动态"
             },
@@ -370,7 +367,8 @@
                     "description": "动态文字内容",
                     "content": "动态文字内容",
                     "from": "create.dynamic.web",
-                    "extension": "{'emoji_type':1}",
+                    "up_choose_comment": 0,
+                    "extension": "{\"emoji_type\":1,\"from\":{\"emoji_type\":1},\"flag_cfg\":{}}",
                     "at_uids": "艾特用户UID列表，半角逗号分隔",
                     "at_control": [
                         {
@@ -485,6 +483,43 @@
                 },
                 "comment": "动态评论"
             }
+        },
+        "schedule": {
+            "list": {
+                "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/get_drafts",
+                "method": "GET",
+                "verify": false,
+                "params": null,
+                "comment": "获取待发送定时动态列表"
+            },
+            "publish_now": {
+                "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/publish_now",
+                "method": "POST",
+                "verify": false,
+                "data": {
+                    "draft_id": "定时动态ID"
+                },
+                "comment": "立即发送定时动态"
+            },
+            "modify": {
+                "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/modify_draft",
+                "method": "POST",
+                "verify": false,
+                "data": {
+                    "draft_id": "定时动态ID",
+                    "kwargs": "剩余参数见dynamic.send.schedule"
+                },
+                "comment": "修改待发定时动态"
+            },
+            "delete": {
+                "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/rm_draft",
+                "method": "POST",
+                "verify": false,
+                "data": {
+                    "draft_id": "定时动态ID"
+                },
+                "comment": "删除待发定时动态"
+            }
         }
     },
     "user": {
@@ -504,7 +539,7 @@
                 },
                 "comment": "用户基本信息"
             },
-            "stat": {
+            "relation": {
                 "url": "https://api.bilibili.com/x/relation/stat",
                 "method": "GET",
                 "verify": false,
@@ -512,6 +547,15 @@
                     "vmid": "uid"
                 },
                 "comment": "关注数，粉丝数"
+            },
+            "upstat": {
+                "url": "http://api.bilibili.com/x/space/upstat",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "mid": "uid"
+                },
+                "comment": "视频播放量，文章阅读量，总点赞数"
             },
             "live": {
                 "url": "https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld",
@@ -529,7 +573,7 @@
                 "params": {
                     "mid": "uid",
                     "ps": 30,
-                    "tid": 0,
+                    "tid": "分区ID，0表示全部",
                     "pn": "页码",
                     "keyword": "关键词，可为空",
                     "order": "pubdate上传日期，click播放量，stow收藏量"
@@ -660,32 +704,100 @@
         }
     },
     "bangumi": {
-        "bangumi_info":{
-            "url": "https://api.bilibili.com/pgc/review/user",
-            "method": "GET",
-            "verify": false,
-            "params": {
-                "media_id": "番剧的media_id"
+        "info": {
+            "meta":{
+                "url": "https://api.bilibili.com/pgc/review/user",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "media_id": "番剧的media_id(URL中的/mdxxxx)"
+                },
+                "comment": "获取番剧信息"
             },
-            "comment": "获取番剧信息"
+            "episodes_list":{
+                "url":"https://api.bilibili.com/pgc/web/season/section",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "season_id": "番剧的season_id"
+                },
+                "comment": "获取番剧剧集列表"
+            },
+            "season_status":{
+                "url":"https://api.bilibili.com/pgc/web/season/stat",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "season_id": "番剧的season_id"
+                },
+                "comment": "获取番剧播放量，追番等信息"
+            },
+            "short_comment":{
+                "url":"https://api.bilibili.com/pgc/review/short/list",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "media_id": "番剧的media_id",
+                    "ps": 20,
+                    "sort": "排序方式0默认1按时间倒序",
+                    "cursor": "循环获取用，第一次调用本API返回中的next值"
+                },
+                "comment": "获取番剧短评"
+            },
+            "long_comment":{
+                "url":"https://api.bilibili.com/pgc/review/long/list",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "media_id": "番剧的media_id",
+                    "ps": 20,
+                    "sort": "排序方式0默认1按时间倒序",
+                    "cursor": "循环获取用，第一次调用本API返回中的next值"
+                },
+                "comment": "获取番剧长评"
+            },
+            "relate_video": {
+                "url":"https://api.bilibili.com/x/web-interface/tag/top?pn=10&ps=24&tid=8583026",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "tid": "频道ID",
+                    "ps": 20,
+                    "sort": "排序方式0默认1按时间倒序",
+                    "cursor": "循环获取用，第一次调用本API返回中的next值"
+                },
+                "comment": "获取番剧长评"
+            }
         },
-        "bangumi_list":{
-            "url":"https://api.bilibili.com/pgc/web/season/section",
-            "method": "GET",
-            "verify": false,
-            "params": {
-                "season_id": "番剧的season_id"
+        "operate": {
+            "follow_add":{
+                "url":"https://api.bilibili.com/pgc/web/follow/add",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "season_id": "番剧的season_id"
+                },
+                "comment": "追番"
             },
-            "comment": "获取番剧剧集列表"
-        },
-        "bangumi_status":{
-            "url":"https://api.bilibili.com/pgc/web/season/stat",
-            "method": "GET",
-            "verify": false,
-            "params": {
-                "season_id": "番剧的season_id"
+            "follow_del":{
+                "url":"https://api.bilibili.com/pgc/web/follow/del",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "season_id": "番剧的season_id"
+                },
+                "comment": "取消追番"
             },
-            "comment": "获取番剧播放量，追番等信息"
+            "follow_status":{
+                "url":"https://api.bilibili.com/pgc/web/follow/status/update",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "season_id": "番剧的season_id",
+                    "status": "1想看2在看3已看"
+                },
+                "comment": "追番状态"
+            }
         }
     }
 }
