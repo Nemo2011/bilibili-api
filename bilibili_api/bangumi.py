@@ -261,5 +261,6 @@ def set_follow_status(season_id: int, status: int = 2, verify: utils.Verify = No
 
 
 """
-こころぴょんぴょん待ち考えるふりしてもうちょっと近づいちゃえ　♪
+こころぴょんぴょん待ち  考えるふりして  もうちょっと近づいちゃえ　♪
+ーー「ご注文はうさぎですか？」
 """
