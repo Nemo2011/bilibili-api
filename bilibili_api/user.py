@@ -506,12 +506,136 @@ def get_media_list_content_raw(media_id: int, order: str = "mtime", pn: int = 1,
     data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
     return data
 
+
+def get_followings_raw(uid: int, ps: int = 20, pn: int = 1, order: str = "desc", verify: utils.Verify = None):
+    """
+    低层级API,获取用户关注列表（不是自己只能访问前5页）
+    :param order: desc倒序,asc正序
+    :param pn: 页码
+    :param ps: 每页数量
+    :param uid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    assert order in ("desc", "asc"), exceptions.BilibiliApiException("不支持的排序方式")
+
+    api = API["user"]["info"]["followings"]
+    params = {
+        "vmid": uid,
+        "ps": ps,
+        "pn": pn,
+        "order": order
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_followings(uid: int, order: str = "desc", limit: int = 114514, callback=None, verify: utils.Verify = None):
+    """
+    获取用户关注列表
+    :param callback: 回调
+    :param uid:
+    :param order: desc倒序,asc正序
+    :param limit: 数量限制
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    count = 0
+    page = 1
+    followings = []
+    while count < limit:
+        try:
+            data = get_followings_raw(uid=uid, order=order, pn=page, verify=verify)
+        except exceptions.BilibiliException as e:
+            if e.code == 22007:
+                break
+            else:
+                raise e
+        if len(data["list"]) == 0:
+            break
+        count += len(data["list"])
+        if callable(callback):
+            callback(data["list"])
+        followings += data["list"]
+        if callable(callback):
+            callback(data["list"])
+        page += 1
+    return followings[:limit]
+
+
+def get_followers_raw(uid: int, ps: int = 20, pn: int = 1, order: str = "desc", verify: utils.Verify = None):
+    """
+    低层级API,获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）
+    :param order: desc倒序,asc正序
+    :param pn: 页码
+    :param ps: 每页数量
+    :param uid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    assert order in ("desc", "asc"), exceptions.BilibiliApiException("不支持的排序方式")
+
+    api = API["user"]["info"]["followers"]
+    params = {
+        "vmid": uid,
+        "ps": ps,
+        "pn": pn,
+        "order": order
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
+def get_followers(uid: int, order: str = "desc", limit: int = 114514, callback=None, verify: utils.Verify = None):
+    """
+    获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）
+    :param callback: 回调
+    :param uid:
+    :param order: desc倒序,asc正序
+    :param limit: 数量限制
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    count = 0
+    page = 1
+    followings = []
+    while count < limit:
+        try:
+            data = get_followers_raw(uid=uid, order=order, pn=page, verify=verify)
+        except exceptions.BilibiliException as e:
+            if e.code == 22007:
+                break
+            else:
+                raise e
+        if len(data["list"]) == 0:
+            break
+        if callable(callback):
+            callback(data["list"])
+        count += len(data["list"])
+        followings += data["list"]
+        if callable(callback):
+            callback(data["list"])
+        page += 1
+    return followings[:limit]
+
+
 # 操作用户
 
 
-def set_subscribe(uid: int, status: bool = True, verify: utils.Verify = None):
+def set_subscribe(uid: int, status: bool = True, whisper: bool = False, verify: utils.Verify = None):
     """
     设置用户关注状态
+    :param whisper: 设置关注时是否为悄悄关注
     :param uid:
     :param status: 状态，True or False
     :param verify:
@@ -531,6 +655,8 @@ def set_subscribe(uid: int, status: bool = True, verify: utils.Verify = None):
         "re_src": 11,
         "csrf": verify.csrf
     }
+    if status and whisper:
+        data["act"] = 3
     data = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
     return data
 
@@ -561,7 +687,40 @@ def set_black(uid: int, status: bool = True, verify: utils.Verify = None):
     return data
 
 
+def remove_fans(uid: int, verify: utils.Verify = None):
+    """
+    移除粉丝
+    :param uid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    api = API["user"]["operate"]["modify"]
+    data = {
+        "fid": uid,
+        "act": 7,
+        "re_src": 11,
+        "csrf": verify.csrf
+    }
+    data = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
+    return data
+
+
 def send_msg(uid: int, text: str, self_uid: int = None, verify: utils.Verify = None):
+    """
+    给用户发送私聊信息
+    :param uid:
+    :param text: 内容
+    :param self_uid: 自己的UID，若不提供将自动获取
+    :param verify:
+    :return:
+    """
     if verify is None:
         verify = utils.Verify()
     if not verify.has_sess():
@@ -590,4 +749,5 @@ def send_msg(uid: int, text: str, self_uid: int = None, verify: utils.Verify = N
 
 """
 もしかしてうちは、田舎に住んでいるん？
+ーー「のんのんびより」
 """

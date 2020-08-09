@@ -1,6 +1,6 @@
 r"""
 模块：live
-功能：直播各种操作
+功能：直播间各种信息和操作
    _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
@@ -9,7 +9,6 @@ r"""
  |_|      /_/    \_\ |_____/  |_____/  |_|\_\  \____/   \____/
 """
 import time
-
 import websockets
 import struct
 import zlib
@@ -351,9 +350,17 @@ class LiveDanmaku:
         asyncio.run(self.__main())
 
     def disconnect(self):
+        """
+        断开连接
+        :return:
+        """
         asyncio.gather(self.__ws.close())
 
     async def __main(self):
+        """
+        入口
+        :return:
+        """
         self.logger.debug("准备连接直播间")
         for host in self.__conf["host_server_list"]:
             port = host['wss_port'] if self.use_wss else host['ws_port']
@@ -422,6 +429,10 @@ class LiveDanmaku:
                     self.logger.warning("检测到未知的数据包类型，无法处理")
 
     async def __heartbeat(self):
+        """
+        定时发送心跳包
+        :return:
+        """
         HEARTBEAT = base64.b64decode("AAAAHwAQAAEAAAACAAAAAVtvYmplY3QgT2JqZWN0XQ==")
         while self.__has_connected:
             self.logger.debug("发送心跳包")
@@ -508,7 +519,7 @@ class LiveDanmaku:
     def on(self, name: str):
         """
         使用@语法，触发事件时会被调用
-        :param name: 事件名，特殊：VIEW（人气变更）
+        :param name: 事件名，特殊：VIEW（人气更新）
         :return:
         """
         """
@@ -539,3 +550,9 @@ class LiveDanmaku:
                 func(*args, **kwargs)
             return wrapper
         return decoration
+
+
+"""
+なにせ高性能ですから！（このAPIを指す）
+ーー「ATRI」
+"""

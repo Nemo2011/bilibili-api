@@ -12,7 +12,6 @@ from . import exceptions, utils, user
 import requests
 import json
 from xml.dom.minidom import parseString
-import math
 import re
 import datetime
 import time
@@ -94,7 +93,7 @@ def get_danmaku(bvid: str = None, aid: int = None, page: int = 0,
                 dm_time=float(info[0]),
                 send_time=int(info[4]),
                 crc32_id=info[6],
-                color=int(info[3]),
+                color=utils.Color(info[3]),
                 mode=info[1],
                 font_size=info[2],
                 is_sub=is_sub,
@@ -249,67 +248,6 @@ def get_playurl(bvid: str = None, aid: int = None, page: int = 0, verify: utils.
         return playurl
     else:
         raise exceptions.NetworkException(req.status_code)
-
-
-def get_comments_raw(bvid: str = None, aid: int = None, pn: int = 1, verify: utils.Verify = None):
-    """
-    低层级API获取视频评论
-    :param bvid:
-    :param aid:
-    :param pn: 页码
-    :param verify:
-    :return:
-    """
-    if not (aid or bvid):
-        raise exceptions.NoIdException
-    if verify is None:
-        verify = utils.Verify()
-    if aid is None:
-        aid = utils.bvid2aid(bvid)
-
-    api = API["video"]["info"]["comments"]
-    params = {
-        "oid": aid,
-        "type": 1,
-        "sort": 2,
-        "pn": pn,
-    }
-    resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
-    return resp
-
-
-def get_comments(bvid: str = None, aid: int = None, limit: int = 1919810, callback=None, verify: utils.Verify = None):
-    """
-    获取视频评论
-    :param callback: 回调函数
-    :param aid:
-    :param bvid:
-    :param limit: 限制数量
-    :param verify:
-    :return:
-    """
-    if not (aid or bvid):
-        raise exceptions.NoIdException
-    if verify is None:
-        verify = utils.Verify()
-    if aid is None:
-        aid = utils.bvid2aid(bvid)
-
-    count = 0
-    replies = []
-    page = 1
-    while count < limit:
-        resp = get_comments_raw(bvid=bvid, aid=aid, pn=page, verify=verify)
-        if "replies" not in resp:
-            break
-        if resp["replies"] is None:
-            break
-        count += len(resp["replies"])
-        replies += resp["replies"]
-        if callable(callback):
-            callback(resp["replies"])
-        page += 1
-    return replies[:limit]
 
 
 def get_related(bvid: str = None, aid: int = None, verify: utils.Verify = None):
@@ -556,6 +494,29 @@ def set_favorite(add_media_ids: list = None, remove_media_ids: list = None, bvid
     return resp
 
 
+# 评论相关
+
+
+def get_comments(bvid: str = None, aid: int = None, order: str = "time", limit: int = 1919810, callback=None, verify: utils.Verify = None):
+    """
+    获取评论
+    :param order:
+    :param callback: 回调函数
+    :param aid:
+    :param bvid:
+    :param limit: 限制数量
+    :param verify:
+    :return:
+    """
+    if not (aid or bvid):
+        raise exceptions.NoIdException
+    if aid is None:
+        aid = utils.bvid2aid(bvid)
+
+    replies = utils.get_comments(aid, "video", order, limit, callback, verify)
+    return replies
+
+
 def send_comment(text: str, root: int = None, parent: int = None, bvid: str = None, aid: int = None,
                  verify: utils.Verify = None):
     """
@@ -570,76 +531,89 @@ def send_comment(text: str, root: int = None, parent: int = None, bvid: str = No
     """
     if not (aid or bvid):
         raise exceptions.NoIdException
-    if verify is None:
-        verify = utils.Verify()
-    if not verify.has_sess():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-    if not verify.has_csrf():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
     if aid is None:
         aid = utils.bvid2aid(bvid)
 
-    api = API["video"]["operate"]["send_comment"]
-    data = {
-        "oid": aid,
-        "type": 1,
-        "message": text,
-        "plat": 1,
-        "csrf": verify.csrf
-    }
-    if root is not None:
-        data["root"] = data["parent"] = root
-        if parent is not None:
-            data["parent"] = parent
-    resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
+    resp = utils.send_comment(text, aid, "video", root, parent, verify=verify)
     return resp
 
 
-def operate_comment(rpid: int, mode: str, status: bool = True,
-                    bvid: str = None, aid: int = None, verify: utils.Verify = None):
+def set_like_comment(rpid: int, status: bool = True, bvid: str = None, aid: int = None, verify: utils.Verify = None):
     """
-    操作评论
-    :param rpid: 评论id
-    :param mode: 评论操作，like, hate, top, del
-    :param status: 操作状态，如当status为like时，True点赞，False取消点赞，其他以此类推，del不支持
-    :param aid:
+    设置评论点赞状态
+    :param rpid:
+    :param status: 状态
     :param bvid:
+    :param aid:
     :param verify:
     :return:
     """
     if not (aid or bvid):
         raise exceptions.NoIdException
-    if verify is None:
-        verify = utils.Verify()
-    if not verify.has_sess():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-    if not verify.has_csrf():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
     if aid is None:
         aid = utils.bvid2aid(bvid)
-    mode = mode.lower()
 
-    api = API["video"]["operate"].get(mode + "_comment", None)
-    if api is None:
-        raise exceptions.BilibiliApiException("不支持的评论操作，支持的值：like, hate, top, del")
-
-    if mode == "del":
-        data = {
-            "rpid": rpid,
-            "oid": aid,
-            "type": 1,
-            "csrf": verify.csrf
-        }
-    else:
-        data = {
-            "rpid": rpid,
-            "oid": aid,
-            "type": 1,
-            "action": 1 if status else 0,
-            "csrf": verify.csrf
-        }
-    resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
+    resp = utils.operate_comment("like", aid, "video", rpid, status, verify=verify)
     return resp
+
+
+def set_hate_comment(rpid: int, status: bool = True, bvid: str = None, aid: int = None, verify: utils.Verify = None):
+    """
+    设置评论点踩状态
+    :param rpid:
+    :param status: 状态
+    :param bvid:
+    :param aid:
+    :param verify:
+    :return:
+    """
+    if not (aid or bvid):
+        raise exceptions.NoIdException
+    if aid is None:
+        aid = utils.bvid2aid(bvid)
+
+    resp = utils.operate_comment("hate", aid, "video", rpid, status, verify=verify)
+    return resp
+
+
+def set_top_comment(rpid: int, status: bool = True, bvid: str = None, aid: int = None, verify: utils.Verify = None):
+    """
+    设置评论置顶状态
+    :param rpid:
+    :param status: 状态
+    :param bvid:
+    :param aid:
+    :param verify:
+    :return:
+    """
+    if not (aid or bvid):
+        raise exceptions.NoIdException
+    if aid is None:
+        aid = utils.bvid2aid(bvid)
+
+    resp = utils.operate_comment("top", aid, "video", rpid, status, verify=verify)
+    return resp
+
+
+def del_comment(rpid: int, bvid: str = None, aid: int = None, verify: utils.Verify = None):
+    """
+    删除评论
+    :param rpid:
+    :param bvid:
+    :param aid:
+    :param verify:
+    :return:
+    """
+    if not (aid or bvid):
+        raise exceptions.NoIdException
+    if aid is None:
+        aid = utils.bvid2aid(bvid)
+
+    resp = utils.operate_comment("del", aid, "video", rpid, verify=verify)
+    return resp
+
+
+# 评论相关结束
 
 
 def send_danmaku(danmaku: utils.Danmaku, page: int = 0, bvid: str = None, aid: int = None, verify: utils.Verify = None):

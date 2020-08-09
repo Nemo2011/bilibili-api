@@ -332,72 +332,6 @@ def get_reposts(dynamic_id: int, limit: int = 114514, callback=None, verify: uti
     return reposts[:limit]
 
 
-def get_replies_raw(dynamic_id: int, type_: int, pn: int = 1, sort: int = 0, verify: utils.Verify = None):
-    """
-    低层级API，获取动态评论
-    :param dynamic_id: 动态ID（画册动态和文字动态要求不同，画册动态ID较短，文字动态ID较长）
-    :param type_: 动态类型，11画册17文字
-    :param pn: 页码
-    :param sort: 排序方式 2按热度0按时间
-    :param verify:
-    :return:
-    """
-    if verify is None:
-        verify = utils.Verify()
-
-    api = API["dynamic"]["info"]["reply"]
-    params = {
-        "pn": pn,
-        "type": type_,
-        "oid": dynamic_id,
-        "sort": sort
-    }
-    resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
-    return resp
-
-
-def get_replies(dynamic_id: int, limit: int = 114514, order: str = "time", callback=None, verify: utils.Verify = None):
-    """
-    自动循环获取动态评论列表
-    :param callback: 回调函数
-    :param dynamic_id: 动态ID
-    :param limit: 限制
-    :param order: 排序方式，"time"按时间，"like"按热度
-    :param verify:
-    :return:
-    """
-    if verify is None:
-        verify = utils.Verify()
-    ORDER_MAP = {
-        "time": 0,
-        "like": 2
-    }
-    order = ORDER_MAP.get(order, None)
-    if order is None:
-        raise exceptions.BilibiliApiException("不支持的排序方式")
-
-    dy_info = get_info(dynamic_id)
-    TYPE_MAP = {
-        2: 11,
-        4: 17
-    }
-    type_ = TYPE_MAP.get(dy_info["desc"]["type"], 17)
-    rid = dy_info["desc"]["rid"] if type_ == 11 else dynamic_id
-    replies = []
-    count = 0
-    page = 1
-    while count < limit:
-        resp = get_replies_raw(rid, type_, page, order, verify)
-        if resp["replies"] is None:
-            break
-        count += len(resp["replies"])
-        replies += resp["replies"]
-        if callable(callback):
-            callback(resp["replies"])
-        page += 1
-    return replies[:limit]
-
-
 # 动态操作
 
 def set_like(dynamic_id: int, status: bool = True, verify: utils.Verify = None):
@@ -419,40 +353,6 @@ def set_like(dynamic_id: int, status: bool = True, verify: utils.Verify = None):
         "dynamic_id": dynamic_id,
         "up": 1 if status else 2,
         "uid": self_uid
-    }
-    resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
-    return resp
-
-
-def reply(text: str, dynamic_id: int, verify: utils.Verify = None):
-    """
-    回复动态
-    :param text: 内容
-    :param dynamic_id: 动态ID
-    :param verify:
-    :return:
-    """
-    if verify is None:
-        verify = utils.Verify()
-    if not verify.has_sess():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-    if not verify.has_csrf():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
-
-    api = API["dynamic"]["operate"]["reply"]
-    dy_info = get_info(dynamic_id)
-    TYPE_MAP = {
-        2: 11,
-        4: 17
-    }
-    type_ = TYPE_MAP.get(dy_info["desc"]["type"], 17)
-    rid = dy_info["desc"]["rid"] if type_ == 11 else dynamic_id
-    data = {
-        "oid": rid,
-        "type": type_,
-        "message": text,
-        "plat": 1,
-        "csrf": verify.csrf
     }
     resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
     return resp
@@ -504,42 +404,127 @@ def repost(dynamic_id: int, text: str = "转发动态", verify: utils.Verify = N
     return resp
 
 
-def operate_comment(dynamic_id: int, rpid: int, mode: str, status: bool = True, verify: utils.Verify = None):
+TYPE_MAP = {
+    2: "dynamic_draw",
+    4: "dynamic_text"
+}
+
+
+def __get_type_and_rid(dynamic_id: int):
+    dy_info = get_info(dynamic_id)
+    type_ = TYPE_MAP.get(dy_info["desc"]["type"], TYPE_MAP[4])
+    rid = dy_info["desc"]["rid"] if type_ == "dynamic_draw" else dynamic_id
+    return type_, rid
+
+# 评论相关
+
+
+def get_comments(dynamic_id: int, order: str = "time", limit: int = 1919810, callback=None, verify: utils.Verify = None):
     """
-    操作动态评论，和视频评论用的同一个API
-    :param dynamic_id: 动态ID
-    :param rpid: 评论id
-    :param mode: 评论操作，like, hate, top, del
-    :param status: 操作状态，如当status为like时，True点赞，False取消点赞，其他以此类推，del不支持
+    获取评论
+    :param dynamic_id:
+    :param order:
+    :param callback: 回调函数
+    :param limit: 限制数量
     :param verify:
     :return:
     """
-    if verify is None:
-        verify = utils.Verify()
-    if not verify.has_sess():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-    if not verify.has_csrf():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
-    mode = mode.lower()
+    type_, rid = __get_type_and_rid(dynamic_id)
+    replies = utils.get_comments(rid, type_, order, limit, callback, verify)
+    return replies
 
-    # 和视频评论用的一个API
-    api = API["video"]["operate"].get(mode + "_comment", None)
-    if api is None:
-        raise exceptions.BilibiliApiException("不支持的评论操作，支持的值：like, hate, top, del")
-    dy_info = get_info(dynamic_id)
-    TYPE_MAP = {
-        2: 11,
-        4: 17
-    }
-    type_ = TYPE_MAP.get(dy_info["desc"]["type"], 17)
-    rid = dy_info["desc"]["rid"] if type_ == 11 else dynamic_id
-    data = {
-        "rpid": rpid,
-        "oid": rid,
-        "type": type_,
-        "csrf": verify.csrf
-    }
-    if mode != "del":
-        data["action"] = 1 if status else 0,
-    resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
+
+def send_comment(text: str, dynamic_id: int, root: int = None, parent: int = None,
+                 verify: utils.Verify = None):
+    """
+    发送评论
+    :param dynamic_id:
+    :param parent: 回复谁的评论的rpid（若不填则对方无法收到回复消息提醒）
+    :param root: 根评论rpid，即在哪个评论下面回复
+    :param text: 评论内容，为回复评论时不会自动使用`回复 @%用户名%：%回复内容%`这种格式，目前没有发现根据rpid获取评论信息的API
+    :param verify:
+    :return:
+    """
+    type_, rid = __get_type_and_rid(dynamic_id)
+    resp = utils.send_comment(text, rid, type_, root, parent, verify=verify)
     return resp
+
+
+def set_like_comment(rpid: int, dynamic_id: int, status: bool = True, verify: utils.Verify = None):
+    """
+    设置评论点赞状态
+    :param dynamic_id:
+    :param rpid:
+    :param status: 状态
+    :param verify:
+    :return:
+    """
+    type_, rid = __get_type_and_rid(dynamic_id)
+    resp = utils.operate_comment("like", rid, type_, rpid, status, verify=verify)
+    return resp
+
+
+def set_hate_comment(rpid: int, dynamic_id: int, status: bool = True, verify: utils.Verify = None):
+    """
+    设置评论点踩状态
+    :param dynamic_id:
+    :param rpid:
+    :param status: 状态
+    :param verify:
+    :return:
+    """
+    type_, rid = __get_type_and_rid(dynamic_id)
+    resp = utils.operate_comment("hate", rid, type_, rpid, status, verify=verify)
+    return resp
+
+
+def set_top_comment(rpid: int, dynamic_id: int, status: bool = True, verify: utils.Verify = None):
+    """
+    设置评论置顶状态
+    :param dynamic_id:
+    :param rpid:
+    :param status: 状态
+    :param verify:
+    :return:
+    """
+    type_, rid = __get_type_and_rid(dynamic_id)
+    resp = utils.operate_comment("top", rid, type_, rpid, status, verify=verify)
+    return resp
+
+
+def del_comment(rpid: int, dynamic_id: int, verify: utils.Verify = None):
+    """
+    删除评论
+    :param dynamic_id:
+    :param rpid:
+    :param verify:
+    :return:
+    """
+    type_, rid = __get_type_and_rid(dynamic_id)
+    resp = utils.operate_comment("del", rid, type_, rpid, verify=verify)
+    return resp
+
+
+# 评论相关结束
+
+
+"""
+希望の花、繋いだ絆を　♪
+ーー「フリージア」
+ₘₙⁿ
+▏n
+█▏　､⺍
+█▏ ⺰ʷʷｨ
+█◣▄██◣
+◥██████▋
+　◥████ █▎
+　　███▉ █▎
+　◢████◣⌠ₘ℩
+　　██◥█◣\≫
+　　██　◥█◣
+　　█▉　　█▊
+　　█▊　　█▊
+　　█▊　　█▋
+　　 █▏　　█▙
+　　 █
+"""

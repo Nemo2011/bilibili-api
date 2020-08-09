@@ -98,18 +98,6 @@
                 },
                 "comment": "获取关联视频"
             },
-            "comments": {
-                "url": "https://api.bilibili.com/x/v2/reply",
-                "method": "GET",
-                "verify": false,
-                "params": {
-                    "pn": "页码",
-                    "type": "1",
-                    "oid": "av号",
-                    "sort": "排序依据（0按热度，2按时间）"
-                },
-                "comment": "获取评论"
-            },
             "is_liked": {
                 "url": "https://api.bilibili.com/x/web-interface/archive/has/like",
                 "method": "GET",
@@ -182,65 +170,6 @@
                     "del_media_ids": "移除收藏（多个收藏夹时半角逗号分隔）"
                 },
                 "comment": "收藏夹修改"
-            },
-            "send_comment": {
-                "url": "https://api.bilibili.com/x/v2/reply/add",
-                "method": "POST",
-                "verify": true,
-                "data": {
-                    "oid": "av号",
-                    "type": "1",
-                    "message": "评论内容",
-                    "plat": "1"
-                },
-                "comment": "发送评论"
-            },
-            "like_comment": {
-                "url": "https://api.bilibili.com/x/v2/reply/action",
-                "method": "POST",
-                "verify": true,
-                "data": {
-                    "oid": "av号",
-                    "type": "1",
-                    "action": "1点赞0取消点赞",
-                    "rpid": "评论编号"
-                },
-                "comment": "点赞/取消点赞评论"
-            },
-            "hate_comment": {
-                "url": "https://api.bilibili.com/x/v2/reply/hate",
-                "method": "POST",
-                "verify": true,
-                "data": {
-                    "oid": "av号",
-                    "type": "1",
-                    "action": "1踩0取消踩",
-                    "rpid": "评论编号"
-                },
-                "comment": "踩/取消踩评论"
-            },
-            "top_comment": {
-                "url": "https://api.bilibili.com/x/v2/reply/top",
-                "method": "POST",
-                "verify": true,
-                "data": {
-                    "oid": "av号",
-                    "type": "1",
-                    "action": "1置顶0取消置顶",
-                    "rpid": "评论编号"
-                },
-                "comment": "置顶/取消置顶评论"
-            },
-            "del_comment": {
-                "url": "https://api.bilibili.com/x/v2/reply/del",
-                "method": "POST",
-                "verify": true,
-                "data": {
-                    "oid": "av号",
-                    "type": "1",
-                    "rpid": "评论编号"
-                },
-                "comment": "删除评论"
             },
             "send_danmaku": {
                 "url": "https://api.bilibili.com/x/v2/dm/post",
@@ -427,18 +356,6 @@
                 },
                 "comment": "点赞"
             },
-            "reply": {
-                "url": "https://api.bilibili.com/x/v2/reply/add",
-                "method": "POST",
-                "verify": true,
-                "data": {
-                    "oid": "画册ID或动态ID",
-                    "type": "11画册17文字",
-                    "message": "内容",
-                    "plat": 1
-                },
-                "comment": "回复"
-            },
             "repost": {
                 "url": "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost",
                 "method": "POST",
@@ -470,18 +387,6 @@
                     "dynamic_id": "动态ID"
                 },
                 "comment": "动态详细信息"
-            },
-            "reply": {
-                "url": "https://api.bilibili.com/x/v2/reply",
-                "method": "GET",
-                "verify": false,
-                "params": {
-                    "pn": "页码",
-                    "type": "11画册17文字",
-                    "oid": "画册id或动态id",
-                    "sort": "2按热度0按时间"
-                },
-                "comment": "动态评论"
             }
         },
         "schedule": {
@@ -663,6 +568,30 @@
                     "tid": "分区ID，0为全部"
                 },
                 "comment": "获取收藏夹内容"
+            },
+            "followings": {
+                "url": "https://api.bilibili.com/x/relation/followings",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "vmid": "uid",
+                    "ps": 20,
+                    "pn": "页码",
+                    "order": "desc倒序,asc正序"
+                },
+                "comment": "获取用户关注列表（不是自己只能访问前5页）"
+            },
+            "followers": {
+                "url": "https://api.bilibili.com/x/relation/followers",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "vmid": "uid",
+                    "ps": 20,
+                    "pn": "页码",
+                    "order": "desc倒序,asc正序"
+                },
+                "comment": "获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）"
             }
         },
         "operate": {
@@ -672,7 +601,7 @@
                 "verify": true,
                 "data": {
                     "fid": "UID",
-                    "act": "1关注2取关 5拉黑6取消拉黑",
+                    "act": "1关注2取关 3悄悄关注 5拉黑6取消拉黑，7移除粉丝",
                     "re_src": 11
                 },
                 "comment": "用户关系操作"
@@ -927,6 +856,149 @@
                     "visit_id": "空"
                 },
                 "comment": "解封用户"
+            }
+        }
+    },
+    "article": {
+        "info": {
+            "view": {
+                "url": "https://api.bilibili.com/x/article/viewinfo",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "id": "cv号"
+                },
+                "comment": "专栏信息数据"
+            },
+            "like": {
+                "url": "https://api.bilibili.com/x/article/like",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "id": "cv号",
+                    "type": "1点赞2取消"
+                },
+                "comment": "专栏点赞"
+            },
+            "add_favorite": {
+                "url": "https://api.bilibili.com/x/article/favorites/add",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "id": "cv号"
+                },
+                "comment": "专栏收藏"
+            },
+            "del_favorite": {
+                "url": "https://api.bilibili.com/x/article/favorites/del",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "id": "cv号"
+                },
+                "comment": "专栏取消收藏"
+            },
+            "coin": {
+                "url": "https://api.bilibili.com/x/web-interface/coin/add",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "id": "cv号",
+                    "multiply": "硬币数量，目前只能是1个",
+                    "upid": "up主的uid",
+                    "avtype": 2
+                },
+                "comment": "专栏投币"
+            }
+        }
+    },
+    "common": {
+        "vote": {
+            "info": {
+                "get_info": {
+                    "url": "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info",
+                    "method": "GET",
+                    "verify": false,
+                    "params": {
+                        "vote_id": "投票ID"
+                    },
+                    "comment": "获取投票信息"
+                }
+            }
+        },
+        "comment": {
+            "send": {
+                "url": "https://api.bilibili.com/x/v2/reply/add",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "各种类型id",
+                    "type": "1视频，12专栏，11画册动态，17文字动态，下同。",
+                    "message": "评论内容",
+                    "plat": "1",
+                    "root": "根评论rpid，即在谁的评论下面回复，为空时在oid下直接评论",
+                    "parent": "父评论rpid，即回复谁的评论，为空时在oid下直接评论"
+                },
+                "comment": "发送评论"
+            },
+            "like": {
+                "url": "https://api.bilibili.com/x/v2/reply/action",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "av号",
+                    "type": "1",
+                    "action": "1点赞0取消点赞",
+                    "rpid": "评论编号"
+                },
+                "comment": "点赞/取消点赞评论"
+            },
+            "hate": {
+                "url": "https://api.bilibili.com/x/v2/reply/hate",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "av号",
+                    "type": "1",
+                    "action": "1踩0取消踩",
+                    "rpid": "评论编号"
+                },
+                "comment": "踩/取消踩评论"
+            },
+            "top": {
+                "url": "https://api.bilibili.com/x/v2/reply/top",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "av号",
+                    "type": "1",
+                    "action": "1置顶0取消置顶",
+                    "rpid": "评论编号"
+                },
+                "comment": "置顶/取消置顶评论"
+            },
+            "del": {
+                "url": "https://api.bilibili.com/x/v2/reply/del",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "av号",
+                    "type": "1",
+                    "rpid": "评论编号"
+                },
+                "comment": "删除评论"
+            },
+            "get": {
+                "url": "https://api.bilibili.com/x/v2/reply",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "pn": "页码",
+                    "type": "",
+                    "oid": "动态时画册id或动态id",
+                    "sort": "2按热度0按时间"
+                },
+                "comment": "获取评论"
             }
         }
     }
