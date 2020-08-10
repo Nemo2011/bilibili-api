@@ -2,3 +2,4 @@
 /.idea
 test*.*
 **/__pycache__
+/bilibili_api.egg-info
