@@ -10,7 +10,7 @@
 
 # 介绍
 
-这是一个用Python写的调用 [Bilibili](https://www.bilibili.com) 各种API的库，范围涵盖视频、音频、直播、动态、专栏、用户、番剧等[^1]。你可以使用很简短的代码去调用API，而不需要自己去寻找API，指定各种参数。
+这是一个用Python写的调用 [Bilibili](https://www.bilibili.com) 各种API的库，范围涵盖视频、音频、直播、动态、专栏、用户、番剧等[1]。你可以使用很简短的代码去调用API，而不需要自己去寻找API，指定各种参数。
 
 用到的第三方库：
 
@@ -26,7 +26,7 @@
 - 可使用代理，绕过b站风控策略。
 - 全面支持BV号（bvid），同时也兼容AV号（aid）。
 - 调用简便，函数命名易懂，代码注释详细。
-- 不仅仅是官方提供的API！还附加：AV号与BV号互转[^2]、连接直播弹幕Websocket服务器、视频弹幕反查、专栏内容爬取[^3]等。
+- 不仅仅是官方提供的API！还附加：AV号与BV号互转[2]、连接直播弹幕Websocket服务器、视频弹幕反查、专栏内容爬取[3]等。
 - 更多功能请参照 [开发文档][docs]。
 
 # 快速开始
@@ -188,11 +188,11 @@ bilibili_api.request_settings["proxies"] = {} # 里头填写你的代理
 
 ## 在提交 Issue 前
 
-如果是遇到漏洞，建议你先检查自己API的版本是不是最新的，可能更新到最新版本就解决了问题。如果已经是最新的仍然存在漏洞，就可以提交 Issue 来骂我~~（并不）~~。
+如果是遇到漏洞，建议你先检查自己API的版本是不是最新的，可能更新到最新版本就解决了问题。如果已经是最新的仍然存在漏洞，就可以提交 Issue 来骂我 ~~（并不）~~ 。
 
 提问前请先仔细阅读 [开发文档][docs] ！！！！里面写的很全面，如果实在不懂再发 Issue 来问。
 
-# PR规范~~（不是舔）~~
+# PR规范 ~~（不是舔）~~
 
 PR: Pull request
 
@@ -203,7 +203,7 @@ PR: Pull request
 1. 如果你要增加新的API，请先在 `data/api.json` 中对应分类增加API的详细说明，具体格式可以参照现有的内容。另外，请对增加的API代码注释进行详尽的说明，每个参数除非含义十分明显（如bvid），都进行说明，具体格式可以参照现有代码。
 2. 希望你能在肝代码前，看看现有的代码风格，尽量模仿，方便日♂后维护。[这里有一份代码风格规范文档可以参考](https://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_style_rules/)，实际上如果你使用的IDE是PyCharm，也会对你的代码进行指导。当然，如果你执意不遵守的话............那我就会累死了QAQ。
 
-**计划写一份面向开发者的开发文档~~(咕咕咕)~~**
+**计划写一份面向开发者的开发文档 ~~(咕咕咕)~~**
 
 # 支持这个项目
 
@@ -217,9 +217,10 @@ PR: Pull request
 
 # 脚注
 
-[^1]: 这里只列出一部分，请以实际API为准。
-[^2]: 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784>
-[^3]: 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
+\[1]: 这里只列出一部分，请以实际API为准。
+
+\[2]: 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784>
+\[3]: 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
 
 
 
