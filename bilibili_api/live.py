@@ -304,7 +304,7 @@ def unban_user(room_real_id: int, block_id: int, verify: utils.Verify = None):
     return resp
 
 
-class LiveDanmaku:
+class LiveDanmaku(object):
     """
     Websocket实时获取直播弹幕
     """

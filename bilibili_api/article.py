@@ -449,7 +449,7 @@ async def _image_downloader_main(urls, save_path):
             await task
 
 
-class Article:
+class Article(object):
     def __init__(self, meta: dict = None, paragraphs: list = None):
         self.meta = meta if meta else {}
         self.paragraphs = paragraphs if paragraphs else []
@@ -501,7 +501,7 @@ class Article:
             f.write(json.dumps(self.meta, indent=4, ensure_ascii=False))
 
 
-class Paragraph:
+class Paragraph(object):
     def __init__(self, align: str = "left", node_list: list = None):
         self.node_list = node_list if node_list else []
         self.align = align
@@ -518,7 +518,7 @@ class Paragraph:
         return t
 
 
-class AbstractNode:
+class AbstractNode(object):
     def __init__(self, **kwargs):
         pass
 
