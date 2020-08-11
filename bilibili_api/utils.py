@@ -52,7 +52,7 @@ def get_api():
     return apis
 
 
-class Color:
+class Color(object):
     def __init__(self, hex_: str = "FFFFFF"):
         self.__color = 0
         self.set_hex_color(hex_)
@@ -128,7 +128,7 @@ class Color:
 _crack_uid = None
 
 
-class Danmaku:
+class Danmaku(object):
     FONT_SIZE_SMALL = 18
     FONT_SIZE_BIG = 36
     FONT_SIZE_NORMAL = 25
@@ -171,7 +171,7 @@ class Danmaku:
         return self.uid
 
 
-class Verify:
+class Verify(object):
     def __init__(self, sessdata: str = None, csrf: str = None):
         self.sessdata = sessdata
         self.csrf = csrf
@@ -243,7 +243,7 @@ class Verify:
         return ret
 
 
-class CrackUid:
+class CrackUid(object):
     """
     弹幕中的CRC32 ID转换成用户UID
     代码翻译自：https://github.com/esterTion/BiliBili_crc2mid
