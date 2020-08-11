@@ -1,6 +1,8 @@
 r"""
 模块：异常库
 功能：定义一些常见错误
+项目GitHub地址：https://github.com/Passkou/bilibili_api
+项目主页：https://passkou.com/bilibili_api
   _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |

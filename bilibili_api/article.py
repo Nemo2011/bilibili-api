@@ -1,15 +1,19 @@
 r"""
 模块： article
 功能： 专栏各种信息操作
+项目GitHub地址：https://github.com/Passkou/bilibili_api
+项目主页：https://passkou.com/bilibili_api
    _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
  |  ___/    / /\ \    \___ \   \___ \  |  <   | |  | | | |  | |
  | |       / ____ \   ____) |  ____) | | . \  | |__| | | |__| |
  |_|      /_/    \_\ |_____/  |_____/  |_|\_\  \____/   \____/
+
 """
 import os
-from . import exceptions, utils
+
+from . import exceptions, utils, common
 import requests
 import asyncio
 import aiohttp
@@ -18,6 +22,7 @@ import time
 import datetime
 import json
 import re
+from .common import get_vote_info
 
 API = utils.get_api()
 
@@ -35,7 +40,7 @@ def get_comments(cv: int, order: str = "time", limit: int = 1919810, callback=No
     :param verify:
     :return:
     """
-    replies = utils.get_comments(cv, "article", order, limit, callback, verify)
+    replies = common.get_comments(cv, "article", order, limit, callback, verify)
     return replies
 
 
@@ -50,7 +55,7 @@ def send_comment(text: str, cv: int, root: int = None, parent: int = None,
     :param verify:
     :return:
     """
-    resp = utils.send_comment(text, cv, "article", root, parent, verify=verify)
+    resp = common.send_comment(text, cv, "article", root, parent, verify=verify)
     return resp
 
 
@@ -63,7 +68,7 @@ def set_like_comment(rpid: int, cv: int, status: bool = True, verify: utils.Veri
     :param verify:
     :return:
     """
-    resp = utils.operate_comment("like", cv, "article", rpid, status, verify=verify)
+    resp = common.operate_comment("like", cv, "article", rpid, status, verify=verify)
     return resp
 
 
@@ -76,7 +81,7 @@ def set_hate_comment(rpid: int, cv: int, status: bool = True, verify: utils.Veri
     :param verify:
     :return:
     """
-    resp = utils.operate_comment("hate", cv, "article", rpid, status, verify=verify)
+    resp = common.operate_comment("hate", cv, "article", rpid, status, verify=verify)
     return resp
 
 
@@ -89,7 +94,7 @@ def set_top_comment(rpid: int, cv: int, status: bool = True, verify: utils.Verif
     :param verify:
     :return:
     """
-    resp = utils.operate_comment("top", cv, "article", rpid, status, verify=verify)
+    resp = common.operate_comment("top", cv, "article", rpid, status, verify=verify)
     return resp
 
 
@@ -101,7 +106,7 @@ def del_comment(rpid: int, cv: int, verify: utils.Verify = None):
     :param verify:
     :return:
     """
-    resp = utils.operate_comment("del", cv, "article", rpid, verify=verify)
+    resp = common.operate_comment("del", cv, "article", rpid, verify=verify)
     return resp
 
 
@@ -139,10 +144,11 @@ def set_like(cv: int, status: bool = True, verify: utils.Verify = None):
     assert verify.has_sess(), exceptions.BilibiliApiException(utils.MESSAGES["no_sess"])
     assert verify.has_csrf(), exceptions.BilibiliApiException(utils.MESSAGES["no_csrf"])
 
-    api = API["article"]["info"]["like"]
+    api = API["article"]["operate"]["like"]
     data = {
         "id": cv,
-        "type": 1 if status else 2
+        "type": 1 if status else 2,
+        "csrf": verify.csrf
     }
     resp = utils.post(api["url"], data=data, cookies=verify.get_cookies())
     return resp
@@ -161,7 +167,7 @@ def set_favorite(cv: int, status: bool = True, verify: utils.Verify = None):
     assert verify.has_sess(), exceptions.BilibiliApiException(utils.MESSAGES["no_sess"])
     assert verify.has_csrf(), exceptions.BilibiliApiException(utils.MESSAGES["no_csrf"])
 
-    api = API["article"]["info"]["add_favorite"] if status else API["article"]["info"]["del_favorite"]
+    api = API["article"]["operate"]["add_favorite"] if status else API["article"]["info"]["del_favorite"]
     data = {
         "id": cv
     }
@@ -183,14 +189,27 @@ def add_coins(cv: int, num: int = 1, verify: utils.Verify = None):
     assert verify.has_csrf(), exceptions.BilibiliApiException(utils.MESSAGES["no_csrf"])
 
     upid = get_info(cv)["mid"]
-    api = API["article"]["info"]["coin"]
+    api = API["article"]["operate"]["coin"]
     data = {
-        "id": cv,
+        "aid": cv,
         "multiply": num,
         "upid": upid,
-        "avtype": 2
+        "avtype": 2,
+        "csrf": verify.csrf
     }
     resp = utils.post(api["url"], data=data, cookies=verify.get_cookies())
+    return resp
+
+
+def share_to_dynamic(cv: int, content: str, verify: utils.Verify = None):
+    """
+    专栏转发
+    :param cv:
+    :param content:
+    :param verify:
+    :return:
+    """
+    resp = common.dynamic_share("article", cv, content, verify=verify)
     return resp
 
 
@@ -365,7 +384,7 @@ def get_content(cid: int, preview: bool = False, verify: utils.Verify = None):
             elif "vote-display" in cls:
                 # 投票卡片
                 vote_id = int(node["data-vote-id"])
-                info = utils.get_vote_info(vote_id)["info"]
+                info = common.get_vote_info(vote_id)["info"]
                 obj = VoteNode(vote_id, info)
                 prev.node_list.append(obj)
             else:

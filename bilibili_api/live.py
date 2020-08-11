@@ -1,6 +1,8 @@
 r"""
 模块：live
 功能：直播间各种信息和操作
+项目GitHub地址：https://github.com/Passkou/bilibili_api
+项目主页：https://passkou.com/bilibili_api
    _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
@@ -85,7 +87,7 @@ def get_user_info_in_room(room_real_id: int, verify: utils.Verify = None):
     return resp
 
 
-def get_user_info(verify: utils.Verify = None):
+def get_self_info(verify: utils.Verify = None):
     """
     获取直播用户等级等信息
     :param verify:
@@ -239,7 +241,7 @@ def send_danmaku(room_real_id: int, danmaku: utils.Danmaku, verify: utils.Verify
         "csrf": verify.csrf,
         "csrf_token": verify.csrf,
         "rnd": int(time.time()),
-        "color": danmaku.get_dec_color(),
+        "color": danmaku.color.get_dec_color(),
         "fontsize": danmaku.font_size
     }
     resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
