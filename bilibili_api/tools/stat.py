@@ -35,3 +35,4 @@ def get_total_line():
                 line += len(data.splitlines())
                 char_count += len(data)
     print(f"共有文件：{file_count} 个，总行数：{line} 行，总字符数：{char_count} 个")
+

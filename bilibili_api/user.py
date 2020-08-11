@@ -1,6 +1,8 @@
 r"""
 模块：user
 功能：获取用户各种信息以及操作用户
+项目GitHub地址：https://github.com/Passkou/bilibili_api
+项目主页：https://passkou.com/bilibili_api
   _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
@@ -9,7 +11,7 @@ r"""
  |_|      /_/    \_\ |_____/  |_____/  |_|\_\  \____/   \____/
 """
 import json
-from . import utils, exceptions
+from . import utils, exceptions, common
 
 API = utils.get_api()
 
@@ -308,29 +310,41 @@ def get_article_list(uid: int, order: str = "latest", verify: utils.Verify = Non
     return data
 
 
-def get_dynamic(uid: int, limit: int = 114514, verify: utils.Verify = None):
+def get_dynamic_raw(uid: int, offset: str = 0, need_top: bool = False, verify: utils.Verify = None):
+    if verify is None:
+        verify = utils.Verify()
+    api = API["user"]["info"]["dynamic"]
+    params = {
+        "host_uid": uid,
+        "offset_dynamic_id": offset,
+        "need_top": 1 if need_top else 0
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    for card in data["cards"]:
+        card["card"] = json.loads(card["card"])
+        card["extend_json"] = json.loads(card["extend_json"])
+
+    return data
+
+
+def get_dynamic(uid: int, limit: int = 114514, callback=None, verify: utils.Verify = None):
     """
     自动循环获取用户动态
+    :param callback:
     :param uid:
     :param limit: 限制数量
     :param verify:
     :return:
     """
-    if verify is None:
-        verify = utils.Verify()
 
-    api = API["user"]["info"]["dynamic"]
     offset = "0"
     count = 0
     dynamic = []
     while count < limit:
-        params = {
-            "host_uid": uid,
-            "offset_dynamic_id": offset,
-            "need_top": 0
-        }
-        data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
-        dynamic.append(data["cards"])
+        data = get_dynamic_raw(uid, offset, verify=verify)
+        dynamic += data["cards"]
+        if callable(callback):
+            callback(data["cards"])
         if data["has_more"] != 1:
             break
         count += len(data["cards"])
@@ -397,60 +411,39 @@ def get_bangumi_raw(uid: int, pn: int = 1, ps: int = 15, type_: str = "bangumi",
     return data
 
 
-def get_media_list(uid: int, limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_favorite_list_content_raw(media_id: int, pn: int = 1, ps: int = 20, keyword: str = "",
+                                  order: str = "mtime", type_: int = 0, tid: int = 0, verify: utils.Verify = None):
     """
-    获取收藏夹分类列表
-    :param callback: 回调函数
-    :param uid:
-    :param limit:
-    :param verify:
-    :return:
-    """
-    if verify is None:
-        verify = utils.Verify()
-
-    count = 0
-    page = 1
-    media_list = []
-    while count < limit:
-        data = get_media_list_raw(uid=uid, pn=page, verify=verify)
-        if not data:
-            break
-        if "list" not in data:
-            break
-        count += len(data["list"])
-        media_list += data["list"]
-        if callable(callback):
-            callback(data["list"])
-        page += 1
-    return media_list
-
-
-def get_media_list_raw(uid: int, pn: int = 1, ps: int = 100, verify: utils.Verify = None):
-    """
-    低层级API，获取收藏夹分类列表原始返回
-    :param uid:
+    获取收藏夹内容
+    :param media_id: 收藏夹id
     :param pn:
     :param ps:
+    :param keyword: 搜索关键词
+    :param order: 排序依据。mtime最近收藏，view最多播放，pubtime最新投稿
+    :param type_:
+    :param tid: 分区ID，0为全部
     :param verify:
     :return:
     """
     if verify is None:
         verify = utils.Verify()
 
-    api = API["user"]["info"]["media_list"]
+    api = API["common"]["favorite"]["get_favorite_list_content"]
     params = {
-        "up_mid": uid,
+        "media_id": media_id,
         "pn": pn,
         "ps": ps,
-        "is_space": 0
+        "keyword": keyword,
+        "order": order,
+        "type": type_,
+        "tid": tid
     }
     data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
     return data
 
 
-def get_media_list_content(media_id: int, order: str = "mtime",
-                           limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_favorite_list_content(media_id: int, order: str = "mtime",
+                              limit: int = 114514, callback=None, verify: utils.Verify = None):
     """
     自动循环获取收藏夹内容
     :param callback: 回调函数
@@ -464,8 +457,10 @@ def get_media_list_content(media_id: int, order: str = "mtime",
     page = 1
     content = []
     while count < limit:
-        data = get_media_list_content_raw(media_id=media_id, order=order, pn=page, verify=verify)
+        data = get_favorite_list_content_raw(media_id=media_id, order=order, pn=page, verify=verify)
         if "medias" not in data:
+            break
+        if data["medias"] is None:
             break
         count += len(data["medias"])
         content += data["medias"]
@@ -475,36 +470,15 @@ def get_media_list_content(media_id: int, order: str = "mtime",
     return content[:limit]
 
 
-def get_media_list_content_raw(media_id: int, order: str = "mtime", pn: int = 1, ps: int = 20, tid: int = 0,
-                               keyword: str = "", verify: utils.Verify = None):
+def get_favorite_list(uid: int, verify: utils.Verify = None):
     """
-    低层级API，获取收藏夹内容
-    :param media_id: 收藏夹分类ID
-    :param order: 排序方式，接受值：mtime（最近收藏）、view（最多播放）、pubtime（最近投稿）
-    :param pn: 页码
-    :param ps: 单页最大数量，默认20即可
-    :param tid: 分区ID
-    :param keyword: 搜索关键词
+    获取收藏夹列表
+    :param uid:
     :param verify:
     :return:
     """
-    if verify is None:
-        verify = utils.Verify()
-    if order not in ("mtime", "view", "pubtime"):
-        raise exceptions.BilibiliApiException("order参数错误，接受值：mtime（最近收藏）、view（最多播放）、pubtime（最近投稿）")
-
-    api = API["user"]["info"]["media_list_content"]
-    params = {
-        "media_id": media_id,
-        "pn": pn,
-        "ps": ps,
-        "order": order,
-        "keyword": keyword,
-        "type": 0,
-        "tid": tid
-    }
-    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
-    return data
+    resp = common.get_favorite_list(uid, verify=verify)
+    return resp
 
 
 def get_followings_raw(uid: int, ps: int = 20, pn: int = 1, order: str = "desc", verify: utils.Verify = None):

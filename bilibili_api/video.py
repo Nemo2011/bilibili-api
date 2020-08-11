@@ -1,6 +1,8 @@
 r"""
 模块：video
 功能：获取视频各种信息以及操作视频
+项目GitHub地址：https://github.com/Passkou/bilibili_api
+项目主页：https://passkou.com/bilibili_api
    _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
@@ -8,13 +10,14 @@ r"""
  | |       / ____ \   ____) |  ____) | | . \  | |__| | | |__| |
  |_|      /_/    \_\ |_____/  |_____/  |_|\_\  \____/   \____/
 """
-from . import exceptions, utils, user
+from . import exceptions, utils, user, common
 import requests
 import json
 from xml.dom.minidom import parseString
 import re
 import datetime
 import time
+from .common import get_vote_info
 
 API = utils.get_api()
 
@@ -206,7 +209,7 @@ def get_pages(bvid: str = None, aid: int = None, verify: utils.Verify = None):
     return get
 
 
-def get_playurl(bvid: str = None, aid: int = None, page: int = 0, verify: utils.Verify = None):
+def get_download_url(bvid: str = None, aid: int = None, page: int = 0, verify: utils.Verify = None):
     """
     获取视频下载链接
     :param aid:
@@ -297,36 +300,20 @@ def get_added_coins(bvid: str = None, aid: int = None, verify: utils.Verify = No
     return value
 
 
-def get_media_list(bvid: str = None, aid: int = None, verify: utils.Verify = None):
+def get_favorite_list(bvid: str = None, aid: int = None, verify: utils.Verify = None):
     """
-    获取收藏夹列表以及当视频收藏情况，供对视频收藏操作用
-    :param aid:
-    :param bvid:
-    :param verify:
-    :return:
+    获取收藏夹列表供收藏操作用
+    :param bvid: 
+    :param aid: 
+    :param verify: 
+    :return: 
     """
     if not (aid or bvid):
         raise exceptions.NoIdException
-    if verify is None:
-        verify = utils.Verify()
-    if not verify.has_sess():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-
-    api = API["video"]["info"]["get_media_list"]
     if aid is None:
         aid = utils.bvid2aid(bvid)
-    self_info = user.get_self_info(verify)
-    params = {
-        "rid": aid,
-        "up_mid": self_info["mid"],
-        "type": 2
-    }
-    my_headers = utils.DEFAULT_HEADERS
-    my_headers["Referer"] = "https://www.bilibili.com/%s" % bvid if bvid is not None \
-        else "https://www.bilibili.com/av%s" % aid
-    get = utils.get(url=api["url"], params=params, cookies=verify.get_cookies(), headers=my_headers)
-    value = get["list"]
-    return value
+    resp = common.get_favorite_list(rid=aid, type_="video", verify=verify)
+    return resp
 
 
 def is_liked(bvid: str = None, aid: int = None, verify: utils.Verify = None):
@@ -386,10 +373,10 @@ def is_favoured(bvid: str = None, aid: int = None, verify: utils.Verify = None):
 # 操作视频
 
 
-def set_like(like: bool = True, bvid: str = None, aid: int = None, verify: utils.Verify = None):
+def set_like(status: bool = True, bvid: str = None, aid: int = None, verify: utils.Verify = None):
     """
     点赞
-    :param like: True点赞False取消点赞
+    :param status: True点赞False取消点赞
     :param aid:
     :param bvid:
     :param verify:
@@ -411,7 +398,7 @@ def set_like(like: bool = True, bvid: str = None, aid: int = None, verify: utils
         "csrf": verify.csrf,
         "bvid": bvid
     }
-    if like:
+    if status:
         data["like"] = 1
     else:
         data["like"] = 2
@@ -452,52 +439,30 @@ def add_coins(num: int = 2, like: bool = True, bvid: str = None, aid: int = None
     return resp
 
 
-def set_favorite(add_media_ids: list = None, remove_media_ids: list = None, bvid: str = None, aid: int = None,
-                 verify: utils.Verify = None):
+def operate_favorite(bvid: str = None, aid: int = None, add_media_ids: list = None,
+                     del_media_ids: list = None, verify: utils.Verify = None):
     """
-    收藏视频
-    :param add_media_ids: 添加收藏夹ID列表
-    :param remove_media_ids: 移除收藏夹ID列表
+    操作音频收藏夹
     :param aid:
     :param bvid:
+    :param add_media_ids:
+    :param del_media_ids:
     :param verify:
     :return:
     """
     if not (aid or bvid):
         raise exceptions.NoIdException
-    if verify is None:
-        verify = utils.Verify()
-    if not verify.has_sess():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-    if not verify.has_csrf():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
-    if not (add_media_ids or remove_media_ids):
-        raise exceptions.BilibiliApiException("请至少传入add_media_list和remove_media_list中的其中一个")
-    if add_media_ids is None:
-        add_media_ids = []
-    if remove_media_ids is None:
-        remove_media_ids = []
     if aid is None:
         aid = utils.bvid2aid(bvid)
-
-    api = API["video"]["operate"]["favorite"]
-    data = {
-        "rid": aid,
-        "type": 2,
-        "add_media_ids": ",".join(add_media_ids),
-        "del_media_ids": ",".join(remove_media_ids),
-        "csrf": verify.csrf
-    }
-    my_headers = utils.DEFAULT_HEADERS
-    my_headers["Referer"] = "https://www.bilibili.com/av%s" % aid
-    resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies(), headers=my_headers)
+    resp = common.operate_favorite(aid, "video", add_media_ids, del_media_ids, verify)
     return resp
 
 
 # 评论相关
 
 
-def get_comments(bvid: str = None, aid: int = None, order: str = "time", limit: int = 1919810, callback=None, verify: utils.Verify = None):
+def get_comments(bvid: str = None, aid: int = None, order: str = "time", limit: int = 1919810,
+                 callback=None, verify: utils.Verify = None):
     """
     获取评论
     :param order:
@@ -513,7 +478,7 @@ def get_comments(bvid: str = None, aid: int = None, order: str = "time", limit: 
     if aid is None:
         aid = utils.bvid2aid(bvid)
 
-    replies = utils.get_comments(aid, "video", order, limit, callback, verify)
+    replies = common.get_comments(aid, "video", order, limit, callback, verify)
     return replies
 
 
@@ -534,7 +499,7 @@ def send_comment(text: str, root: int = None, parent: int = None, bvid: str = No
     if aid is None:
         aid = utils.bvid2aid(bvid)
 
-    resp = utils.send_comment(text, aid, "video", root, parent, verify=verify)
+    resp = common.send_comment(text, aid, "video", root, parent, verify=verify)
     return resp
 
 
@@ -553,7 +518,7 @@ def set_like_comment(rpid: int, status: bool = True, bvid: str = None, aid: int 
     if aid is None:
         aid = utils.bvid2aid(bvid)
 
-    resp = utils.operate_comment("like", aid, "video", rpid, status, verify=verify)
+    resp = common.operate_comment("like", aid, "video", rpid, status, verify=verify)
     return resp
 
 
@@ -572,7 +537,7 @@ def set_hate_comment(rpid: int, status: bool = True, bvid: str = None, aid: int 
     if aid is None:
         aid = utils.bvid2aid(bvid)
 
-    resp = utils.operate_comment("hate", aid, "video", rpid, status, verify=verify)
+    resp = common.operate_comment("hate", aid, "video", rpid, status, verify=verify)
     return resp
 
 
@@ -591,7 +556,7 @@ def set_top_comment(rpid: int, status: bool = True, bvid: str = None, aid: int =
     if aid is None:
         aid = utils.bvid2aid(bvid)
 
-    resp = utils.operate_comment("top", aid, "video", rpid, status, verify=verify)
+    resp = common.operate_comment("top", aid, "video", rpid, status, verify=verify)
     return resp
 
 
@@ -609,7 +574,7 @@ def del_comment(rpid: int, bvid: str = None, aid: int = None, verify: utils.Veri
     if aid is None:
         aid = utils.bvid2aid(bvid)
 
-    resp = utils.operate_comment("del", aid, "video", rpid, verify=verify)
+    resp = common.operate_comment("del", aid, "video", rpid, verify=verify)
     return resp
 
 
@@ -635,7 +600,7 @@ def send_danmaku(danmaku: utils.Danmaku, page: int = 0, bvid: str = None, aid: i
     if not verify.has_csrf():
         raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
 
-    page_info = get_pages(aid, bvid, verify)
+    page_info = get_pages(bvid, aid, verify)
     oid = page_info[page]["cid"]
     api = API["video"]["operate"]["send_danmaku"]
     if danmaku.is_sub:
@@ -649,7 +614,7 @@ def send_danmaku(danmaku: utils.Danmaku, page: int = 0, bvid: str = None, aid: i
         "aid": aid,
         "bvid": bvid,
         "progress": int(danmaku.dm_time.seconds * 1000),
-        "color": danmaku.get_dec_color(),
+        "color": danmaku.color.get_dec_color(),
         "fontsize": danmaku.font_size,
         "pool": pool,
         "mode": danmaku.mode,
@@ -711,6 +676,23 @@ def del_tag(tag_id: int, bvid: str = None, aid: int = None, verify: utils.Verify
         "bvid": bvid
     }
     resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
+    return resp
+
+
+def share_to_dynamic(content: str, bvid: str = None, aid: int = None, verify: utils.Verify = None):
+    """
+    视频分享到动态
+    :param aid:
+    :param bvid:
+    :param content:
+    :param verify:
+    :return:
+    """
+    if not (aid or bvid):
+        raise exceptions.NoIdException
+    if aid is None:
+        aid = utils.bvid2aid(bvid)
+    resp = common.dynamic_share("video", aid, content, verify=verify)
     return resp
 
 

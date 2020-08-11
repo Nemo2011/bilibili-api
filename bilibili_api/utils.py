@@ -1,6 +1,8 @@
 r"""
 模块：utils
 功能：基础工具库
+项目GitHub地址：https://github.com/Passkou/bilibili_api
+项目主页：https://passkou.com/bilibili_api
    _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
@@ -17,13 +19,16 @@ from bilibili_api import exceptions
 import urllib3
 from zlib import crc32
 
-use_https = True
+request_settings = {
+    "use_https": True,
+    "proxies": None
+}
 urllib3.disable_warnings()
 
 DEFAULT_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                   "Chrome/79.0.3945.130 Safari/537.36",
-    "Referer": "https://www.bilibili.com"
+    "Referer": "https://www.bilibili.com/"
 }
 
 MESSAGES = {
@@ -59,7 +64,7 @@ class Color:
         :return:
         """
         if len(hex_color) == 3:
-            hex_color = "".join(x + "0" for x in hex_color)
+            hex_color = "".join([x + "0" for x in hex_color])
         dec = int(hex_color, 16)
         self.__color = dec
 
@@ -120,6 +125,9 @@ class Color:
         return self.get_hex_color()
 
 
+_crack_uid = None
+
+
 class Danmaku:
     FONT_SIZE_SMALL = 18
     FONT_SIZE_BIG = 36
@@ -136,7 +144,7 @@ class Danmaku:
         self.crc32_id = crc32_id
         self.uid = None
 
-        self.__color = color if color else Color()
+        self.color = color if color else Color()
 
         self.mode = mode
         self.font_size = font_size
@@ -152,18 +160,15 @@ class Danmaku:
 
     def crack_uid(self):
         """
-        暴力破解UID，耗时较长不要大量使用
+        暴力破解UID
         :return:
         """
-        crc_dec = int(self.crc32_id, 16)
-        uid = 1
-        while True:
-            crc = crc32(str(uid).encode())
-            if crc == crc_dec:
-                break
-            uid += 1
-        self.uid = uid
-        return uid
+        global _crack_uid
+        if _crack_uid is None:
+            _crack_uid = CrackUid()
+        uid = _crack_uid(self.crc32_id)
+        self.uid = int(uid)
+        return self.uid
 
 
 class Verify:
@@ -238,32 +243,126 @@ class Verify:
         return ret
 
 
+class CrackUid:
+    """
+    弹幕中的CRC32 ID转换成用户UID
+    代码翻译自：https://github.com/esterTion/BiliBili_crc2mid
+    """
+    def __init__(self):
+        self.__CRCPOLYNOMIAL = 0xEDB88320
+        self.__crctable = [None] * 256
+        self.__create_table()
+        self.__index = [None] * 4
+
+    def __create_table(self):
+        for i in range(256):
+            crcreg = i
+            for j in range(8):
+                if (crcreg & 1) != 0:
+                    crcreg = self.__CRCPOLYNOMIAL ^ (crcreg >> 1)
+                else:
+                    crcreg >>= 1
+            self.__crctable[i] = crcreg
+
+    def __crc32(self, input_):
+        if type(input_) != str:
+            input_ = str(input_)
+        crcstart = 0xFFFFFFFF
+        len_ = len(input_)
+        for i in range(len_):
+            index = (crcstart ^ ord(input_[i])) & 0xFF
+            crcstart = (crcstart >> 8) ^ self.__crctable[index]
+        return crcstart
+
+    def __crc32lastindex(self, input_):
+        if type(input_) != str:
+            input_ = str(input_)
+        crcstart = 0xFFFFFFFF
+        len_ = len(input_)
+        index = None
+        for i in range(len_):
+            index = (crcstart ^ ord(input_[i])) & 0xFF
+            crcstart = (crcstart >> 8) ^ self.__crctable[index]
+        return index
+
+    def __getcrcindex(self, t):
+        for i in range(256):
+            if self.__crctable[i] >> 24 == t:
+                return i
+        return -1
+
+    def __deepCheck(self, i, index):
+        tc = 0x00
+        str_ = ""
+        hash_ = self.__crc32(i)
+        tc = hash_ & 0xFF ^ index[2]
+        if not (57 >= tc >= 48):
+            return [0]
+        str_ += str(tc - 48)
+        hash_ = self.__crctable[index[2]] ^ (hash_ >> 8)
+
+        tc = hash_ & 0xFF ^ index[1]
+        if not (57 >= tc >= 48):
+            return [0]
+        str_ += str(tc - 48)
+        hash_ = self.__crctable[index[1]] ^ (hash_ >> 8)
+
+        tc = hash_ & 0xFF ^ index[0]
+        if not (57 >= tc >= 48):
+            return [0]
+        str_ += str(tc - 48)
+        hash_ = self.__crctable[index[0]] ^ (hash_ >> 8)
+
+        return [1, str_]
+
+    def __call__(self, input_):
+        ht = int(input_, 16) ^ 0xFFFFFFFF
+        i = 3
+        while i >= 0:
+            self.__index[3-i] = self.__getcrcindex(ht >> (i*8))
+            snum = self.__crctable[self.__index[3-i]]
+            ht ^= snum >> ((3-i)*8)
+            i -= 1
+        for i in range(10000000):
+            lastindex = self.__crc32lastindex(i)
+            if lastindex == self.__index[3]:
+                deepCheckData = self.__deepCheck(i, self.__index)
+                if deepCheckData[0]:
+                    break
+        if i == 10000000:
+            return -1
+        return str(i) + deepCheckData[1]
+
 # 请求相关
 
 
-def get(url, params=None, cookies=None, headers=None, **kwargs):
-    """
-    专用GET请求
-    :param url:
-    :param params:
-    :param cookies:
-    :param headers:
-    :param kwargs:
-    :return:
-    """
-    if headers is None:
-        headers = DEFAULT_HEADERS
-    if use_https:
-        req = requests.get(url=url, params=params, headers=headers, cookies=cookies, verify=True, **kwargs)
-    else:
-        req = requests.get(url=url, params=params, headers=headers, cookies=cookies, verify=False, **kwargs)
+def request(method: str, url: str, params=None, data=None, cookies=None, headers=None, **kwargs):
+    st = {
+        "url": url,
+        "params": params,
+        "cookies": cookies,
+        "headers": DEFAULT_HEADERS if headers is None else headers,
+        "verify": request_settings["use_https"],
+        "data": data,
+        "proxies": request_settings["proxies"]
+    }
+    st.update(kwargs)
+
+    req = requests.request(method, **st)
+
     if req.ok:
         content = req.content.decode("utf8")
         if req.headers.get("content-length") == 0:
             return None
         con = json.loads(content)
         if con["code"] != 0:
-            raise exceptions.BilibiliException(con["code"], con["message"])
+            if "message" in con:
+                msg = con["message"]
+            elif "msg" in con:
+                msg = con["msg"]
+            else:
+                msg = "请求失败，服务器未返回失败原因"
+            raise exceptions.BilibiliException(con["code"], msg)
         else:
             if 'data' in con.keys():
                 return con['data']
@@ -276,6 +375,20 @@ def get(url, params=None, cookies=None, headers=None, **kwargs):
         raise exceptions.NetworkException(req.status_code)
 
 
+def get(url, params=None, cookies=None, headers=None, **kwargs):
+    """
+    专用GET请求
+    :param url:
+    :param params:
+    :param cookies:
+    :param headers:
+    :param kwargs:
+    :return:
+    """
+    resp = request("GET", url=url, params=params, cookies=cookies, headers=headers, **kwargs)
+    return resp
+
+
 def post(url, cookies, data=None, headers=None, **kwargs):
     """
     专用POST请求
@@ -286,29 +399,23 @@ def post(url, cookies, data=None, headers=None, **kwargs):
     :param kwargs:
     :return:
     """
-    if headers is None:
-        headers = DEFAULT_HEADERS
-    if use_https:
-        req = requests.post(url=url, data=data, headers=headers, cookies=cookies, verify=True, **kwargs)
-    else:
-        req = requests.post(url=url, data=data, headers=headers, cookies=cookies, verify=False, **kwargs)
-    if req.ok:
-        content = req.content.decode("utf8")
-        if req.headers.get("content-length") == 0:
-            return None
-        con = json.loads(content)
-        if con["code"] != 0:
-            raise exceptions.BilibiliException(con["code"], con["message"])
-        else:
-            if "data" in con:
-                return con["data"]
-            else:
-                if 'result' in con.keys():
-                    return con["result"]
-                else:
-                    return None
-    else:
-        raise exceptions.NetworkException(req.status_code)
+    resp = request("POST", url=url, data=data, cookies=cookies, headers=headers, **kwargs)
+    return resp
+
+
+def delete(url, params=None, data=None, cookies=None, headers=None, **kwargs):
+    """
+    专用DELETE请求
+    :param url:
+    :param params:
+    :param data:
+    :param cookies:
+    :param headers:
+    :param kwargs:
+    :return:
+    """
+    resp = request("DELETE", url=url, params=params, data=data, cookies=cookies, headers=headers, **kwargs)
+    return resp
 
 
 def bvid2aid(bvid: str):
@@ -360,174 +467,64 @@ def aid2bvid(aid: int):
     return enc(aid)
 
 
-# 评论相关
-
-
-COMMENT_TYPE_MAP = {
-    "video": 1,
-    "article": 12,
-    "dynamic_draw": 11,
-    "dynamic_text": 17
-}
-
-COMMENT_SORT_MAP = {
-    "like": 2,
-    "time": 0
-}
-
-
-def send_comment(text: str, oid: int, type_: str, root: int = None,
-                    parent: int = None, verify: Verify = None):
+def upload_image(images_path: str, verify: Verify):
     """
-    通用发送评论
-    :param text:
-    :param oid:
-    :param type_:
-    :param root:
-    :param parent:
+    上传图片
     :param verify:
+    :param images_path: 图片路径列表
     :return:
     """
-    if verify is None:
-        raise exceptions.BilibiliApiException("请提供verify")
-    assert verify.has_sess(), exceptions.BilibiliApiException(MESSAGES["no_sess"])
-    assert verify.has_csrf(), exceptions.BilibiliApiException(MESSAGES["no_csrf"])
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(MESSAGES["no_sess"])
 
-    type_ = COMMENT_TYPE_MAP.get(type_, None)
-    assert type_ is not None, exceptions.BilibiliApiException("不支持的评论类型")
-
-    # 参数检查完毕
+    api = get_api()["dynamic"]["send"]["upload_img"]
     data = {
-        "oid": oid,
-        "type": type_,
-        "message": text,
-        "plat": 1,
-        "csrf": verify.csrf
+        "biz": "draw",
+        "category": "daily"
     }
-    if root is not None:
-        data["root"] = data["parent"] = root
-        if parent is not None:
-            data["parent"] = parent
-    api = get_api()["common"]["comment"]["send"]
-    resp = post(api["url"], data=data, cookies=verify.get_cookies())
+    files = {
+        "file_up": open(images_path, "rb")
+    }
+    resp = post(url=api["url"], data=data, cookies=verify.get_cookies(), files=files)
     return resp
 
 
-def operate_comment(action: str, oid: int, type_: str, rpid: int,
-                    status: bool = True, verify: Verify = None):
+def get_channel_info_by_tid(tid: int):
     """
-    通用评论操作
-    :param action: 操作类型，见api.json
-    :param oid:
-    :param type_:
-    :param rpid:
-    :param status: 设置状态
-    :param verify:
-    :return:
+    根据tid获取频道信息
+    :param tid:
+    :return: 第一个是主分区，第二个是子分区，没有时返回None
     """
-    if verify is None:
-        raise exceptions.BilibiliApiException("请提供verify")
-    assert verify.has_sess(), exceptions.BilibiliApiException(MESSAGES["no_sess"])
-    assert verify.has_csrf(), exceptions.BilibiliApiException(MESSAGES["no_csrf"])
+    with open(os.path.join(get_project_path(), "data/channel.json"), encoding="utf8") as f:
+        channel = json.loads(f.read())
 
-    type_ = COMMENT_TYPE_MAP.get(type_, None)
-    assert type_ is not None, exceptions.BilibiliApiException("不支持的评论类型")
-
-    comment_api = get_api()["common"]["comment"]
-    api = comment_api.get(action, None)
-    assert api is not None, exceptions.BilibiliApiException("不支持的评论操作方式")
-    # 参数检查完毕
-    data = {
-        "oid": oid,
-        "type": type_,
-        "rpid": rpid,
-        "csrf": verify.csrf
-    }
-    if action != "del":
-        data["action"] = 1 if status else 0
-
-    resp = post(api["url"], cookies=verify.get_cookies(), data=data)
-    return resp
+    for main_ch in channel:
+        if tid == int(main_ch["tid"]):
+            return main_ch, None
+        for sub_ch in main_ch["sub"]:
+            if tid == sub_ch["tid"]:
+                return main_ch, sub_ch
+    else:
+        return None, None
 
 
-def get_comments_raw(oid: int, type_: str, order: str = "time", pn: int = 1, verify: Verify = None):
+def get_channel_info_by_name(name: str):
     """
-    通用获取评论
-    :param oid:
-    :param type_:
-    :param order:
-    :param pn:
-    :param verify:
-    :return:
+    根据名字获取频道信息
+    :param name:
+    :return: 第一个是主分区，第二个是子分区，没有时返回None
     """
-    if verify is None:
-        verify = Verify()
+    with open(os.path.join(get_project_path(), "data/channel.json"), encoding="utf8") as f:
+        channel = json.loads(f.read())
 
-    type_ = COMMENT_TYPE_MAP.get(type_, None)
-    assert type_ is not None, exceptions.BilibiliApiException("不支持的评论类型")
-
-    order = COMMENT_SORT_MAP.get(order, None)
-    assert order is not None, exceptions.BilibiliApiException("不支持的排序方式，支持：time（时间倒序），like（热度倒序）")
-    # 参数检查完毕
-    params = {
-        "oid": oid,
-        "type": type_,
-        "sort": order,
-        "pn": pn
-    }
-    comment_api = get_api()["common"]["comment"]
-    api = comment_api.get("get", None)
-    resp = get(api["url"], params=params, cookies=verify.get_cookies())
-    return resp
-
-
-def get_comments(oid: int, type_: str, order: str = "time", limit: int = 1919810, callback=None, verify: Verify = None):
-    """
-    通用循环获取评论
-    :param type_:
-    :param order:
-    :param callback: 回调函数
-    :param oid:
-    :param limit: 限制数量
-    :param verify:
-    :return:
-    """
-    if verify is None:
-        verify = Verify()
-
-    count = 0
-    replies = []
-    page = 1
-    while count < limit:
-        resp = get_comments_raw(oid=oid, pn=page, order=order, verify=verify, type_=type_)
-        if "replies" not in resp:
-            break
-        if resp["replies"] is None:
-            break
-        count += len(resp["replies"])
-        replies += resp["replies"]
-        if callable(callback):
-            callback(resp["replies"])
-        page += 1
-    return replies[:limit]
-
-
-def get_vote_info(vote_id: int, verify: Verify = None):
-    """
-    获取投票信息
-    :param vote_id:
-    :param verify:
-    :return:
-    """
-    if verify is None:
-        verify = Verify()
-
-    api = get_api()["common"]["vote"]["info"]["get_info"]
-    params = {
-        "vote_id": vote_id
-    }
-    resp = get(url=api["url"], params=params, cookies=verify.get_cookies())
-    return resp
+    for main_ch in channel:
+        if name in main_ch["name"]:
+            return main_ch, None
+        for sub_ch in main_ch["sub"]:
+            if name in sub_ch["name"]:
+                return main_ch, sub_ch
+    else:
+        return None, None
 
 
 """

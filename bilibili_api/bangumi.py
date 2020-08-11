@@ -1,6 +1,8 @@
 r"""
 模块：bangumi
 功能：番剧相关
+项目GitHub地址：https://github.com/Passkou/bilibili_api
+项目主页：https://passkou.com/bilibili_api
    _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
@@ -9,7 +11,8 @@ r"""
  |_|      /_/    \_\ |_____/  |_____/  |_|\_\  \____/   \____/
 """
 
-from . import utils, exceptions
+from . import utils, exceptions, common
+from .common import get_vote_info
 
 API = utils.get_api()
 
@@ -27,42 +30,6 @@ def get_meta(media_id: int, verify: utils.Verify = None):
     api = API["bangumi"]["info"]["meta"]
     params = {
         "media_id": media_id
-    }
-    resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
-    return resp
-
-
-def get_episodes_list(season_id: int, verify: utils.Verify = None):
-    """
-    获取季度分集列表
-    :param season_id: season_id，从get_meta中获取
-    :param verify:
-    :return:
-    """
-    if verify is None:
-        verify = utils.Verify()
-
-    api = API["bangumi"]["info"]["episodes_list"]
-    params = {
-        "season_id": season_id
-    }
-    resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
-    return resp
-
-
-def get_data(season_id: int, verify: utils.Verify = None):
-    """
-    获取番剧播放量，追番等信息
-    :param season_id:
-    :param verify:
-    :return:
-    """
-    if verify is None:
-        verify = utils.Verify()
-
-    api = API["bangumi"]["info"]["season_status"]
-    params = {
-        "season_id": season_id
     }
     resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
     return resp
@@ -206,6 +173,42 @@ def get_long_comments(media_id: int, order: str = "default", limit: int = 114514
     return comments[:limit]
 
 
+def get_episodes_list(season_id: int, verify: utils.Verify = None):
+    """
+    获取季度分集列表
+    :param season_id: season_id，从get_meta中获取
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["bangumi"]["info"]["episodes_list"]
+    params = {
+        "season_id": season_id
+    }
+    resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return resp
+
+
+def get_interact_data(season_id: int, verify: utils.Verify = None):
+    """
+    获取番剧播放量，追番等信息
+    :param season_id:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["bangumi"]["info"]["season_status"]
+    params = {
+        "season_id": season_id
+    }
+    resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return resp
+
+
 # 番剧操作
 
 
@@ -259,6 +262,17 @@ def set_follow_status(season_id: int, status: int = 2, verify: utils.Verify = No
     resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
     return resp
 
+
+def share_to_dynamic(epid: int, content: str, verify: utils.Verify = None):
+    """
+    专栏转发
+    :param epid: EP号
+    :param content:
+    :param verify:
+    :return:
+    """
+    resp = common.dynamic_share("bangumi", epid, content, verify=verify)
+    return resp
 
 """
 こころぴょんぴょん待ち  考えるふりして  もうちょっと近づいちゃえ　♪

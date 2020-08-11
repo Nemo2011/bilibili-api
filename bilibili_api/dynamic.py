@@ -1,6 +1,8 @@
 r"""
 模块： dynamic
 功能： 动态发送、操作、信息获取等
+项目GitHub地址：https://github.com/Passkou/bilibili_api
+项目主页：https://passkou.com/bilibili_api
    _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
@@ -8,33 +10,14 @@ r"""
  | |       / ____ \   ____) |  ____) | | . \  | |__| | | |__| |
  |_|      /_/    \_\ |_____/  |_____/  |_|\_\  \____/   \____/
 """
+import bilibili_api.common
 from . import user, exceptions, utils
 import re
 import json
 import datetime
+from .common import get_vote_info
 
 API = utils.get_api()
-
-
-def __upload_images(images_path: list, verify: utils.Verify):
-    """
-    上传图片
-    :param images_path: 图片路径列表
-    :return:
-    """
-    api = API["dynamic"]["send"]["upload_img"]
-    data = {
-        "biz": "draw",
-        "category": "daily"
-    }
-    images_info = []
-    for path in images_path:
-        files = {
-            "file_up": open(path, "rb")
-        }
-        resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies(), files=files)
-        images_info.append(resp)
-    return images_info
 
 
 def __parse_at(text: str):
@@ -50,7 +33,13 @@ def __parse_at(text: str):
     new_text = text
     for match in match_result:
         uid = match.group()
-        user_info = user.get_user_info(int(uid))
+        try:
+            user_info = user.get_user_info(int(uid))
+        except exceptions.BilibiliException as e:
+            if e.code == -404:
+                raise exceptions.BilibiliApiException(f"用户uid={uid}不存在")
+            else:
+                raise e
         name = user_info["name"]
         uid_list.append(uid)
         names.append(name)
@@ -99,7 +88,10 @@ def __get_draw_data(text: str, images_path: list, verify: utils.Verify):
     :return:
     """
     new_text, at_uids, ctrl = __parse_at(text)
-    images_info = __upload_images(images_path, verify)
+    images_info = []
+    for path in images_path:
+        i = utils.upload_image(path, verify)
+        images_info.append(i)
 
     def pic(image):
         return {"img_src": image["image_url"], "img_width": image["image_width"],
@@ -346,13 +338,16 @@ def set_like(dynamic_id: int, status: bool = True, verify: utils.Verify = None):
         verify = utils.Verify()
     if not verify.has_sess():
         raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
 
     api = API["dynamic"]["operate"]["like"]
     self_uid = user.get_self_info(verify)["mid"]
     data = {
         "dynamic_id": dynamic_id,
         "up": 1 if status else 2,
-        "uid": self_uid
+        "uid": self_uid,
+        "csrf": verify.csrf
     }
     resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
     return resp
@@ -369,10 +364,13 @@ def delete(dynamic_id: int, verify: utils.Verify = None):
         verify = utils.Verify()
     if not verify.has_sess():
         raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
 
     api = API["dynamic"]["operate"]["delete"]
     data = {
-        "dynamic_id": dynamic_id
+        "dynamic_id": dynamic_id,
+        "csrf": verify.csrf
     }
     resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
     return resp
@@ -430,7 +428,7 @@ def get_comments(dynamic_id: int, order: str = "time", limit: int = 1919810, cal
     :return:
     """
     type_, rid = __get_type_and_rid(dynamic_id)
-    replies = utils.get_comments(rid, type_, order, limit, callback, verify)
+    replies = bilibili_api.common.get_comments(rid, type_, order, limit, callback, verify)
     return replies
 
 
@@ -446,7 +444,7 @@ def send_comment(text: str, dynamic_id: int, root: int = None, parent: int = Non
     :return:
     """
     type_, rid = __get_type_and_rid(dynamic_id)
-    resp = utils.send_comment(text, rid, type_, root, parent, verify=verify)
+    resp = bilibili_api.common.send_comment(text, rid, type_, root, parent, verify=verify)
     return resp
 
 
@@ -460,7 +458,7 @@ def set_like_comment(rpid: int, dynamic_id: int, status: bool = True, verify: ut
     :return:
     """
     type_, rid = __get_type_and_rid(dynamic_id)
-    resp = utils.operate_comment("like", rid, type_, rpid, status, verify=verify)
+    resp = bilibili_api.common.operate_comment("like", rid, type_, rpid, status, verify=verify)
     return resp
 
 
@@ -474,7 +472,7 @@ def set_hate_comment(rpid: int, dynamic_id: int, status: bool = True, verify: ut
     :return:
     """
     type_, rid = __get_type_and_rid(dynamic_id)
-    resp = utils.operate_comment("hate", rid, type_, rpid, status, verify=verify)
+    resp = bilibili_api.common.operate_comment("hate", rid, type_, rpid, status, verify=verify)
     return resp
 
 
@@ -488,7 +486,7 @@ def set_top_comment(rpid: int, dynamic_id: int, status: bool = True, verify: uti
     :return:
     """
     type_, rid = __get_type_and_rid(dynamic_id)
-    resp = utils.operate_comment("top", rid, type_, rpid, status, verify=verify)
+    resp = bilibili_api.common.operate_comment("top", rid, type_, rpid, status, verify=verify)
     return resp
 
 
@@ -501,7 +499,7 @@ def del_comment(rpid: int, dynamic_id: int, verify: utils.Verify = None):
     :return:
     """
     type_, rid = __get_type_and_rid(dynamic_id)
-    resp = utils.operate_comment("del", rid, type_, rpid, verify=verify)
+    resp = bilibili_api.common.operate_comment("del", rid, type_, rpid, verify=verify)
     return resp
 
 
@@ -527,4 +525,5 @@ def del_comment(rpid: int, dynamic_id: int, verify: utils.Verify = None):
 　　█▊　　█▋
 　　 █▏　　█▙
 　　 █
+在代码里也停不下来的团长是鉴（确信）
 """
