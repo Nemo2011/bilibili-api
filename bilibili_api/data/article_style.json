@@ -1,0 +1,98 @@
+{
+    "font-size-12": {
+        "font-size": "12px"
+    },
+    "font-size-16": {
+        "font-size": "16px"
+    },
+    "font-size-20": {
+        "font-size": "20px"
+    },
+    "font-size-23": {
+        "font-size": "23px"
+    },
+    "color-blue-01": {
+        "color": "#56c1fe"
+    },
+    "color-lblue-01": {
+        "color": "#73fdea"
+    },
+    "color-green-01": {
+        "color": "#89fa4e"
+    },
+    "color-yellow-01": {
+        "color": "#fff359"
+    },
+    "color-pink-01": {
+        "color": "#ff968d"
+    },
+    "color-purple-01": {
+        "color": "#ff8cc6"
+    },
+    "color-blue-02": {
+        "color": "#02a2ff"
+    },
+    "color-lblue-02": {
+        "color": "#18e7cf"
+    },
+    "color-green-02": {
+        "color": "#60d837"
+    },
+    "color-yellow-02": {
+        "color": "#fbe231"
+    },
+    "color-pink-02": {
+        "color": "#ff654e"
+    },
+    "color-purple-02": {
+        "color": "#ef5fa8"
+    },
+    "color-blue-03": {
+        "color": "#0176ba"
+    },
+    "color-lblue-03": {
+        "color": "#068f86"
+    },
+    "color-green-03": {
+        "color": "#1db100"
+    },
+    "color-yellow-03": {
+        "color": "#f8ba00"
+    },
+    "color-pink-03": {
+        "color": "#ee230d"
+    },
+    "color-purple-03": {
+        "color": "#cb297a"
+    },
+    "color-blue-04": {
+        "color": "#004e80"
+    },
+    "color-lblue-04": {
+        "color": "#017c76"
+    },
+    "color-green-04": {
+        "color": "#017001"
+    },
+    "color-yellow-04": {
+        "color": "#ff9201"
+    },
+    "color-pink-04": {
+        "color": "#b41700"
+    },
+    "color-purple-04": {
+        "color": "#99195e"
+    },
+    "color-gray-01": {
+        "color": "#d6d5d5"
+    },
+    "color-gray-02": {
+        "color": "#929292"
+    },
+    "color-gray-03": {
+        "color": "#5f5f5f"
+    },
+    "color-default": {
+        "color": "#222"
+    }
+}
