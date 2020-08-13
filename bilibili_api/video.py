@@ -406,7 +406,7 @@ def set_like(status: bool = True, bvid: str = None, aid: int = None, verify: uti
     return resp
 
 
-def add_coins(num: int = 2, like: bool = True, bvid: str = None, aid: int = None, verify: utils.Verify = None):
+def add_coins(num: int = 1, like: bool = True, bvid: str = None, aid: int = None, verify: utils.Verify = None):
     """
     投币
     :param num: 1或2个
