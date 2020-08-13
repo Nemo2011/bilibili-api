@@ -467,11 +467,11 @@ def aid2bvid(aid: int):
     return enc(aid)
 
 
-def upload_image(images_path: str, verify: Verify):
+def upload_image(image_path: str, verify: Verify):
     """
     上传图片
     :param verify:
-    :param images_path: 图片路径列表
+    :param image_path: 图片路径列表
     :return:
     """
     if not verify.has_sess():
@@ -483,48 +483,12 @@ def upload_image(images_path: str, verify: Verify):
         "category": "daily"
     }
     files = {
-        "file_up": open(images_path, "rb")
+        "file_up": open(image_path, "rb")
     }
     resp = post(url=api["url"], data=data, cookies=verify.get_cookies(), files=files)
     return resp
 
 
-def get_channel_info_by_tid(tid: int):
-    """
-    根据tid获取频道信息
-    :param tid:
-    :return: 第一个是主分区，第二个是子分区，没有时返回None
-    """
-    with open(os.path.join(get_project_path(), "data/channel.json"), encoding="utf8") as f:
-        channel = json.loads(f.read())
-
-    for main_ch in channel:
-        if tid == int(main_ch["tid"]):
-            return main_ch, None
-        for sub_ch in main_ch["sub"]:
-            if tid == sub_ch["tid"]:
-                return main_ch, sub_ch
-    else:
-        return None, None
-
-
-def get_channel_info_by_name(name: str):
-    """
-    根据名字获取频道信息
-    :param name:
-    :return: 第一个是主分区，第二个是子分区，没有时返回None
-    """
-    with open(os.path.join(get_project_path(), "data/channel.json"), encoding="utf8") as f:
-        channel = json.loads(f.read())
-
-    for main_ch in channel:
-        if name in main_ch["name"]:
-            return main_ch, None
-        for sub_ch in main_ch["sub"]:
-            if name in sub_ch["name"]:
-                return main_ch, sub_ch
-    else:
-        return None, None
 
 
 """

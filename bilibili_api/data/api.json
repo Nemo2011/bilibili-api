@@ -1147,5 +1147,19 @@
                 "comment": "取消收藏歌单"
             }
         }
+    },
+    "channel": {
+        "ranking": {
+            "get_top10": {
+                "url": "https://api.bilibili.com/x/web-interface/ranking/region?rid=160&day=3&original=0",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "rid": "tid，分区id",
+                    "day": "3，7"
+                },
+                "comment": "获取分区前十排行榜"
+            }
+        }
     }
 }
