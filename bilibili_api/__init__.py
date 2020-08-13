@@ -2,7 +2,7 @@ from . import video, user, dynamic, bangumi, live, article, exceptions, tools, a
 from .utils import aid2bvid, bvid2aid, upload_image, Verify, Danmaku, Color, request_settings
 
 META = {
-    "version": "2.0.0-beta.0"
+    "version": "2.0.0"
 }
 
 
