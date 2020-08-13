@@ -1,0 +1,1165 @@
+{
+    "video": {
+        "info": {
+            "info_simple": {
+                "url": "https://api.bilibili.com/x/web-interface/archive/stat",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "aid": "av号"
+                },
+                "comment": "视频简易信息"
+            },
+            "info_detail": {
+                "url": "https://api.bilibili.com/x/web-interface/view",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "aid": "av号"
+                },
+                "comment": "视频详细信息"
+            },
+            "danmaku": {
+                "url": "https://api.bilibili.com/x/v1/dm/list.so",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "oid": "video_info中的cid，即分P的编号"
+                },
+                "comment": "弹幕列表"
+            },
+            "history_danmaku": {
+                "url": "https://api.bilibili.com/x/v2/dm/history",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "oid": "分P的编号",
+                    "type": "1",
+                    "date": "日期 (yyyy-mm-dd)"
+                },
+                "comment": "历史弹幕列表"
+            },
+            "history_danmaku_index": {
+                "url": "https://api.bilibili.com/x/v2/dm/history/index",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "oid": "分P的编号",
+                    "type": "1",
+                    "month": "年月 (yyyy-mm)"
+                },
+                "comment": "存在历史弹幕的日期"
+            },
+            "tags": {
+                "url": "https://api.bilibili.com/x/tag/archive/tags",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "aid": "av号"
+                },
+                "comment": "视频标签信息"
+            },
+            "charge": {
+                "url": "https://api.bilibili.com/x/web-interface/elec/show",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "aid": "av号",
+                    "mid": "用户UID"
+                },
+                "comment": "视频充电信息"
+            },
+            "pages": {
+                "url": "https://api.bilibili.com/x/player/pagelist",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "aid": "av号"
+                },
+                "comment": "分P列表"
+            },
+            "playurl": {
+                "url": "https://api.bilibili.com/x/player/playurl",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "avid": "av号",
+                    "cid": "分P编号",
+                    "qn": 112
+                },
+                "comment": "视频下载的信息，下载链接需要提供headers伪装浏览器请求（Referer和User-Agent）"
+            },
+            "related": {
+                "url": "https://api.bilibili.com/x/web-interface/archive/related",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "aid": "av号"
+                },
+                "comment": "获取关联视频"
+            },
+            "is_liked": {
+                "url": "https://api.bilibili.com/x/web-interface/archive/has/like",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "aid": "av号"
+                },
+                "comment": "是否已点赞"
+            },
+            "is_coins": {
+                "url": "https://api.bilibili.com/x/web-interface/archive/coins",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "aid": "av号"
+                },
+                "comment": "是否已投币 "
+            },
+            "is_favoured": {
+                "url": "https://api.bilibili.com/x/v2/fav/video/favoured",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "aid": "av号"
+                },
+                "comment": "是否已收藏"
+            },
+            "get_media_list": {
+                "url": "https://api.bilibili.com/x/v3/fav/folder/created/list-all",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "rid": "av号",
+                    "up_mid": "up的uid",
+                    "type": 2
+                },
+                "comment": "获取收藏夹列表信息，用于收藏操作"
+            }
+        },
+        "operate": {
+            "like": {
+                "url": "https://api.bilibili.com/x/web-interface/archive/like",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "aid": "av号",
+                    "like": "1是点赞，2是取消点赞"
+                },
+                "comment": "给视频点赞/取消点赞 "
+            },
+            "coin": {
+                "url": "https://api.bilibili.com/x/web-interface/coin/add",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "aid": "av号",
+                    "multiply": "几个币",
+                    "select_like": "同时点赞（1是0否）"
+                },
+                "comment": "给视频投币"
+            },
+            "send_danmaku": {
+                "url": "https://api.bilibili.com/x/v2/dm/post",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "type": "1",
+                    "oid": "分P编号",
+                    "msg": "弹幕内容",
+                    "bvid": "bvid",
+                    "progress": "发送时间（毫秒）",
+                    "color": "颜色（十六进制转十进制）",
+                    "fontsize": "字体大小（小18普通25大36）",
+                    "pool": "字幕弹幕（1是0否）",
+                    "mode": "模式（滚动1顶部5底部4）",
+                    "plat": "1"
+                },
+                "comment": "发送弹幕"
+            },
+            "add_tag": {
+                "url": "https://api.bilibili.com/x/tag/archive/add",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "aid": "av号",
+                    "tag_name": "标签名"
+                },
+                "comment": "添加标签"
+            },
+            "del_tag": {
+                "url": "https://api.bilibili.com/x/tag/archive/del",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "aid": "av号",
+                    "tag_id": "标签id"
+                },
+                "comment": "删除标签"
+            },
+            "like_tag": {
+                "url": "https://api.bilibili.com/x/tag/archive/like2",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "aid": "av号",
+                    "tag_id": "标签id"
+                },
+                "comment": "切换标签点赞状态"
+            },
+            "hate_tag": {
+                "url": "https://api.bilibili.com/x/tag/archive/hate2",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "aid": "av号",
+                    "tag_id": "标签id"
+                },
+                "comment": "切换标签踩状态"
+            },
+            "subscribe_tag": {
+                "url": "https://api.bilibili.com/x/tag/subscribe/add",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "tag_id": "标签id"
+                },
+                "comment": "订阅标签"
+            },
+            "unsubscribe_tag": {
+                "url": "https://api.bilibili.com/x/tag/subscribe/cancel",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "tag_id": "标签id"
+                },
+                "comment": "取消订阅标签"
+            }
+        }
+    },
+    "dynamic": {
+        "send": {
+            "upload_img": {
+                "url": "https://api.vc.bilibili.com/api/v1/drawImage/upload",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "biz": "draw",
+                    "category": "daily"
+                },
+                "files": {
+                    "file_up": "二进制img"
+                },
+                "comment": "上传图片"
+            },
+            "schedule": {
+                "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/add_draft",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "type": "4为有图动态，2为无图动态",
+                    "publish_time": "发布时间戳",
+                    "request(type=4)": "见 instant_draw.data，无setting",
+                    "request(type=2)": "见 instant_text.data"
+                },
+                "comment": "发布定时动态"
+            },
+            "instant_draw": {
+                "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/create_draw",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "biz": 3,
+                    "category": 3,
+                    "type": 0,
+                    "pictures": [
+                        {
+                            "img_src": "图片地址",
+                            "img_width": "图片宽度",
+                            "img_height": "图片高度"
+                        }
+                    ],
+                    "title": "",
+                    "tags": "",
+                    "description": "动态文字内容",
+                    "content": "动态文字内容",
+                    "from": "create.dynamic.web",
+                    "up_choose_comment": 0,
+                    "extension": "{\"emoji_type\":1,\"from\":{\"emoji_type\":1},\"flag_cfg\":{}}",
+                    "at_uids": "艾特用户UID列表，半角逗号分隔",
+                    "at_control": [
+                        {
+                            "location": "@符号起始位置，0为第一个字符",
+                            "type": 1,
+                            "length": "@区域长度（2 + 用户名字符串长度）",
+                            "data": "用户UID"
+                        }
+                    ],
+                    "setting": {
+                        "copy_forbidden": 0,
+                        "cachedTime": 0
+                    }
+                }
+            },
+            "instant_text": {
+                "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/create",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "dynamic_id": 0,
+                    "type": 4,
+                    "rid": 0,
+                    "content": "动态文本内容",
+                    "extension": "{\"emoji_type\":1}",
+                    "at_uids": "艾特用户UID列表，半角逗号分隔",
+                    "ctrl": [
+                        {
+                            "location": "@符号起始位置，0为第一个字符",
+                            "type": 1,
+                            "length": "@区域长度（2 + 用户名字符串长度）",
+                            "data": "用户UID"
+                        }
+                    ]
+                }
+            }
+        },
+        "operate": {
+            "delete": {
+                "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/rm_dynamic",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "dynamic_id": "动态ID"
+                },
+                "comment": "删除动态"
+            },
+            "like": {
+                "url": "https://api.vc.bilibili.com/dynamic_like/v1/dynamic_like/thumb",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "dynamic_id": "动态ID",
+                    "up": "1点赞2取消",
+                    "uid": "自己uid"
+                },
+                "comment": "点赞"
+            },
+            "repost": {
+                "url": "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "dynamic_id": "动态ID",
+                    "content": "内容",
+                    "extension": "{\"emoji_type\":1}"
+                },
+                "comment": "转发"
+            }
+        },
+        "info": {
+            "repost": {
+                "url": "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost_detail",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "dynamic_id": "动态ID",
+                    "offset": "每页第一条动态ID"
+                },
+                "comment": "动态转发信息，最多获取560条"
+            },
+            "detail": {
+                "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "dynamic_id": "动态ID"
+                },
+                "comment": "动态详细信息"
+            }
+        },
+        "schedule": {
+            "list": {
+                "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/get_drafts",
+                "method": "GET",
+                "verify": false,
+                "params": null,
+                "comment": "获取待发送定时动态列表"
+            },
+            "publish_now": {
+                "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/publish_now",
+                "method": "POST",
+                "verify": false,
+                "data": {
+                    "draft_id": "定时动态ID"
+                },
+                "comment": "立即发送定时动态"
+            },
+            "modify": {
+                "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/modify_draft",
+                "method": "POST",
+                "verify": false,
+                "data": {
+                    "draft_id": "定时动态ID",
+                    "kwargs": "剩余参数见dynamic.send.schedule"
+                },
+                "comment": "修改待发定时动态"
+            },
+            "delete": {
+                "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/rm_draft",
+                "method": "POST",
+                "verify": false,
+                "data": {
+                    "draft_id": "定时动态ID"
+                },
+                "comment": "删除待发定时动态"
+            }
+        }
+    },
+    "user": {
+        "info": {
+            "my_info": {
+                "url": "https://api.bilibili.com/x/space/myinfo",
+                "method": "GET",
+                "verify": true,
+                "comment": "获取自己的信息"
+            },
+            "info": {
+                "url": "https://api.bilibili.com/x/space/acc/info",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "mid": "uid"
+                },
+                "comment": "用户基本信息"
+            },
+            "relation": {
+                "url": "https://api.bilibili.com/x/relation/stat",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "vmid": "uid"
+                },
+                "comment": "关注数，粉丝数"
+            },
+            "upstat": {
+                "url": "http://api.bilibili.com/x/space/upstat",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "mid": "uid"
+                },
+                "comment": "视频播放量，文章阅读量，总点赞数"
+            },
+            "live": {
+                "url": "https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "mid": "uid"
+                },
+                "comment": "直播间基本信息"
+            },
+            "video": {
+                "url": "https://api.bilibili.com/x/space/arc/search",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "mid": "uid",
+                    "ps": 30,
+                    "tid": "分区ID，0表示全部",
+                    "pn": "页码",
+                    "keyword": "关键词，可为空",
+                    "order": "pubdate上传日期，click播放量，stow收藏量"
+                },
+                "comment": "搜索用户视频"
+            },
+            "audio": {
+                "url": "https://api.bilibili.com/audio/music-service/web/song/upper",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "uid": "uid",
+                    "ps": 30,
+                    "pn": "页码",
+                    "order": "1最新发布，2最多播放，3最多收藏"
+                },
+                "comment": "音频"
+            },
+            "article": {
+                "url": "https://api.bilibili.com/x/space/article",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "mid": "uid",
+                    "ps": 30,
+                    "pn": "页码",
+                    "sort": "publish_time最新发布，view最多阅读，fav最多收藏"
+                },
+                "comment": "专栏"
+            },
+            "article_lists": {
+                "url": "https://api.bilibili.com/x/article/up/lists",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "mid": "uid",
+                    "sort": "0最近更新，1最多阅读"
+                },
+                "comment": "专栏文集"
+            },
+            "dynamic": {
+                "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "host_uid": "uid",
+                    "offset_dynamic_id": "动态偏移用，第一页为0",
+                    "need_top": "显示置顶动态"
+                },
+                "comment": "用户动态信息"
+            },
+            "bangumi": {
+                "url": "https://api.bilibili.com/x/space/bangumi/follow/list",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "vmid": "uid",
+                    "pn": "页码",
+                    "ps": 15,
+                    "type": "1追番，2追剧"
+                },
+                "comment": "用户追番列表"
+            },
+            "followings": {
+                "url": "https://api.bilibili.com/x/relation/followings",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "vmid": "uid",
+                    "ps": 20,
+                    "pn": "页码",
+                    "order": "desc倒序,asc正序"
+                },
+                "comment": "获取用户关注列表（不是自己只能访问前5页）"
+            },
+            "followers": {
+                "url": "https://api.bilibili.com/x/relation/followers",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "vmid": "uid",
+                    "ps": 20,
+                    "pn": "页码",
+                    "order": "desc倒序,asc正序"
+                },
+                "comment": "获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）"
+            }
+        },
+        "operate": {
+            "modify": {
+                "url": "https://api.bilibili.com/x/relation/modify",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "fid": "UID",
+                    "act": "1关注2取关 3悄悄关注 5拉黑6取消拉黑，7移除粉丝",
+                    "re_src": 11
+                },
+                "comment": "用户关系操作"
+            },
+            "send_msg": {
+                "url": "https://api.vc.bilibili.com/web_im/v1/web_im/send_msg",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "msg[sender_uid]": "自己的UID",
+                    "msg[receiver_id]": "对方UID",
+                    "msg[receiver_type]": 1,
+                    "msg[msg_type]": 1,
+                    "msg[msg_status]": 0,
+                    "msg[content]": {
+                        "content": "文本内容"
+                    }
+                },
+                "comment": "给用户发信息"
+            }
+        }
+    },
+    "bangumi": {
+        "info": {
+            "meta":{
+                "url": "https://api.bilibili.com/pgc/review/user",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "media_id": "番剧的media_id(URL中的/mdxxxx)"
+                },
+                "comment": "获取番剧信息"
+            },
+            "episodes_list":{
+                "url":"https://api.bilibili.com/pgc/web/season/section",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "season_id": "番剧的season_id"
+                },
+                "comment": "获取番剧剧集列表"
+            },
+            "season_status":{
+                "url":"https://api.bilibili.com/pgc/web/season/stat",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "season_id": "番剧的season_id"
+                },
+                "comment": "获取番剧播放量，追番等信息"
+            },
+            "short_comment":{
+                "url":"https://api.bilibili.com/pgc/review/short/list",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "media_id": "番剧的media_id",
+                    "ps": 20,
+                    "sort": "排序方式0默认1按时间倒序",
+                    "cursor": "循环获取用，第一次调用本API返回中的next值"
+                },
+                "comment": "获取番剧短评"
+            },
+            "long_comment":{
+                "url":"https://api.bilibili.com/pgc/review/long/list",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "media_id": "番剧的media_id",
+                    "ps": 20,
+                    "sort": "排序方式0默认1按时间倒序",
+                    "cursor": "循环获取用，第一次调用本API返回中的next值"
+                },
+                "comment": "获取番剧长评"
+            },
+            "relate_video": {
+                "url":"https://api.bilibili.com/x/web-interface/tag/top?pn=10&ps=24&tid=8583026",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "tid": "频道ID",
+                    "ps": 20,
+                    "sort": "排序方式0默认1按时间倒序",
+                    "cursor": "循环获取用，第一次调用本API返回中的next值"
+                },
+                "comment": "获取番剧长评"
+            }
+        },
+        "operate": {
+            "follow_add":{
+                "url":"https://api.bilibili.com/pgc/web/follow/add",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "season_id": "番剧的season_id"
+                },
+                "comment": "追番"
+            },
+            "follow_del":{
+                "url":"https://api.bilibili.com/pgc/web/follow/del",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "season_id": "番剧的season_id"
+                },
+                "comment": "取消追番"
+            },
+            "follow_status":{
+                "url":"https://api.bilibili.com/pgc/web/follow/status/update",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "season_id": "番剧的season_id",
+                    "status": "1想看2在看3已看"
+                },
+                "comment": "追番状态"
+            }
+        }
+    },
+    "live": {
+        "info": {
+            "room_play_info":{
+                "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getRoomPlayInfo",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "room_id": "房间号"
+                },
+                "comment": "获取房间信息（真实房间号，封禁情况等）"
+            },
+            "chat_conf":{
+                "url": "https://api.live.bilibili.com/room/v1/Danmu/getConf",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "room_id": "真实房间号"
+                },
+                "comment": "获取聊天弹幕服务器配置信息(websocket)"
+            },
+            "room_info":{
+                "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "room_id": "真实房间号"
+                },
+                "comment": "获取直播间信息（标题，简介等）"
+            },
+            "user_info_in_room":{
+                "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByUser",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "room_id": "真实房间号"
+                },
+                "comment": "获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）"
+            },
+            "user_info":{
+                "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/get_user_info",
+                "method": "GET",
+                "verify": true,
+                "params": null,
+                "comment": "获取直播用户等级等信息"
+            },
+            "dahanghai": {
+                "url": "https://api.live.bilibili.com/xlive/app-room/v1/guardTab/topList",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "roomid": "真实房间号",
+                    "page": "页码",
+                    "ruid": "全称room_uid，从room_play_info里头的uid可以找到",
+                    "page_size": 29
+                },
+                "comment": "获取大航海列表"
+            },
+            "seven_rank":{
+                "url": "https://api.live.bilibili.com/rankdb/v1/RoomRank/webSevenRank",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "roomid": "真实房间号",
+                    "ruid": "全称room_uid，从room_play_info里头的uid可以找到"
+                },
+                "comment": "获取七日榜"
+            },
+            "fans_medal_rank":{
+                "url": "https://api.live.bilibili.com/rankdb/v1/RoomRank/webMedalRank",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "roomid": "真实房间号",
+                    "ruid": "全称room_uid，从room_play_info里头的uid可以找到"
+                },
+                "comment": "获取粉丝勋章排行榜"
+            },
+            "black_list":{
+                "url": "https://api.live.bilibili.com/liveact/ajaxGetBlockList",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "roomid": "真实房间号",
+                    "page": "页码"
+                },
+                "comment": "获取房间黑名单列表，登录账号需要是该房间房管"
+            }
+        },
+        "operate": {
+            "send_danmaku":{
+                "url": "https://api.live.bilibili.com/msg/send",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "roomid": "真实房间号",
+                    "color": "十进制颜色，有权限限制",
+                    "fontsize": 25,
+                    "mode": "1飞行5顶部4底部",
+                    "msg": "弹幕信息",
+                    "rnd": "当前时间戳",
+                    "bubble": "默认0，功能不知",
+                    "csrf,csrf_token": "要给两个"
+                },
+                "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
+            },
+            "add_block":{
+                "url": "https://api.live.bilibili.com/banned_service/v2/Silent/add_block_user",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "roomid": "真实房间号",
+                    "block_uid": "封禁用户UID",
+                    "hour": "小时",
+                    "visit_id": "空"
+                },
+                "comment": "封禁用户"
+            },
+            "del_block":{
+                "url": "https://api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "roomid": "真实房间号",
+                    "id": "封禁ID，从live.info.black_list中获取或者live.operate.add_black的返回值获取",
+                    "visit_id": "空"
+                },
+                "comment": "解封用户"
+            }
+        }
+    },
+    "article": {
+        "info": {
+            "view": {
+                "url": "https://api.bilibili.com/x/article/viewinfo",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "id": "cv号"
+                },
+                "comment": "专栏信息数据"
+            }
+        },
+        "operate": {
+            "like": {
+                "url": "https://api.bilibili.com/x/article/like",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "id": "cv号",
+                    "type": "1点赞2取消"
+                },
+                "comment": "专栏点赞"
+            },
+            "add_favorite": {
+                "url": "https://api.bilibili.com/x/article/favorites/add",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "id": "cv号"
+                },
+                "comment": "专栏收藏"
+            },
+            "del_favorite": {
+                "url": "https://api.bilibili.com/x/article/favorites/del",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "id": "cv号"
+                },
+                "comment": "专栏取消收藏"
+            },
+            "coin": {
+                "url": "https://api.bilibili.com/x/web-interface/coin/add",
+                "method": "POST",
+                "verify": true,
+                "params": {
+                    "aid": "cv号",
+                    "multiply": "硬币数量，目前只能是1个",
+                    "upid": "up主的uid",
+                    "avtype": 2
+                },
+                "comment": "专栏投币"
+            }
+        }
+    },
+    "common": {
+        "vote": {
+            "info": {
+                "get_info": {
+                    "url": "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info",
+                    "method": "GET",
+                    "verify": false,
+                    "params": {
+                        "vote_id": "投票ID"
+                    },
+                    "comment": "获取投票信息"
+                }
+            }
+        },
+        "comment": {
+            "send": {
+                "url": "https://api.bilibili.com/x/v2/reply/add",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "各种类型id",
+                    "type": "1视频，12专栏，11画册动态，17文字动态，14音频，19歌单。下同。",
+                    "message": "评论内容",
+                    "plat": "1",
+                    "root": "根评论rpid，即在谁的评论下面回复，为空时在oid下直接评论",
+                    "parent": "父评论rpid，即回复谁的评论，为空时在oid下直接评论"
+                },
+                "comment": "发送评论"
+            },
+            "like": {
+                "url": "https://api.bilibili.com/x/v2/reply/action",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "av号",
+                    "type": "1",
+                    "action": "1点赞0取消点赞",
+                    "rpid": "评论编号"
+                },
+                "comment": "点赞/取消点赞评论"
+            },
+            "hate": {
+                "url": "https://api.bilibili.com/x/v2/reply/hate",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "av号",
+                    "type": "1",
+                    "action": "1踩0取消踩",
+                    "rpid": "评论编号"
+                },
+                "comment": "踩/取消踩评论"
+            },
+            "top": {
+                "url": "https://api.bilibili.com/x/v2/reply/top",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "av号",
+                    "type": "1",
+                    "action": "1置顶0取消置顶",
+                    "rpid": "评论编号"
+                },
+                "comment": "置顶/取消置顶评论"
+            },
+            "del": {
+                "url": "https://api.bilibili.com/x/v2/reply/del",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "oid": "av号",
+                    "type": "1",
+                    "rpid": "评论编号"
+                },
+                "comment": "删除评论"
+            },
+            "get": {
+                "url": "https://api.bilibili.com/x/v2/reply",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "pn": "页码",
+                    "type": "",
+                    "oid": "动态时画册id或动态id",
+                    "sort": "2按热度0按时间"
+                },
+                "comment": "获取评论"
+            }
+        },
+        "dynamic_share": {
+            "url": "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/share",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "uid": "up uid，经测试可为0",
+                "type": "8视频(rid=av)，64专栏(rid=cv)，256音频(rid=au)，2048自定义分享，4097番剧(rid=ep)，",
+                "share_uid": "自己的uid，经测试可为0",
+                "content": "动态内容",
+                "rid": "视频是aid，专栏是cv，以此类推",
+                "csrf,csrf_token": "同时提供这两个"
+            },
+            "case_type_eq_2048": {
+                "params": {
+                    "+sketch[title]": "标题",
+                    "+sketch[biz_type]": 131,
+                    "+sketch[cover_url]": "图片链接",
+                    "+sketch[target_url]": "跳转链接，仅限站内，间接站外跳转：https://game.bilibili.com/linkfilter/?url="
+                }
+            },
+            "comment": "站内资源分享到动态"
+        },
+        "online": {
+            "url": "https://api.bilibili.com/x/web-interface/online",
+            "method": "GET",
+            "verify": false,
+            "comment": "获取在线人数"
+        },
+        "favorite": {
+            "get_favorite_list_old": {
+                "url": "https://api.bilibili.com/medialist/gateway/base/created",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "up_mid": "用户uid",
+                    "type": "12音频",
+                    "pn": "页码",
+                    "ps": 100,
+                    "rid": "音频(au)"
+                },
+                "comment": "获取媒体收藏情况，必须使用Referer"
+            },
+            "get_favorite_list": {
+                "url": "https://api.bilibili.com/x/v3/fav/folder/created/list-all",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "up_mid": "用户uid"
+                },
+                "case_需要获取媒体收藏情况": {
+                    "+type": "2视频",
+                    "+rid": "视频(aid)"
+                },
+                "comment": "获取收藏夹列表信息"
+            },
+            "get_favorite_list_content": {
+                "url": "https://api.bilibili.com/x/v3/fav/resource/list",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "media_id": "收藏夹id",
+                    "ps": 20,
+                    "pn": "页码",
+                    "keyword": "搜索关键词",
+                    "order": "排序依据。mtime最近收藏，view最多播放，pubtime最新投稿",
+                    "type": 0,
+                    "tid": "分区ID，0为全部"
+                },
+                "comment": "获取收藏夹内容"
+            },
+            "operate_favorite": {
+                "url": "https://api.bilibili.com/medialist/gateway/coll/resource/deal",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "rid": "视频aid，音频au",
+                    "type": "2视频，12音频",
+                    "add_media_ids": "添加收藏（多个收藏夹时半角逗号分隔）",
+                    "del_media_ids": "移除收藏（多个收藏夹时半角逗号分隔）"
+                },
+                "comment": "收藏夹修改"
+            }
+        }
+    },
+    "audio": {
+        "audio_info": {
+            "info": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/song/info",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "sid": "音频au号"
+                },
+                "comment": "获取音频信息"
+            },
+            "tag": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/tag/song",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "sid": "音频au号"
+                },
+                "comment": "获取音频tag"
+            },
+            "user": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/stat/user",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "uid": "用户UID"
+                },
+                "comment": "获取用户数据（收听数，粉丝数等）"
+            },
+            "download_url": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/url",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "sid": "音频au号",
+                    "privilege": 2,
+                    "quality": 2
+                },
+                "comment": "获取音频文件下载链接，目前音质貌似不可控"
+            }
+        },
+        "audio_operate": {
+            "coin": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/coin/add",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "sid": "歌单ID",
+                    "multiply": "硬币数量，最大2"
+                },
+                "comment": "投币"
+            }
+        },
+        "list_info": {
+            "info": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/menu/info",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "sid": "歌单ID"
+                },
+                "comment": "获取歌单信息"
+            },
+            "tag": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/tag/menu",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "sid": "歌单ID"
+                },
+                "comment": "获取歌单tag"
+            },
+            "song_list": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/song/of-menu",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "sid": "歌单ID",
+                    "pn": "页码",
+                    "ps": 100
+                },
+                "comment": "获取歌单歌曲列表"
+            }
+        },
+        "list_operate": {
+            "set_favorite": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/collect/menu",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "sid": "歌单ID"
+                },
+                "comment": "收藏歌单"
+            },
+            "del_favorite": {
+                "url": "https://www.bilibili.com/audio/music-service-c/web/collect/menu",
+                "method": "DELETE",
+                "verify": true,
+                "params": {
+                    "sid": "歌单ID"
+                },
+                "data": {
+                    "csrf": "csrf"
+                },
+                "comment": "取消收藏歌单"
+            }
+        }
+    },
+    "channel": {
+        "ranking": {
+            "get_top10": {
+                "url": "https://api.bilibili.com/x/web-interface/ranking/region?rid=160&day=3&original=0",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "rid": "tid，分区id",
+                    "day": "3，7"
+                },
+                "comment": "获取分区前十排行榜"
+            }
+        }
+    }
+}

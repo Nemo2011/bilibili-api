@@ -1,4 +1,6 @@
 /dist
 /.idea
-test*.py
+test*.*
 **/__pycache__
+/bilibili_api.egg-info
+/design
