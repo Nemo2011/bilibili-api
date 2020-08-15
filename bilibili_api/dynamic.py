@@ -15,7 +15,6 @@ from . import user, exceptions, utils
 import re
 import json
 import datetime
-from .common import get_vote_info
 
 API = utils.get_api()
 
