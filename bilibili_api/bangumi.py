@@ -12,7 +12,6 @@ r"""
 """
 
 from . import utils, exceptions, common
-from .common import get_vote_info
 
 API = utils.get_api()
 
@@ -41,7 +40,7 @@ def get_short_comments_raw(media_id: int, ps: int = 20, sort: str = "default",
     低层级API获取短评列表
     :param media_id:
     :param ps: 默认20即可
-    :param sort: 排序方式0默认1按时间倒序
+    :param sort: 排序方式default默认time按时间倒序
     :param cursor: 循环获取用，第一次调用本API返回中的next值
     :param verify:
     :return:
@@ -208,7 +207,7 @@ def get_interact_data(season_id: int, verify: utils.Verify = None):
     resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
     return resp
 
-
+# TODO 获取ep信息，在window.__INITIAL_STATE__
 # 番剧操作
 
 
