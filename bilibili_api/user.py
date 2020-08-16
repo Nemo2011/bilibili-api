@@ -603,6 +603,25 @@ def get_followers(uid: int, order: str = "desc", limit: int = 114514, callback=N
     return followings[:limit]
 
 
+def get_overview(uid: int, verify: utils.Verify = None):
+    """
+    获取用户的简易订阅和投稿信息
+    :param uid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    api = API["user"]["info"]["overview"]
+    params = {
+        "mid": uid,
+        "jsonp": "jsonp",
+        "callback": "__jp8"
+    }
+    data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return data
+
+
 # 操作用户
 
 
