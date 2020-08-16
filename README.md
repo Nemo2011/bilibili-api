@@ -202,7 +202,7 @@ PR: Pull request
 
 1. 如果你要增加新的API，请先在 `data/api.json` 中对应分类增加API的详细说明，具体格式可以参照现有的内容。另外，请对增加的API代码注释进行详尽的说明，每个参数除非含义十分明显（如bvid），都进行说明，具体格式可以参照现有代码。
 2. 希望你能在肝代码前，看看现有的代码风格，尽量模仿，方便日♂后维护。[这里有一份代码风格规范文档可以参考](https://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_style_rules/)，实际上如果你使用的IDE是PyCharm，也会对你的代码进行指导。当然，如果你执意不遵守的话............那我就会累死了QAQ。
-3. **所有PR请向develop分支发起 **
+3. **所有PR请向develop分支发起**
 
 **计划写一份面向开发者的开发文档 ~~(咕咕咕)~~**
 
