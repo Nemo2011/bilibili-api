@@ -12,6 +12,7 @@ r"""
 """
 import json
 import datetime
+import re
 import time
 import os
 import requests
@@ -353,7 +354,10 @@ def request(method: str, url: str, params=None, data=None, cookies=None, headers
         content = req.content.decode("utf8")
         if req.headers.get("content-length") == 0:
             return None
-        con = json.loads(content)
+        if 'jsonp' in params and 'callback' in params:
+            con=json.loads(re.match(".*?({.*}).*", content, re.S).group(1)) # 正则处理jsonp问题
+        else:
+            con = json.loads(content)
         if con["code"] != 0:
             if "message" in con:
                 msg = con["message"]
