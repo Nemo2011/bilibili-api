@@ -46,6 +46,6 @@ setuptools.setup(
     },
     python_requires=">=3",
     data_files=[
-        ("", ["./LICENSE.md", "./CHANGELOG.md"])
+        ("", ["./LICENSE.md", "./CHANGELOG.md", "./docs"])
     ]
 )
