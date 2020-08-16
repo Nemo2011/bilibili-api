@@ -106,7 +106,7 @@ def get_short_comments(media_id: int, order: str = "default", limit: int = 11451
 def get_long_comments_raw(media_id: int, ps: int = 20, sort: str = "default",
                           cursor: str = None, verify: utils.Verify = None):
     """
-    低层级API获取短评列表
+    低层级API获取长评列表
     :param media_id:
     :param ps: 默认20即可
     :param sort: 排序方式0默认1按时间倒序
@@ -138,7 +138,7 @@ def get_long_comments_raw(media_id: int, ps: int = 20, sort: str = "default",
 def get_long_comments(media_id: int, order: str = "default", limit: int = 114514,
                       callback=None, verify: utils.Verify = None):
     """
-    自动循环获取短评
+    自动循环获取长评
     :param callback: 回调函数，每次获取到一页会将该页数据传入指定的函数
     :param media_id:
     :param order: default（默认排序）time（时间倒序）
