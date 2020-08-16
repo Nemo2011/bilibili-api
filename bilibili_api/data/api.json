@@ -553,6 +553,17 @@
                     "order": "desc倒序,asc正序"
                 },
                 "comment": "获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）"
+            },
+            "navnum": {
+                "url": "https://api.bilibili.com/x/space/navnum",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "mid": "uid",
+                    "jsonp": "jsonp",
+                    "callback": "__jp8"
+                },
+                "comment": "获取用户的简易订阅和投稿信息(主要是这些的数量统计)"
             }
         },
         "operate": {
