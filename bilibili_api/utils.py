@@ -336,7 +336,7 @@ class CrackUid(object):
 # 请求相关
 
 
-def request(method: str, url: str, params=None, data=None, cookies=None, headers=None, **kwargs):
+def request(method: str, url: str, params=None, data_type: str = 'json',data=None, cookies=None, headers=None, **kwargs):
     st = {
         "url": url,
         "params": params,
@@ -354,28 +354,31 @@ def request(method: str, url: str, params=None, data=None, cookies=None, headers
         content = req.content.decode("utf8")
         if req.headers.get("content-length") == 0:
             return None
-        con = json.loads(content)
-        if con["code"] != 0:
-            if "message" in con:
-                msg = con["message"]
-            elif "msg" in con:
-                msg = con["msg"]
-            else:
-                msg = "请求失败，服务器未返回失败原因"
-            raise exceptions.BilibiliException(con["code"], msg)
+        if data_type=='text':
+            return content
         else:
-            if 'data' in con.keys():
-                return con['data']
-            else:
-                if 'result' in con.keys():
-                    return con["result"]
+            con = json.loads(content)
+            if con["code"] != 0:
+                if "message" in con:
+                    msg = con["message"]
+                elif "msg" in con:
+                    msg = con["msg"]
                 else:
-                    return None
+                    msg = "请求失败，服务器未返回失败原因"
+                raise exceptions.BilibiliException(con["code"], msg)
+            else:
+                if 'data' in con.keys():
+                    return con['data']
+                else:
+                    if 'result' in con.keys():
+                        return con["result"]
+                    else:
+                        return None
     else:
         raise exceptions.NetworkException(req.status_code)
 
 
-def get(url, params=None, cookies=None, headers=None, **kwargs):
+def get(url, params=None, cookies=None, headers=None, data_type: str = 'json',**kwargs):
     """
     专用GET请求
     :param url:
@@ -385,11 +388,11 @@ def get(url, params=None, cookies=None, headers=None, **kwargs):
     :param kwargs:
     :return:
     """
-    resp = request("GET", url=url, params=params, cookies=cookies, headers=headers, **kwargs)
+    resp = request("GET", url=url, params=params, cookies=cookies, headers=headers, data_type= data_type,**kwargs)
     return resp
 
 
-def post(url, cookies, data=None, headers=None, **kwargs):
+def post(url, cookies, data=None, headers=None,data_type: str = 'json', **kwargs):
     """
     专用POST请求
     :param url:
@@ -399,7 +402,7 @@ def post(url, cookies, data=None, headers=None, **kwargs):
     :param kwargs:
     :return:
     """
-    resp = request("POST", url=url, data=data, cookies=cookies, headers=headers, **kwargs)
+    resp = request("POST", url=url, data=data, cookies=cookies, headers=headers,data_type= data_type, **kwargs)
     return resp
 
 
