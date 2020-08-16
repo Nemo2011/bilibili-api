@@ -554,7 +554,7 @@
                 },
                 "comment": "获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）"
             },
-            "navnum": {
+            "overview": {
                 "url": "https://api.bilibili.com/x/space/navnum",
                 "method": "GET",
                 "verify": false,

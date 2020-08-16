@@ -12,6 +12,7 @@ r"""
 """
 import json
 import datetime
+import re
 import time
 import os
 import requests
@@ -336,7 +337,7 @@ class CrackUid(object):
 # 请求相关
 
 
-def request(method: str, url: str, params=None, data_type: str = 'json',data=None, cookies=None, headers=None, **kwargs):
+def request(method: str, url: str, params=None, data=None, cookies=None, headers=None, **kwargs):
     st = {
         "url": url,
         "params": params,
@@ -354,31 +355,31 @@ def request(method: str, url: str, params=None, data_type: str = 'json',data=Non
         content = req.content.decode("utf8")
         if req.headers.get("content-length") == 0:
             return None
-        if data_type=='text':
-            return content
+        if 'jsonp' in params.keys() or 'callback' in params.keys():
+            con=json.loads(re.match(".*?({.*}).*", content, re.S).group(1)) # 正则处理jsonp问题
         else:
             con = json.loads(content)
-            if con["code"] != 0:
-                if "message" in con:
-                    msg = con["message"]
-                elif "msg" in con:
-                    msg = con["msg"]
-                else:
-                    msg = "请求失败，服务器未返回失败原因"
-                raise exceptions.BilibiliException(con["code"], msg)
+        if con["code"] != 0:
+            if "message" in con:
+                msg = con["message"]
+            elif "msg" in con:
+                msg = con["msg"]
             else:
-                if 'data' in con.keys():
-                    return con['data']
+                msg = "请求失败，服务器未返回失败原因"
+            raise exceptions.BilibiliException(con["code"], msg)
+        else:
+            if 'data' in con.keys():
+                return con['data']
+            else:
+                if 'result' in con.keys():
+                    return con["result"]
                 else:
-                    if 'result' in con.keys():
-                        return con["result"]
-                    else:
-                        return None
+                    return None
     else:
         raise exceptions.NetworkException(req.status_code)
 
 
-def get(url, params=None, cookies=None, headers=None, data_type: str = 'json',**kwargs):
+def get(url, params=None, cookies=None, headers=None, **kwargs):
     """
     专用GET请求
     :param url:
@@ -388,11 +389,11 @@ def get(url, params=None, cookies=None, headers=None, data_type: str = 'json',**
     :param kwargs:
     :return:
     """
-    resp = request("GET", url=url, params=params, cookies=cookies, headers=headers, data_type= data_type,**kwargs)
+    resp = request("GET", url=url, params=params, cookies=cookies, headers=headers, **kwargs)
     return resp
 
 
-def post(url, cookies, data=None, headers=None,data_type: str = 'json', **kwargs):
+def post(url, cookies, data=None, headers=None, **kwargs):
     """
     专用POST请求
     :param url:
@@ -402,7 +403,7 @@ def post(url, cookies, data=None, headers=None,data_type: str = 'json', **kwargs
     :param kwargs:
     :return:
     """
-    resp = request("POST", url=url, data=data, cookies=cookies, headers=headers,data_type= data_type, **kwargs)
+    resp = request("POST", url=url, data=data, cookies=cookies, headers=headers, **kwargs)
     return resp
 
 
