@@ -616,7 +616,7 @@ def get_overview(uid: int, verify: utils.Verify = None):
     params = {
         "mid": uid,
         "jsonp": "jsonp",
-        "callback": "__jp8"  # 必须带有这个默认的参数
+        "callback": "__jp8"
     }
     data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
     return data
