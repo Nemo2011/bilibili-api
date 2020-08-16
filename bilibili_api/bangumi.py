@@ -12,6 +12,9 @@ r"""
 """
 
 from . import utils, exceptions, common
+import requests
+import re
+import json
 
 API = utils.get_api()
 
@@ -206,6 +209,30 @@ def get_interact_data(season_id: int, verify: utils.Verify = None):
     }
     resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
     return resp
+
+
+def get_episode_info(epid: int, verify: utils.Verify = None):
+    """
+    获取番剧ep信息
+    :param epid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    resp = requests.get(f"https://www.bilibili.com/bangumi/play/ep{epid}",
+                        cookies=verify.get_cookies(), headers=utils.DEFAULT_HEADERS)
+    if resp.status_code != 200:
+        raise exceptions.NetworkException(resp.status_code)
+    pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
+    match = re.search(pattern, resp.content.decode())
+    if match is None:
+        raise exceptions.BilibiliApiException("未找到番剧信息")
+    try:
+        content = json.loads(match.group(1))
+    except json.JSONDecodeError:
+        raise exceptions.BilibiliApiException("信息解析错误")
+    return content
 
 # TODO 获取ep信息，在window.__INITIAL_STATE__
 # 番剧操作
