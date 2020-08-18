@@ -14,6 +14,14 @@
 
 ## 方法
 
+### get_collective_info
+
+获取总体信息，结合 get_episode_info 和 get_meta 等
+
+| 参数名   | 类型 | 必须提供 | 默认 | 释义 |
+| -------- | ---- | -------- | ---- | ---- |
+| season_id | int  | True     | -    |   https://www.bilibili.com/bangumi/play/ep259653   |
+
 ### get_episode_info
 
 获取番剧单集信息
