@@ -209,6 +209,24 @@ def get_interact_data(season_id: int, verify: utils.Verify = None):
     return resp
 
 
+def get_bangumi_info(season_id: int, verify: utils.Verify = None):
+    """
+    获取番剧全面概括信息,包括发布时间、剧集情况、stat等情况
+    :param season_id:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["bangumi"]["info"]["info"]
+    params = {
+        "season_id": season_id
+    }
+    resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return resp
+
+
 # 番剧操作
 
 
@@ -273,6 +291,7 @@ def share_to_dynamic(epid: int, content: str, verify: utils.Verify = None):
     """
     resp = common.dynamic_share("bangumi", epid, content, verify=verify)
     return resp
+
 
 """
 こころぴょんぴょん待ち  考えるふりして  もうちょっと近づいちゃえ　♪
