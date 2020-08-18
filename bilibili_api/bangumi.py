@@ -234,6 +234,25 @@ def get_episode_info(epid: int, verify: utils.Verify = None):
         raise exceptions.BilibiliApiException("信息解析错误")
     return content
 
+
+def get_collective_info(season_id: int, verify: utils.Verify = None):
+    """
+    获取番剧全面概括信息,包括发布时间、剧集情况、stat等情况
+    :param season_id:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["bangumi"]["info"]["collective_info"]
+    params = {
+        "season_id": season_id
+    }
+    resp = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return resp
+
+
 # TODO 获取ep信息，在window.__INITIAL_STATE__
 # 番剧操作
 

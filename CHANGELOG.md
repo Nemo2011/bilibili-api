@@ -1,8 +1,11 @@
 # 更新日志
 
++ V2.0.2
+    + 新增接口：bangumi.get_collective_info，获取番剧全面概括信息,包括发布时间、剧集情况、stat等情况
+
 + V2.0.1 2020/08/16
     + 增加开发文档
-    + 增加获取用户投稿数据概览接口 user.get_overview
+    + 增加获取用户投稿和订阅数据概览接口 user.get_overview
     + 修正注释错误
     + 新增接口：bangumi.get_episode_info，获取番剧剧集信息
     
