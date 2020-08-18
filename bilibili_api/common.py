@@ -62,11 +62,11 @@ def send_comment(text: str, oid: int, type_: str, root: int = None,
         "csrf": verify.csrf
     }
     if parent is not None and root is None:
-        # 回复动态下面的评论
+        # 直接回复媒体
         data["root"] = oid
         data["parent"] = parent
     elif parent is None and root is not None:
-        # 直接回复动态
+        # 回复动态下面的评论
         data["root"] = root
         data["parent"] = root
     elif parent is not None and root is not None:

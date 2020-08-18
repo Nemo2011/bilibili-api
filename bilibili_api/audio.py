@@ -12,7 +12,6 @@ r"""
 """
 
 from . import utils, exceptions, common, user
-from .common import get_vote_info
 
 API = utils.get_api()
 

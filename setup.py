@@ -38,13 +38,14 @@ setuptools.setup(
             "tools/*.*"
         ]
     },
+    url="https://passkou.com/bilibili_api",
     project_urls={
-        "Github": "https://github.com/Passkou/bilibili_api",
+        "Source": "https://github.com/Passkou/bilibili_api",
         "Homepage": "https://passkou.com/bilibili_api",
         "Documentation": "https://passkou.com/docs/bilibili_api"
     },
     python_requires=">=3",
     data_files=[
-        ("", ["./LICENSE.md", "./CHANGELOG.md"])
+        ("", ["./LICENSE.md", "./CHANGELOG.md", "./docs"])
     ]
 )

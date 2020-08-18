@@ -18,7 +18,6 @@ import os
 import requests
 from bilibili_api import exceptions
 import urllib3
-from zlib import crc32
 
 request_settings = {
     "use_https": True,

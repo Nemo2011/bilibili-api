@@ -17,7 +17,6 @@ from xml.dom.minidom import parseString
 import re
 import datetime
 import time
-from .common import get_vote_info
 
 API = utils.get_api()
 
