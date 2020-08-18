@@ -12,7 +12,9 @@ r"""
 """
 
 from . import utils, exceptions, common
-from .common import get_vote_info
+import requests
+import re
+import json
 
 API = utils.get_api()
 
@@ -41,7 +43,7 @@ def get_short_comments_raw(media_id: int, ps: int = 20, sort: str = "default",
     低层级API获取短评列表
     :param media_id:
     :param ps: 默认20即可
-    :param sort: 排序方式0默认1按时间倒序
+    :param sort: 排序方式default默认time按时间倒序
     :param cursor: 循环获取用，第一次调用本API返回中的next值
     :param verify:
     :return:
@@ -209,6 +211,30 @@ def get_interact_data(season_id: int, verify: utils.Verify = None):
     return resp
 
 
+def get_episode_info(epid: int, verify: utils.Verify = None):
+    """
+    获取番剧ep信息
+    :param epid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    resp = requests.get(f"https://www.bilibili.com/bangumi/play/ep{epid}",
+                        cookies=verify.get_cookies(), headers=utils.DEFAULT_HEADERS)
+    if resp.status_code != 200:
+        raise exceptions.NetworkException(resp.status_code)
+    pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
+    match = re.search(pattern, resp.content.decode())
+    if match is None:
+        raise exceptions.BilibiliApiException("未找到番剧信息")
+    try:
+        content = json.loads(match.group(1))
+    except json.JSONDecodeError:
+        raise exceptions.BilibiliApiException("信息解析错误")
+    return content
+
+
 def get_bangumi_info(season_id: int, verify: utils.Verify = None):
     """
     获取番剧全面概括信息,包括发布时间、剧集情况、stat等情况
@@ -227,6 +253,7 @@ def get_bangumi_info(season_id: int, verify: utils.Verify = None):
     return resp
 
 
+# TODO 获取ep信息，在window.__INITIAL_STATE__
 # 番剧操作
 
 
@@ -291,7 +318,6 @@ def share_to_dynamic(epid: int, content: str, verify: utils.Verify = None):
     """
     resp = common.dynamic_share("bangumi", epid, content, verify=verify)
     return resp
-
 
 """
 こころぴょんぴょん待ち  考えるふりして  もうちょっと近づいちゃえ　♪
