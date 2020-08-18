@@ -2,7 +2,7 @@
 
 + V2.0.1 2020/08/16
     + 增加开发文档
-    + 增加获取用户投稿数据概览接口 user.get_overview
+    + 增加获取用户投稿和订阅数据概览接口 user.get_overview
     + 修正注释错误
     + 新增接口：bangumi.get_episode_info，获取番剧剧集信息
     
