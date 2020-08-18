@@ -1,5 +1,4 @@
 import setuptools
-import bilibili_api
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -7,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='bilibili_api',
-    version=bilibili_api.META["version"],
+    version="2.0.2",
     license='GPLv3+',
     author='Passkou',
     author_email='psk116@outlook.com',
