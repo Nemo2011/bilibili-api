@@ -2,7 +2,7 @@
 
 # bilibili_api
 
-[![版本](https://img.shields.io/badge/版本-2.0.0-green)](https://github.com/Passkou/bilibili_api/tree/master/changelog.md) [![API数量](https://img.shields.io/badge/API数量-100+-blue)](https://github.com/Passkou/bilibili_api/tree/master/bilibili_api/data/api.json) [![STARS](https://img.shields.io/github/stars/Passkou/bilibili_api?color=yellow&label=Github%20Stars)](https://github.com/Passkou/bilibili_api/stargazers) [![LICENSE](https://img.shields.io/badge/LICENSE-GPL%20v3-red)](https://github.com/Passkou/bilibili_api/tree/master/LICENSE.md) ![Python](https://img.shields.io/badge/Python-3.x-blue) [![](https://img.shields.io/badge/这个标签太好玩了-.py-orange)](https://shields.io/)
+[![版本](https://img.shields.io/badge/版本-2.0.1-green)](https://github.com/Passkou/bilibili_api/tree/master/CHANGELOG.md) [![API数量](https://img.shields.io/badge/API数量-100+-blue)](https://github.com/Passkou/bilibili_api/tree/master/bilibili_api/data/api.json) [![STARS](https://img.shields.io/github/stars/Passkou/bilibili_api?color=yellow&label=Github%20Stars)](https://github.com/Passkou/bilibili_api/stargazers) [![LICENSE](https://img.shields.io/badge/LICENSE-GPL%20v3-red)](https://github.com/Passkou/bilibili_api/tree/master/LICENSE.md) ![Python](https://img.shields.io/badge/Python-3.x-blue) [![](https://img.shields.io/badge/这个标签太好玩了-.py-orange)](https://shields.io/)
 
 **项目官网**: [bilibili_api 官网][homepage]
 
@@ -139,7 +139,7 @@ video.set_like("BV1uv411q7Mv", True, verify)
 
 请求速度不要过快，自己测试简单的线性请求（如单线程使用循环结构）请求是不会触发风控策略的，当然这是大部分API，以实际情况为准。
 
-如果你使用多线程、多进程或者并发等在同一时间点请求多次的方法，可能会触发b站风控策略，返回的状态码是413（应该，忘了），导致无法继续使用爬虫。
+如果你使用多线程、多进程或者并发等在同一时间点请求多次的方法，可能会触发b站风控策略，返回的状态码是412，导致无法继续使用爬虫。
 
 当然如果你已经触发风控策略，可以通过设置代理来绕过。设置方法如下：
 
@@ -202,6 +202,7 @@ PR: Pull request
 
 1. 如果你要增加新的API，请先在 `data/api.json` 中对应分类增加API的详细说明，具体格式可以参照现有的内容。另外，请对增加的API代码注释进行详尽的说明，每个参数除非含义十分明显（如bvid），都进行说明，具体格式可以参照现有代码。
 2. 希望你能在肝代码前，看看现有的代码风格，尽量模仿，方便日♂后维护。[这里有一份代码风格规范文档可以参考](https://zh-google-styleguide.readthedocs.io/en/latest/google-python-styleguide/python_style_rules/)，实际上如果你使用的IDE是PyCharm，也会对你的代码进行指导。当然，如果你执意不遵守的话............那我就会累死了QAQ。
+3. **所有PR请向develop分支发起**
 
 **计划写一份面向开发者的开发文档 ~~(咕咕咕)~~**
 
@@ -211,9 +212,10 @@ PR: Pull request
 
 你以为我要恰饭？那么你错了2333。做这个项目只是我的业余工作，暂不计划接受个人赞助。如果你想支持一下这个项目，可以做以下几点：
 
-1. 如果你的项目中用到了这个库，可以在说明文档中标注一下这个项目的Github地址或者 [项目官网地址][homepage] 。
-2. 如果你用了这个项目进行爬虫，制作了数据统计视频并发到b站或其他视频平台，你也可以在简介中注明一下用到了这个模块，这就够了。
-3. 当然，你也可以参与维护这个项目，提交PR即可。
+1. GitHub上给个小星星（star）~
+2. 如果你的项目中用到了这个库，可以在说明文档中标注一下这个项目的Github地址或者 [项目官网地址][homepage] 。
+3. 如果你用了这个项目进行爬虫，制作了数据统计视频并发到b站或其他视频平台，你也可以在简介中注明一下用到了这个模块，这就够了。
+4. 当然，你也可以参与维护这个项目，提交PR即可。
 
 # 脚注
 

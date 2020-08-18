@@ -22,7 +22,6 @@ import time
 import datetime
 import json
 import re
-from .common import get_vote_info
 
 API = utils.get_api()
 
