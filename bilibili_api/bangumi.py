@@ -235,7 +235,7 @@ def get_episode_info(epid: int, verify: utils.Verify = None):
     return content
 
 
-def get_bangumi_info(season_id: int, verify: utils.Verify = None):
+def get_collective_info(season_id: int, verify: utils.Verify = None):
     """
     获取番剧全面概括信息,包括发布时间、剧集情况、stat等情况
     :param season_id:
@@ -245,7 +245,7 @@ def get_bangumi_info(season_id: int, verify: utils.Verify = None):
     if verify is None:
         verify = utils.Verify()
 
-    api = API["bangumi"]["info"]["info"]
+    api = API["bangumi"]["info"]["collective_info"]
     params = {
         "season_id": season_id
     }

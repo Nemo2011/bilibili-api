@@ -661,7 +661,7 @@
                 },
                 "comment": "获取番剧长评"
             },
-            "info": {
+            "collective_info": {
                 "url": "http://api.bilibili.com/pgc/view/web/season",
                 "method": "GET",
                 "verify": false,
