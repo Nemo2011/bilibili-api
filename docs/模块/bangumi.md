@@ -20,7 +20,7 @@
 
 | 参数名   | 类型 | 必须提供 | 默认 | 释义 |
 | -------- | ---- | -------- | ---- | ---- |
-| season_id | int  | True     | -    |   https://www.bilibili.com/bangumi/play/ep259653   |
+| season_id | int  | True     | -    |     |
 
 ### get_episode_info
 
