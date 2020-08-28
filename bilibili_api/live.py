@@ -175,6 +175,10 @@ def get_dahanghai(room_real_id: int, limit: int = 114514, callback=None, verify:
     page = 1
     while count < limit:
         resp = get_dahanghai_raw(room_real_id=room_real_id, ruid=ruid, page=page, verify=verify)
+        if page == 1:
+            if len(resp['top3']) != 0:
+                count += len(resp["top3"])
+                users += resp["top3"]
         if len(resp["list"]) == 0:
             break
         count += len(resp["list"])
