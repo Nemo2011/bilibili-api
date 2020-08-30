@@ -18,6 +18,7 @@ import os
 import requests
 from bilibili_api import exceptions
 import urllib3
+import copy
 
 request_settings = {
     "use_https": True,
@@ -337,11 +338,19 @@ class CrackUid(object):
 
 
 def request(method: str, url: str, params=None, data=None, cookies=None, headers=None, **kwargs):
+    if params is None:
+        params = {}
+    if data is None:
+        data = {}
+    if cookies is None:
+        cookies = {},
+    if headers is None:
+        headers = copy.deepcopy(DEFAULT_HEADERS)
     st = {
         "url": url,
         "params": params,
         "cookies": cookies,
-        "headers": DEFAULT_HEADERS if headers is None else headers,
+        "headers": headers,
         "verify": request_settings["use_https"],
         "data": data,
         "proxies": request_settings["proxies"]
@@ -355,7 +364,7 @@ def request(method: str, url: str, params=None, data=None, cookies=None, headers
         if req.headers.get("content-length") == 0:
             return None
         if 'jsonp' in params and 'callback' in params:
-            con=json.loads(re.match(".*?({.*}).*", content, re.S).group(1)) # 正则处理jsonp问题
+            con = json.loads(re.match(".*?({.*}).*", content, re.S).group(1))
         else:
             con = json.loads(content)
         if con["code"] != 0:
