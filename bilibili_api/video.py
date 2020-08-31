@@ -208,7 +208,7 @@ def get_pages(bvid: str = None, aid: int = None, verify: utils.Verify = None):
     return get
 
 
-def get_download_url(bvid: str = None, aid: int = None, page: int = 0, video_quality: str = None,
+def get_download_url(bvid: str = None, aid: int = None, page: int = 0,
                      verify: utils.Verify = None):
     """
     获取视频下载链接
@@ -216,7 +216,6 @@ def get_download_url(bvid: str = None, aid: int = None, page: int = 0, video_qua
     :param bvid:
     :param page:
     :param verify:
-    :param video_quality: 目前可下载的视频质量:['1080P60', '720P60', '1080P', '720P', '480P', '360P']
     :return:
     """
     if not (aid or bvid):
@@ -238,31 +237,22 @@ def get_download_url(bvid: str = None, aid: int = None, page: int = 0, video_qua
         match = re.search("<script>window.__playinfo__=(.*?)</script>", req.text)
         if match is not None:
             text = match.group(1)
-            playurl = json.loads(text)
-            try:
-                video_describe = playurl['data']['accept_description']
-                video_accept_quality = playurl['data']['accept_quality']
-            except:
-                raise exceptions.BilibiliApiException(msg="视频类型错误")
-            video_quality_dict = dict(zip(video_describe, video_accept_quality))
-            vquality = [video_quality_dict[v] for v in video_quality_dict.keys() if
-                        re.search(fr'.*{video_quality}$', v)]
-            if vquality is None or video_quality is None:
-                vquality = ''
+            data = json.loads(text)
+            if data['code'] != 0:
+                raise exceptions.BilibiliException(data['code'], data['messsage'])
+            playurl = data['data']
         else:
-            vquality = ''
-
-        page_id = video_info["pages"][page]["cid"]
-        url = API["video"]["info"]["playurl"]["url"]
-        params = {
-            "bvid": bvid,
-            "avid": aid,
-            "qn": vquality,
-            "cid": page_id,
-            "otype": 'json',
-            "fnval": 16
-        }
-        playurl = utils.get(url=url, params=params, cookies=verify.get_cookies())
+            page_id = video_info["pages"][page]["cid"]
+            url = API["video"]["info"]["playurl"]["url"]
+            params = {
+                "bvid": bvid,
+                "avid": aid,
+                "qn": 120,
+                "cid": page_id,
+                "otype": 'json',
+                "fnval": 16
+            }
+            playurl = utils.get(url=url, params=params, cookies=verify.get_cookies())
         return playurl
     else:
         raise exceptions.NetworkException(req.status_code)
