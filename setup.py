@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name='bilibili_api',
-    version="2.0.4",
+    version="2.0.5",
     license='GPLv3+',
     author='Passkou',
     author_email='psk116@outlook.com',
