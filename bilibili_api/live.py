@@ -402,7 +402,7 @@ class LiveDanmaku(object):
         循环收取数据
         :return:
         """
-        asyncio.gather(self.__heartbeat())
+        asyncio.create_task(self.__heartbeat())
         while True:
             try:
                 data = await self.__recv()
