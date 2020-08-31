@@ -356,7 +356,7 @@ def request(method: str, url: str, params=None, data=None, cookies=None, headers
         "proxies": request_settings["proxies"]
     }
     st.update(kwargs)
-
+    print(st)
     req = requests.request(method, **st)
 
     if req.ok:
@@ -501,7 +501,21 @@ def upload_image(image_path: str, verify: Verify):
     return resp
 
 
-
+def map_vedio_type(video_describe: list, video_accept_quality: list, download_type: str):
+    '''
+    下载格式 1080P60 -> 高清 1080P60
+    :param video_describe: 视频类型描述
+    :param video_accept_quality: 视频类型映射
+    :param download_type: 输入字段
+    :return:
+    '''
+    if video_describe is None or video_accept_quality is None:
+        raise exceptions.VideoTypeException()
+    video_type_dict = dict(zip(video_describe,video_accept_quality))
+    vtype = [video_type_dict[v] for v in video_type_dict.keys() if re.search(fr'.*{download_type}$',v)]
+    if vtype is None:
+        vtype = video_accept_quality[0]
+    return vtype
 
 """
 みゃーねか？どうしたみゃーね～
