@@ -51,7 +51,9 @@ class LiveException(BilibiliApiException):
     def __init__(self, msg: str):
         super().__init__(msg)
 
-
+class VideoTypeException(BilibiliApiException):
+    def __init__(self):
+        self.msg = "视频类型错误"
 """
 奇怪的异常增加了！
 """

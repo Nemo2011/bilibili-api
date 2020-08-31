@@ -85,7 +85,7 @@
                 "params": {
                     "avid": "av号",
                     "cid": "分P编号",
-                    "qn": 112
+                    "qn": 116
                 },
                 "comment": "视频下载的信息，下载链接需要提供headers伪装浏览器请求（Referer和User-Agent）"
             },

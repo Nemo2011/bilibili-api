@@ -208,13 +208,14 @@ def get_pages(bvid: str = None, aid: int = None, verify: utils.Verify = None):
     return get
 
 
-def get_download_url(bvid: str = None, aid: int = None, page: int = 0, verify: utils.Verify = None):
+def get_download_url(bvid: str = None, aid: int = None, page: int = 0, verify: utils.Verify = None, video_type : str = None):
     """
     获取视频下载链接
     :param aid:
     :param bvid:
     :param page:
     :param verify:
+    :param video_type: 目前可下载的视频类型:['1080P60', '720P60', '1080P', '720P', '480P', '360P']
     :return:
     """
     if not (aid or bvid):
@@ -229,24 +230,29 @@ def get_download_url(bvid: str = None, aid: int = None, page: int = 0, verify: u
         url = "https://www.bilibili.com/video/%s" % bvid
     else:
         url = "https://www.bilibili.com/video/av%s" % aid
+
     req = requests.get(url, cookies=verify.get_cookies(), headers=utils.DEFAULT_HEADERS, params={"p": page + 1})
+    vtype = 116
+
     if req.ok:
         match = re.search("<script>window.__playinfo__=(.*?)</script>", req.text)
         if match is not None:
             text = match.group(1)
             playurl = json.loads(text)
-        elif match is None:
-            page_id = video_info["pages"][page]["cid"]
-            url = API["video"]["info"]["playurl"]["url"]
-            params = {
-                "bvid": bvid,
-                "avid": aid,
-                "qn": 112,
-                "cid": page_id
-            }
-            playurl = utils.get(url=url, params=params, cookies=verify.get_cookies())
-        else:
-            raise exceptions.BilibiliApiException("无法获取playurl")
+            vtype = utils.map_vedio_type(playurl['data']['accept_description'], playurl['data']['accept_quality'], video_type)
+
+
+        page_id = video_info["pages"][page]["cid"]
+        url = API["video"]["info"]["playurl"]["url"]
+        params = {
+            "bvid": bvid,
+            "avid": aid,
+            "qn": vtype,
+            "cid": page_id,
+            "otype":'json',
+            "fnval":16
+        }
+        playurl = utils.get(url=url, params=params, cookies=verify.get_cookies())
         return playurl
     else:
         raise exceptions.NetworkException(req.status_code)
