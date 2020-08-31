@@ -500,9 +500,6 @@ def upload_image(image_path: str, verify: Verify):
     resp = post(url=api["url"], data=data, cookies=verify.get_cookies(), files=files)
     return resp
 
-
-
-
 """
 みゃーねか？どうしたみゃーね～
 ーー「私に天使が舞い降りた！」
