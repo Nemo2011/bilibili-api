@@ -426,12 +426,12 @@ class LiveDanmaku(object):
                     self.logger.debug("收到心跳包反馈")
                     handlers = self.__event_handlers.get("VIEW", [])
                     for handler in handlers:
-                        asyncio.create_task(self.__run(handler, info["data"]["view"]))
+                        asyncio.create_task(self.__run_in_executor(handler, info["data"]["view"]))
                 elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE:
                     # 直播间弹幕、礼物等信息
                     handlers = self.__event_handlers.get(info["data"]["cmd"], [])
                     for handler in handlers:
-                        asyncio.create_task(self.__run(handler, info["data"]))
+                        asyncio.create_task(self.__run_in_executor(handler, info["data"]))
                 else:
                     self.logger.warning("检测到未知的数据包类型，无法处理")
 
@@ -524,10 +524,11 @@ class LiveDanmaku(object):
         return ret
 
     @staticmethod
-    async def __run(func, *args):
+    async def __run_in_executor(func, *args):
         """
-        异步调用程序
+        将同步程序打包成执行器异步执行
         :param func: 回调函数，非异步函数
+        :param *args: 传递给函数的参数
         :return:
         """
         loop = asyncio.get_event_loop()
