@@ -346,11 +346,11 @@ class LiveDanmaku(object):
         assert not self.__has_connected, exceptions.LiveException("已连接直播间，不可重复连接")
         # 获取真实房间号
         self.logger.debug("正在获取真实房间号")
-        self.room_id = get_room_play_info(room_display_id=self.room_id)["room_id"]
+        self.room_id = get_room_play_info(room_display_id=self.room_id, verify=self.verify)["room_id"]
         self.logger.debug(f"获取成功，真实房间号：{self.room_id}")
         # 获取直播服务器配置
         self.logger.debug("正在获取聊天服务器配置")
-        self.__conf = get_chat_conf(room_real_id=self.room_id)
+        self.__conf = get_chat_conf(room_real_id=self.room_id, verify=self.verify)
         self.logger.debug("聊天服务器配置获取成功")
         # 连接直播间
         asyncio.run(self.__main())
@@ -384,9 +384,10 @@ class LiveDanmaku(object):
                             self.logger.debug("检测到传入Verify，正在获取用户UID")
                             self_info = user.get_self_info(self.verify)
                             uid = self_info["mid"]
+                            self.logger.debug(f"用户UID为{uid}")
                     verifyData = {"uid": 0 if uid is None else uid, "roomid": self.room_id,
                                   "protover": 2, "platform": "web",
-                                  "clientver": "1.11.0", "type": 2, "key": self.__conf["token"]}
+                                  "clientver": "1.17.0", "type": 2, "key": self.__conf["token"]}
                     data = json.dumps(verifyData).encode()
                     await self.__send(data, LiveDanmaku.PROTOCOL_VERSION_HEARTBEAT, LiveDanmaku.DATAPACK_TYPE_VERIFY)
                     await self.__loop()
@@ -425,12 +426,12 @@ class LiveDanmaku(object):
                     self.logger.debug("收到心跳包反馈")
                     handlers = self.__event_handlers.get("VIEW", [])
                     for handler in handlers:
-                        handler(info["data"]["view"])
+                        asyncio.create_task(self.__run(handler, info["data"]["view"]))
                 elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE:
                     # 直播间弹幕、礼物等信息
                     handlers = self.__event_handlers.get(info["data"]["cmd"], [])
                     for handler in handlers:
-                        handler(info["data"])
+                        asyncio.create_task(self.__run(handler, info["data"]))
                 else:
                     self.logger.warning("检测到未知的数据包类型，无法处理")
 
@@ -521,6 +522,16 @@ class LiveDanmaku(object):
             ret.append(recvData)
             offset += length
         return ret
+
+    @staticmethod
+    async def __run(func, *args):
+        """
+        异步调用程序
+        :param func: 回调函数，非异步函数
+        :return:
+        """
+        loop = asyncio.get_event_loop()
+        loop.run_in_executor(None, func, *args)
 
     def on(self, name: str):
         """
