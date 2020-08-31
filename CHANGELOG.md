@@ -1,7 +1,8 @@
 # 更新日志
 
-+ V2.0.5
++ V2.0.5 2020/08/31
     + 修复直播LiveDanmaku使用Verify被服务器拒绝, 优化异步
+    + 优化 video.get_download_url
 
 + V2.0.4 2020/08/30
     + 修复utils.request若未传入params则报错的问题
