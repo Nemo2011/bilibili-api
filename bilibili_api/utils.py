@@ -343,7 +343,7 @@ def request(method: str, url: str, params=None, data=None, cookies=None, headers
     if data is None:
         data = {}
     if cookies is None:
-        cookies = {},
+        cookies = {}
     if headers is None:
         headers = copy.deepcopy(DEFAULT_HEADERS)
     st = {
