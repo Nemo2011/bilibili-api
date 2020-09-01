@@ -353,11 +353,7 @@ class LiveDanmaku(object):
         self.__conf = get_chat_conf(room_real_id=self.room_id, verify=self.verify)
         self.logger.debug("聊天服务器配置获取成功")
         # 连接直播间
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            asyncio.create_task(self.__main())
-        else:
-            asyncio.run(self.__main())
+        asyncio.run(self.__main())
 
     def disconnect(self):
         """
