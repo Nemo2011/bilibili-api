@@ -330,7 +330,7 @@ class LiveDanmaku(object):
         self.logger = logging.getLogger("LiveDanmaku")
         self.logger.setLevel(logging.DEBUG if debug else logging.INFO)
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)s] %(message)s"))
+        handler.setFormatter(logging.Formatter("[" + str(room_display_id) + "][%(asctime)s][%(levelname)s] %(message)s"))
         self.logger.addHandler(handler)
 
         self.__event_handlers = {}
@@ -353,7 +353,11 @@ class LiveDanmaku(object):
         self.__conf = get_chat_conf(room_real_id=self.room_id, verify=self.verify)
         self.logger.debug("聊天服务器配置获取成功")
         # 连接直播间
-        asyncio.run(self.__main())
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.create_task(self.__main())
+        else:
+            asyncio.run(self.__main())
 
     def disconnect(self):
         """
@@ -426,12 +430,12 @@ class LiveDanmaku(object):
                     self.logger.debug("收到心跳包反馈")
                     handlers = self.__event_handlers.get("VIEW", [])
                     for handler in handlers:
-                        asyncio.create_task(self.__run_in_executor(handler, info["data"]["view"]))
+                        asyncio.create_task(self.__run_as_asynchronous_func(handler, info["data"]["view"]))
                 elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE:
                     # 直播间弹幕、礼物等信息
                     handlers = self.__event_handlers.get(info["data"]["cmd"], [])
                     for handler in handlers:
-                        asyncio.create_task(self.__run_in_executor(handler, info["data"]))
+                        asyncio.create_task(self.__run_as_asynchronous_func(handler, info["data"]))
                 else:
                     self.logger.warning("检测到未知的数据包类型，无法处理")
 
@@ -524,15 +528,19 @@ class LiveDanmaku(object):
         return ret
 
     @staticmethod
-    async def __run_in_executor(func, *args):
+    async def __run_as_asynchronous_func(func, *args):
         """
         将同步程序打包成执行器异步执行
+        若为异步程序则直接执行
         :param func: 回调函数，非异步函数
         :param *args: 传递给函数的参数
         :return:
         """
-        loop = asyncio.get_event_loop()
-        loop.run_in_executor(None, func, *args)
+        if asyncio.iscoroutinefunction(func):
+            await func(*args)
+        else:
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(None, func, *args)
 
     def on(self, name: str):
         """

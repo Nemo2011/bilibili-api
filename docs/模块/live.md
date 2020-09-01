@@ -149,6 +149,21 @@ if __name__ == "__main__":
 
 请按照以上格式写。
 
+另外还有一种异步写法，只要简单在方法前面加个async就可以了，**推荐异步写法**：
+
+```python
+from bilibili_api.live import LiveDanmaku
+
+room = LiveDanmaku(room_display_id=114514)
+
+@room.on("DANMU_MSG")  # 指定事件名
+async def on_danmu(msg):
+    print(msg)
+    
+if __name__ == "__main__":
+    room.connect()
+```
+
 常用事件名：
 
 ```

@@ -2,6 +2,7 @@
 
 + V2.0.6
     + 修复utils.request中cookies默认值初始化类型是tuple而不是dict的问题（低层级方法，不影响用户使用）
+    + 优化LiveDanmaku异步调用，文档同步更新
 
 + V2.0.5 2020/08/31
     + 修复直播LiveDanmaku使用Verify被服务器拒绝, 优化异步
