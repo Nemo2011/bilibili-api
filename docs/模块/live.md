@@ -99,6 +99,16 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 注意，block_id可用 [ban_user](#ban_user) 的返回值获取，或者 [get_black_list](#get_black_list) 中获取。
 
 
+### gather_run_livedanmaku
+
+自动连接多个直播间弹幕
+
+| 参数名   | 类型 | 必须提供 | 默认 | 释义       |
+| -------- | ---- | -------- | ---- | ---------- |
+| *livedanmaku_classes | [LiveDanmaku](#LiveDanmaku)  | True     | -    | LiveDanmaku类动态参数 |
+
+具体用法参加：[连接多个直播间](#连接多个直播间)
+
 
 ## 类
 
@@ -188,6 +198,40 @@ ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个xx小时榜
 
 事件名就是返回的 `cmd` 键对应的值。
 
+
+### 连接多个直播间
+
+按以下写法即可同时连接多个直播间
+
+
+```python
+from bilibili_api.live import LiveDanmaku, gather_run_livedanmaku
+
+# 初始化不同房间的类
+room1 = LiveDanmaku(114514, debug=True)
+room2 = LiveDanmaku(1919810, debug=True)
+# 可以添加多个，目前还没测试出最多多少
+
+
+@room1.on('INTERACT_WORD')
+async def rm1(event):
+    # 房间1信息处理
+    print(event)
+
+
+@room2.on('INTERACT_WORD')
+async def rm2(event):
+    # 房间2信息处理
+    print(event)
+
+
+if __name__ == '__main__':
+    # 使用动态参数传入
+    gather_run_livedanmaku(room1, room2)
+    # 也可以这样写
+    room_list = [room1, room2]
+    gather_run_livedanmaku(*room_list)
+```
 
 
 [Danmaku]: /docs/bilibili_api/模块/bilibili_api#Danmaku

@@ -308,6 +308,23 @@ def unban_user(room_real_id: int, block_id: int, verify: utils.Verify = None):
     return resp
 
 
+def gather_run_livedanmaku(*livedanmaku_classes):
+    """
+    同时连接多个直播间
+    :param livedanmaku_classes: LiveDanmaku类动态参数
+    :return:
+    """
+    tasks = []
+    for room in livedanmaku_classes:
+        task = room.connect(True)
+        tasks.append(task)
+
+    async def run():
+        for task in tasks:
+            await task
+    asyncio.get_event_loop().run_until_complete(run())
+
+
 class LiveDanmaku(object):
     """
     Websocket实时获取直播弹幕
@@ -327,7 +344,7 @@ class LiveDanmaku(object):
         self.room_id = room_display_id
         self.use_wss = use_wss
         # logging
-        self.logger = logging.getLogger("LiveDanmaku")
+        self.logger = logging.getLogger(f"LiveDanmaku_{self.room_id}")
         self.logger.setLevel(logging.DEBUG if debug else logging.INFO)
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter("[" + str(room_display_id) + "][%(asctime)s][%(levelname)s] %(message)s"))
@@ -338,7 +355,7 @@ class LiveDanmaku(object):
         self.__has_connected = False
         self.__conf = None
 
-    def connect(self):
+    def connect(self, is_gather_call: bool = False):
         """
         连接直播间
         :return:
@@ -353,7 +370,13 @@ class LiveDanmaku(object):
         self.__conf = get_chat_conf(room_real_id=self.room_id, verify=self.verify)
         self.logger.debug("聊天服务器配置获取成功")
         # 连接直播间
-        asyncio.run(self.__main())
+        loop = asyncio.get_event_loop()
+        if is_gather_call:
+            task = loop.create_task(self.__main())
+            return task
+        else:
+            loop.run_until_complete(self.__main())
+            return None
 
     def disconnect(self):
         """
