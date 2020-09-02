@@ -99,7 +99,7 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 注意，block_id可用 [ban_user](#ban_user) 的返回值获取，或者 [get_black_list](#get_black_list) 中获取。
 
 
-### gather_run_livedanmaku
+### connect_all_livedanmaku
 
 自动连接多个直播间弹幕
 
@@ -123,6 +123,12 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 | room_display_id | int  | True     | -     | 房间显示ID                    |
 | debug           | bool | False    | False | 调试模式，将输出详细的信息    |
 | use_wss         | bool | False    | True  | 使用WSS（Websocket over SSL） |
+| verify         | bool | False    | None  | verify类，事实上不用提供也行 |
+| all_event_callback  | function | False    | None  | 所有事件回调函数 |
+
+注：all_event_callback适合用于连接多个直播间的时候用，回调内容中会一并传入房间ID用于判断是哪个房间。
+
+常见应用场景：不同房间处理不同的事件、记录所有房间的弹幕信息等。
 
 #### 属性
 
@@ -135,6 +141,11 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 ##### connect
 
 连接弹幕服务器。
+
+| 参数名          | 类型 | 必须提供 | 默认  | 释义                          |
+| --------------- | ---- | -------- | ----- | ----------------------------- |
+| return_task | bool  | False     | False     | 返回Task类，供用户自行调用协程 |
+
 
 ##### disconnect
 
@@ -205,7 +216,7 @@ ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个xx小时榜
 
 
 ```python
-from bilibili_api.live import LiveDanmaku, gather_run_livedanmaku
+from bilibili_api.live import LiveDanmaku, connect_all_livedanmaku
 
 # 初始化不同房间的类
 room1 = LiveDanmaku(114514, debug=True)
@@ -227,10 +238,10 @@ async def rm2(event):
 
 if __name__ == '__main__':
     # 使用动态参数传入
-    gather_run_livedanmaku(room1, room2)
+    connect_all_livedanmaku(room1, room2)
     # 也可以这样写
     room_list = [room1, room2]
-    gather_run_livedanmaku(*room_list)
+    connect_all_livedanmaku(*room_list)
 ```
 
 
