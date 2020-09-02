@@ -1,9 +1,10 @@
 # 更新日志
 
-+ V2.0.6
++ V2.1.0
     + 修复utils.request中cookies默认值初始化类型是tuple而不是dict的问题（低层级方法，不影响用户使用）
     + 优化LiveDanmaku异步调用，文档同步更新
-    + LiveDanmaku现在可以同时连接多个直播间了，参见开发文档 模块/live
+    + LiveDanmaku现在可以同时连接多个直播间，参见开发文档 模块/live
+    + **LiveDanmaku回调数据结构修改，不向下兼容，请注意**
 
 + V2.0.5 2020/08/31
     + 修复直播LiveDanmaku使用Verify被服务器拒绝, 优化异步

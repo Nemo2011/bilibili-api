@@ -308,7 +308,7 @@ def unban_user(room_real_id: int, block_id: int, verify: utils.Verify = None):
     return resp
 
 
-def gather_run_livedanmaku(*livedanmaku_classes):
+def connect_all_livedanmaku(*livedanmaku_classes):
     """
     同时连接多个直播间
     :param livedanmaku_classes: LiveDanmaku类动态参数
@@ -339,23 +339,29 @@ class LiveDanmaku(object):
     DATAPACK_TYPE_VERIFY = 7
     DATAPACK_TYPE_VERIFY_SUCCESS_RESPONSE = 8
 
-    def __init__(self, room_display_id: int, debug: bool = False, use_wss: bool = True, verify: utils.Verify = None):
+    def __init__(self, room_display_id: int, debug: bool = False, use_wss: bool = True, all_event_callback=None,
+                 verify: utils.Verify = None):
         self.verify = verify
-        self.room_id = room_display_id
-        self.use_wss = use_wss
+        self.room_real_id = room_display_id
+        self.room_display_id = room_display_id
+        self.__use_wss = use_wss
         # logging
-        self.logger = logging.getLogger(f"LiveDanmaku_{self.room_id}")
+        self.logger = logging.getLogger(f"LiveDanmaku_{self.room_display_id}")
         self.logger.setLevel(logging.DEBUG if debug else logging.INFO)
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter("[" + str(room_display_id) + "][%(asctime)s][%(levelname)s] %(message)s"))
         self.logger.addHandler(handler)
+
+        if all_event_callback and not callable(all_event_callback):
+            raise exceptions.LiveException("all_event_callback请传入方法")
+        self.__all_event_callback = all_event_callback
 
         self.__event_handlers = {}
         self.__websocket = None
         self.__has_connected = False
         self.__conf = None
 
-    def connect(self, is_gather_call: bool = False):
+    def connect(self, return_task: bool = False):
         """
         连接直播间
         :return:
@@ -363,15 +369,15 @@ class LiveDanmaku(object):
         assert not self.__has_connected, exceptions.LiveException("已连接直播间，不可重复连接")
         # 获取真实房间号
         self.logger.debug("正在获取真实房间号")
-        self.room_id = get_room_play_info(room_display_id=self.room_id, verify=self.verify)["room_id"]
-        self.logger.debug(f"获取成功，真实房间号：{self.room_id}")
+        self.room_real_id = get_room_play_info(room_display_id=self.room_real_id, verify=self.verify)["room_id"]
+        self.logger.debug(f"获取成功，真实房间号：{self.room_real_id}")
         # 获取直播服务器配置
         self.logger.debug("正在获取聊天服务器配置")
-        self.__conf = get_chat_conf(room_real_id=self.room_id, verify=self.verify)
+        self.__conf = get_chat_conf(room_real_id=self.room_real_id, verify=self.verify)
         self.logger.debug("聊天服务器配置获取成功")
         # 连接直播间
         loop = asyncio.get_event_loop()
-        if is_gather_call:
+        if return_task:
             task = loop.create_task(self.__main())
             return task
         else:
@@ -392,8 +398,8 @@ class LiveDanmaku(object):
         """
         self.logger.debug("准备连接直播间")
         for host in self.__conf["host_server_list"]:
-            port = host['wss_port'] if self.use_wss else host['ws_port']
-            protocol = "wss" if self.use_wss else "ws"
+            port = host['wss_port'] if self.__use_wss else host['ws_port']
+            protocol = "wss" if self.__use_wss else "ws"
             uri = f"{protocol}://{host['host']}:{port}/sub"
             self.logger.debug(f"正在尝试连接主机： {uri}")
             try:
@@ -408,7 +414,7 @@ class LiveDanmaku(object):
                             self_info = user.get_self_info(self.verify)
                             uid = self_info["mid"]
                             self.logger.debug(f"用户UID为{uid}")
-                    verifyData = {"uid": 0 if uid is None else uid, "roomid": self.room_id,
+                    verifyData = {"uid": 0 if uid is None else uid, "roomid": self.room_real_id,
                                   "protover": 2, "platform": "web",
                                   "clientver": "1.17.0", "type": 2, "key": self.__conf["token"]}
                     data = json.dumps(verifyData).encode()
@@ -435,6 +441,10 @@ class LiveDanmaku(object):
                 break
             self.logger.debug(f"收到信息：{data}")
             for info in data:
+                callback_info = {
+                    'room_display_id': self.room_display_id,
+                    'room_real_id': self.room_real_id
+                }
                 # 依次处理并调用用户指定函数
                 if info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_VERIFY_SUCCESS_RESPONSE:
                     # 认证反馈
@@ -447,14 +457,22 @@ class LiveDanmaku(object):
                 elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_HEARTBEAT_RESPONSE:
                     # 心跳包反馈，返回直播间人气
                     self.logger.debug("收到心跳包反馈")
+                    callback_info["type"] = 'VIEW'
+                    callback_info["data"] = info["data"]["view"]
+                    if self.__all_event_callback:
+                        asyncio.create_task(self.__run_as_asynchronous_func(self.__all_event_callback, callback_info))
                     handlers = self.__event_handlers.get("VIEW", [])
                     for handler in handlers:
-                        asyncio.create_task(self.__run_as_asynchronous_func(handler, info["data"]["view"]))
+                        asyncio.create_task(self.__run_as_asynchronous_func(handler, callback_info))
                 elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE:
                     # 直播间弹幕、礼物等信息
+                    callback_info["type"] = info["data"]["cmd"]
+                    callback_info["data"] = info["data"]
+                    if self.__all_event_callback:
+                        asyncio.create_task(self.__run_as_asynchronous_func(self.__all_event_callback, callback_info))
                     handlers = self.__event_handlers.get(info["data"]["cmd"], [])
                     for handler in handlers:
-                        asyncio.create_task(self.__run_as_asynchronous_func(handler, info["data"]))
+                        asyncio.create_task(self.__run_as_asynchronous_func(handler, callback_info))
                 else:
                     self.logger.warning("检测到未知的数据包类型，无法处理")
 
@@ -558,8 +576,7 @@ class LiveDanmaku(object):
         if asyncio.iscoroutinefunction(func):
             await func(*args)
         else:
-            loop = asyncio.get_event_loop()
-            await loop.run_in_executor(None, func, *args)
+            func(*args)
 
     def on(self, name: str):
         """
