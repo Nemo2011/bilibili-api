@@ -124,11 +124,6 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 | debug           | bool | False    | False | 调试模式，将输出详细的信息    |
 | use_wss         | bool | False    | True  | 使用WSS（Websocket over SSL） |
 | verify         | bool | False    | None  | verify类，事实上不用提供也行 |
-| all_event_callback  | function | False    | None  | 所有事件回调函数 |
-
-注：all_event_callback适合用于连接多个直播间的时候用，回调内容中会一并传入房间ID用于判断是哪个房间。
-
-常见应用场景：不同房间处理不同的事件、记录所有房间的弹幕信息等。
 
 #### 属性
 
@@ -150,6 +145,16 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 ##### disconnect
 
 断开弹幕服务器连接。
+
+
+##### add_event_handler
+
+添加事件处理器
+
+| 参数名          | 类型 | 必须提供 | 默认  | 释义                          |
+| --------------- | ---- | -------- | ----- | ----------------------------- |
+| event_name | str  | True     | -     | 事件名，参照下面的事件名列表 |
+| func | Function  | True     | -     | 事件处理器方法 |
 
 #### 事件
 
@@ -185,11 +190,13 @@ if __name__ == "__main__":
     room.connect()
 ```
 
+也可以采用 [add_event_handler](#add_event_handler) 来添加事件处理器。
+
+
 常用事件名：
 
 ```
 DANMU_MSG: 用户发送弹幕
-VIEW: 直播间人气更新
 SEND_GIFT: 礼物
 WELCOME: 老爷进入房间
 WELCOME_GUARD: 房管进入房间
@@ -201,6 +208,22 @@ ENTRY_EFFECT: 进场特效
 ROOM_RANK: 房间排名更新
 INTERACT_WORD: 用户进入直播间
 ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个xx小时榜
+```
+
+特殊事件名（本模块自定义事件）：
+```
+ALL: 所有事件均调用回调函数
+VIEW: 直播间人气更新
+```
+
+回调数据格式：
+```json
+{
+    "room_display_id": "房间展示ID，类型int", 
+    "room_real_id": "房间真实ID，类型int", 
+    "type": "事件名，类型str", 
+    "data": "事件内容，类型根据事件名而定（一般是dict，VIEW事件是int）"
+}
 ```
 
 直播区更新速度快，以实际API为准，可以开debug自己看。

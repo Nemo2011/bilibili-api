@@ -339,7 +339,7 @@ class LiveDanmaku(object):
     DATAPACK_TYPE_VERIFY = 7
     DATAPACK_TYPE_VERIFY_SUCCESS_RESPONSE = 8
 
-    def __init__(self, room_display_id: int, debug: bool = False, use_wss: bool = True, all_event_callback=None,
+    def __init__(self, room_display_id: int, debug: bool = False, use_wss: bool = True,
                  verify: utils.Verify = None):
         self.verify = verify
         self.room_real_id = room_display_id
@@ -351,10 +351,6 @@ class LiveDanmaku(object):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter("[" + str(room_display_id) + "][%(asctime)s][%(levelname)s] %(message)s"))
         self.logger.addHandler(handler)
-
-        if all_event_callback and not callable(all_event_callback):
-            raise exceptions.LiveException("all_event_callback请传入方法")
-        self.__all_event_callback = all_event_callback
 
         self.__event_handlers = {}
         self.__websocket = None
@@ -459,18 +455,18 @@ class LiveDanmaku(object):
                     self.logger.debug("收到心跳包反馈")
                     callback_info["type"] = 'VIEW'
                     callback_info["data"] = info["data"]["view"]
-                    if self.__all_event_callback:
-                        asyncio.create_task(self.__run_as_asynchronous_func(self.__all_event_callback, callback_info))
                     handlers = self.__event_handlers.get("VIEW", [])
+                    # ALL事件
+                    handlers += self.__event_handlers.get("ALL", [])
                     for handler in handlers:
                         asyncio.create_task(self.__run_as_asynchronous_func(handler, callback_info))
                 elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE:
                     # 直播间弹幕、礼物等信息
                     callback_info["type"] = info["data"]["cmd"]
                     callback_info["data"] = info["data"]
-                    if self.__all_event_callback:
-                        asyncio.create_task(self.__run_as_asynchronous_func(self.__all_event_callback, callback_info))
                     handlers = self.__event_handlers.get(info["data"]["cmd"], [])
+                    # ALL事件
+                    handlers += self.__event_handlers.get("ALL", [])
                     for handler in handlers:
                         asyncio.create_task(self.__run_as_asynchronous_func(handler, callback_info))
                 else:
@@ -567,8 +563,7 @@ class LiveDanmaku(object):
     @staticmethod
     async def __run_as_asynchronous_func(func, *args):
         """
-        将同步程序打包成执行器异步执行
-        若为异步程序则直接执行
+        区分同步和异步执行函数
         :param func: 回调函数，非异步函数
         :param *args: 传递给函数的参数
         :return:
@@ -578,17 +573,30 @@ class LiveDanmaku(object):
         else:
             func(*args)
 
+    def add_event_handler(self, event_name: str, func):
+        """
+        为当前直播弹幕增加事件回调
+        :param event_name: 事件名
+        :param func: 回调函数
+        :return:
+        """
+        if not callable(func):
+            raise exceptions.LiveException("回调函数请传入方法")
+        upper_name = event_name.upper()
+        if upper_name not in self.__event_handlers:
+            self.__event_handlers[upper_name] = []
+        self.__event_handlers[upper_name].append(func)
+
     def on(self, name: str):
         """
         使用@语法，触发事件时会被调用
-        :param name: 事件名，特殊：VIEW（人气更新）
+        :param name: 事件名
         :return:
         """
         """
         直播区更新速度快，以实际API为准，可以开debug自己看
         常见事件名：
         DANMU_MSG: 用户发送弹幕
-        VIEW: 直播间人气更新
         SEND_GIFT: 礼物
         WELCOME: 老爷进入房间
         WELCOME_GUARD: 房管进入房间
@@ -600,6 +608,9 @@ class LiveDanmaku(object):
         ROOM_RANK: 房间排名更新
         INTERACT_WORD: 用户进入直播间
         ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个xx小时榜
+        本模块自定义事件：
+        VIEW: 直播间人气更新
+        ALL: 所有事件
         """
         def decoration(func):
             upper_name = name.upper()
