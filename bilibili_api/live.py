@@ -387,6 +387,9 @@ class LiveDanmaku(object):
         """
         asyncio.gather(self.__ws.close())
 
+    def has_connected(self):
+        return __self.has_connected
+
     async def __main(self):
         """
         入口
@@ -455,18 +458,14 @@ class LiveDanmaku(object):
                     self.logger.debug("收到心跳包反馈")
                     callback_info["type"] = 'VIEW'
                     callback_info["data"] = info["data"]["view"]
-                    handlers = self.__event_handlers.get("VIEW", [])
-                    # ALL事件
-                    handlers += self.__event_handlers.get("ALL", [])
+                    handlers = self.__event_handlers.get("VIEW", []) + self.__event_handlers.get("ALL", [])
                     for handler in handlers:
                         asyncio.create_task(self.__run_as_asynchronous_func(handler, callback_info))
                 elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE:
                     # 直播间弹幕、礼物等信息
                     callback_info["type"] = info["data"]["cmd"]
                     callback_info["data"] = info["data"]
-                    handlers = self.__event_handlers.get(info["data"]["cmd"], [])
-                    # ALL事件
-                    handlers += self.__event_handlers.get("ALL", [])
+                    handlers = self.__event_handlers.get(info["data"]["cmd"], []) + self.__event_handlers.get("ALL", [])
                     for handler in handlers:
                         asyncio.create_task(self.__run_as_asynchronous_func(handler, callback_info))
                 else:
