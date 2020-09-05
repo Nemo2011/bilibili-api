@@ -388,7 +388,7 @@ class LiveDanmaku(object):
         asyncio.gather(self.__ws.close())
 
     def has_connected(self):
-        return __self.has_connected
+        return self.__has_connected
 
     async def __main(self):
         """
