@@ -156,6 +156,11 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 | event_name | str  | True     | -     | 事件名，参照下面的事件名列表 |
 | func | Function  | True     | -     | 事件处理器方法 |
 
+
+##### has_connected
+
+是否已连接直播间
+
 #### 事件
 
 收到事件时调用用户指定方法，完整例子：
