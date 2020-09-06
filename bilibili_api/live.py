@@ -20,6 +20,7 @@ import json
 import base64
 import functools
 from . import exceptions, utils, user
+import copy
 
 
 API = utils.get_api()

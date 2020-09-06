@@ -3,7 +3,7 @@ from .utils import aid2bvid, bvid2aid, upload_image, Verify, Danmaku, Color, req
 from .common import get_vote_info
 
 META = {
-    "version": "2.0.5"
+    "version": "2.1.0b0"
 }
 
 
