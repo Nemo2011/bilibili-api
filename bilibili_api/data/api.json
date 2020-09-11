@@ -566,6 +566,23 @@
                     "callback": "__jp8"
                 },
                 "comment": "获取用户的简易订阅和投稿信息(主要是这些的数量统计)"
+            },
+            "self_subscribe_group": {
+                "url": "https://api.bilibili.com/x/relation/tags",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                },
+                "comment": "获取自己的关注分组列表，用于操作关注"
+            },
+            "get_user_in_which_subscribe_groups": {
+                "url": "https://api.bilibili.com/x/relation/tag/user",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "fid": "uid"
+                },
+                "comment": "获取用户在哪一个分组"
             }
         },
         "operate": {
@@ -595,6 +612,44 @@
                     }
                 },
                 "comment": "给用户发信息"
+            },
+            "add_subscribe_group": {
+                "url": "https://api.bilibili.com/x/relation/tag/create",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "tag": "分组名"
+                },
+                "comment": "添加关注分组"
+            },
+            "del_subscribe_group": {
+                "url": "https://api.bilibili.com/x/relation/tag/del",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "tagid": "分组id"
+                },
+                "comment": "删除关注分组"
+            },
+            "rename_subscribe_group": {
+                "url": "https://api.bilibili.com/x/relation/tag/update",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "tagid": "分组id",
+                    "name": "新的分组名"
+                },
+                "comment": "重命名分组"
+            },
+            "move_user_subscribe_group": {
+                "url": "https://api.bilibili.com/x/relation/tags/addUsers",
+                "method": "POST",
+                "verify": true,
+                "data": {
+                    "fids": "UID",
+                    "tagids": "分组的tagids，逗号分隔"
+                },
+                "comment": "移动用户到关注分组"
             }
         }
     },

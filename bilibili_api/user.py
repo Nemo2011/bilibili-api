@@ -739,6 +739,128 @@ def send_msg(uid: int, text: str, self_uid: int = None, verify: utils.Verify = N
     data = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
     return data
 
+# 分组操作
+
+
+def get_self_subscribe_group(verify: utils.Verify):
+    """
+    获取自己的关注分组列表
+    :param verify:
+    :return:
+    """
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+
+    api = API["user"]["info"]["self_subscribe_group"]
+    resp = utils.get(api["url"], cookies=verify.get_cookies())
+    return resp
+
+
+def get_user_in_which_subscribe_groups(uid: int, verify: utils.Verify):
+    """
+    获取用户在哪些关注分组列表
+    :param uid:
+    :param verify:
+    :return:
+    """
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+
+    api = API["user"]["info"]["get_user_in_which_subscribe_groups"]
+    params = {
+        "fid": uid
+    }
+    resp = utils.get(api["url"], params=params, cookies=verify.get_cookies())
+    return resp
+
+
+def add_subscribe_group(name: str, verify: utils.Verify):
+    """
+    添加关注分组
+    :param name: 分组名
+    :param verify:
+    :return:
+    """
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    api = API["user"]["operate"]["add_subscribe_group"]
+    payload = {
+        "tag": name,
+        "csrf": verify.csrf
+    }
+    resp = utils.post(api["url"], data=payload, cookies=verify.get_cookies())
+    return resp
+
+
+def del_subscribe_group(group_id: int, verify: utils.Verify):
+    """
+    删除关注分组
+    :param group_id: 分组ID
+    :param verify:
+    :return:
+    """
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    api = API["user"]["operate"]["del_subscribe_group"]
+    payload = {
+        "tagid": group_id,
+        "csrf": verify.csrf
+    }
+    resp = utils.post(api["url"], data=payload, cookies=verify.get_cookies())
+    return resp
+
+
+def rename_subscribe_group(group_id: int, new_name: str, verify: utils.Verify):
+    """
+    重命名关注分组
+    :param new_name: 新的分组名
+    :param group_id: 分组ID
+    :param verify:
+    :return:
+    """
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    api = API["user"]["operate"]["rename_subscribe_group"]
+    payload = {
+        "tagid": group_id,
+        "name": new_name,
+        "csrf": verify.csrf
+    }
+    resp = utils.post(api["url"], data=payload, cookies=verify.get_cookies())
+    return resp
+
+
+def move_user_subscribe_group(uid: int, group_ids: list, verify: utils.Verify):
+    """
+    移动用户到特定的关注分组
+    :param uid:
+    :param group_ids: 分组id列表，为空时移动到默认分组
+    :param verify:
+    :return:
+    """
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    api = API["user"]["operate"]["move_user_subscribe_group"]
+    payload = {
+        "fids": uid,
+        "tagids": ",".join(list(map(lambda x: str(x), group_ids))) if len(group_ids) != 0 else "0",
+        "csrf": verify.csrf
+    }
+    resp = utils.post(api["url"], data=payload, cookies=verify.get_cookies())
+    return resp
+
 
 """
 もしかしてうちは、田舎に住んでいるん？
