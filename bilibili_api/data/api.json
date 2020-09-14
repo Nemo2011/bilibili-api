@@ -444,7 +444,7 @@
                 "comment": "关注数，粉丝数"
             },
             "upstat": {
-                "url": "http://api.bilibili.com/x/space/upstat",
+                "url": "https://api.bilibili.com/x/space/upstat",
                 "method": "GET",
                 "verify": false,
                 "params": {
@@ -719,7 +719,7 @@
                 "comment": "获取番剧长评"
             },
             "collective_info": {
-                "url": "http://api.bilibili.com/pgc/view/web/season",
+                "url": "https://api.bilibili.com/pgc/view/web/season",
                 "method": "GET",
                 "verify": false,
                 "params": {
