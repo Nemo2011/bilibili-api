@@ -845,6 +845,19 @@
                     "page": "页码"
                 },
                 "comment": "获取房间黑名单列表，登录账号需要是该房间房管"
+            },
+            "room_play_url": {
+                "url": "https://api.live.bilibili.com/xlive/web-room/v1/playUrl/playUrl",
+                "method": "GET",
+                "verify": false,
+                "params": {
+                    "cid": "真实房间号",
+                    "platform": "web",
+                    "qn": "清晰度编号，原画10000，超清250，高清150",
+                    "https_url_req": "1",
+                    "ptype": "16"
+                },
+                "comment": "获取房间直播流列表"
             }
         },
         "operate": {
