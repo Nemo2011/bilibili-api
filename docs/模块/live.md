@@ -24,6 +24,14 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 | --------------- | ---- | -------- | ---- | ---------- |
 | room_display_id | int  | True     | -    | 房间显示ID |
 
+### get_room_play_url
+
+获取直播流地址
+
+| 参数名          | 类型 | 必须提供 | 默认 | 释义       |
+| --------------- | ---- | -------- | ---- | ---------- |
+| room_real_id | int  | True     | -    | 房间真实ID |
+
 ### get_chat_conf
 
 获取聊天服务器信息，用于连接弹幕服务器用。下面有 [LiveDanmaku](#LiveDanmaku) 类可以方便连接，不需要用到这个方法。

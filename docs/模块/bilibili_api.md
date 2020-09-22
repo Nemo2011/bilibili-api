@@ -63,12 +63,6 @@ bv号转av号。
 | ------- | ---- | -------- | ---- | ------ |
 | vote_id | int  | True     | -    | 投票ID |
 
-### check_update
-
-检查更新。
-
-
-
 ## 类
 
 ### Danmaku

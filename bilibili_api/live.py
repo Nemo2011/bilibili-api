@@ -41,6 +41,28 @@ def get_room_play_info(room_display_id: int, verify: utils.Verify = None):
     return resp
 
 
+def get_room_play_url(room_real_id: int, verify: utils.Verify = None):
+    """
+    获取获取房间直播流地址
+    :param room_real_id: 房间真实ID
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    api = API["live"]["info"]["room_play_url"]
+    params = {
+        "cid": room_real_id,
+        "platform": "web",
+        "qn": 10000,
+        "https_url_req": "1",
+        "ptype": "16"
+    }
+    resp = utils.get(api["url"], params, cookies=verify.get_cookies())
+    return resp
+
+
 def get_chat_conf(room_real_id: int, verify: utils.Verify = None):
     """
     获取聊天弹幕服务器配置信息(websocket)
