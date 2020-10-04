@@ -2,7 +2,7 @@
 
 # bilibili_api
 
-[![版本](https://img.shields.io/badge/版本-2.1.2-green)](https://github.com/Passkou/bilibili_api/tree/master/CHANGELOG.md) [![API数量](https://img.shields.io/badge/API数量-100+-blue)](https://github.com/Passkou/bilibili_api/tree/master/bilibili_api/data/api.json) [![STARS](https://img.shields.io/github/stars/Passkou/bilibili_api?color=yellow&label=Github%20Stars)](https://github.com/Passkou/bilibili_api/stargazers) [![LICENSE](https://img.shields.io/badge/LICENSE-GPL%20v3-red)](https://github.com/Passkou/bilibili_api/tree/master/LICENSE.md) ![Python](https://img.shields.io/badge/Python-3.8-blue) [![](https://img.shields.io/badge/这个标签太好玩了-.py-orange)](https://shields.io/)
+[![版本](https://img.shields.io/badge/版本-2.1.3-green)](https://github.com/Passkou/bilibili_api/tree/master/CHANGELOG.md) [![API数量](https://img.shields.io/badge/API数量-100+-blue)](https://github.com/Passkou/bilibili_api/tree/master/bilibili_api/data/api.json) [![STARS](https://img.shields.io/github/stars/Passkou/bilibili_api?color=yellow&label=Github%20Stars)](https://github.com/Passkou/bilibili_api/stargazers) [![LICENSE](https://img.shields.io/badge/LICENSE-GPL%20v3-red)](https://github.com/Passkou/bilibili_api/tree/master/LICENSE.md) ![Python](https://img.shields.io/badge/Python-3.8-blue) [![](https://img.shields.io/badge/这个标签太好玩了-.py-orange)](https://shields.io/)
 
 
 **项目官网**: [bilibili_api 官网][homepage]
@@ -211,7 +211,7 @@ PR: Pull request
 
 这个项目目前只由我（Passkou）一个人在维护。
 
-你以为我要恰饭？那么你错了2333。做这个项目只是我的业余工作，暂不计划接受个人赞助。如果你想支持一下这个项目，可以做以下几点：
+如果你想支持一下这个项目，可以做以下几点：
 
 1. GitHub上给个小星星（star）~
 2. 如果你的项目中用到了这个库，可以在说明文档中标注一下这个项目的Github地址或者 [项目官网地址][homepage] 。

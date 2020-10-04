@@ -73,6 +73,8 @@ def get_up_info(uid: int, verify: utils.Verify = None):
     """
     if verify is None:
         verify = utils.Verify()
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
 
     api = API["user"]["info"]["upstat"]
     params = {

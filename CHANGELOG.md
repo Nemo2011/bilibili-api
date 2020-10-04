@@ -1,5 +1,9 @@
 # 更新日志
 
++ V2.1.3 2020/10/04
+    + user.get_videos() 增加查询条件，详见文档
+    + user.get_up_info() 强制传入Verify，需要有SESSDATA（如果没有会获取不到信息）
+
 + V2.1.2 2020/09/26
     + 新增live.get_room_play_url（获取直播流地址）
 
