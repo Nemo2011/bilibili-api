@@ -4,8 +4,9 @@ import re
 
 
 def get_version():
-    from setup import version
-    return version
+    with open("../version.txt") as f:
+        version = f.read()
+        return version
 
 
 def markdown2html(markdown_content):

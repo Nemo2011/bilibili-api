@@ -1,8 +1,8 @@
 import setuptools
 
-version = '2.1.3'
-
 if __name__ == '__main__':
+    with open("./version.txt") as f:
+        version = f.read()
     # 自动生成readme
     with open("README.template.md", 'r', encoding='utf8') as f:
         content = f.read()
