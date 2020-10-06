@@ -57,7 +57,7 @@ if __name__ == '__main__':
             "Homepage": "https://passkou.com/bilibili_api",
             "Documentation": "https://passkou.com/docs/bilibili_api"
         },
-        python_requires=">=3",
+        python_requires=">=3.8",
         data_files=[
             ("", ["./LICENSE.md", "./CHANGELOG.md", "./version.txt", "./README.template.md"])
         ]
