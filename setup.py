@@ -3,9 +3,14 @@ import setuptools
 version = '2.1.3'
 
 if __name__ == '__main__':
-    with open("README.md", "r", encoding="utf-8") as fh:
-        long_description = fh.read()
-        fh.close()
+    # 自动生成readme
+    with open("README.template.md", 'r', encoding='utf8') as f:
+        content = f.read()
+        # 替换版本号
+        content = content.replace('%version%', version)
+        long_description = content
+    with open("README.md", "w", encoding="utf-8") as f:
+        f.write(content)
 
     setuptools.setup(
         name='bilibili_api',
