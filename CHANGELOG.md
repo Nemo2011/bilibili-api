@@ -1,5 +1,8 @@
 # 更新日志
 
++ V2.1.4 2020/10/06
+    + 将项目主页纳入repo管理
+
 + V2.1.3 2020/10/04
     + user.get_videos() 增加查询条件，详见文档
     + user.get_up_info() 强制传入Verify，需要有SESSDATA（如果没有会获取不到信息）

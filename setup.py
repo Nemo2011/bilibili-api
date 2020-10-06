@@ -1,16 +1,22 @@
 import setuptools
+import sys
 
 if __name__ == '__main__':
     with open("./version.txt") as f:
         version = f.read()
-    # 自动生成readme
-    with open("README.template.md", 'r', encoding='utf8') as f:
-        content = f.read()
-        # 替换版本号
-        content = content.replace('%version%', version)
-        long_description = content
-    with open("README.md", "w", encoding="utf-8") as f:
-        f.write(content)
+    if 'sdist' in sys.argv:
+        # 自动生成readme
+        print("动态生成README.md")
+        with open("README.template.md", 'r', encoding='utf8') as f:
+            content = f.read()
+            # 替换版本号
+            content = content.replace('%version%', version)
+            long_description = content
+        with open("README.md", "w", encoding="utf-8") as f:
+            f.write(content)
+    else:
+        with open("README.md", "r", encoding="utf-8") as f:
+            long_description = f.read()
 
     setuptools.setup(
         name='bilibili_api',
@@ -53,6 +59,6 @@ if __name__ == '__main__':
         },
         python_requires=">=3",
         data_files=[
-            ("", ["./LICENSE.md", "./CHANGELOG.md"])
+            ("", ["./LICENSE.md", "./CHANGELOG.md", "./version.txt", "./README.template.md"])
         ]
     )
