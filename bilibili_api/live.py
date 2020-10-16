@@ -362,12 +362,13 @@ class LiveDanmaku(object):
     DATAPACK_TYPE_VERIFY = 7
     DATAPACK_TYPE_VERIFY_SUCCESS_RESPONSE = 8
 
-    def __init__(self, room_display_id: int, debug: bool = False, use_wss: bool = True,
-                 verify: utils.Verify = None):
+    def __init__(self, room_display_id: int, debug: bool = False, use_wss: bool = True, should_reconnect: bool = True
+                 , verify: utils.Verify = None):
         self.verify = verify
         self.room_real_id = room_display_id
         self.room_display_id = room_display_id
         self.__use_wss = use_wss
+        self.__event_loop = asyncio.get_event_loop()
         # logging
         self.logger = logging.getLogger(f"LiveDanmaku_{self.room_display_id}")
         self.logger.setLevel(logging.DEBUG if debug else logging.INFO)
@@ -377,15 +378,21 @@ class LiveDanmaku(object):
 
         self.__event_handlers = {}
         self.__websocket = None
-        self.__has_connected = False
+        # 连接状态，0未连接，1已连接，3已正常断开，-1异常断开
+        self.__connected_status = 0
         self.__conf = None
+        self.__tasks = []
+
+        # 重连设置
+        self.should_reconnect = should_reconnect
 
     def connect(self, return_task: bool = False):
         """
         连接直播间
         :return:
         """
-        assert not self.__has_connected, exceptions.LiveException("已连接直播间，不可重复连接")
+        if self.__connected_status == 1:
+            raise exceptions.LiveException("已连接直播间，不可重复连接")
         # 获取真实房间号
         self.logger.debug("正在获取真实房间号")
         self.room_real_id = get_room_play_info(room_display_id=self.room_real_id, verify=self.verify)["room_id"]
@@ -395,23 +402,25 @@ class LiveDanmaku(object):
         self.__conf = get_chat_conf(room_real_id=self.room_real_id, verify=self.verify)
         self.logger.debug("聊天服务器配置获取成功")
         # 连接直播间
-        loop = asyncio.get_event_loop()
+        loop = self.__event_loop
         if return_task:
             task = loop.create_task(self.__main())
             return task
         else:
             loop.run_until_complete(self.__main())
-            return None
+            loop.run_forever()
 
     def disconnect(self):
         """
         断开连接
         :return:
         """
+        self.__connected_status = 2
+        self.__clear_tasks()
         asyncio.gather(self.__ws.close())
 
-    def has_connected(self):
-        return self.__has_connected
+    def get_connect_status(self):
+        return self.__connected_status
 
     async def __main(self):
         """
@@ -428,7 +437,6 @@ class LiveDanmaku(object):
                 async with websockets.connect(uri) as ws:
                     self.__ws = ws
                     self.logger.debug(f"连接主机成功, 准备发送认证信息")
-                    self.__has_connected = True
                     uid = None
                     if self.verify is not None:
                         if self.verify.has_sess():
@@ -441,11 +449,13 @@ class LiveDanmaku(object):
                                   "clientver": "1.17.0", "type": 2, "key": self.__conf["token"]}
                     data = json.dumps(verifyData).encode()
                     await self.__send(data, LiveDanmaku.PROTOCOL_VERSION_HEARTBEAT, LiveDanmaku.DATAPACK_TYPE_VERIFY)
+                    self.__connected_status = 1
                     await self.__loop()
-                    break
+                    return
             except websockets.ConnectionClosedError:
                 self.logger.warning(f"连接失败，准备尝试下一个地址")
         else:
+            self.__connected_status = -1
             self.logger.error(f"所有主机连接失败，程序终止")
 
     async def __loop(self):
@@ -453,13 +463,29 @@ class LiveDanmaku(object):
         循环收取数据
         :return:
         """
-        asyncio.create_task(self.__heartbeat())
+        heartbeat_task = asyncio.create_task(self.__heartbeat())
+        self.__tasks.append(heartbeat_task)
         while True:
             try:
                 data = await self.__recv()
             except websockets.ConnectionClosed:
-                self.logger.warning("连接被断开")
-                self.__has_connected = False
+                callback_info = {
+                    'room_display_id': self.room_display_id,
+                    'room_real_id': self.room_real_id,
+                    "type": "DISCONNECT",
+                    "data": self.__connected_status
+                }
+                handlers = self.__event_handlers.get("DISCONNECT", []) + self.__event_handlers.get("ALL", [])
+                for handler in handlers:
+                    asyncio.create_task(self.__run_as_asynchronous_func(handler, callback_info))
+                if self.__connected_status == 2:
+                    self.logger.info("连接正常断开")
+                else:
+                    self.__connected_status = -1
+                    self.logger.warning("连接被异常断开")
+                    self.__clear_tasks()
+                    if self.should_reconnect:
+                        self.connect(True)
                 break
             self.logger.debug(f"收到信息：{data}")
             for info in data:
@@ -494,13 +520,22 @@ class LiveDanmaku(object):
                 else:
                     self.logger.warning("检测到未知的数据包类型，无法处理")
 
+    def __clear_tasks(self):
+        """
+        清除所有运行中的task
+        :return:
+        """
+        for task in self.__tasks:
+            task.cancel()
+        self.__tasks = []
+
     async def __heartbeat(self):
         """
         定时发送心跳包
         :return:
         """
         HEARTBEAT = base64.b64decode("AAAAHwAQAAEAAAACAAAAAVtvYmplY3QgT2JqZWN0XQ==")
-        while self.__has_connected:
+        while self.__connected_status == 2:
             self.logger.debug("发送心跳包")
             await self.__ws.send(HEARTBEAT)
             await asyncio.sleep(30.0)
@@ -633,6 +668,7 @@ class LiveDanmaku(object):
         本模块自定义事件：
         VIEW: 直播间人气更新
         ALL: 所有事件
+        DISCONNECT: 断开连接（传入连接状态码参数）
         """
         def decoration(func):
             upper_name = name.upper()

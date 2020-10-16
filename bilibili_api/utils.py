@@ -337,7 +337,7 @@ class CrackUid(object):
 # 请求相关
 
 
-def request(method: str, url: str, params=None, data=None, cookies=None, headers=None, **kwargs):
+def request(method: str, url: str, params=None, data=None, cookies=None, headers=None, data_type: str = "form", **kwargs):
     if params is None:
         params = {}
     if data is None:
@@ -346,6 +346,8 @@ def request(method: str, url: str, params=None, data=None, cookies=None, headers
         cookies = {}
     if headers is None:
         headers = copy.deepcopy(DEFAULT_HEADERS)
+    if data_type.lower() == "json":
+        headers['Content-Type'] = "application/json"
     st = {
         "url": url,
         "params": params,
@@ -387,9 +389,10 @@ def request(method: str, url: str, params=None, data=None, cookies=None, headers
         raise exceptions.NetworkException(req.status_code)
 
 
-def get(url, params=None, cookies=None, headers=None, **kwargs):
+def get(url, params=None, cookies=None, headers=None, data_type: str = "form", **kwargs):
     """
     专用GET请求
+    :param data_type:
     :param url:
     :param params:
     :param cookies:
@@ -397,13 +400,14 @@ def get(url, params=None, cookies=None, headers=None, **kwargs):
     :param kwargs:
     :return:
     """
-    resp = request("GET", url=url, params=params, cookies=cookies, headers=headers, **kwargs)
+    resp = request("GET", url=url, params=params, cookies=cookies, headers=headers, data_type=data_type, **kwargs)
     return resp
 
 
-def post(url, cookies, data=None, headers=None, **kwargs):
+def post(url, cookies, data=None, headers=None, data_type: str = "form", **kwargs):
     """
     专用POST请求
+    :param data_type:
     :param url:
     :param cookies:
     :param data:
@@ -411,13 +415,14 @@ def post(url, cookies, data=None, headers=None, **kwargs):
     :param kwargs:
     :return:
     """
-    resp = request("POST", url=url, data=data, cookies=cookies, headers=headers, **kwargs)
+    resp = request("POST", url=url, data=data, cookies=cookies, headers=headers, data_type=data_type, **kwargs)
     return resp
 
 
-def delete(url, params=None, data=None, cookies=None, headers=None, **kwargs):
+def delete(url, params=None, data=None, cookies=None, headers=None, data_type: str = "form", **kwargs):
     """
     专用DELETE请求
+    :param data_type:
     :param url:
     :param params:
     :param data:
@@ -426,7 +431,7 @@ def delete(url, params=None, data=None, cookies=None, headers=None, **kwargs):
     :param kwargs:
     :return:
     """
-    resp = request("DELETE", url=url, params=params, data=data, cookies=cookies, headers=headers, **kwargs)
+    resp = request("DELETE", url=url, params=params, data=data, cookies=cookies, headers=headers, data_type=data_type, **kwargs)
     return resp
 
 

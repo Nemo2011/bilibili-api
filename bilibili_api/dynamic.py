@@ -290,12 +290,10 @@ def get_reposts_raw(dynamic_id: int, offset: str = "0", verify: utils.Verify = N
     return resp
 
 
-def get_reposts(dynamic_id: int, limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_reposts_r(dynamic_id: int, verify: utils.Verify = None):
     """
     自动循环获取动态转发列表
-    :param callback: 回调函数
     :param dynamic_id: 动态ID
-    :param limit: 限制数量，注意b站API有获取数量限制，大概在560个左右就获取不到了
     :param verify:
     :return:
     """
@@ -303,24 +301,18 @@ def get_reposts(dynamic_id: int, limit: int = 114514, callback=None, verify: uti
         verify = utils.Verify()
 
     offset = ""
-    reposts = []
-    count = 0
-    while count < limit:
+    while True:
         data = get_reposts_raw(dynamic_id, offset, verify)
         if "items" not in data:
             break
         items = data["items"]
-        count += len(items)
         for i in items:
             i["card"] = json.loads(i["card"])
             i["extend_json"] = json.loads(i["extend_json"])
-        reposts += items
-        if callable(callback):
-            callback(items)
+            yield i
         if "offset" not in data:
             break
         offset = data["offset"]
-    return reposts[:limit]
 
 
 # 动态操作
@@ -416,18 +408,16 @@ def __get_type_and_rid(dynamic_id: int):
 # 评论相关
 
 
-def get_comments(dynamic_id: int, order: str = "time", limit: int = 1919810, callback=None, verify: utils.Verify = None):
+def get_comments_g(dynamic_id: int, order: str = "time", verify: utils.Verify = None):
     """
     获取评论
     :param dynamic_id:
     :param order:
-    :param callback: 回调函数
-    :param limit: 限制数量
     :param verify:
     :return:
     """
     type_, rid = __get_type_and_rid(dynamic_id)
-    replies = bilibili_api.common.get_comments(rid, type_, order, limit, callback, verify)
+    replies = bilibili_api.common.get_comments(rid, type_, order, verify)
     return replies
 
 

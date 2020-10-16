@@ -102,32 +102,25 @@ def get_live_info(uid: int, verify: utils.Verify = None):
     return data
 
 
-def get_videos(uid: int, order: str = "pubdate", limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_videos_g(uid: int, order: str = "pubdate", verify: utils.Verify = None):
     """
     自动循环获取用户投稿视频信息
-    :param callback: 回调函数
     :param uid:
     :param order: 排序，接受"pubdate", "view", "favorite"
-    :param limit: 限制数量
     :param verify:
     :return:
     """
     if verify is None:
         verify = utils.Verify()
 
-    count = 0
     page = 1
-    videos = []
-    while count < limit:
+    while True:
         data = get_videos_raw(uid=uid, order=order, pn=page, verify=verify)
         if not data["list"]["vlist"]:
             break
-        count += len(data["list"]["vlist"])
-        videos += data["list"]["vlist"]
-        if callable(callback):
-            callback(data["list"]["vlist"])
+        for v in data["list"]["vlist"]:
+            yield v
         page += 1
-    return videos[:limit]
 
 
 def get_videos_raw(uid: int, ps: int = 30, tid: int = 0, pn: int = 1, keyword: str = "",
@@ -166,32 +159,25 @@ def get_videos_raw(uid: int, ps: int = 30, tid: int = 0, pn: int = 1, keyword: s
     return data
 
 
-def get_audios(uid: int, order: str = "pubdate", limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_audios_g(uid: int, order: str = "pubdate", verify: utils.Verify = None):
     """
     获取用户音频投稿
-    :param callback:
     :param uid:
     :param order: 排序，接受"pubdate", "view", "favorite"
-    :param limit: 数量限制
     :param verify:
     :return:
     """
     if verify is None:
         verify = utils.Verify()
 
-    count = 0
     page = 1
-    audios = []
-    while count < limit:
+    while True:
         data = get_audios_raw(uid=uid, order=order, pn=page, verify=verify)
         if not data["data"]:
             break
-        count += len(data["data"])
-        audios += data["data"]
-        if callable(callback):
-            callback(data["data"])
+        for au in data["data"]:
+            yield au
         page += 1
-    return audios[:limit]
 
 
 def get_audios_raw(uid: int, order: str = "pubdate", ps: int = 30,
@@ -225,33 +211,26 @@ def get_audios_raw(uid: int, order: str = "pubdate", ps: int = 30,
     return data
 
 
-def get_articles(uid: int, order: str = "pubdate", limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_articles_g(uid: int, order: str = "pubdate", verify: utils.Verify = None):
     """
     自动循环获取专栏投稿
-    :param callback: 回调函数
     :param uid:
     :param order: 排序方式，pubdate（上传日期）、view（播放量）、favorite（收藏量）
-    :param limit: 限制数量
     :param verify:
     :return:
     """
     if verify is None:
         verify = utils.Verify()
 
-    count = 0
     page = 1
-    articles = []
-    while count < limit:
+    while True:
         data = get_articles_raw(uid=uid, order=order, verify=verify, pn=page)
         if "articles" not in data:
             break
         else:
-            articles += data["articles"]
-            if callable(callback):
-                callback(data["articles"])
-            count += len(data["articles"])
+            for ar in data["articles"]:
+                yield ar
             page += 1
-    return articles[:limit]
 
 
 def get_articles_raw(uid: int, pn: int = 1, ps: int = 30, order: str = "pubdate", verify: utils.Verify = None):
@@ -329,58 +308,43 @@ def get_dynamic_raw(uid: int, offset: str = 0, need_top: bool = False, verify: u
     return data
 
 
-def get_dynamic(uid: int, limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_dynamic_g(uid: int, verify: utils.Verify = None):
     """
     自动循环获取用户动态
-    :param callback:
     :param uid:
-    :param limit: 限制数量
     :param verify:
     :return:
     """
 
     offset = "0"
-    count = 0
-    dynamic = []
-    while count < limit:
+    while True:
         data = get_dynamic_raw(uid, offset, verify=verify)
-        dynamic += data["cards"]
-        if callable(callback):
-            callback(data["cards"])
+        for c in data["cards"]:
+            yield c
         if data["has_more"] != 1:
             break
-        count += len(data["cards"])
         offset = data["next_offset"]
 
-    return dynamic[:limit]
 
-
-def get_bangumi(uid: int, type_: str = "bangumi", limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_bangumi_g(uid: int, type_: str = "bangumi", verify: utils.Verify = None):
     """
     自动循环获取追番/追剧列表
-    :param callback: 回调函数
     :param uid:
     :param type_:
-    :param limit:
     :param verify:
     :return:
     """
     if verify is None:
         verify = utils.Verify()
 
-    bangumi = []
     page = 1
-    count = 0
-    while count < limit:
+    while True:
         data = get_bangumi_raw(uid=uid, pn=page, type_=type_, verify=verify)
         if len(data["list"]) == 0:
             break
-        bangumi += data["list"]
-        if callable(callback):
-            callback(data["list"])
-        count += len(data["list"])
+        for b in data["list"]:
+            yield b
         page += 1
-    return bangumi[:limit]
 
 
 def get_bangumi_raw(uid: int, pn: int = 1, ps: int = 15, type_: str = "bangumi", verify: utils.Verify = None):
@@ -444,32 +408,24 @@ def get_favorite_list_content_raw(media_id: int, pn: int = 1, ps: int = 20, keyw
     return data
 
 
-def get_favorite_list_content(media_id: int, order: str = "mtime",
-                              limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_favorite_list_content_g(media_id: int, order: str = "mtime", verify: utils.Verify = None):
     """
     自动循环获取收藏夹内容
-    :param callback: 回调函数
     :param media_id: 收藏夹分类ID
     :param order: 排序方式，接受值：mtime（最近收藏）、view（最多播放）、pubtime（最近投稿）
-    :param limit: 限制数量
     :param verify:
     :return:
     """
-    count = 0
     page = 1
-    content = []
-    while count < limit:
+    while True:
         data = get_favorite_list_content_raw(media_id=media_id, order=order, pn=page, verify=verify)
         if "medias" not in data:
             break
         if data["medias"] is None:
             break
-        count += len(data["medias"])
-        content += data["medias"]
-        if callable(callback):
-            callback(data["medias"])
+        for m in data["medias"]:
+            yield m
         page += 1
-    return content[:limit]
 
 
 def get_favorite_list(uid: int, verify: utils.Verify = None):
@@ -508,23 +464,19 @@ def get_followings_raw(uid: int, ps: int = 20, pn: int = 1, order: str = "desc",
     return data
 
 
-def get_followings(uid: int, order: str = "desc", limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_followings_g(uid: int, order: str = "desc", verify: utils.Verify = None):
     """
     获取用户关注列表
-    :param callback: 回调
     :param uid:
     :param order: desc倒序,asc正序
-    :param limit: 数量限制
     :param verify:
     :return:
     """
     if verify is None:
         verify = utils.Verify()
 
-    count = 0
     page = 1
-    followings = []
-    while count < limit:
+    while True:
         try:
             data = get_followings_raw(uid=uid, order=order, pn=page, verify=verify)
         except exceptions.BilibiliException as e:
@@ -534,14 +486,9 @@ def get_followings(uid: int, order: str = "desc", limit: int = 114514, callback=
                 raise e
         if len(data["list"]) == 0:
             break
-        count += len(data["list"])
-        if callable(callback):
-            callback(data["list"])
-        followings += data["list"]
-        if callable(callback):
-            callback(data["list"])
+        for f in data["list"]:
+            yield f
         page += 1
-    return followings[:limit]
 
 
 def get_followers_raw(uid: int, ps: int = 20, pn: int = 1, order: str = "desc", verify: utils.Verify = None):
@@ -569,23 +516,19 @@ def get_followers_raw(uid: int, ps: int = 20, pn: int = 1, order: str = "desc", 
     return data
 
 
-def get_followers(uid: int, order: str = "desc", limit: int = 114514, callback=None, verify: utils.Verify = None):
+def get_followers_g(uid: int, order: str = "desc", verify: utils.Verify = None):
     """
     获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）
-    :param callback: 回调
     :param uid:
     :param order: desc倒序,asc正序
-    :param limit: 数量限制
     :param verify:
     :return:
     """
     if verify is None:
         verify = utils.Verify()
 
-    count = 0
     page = 1
-    followings = []
-    while count < limit:
+    while True:
         try:
             data = get_followers_raw(uid=uid, order=order, pn=page, verify=verify)
         except exceptions.BilibiliException as e:
@@ -595,14 +538,9 @@ def get_followers(uid: int, order: str = "desc", limit: int = 114514, callback=N
                 raise e
         if len(data["list"]) == 0:
             break
-        if callable(callback):
-            callback(data["list"])
-        count += len(data["list"])
-        followings += data["list"]
-        if callable(callback):
-            callback(data["list"])
+        for f in data["list"]:
+            yield f
         page += 1
-    return followings[:limit]
 
 
 def get_overview(uid: int, verify: utils.Verify = None):

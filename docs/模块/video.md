@@ -164,5 +164,91 @@ bvid: bv号，即b站改版之后用于标识视频的唯一ID。和aid可以互
 | content | str  | True     | -    | 动态内容 |
 
 
+## 上传视频
+
+上传视频步骤略繁琐，故单独在这说明。
+
+一共有三个方法，分别如下：
+
+`video_upload(path, verify)`: 上传视频文件到b站服务器
+
+`video_cover_upload(path, verify)`: 上传视频封面
+
+`video_submit(data, verify)`: 提交投稿
+
+verify传入完全参数，必须提供。
+
+因为投稿参数过多，而且不知道以后会不会变，所以直接传入原始请求参数
+
+提交投稿data参数如下：
+
+```json
+{
+    "copyright": 1自制2转载,
+    "source": "类型为转载时注明转载来源，为自制时删除此键",
+    "cover": "封面URL",
+    "desc": "简介",
+    "desc_format_id": 0,
+    "dynamic": "动态信息",
+    "interactive": 0,
+    "no_reprint": 1为显示禁止转载,
+    "subtitles": {
+        // 字幕格式，请自行研究
+        "lan": "语言",
+        "open": 0
+    },
+    "tag": "标签1,标签2,标签3（英文半角逗号分隔）",
+    "tid": 分区ID（channel模块里头可以获取到）,
+    "title": "标题",
+    "videos": [
+        {
+            "desc": "描述",
+            "filename": "video_upload(返回值)",
+            "title": "分P标题"
+        }
+    ]
+}
+```
+
+举个栗子
+
+```python
+from bilibili_api import video, Verify
+
+verify = Verify("sessdata", "csrf")
+# 上传视频
+filename = video.video_upload("D:/整活.mp4", verify=verify)
+# 上传封面
+cover_url = video.video_cover_upload("D:/整活.png", verify=verify)
+data = {
+    "copyright": 1,
+    "cover": cover_url,
+    "desc": "无端迫害",
+    "desc_format_id": 0,
+    "dynamic": "",
+    "interactive": 0,
+    "no_reprint": 1,
+    "subtitles": {
+        "lan": "",
+        "open": 0
+    },
+    "tag": "哲学,请问您今天要来点兔子吗,鬼畜调教",
+    "tid": 22,
+    "title": "请问您今天要来点哲♂学吗",
+    "videos": [
+        {
+            "desc": "",
+            "filename": filename,
+            "title": "P1"
+        }
+    ]
+}
+# 提交投稿
+result = video.video_submit(data, verify=verify)
+
+# 成功的话会返回bv号和av号
+print(result)
+
+```
 
 [Danmaku]: /docs/bilibili_api/模块/bilibili_api#Danmaku

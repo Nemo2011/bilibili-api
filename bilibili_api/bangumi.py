@@ -69,14 +69,11 @@ def get_short_comments_raw(media_id: int, ps: int = 20, sort: str = "default",
     return resp
 
 
-def get_short_comments(media_id: int, order: str = "default", limit: int = 114514,
-                       callback=None, verify: utils.Verify = None):
+def get_short_comments_g(media_id: int, order: str = "default", verify: utils.Verify = None):
     """
-    自动循环获取短评
-    :param callback: 回调函数，每次获取到一页会将该页数据传入指定的函数
+    自动循环获取短评，使用生成器
     :param media_id:
     :param order: default（默认排序）time（时间倒序）
-    :param limit: 限制获取数量
     :param verify:
     :return:
     """
@@ -84,9 +81,7 @@ def get_short_comments(media_id: int, order: str = "default", limit: int = 11451
         verify = utils.Verify()
 
     cursor = None
-    count = 0
-    comments = []
-    while count < limit:
+    while True:
         resp = get_short_comments_raw(media_id=media_id, sort=order, cursor=cursor, verify=verify)
         if "list" not in resp:
             break
@@ -95,15 +90,12 @@ def get_short_comments(media_id: int, order: str = "default", limit: int = 11451
         if len(resp["list"]) == 0:
             break
 
-        count += len(resp["list"])
-        comments += resp["list"]
-        if callable(callback):
-            callback(resp["list"])
+        for r in resp["list"]:
+            yield r
 
         if "next" not in resp:
             break
         cursor = resp["next"]
-    return comments[:limit]
 
 
 def get_long_comments_raw(media_id: int, ps: int = 20, sort: str = "default",
@@ -138,14 +130,11 @@ def get_long_comments_raw(media_id: int, ps: int = 20, sort: str = "default",
     return resp
 
 
-def get_long_comments(media_id: int, order: str = "default", limit: int = 114514,
-                      callback=None, verify: utils.Verify = None):
+def get_long_comments_g(media_id: int, order: str = "default", verify: utils.Verify = None):
     """
-    自动循环获取长评
-    :param callback: 回调函数，每次获取到一页会将该页数据传入指定的函数
+    自动循环获取长评，使用生成器
     :param media_id:
     :param order: default（默认排序）time（时间倒序）
-    :param limit: 限制获取数量
     :param verify:
     :return:
     """
@@ -153,9 +142,7 @@ def get_long_comments(media_id: int, order: str = "default", limit: int = 114514
         verify = utils.Verify()
 
     cursor = None
-    count = 0
-    comments = []
-    while count < limit:
+    while True:
         resp = get_long_comments_raw(media_id=media_id, sort=order, cursor=cursor, verify=verify)
         if "list" not in resp:
             break
@@ -164,15 +151,12 @@ def get_long_comments(media_id: int, order: str = "default", limit: int = 114514
         if len(resp["list"]) == 0:
             break
 
-        count += len(resp["list"])
-        comments += resp["list"]
-        if callable(callback):
-            callback(resp["list"])
+        for r in resp["list"]:
+            yield r
 
         if "next" not in resp:
             break
         cursor = resp["next"]
-    return comments[:limit]
 
 
 def get_episodes_list(season_id: int, verify: utils.Verify = None):
