@@ -51,6 +51,10 @@ class LiveException(BilibiliApiException):
     def __init__(self, msg: str):
         super().__init__(msg)
 
+class UploadException(BilibiliApiException):
+    def __init__(self, msg: str):
+        super().__init__(msg)
+
 """
 奇怪的异常增加了！
 """

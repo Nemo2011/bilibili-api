@@ -169,17 +169,15 @@ def share_to_dynamic(auid: int, content: str, verify: utils.Verify):
 # 评论相关
 
 
-def get_comments(auid: int, order: str = "time", limit: int = 1919810, callback=None, verify: utils.Verify = None):
+def get_comments_g(auid: int, order: str = "time", verify: utils.Verify = None):
     """
     获取评论
     :param auid: 音频ID
     :param order:
-    :param callback: 回调函数
-    :param limit: 限制数量
     :param verify:
     :return:
     """
-    replies = common.get_comments(auid, "audio", order, limit, callback, verify)
+    replies = common.get_comments(auid, "audio", order, verify)
     return replies
 
 
@@ -260,17 +258,15 @@ def del_comment(rpid: int, auid: int, verify: utils.Verify = None):
 # 评论相关
 
 
-def list_get_comments(amid: int, order: str = "time", limit: int = 1919810, callback=None, verify: utils.Verify = None):
+def list_get_comments_g(amid: int, order: str = "time", verify: utils.Verify = None):
     """
     获取评论
     :param amid: 音频ID
     :param order:
-    :param callback: 回调函数
-    :param limit: 限制数量
     :param verify:
     :return:
     """
-    replies = common.get_comments(amid, "audio_list", order, limit, callback, verify)
+    replies = common.get_comments(amid, "audio_list", order, verify)
     return replies
 
 
@@ -400,29 +396,22 @@ def list_get_song_list_raw(amid: int = None, pn: int = 1, ps: int = 100, verify:
     return resp
 
 
-def list_get_song_list(amid: int = None, limit: int = 114514, callback=None, verify: utils.Verify = None):
+def list_get_song_list_g(amid: int = None, verify: utils.Verify = None):
     """
     循环获取歌单歌曲列表
-    :param callback:
-    :param limit:
     :param amid:
     :param verify:
     :return:
     """
     page = 1
-    count = 0
-    songs = []
 
-    while count < limit:
+    while True:
         resp = list_get_song_list_raw(amid, page, 100, verify)
         if resp is None:
             break
-        count += len(resp["data"])
-        songs += resp["data"]
-        if callable(callback):
-            callback(resp["data"])
+        for r in resp["data"]:
+            yield r
         page += 1
-    return songs[:limit]
 
 
 def list_set_favorite(amid: int, status=True, verify: utils.Verify = None):

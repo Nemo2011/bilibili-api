@@ -29,17 +29,15 @@ API = utils.get_api()
 # 评论相关
 
 
-def get_comments(cv: int, order: str = "time", limit: int = 1919810, callback=None, verify: utils.Verify = None):
+def get_comments_g(cv: int, order: str = "time", verify: utils.Verify = None):
     """
     获取评论
     :param cv: cv号
     :param order:
-    :param callback: 回调函数
-    :param limit: 限制数量
     :param verify:
     :return:
     """
-    replies = common.get_comments(cv, "article", order, limit, callback, verify)
+    replies = common.get_comments(cv, "article", order, verify)
     return replies
 
 

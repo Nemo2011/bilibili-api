@@ -149,36 +149,28 @@ def get_comments_raw(oid: int, type_: str, order: str = "time", pn: int = 1, ver
     return resp
 
 
-def get_comments(oid: int, type_: str, order: str = "time",
-                 limit: int = 1919810, callback=None, verify: utils.Verify = None):
+def get_comments(oid: int, type_: str, order: str = "time", verify: utils.Verify = None):
     """
-    通用循环获取评论
+    通用循环获取评论，使用生成器语法
     :param type_:
     :param order:
-    :param callback: 回调函数
     :param oid:
-    :param limit: 限制数量
     :param verify:
     :return:
     """
     if verify is None:
         verify = utils.Verify()
 
-    count = 0
-    replies = []
     page = 1
-    while count < limit:
+    while True:
         resp = get_comments_raw(oid=oid, pn=page, order=order, verify=verify, type_=type_)
         if "replies" not in resp:
             break
         if resp["replies"] is None:
             break
-        count += len(resp["replies"])
-        replies += resp["replies"]
-        if callable(callback):
-            callback(resp["replies"])
+        for rep in resp["replies"]:
+            yield rep
         page += 1
-    return replies[:limit]
 
 
 def get_vote_info(vote_id: int, verify: utils.Verify = None):
