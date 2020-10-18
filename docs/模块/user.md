@@ -300,4 +300,4 @@ uid: 用于标识用户的唯一纯数字ID，从用户空间的地址最后面�
 | group_id     | int  | True     | -    | 分组id      |
 
 
-[循环获取数据参数说明]: /docs/bilibili_api/通用解释#循环获取数据参数说明
+[循环获取数据参数说明]: /bilibili_api/docs/通用解释#循环获取数据参数说明

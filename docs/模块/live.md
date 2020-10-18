@@ -107,7 +107,7 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 注意，block_id可用 [ban_user](#ban_user) 的返回值获取，或者 [get_black_list](#get_black_list) 中获取。
 
 
-### connect_all_livedanmaku
+### connect_all_LiveDanmaku
 
 自动连接多个直播间弹幕
 
@@ -148,7 +148,7 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 
 | 参数名          | 类型 | 必须提供 | 默认  | 释义                          |
 | --------------- | ---- | -------- | ----- | ----------------------------- |
-| return_task | bool  | False     | False     | 返回Task类，供用户自行调用协程 |
+| return_coroutine | bool  | False     | False     | 返回 Coroutine 类，供用户自行调用协程 |
 
 
 ##### disconnect
@@ -285,6 +285,6 @@ if __name__ == '__main__':
 ```
 
 
-[Danmaku]: /docs/bilibili_api/模块/bilibili_api#Danmaku
+[Danmaku]: /bilibili_api/docs/模块/bilibili_api#Danmaku
 
-[循环获取数据参数说明]: /docs/bilibili_api/通用解释#循环获取数据参数说明
+[循环获取数据参数说明]: /bilibili_api/docs/通用解释#循环获取数据参数说明

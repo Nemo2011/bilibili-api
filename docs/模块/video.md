@@ -251,4 +251,103 @@ print(result)
 
 ```
 
-[Danmaku]: /docs/bilibili_api/模块/bilibili_api#Danmaku
+## 类
+
+### VideoOnlineMonitor
+
+通过Websocket实时连接视频房间，可实时获取在线人数、弹幕更新，
+
+#### 初始化参数
+
+| 参数名          | 类型 | 必须提供 | 默认  | 释义                          |
+| --------------- | ---- | -------- | ----- | ----------------------------- |
+| bvid | str  | False     | None     | bv号（aid和bvid两者必须提供其中一个，bv号优先级更高）                    |
+| aid | int  | False     | None     | av号（aid和bvid两者必须提供其中一个）                    |
+| debug           | bool | False    | False | 调试模式，将输出详细的信息    |
+| should_reconnect         | bool | False    | True  | 异常断开后是否重连 |
+| page         | int | False    | 0  | 分P编号，从0开始 |
+| event_handler         | Function | False    | None  | 事件处理器，因为事件比较少所以就没像live.LiveDanmaku那样写装饰器了 |
+
+#### 属性
+
+| 属性名 | 类型           | 释义                           |
+| ------ | -------------- | ------------------------------ |
+| logger | logging.Logger | 日志记录，可以自行设置一些输出 |
+
+#### 方法
+
+##### connect
+
+连接弹幕服务器。
+
+| 参数名          | 类型 | 必须提供 | 默认  | 释义                          |
+| --------------- | ---- | -------- | ----- | ----------------------------- |
+| return_coroutine | bool  | False     | False     | 返回 Coroutine 类，供用户自行调用协程 |
+
+
+##### disconnect
+
+断开弹幕服务器连接。
+
+##### get_connect_status
+
+获取连接直播间状态
+
+0未连接，1已连接，3已正常断开，-1异常断开
+
+#### 事件
+
+收到事件时调用用户指定方法，完整例子：
+
+```python
+from bilibili_api.video import VideoOnlineMonitor
+
+def event_handler(data):
+    print(data)
+
+room = VideoOnlineMonitor(bvid="BV1uv411q7Mv", event_handler=event_handler)
+
+    
+if __name__ == "__main__":
+    room.connect()
+```
+
+常用事件名：
+
+```
+ONLINE： 在线人数更新
+DANMAKU： 收到实时弹幕
+DISCONNECT： 断开连接（传入连接状态码参数）
+```
+
+回调数据格式：
+```json
+{
+    "type": "事件名，类型str", 
+    "aid": "av号，类型int", 
+    "bvid": "bv号，类型str", 
+    "data": "事件内容，类型根据事件类型而定"
+}
+```
+
+需要注意的是收到弹幕时会返回 [Danmaku][Danmaku] 类，已经帮你解析好了。
+
+### 连接多个视频
+
+```python
+import bilibili_api
+
+def on_event(data):
+    print(data)
+
+room = bilibili_api.video.VideoOnlineMonitor('BV1y54y1k7CB', debug=False, event_handler=on_event)
+room1 = bilibili_api.video.VideoOnlineMonitor('BV1y54y1k7CB', debug=False, event_handler=on_event)
+
+if __name__ == '__main__':
+    bilibili_api.video.connect_all_VideoOnlineMonitor(room, room1)
+    # 用列表解构
+    rooms = [room, room1]
+    bilibili_api.video.connect_all_VideoOnlineMonitor(*rooms)
+```
+
+[Danmaku]: /bilibili_api/docs/模块/bilibili_api#Danmaku
