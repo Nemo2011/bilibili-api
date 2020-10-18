@@ -59,11 +59,11 @@ amid：标识歌单的唯一数字ID
 
 ### 评论相关
 
-参见 [评论信息和操作](/docs/bilibili_api/通用解释#评论信息和操作)，传入auid。
+参见 [评论信息和操作](/bilibili_api/docs/通用解释#评论信息和操作)，传入auid。
 
 ### 歌单评论相关
 
-参见 [评论信息和操作](/docs/bilibili_api/通用解释#评论信息和操作)，传入amid。
+参见 [评论信息和操作](/bilibili_api/docs/通用解释#评论信息和操作)，传入amid。
 
 ### list_get_info
 
@@ -106,4 +106,4 @@ amid：标识歌单的唯一数字ID
 
 
 
-[循环获取数据参数说明]: /docs/bilibili_api/通用解释#循环获取数据参数说明
+[循环获取数据参数说明]: /bilibili_api/docs/通用解释#循环获取数据参数说明

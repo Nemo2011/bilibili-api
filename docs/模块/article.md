@@ -12,7 +12,7 @@ cv：cv号，标识专栏的唯一ID。
 
 ### 评论相关
 
-参见 [评论信息和操作](/docs/bilibili_api/通用解释#评论信息和操作)，传入cv。
+参见 [评论信息和操作](/bilibili_api/docs/通用解释#评论信息和操作)，传入cv。
 
 ### get_info
 

@@ -331,7 +331,7 @@ def unban_user(room_real_id: int, block_id: int, verify: utils.Verify = None):
     return resp
 
 
-def connect_all_livedanmaku(*livedanmaku_classes):
+def connect_all_LiveDanmaku(*livedanmaku_classes):
     """
     同时连接多个直播间
     :param livedanmaku_classes: LiveDanmaku类动态参数
@@ -345,7 +345,9 @@ def connect_all_livedanmaku(*livedanmaku_classes):
     async def run():
         for task in tasks:
             await task
+
     asyncio.get_event_loop().run_until_complete(run())
+    asyncio.get_event_loop().run_forever()
 
 
 class LiveDanmaku(object):
@@ -381,34 +383,27 @@ class LiveDanmaku(object):
         # 连接状态，0未连接，1已连接，3已正常断开，-1异常断开
         self.__connected_status = 0
         self.__conf = None
-        self.__tasks = []
 
         # 重连设置
         self.should_reconnect = should_reconnect
 
-    def connect(self, return_task: bool = False):
+        self.__heartbeat_task = None
+        self.__is_single_room = False
+
+    def connect(self, return_coroutine: bool = False):
         """
         连接直播间
         :return:
         """
         if self.__connected_status == 1:
             raise exceptions.LiveException("已连接直播间，不可重复连接")
-        # 获取真实房间号
-        self.logger.debug("正在获取真实房间号")
-        self.room_real_id = get_room_play_info(room_display_id=self.room_real_id, verify=self.verify)["room_id"]
-        self.logger.debug(f"获取成功，真实房间号：{self.room_real_id}")
-        # 获取直播服务器配置
-        self.logger.debug("正在获取聊天服务器配置")
-        self.__conf = get_chat_conf(room_real_id=self.room_real_id, verify=self.verify)
-        self.logger.debug("聊天服务器配置获取成功")
-        # 连接直播间
-        loop = self.__event_loop
-        if return_task:
-            task = loop.create_task(self.__main())
-            return task
+        if return_coroutine:
+            self.__is_single_room = False
+            return self.__main()
         else:
-            loop.run_until_complete(self.__main())
-            loop.run_forever()
+            self.__is_single_room = True
+            asyncio.get_event_loop().run_until_complete(self.__main())
+            asyncio.get_event_loop().run_forever()
 
     def disconnect(self):
         """
@@ -416,7 +411,6 @@ class LiveDanmaku(object):
         :return:
         """
         self.__connected_status = 2
-        self.__clear_tasks()
         asyncio.gather(self.__ws.close())
 
     def get_connect_status(self):
@@ -427,6 +421,15 @@ class LiveDanmaku(object):
         入口
         :return:
         """
+        # 获取真实房间号
+        self.logger.debug("正在获取真实房间号")
+        self.room_real_id = get_room_play_info(room_display_id=self.room_real_id, verify=self.verify)["room_id"]
+        self.logger.debug(f"获取成功，真实房间号：{self.room_real_id}")
+        # 获取直播服务器配置
+        self.logger.debug("正在获取聊天服务器配置")
+        self.__conf = get_chat_conf(room_real_id=self.room_real_id, verify=self.verify)
+        self.logger.debug("聊天服务器配置获取成功")
+        # 连接直播间
         self.logger.debug("准备连接直播间")
         for host in self.__conf["host_server_list"]:
             port = host['wss_port'] if self.__use_wss else host['ws_port']
@@ -464,7 +467,7 @@ class LiveDanmaku(object):
         :return:
         """
         heartbeat_task = asyncio.create_task(self.__heartbeat())
-        self.__tasks.append(heartbeat_task)
+        self.__heartbeat_task = heartbeat_task
         while True:
             try:
                 data = await self.__recv()
@@ -480,12 +483,15 @@ class LiveDanmaku(object):
                     asyncio.create_task(self.__run_as_asynchronous_func(handler, callback_info))
                 if self.__connected_status == 2:
                     self.logger.info("连接正常断开")
+                    if self.__is_single_room:
+                        asyncio.get_event_loop().stop()
                 else:
                     self.__connected_status = -1
                     self.logger.warning("连接被异常断开")
-                    self.__clear_tasks()
                     if self.should_reconnect:
-                        self.connect(True)
+                        asyncio.create_task(self.connect(True))
+                if self.__heartbeat_task is not None:
+                    self.__heartbeat_task.cancel()
                 break
             self.logger.debug(f"收到信息：{data}")
             for info in data:
@@ -520,22 +526,13 @@ class LiveDanmaku(object):
                 else:
                     self.logger.warning("检测到未知的数据包类型，无法处理")
 
-    def __clear_tasks(self):
-        """
-        清除所有运行中的task
-        :return:
-        """
-        for task in self.__tasks:
-            task.cancel()
-        self.__tasks = []
-
     async def __heartbeat(self):
         """
         定时发送心跳包
         :return:
         """
         HEARTBEAT = base64.b64decode("AAAAHwAQAAEAAAACAAAAAVtvYmplY3QgT2JqZWN0XQ==")
-        while self.__connected_status == 2:
+        while self.__connected_status == 1:
             self.logger.debug("发送心跳包")
             await self.__ws.send(HEARTBEAT)
             await asyncio.sleep(30.0)

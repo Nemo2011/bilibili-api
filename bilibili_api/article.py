@@ -226,7 +226,7 @@ def get_content(cid: int, preview: bool = False, verify: utils.Verify = None):
 
     if not preview:
         # 拉取数据
-        protocol = "https" if utils.use_https else "http"
+        protocol = "https" if utils.request_settings['use_https'] else "http"
         url = f"{protocol}://www.bilibili.com/read/cv{cid}"
         resp = requests.get(url, headers=utils.DEFAULT_HEADERS, cookies=verify.get_cookies())
         if "error" in resp.url:
@@ -649,7 +649,7 @@ class ImageNode(AbstractNode):
         return f"![{self.alt}]({self.url} \"{self.alt}\")"
 
 
-# 专栏卡片
+# 卡片
 
 
 class AbstractCardNode(AbstractNode):
