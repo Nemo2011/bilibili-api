@@ -10,7 +10,7 @@
 
 + V3.0.0b0 2020/10/16
     + live.LiveDanmaku现在可以自动重连了，详见文档
-    + live.LiveDanmaku.has_connected()更改为get_connect_status，表示连接状态，0未连接，1已连接，3已正常断开，-1异常断开
+    + live.LiveDanmaku.has_connected()更改为get_connect_status，表示连接状态，0未连接，1已连接，2已正常断开，-1异常断开
     + 修改所有循环获取数据为**生成器**语法，方法名后面加了`_g`后缀便于识别
     + video模块新增视频上传功能，详见文档
 
