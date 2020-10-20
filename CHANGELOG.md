@@ -1,5 +1,9 @@
 # 更新日志
 
++ V3.0.0b2 2020/10/20
+    + github自动化推送到PyPi
+    + 修正changelog部分错误
+
 + V3.0.0b1 2020/10/17
     + 修复article.get_content()报错
     + 修正一些注释错误
