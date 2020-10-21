@@ -783,9 +783,9 @@ def video_upload(path: str, verify: utils.Verify):
         task_chunks[-1] += (chunks_settings[-remain:])
 
         async with aiohttp.ClientSession(headers={'X-Upos-Auth': settings['auth']}, cookies=verify.get_cookies()) as sess:
-            coroutines = []
             while True:
                 # 循环上传
+                coroutines = []
                 chs = task_chunks
                 for chunks in chs:
                     coroutines.append(upload(chunks, sess))
