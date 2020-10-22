@@ -1,25 +1,19 @@
 # 更新日志
 
-+ V3.0.0b3 2020/10/21
-    + 修复视频循环上传中的一个BUG
-
-+ V3.0.0b2 2020/10/20
-    + github自动化推送到PyPi
-    + 修正changelog部分错误
-
-+ V3.0.0b1 2020/10/17
++ V3.0.0 2020/10/22
+    + live.LiveDanmaku现在可以自动重连了，详见文档
+    + live.LiveDanmaku.has_connected()更改为get_connect_status，表示连接状态，0未连接，1已连接，2已正常断开，-1异常断开
+    + 修改所有循环获取数据为**生成器**语法，方法名后面加了`_g`后缀便于识别
+    + video模块新增视频上传功能，详见文档
     + 修复article.get_content()报错
     + 修正一些注释错误
     + 增加 video.VideoOnlineMonitor，可监控视频实时在线观看人数和实时更新弹幕，使用websocket
     + 优化 live.LiveDanmaku
     + 修改 live.connect_all_livedanmaku() 为 connect_all_LiveDanmaku()
     + 修改 live.LiveDanmaku.connect(return_task) 参数改为 return_coroutine，为True时返回一个 Coroutine 对象而不是 Task 对象
-
-+ V3.0.0b0 2020/10/16
-    + live.LiveDanmaku现在可以自动重连了，详见文档
-    + live.LiveDanmaku.has_connected()更改为get_connect_status，表示连接状态，0未连接，1已连接，2已正常断开，-1异常断开
-    + 修改所有循环获取数据为**生成器**语法，方法名后面加了`_g`后缀便于识别
-    + video模块新增视频上传功能，详见文档
+    + github自动化推送到PyPi
+    + 修正changelog部分错误
+    + 经检测支持Python3.9，修改README
 
 + V2.1.4 2020/10/06
     + 将项目主页纳入repo管理
