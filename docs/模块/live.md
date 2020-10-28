@@ -54,13 +54,13 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 
 获取房间封禁列表，需要登录并且是房管或者主播。
 
-### get_dahanhai
+### get_dahanghai
 
 获取大航海列表
 
 参照：[循环获取数据参数说明][循环获取数据参数说明]
 
-### get_dahanhai_raw
+### get_dahanghai_raw
 
 低层级API，获取大航海列表
 
