@@ -130,16 +130,24 @@ _crack_uid = None
 
 
 class Danmaku(object):
+    FONT_SIZE_EXTREME_SMALL = 12
+    FONT_SIZE_SUPER_SMALL = 16
     FONT_SIZE_SMALL = 18
-    FONT_SIZE_BIG = 36
     FONT_SIZE_NORMAL = 25
+    FONT_SIZE_BIG = 36
+    FONT_SIZE_SUPER_BIG = 45
+    FONT_SIZE_EXTREME_BIG = 64
     MODE_FLY = 1
     MODE_TOP = 5
     MODE_BOTTOM = 4
+    MODE_REVERSE = 6
+    TYPE_NORMAL = 0
+    TYPE_SUBTITLE = 1
 
     def __init__(self, text: str, dm_time: float = 0.0, send_time: float = time.time(), crc32_id: str = None
-                 , color: Color = None,
-                 mode: int = MODE_FLY, font_size: int = FONT_SIZE_NORMAL, is_sub: bool = False):
+                 , color: Color = None, weight: int = -1, id_: int = -1, id_str: str = "", action: str = '',
+                 mode: int = MODE_FLY, font_size: int = FONT_SIZE_NORMAL, is_sub: bool = False, pool: int = -1,
+                 attr: int = -1):
         self.dm_time = datetime.timedelta(seconds=dm_time)
         self.send_time = datetime.datetime.fromtimestamp(send_time)
         self.crc32_id = crc32_id
@@ -151,6 +159,13 @@ class Danmaku(object):
         self.font_size = font_size
         self.is_sub = is_sub
         self.text = text
+
+        self.weight = weight
+        self.id = id_
+        self.id_str = id_str
+        self.action = action
+        self.pool = pool
+        self.attr = attr
 
     def __str__(self):
         ret = "%s, %s, %s" % (self.send_time, self.dm_time, self.text)
@@ -504,6 +519,27 @@ def upload_image(image_path: str, verify: Verify):
     }
     resp = post(url=api["url"], data=data, cookies=verify.get_cookies(), files=files)
     return resp
+
+
+def read_varint(stream: bytes):
+    """
+    读取varint
+    :param stream:
+    :return: value（真实值）, length（varint长度）
+    """
+    value = 0
+    position = 0
+    shift = 0
+    while True:
+        if position >= len(stream):
+            break
+        byte = stream[position]
+        value += (byte & 0b01111111) << shift
+        if byte & 0b10000000 == 0:
+            break
+        position += 1
+        shift += 7
+    return value, position + 1
 
 """
 みゃーねか？どうしたみゃーね～

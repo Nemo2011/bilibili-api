@@ -77,40 +77,129 @@ def get_danmaku(bvid: str = None, aid: int = None, page: int = 0,
     info = get_video_info(aid=aid, bvid=bvid, verify=verify)
     page_id = info["pages"][page]["cid"]
     params = {
-        "oid": page_id
+        "oid": page_id,
+        "type": 1,
+        "segment_index": 1
     }
     if date is not None:
         params["date"] = date.strftime("%Y-%m-%d")
         params["type"] = 1
     req = requests.get(api["url"], params=params, headers=utils.DEFAULT_HEADERS, cookies=verify.get_cookies())
     if req.ok:
-        con = req.content.decode("utf-8")
-        try:
-            xml = parseString(con)
-        except Exception:
-            j = json.loads(con)
-            raise exceptions.BilibiliException(j["code"], j["message"])
-        danmaku = xml.getElementsByTagName("d")
-        py_danmaku = []
-        for d in danmaku:
-            info = d.getAttribute("p").split(",")
-            text = d.childNodes[0].data
-            if info[5] == '0':
-                is_sub = False
+        content_type = req.headers['content-type']
+        if content_type == 'application/json':
+            con = req.json()
+            if con['code'] != 0:
+                raise exceptions.BilibiliException(con['code'], con['message'])
             else:
-                is_sub = True
-            dm = utils.Danmaku(
-                dm_time=float(info[0]),
-                send_time=int(info[4]),
-                crc32_id=info[6],
-                color=utils.Color(info[3]),
-                mode=info[1],
-                font_size=info[2],
-                is_sub=is_sub,
-                text=text
-            )
-            py_danmaku.append(dm)
-        return py_danmaku
+                return con
+        elif content_type == 'application/octet-stream':
+            # 解析二进制流数据
+            con = req.content
+            data = con
+            danmakus = []
+            offset = 0
+            while offset < len(data):
+                if data[offset] == 0x0a:
+                    dm = utils.Danmaku('')
+                    danmakus.append(dm)
+                    offset += 1
+                    dm_data_length, l = utils.read_varint(data[offset:])
+                    offset += l
+                    real_data = data[offset:offset+dm_data_length]
+                    dm_data_offset = 0
+
+                    while dm_data_offset < dm_data_length:
+                        data_type = real_data[dm_data_offset] >> 3
+                        dm_data_offset += 1
+                        if data_type == 1:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.id = d
+                        elif data_type == 2:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.dm_time = datetime.timedelta(seconds=d / 1000)
+                        elif data_type == 3:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.mode = d
+                        elif data_type == 4:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.font_size = d
+                        elif data_type == 5:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.color = utils.Color()
+                            dm.color.set_dec_color(d)
+                        elif data_type == 6:
+                            str_len = real_data[dm_data_offset]
+                            dm_data_offset += 1
+                            d = real_data[dm_data_offset:dm_data_offset + str_len]
+                            dm_data_offset += str_len
+                            dm.crc32_id = d.decode()
+                        elif data_type == 7:
+                            str_len = real_data[dm_data_offset]
+                            dm_data_offset += 1
+                            d = real_data[dm_data_offset:dm_data_offset + str_len]
+                            dm_data_offset += str_len
+                            dm.text = d.decode(errors='ignore')
+                        elif data_type == 8:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.send_time = datetime.datetime.fromtimestamp(d)
+                        elif data_type == 9:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.weight = d
+                        elif data_type == 10:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.action = d
+                        elif data_type == 11:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.pool = d
+                        elif data_type == 12:
+                            str_len = real_data[dm_data_offset]
+                            dm_data_offset += 1
+                            d = real_data[dm_data_offset:dm_data_offset + str_len]
+                            dm_data_offset += str_len
+                            dm.id_str = d.decode()
+                        elif data_type == 13:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.attr = d
+                        else:
+                            break
+                    offset += dm_data_length
+            return danmakus
+        elif content_type == 'text/xml':
+            # 解析XML数据
+            con = req.content.decode("utf-8")
+            xml = parseString(con)
+            danmaku = xml.getElementsByTagName("d")
+            py_danmaku = []
+            for d in danmaku:
+                info = d.getAttribute("p").split(",")
+                text = d.childNodes[0].data
+                if info[5] == '0':
+                    is_sub = False
+                else:
+                    is_sub = True
+                dm = utils.Danmaku(
+                    dm_time=float(info[0]),
+                    send_time=int(info[4]),
+                    crc32_id=info[6],
+                    color=utils.Color(info[3]),
+                    mode=info[1],
+                    font_size=info[2],
+                    is_sub=is_sub,
+                    text=text
+                )
+                py_danmaku.append(dm)
+            return py_danmaku
     else:
         raise exceptions.NetworkException(req.status_code)
 
