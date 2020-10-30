@@ -214,9 +214,13 @@ if __name__ == "__main__":
 ```
 DANMU_MSG: 用户发送弹幕
 SEND_GIFT: 礼物
+COMBO_SEND：礼物连击
+GUARD_BUY：续费大航海
+SUPER_CHAT_MESSAGE：醒目留言（SC）
+SUPER_CHAT_MESSAGE_JPN：醒目留言（带日语翻译？）
 WELCOME: 老爷进入房间
 WELCOME_GUARD: 房管进入房间
-NOTICE_MSG: 系统通知
+NOTICE_MSG: 系统通知（全频道广播之类的）
 PREPARING: 直播准备中
 LIVE: 直播开始
 ROOM_REAL_TIME_MESSAGE_UPDATE: 粉丝数等更新
@@ -224,6 +228,7 @@ ENTRY_EFFECT: 进场特效
 ROOM_RANK: 房间排名更新
 INTERACT_WORD: 用户进入直播间
 ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个xx小时榜
+
 ```
 
 特殊事件名（本模块自定义事件）：
