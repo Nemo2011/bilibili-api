@@ -22,28 +22,6 @@ bvid: bv号，即b站改版之后用于标识视频的唯一ID。和aid可以互
 | --------- | ---- | -------- | ----- | ------------------------- |
 | is_simple | bool | True     | False | 简易信息，将调用另一个API |
 
-### get_danmaku
-
-获取弹幕信息。
-
-| 参数名 | 类型          | 必须提供 | 默认       | 释义                                                         |
-| ------ | ------------- | -------- | ---------- | ------------------------------------------------------------ |
-| page   | int           | False    | 0          | 分p，从0开始                                                 |
-| date   | datetime.date | False    | 今天的日期 | 弹幕日期，查询历史弹幕索引参见 [get_history_danmaku_index](#get_history_danmaku_index) |
-
-返回 [Danmaku][Danmaku] 类的列表。
-
-### get_history_danmaku_index
-
-获取历史弹幕日期索引。
-
-| 参数名 | 类型          | 必须提供 | 默认   | 释义         |
-| ------ | ------------- | -------- | ------ | ------------ |
-| page   | int           | False    | 0      | 分p，从0开始 |
-| date   | datetime.date | False    | 这个月 | 提供年月即可 |
-
-返回存在历史弹幕的日期列表，例：["2020-01-01", "2020-08-08"]
-
 ### get_tags
 
 获取视频标签信息。
@@ -115,7 +93,7 @@ bvid: bv号，即b站改版之后用于标识视频的唯一ID。和aid可以互
 | 参数名 | 类型 | 必须提供 | 默认 | 释义            |
 | ------ | ---- | -------- | ---- | --------------- |
 | num    | int  | False    | 1    | 投币数量，1~2个 |
-| likr   | bool | False    | True | 同时点赞        |
+| like   | bool | False    | True | 同时点赞        |
 
 ### operate_favorite
 
@@ -126,9 +104,52 @@ bvid: bv号，即b站改版之后用于标识视频的唯一ID。和aid可以互
 | add_media_ids | list | -        | []   | 要添加到的收藏夹ID       |
 | del_media_ids | list | -        | []   | 要从收藏夹移除的收藏夹ID |
 
-### 评论相关
+## 弹幕相关
 
-参见 [评论信息和操作](/docs/bilibili_api/通用解释#评论信息和操作)，id还是一样传入bvid或aid。
+### get_danmaku
+
+获取弹幕信息。
+
+| 参数名 | 类型          | 必须提供 | 默认       | 释义                                                         |
+| ------ | ------------- | -------- | ---------- | ------------------------------------------------------------ |
+| page   | int           | False    | 0          | 分p，从0开始                                                 |
+| date   | datetime.date | False    | 今天的日期 | 弹幕日期，查询历史弹幕索引参见 [get_history_danmaku_index](#get_history_danmaku_index) |
+
+返回 [Danmaku][Danmaku] 类的列表。
+
+### get_history_danmaku_index
+
+获取历史弹幕日期索引。
+
+| 参数名 | 类型          | 必须提供 | 默认   | 释义         |
+| ------ | ------------- | -------- | ------ | ------------ |
+| page   | int           | False    | 0      | 分p，从0开始 |
+| date   | datetime.date | False    | 这个月 | 提供年月即可 |
+
+返回存在历史弹幕的日期列表，例：["2020-01-01", "2020-08-08"]
+
+### like_danmaku
+
+点赞弹幕
+
+无需提供bvid, aid
+
+| 参数名 | 类型 | 必须提供 | 默认 | 释义            |
+| ------ | ---- | -------- | ---- | --------------- |
+| dmid    | int  | True    | -    | 弹幕id |
+| oid   | int | True    | - | 分P id，也叫cid        |
+| is_like   | bool | False    | True | 是否点赞      |
+
+### has_liked_danmaku
+
+是否已点赞弹幕
+
+无需提供bvid, aid
+
+| 参数名 | 类型 | 必须提供 | 默认 | 释义            |
+| ------ | ---- | -------- | ---- | --------------- |
+| dmid    | int/list  | True    | -    | 弹幕id，为list时同时查询多个弹幕，为int时只查询一条弹幕 |
+| oid   | int | True    | - | 分P id，也叫cid        |
 
 ### send_danmaku
 
@@ -138,6 +159,11 @@ bvid: bv号，即b站改版之后用于标识视频的唯一ID。和aid可以互
 | ------- | ------------------ | -------- | ---- | ------------ |
 | danmaku | [Danmaku][Danmaku] | True     | -    | 要发送的弹幕 |
 | page    | int                | False    | 0    | 分p号        |
+
+
+### 评论相关
+
+参见 [评论信息和操作](/docs/bilibili_api/通用解释#评论信息和操作)，id还是一样传入bvid或aid。
 
 ### add_tag
 
@@ -170,11 +196,21 @@ bvid: bv号，即b站改版之后用于标识视频的唯一ID。和aid可以互
 
 一共有三个方法，分别如下：
 
-`video_upload(path, verify)`: 上传视频文件到b站服务器
+`video_upload(path, verify, on_progress=None)`: 上传视频文件到b站服务器
 
 `video_cover_upload(path, verify)`: 上传视频封面
 
 `video_submit(data, verify)`: 提交投稿
+
+**on_progress 说明：**
+
+进度回调，数据格式：
+
+{"event": "事件名", "ok": "是否成功", "data": "附加数据"}
+
+事件名：PRE_UPLOAD，GET_UPLOAD_ID，UPLOAD_CHUNK，VERIFY
+
+---
 
 verify传入完全参数，必须提供。
 
