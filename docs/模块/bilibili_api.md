@@ -83,6 +83,12 @@ bv号转av号。
 | font_size | int             | False    | Danmaku.FONT_SIZE_NORMAL | 弹幕字体大小     |
 | is_sub    | bool            | False    | False                    | 是否为字幕弹幕   |
 | color     | [Color](#Color) | False    | 白色                     | 弹幕颜色         |
+| weight    | int             | False    | -1                       | 不知道           |
+| id_       | int             | False    | -1                       | 弹幕ID           |
+| id_str    | str             | False    | ""                       | 弹幕字符串ID     |
+| action    | str             | False    | ""                       | 不知道           |
+| pool      | int             | False    | -1                       | 不知道           |
+| attr      | int             | False    | -1                       | 不知道           |
 
 #### 属性
 
@@ -97,17 +103,30 @@ bv号转av号。
 | is_sub    | bool               | 是否为字幕弹幕   |
 | color     | [Color](#Color)    | 弹幕颜色         |
 | uid       | int                | 发送者真实UID    |
+| weight    | int             | 不知道           |
+| id_       | int             | 弹幕ID           |
+| id_str    | str            | 弹幕字符串ID     |
+| action    | str         | 不知道           |
+| pool      | int          | 不知道           |
+| attr      | int            | 不知道           |
 
 #### 常量
 
-| 名字             | 解释     |
-| ---------------- | -------- |
-| FONT_SIZE_SMALL  | 小字体   |
-| FONT_SIZE_BIG    | 大字体   |
-| FONT_SIZE_NORMAL | 标准字体 |
-| MODE_FLY         | 飞行弹幕 |
-| MODE_TOP         | 顶部弹幕 |
-| MODE_BOTTOM      | 底部弹幕 |
+| 名字                    | 解释     |
+| ----------------------- | -------- |
+| FONT_SIZE_EXTREME_SMALL | 极小字体 |
+| FONT_SIZE_SUPER_SMALL   | 超小字体 |
+| FONT_SIZE_SMALL         | 小字体   |
+| FONT_SIZE_BIG           | 大字体   |
+| FONT_SIZE_SUPER_BIG     | 超大字体 |
+| FONT_SIZE_EXTREME_BIG   | 极大字体 |
+| FONT_SIZE_NORMAL        | 标准字体 |
+| MODE_FLY                | 飞行弹幕 |
+| MODE_TOP                | 顶部弹幕 |
+| MODE_BOTTOM             | 底部弹幕 |
+| MODE_REVERSE            | 反向弹幕 |
+| TYPE_NORMAL             | 普通弹幕 |
+| TYPE_SUBTITLE           | 字幕弹幕 |
 
 #### 方法
 

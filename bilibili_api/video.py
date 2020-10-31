@@ -55,187 +55,6 @@ def get_video_info(bvid: str = None, aid: int = None, is_simple: bool = False, v
     return info
 
 
-def get_danmaku(bvid: str = None, aid: int = None, page: int = 0,
-                verify: utils.Verify = None, date: datetime.date = None):
-    """
-    获取弹幕
-    :param aid:
-    :param bvid:
-    :param page: 分p数
-    :param verify: date不为None时需要SESSDATA验证
-    :param date: 为None时获取最新弹幕，为datetime.date时获取历史弹幕
-    """
-
-    if not (aid or bvid):
-        raise exceptions.NoIdException
-    if verify is None:
-        verify = utils.Verify()
-    if date is not None:
-        if not verify.has_sess():
-            raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-    api = API["video"]["info"]["danmaku"] if date is None else API["video"]["info"]["history_danmaku"]
-    info = get_video_info(aid=aid, bvid=bvid, verify=verify)
-    page_id = info["pages"][page]["cid"]
-    params = {
-        "oid": page_id,
-        "type": 1,
-        "segment_index": 1
-    }
-    if date is not None:
-        params["date"] = date.strftime("%Y-%m-%d")
-        params["type"] = 1
-    req = requests.get(api["url"], params=params, headers=utils.DEFAULT_HEADERS, cookies=verify.get_cookies())
-    if req.ok:
-        content_type = req.headers['content-type']
-        if content_type == 'application/json':
-            con = req.json()
-            if con['code'] != 0:
-                raise exceptions.BilibiliException(con['code'], con['message'])
-            else:
-                return con
-        elif content_type == 'application/octet-stream':
-            # 解析二进制流数据
-            con = req.content
-            data = con
-            danmakus = []
-            offset = 0
-            while offset < len(data):
-                if data[offset] == 0x0a:
-                    dm = utils.Danmaku('')
-                    danmakus.append(dm)
-                    offset += 1
-                    dm_data_length, l = utils.read_varint(data[offset:])
-                    offset += l
-                    real_data = data[offset:offset+dm_data_length]
-                    dm_data_offset = 0
-
-                    while dm_data_offset < dm_data_length:
-                        data_type = real_data[dm_data_offset] >> 3
-                        dm_data_offset += 1
-                        if data_type == 1:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.id = d
-                        elif data_type == 2:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.dm_time = datetime.timedelta(seconds=d / 1000)
-                        elif data_type == 3:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.mode = d
-                        elif data_type == 4:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.font_size = d
-                        elif data_type == 5:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.color = utils.Color()
-                            dm.color.set_dec_color(d)
-                        elif data_type == 6:
-                            str_len = real_data[dm_data_offset]
-                            dm_data_offset += 1
-                            d = real_data[dm_data_offset:dm_data_offset + str_len]
-                            dm_data_offset += str_len
-                            dm.crc32_id = d.decode()
-                        elif data_type == 7:
-                            str_len = real_data[dm_data_offset]
-                            dm_data_offset += 1
-                            d = real_data[dm_data_offset:dm_data_offset + str_len]
-                            dm_data_offset += str_len
-                            dm.text = d.decode(errors='ignore')
-                        elif data_type == 8:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.send_time = datetime.datetime.fromtimestamp(d)
-                        elif data_type == 9:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.weight = d
-                        elif data_type == 10:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.action = d
-                        elif data_type == 11:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.pool = d
-                        elif data_type == 12:
-                            str_len = real_data[dm_data_offset]
-                            dm_data_offset += 1
-                            d = real_data[dm_data_offset:dm_data_offset + str_len]
-                            dm_data_offset += str_len
-                            dm.id_str = d.decode()
-                        elif data_type == 13:
-                            d, l = utils.read_varint(real_data[dm_data_offset:])
-                            dm_data_offset += l
-                            dm.attr = d
-                        else:
-                            break
-                    offset += dm_data_length
-            return danmakus
-        elif content_type == 'text/xml':
-            # 解析XML数据
-            con = req.content.decode("utf-8")
-            xml = parseString(con)
-            danmaku = xml.getElementsByTagName("d")
-            py_danmaku = []
-            for d in danmaku:
-                info = d.getAttribute("p").split(",")
-                text = d.childNodes[0].data
-                if info[5] == '0':
-                    is_sub = False
-                else:
-                    is_sub = True
-                dm = utils.Danmaku(
-                    dm_time=float(info[0]),
-                    send_time=int(info[4]),
-                    crc32_id=info[6],
-                    color=utils.Color(info[3]),
-                    mode=info[1],
-                    font_size=info[2],
-                    is_sub=is_sub,
-                    text=text
-                )
-                py_danmaku.append(dm)
-            return py_danmaku
-    else:
-        raise exceptions.NetworkException(req.status_code)
-
-
-def get_history_danmaku_index(bvid: str = None, aid: int = None, page: int = 0,
-                              date: datetime.date = None, verify: utils.Verify = None):
-    """
-    获取历史弹幕索引
-    :param aid:
-    :param bvid:
-    :param page:
-    :param date: 默认为这个月
-    :param verify:
-    :return:
-    """
-    if not (aid or bvid):
-        raise exceptions.NoIdException
-    if verify is None:
-        verify = utils.Verify()
-    if date is None:
-        date = datetime.date.fromtimestamp(time.time())
-    if not verify.has_sess():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-
-    info = get_video_info(aid=aid, bvid=bvid, verify=verify)
-    page_id = info["pages"][page]["cid"]
-    api = API["video"]["info"]["history_danmaku_index"]
-    params = {
-        "oid": page_id,
-        "month": date.strftime("%Y-%m"),
-        "type": 1
-    }
-    get = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
-    return get
-
-
 def get_tags(bvid: str = None, aid: int = None, verify: utils.Verify = None):
     """
     获取视频标签
@@ -559,6 +378,285 @@ def operate_favorite(bvid: str = None, aid: int = None, add_media_ids: list = No
     resp = common.operate_favorite(aid, "video", add_media_ids, del_media_ids, verify)
     return resp
 
+# 弹幕相关
+
+
+def get_danmaku(bvid: str = None, aid: int = None, page: int = 0,
+                verify: utils.Verify = None, date: datetime.date = None):
+    """
+    获取弹幕
+    :param aid:
+    :param bvid:
+    :param page: 分p数
+    :param verify: date不为None时需要SESSDATA验证
+    :param date: 为None时获取最新弹幕，为datetime.date时获取历史弹幕
+    """
+
+    if not (aid or bvid):
+        raise exceptions.NoIdException
+    if verify is None:
+        verify = utils.Verify()
+    if date is not None:
+        if not verify.has_sess():
+            raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    api = API["video"]["danmaku"]["get_danmaku"] if date is None else API["video"]["danmaku"]["get_history_danmaku"]
+    info = get_video_info(aid=aid, bvid=bvid, verify=verify)
+    page_id = info["pages"][page]["cid"]
+    params = {
+        "oid": page_id,
+        "type": 1,
+        "segment_index": 1
+    }
+    if date is not None:
+        params["date"] = date.strftime("%Y-%m-%d")
+        params["type"] = 1
+    req = requests.get(api["url"], params=params, headers=utils.DEFAULT_HEADERS, cookies=verify.get_cookies())
+    if req.ok:
+        content_type = req.headers['content-type']
+        if content_type == 'application/json':
+            con = req.json()
+            if con['code'] != 0:
+                raise exceptions.BilibiliException(con['code'], con['message'])
+            else:
+                return con
+        elif content_type == 'application/octet-stream':
+            # 解析二进制流数据
+            con = req.content
+            data = con
+            danmakus = []
+            offset = 0
+            while offset < len(data):
+                if data[offset] == 0x0a:
+                    dm = utils.Danmaku('')
+                    danmakus.append(dm)
+                    offset += 1
+                    dm_data_length, l = utils.read_varint(data[offset:])
+                    offset += l
+                    real_data = data[offset:offset+dm_data_length]
+                    dm_data_offset = 0
+
+                    while dm_data_offset < dm_data_length:
+                        data_type = real_data[dm_data_offset] >> 3
+                        dm_data_offset += 1
+                        if data_type == 1:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.id = d
+                        elif data_type == 2:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.dm_time = datetime.timedelta(seconds=d / 1000)
+                        elif data_type == 3:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.mode = d
+                        elif data_type == 4:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.font_size = d
+                        elif data_type == 5:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.color = utils.Color()
+                            dm.color.set_dec_color(d)
+                        elif data_type == 6:
+                            str_len = real_data[dm_data_offset]
+                            dm_data_offset += 1
+                            d = real_data[dm_data_offset:dm_data_offset + str_len]
+                            dm_data_offset += str_len
+                            dm.crc32_id = d.decode()
+                        elif data_type == 7:
+                            str_len = real_data[dm_data_offset]
+                            dm_data_offset += 1
+                            d = real_data[dm_data_offset:dm_data_offset + str_len]
+                            dm_data_offset += str_len
+                            dm.text = d.decode(errors='ignore')
+                        elif data_type == 8:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.send_time = datetime.datetime.fromtimestamp(d)
+                        elif data_type == 9:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.weight = d
+                        elif data_type == 10:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.action = d
+                        elif data_type == 11:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.pool = d
+                        elif data_type == 12:
+                            str_len = real_data[dm_data_offset]
+                            dm_data_offset += 1
+                            d = real_data[dm_data_offset:dm_data_offset + str_len]
+                            dm_data_offset += str_len
+                            dm.id_str = d.decode()
+                        elif data_type == 13:
+                            d, l = utils.read_varint(real_data[dm_data_offset:])
+                            dm_data_offset += l
+                            dm.attr = d
+                        else:
+                            break
+                    offset += dm_data_length
+            return danmakus
+        elif content_type == 'text/xml':
+            # 解析XML数据
+            con = req.content.decode("utf-8")
+            xml = parseString(con)
+            danmaku = xml.getElementsByTagName("d")
+            py_danmaku = []
+            for d in danmaku:
+                info = d.getAttribute("p").split(",")
+                text = d.childNodes[0].data
+                if info[5] == '0':
+                    is_sub = False
+                else:
+                    is_sub = True
+                dm = utils.Danmaku(
+                    dm_time=float(info[0]),
+                    send_time=int(info[4]),
+                    crc32_id=info[6],
+                    color=utils.Color(info[3]),
+                    mode=info[1],
+                    font_size=info[2],
+                    is_sub=is_sub,
+                    text=text
+                )
+                py_danmaku.append(dm)
+            return py_danmaku
+    else:
+        raise exceptions.NetworkException(req.status_code)
+
+
+def get_history_danmaku_index(bvid: str = None, aid: int = None, page: int = 0,
+                              date: datetime.date = None, verify: utils.Verify = None):
+    """
+    获取历史弹幕索引
+    :param aid:
+    :param bvid:
+    :param page:
+    :param date: 默认为这个月
+    :param verify:
+    :return:
+    """
+    if not (aid or bvid):
+        raise exceptions.NoIdException
+    if verify is None:
+        verify = utils.Verify()
+    if date is None:
+        date = datetime.date.fromtimestamp(time.time())
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+
+    info = get_video_info(aid=aid, bvid=bvid, verify=verify)
+    page_id = info["pages"][page]["cid"]
+    api = API["video"]["danmaku"]["get_history_danmaku_index"]
+    params = {
+        "oid": page_id,
+        "month": date.strftime("%Y-%m"),
+        "type": 1
+    }
+    get = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    return get
+
+
+def like_danmaku(dmid: int, oid: int, is_like: bool = True, verify: utils.Verify = None):
+    """
+    点赞弹幕
+    :param dmid: 弹幕ID
+    :param oid: 分P id，又称cid
+    :param is_like: 点赞/取消点赞
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    api = API['video']['danmaku']['like_danmaku']
+    payload = {
+        "dmid": dmid,
+        "oid": oid,
+        "op": 1 if is_like else 2,
+        "platform": "web_player",
+        "csrf": verify.csrf
+    }
+    resp = utils.post(api["url"], cookies=verify.get_cookies(), data=payload)
+    return resp
+
+
+def has_liked_danmaku(dmid, oid: int, verify: utils.Verify = None):
+    """
+    是否已点赞弹幕
+    :param dmid: 弹幕id，为list时同时查询多个弹幕，为int时只查询一条弹幕
+    :param oid: 分P id，又称cid
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+
+    api = API['video']['danmaku']['has_liked_danmaku']
+    params = {
+        "ids": dmid if type(dmid) == int else ",".join(list(map(lambda id_: str(id_), dmid))) if type(dmid) == list else None,
+        "oid": oid,
+    }
+    if params['ids'] is None:
+        raise exceptions.BilibiliApiException("参数错误")
+    resp = utils.get(api["url"], cookies=verify.get_cookies(), params=params)
+    return resp
+
+
+def send_danmaku(danmaku: utils.Danmaku, page: int = 0, bvid: str = None, aid: int = None, verify: utils.Verify = None):
+    """
+    发送弹幕
+    :param danmaku: Danmaku类
+    :param page: 分p号
+    :param aid:
+    :param bvid:
+    :param verify:
+    :return:
+    """
+    if not (aid or bvid):
+        raise exceptions.NoIdException
+    if verify is None:
+        verify = utils.Verify()
+    if not verify.has_sess():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
+    if not verify.has_csrf():
+        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
+
+    page_info = get_pages(bvid, aid, verify)
+    oid = page_info[page]["cid"]
+    api = API["video"]["operate"]["send_danmaku"]
+    if danmaku.is_sub:
+        pool = 1
+    else:
+        pool = 0
+    data = {
+        "type": 1,
+        "oid": oid,
+        "msg": danmaku.text,
+        "aid": aid,
+        "bvid": bvid,
+        "progress": int(danmaku.dm_time.seconds * 1000),
+        "color": danmaku.color.get_dec_color(),
+        "fontsize": danmaku.font_size,
+        "pool": pool,
+        "mode": danmaku.mode,
+        "plat": 1,
+        "csrf": verify.csrf
+    }
+    resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
+    return resp
+
 
 # 评论相关
 
@@ -680,50 +778,6 @@ def del_comment(rpid: int, bvid: str = None, aid: int = None, verify: utils.Veri
 # 评论相关结束
 
 
-def send_danmaku(danmaku: utils.Danmaku, page: int = 0, bvid: str = None, aid: int = None, verify: utils.Verify = None):
-    """
-    发送弹幕
-    :param danmaku: Danmaku类
-    :param page: 分p号
-    :param aid:
-    :param bvid:
-    :param verify:
-    :return:
-    """
-    if not (aid or bvid):
-        raise exceptions.NoIdException
-    if verify is None:
-        verify = utils.Verify()
-    if not verify.has_sess():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-    if not verify.has_csrf():
-        raise exceptions.NoPermissionException(utils.MESSAGES["no_csrf"])
-
-    page_info = get_pages(bvid, aid, verify)
-    oid = page_info[page]["cid"]
-    api = API["video"]["operate"]["send_danmaku"]
-    if danmaku.is_sub:
-        pool = 1
-    else:
-        pool = 0
-    data = {
-        "type": 1,
-        "oid": oid,
-        "msg": danmaku.text,
-        "aid": aid,
-        "bvid": bvid,
-        "progress": int(danmaku.dm_time.seconds * 1000),
-        "color": danmaku.color.get_dec_color(),
-        "fontsize": danmaku.font_size,
-        "pool": pool,
-        "mode": danmaku.mode,
-        "plat": 1,
-        "csrf": verify.csrf
-    }
-    resp = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
-    return resp
-
-
 def add_tag(tag_name: str, bvid: str = None, aid: int = None, verify: utils.Verify = None):
     """
     添加标签
@@ -797,13 +851,17 @@ def share_to_dynamic(content: str, bvid: str = None, aid: int = None, verify: ut
 
 # 视频上传三步
 
-def video_upload(path: str, verify: utils.Verify):
+def video_upload(path: str, verify: utils.Verify, on_progress=None):
     """
     上传视频
+    :param on_progress: 进度回调，数据格式：{"event": "事件名", "ok": "是否成功", "data": "附加数据"}
+                        事件名：PRE_UPLOAD，GET_UPLOAD_ID，UPLOAD_CHUNK，VERIFY
     :param path: 视频路径
     :param verify:
     :return: 该视频的filename，用于后续提交投稿用
     """
+    if on_progress is not None and not callable(on_progress):
+        raise exceptions.BilibiliApiException("on_progress 参数必须是个方法")
     session = requests.session()
     session.headers = utils.DEFAULT_HEADERS
     requests.utils.add_dict_to_cookiejar(session.cookies, verify.get_cookies())
@@ -817,15 +875,29 @@ def video_upload(path: str, verify: utils.Verify):
         'r': 'upos',
         'profile': 'ugcupos/bup'
     }
-    resp = session.get('https://member.bilibili.com/preupload', params=params)
-    settings = resp.json()
-    upload_url = 'https:' + settings['endpoint'] + '/' + settings['upos_uri'].replace('upos://', '')
-    headers = {
-        'X-Upos-Auth': settings['auth']
-    }
-    resp = session.post(upload_url + "?uploads&output=json", headers=headers)
-    settings['upload_id'] = resp.json()['upload_id']
-    filename = os.path.splitext(resp.json()['key'].lstrip('/'))[0]
+    try:
+        resp = session.get('https://member.bilibili.com/preupload', params=params)
+        settings = resp.json()
+        upload_url = 'https:' + settings['endpoint'] + '/' + settings['upos_uri'].replace('upos://', '')
+        headers = {
+            'X-Upos-Auth': settings['auth']
+        }
+        if on_progress:
+            on_progress({"event": "PRE_UPLOAD", "ok": True, "data": None})
+    except Exception as e:
+        if on_progress:
+            on_progress({"event": "PRE_UPLOAD", "ok": False, "data": e})
+        raise e
+    try:
+        resp = session.post(upload_url + "?uploads&output=json", headers=headers)
+        settings['upload_id'] = resp.json()['upload_id']
+        filename = os.path.splitext(resp.json()['key'].lstrip('/'))[0]
+        if on_progress:
+            on_progress({"event": "GET_UPLOAD_ID", "ok": True, "data": None})
+    except Exception as e:
+        if on_progress:
+            on_progress({"event": "GET_UPLOAD_ID", "ok": False, "data": e})
+        raise e
     # 分配任务
     chunks_settings = []
     i = 0
@@ -854,12 +926,15 @@ def video_upload(path: str, verify: utils.Verify):
         failed_chunks = []
         with open(path, 'rb') as f:
             for chunk in chunks:
-                print('上传区块中', chunk)
                 f.seek(chunk['start'], 0)
                 async with sess.put(upload_url, params=chunk, data=f.read(chunk['size']), headers=utils.DEFAULT_HEADERS) as r:
                     if r.status != 200:
-                        print('区块上传失败：', chunk['chunk'], r.status)
+                        if on_progress:
+                            on_progress({"event": "UPLOAD_CHUNK", "ok": False, "data": chunk})
                         failed_chunks.append(chunk)
+                    else:
+                        if on_progress:
+                            on_progress({"event": "UPLOAD_CHUNK", "ok": True, "data": chunk})
         return failed_chunks
 
     async def main():
@@ -906,8 +981,12 @@ def video_upload(path: str, verify: utils.Verify):
                 result = json.loads(result)
                 ok = result.get('OK', 0)
                 if ok == 1:
+                    if on_progress:
+                        on_progress({"event": "VERIFY", "ok": True, "data": None})
                     return filename
                 else:
+                    if on_progress:
+                        on_progress({"event": "VERIFY", "ok": False, "data": None})
                     raise exceptions.UploadException('视频上传失败')
 
     r = asyncio.get_event_loop().run_until_complete(main())
