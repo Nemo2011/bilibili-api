@@ -917,7 +917,7 @@ def video_upload(path: str, verify: utils.Verify, on_progress=None):
         s['size'] = s['end'] - s['start']
         chunks_settings.append(s)
         i += 1
-        offset = s['end'] + 1
+        offset = s['end']
         remain -= settings['chunk_size']
         if remain <= 0:
             break
