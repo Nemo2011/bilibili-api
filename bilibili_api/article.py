@@ -41,6 +41,17 @@ def get_comments_g(cv: int, order: str = "time", verify: utils.Verify = None):
     return replies
 
 
+def get_sub_comments_g(cv: int, root: int, verify: utils.Verify = None):
+    """
+    获取评论下的评论
+    :param cv:
+    :param root: 根评论ID
+    :param verify:
+    :return:
+    """
+    return common.get_sub_comments(cv, "article", root, verify=verify)
+
+
 def send_comment(text: str, cv: int, root: int = None, parent: int = None,
                  verify: utils.Verify = None):
     """

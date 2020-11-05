@@ -173,6 +173,62 @@ def get_comments(oid: int, type_: str, order: str = "time", verify: utils.Verify
         page += 1
 
 
+def get_sub_comments_raw(oid: int, type_: str, root: int, ps: int = 10, pn: int = 1, verify: utils.Verify = None):
+    """
+    通用获取子评论
+    :param ps:
+    :param root:
+    :param oid:
+    :param type_:
+    :param pn:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    type_ = COMMENT_TYPE_MAP.get(type_, None)
+    assert type_ is not None, exceptions.BilibiliApiException("不支持的评论类型")
+
+    # 参数检查完毕
+    params = {
+        "oid": oid,
+        "type": type_,
+        "ps": ps,
+        "pn": pn,
+        "root": root
+    }
+    comment_api = API["common"]["comment"]
+    api = comment_api.get("sub_reply", None)
+    resp = utils.get(api["url"], params=params, cookies=verify.get_cookies())
+    return resp
+
+
+def get_sub_comments(oid: int, type_: str, root: int, ps: int = 10, verify: utils.Verify = None):
+    """
+    通用循环获取子评论，使用生成器语法
+    :param ps:
+    :param root:
+    :param type_:
+    :param oid:
+    :param verify:
+    :return:
+    """
+    if verify is None:
+        verify = utils.Verify()
+
+    page = 1
+    while True:
+        resp = get_sub_comments_raw(oid=oid, pn=page, root=root, ps=ps, verify=verify, type_=type_)
+        if "replies" not in resp:
+            break
+        if resp["replies"] is None:
+            break
+        for rep in resp["replies"]:
+            yield rep
+        page += 1
+
+
 def get_vote_info(vote_id: int, verify: utils.Verify = None):
     """
     获取投票信息

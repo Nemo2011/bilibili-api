@@ -181,6 +181,17 @@ def get_comments_g(auid: int, order: str = "time", verify: utils.Verify = None):
     return replies
 
 
+def get_sub_comments_g(auid: int, root: int, verify: utils.Verify = None):
+    """
+    获取评论下的评论
+    :param auid:
+    :param root: 根评论ID
+    :param verify:
+    :return:
+    """
+    return common.get_sub_comments(auid, "audio", root, verify=verify)
+
+
 def send_comment(text: str, auid: int,  root: int = None, parent: int = None,
                  verify: utils.Verify = None):
     """
@@ -261,13 +272,24 @@ def del_comment(rpid: int, auid: int, verify: utils.Verify = None):
 def list_get_comments_g(amid: int, order: str = "time", verify: utils.Verify = None):
     """
     获取评论
-    :param amid: 音频ID
+    :param amid: 歌单ID
     :param order:
     :param verify:
     :return:
     """
     replies = common.get_comments(amid, "audio_list", order, verify)
     return replies
+
+
+def list_get_sub_comments_g(amid: int, root: int, verify: utils.Verify = None):
+    """
+    获取评论下的评论
+    :param amid: 歌单ID
+    :param root: 根评论ID
+    :param verify:
+    :return:
+    """
+    return common.get_sub_comments(amid, "audio_list", root, verify=verify)
 
 
 def list_send_comment(text: str, amid: int,  root: int = None, parent: int = None,
