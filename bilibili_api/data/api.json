@@ -1079,6 +1079,19 @@
           "sort": "2按热度0按时间"
         },
         "comment": "获取评论"
+      },
+      "sub_reply": {
+        "url": "https://api.bilibili.com/x/v2/reply/reply",
+        "method": "GET",
+        "verify": false,
+        "params": {
+          "pn": "页码",
+          "ps": 10,
+          "type": "",
+          "oid": "id",
+          "root": "根评论ID"
+        },
+        "comment": "获取评论的回复评论"
       }
     },
     "dynamic_share": {

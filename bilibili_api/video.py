@@ -679,6 +679,22 @@ def get_comments_g(bvid: str = None, aid: int = None, order: str = "time", verif
     return replies
 
 
+def get_sub_comments_g(root: int, bvid: str = None, aid: int = None, verify: utils.Verify = None):
+    """
+    获取评论下的评论
+    :param root: 根评论ID
+    :param bvid:
+    :param aid:
+    :param verify:
+    :return:
+    """
+    if not (aid or bvid):
+        raise exceptions.NoIdException
+    if aid is None:
+        aid = utils.bvid2aid(bvid)
+    return common.get_sub_comments(aid, "video", root, verify=verify)
+
+
 def send_comment(text: str, root: int = None, parent: int = None, bvid: str = None, aid: int = None,
                  verify: utils.Verify = None):
     """

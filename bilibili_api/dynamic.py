@@ -421,6 +421,18 @@ def get_comments_g(dynamic_id: int, order: str = "time", verify: utils.Verify = 
     return replies
 
 
+def get_sub_comments_g(dynamic_id: int, root: int, verify: utils.Verify = None):
+    """
+    获取评论下的评论
+    :param dynamic_id: 动态ID
+    :param root: 根评论ID
+    :param verify:
+    :return:
+    """
+    type_, rid = __get_type_and_rid(dynamic_id)
+    return bilibili_api.common.get_sub_comments(rid, type_, root, verify=verify)
+
+
 def send_comment(text: str, dynamic_id: int, root: int = None, parent: int = None,
                  verify: utils.Verify = None):
     """
