@@ -456,6 +456,8 @@ class LiveDanmaku(object):
                         await self.__loop()
                         if self.__connected_status >= 0:
                             return
+                        if not self.should_reconnect:
+                            return
             except websockets.ConnectionClosedError:
                 self.logger.warning(f"连接失败，准备尝试下一个地址")
         else:
