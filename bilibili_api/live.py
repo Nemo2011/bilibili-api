@@ -403,7 +403,6 @@ class LiveDanmaku(object):
         else:
             self.__is_single_room = True
             asyncio.get_event_loop().run_until_complete(self.__main())
-            asyncio.get_event_loop().run_forever()
 
     def disconnect(self):
         """
@@ -437,24 +436,26 @@ class LiveDanmaku(object):
             uri = f"{protocol}://{host['host']}:{port}/sub"
             self.logger.debug(f"正在尝试连接主机： {uri}")
             try:
-                async with websockets.connect(uri) as ws:
-                    self.__ws = ws
-                    self.logger.debug(f"连接主机成功, 准备发送认证信息")
-                    uid = None
-                    if self.verify is not None:
-                        if self.verify.has_sess():
-                            self.logger.debug("检测到传入Verify，正在获取用户UID")
-                            self_info = user.get_self_info(self.verify)
-                            uid = self_info["mid"]
-                            self.logger.debug(f"用户UID为{uid}")
-                    verifyData = {"uid": 0 if uid is None else uid, "roomid": self.room_real_id,
-                                  "protover": 2, "platform": "web",
-                                  "clientver": "1.17.0", "type": 2, "key": self.__conf["token"]}
-                    data = json.dumps(verifyData).encode()
-                    await self.__send(data, LiveDanmaku.PROTOCOL_VERSION_HEARTBEAT, LiveDanmaku.DATAPACK_TYPE_VERIFY)
-                    self.__connected_status = 1
-                    await self.__loop()
-                    return
+                while True:
+                    async with websockets.connect(uri) as ws:
+                        self.__ws = ws
+                        self.logger.debug(f"连接主机成功, 准备发送认证信息")
+                        uid = None
+                        if self.verify is not None:
+                            if self.verify.has_sess():
+                                self.logger.debug("检测到传入Verify，正在获取用户UID")
+                                self_info = user.get_self_info(self.verify)
+                                uid = self_info["mid"]
+                                self.logger.debug(f"用户UID为{uid}")
+                        verifyData = {"uid": 0 if uid is None else uid, "roomid": self.room_real_id,
+                                      "protover": 2, "platform": "web",
+                                      "clientver": "1.17.0", "type": 2, "key": self.__conf["token"]}
+                        data = json.dumps(verifyData).encode()
+                        await self.__send(data, LiveDanmaku.PROTOCOL_VERSION_HEARTBEAT, LiveDanmaku.DATAPACK_TYPE_VERIFY)
+                        self.__connected_status = 1
+                        await self.__loop()
+                        if self.__connected_status >= 0:
+                            return
             except websockets.ConnectionClosedError:
                 self.logger.warning(f"连接失败，准备尝试下一个地址")
         else:
@@ -483,13 +484,10 @@ class LiveDanmaku(object):
                     asyncio.create_task(self.__run_as_asynchronous_func(handler, callback_info))
                 if self.__connected_status == 2:
                     self.logger.info("连接正常断开")
-                    if self.__is_single_room:
-                        asyncio.get_event_loop().stop()
+                    return
                 else:
                     self.__connected_status = -1
                     self.logger.warning("连接被异常断开")
-                    if self.should_reconnect:
-                        asyncio.create_task(self.connect(True))
                 if self.__heartbeat_task is not None:
                     self.__heartbeat_task.cancel()
                 break
