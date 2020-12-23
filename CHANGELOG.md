@@ -1,5 +1,9 @@
 # 更新日志
 
++ V3.1.4 2020/12/23
+    + 修复 live.connect_all_LiveDanmaku 只能连接一个房间的bug
+    + 优化文档
+
 + V3.1.3 2020/11/20
     + 修复 live.LiveDanmaku 单房间调用 disconnect() 时报错问题
 
