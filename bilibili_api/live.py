@@ -333,21 +333,20 @@ def unban_user(room_real_id: int, block_id: int, verify: utils.Verify = None):
 
 def connect_all_LiveDanmaku(*livedanmaku_classes):
     """
-    同时连接多个直播间
+    简单同时连接多个直播间，一般建议自行处理事件循环来进行更精准的控制
+    使用 `room.connect(True)` 可以返回一个 Coroutine，将这个安排进事件循环即可连接到房间
     :param livedanmaku_classes: LiveDanmaku类动态参数
     :return:
     """
-    tasks = []
-    for room in livedanmaku_classes:
-        task = room.connect(True)
-        tasks.append(task)
 
     async def run():
-        for task in tasks:
-            await task
+        tasks = []
+        for room in livedanmaku_classes:
+            task = asyncio.create_task(room.connect(True))
+            tasks.append(task)
+        await asyncio.gather(*tasks)
 
-    asyncio.get_event_loop().run_until_complete(run())
-    asyncio.get_event_loop().run_forever()
+    asyncio.run(run())
 
 
 class LiveDanmaku(object):
@@ -393,6 +392,7 @@ class LiveDanmaku(object):
     def connect(self, return_coroutine: bool = False):
         """
         连接直播间
+        :param return_coroutine: 是否返回房间入口的 Coroutine 而不是直接连接单个房间。用以自行进行更精准的异步控制。
         :return:
         """
         if self.__connected_status == 1:
