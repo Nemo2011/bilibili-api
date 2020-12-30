@@ -893,6 +893,21 @@
           "ptype": "16"
         },
         "comment": "获取房间直播流列表"
+      },
+      "room_play_info_v2": {
+        "url": "https://api.live.bilibili.com/xlive/web-room/v2/index/getRoomPlayInfo",
+        "method": "GET",
+        "verify": false,
+        "params": {
+          "room_id": "真实房间号",
+          "protocol": "流协议，0为FLV流，1为HLS流。默认：0,1",
+          "format": "容器格式，0为flv格式；1为ts格式（仅限hls流）；2为fmp4格式（仅限hls流）。默认：0,2",
+          "codec": "视频编码，0为avc编码，1为hevc编码。默认：0,1",
+          "qn": "清晰度编号，原画：10000（建议），4K：800，蓝光(杜比)：401，蓝光：400，超清：250，高清：150，流畅：80，默认：0",
+          "platform": "web",
+          "ptype": "16"
+        },
+        "comment": "获取房间信息及可用清晰度列表"
       }
     },
     "operate": {
