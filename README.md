@@ -1,11 +1,9 @@
-[![LOGO](https://res.passkou.com/image/20200812011335.png)](https://passkou.com/bilibili_api "点击进入官网")
+![LOGO](https://res.passkou.com/image/20200812011335.png)
 
 # bilibili_api
 
 [![API数量](https://img.shields.io/badge/API数量-100+-blue)](https://github.com/Passkou/bilibili_api/tree/master/bilibili_api/data/api.json) [![STARS](https://img.shields.io/github/stars/Passkou/bilibili_api?color=yellow&label=Github%20Stars)](https://github.com/Passkou/bilibili_api/stargazers) [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)](https://github.com/Passkou/bilibili_api/tree/master/LICENSE.md) ![Python](https://img.shields.io/badge/Python-3.9|3.8-blue) [![](https://img.shields.io/badge/这个标签太好玩了-.py-orange)](https://shields.io/)
 
-
-**项目官网**: [bilibili_api 官网][homepage]
 
 **开发文档**: [bilibili_api 开发文档][docs]
 
@@ -218,7 +216,7 @@ PR: Pull request
 如果你想支持一下这个项目，可以做以下几点：
 
 1. GitHub上给个小星星（star）~
-2. 如果你的项目中用到了这个库，可以在说明文档中标注一下这个项目的Github地址或者 [项目官网地址][homepage] 。
+2. 如果你的项目中用到了这个库，可以在说明文档中标注一下这个项目的Github地址。
 3. 如果你用了这个项目进行爬虫，制作了数据统计视频并发到b站或其他视频平台，你也可以在简介中注明一下用到了这个模块，这就够了。
 4. 当然，你也可以参与维护这个项目，提交PR即可。
 
@@ -234,5 +232,4 @@ PR: Pull request
 
 
 
-[docs]: https://passkou.com/bilibili_api/docs/
-[homepage]: https://passkou.com/bilibili_api
+[docs]: /docs

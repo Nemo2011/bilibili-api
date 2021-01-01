@@ -386,4 +386,4 @@ if __name__ == '__main__':
     bilibili_api.video.connect_all_VideoOnlineMonitor(*rooms)
 ```
 
-[Danmaku]: /bilibili_api/docs/模块/bilibili_api#Danmaku
+[Danmaku]: /docs/模块/bilibili_api.md#Danmaku

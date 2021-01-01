@@ -23,6 +23,18 @@ room_real_id：真正的房间号。使用 [get_room_play_info](#get_room_play_i
 | 参数名          | 类型 | 必须提供 | 默认 | 释义       |
 | --------------- | ---- | -------- | ---- | ---------- |
 | room_display_id | int  | True     | -    | 房间显示ID |
+| stream_config | dict  | False     | None    | 获取流信息，如不需要可以不传。 |
+
+stream_config 参考格式：
+
+```json
+{
+    "protocol": "流协议，0为FLV流，1为HLS流。默认：0,1",
+    "format": "容器格式，0为flv格式；1为ts格式（仅限hls流）；2为fmp4格式（仅限hls流）。默认：0,2",
+    "codec": "视频编码，0为avc编码，1为hevc编码。默认：0,1",
+    "qn": "清晰度编号，原画：10000（建议），4K：800，蓝光(杜比)：401，蓝光：400，超清：250，高清：150，流畅：80，默认：0",
+}
+```
 
 ### get_room_play_url
 
@@ -290,6 +302,6 @@ if __name__ == '__main__':
 ```
 
 
-[Danmaku]: /bilibili_api/docs/模块/bilibili_api#Danmaku
+[Danmaku]: /docs/模块/bilibili_api.md#Danmaku
 
-[循环获取数据参数说明]: /bilibili_api/docs/通用解释#循环获取数据参数说明
+[循环获取数据参数说明]: /docs/通用解释.md#循环获取数据参数说明

@@ -26,18 +26,26 @@ import copy
 API = utils.get_api()
 
 
-def get_room_play_info(room_display_id: int, verify: utils.Verify = None):
+def get_room_play_info(room_display_id: int, stream_config: dict = None, verify: utils.Verify = None):
     """
-    获取房间信息（真实房间号，封禁情况等）
-    :param room_display_id: 房间号（展示在URL的房间号）
-    :param verify:
+    获取房间信息（真实房间号，封禁情况等）  
+    :param room_display_id: 房间号（展示在URL的房间号）  
+    :param stream_config: 获取流信息，如不需要可以不传。内容比较多，参见文档 模块/live#get_room_play_info
+    :param verify:  
     :return:
     """
     if verify is None:
         verify = utils.Verify()
 
-    api = API["live"]["info"]["room_play_info"]
-    resp = utils.get(api["url"], {"room_id": room_display_id}, cookies=verify.get_cookies())
+    api = API["live"]["info"]["room_play_info_v2"]
+    params = {
+        "room_id": room_display_id,
+        "platform": "web",
+        "ptype": "16"
+    }
+    if stream_config:
+        params.update(stream_config)
+    resp = utils.get(api["url"], params, cookies=verify.get_cookies())
     return resp
 
 
