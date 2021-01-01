@@ -301,6 +301,8 @@ def get_dynamic_raw(uid: int, offset: str = 0, need_top: bool = False, verify: u
         "need_top": 1 if need_top else 0
     }
     data = utils.get(url=api["url"], params=params, cookies=verify.get_cookies())
+    if data['has_more'] != 1:
+        return data
     for card in data["cards"]:
         card["card"] = json.loads(card["card"])
         card["extend_json"] = json.loads(card["extend_json"])
@@ -319,6 +321,8 @@ def get_dynamic_g(uid: int, verify: utils.Verify = None):
     offset = "0"
     while True:
         data = get_dynamic_raw(uid, offset, verify=verify)
+        if 'cards' not in data:
+            break
         for c in data["cards"]:
             yield c
         if data["has_more"] != 1:
