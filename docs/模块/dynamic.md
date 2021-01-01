@@ -90,7 +90,7 @@ dynamic_id: 动态ID，标识动态的唯一数字ID。https://t.bilibili.com/ �
 
 ### 评论相关
 
-参见 [评论信息和操作](/bilibili_api/docs/通用解释#评论信息和操作)，id传入dynamic_id。
+参见 [评论信息和操作](/docs/通用解释.md#评论信息和操作)，id传入dynamic_id。
 
 
 
@@ -98,4 +98,4 @@ dynamic_id: 动态ID，标识动态的唯一数字ID。https://t.bilibili.com/ �
 
 
 
-[循环获取数据参数说明]: /bilibili_api/docs/通用解释#循环获取数据参数说明
+[循环获取数据参数说明]: /docs/通用解释.md#循环获取数据参数说明

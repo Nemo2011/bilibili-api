@@ -1,5 +1,9 @@
 # 更新日志
 
++ V3.1.5 2021/01/01
+    + 更新 live.get_room_play_info
+    + 关闭官网，感觉没必要放着，还浪费我服务器资源233333
+
 + V3.1.4 2020/12/23
     + 修复 live.connect_all_LiveDanmaku 只能连接一个房间的bug
     + 优化文档

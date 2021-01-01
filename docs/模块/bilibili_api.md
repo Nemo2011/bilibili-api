@@ -142,7 +142,7 @@ bv号转av号。
 
 验证类，用于传入各种方法中。
 
-获取参数方法见 [获取_SESSDATA_和_CSRF](/docs/bilibili_api#获取_SESSDATA_和_CSRF)
+获取参数方法见 [获取_SESSDATA_和_CSRF](/README.md#获取-sessdata-和-csrf)
 
 #### 实例化参数
 
