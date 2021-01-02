@@ -1,5 +1,8 @@
 # 更新日志
 
++ V3.1.7b1
+    + 新增 bilibili_api.web_search, bilibili_api.web_search_by_type
+
 + V3.1.7b0 2021/01/02
     + 修复 channel.get_channel_info_by_tid()方法因channel.json中部分分区没有tid属性导致出错的BUG #97
     + 修复当视频弹幕关闭时程序陷入死循环的BUG #95
