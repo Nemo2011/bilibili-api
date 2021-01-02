@@ -412,3 +412,15 @@ def dynamic_share(type_: str, rid: int, content: str,
             })
     resp = utils.post(url=api["url"], cookies=verify.get_cookies(), data=data)
     return resp
+
+
+def web_search(keyword: str):
+    """
+    只指定关键字在web进行搜索，返回未经处理的字典
+    """
+    api = API["common"]["search"]["web_search"]
+    params = {
+        "keyword": keyword
+    }
+    resp = utils.get(url=api["url"], params=params)
+    return resp
