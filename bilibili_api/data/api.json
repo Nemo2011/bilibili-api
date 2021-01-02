@@ -1191,6 +1191,17 @@
         },
         "comment": "收藏夹修改"
       }
+    },
+    "search": {
+      "web_search": {
+        "url": "https://api.bilibili.com/x/web-interface/search/all/v2",
+        "method": "GET",
+        "verify": false,
+        "params": {
+          "keyword": "搜索用的关键字"
+        },
+        "comment": "在首页以关键字搜索，只指定关键字，其他参数不指定"
+      }
     }
   },
   "audio": {
