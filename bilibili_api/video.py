@@ -425,6 +425,8 @@ def get_danmaku(bvid: str = None, aid: int = None, page: int = 0,
             data = con
             danmakus = []
             offset = 0
+            if data == b'\x10\x01':
+                raise exceptions.BilibiliApiException(bvid + '视频弹幕已关闭')
             while offset < len(data):
                 if data[offset] == 0x0a:
                     dm = utils.Danmaku('')

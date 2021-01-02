@@ -27,6 +27,8 @@ def get_channel_info_by_tid(tid: int):
         channel = json.loads(f.read())
 
     for main_ch in channel:
+        if "tid" not in main_ch:
+            continue
         if tid == int(main_ch["tid"]):
             return main_ch, None
         for sub_ch in main_ch["sub"]:

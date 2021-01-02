@@ -1,5 +1,9 @@
 # 更新日志
 
++ V3.1.7b0 2021/01/02
+    + 修复 channel.get_channel_info_by_tid()方法因channel.json中部分分区没有tid属性导致出错的BUG #97
+    + 修复当视频弹幕关闭时程序陷入死循环的BUG #95
+
 + V3.1.6 2021/01/01
     + 修复获取动态列表报错的BUG
 
