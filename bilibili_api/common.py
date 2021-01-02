@@ -437,11 +437,3 @@ def web_search_by_type(keyword: str, search_type: str):
     }
     resp = utils.get(url=api["url"], params=params)
     return resp
-
-
-def web_search_video(keyword: str):
-    """
-    对web_search_by_type()的封装，限定只搜索视频
-    """
-    resp = web_search_by_type(keyword, "video")
-    return resp
