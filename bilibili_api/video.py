@@ -637,7 +637,7 @@ def send_danmaku(danmaku: utils.Danmaku, page: int = 0, bvid: str = None, aid: i
 
     page_info = get_pages(bvid, aid, verify)
     oid = page_info[page]["cid"]
-    api = API["video"]["operate"]["send_danmaku"]
+    api = API["video"]["danmaku"]["send_danmaku"]
     if danmaku.is_sub:
         pool = 1
     else:

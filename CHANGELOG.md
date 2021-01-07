@@ -1,5 +1,8 @@
 # 更新日志
 
+V 3.1.7b2  2021/01/07
+    + 修复 video.send_danmaku() 出错（手贱打错）
+
 + V3.1.7b1 2021/01/07
     + 新增 bilibili_api.web_search, bilibili_api.web_search_by_type
     + 修复因 UA 头的问题引发的 412 状态码
