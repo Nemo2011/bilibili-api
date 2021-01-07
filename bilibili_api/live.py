@@ -36,12 +36,19 @@ def get_room_play_info(room_display_id: int, stream_config: dict = None, verify:
     """
     if verify is None:
         verify = utils.Verify()
+    if stream_config is None:
+        stream_config = {
+            "protocol": 0,
+            "format": 0,
+            "codec": 1,
+            "qn": 10000
+        }
 
     api = API["live"]["info"]["room_play_info_v2"]
     params = {
         "room_id": room_display_id,
         "platform": "web",
-        "ptype": "16"
+        "ptype": "16",
     }
     if stream_config:
         params.update(stream_config)

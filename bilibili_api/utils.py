@@ -27,8 +27,7 @@ request_settings = {
 urllib3.disable_warnings()
 
 DEFAULT_HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/79.0.3945.130 Safari/537.36",
+    "User-Agent": "Mozilla/5.0",
     "Referer": "https://www.bilibili.com/"
 }
 
@@ -366,16 +365,15 @@ def request(method: str, url: str, params=None, data=None, cookies=None, headers
     st = {
         "url": url,
         "params": params,
-        "cookies": cookies,
         "headers": headers,
         "verify": request_settings["use_https"],
         "data": data,
-        "proxies": request_settings["proxies"]
+        "proxies": request_settings["proxies"],
+        "cookies": cookies
     }
     st.update(kwargs)
 
     req = requests.request(method, **st)
-
     if req.ok:
         content = req.content.decode("utf8")
         if req.headers.get("content-length") == 0:
