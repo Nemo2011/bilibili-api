@@ -1,15 +1,11 @@
 # 更新日志
 
-V 3.1.7b2  2021/01/07
++ 3.1.7  2021/01/12
     + 修复 video.send_danmaku() 出错（手贱打错）
-
-+ V3.1.7b1 2021/01/07
     + 新增 bilibili_api.web_search, bilibili_api.web_search_by_type
     + 修复因 UA 头的问题引发的 412 状态码
     + live.get_room_play_info 的 steam_config 增加默认值，如果没有这个值会导致返回参数错误的报错
     + 修改 setup.py，增加对 Python3.7 的支持（不确定是否完全兼容）
-
-+ V3.1.7b0 2021/01/02
     + 修复 channel.get_channel_info_by_tid()方法因channel.json中部分分区没有tid属性导致出错的BUG #97
     + 修复当视频弹幕关闭时程序陷入死循环的BUG #95
 
