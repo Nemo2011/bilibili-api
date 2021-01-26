@@ -1363,7 +1363,8 @@
 		  "screen_height": "高",
 		  "screen_width": "宽",
 		  "ts": "当前UNIX秒",
-		  "sign": "前面参数按照字母排序+appsec，然后md5计算"
+		  "sign": "前面参数按照字母排序+appsec，然后md5计算",
+		  "appsec": "appsec"
         },
         "comment": "获取新版开屏启动画面"
       }
