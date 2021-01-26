@@ -1335,5 +1335,38 @@
         "comment": "获取分区前十排行榜"
       }
     }
+  },
+  "splash": {
+    "splash": {
+      "list": {
+        "url": "https://app.bilibili.com/x/v2/splash/list",
+        "method": "GET",
+        "verify": false,
+        "params": {
+		  "build": "客户端内部版本号",
+		  "mobi_app": "android/iphone/ipad",
+		  "platform": "android/ios",
+		  "height": "高",
+		  "width": "宽",
+		  "birth": "生日日期(四位数)"
+        },
+        "comment": "获取开屏启动画面"
+      },
+      "brand": {
+        "url": "https://app.bilibili.com/x/v2/splash/brand/list",
+        "method": "GET",
+        "verify": false,
+        "params": {
+		  "appkey": "appkey",
+		  "mobi_app": "android/iphone/ipad",
+		  "platform": "android/ios",
+		  "screen_height": "高",
+		  "screen_width": "宽",
+		  "ts": "当前UNIX秒",
+		  "sign": "前面参数按照字母排序+appsec，然后md5计算"
+        },
+        "comment": "获取新版开屏启动画面"
+      }
+    }
   }
 }
