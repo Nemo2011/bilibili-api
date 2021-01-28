@@ -2,7 +2,6 @@ r"""
 模块：user
 功能：获取用户各种信息以及操作用户
 项目GitHub地址：https://github.com/Passkou/bilibili_api
-项目主页：https://passkou.com/bilibili_api
   _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |

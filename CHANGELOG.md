@@ -1,5 +1,8 @@
 # 更新日志
 
++ NEXT
+    + 删除项目主页注释
+
 + 3.1.7  2021/01/12
     + 修复 video.send_danmaku() 出错（手贱打错）
     + 新增 bilibili_api.web_search, bilibili_api.web_search_by_type

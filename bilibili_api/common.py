@@ -2,7 +2,6 @@ r"""
 模块：common
 功能：通用API，一般用户用不上，不暴露给用户
 项目GitHub地址：https://github.com/Passkou/bilibili_api
-项目主页：https://passkou.com/bilibili_api
    _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
