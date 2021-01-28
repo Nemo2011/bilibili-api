@@ -2,7 +2,6 @@ r"""
 模块：channel
 功能：频道相关
 项目GitHub地址：https://github.com/Passkou/bilibili_api
-项目主页：https://passkou.com/bilibili_api
    _____                _____    _____   _  __   ____    _    _
  |  __ \      /\      / ____|  / ____| | |/ /  / __ \  | |  | |
  | |__) |    /  \    | (___   | (___   | ' /  | |  | | | |  | |
