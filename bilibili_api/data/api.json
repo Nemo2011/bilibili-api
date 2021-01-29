@@ -1336,19 +1336,18 @@
       }
     }
   },
-  "splash": {
+  "app": {
     "splash": {
       "list": {
         "url": "https://app.bilibili.com/x/v2/splash/list",
         "method": "GET",
         "verify": false,
         "params": {
-		  "build": "客户端内部版本号",
-		  "mobi_app": "android/iphone/ipad",
-		  "platform": "android/ios",
-		  "height": "高",
-		  "width": "宽",
-		  "birth": "生日日期(四位数)"
+		  "mobi_app": "android / iphone / ipad",
+		  "platform": "android / ios    / ios",
+		  "height": "屏幕高度",
+		  "width": "屏幕宽度",
+		  "birth": "生日日期(四位数，例 0101)"
         },
         "comment": "获取开屏启动画面"
       },
@@ -1357,16 +1356,12 @@
         "method": "GET",
         "verify": false,
         "params": {
-		  "appkey": "appkey",
-		  "mobi_app": "android/iphone/ipad",
-		  "platform": "android/ios",
-		  "screen_height": "高",
-		  "screen_width": "宽",
-		  "ts": "当前UNIX秒",
-		  "sign": "前面参数按照字母排序+appsec，然后md5计算",
-		  "appsec": "appsec"
+		  "mobi_app": "android / iphone / ipad",
+		  "platform": "android / ios    / ios",
+		  "screen_height": "屏幕高度",
+		  "screen_width": "屏幕宽度"
         },
-        "comment": "获取新版开屏启动画面"
+        "comment": "获取特殊开屏启动画面"
       }
     }
   }

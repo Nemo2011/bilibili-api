@@ -1,21 +1,21 @@
-# splash 模块
+# app 模块
 
-获取开屏启动画面
+客户端相关 API。
 
 ## 方法
 
-### get_splash_list
+### get_loading_images
 
 获取开屏启动画面。
 
-| 参数名      | 类型              | 必须提供 | 默认      | 释义                      |
-| ----------- | ----------------- | -------- | --------- | ------------------------- |
-| build       | int               | False    | 999999999 | 客户端内部版本号          |
-| mobi_app    | str               | False    | android   | 可选 android/iphone/ipad  |
-| platform    | str               | False    | android   | 可选 android/ios          |
-| height      | int               | False    | 1920      | 屏幕高度                  |
-| width       | int               | False    | 1080      | 屏幕宽度                  |
-| birth       | str               | False    | -         | 生日日期(四位数，例 0101) |
+| 参数名      | 类型              | 必须提供 | 默认      | 释义                        |
+| ----------- | ----------------- | -------- | --------- | --------------------------- |
+| build       | int               | False    | 999999999 | 客户端内部版本号            |
+| mobi_app    | str               | False    | android   | 可选 android / iphone / ipad|
+| platform    | str               | False    | android   | 可选 android / ios    / ios |
+| height      | int               | False    | 1920      | 屏幕高度                    |
+| width       | int               | False    | 1080      | 屏幕宽度                    |
+| birth       | str               | False    | -         | 生日日期(四位数，例 0101)   |
 
 * 补充获取结果关系图
 
@@ -55,18 +55,18 @@
 |ipad|ios|0|0|2732x2048|
 
 
-### get_splash_bread
+### get_loading_images_special
 
-获取新版开屏启动画面。
+获取特殊开屏启动画面。
 
-| 参数名      | 类型              | 必须提供 | 默认      | 释义                      |
-| ----------- | ----------------- | -------- | --------- | ------------------------- |
-| appkey      | str               | False    |           | appkey                    |
-| mobi_app    | str               | False    | android   | 可选 android/iphone/ipad  |
-| platform    | str               | False    | android   | 可选 android/ios          |
-| height      | int               | False    | 1920      | 屏幕高度                  |
-| width       | int               | False    | 1080      | 屏幕宽度                  |
-| ts          | int               | False    | 1609430400| 当前UNIX秒                |
-| appsec      | str               | False    |           | appsec                    |
+| 参数名      | 类型              | 必须提供 | 默认      | 释义                        |
+| ----------- | ----------------- | -------- | --------- | --------------------------- |
+| appkey      | str               | False    |           | appkey                      |
+| mobi_app    | str               | False    | android   | 可选 android / iphone / ipad|
+| platform    | str               | False    | android   | 可选 android / ios    / ios |
+| height      | int               | False    | 1920      | 屏幕高度                    |
+| width       | int               | False    | 1080      | 屏幕宽度                    |
+| ts          | int               | False    | (自动获取)| 当前UNIX秒                  |
+| appsec      | str               | False    |           | appsec                      |
 
 * appkey 及 appsec 对应关系请参考 [这里](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/other/API_auth.md)
