@@ -11,6 +11,7 @@ r"""
 """
 import json
 from . import utils, exceptions, common
+import time
 
 API = utils.get_api()
 
@@ -677,7 +678,11 @@ def send_msg(uid: int, text: str, self_uid: int = None, verify: utils.Verify = N
         "msg[msg_type]": 1,
         "msg[msg_status]": 0,
         "msg[content]": json.dumps({"content": text}),
-        "csrf_token": verify.csrf
+        "msg[dev_id]": "1369CA35-1771-4B80-B6D4-D7EB975B7F8A",
+        "msg[new_face_version]": "0",
+        "msg[timestamp]": int(time.time()),
+        "csrf_token": verify.csrf,
+        "csrf": verify.csrf
     }
     data = utils.post(url=api["url"], data=data, cookies=verify.get_cookies())
     return data
