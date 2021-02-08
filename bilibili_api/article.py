@@ -21,6 +21,7 @@ import time
 import datetime
 import json
 import re
+from urllib.parse import unquote
 
 API = utils.get_api()
 
@@ -249,7 +250,9 @@ def get_content(cid: int, preview: bool = False, verify: utils.Verify = None):
 
         # 获取标题等信息
         stat = get_info(cid)
-        ld_json = json.loads(soup.select_one("script[type='application/ld+json']").string)
+        # 制表符换为空格，不然出错
+        ldjson_string = soup.select_one("script[type='application/ld+json']").string.replace('\t', '  ')
+        ld_json = json.loads(ldjson_string)
         meta = {}
         meta["cid"] = cid
         meta["title"] = stat["title"]
@@ -288,7 +291,6 @@ def get_content(cid: int, preview: bool = False, verify: utils.Verify = None):
         body = BeautifulSoup(f"<div>{stat['content']}</div>", "lxml")
 
     # 准备解析文章
-    STYLE_MAP = json.loads(open(os.path.join(os.path.dirname(__file__), "data/article_style.json")).read())
 
     def node_handle(node, prev):
         if node is None:
@@ -298,6 +300,7 @@ def get_content(cid: int, preview: bool = False, verify: utils.Verify = None):
             prev.node_list.append(TextNode(str(node)))
             return
 
+        obj = None
         if node.name == "blockquote":
             # 引用
             obj = BlockquoteNode()
@@ -329,20 +332,19 @@ def get_content(cid: int, preview: bool = False, verify: utils.Verify = None):
             prev.node_list.append(obj)
         elif node.name == "span":
             style = node.get("style", [])
-            cls = node.get("class", [])
             if "text-decoration: line-through;" in style:
                 # 删除线
                 obj = DelNode()
                 prev.node_list.append(obj)
-            if len(cls) > 0:
-                # 行内样式处理
-                obj = StyleNode()
-                prev.node_list.append(obj)
-                for c in cls:
-                    if "font-size" in c:
-                        obj.style.update(STYLE_MAP.get(c, "#000"))
-                    elif "color" in c:
-                        obj.style.update(STYLE_MAP.get(c, "16px"))
+            else:
+                obj = prev
+        elif node.name == 'pre':
+            # 代码块
+            code = unquote(node['codecontent'])
+            lang = node['data-lang'].split('@')[0]
+            obj = CodeNode(code, lang)
+            prev.node_list.append(obj)
+
         elif node.name == "img":
             cls = node.get("class", [])
             if "video-card" in cls:
@@ -394,6 +396,11 @@ def get_content(cid: int, preview: bool = False, verify: utils.Verify = None):
                 info = common.get_vote_info(vote_id)["info"]
                 obj = VoteNode(vote_id, info)
                 prev.node_list.append(obj)
+            elif "latex" in cls:
+                # 公式
+                tex = unquote(node['alt'])
+                obj = LatexNode(tex)
+                prev.node_list.append(obj)
             else:
                 if len(cls) > 0:
                     if "cut-off" in cls[0]:
@@ -412,14 +419,7 @@ def get_content(cid: int, preview: bool = False, verify: utils.Verify = None):
             obj = LiNode()
             prev.node_list.append(obj)
         elif node.name == "p":
-            # 对齐方式处理
             obj = prev
-            style = node.get("style", "").split(";")
-            for sty in style:
-                if "text-align" in sty:
-                    name, value = sty.split(": ")
-                    if type(obj) == Paragraph:
-                        obj.align = value
         elif node.name in ["figcaption"]:
             # 忽略处理节点
             return
@@ -427,9 +427,10 @@ def get_content(cid: int, preview: bool = False, verify: utils.Verify = None):
             # 其他节点
             obj = prev
 
-        for child in node.children:
-            # 处理子节点
-            node_handle(child, obj)
+        if obj is not None:
+            for child in node.children:
+                # 处理子节点
+                node_handle(child, obj)
 
     article = Article(meta=meta)
     for p in body.children:
@@ -658,6 +659,26 @@ class ImageNode(AbstractNode):
     def __str__(self):
         return f"![{self.alt}]({self.url} \"{self.alt}\")"
 
+class LatexNode(AbstractNode):
+    def __init__(self, code: str, **kwargs):
+        super().__init__(**kwargs)
+        self.code = code
+    
+    def __str__(self):
+        if ("\n" in self.code):
+            # 块级公式
+            return f"$$\n{self.code}\n$$"
+        else:
+            # 行内公式
+            return f"${self.code}$"
+
+class CodeNode(AbstractNode):
+    def __init__(self, code: str, lang: str = None, **kwargs):
+        super().__init__(**kwargs)
+        self.code = code
+        self.lang = lang
+    def __str__(self):
+        return f"```{self.lang if self.lang else ''}\n{self.code}\n```"
 
 # 卡片
 
