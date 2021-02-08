@@ -1,18 +1,14 @@
 import setuptools
-import json
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
-with open("./bilibili_api/about.json", encoding="utf8") as f:
-    about = json.loads(f.read())
-
 setuptools.setup(
     name='bilibili_api',
-    version=about["version"],
+    version='3.2.1',
     license='GPLv3+',
     author='Passkou',
-    author_email='psk116@outlook.com',
+    author_email='passkou@foxmail.com',
     description='哔哩哔哩的各种API调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -38,16 +34,14 @@ setuptools.setup(
     ],
     package_data={
         'bilibili_api': [
-            "data/*.*",
-            "tools/*.*",
-            "about.json"
+            "data/*.*"
         ]
     },
-    url="https://passkou.com/bilibili_api",
+    url="https://github.com/Passkou/bilibili_api",
     project_urls={
         "Source": "https://github.com/Passkou/bilibili_api",
-        "Homepage": "https://passkou.com/bilibili_api",
-        "Documentation": "https://passkou.com/docs/bilibili_api"
+        "Homepage": "https://github.com/Passkou/bilibili_api",
+        "Documentation": "https://github.com/Passkou/bilibili_api/tree/main/docs"
     },
-    python_requires=">=3.8"
+    python_requires=">=3.7"
 )
