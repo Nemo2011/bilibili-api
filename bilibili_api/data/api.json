@@ -190,15 +190,6 @@
       }
     },
     "danmaku": {
-      "get_danmaku_old": {
-        "url": "https://api.bilibili.com/x/v1/dm/list.so",
-        "method": "GET",
-        "verify": false,
-        "params": {
-          "oid": "video_info中的cid，即分P的编号"
-        },
-        "comment": "旧API获取弹幕列表"
-      },
       "get_danmaku": {
         "url": "https://api.bilibili.com/x/v2/dm/web/seg.so",
         "method": "GET",
@@ -206,20 +197,10 @@
         "params": {
           "oid": "video_info中的cid，即分P的编号",
           "type": 1,
-          "segment_index": 1
+          "segment_index": 1,
+          "date?": "获取历史弹幕时填入日期，格式：YYYY-MM-DD"
         },
-        "comment": "获取弹幕列表"
-      },
-      "get_history_danmaku": {
-        "url": "https://api.bilibili.com/x/v2/dm/history",
-        "method": "GET",
-        "verify": false,
-        "params": {
-          "oid": "分P的编号",
-          "type": "1",
-          "date": "日期 (yyyy-mm-dd)"
-        },
-        "comment": "历史弹幕列表"
+        "comment": "获取弹幕/历史弹幕列表"
       },
       "get_history_danmaku_index": {
         "url": "https://api.bilibili.com/x/v2/dm/history/index",

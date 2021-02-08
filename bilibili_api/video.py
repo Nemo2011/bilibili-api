@@ -398,7 +398,7 @@ def get_danmaku(bvid: str = None, aid: int = None, page: int = 0,
     if date is not None:
         if not verify.has_sess():
             raise exceptions.NoPermissionException(utils.MESSAGES["no_sess"])
-    api = API["video"]["danmaku"]["get_danmaku"] if date is None else API["video"]["danmaku"]["get_history_danmaku"]
+    api = API["video"]["danmaku"]["get_danmaku"]
     info = get_video_info(aid=aid, bvid=bvid, verify=verify)
     page_id = info["pages"][page]["cid"]
     params = {
