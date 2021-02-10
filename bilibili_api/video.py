@@ -703,7 +703,7 @@ def get_danmaku_g(bvid: str = None, aid: int = None, page_id: int = 0,
     # 循环获取所有 segment
     danmakus = []
     for i in range(sge_count):
-        params['segment_index'] = i
+        params['segment_index'] = i + 1
         req = requests.get(api["url"], params=params, headers=utils.DEFAULT_HEADERS, cookies=verify.get_cookies())
         if req.ok:
             content_type = req.headers['content-type']
