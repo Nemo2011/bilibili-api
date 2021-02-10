@@ -198,9 +198,21 @@
           "oid": "video_info中的cid，即分P的编号",
           "type": 1,
           "segment_index": 1,
-          "date?": "获取历史弹幕时填入日期，格式：YYYY-MM-DD"
+          "date?": "获取历史弹幕时填入日期，格式：YYYY-MM-DD",
+          "pid": "av号"
         },
         "comment": "获取弹幕/历史弹幕列表"
+      },
+      "view": {
+        "url": "https://api.bilibili.com/x/v2/dm/web/view",
+        "method": "GET",
+        "verify": false,
+        "params": {
+          "type": 1,
+          "oid": "分Pid",
+          "pid": "av号"
+        },
+        "comment": "获取弹幕设置、特殊弹幕"
       },
       "get_history_danmaku_index": {
         "url": "https://api.bilibili.com/x/v2/dm/history/index",
