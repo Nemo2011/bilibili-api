@@ -108,14 +108,42 @@ bvid: bv号，即b站改版之后用于标识视频的唯一ID。和aid可以互
 
 ### get_danmaku
 
-获取弹幕信息。
+获取所有弹幕信息。
+
+page_id，请先调用 get_video_info() ，然后取其中的 \["pages"]\[分P号-1]\["cid"]
 
 | 参数名 | 类型          | 必须提供 | 默认       | 释义                                                         |
 | ------ | ------------- | -------- | ---------- | ------------------------------------------------------------ |
-| page   | int           | False    | 0          | 分p，从0开始                                                 |
+| page_id   | int           | True    | -          | 分p id                                                |
 | date   | datetime.date | False    | 今天的日期 | 弹幕日期，查询历史弹幕索引参见 [get_history_danmaku_index](#get_history_danmaku_index) |
 
 返回 [Danmaku][Danmaku] 类的列表。
+
+### get_danmaku_g
+
+获取弹幕信息。返回生成器
+
+page_id，请先调用 get_video_info() ，然后取其中的 \["pages"]\[分P号-1]\["cid"]
+
+| 参数名 | 类型          | 必须提供 | 默认       | 释义                                                         |
+| ------ | ------------- | -------- | ---------- | ------------------------------------------------------------ |
+| page_id   | int           | True    | -          | 分p id                                                |
+| date   | datetime.date | False    | 今天的日期 | 弹幕日期，查询历史弹幕索引参见 [get_history_danmaku_index](#get_history_danmaku_index) |
+
+返回 [Danmaku][Danmaku] 类的生成器。
+
+### get_danmaku_view
+
+获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息
+
+page_id，请先调用 get_video_info() ，然后取其中的 \["pages"]\[分P号-1]\["cid"]
+
+| 参数名 | 类型          | 必须提供 | 默认       | 释义                                                         |
+| ------ | ------------- | -------- | ---------- | ------------------------------------------------------------ |
+| page_id   | int           | True    | -          | 分p id                                                |
+| date   | datetime.date | False    | 今天的日期 | 弹幕日期，查询历史弹幕索引参见 [get_history_danmaku_index](#get_history_danmaku_index) |
+
+返回对象，自己打印出来看
 
 ### get_history_danmaku_index
 
