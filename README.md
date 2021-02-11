@@ -1,4 +1,4 @@
-![LOGO](https://res.passkou.com/image/20200812011335.png)
+![LOGO](https://pic.imgdb.cn/item/602511ef3ffa7d37b343a3a9.jpg)
 
 # bilibili_api
 
