@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setuptools.setup(
     name='bilibili_api',
-    version='4.0.1',
+    version='5.0.0',
     license='GPLv3+',
     author='Passkou',
     author_email='passkou@foxmail.com',
@@ -37,11 +37,11 @@ setuptools.setup(
             "data/*.*"
         ]
     },
-    url="https://github.com/Passkou/bilibili_api",
+    url="https://github.com/Passkou/bilibili-api",
     project_urls={
-        "Source": "https://github.com/Passkou/bilibili_api",
-        "Homepage": "https://github.com/Passkou/bilibili_api",
-        "Documentation": "https://github.com/Passkou/bilibili_api/tree/main/docs"
+        "Source": "https://github.com/Passkou/bilibili-api",
+        "Homepage": "https://github.com/Passkou/bilibili-api",
+        "Documentation": "https://github.com/Passkou/bilibili-api/tree/main/docs"
     },
     python_requires=">=3.7"
 )
