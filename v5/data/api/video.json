@@ -27,7 +27,7 @@
             },
             "comment": "视频标签信息"
         },
-        "charge": {
+        "chargers": {
             "url": "https://api.bilibili.com/x/web-interface/elec/show",
             "method": "GET",
             "verify": false,
@@ -77,7 +77,7 @@
             },
             "comment": "是否已点赞"
         },
-        "has_pay_coins": {
+        "get_pay_coins": {
             "url": "https://api.bilibili.com/x/web-interface/archive/coins",
             "method": "GET",
             "verify": true,

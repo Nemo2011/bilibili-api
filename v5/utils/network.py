@@ -26,6 +26,11 @@ async def request(method: str, url: str, params: dict = None, data: dict = None,
     :param credential: Credential 类
     :return: 接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据
     """
+    method = method.upper()
+    # 请求为非 GET 时要求 bili_jct
+    if method != 'GET':
+        credential.raise_for_no_bili_jct()
+
     # 使用 Referer 和 UA 请求头以绕过反爬虫机制
     DEFAULT_HEADERS = {
         "Referer": "https://www.bilibili.com/",
@@ -40,6 +45,13 @@ async def request(method: str, url: str, params: dict = None, data: dict = None,
     global __session
     if __session.closed:
         __session = aiohttp.ClientSession()
+
+    # 自动添加 csrf
+    if method in ['POST', 'DELETE', 'PATCH']:
+        if data is None:
+            data = {}
+        data['csrf'] = credential.bili_jct
+        data['csrf_token'] = credential.bili_jct
 
     config = {
         "method": method,
