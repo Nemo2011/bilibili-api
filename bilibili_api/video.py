@@ -85,6 +85,7 @@ class Video:
         """
         if aid <= 0:
             raise ArgsException("aid 不能小于或等于 0")
+        
         self.__aid = aid
         self.__bvid = aid2bvid(aid)
 
