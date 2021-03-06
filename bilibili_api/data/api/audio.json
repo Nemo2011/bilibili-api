@@ -1,0 +1,108 @@
+{
+  "audio_info": {
+    "info": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/song/info",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "sid": "音频au号"
+      },
+      "comment": "获取音频信息"
+    },
+    "tag": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/tag/song",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "sid": "音频au号"
+      },
+      "comment": "获取音频tag"
+    },
+    "user": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/stat/user",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "uid": "用户UID"
+      },
+      "comment": "获取用户数据（收听数，粉丝数等）"
+    },
+    "download_url": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/url",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "sid": "音频au号",
+        "privilege": 2,
+        "quality": 2
+      },
+      "comment": "获取音频文件下载链接，目前音质貌似不可控"
+    }
+  },
+  "audio_operate": {
+    "coin": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/coin/add",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "sid": "歌单ID",
+        "multiply": "硬币数量，最大2"
+      },
+      "comment": "投币"
+    }
+  },
+  "list_info": {
+    "info": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/menu/info",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "sid": "歌单ID"
+      },
+      "comment": "获取歌单信息"
+    },
+    "tag": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/tag/menu",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "sid": "歌单ID"
+      },
+      "comment": "获取歌单tag"
+    },
+    "song_list": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/song/of-menu",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "sid": "歌单ID",
+        "pn": "页码",
+        "ps": 100
+      },
+      "comment": "获取歌单歌曲列表"
+    }
+  },
+  "list_operate": {
+    "set_favorite": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/collect/menu",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "sid": "歌单ID"
+      },
+      "comment": "收藏歌单"
+    },
+    "del_favorite": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/collect/menu",
+      "method": "DELETE",
+      "verify": true,
+      "params": {
+        "sid": "歌单ID"
+      },
+      "data": {
+        "csrf": "csrf"
+      },
+      "comment": "取消收藏歌单"
+    }
+  }
+}

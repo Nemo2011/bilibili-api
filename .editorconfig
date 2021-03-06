@@ -1,0 +1,9 @@
+[*.py]
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+end_of_line = crlf
+
+[*.json]
+indent_size = 2
+end_of_line = crlf

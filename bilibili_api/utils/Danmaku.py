@@ -7,6 +7,7 @@ bilibili_api.utils.Danmaku
 import datetime
 from .Color import Color
 from .utils import crack_uid
+import time
 
 class Danmaku:
     FONT_SIZE_EXTREME_SMALL = 12
