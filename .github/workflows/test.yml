@@ -3,6 +3,8 @@ name: "Testing"
 on:
   push:
     branches: ["v5"]
+    paths:
+     - 'bilibili_api/**'
 
 jobs:
   test:
