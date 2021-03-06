@@ -1,8 +1,5 @@
-import pytest
-from bilibili_api import video, Credential, set_session, exceptions
+from bilibili_api import video, exceptions
 from .common import get_credential
-import aiohttp
-import asyncio
 import datetime
 
 BVID = "BV1xx411c7Xg"
