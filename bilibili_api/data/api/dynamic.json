@@ -1,0 +1,178 @@
+{
+  "send": {
+    "upload_img": {
+      "url": "https://api.vc.bilibili.com/api/v1/drawImage/upload",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "biz": "draw",
+        "category": "daily"
+      },
+      "files": {
+        "file_up": "二进制img"
+      },
+      "comment": "上传图片"
+    },
+    "schedule": {
+      "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/add_draft",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "type": "4为有图动态，2为无图动态",
+        "publish_time": "发布时间戳",
+        "request(type=4)": "见 instant_draw.data，无setting",
+        "request(type=2)": "见 instant_text.data"
+      },
+      "comment": "发布定时动态"
+    },
+    "instant_draw": {
+      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/create_draw",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "biz": 3,
+        "category": 3,
+        "type": 0,
+        "pictures": [
+          {
+            "img_src": "图片地址",
+            "img_width": "图片宽度",
+            "img_height": "图片高度"
+          }
+        ],
+        "title": "",
+        "tags": "",
+        "description": "动态文字内容",
+        "content": "动态文字内容",
+        "from": "create.dynamic.web",
+        "up_choose_comment": 0,
+        "extension": "{\"emoji_type\":1,\"from\":{\"emoji_type\":1},\"flag_cfg\":{}}",
+        "at_uids": "艾特用户UID列表，半角逗号分隔",
+        "at_control": [
+          {
+            "location": "@符号起始位置，0为第一个字符",
+            "type": 1,
+            "length": "@区域长度（2 + 用户名字符串长度）",
+            "data": "用户UID"
+          }
+        ],
+        "setting": {
+          "copy_forbidden": 0,
+          "cachedTime": 0
+        }
+      }
+    },
+    "instant_text": {
+      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/create",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "dynamic_id": 0,
+        "type": 4,
+        "rid": 0,
+        "content": "动态文本内容",
+        "extension": "{\"emoji_type\":1}",
+        "at_uids": "艾特用户UID列表，半角逗号分隔",
+        "ctrl": [
+          {
+            "location": "@符号起始位置，0为第一个字符",
+            "type": 1,
+            "length": "@区域长度（2 + 用户名字符串长度）",
+            "data": "用户UID"
+          }
+        ]
+      }
+    }
+  },
+  "operate": {
+    "delete": {
+      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/rm_dynamic",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "dynamic_id": "动态ID"
+      },
+      "comment": "删除动态"
+    },
+    "like": {
+      "url": "https://api.vc.bilibili.com/dynamic_like/v1/dynamic_like/thumb",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "dynamic_id": "动态ID",
+        "up": "1点赞2取消",
+        "uid": "自己uid"
+      },
+      "comment": "点赞"
+    },
+    "repost": {
+      "url": "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "dynamic_id": "动态ID",
+        "content": "内容",
+        "extension": "{\"emoji_type\":1}"
+      },
+      "comment": "转发"
+    }
+  },
+  "info": {
+    "repost": {
+      "url": "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost_detail",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "dynamic_id": "动态ID",
+        "offset": "每页第一条动态ID"
+      },
+      "comment": "动态转发信息，最多获取560条"
+    },
+    "detail": {
+      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "dynamic_id": "动态ID"
+      },
+      "comment": "动态详细信息"
+    }
+  },
+  "schedule": {
+    "list": {
+      "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/get_drafts",
+      "method": "GET",
+      "verify": false,
+      "params": null,
+      "comment": "获取待发送定时动态列表"
+    },
+    "publish_now": {
+      "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/publish_now",
+      "method": "POST",
+      "verify": false,
+      "data": {
+        "draft_id": "定时动态ID"
+      },
+      "comment": "立即发送定时动态"
+    },
+    "modify": {
+      "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/modify_draft",
+      "method": "POST",
+      "verify": false,
+      "data": {
+        "draft_id": "定时动态ID",
+        "kwargs": "剩余参数见dynamic.send.schedule"
+      },
+      "comment": "修改待发定时动态"
+    },
+    "delete": {
+      "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/rm_draft",
+      "method": "POST",
+      "verify": false,
+      "data": {
+        "draft_id": "定时动态ID"
+      },
+      "comment": "删除待发定时动态"
+    }
+  }
+}

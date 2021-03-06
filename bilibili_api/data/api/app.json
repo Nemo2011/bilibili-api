@@ -1,0 +1,29 @@
+{
+  "splash": {
+    "list": {
+      "url": "https://app.bilibili.com/x/v2/splash/list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "mobi_app": "android / iphone / ipad",
+        "platform": "android / ios    / ios",
+        "height": "屏幕高度",
+        "width": "屏幕宽度",
+        "birth": "生日日期(四位数，例 0101)"
+      },
+      "comment": "获取开屏启动画面"
+    },
+    "brand": {
+      "url": "https://app.bilibili.com/x/v2/splash/brand/list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "mobi_app": "android / iphone / ipad",
+        "platform": "android / ios    / ios",
+        "screen_height": "屏幕高度",
+        "screen_width": "屏幕宽度"
+      },
+      "comment": "获取特殊开屏启动画面"
+    }
+  }
+}

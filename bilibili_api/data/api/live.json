@@ -1,0 +1,158 @@
+{
+  "info": {
+    "room_play_info": {
+      "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getRoomPlayInfo",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "room_id": "房间号"
+      },
+      "comment": "获取房间信息（真实房间号，封禁情况等）"
+    },
+    "chat_conf": {
+      "url": "https://api.live.bilibili.com/room/v1/Danmu/getConf",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "room_id": "真实房间号"
+      },
+      "comment": "获取聊天弹幕服务器配置信息(websocket)"
+    },
+    "room_info": {
+      "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "room_id": "真实房间号"
+      },
+      "comment": "获取直播间信息（标题，简介等）"
+    },
+    "user_info_in_room": {
+      "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByUser",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "room_id": "真实房间号"
+      },
+      "comment": "获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）"
+    },
+    "user_info": {
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/get_user_info",
+      "method": "GET",
+      "verify": true,
+      "params": null,
+      "comment": "获取直播用户等级等信息"
+    },
+    "dahanghai": {
+      "url": "https://api.live.bilibili.com/xlive/app-room/v1/guardTab/topList",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "roomid": "真实房间号",
+        "page": "页码",
+        "ruid": "全称room_uid，从room_play_info里头的uid可以找到",
+        "page_size": 29
+      },
+      "comment": "获取大航海列表"
+    },
+    "seven_rank": {
+      "url": "https://api.live.bilibili.com/rankdb/v1/RoomRank/webSevenRank",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "roomid": "真实房间号",
+        "ruid": "全称room_uid，从room_play_info里头的uid可以找到"
+      },
+      "comment": "获取七日榜"
+    },
+    "fans_medal_rank": {
+      "url": "https://api.live.bilibili.com/rankdb/v1/RoomRank/webMedalRank",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "roomid": "真实房间号",
+        "ruid": "全称room_uid，从room_play_info里头的uid可以找到"
+      },
+      "comment": "获取粉丝勋章排行榜"
+    },
+    "black_list": {
+      "url": "https://api.live.bilibili.com/liveact/ajaxGetBlockList",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "roomid": "真实房间号",
+        "page": "页码"
+      },
+      "comment": "获取房间黑名单列表，登录账号需要是该房间房管"
+    },
+    "room_play_url": {
+      "url": "https://api.live.bilibili.com/xlive/web-room/v1/playUrl/playUrl",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "cid": "真实房间号",
+        "platform": "web",
+        "qn": "清晰度编号，原画10000，超清250，高清150",
+        "https_url_req": "1",
+        "ptype": "16"
+      },
+      "comment": "获取房间直播流列表"
+    },
+    "room_play_info_v2": {
+      "url": "https://api.live.bilibili.com/xlive/web-room/v2/index/getRoomPlayInfo",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "room_id": "真实房间号",
+        "protocol": "流协议，0为FLV流，1为HLS流。默认：0,1",
+        "format": "容器格式，0为flv格式；1为ts格式（仅限hls流）；2为fmp4格式（仅限hls流）。默认：0,2",
+        "codec": "视频编码，0为avc编码，1为hevc编码。默认：0,1",
+        "qn": "清晰度编号，原画：10000（建议），4K：800，蓝光(杜比)：401，蓝光：400，超清：250，高清：150，流畅：80，默认：0",
+        "platform": "web",
+        "ptype": "16"
+      },
+      "comment": "获取房间信息及可用清晰度列表"
+    }
+  },
+  "operate": {
+    "send_danmaku": {
+      "url": "https://api.live.bilibili.com/msg/send",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "roomid": "真实房间号",
+        "color": "十进制颜色，有权限限制",
+        "fontsize": 25,
+        "mode": "1飞行5顶部4底部",
+        "msg": "弹幕信息",
+        "rnd": "当前时间戳",
+        "bubble": "默认0，功能不知",
+        "csrf,csrf_token": "要给两个"
+      },
+      "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
+    },
+    "add_block": {
+      "url": "https://api.live.bilibili.com/banned_service/v2/Silent/add_block_user",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "roomid": "真实房间号",
+        "block_uid": "封禁用户UID",
+        "hour": "小时",
+        "visit_id": "空"
+      },
+      "comment": "封禁用户"
+    },
+    "del_block": {
+      "url": "https://api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "roomid": "真实房间号",
+        "id": "封禁ID，从live.info.black_list中获取或者live.operate.add_black的返回值获取",
+        "visit_id": "空"
+      },
+      "comment": "解封用户"
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "info": {
+    "meta": {
+      "url": "https://api.bilibili.com/pgc/review/user",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "media_id": "番剧的media_id(URL中的/mdxxxx)"
+      },
+      "comment": "获取番剧信息"
+    },
+    "episodes_list": {
+      "url": "https://api.bilibili.com/pgc/web/season/section",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "season_id": "番剧的season_id"
+      },
+      "comment": "获取番剧剧集列表"
+    },
+    "season_status": {
+      "url": "https://api.bilibili.com/pgc/web/season/stat",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "season_id": "番剧的season_id"
+      },
+      "comment": "获取番剧播放量，追番等信息"
+    },
+    "short_comment": {
+      "url": "https://api.bilibili.com/pgc/review/short/list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "media_id": "番剧的media_id",
+        "ps": 20,
+        "sort": "排序方式0默认1按时间倒序",
+        "cursor": "循环获取用，第一次调用本API返回中的next值"
+      },
+      "comment": "获取番剧短评"
+    },
+    "long_comment": {
+      "url": "https://api.bilibili.com/pgc/review/long/list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "media_id": "番剧的media_id",
+        "ps": 20,
+        "sort": "排序方式0默认1按时间倒序",
+        "cursor": "循环获取用，第一次调用本API返回中的next值"
+      },
+      "comment": "获取番剧长评"
+    },
+    "relate_video": {
+      "url": "https://api.bilibili.com/x/web-interface/tag/top?pn=10&ps=24&tid=8583026",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "tid": "频道ID",
+        "ps": 20,
+        "sort": "排序方式0默认1按时间倒序",
+        "cursor": "循环获取用，第一次调用本API返回中的next值"
+      },
+      "comment": "获取番剧长评"
+    },
+    "collective_info": {
+      "url": "https://api.bilibili.com/pgc/view/web/season",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "season_id": "B站每个剧集会对应一个唯一ID"
+      },
+      "comment": "获取一个剧集的全面概括信息"
+    }
+  },
+  "operate": {
+    "follow_add": {
+      "url": "https://api.bilibili.com/pgc/web/follow/add",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "season_id": "番剧的season_id"
+      },
+      "comment": "追番"
+    },
+    "follow_del": {
+      "url": "https://api.bilibili.com/pgc/web/follow/del",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "season_id": "番剧的season_id"
+      },
+      "comment": "取消追番"
+    },
+    "follow_status": {
+      "url": "https://api.bilibili.com/pgc/web/follow/status/update",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "season_id": "番剧的season_id",
+        "status": "1想看2在看3已看"
+      },
+      "comment": "追番状态"
+    }
+  }
+}
