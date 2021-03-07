@@ -20,8 +20,11 @@ RATELIMIT = float(os.getenv('BILI_RATELIMIT')) if os.getenv('BILI_RATELIMIT') is
 async def test(module):
     print(Fore.YELLOW + f"=========== 开始测试 {module.__name__} ===========")
     funcs = collect_test_function(module)
-    print(Fore.CYAN + '执行 before_all()')
-    await module.before_all()
+
+    if "before_all" in dir(module):
+        print(Fore.CYAN + '执行 before_all()')
+        await module.before_all()
+        
     result = {
         "passed": 0,
         "failed": 0
@@ -41,8 +44,11 @@ async def test(module):
             print(traceback.format_exc())
             result["failed"] += 1
         await asyncio.sleep(RATELIMIT)
-    print(Fore.CYAN + '执行 after_all()')
-    await module.after_all()
+
+    if "after_all" in dir(module):
+        print(Fore.CYAN + '执行 after_all()')
+        await module.after_all()
+
     print(Fore.YELLOW + f"=========== 结束测试 {module.__name__} ===========\n")
     return result
 

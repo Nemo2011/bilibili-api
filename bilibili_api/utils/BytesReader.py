@@ -23,7 +23,7 @@ class BytesReader:
 
         :return: bool
         """
-        return self.__offset == len(self.__stream)
+        return self.__offset >= len(self.__stream)
 
     def double(self, LE=False):
         """
@@ -70,7 +70,7 @@ class BytesReader:
         str_len = self.varint()
         data = self.__stream[self.__offset:self.__offset + str_len]
         self.__offset += str_len
-        return data.decode(encoding=encoding)
+        return data.decode(encoding=encoding, errors="ignore")
     
     def bool(self):
         """

@@ -3,16 +3,19 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
+with open("bilibili_api/requirements.txt", "r", encoding="utf8") as f:
+    requires = f.read()
+
 setuptools.setup(
-    name='bilibili_api',
+    name='bilibili-api',
     version='5.0.0',
     license='GPLv3+',
     author='Passkou',
-    author_email='passkou@foxmail.com',
+    author_email='passkou@163.com',
     description='哔哩哔哩的各种API调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=["tests"]),
     keywords=[
         "bilibili",
         "api",
@@ -25,23 +28,13 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9"
     ],
-    install_requires=[
-        "requests >= 2.24.0",
-        "websockets >= 8.1",
-        "beautifulsoup4 >= 4.9.1",
-        "aiohttp >= 3.6.2",
-        "cssutils >= 1.0.2"
-    ],
     package_data={
-        'bilibili_api': [
-            "data/*.*"
+        "": [
+            "data/**/*.*",
+            "requirements.txt"
         ]
     },
+    install_requires=requires.splitlines(),
     url="https://github.com/Passkou/bilibili-api",
-    project_urls={
-        "Source": "https://github.com/Passkou/bilibili-api",
-        "Homepage": "https://github.com/Passkou/bilibili-api",
-        "Documentation": "https://github.com/Passkou/bilibili-api/tree/main/docs"
-    },
     python_requires=">=3.7"
 )
