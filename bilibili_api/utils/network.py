@@ -13,6 +13,7 @@ from .. import settings
 import asyncio
 import atexit
 
+
 @atexit.register
 def __clean():
     """
@@ -48,7 +49,7 @@ async def request(method: str, url: str, params: dict = None, data: dict = None,
 
     # 使用 Referer 和 UA 请求头以绕过反爬虫机制
     DEFAULT_HEADERS = {
-        "Referer": "https://www.bilibili.com/",
+        "Referer": "https://www.bilibili.com",
         "User-Agent": "Mozilla/5.0"
     }
     headers = DEFAULT_HEADERS
@@ -79,9 +80,9 @@ async def request(method: str, url: str, params: dict = None, data: dict = None,
         config["proxy"] = settings.proxy
 
     session = get_session()
-    
+
     async with session.request(**config) as resp:
-    
+
         # 检查状态码
         try:
             resp.raise_for_status()
@@ -117,7 +118,7 @@ async def request(method: str, url: str, params: dict = None, data: dict = None,
         if code is None:
             raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
 
-        if code < 0:
+        if code != 0:
             msg = resp_data.get('msg', None)
             if msg is None:
                 msg = resp_data.get('message', None)
@@ -150,6 +151,7 @@ async def upload_multipart(payload: dict):
 
 
 __session: aiohttp.ClientSession = None
+
 
 def get_session():
     """

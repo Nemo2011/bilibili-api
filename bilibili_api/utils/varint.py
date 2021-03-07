@@ -4,6 +4,7 @@ bilibili_api.utils.varint
 变长数字字节相关
 """
 
+
 def read_varint(stream: bytes):
     """
     读取varint

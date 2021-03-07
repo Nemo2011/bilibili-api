@@ -1,9 +1,10 @@
+from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 from bilibili_api import video, exceptions
 from .common import get_credential
 import datetime
 
-BVID = "BV1xx411c7Xg"
-AID = 271
+BVID = "BV1Bf4y1Q7QP"
+AID = 286881175
 video = video.Video(BVID, credential=get_credential())
 
 
@@ -92,6 +93,52 @@ async def test_get_danmaku():
 
 async def test_get_danmaku_history():
     data = await video.get_danmaku(0, date=datetime.date(2020, 1, 1))
+    return data
+
+async def test_like():
+    data = await video.like(True)
+
+    # Clean up
+    await video.like(False)
+    return data
+
+async def test_pay_coin():
+    try:
+        data = await video.pay_coin(2)
+        return data
+    except ResponseCodeException as e:
+        # 不接受以下错误 code
+        # -104 硬币不足
+        # 34005 视频投币上限
+        if e.code not in (-104, 34005):
+            raise e
+        else:
+            return e.raw
+
+async def test_add_tag():
+    try:
+        data = await video.add_tag("测试标签")
+        return data
+    except ResponseCodeException as e:
+        if e.code != 16070:
+            raise e
+        else:
+            return e.raw
+
+async def test_del_tag():
+    try:
+        data = await video.delete_tag(99999999)
+        return data
+    except ResponseCodeException as e:
+        # 16070  只有 UP 才能添加
+        if e.code != 16070:
+            raise e
+        else:
+            return e.raw
+
+async def test_subscribe_and_unsubscribe_tag():
+    data = await video.subscribe_tag(8583026)
+    await video.unsubscribe_tag(8583026)
     return data
 
 async def after_all():

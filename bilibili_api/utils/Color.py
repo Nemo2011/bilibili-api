@@ -4,6 +4,7 @@ bilibili_api.utils.Color
 颜色类
 """
 
+
 class Color(object):
     def __init__(self, hex_: str = "FFFFFF"):
         self.__color = 0
