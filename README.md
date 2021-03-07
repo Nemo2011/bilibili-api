@@ -134,7 +134,7 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 ```python
 from bilibili_api import settings
 
-settings["proxy"] = "http://your-proxy.com" # 里头填写你的代理地址
+settings.proxy = "http://your-proxy.com" # 里头填写你的代理地址
 ```
 
 ## Q: 怎么没有我想要的功能？

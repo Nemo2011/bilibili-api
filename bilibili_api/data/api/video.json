@@ -149,26 +149,6 @@
             },
             "comment": "删除标签"
         },
-        "like_tag": {
-            "url": "https://api.bilibili.com/x/tag/archive/like2",
-            "method": "POST",
-            "verify": true,
-            "data": {
-                "aid": "av号",
-                "tag_id": "标签id"
-            },
-            "comment": "切换标签点赞状态"
-        },
-        "hate_tag": {
-            "url": "https://api.bilibili.com/x/tag/archive/hate2",
-            "method": "POST",
-            "verify": true,
-            "data": {
-                "aid": "av号",
-                "tag_id": "标签id"
-            },
-            "comment": "切换标签踩状态"
-        },
         "subscribe_tag": {
             "url": "https://api.bilibili.com/x/tag/subscribe/add",
             "method": "POST",

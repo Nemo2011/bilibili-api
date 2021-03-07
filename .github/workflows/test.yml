@@ -26,4 +26,6 @@ jobs:
         env:
           BILI_SESSDATA: ${{ secrets.BILI_SESSDATA }}
           BILI_CSRF: ${{ secrets.BILI_CSRF }}
+          BILI_RATELIMIT: 0.2
+          BILI_BUVID3: ${{ secrets.BILI_BUVID3 }}
         run: "python -m tests.main"

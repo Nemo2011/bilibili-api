@@ -3,6 +3,7 @@ import asyncio
 from colorama import Fore, init, Style
 import datetime, time
 import traceback
+import os
 
 def collect_test_function(module):
     names = []
@@ -12,7 +13,9 @@ def collect_test_function(module):
             n = ".".join(n.split('.')[1:])
             names.append(f"{n}.{name}")
     return names
- 
+
+RATELIMIT = float(os.getenv('BILI_RATELIMIT')) if os.getenv('BILI_RATELIMIT') is not None else 0
+
 
 async def test(module):
     print(Fore.YELLOW + f"=========== 开始测试 {module.__name__} ===========")
@@ -37,6 +40,7 @@ async def test(module):
             print(Fore.BLUE)
             print(traceback.format_exc())
             result["failed"] += 1
+        await asyncio.sleep(RATELIMIT)
     print(Fore.CYAN + '执行 after_all()')
     await module.after_all()
     print(Fore.YELLOW + f"=========== 结束测试 {module.__name__} ===========\n")

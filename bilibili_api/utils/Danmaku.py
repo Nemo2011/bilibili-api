@@ -9,6 +9,7 @@ from .Color import Color
 from .utils import crack_uid
 import time
 
+
 class Danmaku:
     FONT_SIZE_EXTREME_SMALL = 12
     FONT_SIZE_SUPER_SMALL = 16
@@ -24,8 +25,7 @@ class Danmaku:
     TYPE_NORMAL = 0
     TYPE_SUBTITLE = 1
 
-    def __init__(self, text: str, dm_time: float = 0.0, send_time: float = time.time(), crc32_id: str = None
-                 , color: Color = None, weight: int = -1, id_: int = -1, id_str: str = "", action: str = '',
+    def __init__(self, text: str, dm_time: float = 0.0, send_time: float = time.time(), crc32_id: str = None, color: Color = None, weight: int = -1, id_: int = -1, id_str: str = "", action: str = '',
                  mode: int = MODE_FLY, font_size: int = FONT_SIZE_NORMAL, is_sub: bool = False, pool: int = -1,
                  attr: int = -1):
         self.dm_time = datetime.timedelta(seconds=dm_time)

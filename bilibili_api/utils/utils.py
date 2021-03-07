@@ -14,7 +14,8 @@ def get_api(field: str):
 
     :param field: API所属分类
     """
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "api", f"{field.lower()}.json"))
+    path = os.path.abspath(os.path.join(os.path.dirname(
+        __file__), "..", "data", "api", f"{field.lower()}.json"))
     if os.path.exists(path):
         with open(path, encoding="utf8") as f:
             return json.loads(f.read())
@@ -38,7 +39,7 @@ def crack_uid(crc32: str):
                 else:
                     crcreg >>= 1
             __crctable[i] = crcreg
-    
+
     __create_table()
 
     def __crc32(input_):

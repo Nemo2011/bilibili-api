@@ -4,7 +4,7 @@ bilibili_api.video
 视频相关操作
 """
 
-from .exceptions.ResponseCodeException import ResponseCodeException
+from bilibili_api.exceptions.ResponseException import ResponseException
 import aiohttp
 from .exceptions.NetworkException import NetworkException
 from .utils.Credential import Credential
@@ -13,11 +13,10 @@ from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.utils import get_api
 from .utils.network import request, get_session
 from .utils.Danmaku import Danmaku
-from .utils.varint import read_varint
 from .utils.Color import Color
+from .utils.BytesReader import BytesReader
 import re
 import json
-import struct
 import datetime
 
 API = get_api("video")
@@ -31,8 +30,11 @@ class Video:
     def __init__(self, bvid: str = None, aid: int = None, credential: Credential = None):
         """
         :param bvid: BV号，以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）
+        :type bvid: str
         :param aid: AV号，大于 0 的整数（若已提供 bvid 则该参数无效）
+        :type aid: int
         :param credential: Credential 类，用于一些操作的凭据认证
+        :type credential: Credential
         """
         # ID 检查
         if bvid is not None:
@@ -58,11 +60,11 @@ class Video:
 
         :param bvid: 以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）
         :type bvid: str
-        :raises ArgsException: BVID 不正确
         """
         # 检查 bvid 是否有效
         if not re.search("^BV[a-zA-Z0-9]{10}$", bvid):
-            raise ArgsException("bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）")
+            raise ArgsException(
+                "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）")
         self.__bvid = bvid
         self.__aid = bvid2aid(bvid)
 
@@ -81,11 +83,10 @@ class Video:
 
         :param aid: 大于 0 的整数
         :type aid: int
-        :raises ArgsException: aid 错误
         """
         if aid <= 0:
             raise ArgsException("aid 不能小于或等于 0")
-        
+
         self.__aid = aid
         self.__bvid = aid2bvid(aid)
 
@@ -130,8 +131,7 @@ class Video:
             "bvid": self.get_bvid(),
             "aid": self.get_aid()
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp
+        return await request("GET", url, params=params, credential=self.credential)
 
     async def get_tags(self):
         """
@@ -142,8 +142,7 @@ class Video:
             "bvid": self.get_bvid(),
             "aid": self.get_aid()
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp
+        return await request("GET", url, params=params, credential=self.credential)
 
     async def get_chargers(self):
         """
@@ -157,8 +156,7 @@ class Video:
             "bvid": self.get_bvid(),
             "mid": mid
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp
+        return await request("GET", url, params=params, credential=self.credential)
 
     async def get_pages(self):
         """
@@ -169,10 +167,9 @@ class Video:
             "aid": self.get_aid(),
             "bvid": self.get_bvid()
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp
+        return await request("GET", url, params=params, credential=self.credential)
 
-    async def __get_pages_id_by_index(self, page_index: int):
+    async def __get_page_id_by_index(self, page_index: int):
         """
         根据分 p 号获取 page_id
 
@@ -199,8 +196,9 @@ class Video:
         获取视频下载信息
 
         :param page_index: 分 P 号，下标从 0 开始
+        :type page_index: int
         """
-        cid = await self.__get_pages_id_by_index(page_index)
+        cid = await self.__get_page_id_by_index(page_index)
 
         url = API["info"]["playurl"]["url"]
         params = {
@@ -210,8 +208,7 @@ class Video:
             "otype": "json",
             "fnval": 16
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp
+        return await request("GET", url, params=params, credential=self.credential)
 
     async def get_related(self):
         """
@@ -222,8 +219,7 @@ class Video:
             "aid": self.get_aid(),
             "bvid": self.get_bvid()
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp
+        return await request("GET", url, params=params, credential=self.credential)
 
     async def has_liked(self):
         """
@@ -238,8 +234,7 @@ class Video:
             "bvid": self.get_bvid(),
             "aid": self.get_aid()
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp == 1
+        return await request("GET", url, params=params, credential=self.credential) == 1
 
     async def get_pay_coins(self):
         """
@@ -254,8 +249,7 @@ class Video:
             "bvid": self.get_bvid(),
             "aid": self.get_aid()
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp["multiply"]
+        return (await request("GET", url, params=params, credential=self.credential))["multiply"]
 
     async def has_favoured(self):
         """
@@ -270,8 +264,7 @@ class Video:
             "bvid": self.get_bvid(),
             "aid": self.get_aid()
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp["favoured"]
+        return (await request("GET", url, params=params, credential=self.credential))["favoured"]
 
     async def get_media_list(self):
         """
@@ -287,8 +280,7 @@ class Video:
             "rid": self.get_aid(),
             "up_mid": info["owner"]["mid"]
         }
-        resp = await request("GET", url, params=params, credential=self.credential)
-        return resp
+        return await request("GET", url, params=params, credential=self.credential)
 
     async def get_danmaku_view(self, page_index: int):
         """
@@ -299,7 +291,7 @@ class Video:
 
         session = get_session()
         api = API["danmaku"]["view"]['url']
-        oid = await self.__get_pages_id_by_index(page_index)
+        oid = await self.__get_page_id_by_index(page_index)
         resp = await session.get(api, params={
             "type": 1,
             "oid": oid,
@@ -316,248 +308,144 @@ class Video:
 
         resp_data = await resp.read()
         json_data = {}
-        pos = 0
-        length = len(resp_data)
+        reader = BytesReader(resp_data)
         # 解析二进制数据流
 
         def read_dmSge(stream: bytes):
-            length_ = len(stream)
-            pos = 0
+            reader_ = BytesReader(stream)
             data = {}
-            while pos < length_:
-                t = stream[pos] >> 3
-                pos += 1
+            while not reader_.has_end():
+                t = reader_.byte() >> 3
                 if t == 1:
-                    d, l = read_varint(stream[pos:])
-                    data['pageSize'] = int(d)
-                    pos += l
+                    data['page_size'] = reader_.varint()
                 elif t == 2:
-                    d, l = read_varint(stream[pos:])
-                    data['total'] = int(d)
-                    pos += l
+                    data['total'] = reader_.varint()
                 else:
                     continue
             return data
 
         def read_flag(stream: bytes):
-            length_ = len(stream)
-            pos = 0
+            reader_ = BytesReader(stream)
             data = {}
-            while pos < length_:
-                t = stream[pos] >> 3
-                pos += 1
+            while not reader_.has_end():
+                t = reader_.byte() >> 3
                 if t == 1:
-                    d, l = read_varint(stream[pos:])
-                    data['recFlag'] = int(d)
-                    pos += l
+                    data['rec_flag'] = reader_.varint()
                 elif t == 2:
-                    str_len, l = read_varint(stream[pos:])
-                    pos += l
-                    data['recText'] = stream[pos: pos + str_len].decode()
-                    pos += str_len
+                    data['rec_text'] = reader_.string()
                 elif t == 3:
-                    d, l = read_varint(stream[pos:])
-                    data['recSwitch'] = int(d)
-                    pos += l
+                    data['rec_switch'] = reader_.varint()
                 else:
                     continue
             return data
 
         def read_commandDms(stream: bytes):
-            length_ = len(stream)
-            pos = 0
+            reader_ = BytesReader(stream)
             data = {}
-            while pos < length_:
-                t = stream[pos] >> 3
-                pos += 1
+            while not reader_.has_end():
+                t = reader_.byte() >> 3
                 if t == 1:
-                    d, l = read_varint(stream[pos:])
-                    data['id'] = int(d)
-                    pos += l
+                    data['id'] = reader_.varint()
                 elif t == 2:
-                    d, l = read_varint(stream[pos:])
-                    data['oid'] = int(d)
-                    pos += l
+                    data['oid'] = reader_.varint()
                 elif t == 3:
-                    d, l = read_varint(stream[pos:])
-                    data['mid'] = int(d)
-                    pos += l
+                    data['mid'] = reader_.varint()
                 elif t == 4:
-                    str_len, l = read_varint(stream[pos:])
-                    pos += l
-                    data['commend'] = stream[pos: pos + str_len].decode()
-                    pos += str_len
+                    data['commend'] = reader_.string()
                 elif t == 5:
-                    str_len, l = read_varint(stream[pos:])
-                    pos += l
-                    data['content'] = stream[pos: pos + str_len].decode()
-                    pos += str_len
+                    data['content'] = reader_.string()
                 elif t == 6:
-                    d, l = read_varint(stream[pos:])
-                    data['progress'] = int(d)
-                    pos += l
+                    data['progress'] = reader_.varint()
                 elif t == 7:
-                    str_len, l = read_varint(stream[pos:])
-                    pos += l
-                    data['ctime'] = stream[pos: pos + str_len].decode()
-                    pos += str_len
+                    data['ctime'] = reader_.string()
                 elif t == 8:
-                    str_len, l = read_varint(stream[pos:])
-                    pos += l
-                    data['mtime'] = stream[pos: pos + str_len].decode()
-                    pos += str_len
+                    data['mtime'] = reader_.string()
                 elif t == 9:
-                    str_len, l = read_varint(stream[pos:])
-                    pos += l
-                    data['extra'] = json.loads(
-                        stream[pos: pos + str_len].decode())
-                    pos += str_len
+                    data['extra'] = json.loads(reader_.string())
                 elif t == 10:
-                    str_len, l = read_varint(stream[pos:])
-                    pos += l
-                    data['idStr'] = stream[pos: pos + str_len].decode()
-                    pos += str_len
+                    data['id_str'] = reader_.string()
                 else:
                     continue
             return data
 
         def read_dmSetting(stream: bytes):
-            length_ = len(stream)
-            pos = 0
+            reader_ = BytesReader(stream)
             data = {}
-            while pos < length_:
-                t = stream[pos] >> 3
-                pos += 1
+            while not reader_.has_end():
+                t = reader_.byte() >> 3
+
                 if t == 1:
-                    data['dmSwitch'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['dm_switch'] = reader_.bool()
                 elif t == 2:
-                    data['aiSwitch'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['ai_switch'] = reader_.bool()
                 elif t == 3:
-                    d, l = read_varint(stream[pos:])
-                    data['aiLevel'] = int(d)
-                    pos += l
+                    data['ai_level'] = reader_.varint()
                 elif t == 4:
-                    data['blocktop'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['enable_top'] = reader_.bool()
                 elif t == 5:
-                    data['blockscroll'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['enable_scroll'] = reader_.bool()
                 elif t == 6:
-                    data['blockbottom'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['enable_bottom'] = reader_.bool()
                 elif t == 7:
-                    data['blockcolor'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['enable_color'] = reader_.bool()
                 elif t == 8:
-                    data['blockspecial'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['enable_special'] = reader_.bool()
                 elif t == 9:
-                    data['preventshade'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['prevent_shade'] = reader_.bool()
                 elif t == 10:
-                    data['dmask'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['dmask'] = reader_.bool()
                 elif t == 11:
-                    d = struct.unpack('>f', stream[pos: pos+4])[0]
-                    pos += 4
-                    data['opacity'] = d
+                    data['opacity'] = reader_.float(True)
                 elif t == 12:
-                    d, l = read_varint(stream[pos:])
-                    data['dmarea'] = int(d)
-                    pos += l
+                    data['dm_area'] = reader_.varint()
                 elif t == 13:
-                    d = struct.unpack('>f', stream[pos: pos + 4])[0]
-                    pos += 4
-                    data['speedplus'] = d
+                    data['speed_plus'] = reader_.float(True)
                 elif t == 14:
-                    d = struct.unpack('>f', stream[pos: pos + 4])[0]
-                    pos += 4
-                    data['fontsize'] = d
+                    data['font_size'] = reader_.float(True)
                 elif t == 15:
-                    data['screensync'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['screen_sync'] = reader_.bool()
                 elif t == 16:
-                    data['speedsync'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['speed_sync'] = reader_.bool()
                 elif t == 17:
-                    str_len, l = read_varint(stream[pos:])
-                    pos += l
-                    data['fontfamily'] = stream[pos: pos + str_len].decode()
-                    pos += str_len
+                    data['font_family'] = reader_.string()
                 elif t == 18:
-                    data['bold'] = True if stream[pos] == b'\x01' else False
-                    pos += 1
+                    data['bold'] = reader_.bool()
                 elif t == 19:
-                    d, l = read_varint(stream[pos:])
-                    data['fontborder'] = int(d)
-                    pos += l
+                    data['font_border'] = reader_.varint()
                 elif t == 20:
-                    str_len, l = read_varint(stream[pos:])
-                    pos += l
-                    data['drawType'] = stream[pos: pos + str_len].decode()
-                    pos += str_len
+                    data['draw_type'] = reader_.string()
                 else:
                     continue
             return data
 
-        while pos < length:
-            type_ = resp_data[pos] >> 3
-            pos += 1
+        while not reader.has_end():
+            type_ = reader.byte() >> 3
+
             if type_ == 1:
-                d, l = read_varint(resp_data[pos:])
-                json_data['state'] = int(d)
-                pos += l
+                json_data['state'] = reader.varint()
             elif type_ == 2:
-                str_len, l = read_varint(resp_data[pos:])
-                pos += l
-                json_data['text'] = resp_data[pos:pos + str_len].decode()
-                pos += str_len
+                json_data['text'] = reader.string()
             elif type_ == 3:
-                str_len, l = read_varint(resp_data[pos:])
-                pos += l
-                json_data['textSide'] = resp_data[pos:pos + str_len].decode()
-                pos += str_len
+                json_data['text_side'] = reader.string()
             elif type_ == 4:
-                data_len, l = read_varint(resp_data[pos:])
-                pos += l
-                json_data['dmSge'] = read_dmSge(resp_data[pos:pos+data_len])
-                pos += data_len
+                json_data['dm_seg'] = read_dmSge(reader.bytes_string())
             elif type_ == 5:
-                data_len, l = read_varint(resp_data[pos:])
-                pos += l
-                json_data['flag'] = read_flag(resp_data[pos:pos + data_len])
-                pos += data_len
+                json_data['flag'] = read_flag(reader.bytes_string())
             elif type_ == 6:
-                if 'specialDms' not in json_data:
-                    json_data['specialDms'] = []
-                data_len, l = read_varint(resp_data[pos:])
-                pos += l
-                json_data['specialDms'].append(
-                    resp_data[pos: pos+data_len].decode())
-                pos += data_len
+                if 'special_dms' not in json_data:
+                    json_data['special_dms'] = []
+                json_data['special_dms'].append(reader.string())
             elif type_ == 7:
-                json_data['checkBox'] = True if resp_data[pos] == b'\x01' else False
-                pos += 1
+                json_data['check_box'] = reader.bool()
             elif type_ == 8:
-                d, l = read_varint(resp_data[pos:])
-                pos += l
-                json_data['count'] = int(d)
+                json_data['count'] = reader.varint()
             elif type_ == 9:
-                data_len, l = read_varint(resp_data[pos:])
-                pos += l
-                if 'commandDms' not in json_data:
-                    json_data['commandDms'] = []
-                json_data['commandDms'].append(
-                    read_commandDms(resp_data[pos: pos+data_len]))
-                pos += data_len
+                if 'command_dms' not in json_data:
+                    json_data['command_dms'] = []
+                json_data['command_dms'].append(
+                    read_commandDms(reader.bytes_string()))
             elif type_ == 10:
-                data_len, l = read_varint(resp_data[pos:])
-                pos += l
-                json_data['dmSetting'] = read_dmSetting(
-                    resp_data[pos: pos+data_len])
-                pos += data_len
+                json_data['dm_setting'] = read_dmSetting(reader.bytes_string())
             else:
                 continue
         return json_data
@@ -567,14 +455,18 @@ class Video:
         获取弹幕
 
         :param page_index: 分 p 号
+        :type page_index: int
         :param date: 为 None 时获取最新弹幕，为 datetime.date 时获取历史弹幕
+        :type date: datetime.Date
+        :return: 弹幕列表
+        :rtype: list[Danmaku]
         """
 
         if date is not None:
             self.credential.raise_for_no_sessdata()
 
         session = get_session()
-        page_id = await self.__get_pages_id_by_index(page_index)
+        page_id = await self.__get_page_id_by_index(page_index)
         aid = self.get_aid()
         params = {
             "oid": page_id,
@@ -593,10 +485,10 @@ class Video:
             params["segment_index"] = 1
             # view 信息
             view = await self.get_danmaku_view(page_index)
-            sge_count = view['dmSge']['total']
+            sge_count = view['dm_seg']['total']
 
         # 循环获取所有 segment
-        danmakus = []
+        danmakus: list[Danmaku] = []
         for i in range(sge_count):
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
@@ -612,97 +504,60 @@ class Video:
                 raise NetworkException(e.status, e.message)
 
             content_type = req.headers['content-type']
-            if content_type == 'application/json':
-                con = await req.json()
-                if con['code'] != 0:
-                    raise ResponseCodeException(con['code'], con['message'])
-                else:
-                    return con
-            elif content_type == 'application/octet-stream':
-                # 解析二进制流数据
-                data = await req.read()
+            if content_type != 'application/octet-stream':
+                raise ResponseException("返回数据类型错误：")
 
-                offset = 0
-                if data == b'\x10\x01':
-                    # 视频弹幕被关闭
-                    raise DanmakuClosedException()
-                while offset < len(data):
-                    if data[offset] == 0x0a:
-                        dm = Danmaku('')
-                        offset += 1
-                        dm_data_length, l = read_varint(data[offset:])
-                        offset += l
-                        real_data = data[offset:offset+dm_data_length]
-                        dm_data_offset = 0
+            # 解析二进制流数据
+            data = await req.read()
+            if data == b'\x10\x01':
+                # 视频弹幕被关闭
+                raise DanmakuClosedException()
 
-                        while dm_data_offset < dm_data_length:
-                            data_type = real_data[dm_data_offset] >> 3
-                            dm_data_offset += 1
-                            if data_type == 1:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.id = d
-                            elif data_type == 2:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.dm_time = datetime.timedelta(
-                                    seconds=d / 1000)
-                            elif data_type == 3:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.mode = d
-                            elif data_type == 4:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.font_size = d
-                            elif data_type == 5:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.color = Color()
-                                dm.color.set_dec_color(d)
-                            elif data_type == 6:
-                                str_len = real_data[dm_data_offset]
-                                dm_data_offset += 1
-                                d = real_data[dm_data_offset:dm_data_offset + str_len]
-                                dm_data_offset += str_len
-                                dm.crc32_id = d.decode()
-                            elif data_type == 7:
-                                str_len = real_data[dm_data_offset]
-                                dm_data_offset += 1
-                                d = real_data[dm_data_offset:dm_data_offset + str_len]
-                                dm_data_offset += str_len
-                                dm.text = d.decode(errors='ignore')
-                            elif data_type == 8:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.send_time = datetime.datetime.fromtimestamp(
-                                    d)
-                            elif data_type == 9:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.weight = d
-                            elif data_type == 10:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.action = d
-                            elif data_type == 11:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.pool = d
-                            elif data_type == 12:
-                                str_len = real_data[dm_data_offset]
-                                dm_data_offset += 1
-                                d = real_data[dm_data_offset:dm_data_offset + str_len]
-                                dm_data_offset += str_len
-                                dm.id_str = d.decode(encoding="ISO-8859-1")
-                            elif data_type == 13:
-                                d, l = read_varint(real_data[dm_data_offset:])
-                                dm_data_offset += l
-                                dm.attr = d
-                            else:
-                                break
-                        offset += dm_data_length
-                        danmakus.append(dm)
+            reader = BytesReader(data)
+            while not reader.has_end():
+                type_ = reader.byte() >> 3
+                if type_ != 1:
+                    raise ResponseException("解析响应数据错误")
+
+                dm = Danmaku('')
+                dm_pack_data = reader.bytes_string()
+                dm_reader = BytesReader(dm_pack_data)
+
+                while not dm_reader.has_end():
+                    data_type = dm_reader.byte() >> 3
+
+                    if data_type == 1:
+                        dm.id = dm_reader.varint()
+                    elif data_type == 2:
+                        dm.dm_time = datetime.timedelta(
+                            seconds=dm_reader.varint() / 1000)
+                    elif data_type == 3:
+                        dm.mode = dm_reader.varint()
+                    elif data_type == 4:
+                        dm.font_size = dm_reader.varint()
+                    elif data_type == 5:
+                        dm.color = Color()
+                        dm.color.set_dec_color(dm_reader.varint())
+                    elif data_type == 6:
+                        dm.crc32_id = dm_reader.string()
+                    elif data_type == 7:
+                        dm.text = dm_reader.string()
+                    elif data_type == 8:
+                        dm.send_time = datetime.datetime.fromtimestamp(
+                            dm_reader.varint())
+                    elif data_type == 9:
+                        dm.weight = dm_reader.varint()
+                    elif data_type == 10:
+                        dm.action = dm_reader.varint()
+                    elif data_type == 11:
+                        dm.pool = dm_reader.varint()
+                    elif data_type == 12:
+                        dm.id_str = dm_reader.string()
+                    elif data_type == 13:
+                        dm.attr = dm_reader.varint()
+                    else:
+                        break
+                danmakus.append(dm)
         return danmakus
 
     async def get_history_danmaku_index(self, page_index: int, date: datetime.date):
@@ -715,7 +570,7 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
 
-        page_id = self.__get_pages_id_by_index(page_index)
+        page_id = self.__get_page_id_by_index(page_index)
         api = API["danmaku"]["get_history_danmaku_index"]
         params = {
             "oid": page_id,
@@ -733,7 +588,7 @@ class Video:
         """
 
         self.credential.raise_for_no_sessdata()
-        page_id = self.__get_pages_id_by_index(page_index)
+        page_id = self.__get_page_id_by_index(page_index)
         api = API["danmaku"]["has_liked_danmaku"]
         params = {
             "oid": page_id,
@@ -749,8 +604,11 @@ class Video:
         :param danmaku: Danmaku 实例
         :type danmaku: Danmaku
         """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
         api = API["danmaku"]["send_danmaku"]
-        oid = self.__get_pages_id_by_index(page_index)
+        oid = await self.__get_page_id_by_index(page_index)
         if danmaku.is_sub:
             pool = 1
         else:
@@ -768,4 +626,140 @@ class Video:
             "mode": danmaku.mode,
             "plat": 1
         }
-        return request("POST", url=api["url"], data=data, credential=self.credential)
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+    async def like_danmaku(self, page_index: int, dmid: int, status: bool = True):
+        """
+        点赞弹幕
+
+        :param page_index: 分 p 序号
+        :type page_index: int
+        :param dmid: 弹幕 ID
+        :type dmid: int
+        :param status: 点赞状态, defaults to True
+        :type status: bool, optional
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["danmaku"]["like_danmaku"]
+        page_id = await self.__get_page_id_by_index(page_index)
+        data = {
+            "dmid": dmid,
+            "oid": page_id,
+            "op": 1 if status else 2,
+            "platform": "web_player"
+        }
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+    async def like(self, status: bool = True):
+        """
+        点赞视频
+
+        :param status: 点赞状态, defaults to True
+        :type status: bool, optional
+        """
+        self.credential.raise_for_no_sessdata
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["like"]
+        data = {
+            "aid": self.get_aid(),
+            "like": 1 if status else 2
+        }
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+    async def pay_coin(self, num: int = 1, like: bool = False):
+        """
+        投币
+
+        :param num: 数量，1 ~ 2 个，对于转载视频只能是 1 个, defaults to 1
+        :type num: int, optional
+        :param like: 是否同时点赞, defaults to True
+        :type like: bool, optional
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        if num not in (1, 2):
+            raise ArgsException("投币数量只能是 1 ~ 2 个")
+
+        api = API["operate"]["coin"]
+        data = {
+            "aid": self.get_aid(),
+            "bvid": self.get_bvid(),
+            "multiply": num,
+            "like": 1 if like else 0
+        }
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+    async def add_tag(self, name: str):
+        """
+        加标签
+
+        :param name: 标签名 
+        :type name: str
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["add_tag"]
+        data = {
+            "aid": self.get_aid(),
+            "bvid": self.get_bvid(),
+            "tag_name": name
+        }
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+    async def delete_tag(self, tag_id: int):
+        """
+        删除标签
+
+        :param tag_id: 标签 ID
+        :type tag_id: int
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["del_tag"]
+
+        data = {
+            "tag_id": tag_id,
+            "aid": self.get_aid(),
+            "bvid": self.get_bvid()
+        }
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+    async def subscribe_tag(self, tag_id: int):
+        """
+        关注标签
+
+        :param tag_id: 标签 ID
+        :type tag_id: int
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["subscribe_tag"]
+
+        data = {
+            "tag_id": tag_id
+        }
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+    async def unsubscribe_tag(self, tag_id: int):
+        """
+        取关标签
+
+        :param tag_id: 标签 ID
+        :type tag_id: int
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["unsubscribe_tag"]
+
+        data = {
+            "tag_id": tag_id
+        }
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
