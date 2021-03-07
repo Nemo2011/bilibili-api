@@ -1,10 +1,11 @@
+from bilibili_api.utils.Danmaku import Danmaku
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 from bilibili_api import video, exceptions
 from .common import get_credential
 import datetime
 
-BVID = "BV1Bf4y1Q7QP"
-AID = 286881175
+BVID = "BV1xx411c7Xg"
+AID = 271
 video = video.Video(BVID, credential=get_credential())
 
 
@@ -95,12 +96,24 @@ async def test_get_danmaku_history():
     data = await video.get_danmaku(0, date=datetime.date(2020, 1, 1))
     return data
 
-async def test_like():
-    data = await video.like(True)
-
-    # Clean up
-    await video.like(False)
+async def test_send_danmaku():
+    dm = Danmaku("TESTING")
+    data = await video.send_danmaku(0, dm)
     return data
+
+async def test_like():
+    try:
+        data = await video.like(True)
+
+        # Clean up
+        await video.like(False)
+        return data
+    except ResponseCodeException as e:
+        # 忽略已点赞和未点赞
+        if e.code not in (65004, 65006):
+            raise e
+        else:
+            return e.raw
 
 async def test_pay_coin():
     try:
@@ -140,10 +153,4 @@ async def test_subscribe_and_unsubscribe_tag():
     data = await video.subscribe_tag(8583026)
     await video.unsubscribe_tag(8583026)
     return data
-
-async def after_all():
-    pass
-
-async def before_all():
-    pass
 
