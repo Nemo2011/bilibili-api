@@ -19,7 +19,7 @@ class ResponseCodeException(ApiException):
             msg (str):              错误信息。
             raw (dict, optional):   原始响应数据. Defaults to None.
         """
-        super.__call__(msg)
+        super().__init__(msg)
         self.msg = msg
         self.code = code
         self.raw = raw

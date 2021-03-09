@@ -12,5 +12,5 @@ class DanmakuClosedException(ApiException):
     视频弹幕被关闭错误。
     """
     def __init__(self):
-        super.__call__()
+        super().__init__(msg)
         self.msg = "视频弹幕已关闭。"

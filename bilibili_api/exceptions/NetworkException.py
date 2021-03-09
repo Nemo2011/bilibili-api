@@ -18,7 +18,7 @@ class NetworkException(ApiException):
             status (int):   状态码。
             msg (str):      状态消息。
         """
-        super.__call__()
+        super().__init__(msg)
         self.status = status
         self.msg = f"网络错误，状态码：{status} - {msg}。"
 
