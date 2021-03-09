@@ -6,6 +6,10 @@ bilibili_api.video
 
 from bilibili_api.exceptions.ResponseException import ResponseException
 import aiohttp
+import re
+import json
+import datetime
+
 from .exceptions.NetworkException import NetworkException
 from .utils.Credential import Credential
 from .exceptions import ArgsException, DanmakuClosedException
@@ -15,26 +19,21 @@ from .utils.network import request, get_session
 from .utils.Danmaku import Danmaku
 from .utils.Color import Color
 from .utils.BytesReader import BytesReader
-import re
-import json
-import datetime
 
 API = get_api("video")
 
 
 class Video:
     """
-    视频类，各种对视频的操作均在里面
+    视频类，各种对视频的操作均在里面。
     """
 
     def __init__(self, bvid: str = None, aid: int = None, credential: Credential = None):
         """
-        :param bvid: BV号，以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）
-        :type bvid: str
-        :param aid: AV号，大于 0 的整数（若已提供 bvid 则该参数无效）
-        :type aid: int
-        :param credential: Credential 类，用于一些操作的凭据认证
-        :type credential: Credential
+        Args:
+            bvid (str, optional):               BV 号. bvid 和 aid 必须提供其中之一。
+            aid (int, optional):                AV 号. bvid 和 aid 必须提供其中之一。
+            credential (Credential, optional):  Credential 类. Defaults to None.
         """
         # ID 检查
         if bvid is not None:
@@ -43,7 +42,7 @@ class Video:
             self.set_aid(aid)
         else:
             # 未提供任一 ID
-            raise ArgsException("请至少提供 bvid 和 aid 中的其中一个参数")
+            raise ArgsException("请至少提供 bvid 和 aid 中的其中一个参数。")
 
         # 未提供 credential 时初始化该类
         if credential is None:
@@ -56,52 +55,55 @@ class Video:
 
     def set_bvid(self, bvid: str):
         """
-        设置 BVID
+        设置 bvid。
 
-        :param bvid: 以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）
-        :type bvid: str
+        Args:
+            bvid (str):   要设置的 bvid。
         """
         # 检查 bvid 是否有效
         if not re.search("^BV[a-zA-Z0-9]{10}$", bvid):
             raise ArgsException(
-                "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）")
+                "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）。")
         self.__bvid = bvid
         self.__aid = bvid2aid(bvid)
 
     def get_bvid(self):
         """
-        获取 BVID
+        获取 BVID。
 
-        :return: BVID
-        :rtype: str
+        Returns:
+            BVID。
         """
         return self.__bvid
 
     def set_aid(self, aid: int):
         """
-        设置 AID
+        设置 aid。
 
-        :param aid: 大于 0 的整数
-        :type aid: int
+        Args:
+            aid (int):   AV 号。
         """
         if aid <= 0:
-            raise ArgsException("aid 不能小于或等于 0")
+            raise ArgsException("aid 不能小于或等于 0。")
 
         self.__aid = aid
         self.__bvid = aid2bvid(aid)
 
     def get_aid(self):
         """
-        获取 AID
+        获取 AID。
 
-        :return: aid
-        :rtype: int
+        Returns:
+            aid。
         """
         return self.__aid
 
     async def get_info(self):
         """
-        获取视频信息
+        获取视频信息。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
         url = API["info"]["detail"]["url"]
         params = {
@@ -115,16 +117,21 @@ class Video:
 
     async def __get_info_cached(self):
         """
-        获取视频信息，如果已获取过则使用之前获取的信息，没有则重新获取
+        获取视频信息，如果已获取过则使用之前获取的信息，没有则重新获取。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
         if self.__info is None:
             return await self.get_info()
-        else:
-            return self.__info
+        return self.__info
 
     async def get_stat(self):
         """
-        获取视频统计数据（播放量，点赞数等）
+        获取视频统计数据（播放量，点赞数等）。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
         url = API["info"]["stat"]["url"]
         params = {
@@ -135,7 +142,10 @@ class Video:
 
     async def get_tags(self):
         """
-        获取视频标签
+        获取视频标签。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
         url = API["info"]["tags"]["url"]
         params = {
@@ -146,7 +156,10 @@ class Video:
 
     async def get_chargers(self):
         """
-        获取视频充电用户
+        获取视频充电用户。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
         info = await self.__get_info_cached()
         mid = info["owner"]["mid"]
@@ -160,7 +173,10 @@ class Video:
 
     async def get_pages(self):
         """
-        获取分 P 信息
+        获取分 P 信息。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
         url = API["info"]["pages"]["url"]
         params = {
@@ -171,21 +187,22 @@ class Video:
 
     async def __get_page_id_by_index(self, page_index: int):
         """
-        根据分 p 号获取 page_id
+        根据分 p 号获取 page_id。
 
-        :param page_index: 分 p 号
-        :type page_index: int
-        :return: 分 p 号
-        :rtype: int
+        Args:
+            page_index (int):   分 P 号，从 0 开始。
+
+        Returns:
+            int, 分 P 的唯一 ID。
         """
         if page_index < 0:
-            raise ArgsException("分 p 号必须大于或等于 0")
+            raise ArgsException("分 p 号必须大于或等于 0。")
 
         info = await self.__get_info_cached()
         pages = info["pages"]
 
         if len(pages) > (page_index + 1):
-            raise ArgsException("不存在该分 p")
+            raise ArgsException("不存在该分 p。")
 
         page = pages[page_index]
         cid = page["cid"]
@@ -193,10 +210,13 @@ class Video:
 
     async def get_download_url(self, page_index: int):
         """
-        获取视频下载信息
+        获取视频下载信息。
 
-        :param page_index: 分 P 号，下标从 0 开始
-        :type page_index: int
+        Args:
+            page_index (int):  分 P 号，从 0 开始。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
         cid = await self.__get_page_id_by_index(page_index)
 
@@ -212,7 +232,10 @@ class Video:
 
     async def get_related(self):
         """
-        获取相关视频信息
+        获取相关视频信息。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
         url = API["info"]["related"]["url"]
         params = {
@@ -223,9 +246,10 @@ class Video:
 
     async def has_liked(self):
         """
-        视频是否点赞过
+        视频是否点赞过。
 
-        :return: bool
+        Returns:
+            bool, 视频是否点赞过。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -238,9 +262,10 @@ class Video:
 
     async def get_pay_coins(self):
         """
-        获取视频已投币数量
+        获取视频已投币数量。
 
-        :return: int
+        Returns:
+            int, 视频已投币数量。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -253,9 +278,10 @@ class Video:
 
     async def has_favoured(self):
         """
-        是否已收藏
+        是否已收藏。
 
-        :return: bool
+        Returns:
+            bool, 视频是否已收藏。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -268,7 +294,10 @@ class Video:
 
     async def get_media_list(self):
         """
-        获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态
+        获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -284,9 +313,13 @@ class Video:
 
     async def get_danmaku_view(self, page_index: int):
         """
-        获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息
-        :param page_id: 分 p 号
-        :return:
+        获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
+
+        Args:
+            page_index (int): 分 p 号，从 0 开始。
+
+        Returns:
+            dict, 调用 API 返回的结果。
         """
 
         session = get_session()
@@ -311,7 +344,7 @@ class Video:
         reader = BytesReader(resp_data)
         # 解析二进制数据流
 
-        def read_dmSge(stream: bytes):
+        def read_dm_seg(stream: bytes):
             reader_ = BytesReader(stream)
             data = {}
             while not reader_.has_end():
@@ -339,7 +372,7 @@ class Video:
                     continue
             return data
 
-        def read_commandDms(stream: bytes):
+        def read_command_danmakus(stream: bytes):
             reader_ = BytesReader(stream)
             data = {}
             while not reader_.has_end():
@@ -368,7 +401,7 @@ class Video:
                     continue
             return data
 
-        def read_dmSetting(stream: bytes):
+        def read_settings(stream: bytes):
             reader_ = BytesReader(stream)
             data = {}
             while not reader_.has_end():
@@ -428,7 +461,7 @@ class Video:
             elif type_ == 3:
                 json_data['text_side'] = reader.string()
             elif type_ == 4:
-                json_data['dm_seg'] = read_dmSge(reader.bytes_string())
+                json_data['dm_seg'] = read_dm_seg(reader.bytes_string())
             elif type_ == 5:
                 json_data['flag'] = read_flag(reader.bytes_string())
             elif type_ == 6:
@@ -443,23 +476,23 @@ class Video:
                 if 'command_dms' not in json_data:
                     json_data['command_dms'] = []
                 json_data['command_dms'].append(
-                    read_commandDms(reader.bytes_string()))
+                    read_command_danmakus(reader.bytes_string()))
             elif type_ == 10:
-                json_data['dm_setting'] = read_dmSetting(reader.bytes_string())
+                json_data['dm_setting'] = read_settings(reader.bytes_string())
             else:
                 continue
         return json_data
 
-    async def get_danmaku(self, page_index: int, date: datetime.date = None):
+    async def get_danmakus(self, page_index: int, date: datetime.date = None):
         """
-        获取弹幕
+        获取弹幕。
 
-        :param page_index: 分 p 号
-        :type page_index: int
-        :param date: 为 None 时获取最新弹幕，为 datetime.date 时获取历史弹幕
-        :type date: datetime.Date
-        :return: 弹幕列表
-        :rtype: list[Danmaku]
+        Args:
+            page_index (int):                分 p 号，从 0 开始。
+            data (datetime.Date, optional):  指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+
+        Returns:
+            list[Danmaku], Danmaku 类的列表。
         """
 
         if date is not None:
@@ -561,12 +594,15 @@ class Video:
         return danmakus
 
     async def get_history_danmaku_index(self, page_index: int, date: datetime.date):
-        """获取特定月份存在历史弹幕的日期
+        """
+        获取特定月份存在历史弹幕的日期。
 
-        :param page_index: 分 p 号
-        :type page_index: int
-        :param date: 日期对象
-        :type date: datetime.date
+        Args:
+            page_index (int):       分 P 号，从 0 开始。
+            date (datetime.date):   精确到年月。
+
+        Returns:
+            None or list[str], 调用 API 返回的结果。不存在时为 None。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -579,12 +615,16 @@ class Video:
         }
         return await request("GET", url=api["url"], params=params, credential=self.credential)
 
-    async def has_liked_danmakus(self, page_index: int, *ids: int):
-        """是否已点赞弹幕
+    async def has_liked_danmakus(self, page_index: int, ids: list[int]):
+        """
+        是否已点赞弹幕。
 
-        :param page_index: 弹幕所在分 P 号
-        :type page_index: int
-        :param *ids: 弹幕 ID，使用剩余参数收集多个 ID
+        Args:
+            page_index (int):  分 P 号，从 0 开始。
+            ids (list[int])：  要查询的弹幕 ID 列表。
+
+        Returns:
+            调用 API 返回的结果。
         """
 
         self.credential.raise_for_no_sessdata()
@@ -597,12 +637,15 @@ class Video:
         return await request("GET", url=api["url"], params=params, credential=self.credential)
 
     async def send_danmaku(self, page_index: int, danmaku: Danmaku):
-        """发送弹幕
+        """
+        发送弹幕。
 
-        :param page_index: 目标分 P 号
-        :type page_index: int
-        :param danmaku: Danmaku 实例
-        :type danmaku: Danmaku
+        Args:
+            page_index (int):   分 P 号，从 0 开始。
+            danmaku (Danmaku):  Danmaku 类。
+
+        Returns:
+            调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -630,14 +673,15 @@ class Video:
 
     async def like_danmaku(self, page_index: int, dmid: int, status: bool = True):
         """
-        点赞弹幕
+        点赞弹幕。
 
-        :param page_index: 分 p 序号
-        :type page_index: int
-        :param dmid: 弹幕 ID
-        :type dmid: int
-        :param status: 点赞状态, defaults to True
-        :type status: bool, optional
+        Args:
+            page_index (int):          分 P 号，从 0 开始。
+            dmid (int):                弹幕 ID。
+            status (bool, optional):   点赞状态。Defaults to True.
+
+        Returns:
+            调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -654,10 +698,13 @@ class Video:
 
     async def like(self, status: bool = True):
         """
-        点赞视频
+        点赞视频。
 
-        :param status: 点赞状态, defaults to True
-        :type status: bool, optional
+        Args:
+            status (bool, optional): 点赞状态。Defaults to True.
+
+        Returns:
+            调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata
         self.credential.raise_for_no_bili_jct()
@@ -671,18 +718,20 @@ class Video:
 
     async def pay_coin(self, num: int = 1, like: bool = False):
         """
-        投币
+        投币。
 
-        :param num: 数量，1 ~ 2 个，对于转载视频只能是 1 个, defaults to 1
-        :type num: int, optional
-        :param like: 是否同时点赞, defaults to True
-        :type like: bool, optional
+        Args:
+            num (int, optional):    硬币数量，为 1 ~ 2 个。Defaults to 1.
+            like (bool, optional):  是否同时点赞。Defaults to False.
+
+        Returns:
+            调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
         if num not in (1, 2):
-            raise ArgsException("投币数量只能是 1 ~ 2 个")
+            raise ArgsException("投币数量只能是 1 ~ 2 个。")
 
         api = API["operate"]["coin"]
         data = {
@@ -695,10 +744,13 @@ class Video:
 
     async def add_tag(self, name: str):
         """
-        加标签
+        加标签。
 
-        :param name: 标签名 
-        :type name: str
+        Args:
+            name (str): 标签名字。
+
+        Returns:
+            调用 API 返回的结果。会返回标签 ID。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -713,10 +765,13 @@ class Video:
 
     async def delete_tag(self, tag_id: int):
         """
-        删除标签
+        删除标签。
 
-        :param tag_id: 标签 ID
-        :type tag_id: int
+        Args:
+            tag_id (int): 标签 ID。
+
+        Returns:
+            调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -732,10 +787,13 @@ class Video:
 
     async def subscribe_tag(self, tag_id: int):
         """
-        关注标签
+        关注标签。
 
-        :param tag_id: 标签 ID
-        :type tag_id: int
+        Args:
+            tag_id (int): 标签 ID。
+
+        Returns:
+            调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -749,10 +807,13 @@ class Video:
 
     async def unsubscribe_tag(self, tag_id: int):
         """
-        取关标签
+        取关标签。
 
-        :param tag_id: 标签 ID
-        :type tag_id: int
+        Args:
+            tag_id (int): 标签 ID。
+
+        Returns:
+            调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()

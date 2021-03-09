@@ -51,7 +51,7 @@
       },
       "comment": "踩/取消踩评论"
     },
-    "top": {
+    "pin": {
       "url": "https://api.bilibili.com/x/v2/reply/top",
       "method": "POST",
       "verify": true,

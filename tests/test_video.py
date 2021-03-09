@@ -89,11 +89,11 @@ async def test_get_danmaku_view():
     return data
 
 async def test_get_danmaku():
-    data = await video.get_danmaku(0)
+    data = await video.get_danmakus(0)
     return data
 
 async def test_get_danmaku_history():
-    data = await video.get_danmaku(0, date=datetime.date(2020, 1, 1))
+    data = await video.get_danmakus(0, date=datetime.date(2020, 1, 1))
     return data
 
 async def test_send_danmaku():

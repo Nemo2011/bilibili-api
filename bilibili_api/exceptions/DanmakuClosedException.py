@@ -1,12 +1,16 @@
 """
 bilibili_api.exceptions.DanmakuClosedException
 
-视频弹幕被关闭错误
+视频弹幕被关闭错误。
 """
 
 from .ApiException import ApiException
 
 
 class DanmakuClosedException(ApiException):
+    """
+    视频弹幕被关闭错误。
+    """
     def __init__(self):
-        self.msg = "视频弹幕已关闭"
+        super.__call__()
+        self.msg = "视频弹幕已关闭。"
