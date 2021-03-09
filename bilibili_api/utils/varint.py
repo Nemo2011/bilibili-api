@@ -1,15 +1,19 @@
 """
 bilibili_api.utils.varint
 
-变长数字字节相关
+变长数字字节相关。
 """
 
 
 def read_varint(stream: bytes):
     """
-    读取varint
-    :param stream:
-    :return: value（真实值）, length（varint长度）
+    读取 varint。
+
+    Args:
+        stream (bytes): 字节流。
+
+    Returns:
+        tuple[int, int]，真实值和占用长度。
     """
     value = 0
     position = 0

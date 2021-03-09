@@ -1,26 +1,30 @@
 """
 bilibili_api.utils.network
 
-与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）
+与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。 
 """
 
 import aiohttp
-from ..exceptions import ResponseCodeException, ResponseException, NetworkException
 import json
 import re
-from .Credential import Credential
-from .. import settings
 import asyncio
 import atexit
+
+from ..exceptions import ResponseCodeException, ResponseException, NetworkException
+from .Credential import Credential
+from .. import settings
 
 
 @atexit.register
 def __clean():
     """
-    程序退出清理操作
+    程序退出清理操作。
     """
     async def __clean_task():
         await __session.close()
+
+    if __session.closed:
+        return
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -33,15 +37,21 @@ def __clean():
 async def request(method: str, url: str, params: dict = None, data: dict = None,
                   credential: Credential = None, **kwargs):
     """
-    向接口发送请求
+    向接口发送请求。
 
-    :param method: 请求方法
-    :param url: 请求 URL
-    :param params: 请求参数
-    :param data: 请求载荷
-    :param credential: Credential 类
-    :return: 接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据
+    Args:
+        method (str):                       请求方法。
+        url (str):                          请求 URL。
+        params (dict, optional):            请求参数。
+        data (dict, optional):              请求载荷。
+        credential (Credential, optional):  Credential 类。
+
+    Returns:
+        接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
     """
+    if credential is None:
+        credential = Credential()
+
     method = method.upper()
     # 请求为非 GET 时要求 bili_jct
     if method != 'GET':
@@ -132,30 +142,15 @@ async def request(method: str, url: str, params: dict = None, data: dict = None,
         return real_data
 
 
-async def close_session():
-    """
-    关闭请求 Session，在所有请求完毕后请务必调用这个方法
-    :return: None
-    """
-    if not __session.closed:
-        await __session.close()
-
-
-async def upload_multipart(payload: dict):
-    """
-    上传 multipart/form-data 类型的数据
-
-    :param payload: 要上传的数据
-    """
-    pass
-
-
 __session: aiohttp.ClientSession = None
 
 
 def get_session():
     """
     获取当前模块的 aiohttp.ClientSession 对象，用于自定义请求
+
+    Returns:
+        aiohttp.ClientSession
     """
     global __session
     if __session is None:
@@ -167,8 +162,8 @@ def set_session(session: aiohttp.ClientSession):
     """
     用户手动设置 Session
 
-    :param session: Session
-    :type session: aiohttp.ClientSession
+    Args:
+        session (aiohttp.ClientSession):  aiohttp.ClientSession 实例。
     """
     global __session
     __session = session

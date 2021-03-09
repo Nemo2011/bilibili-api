@@ -1,18 +1,22 @@
 """
 bilibili_api.BytesReader
 
-读字节流助手
+读字节流助手。
 """
 import struct
+
 from .varint import read_varint
 
 
 class BytesReader:
+    """
+    读字节流助手类。
+    """
     def __init__(self, stream: bytes):
         """
 
-        :param stream: 字节流
-        :type stream: bytes
+        Args:
+            stream (bytes): 字节流
         """
         self.__stream = stream
         self.__offset = 0
@@ -21,15 +25,20 @@ class BytesReader:
         """
         是否已读到末尾
 
-        :return: bool
+        Returns:
+            bool。
         """
         return self.__offset >= len(self.__stream)
 
     def double(self, LE=False):
         """
-        读 double
+        读 double。
 
-        :param LE: 小端
+        Args:
+            LE (bool): 为小端。
+
+        Returns:
+            float。
         """
         data = struct.unpack("<d" if LE else ">d", self.__stream[self.__offset:self.__offset + 8])
         self.__offset += 8
@@ -37,9 +46,13 @@ class BytesReader:
 
     def float(self, LE=False):
         """
-        读 float
+        读 float。
 
-        :param LE: 小端
+        Args:
+            LE (bool): 为小端。
+
+        Returns:
+            float。
         """
         data = struct.unpack("<f" if LE else ">f", self.__stream[self.__offset:self.__offset + 4])
         self.__offset += 4
@@ -47,7 +60,10 @@ class BytesReader:
 
     def varint(self):
         """
-        读 varint
+        读 varint。
+
+        Returns:
+            int。
         """
         d, l = read_varint(self.__stream[self.__offset:])
         self.__offset += l
@@ -55,7 +71,10 @@ class BytesReader:
 
     def byte(self):
         """
-        读 byte
+        读 byte。
+
+        Returns：
+            int。
         """
         data = self.__stream[self.__offset]
         self.__offset += 1
@@ -63,9 +82,13 @@ class BytesReader:
 
     def string(self, encoding="utf8"):
         """
-        读 string
+        读 string。
 
-        :param encoding: 编码方式
+        Args:
+            encoding (str):  编码方式。
+
+        Returns:
+            str。
         """
         str_len = self.varint()
         data = self.__stream[self.__offset:self.__offset + str_len]
@@ -74,7 +97,10 @@ class BytesReader:
     
     def bool(self):
         """
-        读 bool
+        读 bool。
+
+        Returns:
+            bool。
         """
         data = self.__stream[self.__offset]
         self.__offset += 1
@@ -82,7 +108,10 @@ class BytesReader:
 
     def bytes_string(self):
         """
-        读原始字节流
+        读原始字节流。
+
+        Returns:
+            bytes。
         """
         str_len = self.varint()
         data = self.__stream[self.__offset:self.__offset + str_len]
@@ -91,9 +120,13 @@ class BytesReader:
 
     def fixed16(self, LE=False):
         """
-        读 Fixed int16
+        读 Fixed int16。
 
-        :param LE: 小端
+        Args:
+            LE (bool): 为小端。
+
+        Returns:
+            int。
         """
         data = struct.unpack("<h" if LE else ">h", self.__stream[self.__offset:self.__offset + 2])
         self.__offset += 2
@@ -101,9 +134,13 @@ class BytesReader:
 
     def fixed32(self, LE=False):
         """
-        读 Fixed int32
+        读 Fixed int32.
 
-        :param LE: 小端
+        Args:
+            LE (bool): 为小端。
+
+        Returns:
+            int。
         """
         data = struct.unpack("<i" if LE else ">i", self.__stream[self.__offset:self.__offset + 4])
         self.__offset += 4
@@ -111,9 +148,13 @@ class BytesReader:
 
     def fixed64(self, LE=False):
         """
-        读 Fixed int64
+        读 Fixed int64。
 
-        :param LE: 小端
+        Args:
+            LE (bool): 为小端。
+
+        Returns:
+            int。
         """
         data = struct.unpack("<q" if LE else ">q", self.__stream[self.__offset:self.__offset + 8])
         self.__offset += 8
@@ -121,9 +162,13 @@ class BytesReader:
 
     def ufixed16(self, LE=False):
         """
-        读 Unsigned fixed Int16
+        读 Unsigned fixed Int16。
 
-        :param LE: 小端
+        Args:
+            LE (bool): 为小端。
+
+        Returns:
+            int。
         """
         data = struct.unpack("<H" if LE else ">H", self.__stream[self.__offset:self.__offset + 2])
         self.__offset += 2
@@ -131,9 +176,13 @@ class BytesReader:
 
     def ufixed32(self, LE=False):
         """
-        读 Unsigned fixed Int32
+        读 Unsigned fixed Int32。
 
-        :param LE: 小端
+        Args:
+            LE (bool): 为小端。
+
+        Returns:
+            int。
         """
         data = struct.unpack("<I" if LE else ">I", self.__stream[self.__offset:self.__offset + 4])
         self.__offset += 4
@@ -141,9 +190,13 @@ class BytesReader:
 
     def ufixed64(self, LE=False):
         """
-        读 Unsigned fixed Int64
+        读 Unsigned fixed Int64。
 
-        :param LE: 小端
+        Args:
+            LE (bool): 为小端。
+
+        Returns:
+            int。
         """
         data = struct.unpack("<Q" if LE else ">Q", self.__stream[self.__offset:self.__offset + 8])
         self.__offset += 8
@@ -151,9 +204,10 @@ class BytesReader:
 
     def set_pos(self, pos: int):
         """
-        设置读取起始位置
+        设置读取起始位置。
 
-        :param pos: 读取起始位置
+        Args:
+            pos (int): 读取起始位置。
         """
         if pos < 0:
             raise Exception("读取位置不能小于 0")
@@ -165,6 +219,9 @@ class BytesReader:
 
     def get_pos(self):
         """
-        获取当前位置
+        获取当前位置。
+
+        Returns:
+            int, 当前位置。
         """
         return self.__offset

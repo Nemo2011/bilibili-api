@@ -1,16 +1,19 @@
 """
 bilibili_api.utils.aid_bvid_transformer
 
-av 号和 bv 号互转，代码来源：https://www.zhihu.com/question/381784377/answer/1099438784
+av 号和 bv 号互转，代码来源：https://www.zhihu.com/question/381784377/answer/1099438784。
 """
 
 
 def bvid2aid(bvid: str):
     """
-    BV号转AV号
+    BV 号转 AV 号。
 
-    :param bvid: BV号
-    :return:
+    Args: 
+        bvid (str):  BV 号。
+    
+    Returns:
+        int, AV 号。
     """
     table = 'fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF'
     tr = {}
@@ -31,10 +34,13 @@ def bvid2aid(bvid: str):
 
 def aid2bvid(aid: int):
     """
-    AV号转BV号
+    AV 号转 BV 号。
 
-    :param aid: AV号
-    :return:
+    Args: 
+        aid (int):  AV 号。
+    
+    Returns:
+        str, BV 号。
     """
     table = 'fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF'
     tr = {}

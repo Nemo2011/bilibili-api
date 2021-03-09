@@ -82,7 +82,7 @@ def operate_comment(action: str, oid: int, type_: str, rpid: int,
                     status: bool = True, verify: utils.Verify = None):
     """
     通用评论操作
-    :param action: 操作类型，见api.json
+    :param action: 操作类型，见 api.json
     :param oid:
     :param type_:
     :param rpid:

@@ -1,7 +1,7 @@
 """
 bilibili_api.utils.utils
 
-通用工具库
+通用工具库。
 """
 
 import json
@@ -10,9 +10,13 @@ import os
 
 def get_api(field: str):
     """
-    获取 API
+    获取 API。
 
-    :param field: API所属分类
+    Args:
+        field (str): API 所属分类，即 data/api 下的文件名（不含后缀名）
+    
+    Returns:
+        dict, 该 API 的内容。
     """
     path = os.path.abspath(os.path.join(os.path.dirname(
         __file__), "..", "data", "api", f"{field.lower()}.json"))
@@ -23,8 +27,17 @@ def get_api(field: str):
 
 def crack_uid(crc32: str):
     """
-    弹幕中的CRC32 ID转换成用户UID
-    代码翻译自：https://github.com/esterTion/BiliBili_crc2mid
+    弹幕中的 CRC32 ID 转换成用户 UID。
+
+    警告，破解后的 UID 不一定准确，有存在误差，仅供参考。
+
+    代码翻译自：https://github.com/esterTion/BiliBili_crc2mid。
+
+    Args:
+        crc32 (str):  crc32 计算摘要后的 UID。
+    
+    Returns: 
+        int, 真实用户 UID，不一定准确。
     """
     __CRCPOLYNOMIAL = 0xEDB88320
     __crctable = [None] * 256
