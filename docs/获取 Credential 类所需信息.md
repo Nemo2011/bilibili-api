@@ -5,10 +5,10 @@ Credential 类实例化代码如下：
 ```python
 from bilibili_api import Credential
 
-credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct")
+credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct", buvid3="你的 buvid3")
 ```
 
-其中 `sessdata` 和 `bili_jct` 这两个参数的值均在浏览器的 Cookies 里头，下面说明获取方法。
+`sessdata` `bili_jct` 和 `buvid3` 这三个参数的值均在浏览器的 Cookies 里头，下面说明获取方法。
 
 ## 火狐浏览器（Firefox）
 
@@ -20,7 +20,7 @@ credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct")
 
 ![](https://pic.imgdb.cn/item/6038d31d5f4313ce2533c1bd.jpg)
 
-3. 展开左边的 **Cookie** 列表，选中任一b站域名。在右侧找到 `SESSDATA` 和 `bili_jct` 两项即可。
+3. 展开左边的 **Cookie** 列表，选中任一b站域名。在右侧找到对应三项即可。
 
 ![](https://pic.imgdb.cn/item/6038d3df5f4313ce25344c6a.jpg)
 
@@ -34,7 +34,7 @@ credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct")
 
 ![](https://pic.imgdb.cn/item/6038d4425f4313ce253484e4.jpg)
 
-3. 在左侧找到 **Storage/Cookies**，并选中任一b站域名，在右侧找到 `SESSDATA` 和 `bili_jct` 两项即可。
+3. 在左侧找到 **Storage/Cookies**，并选中任一b站域名，在右侧找到对应三项即可。
 
 ![](https://pic.imgdb.cn/item/6038d4ce5f4313ce2534ecb3.jpg)
 
@@ -48,6 +48,6 @@ credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct")
 
 ![](https://pic.imgdb.cn/item/6038d5395f4313ce25354c15.jpg)
 
-3. 在左侧找到 **存储/Cookies**，并选中任一b站域名，在右侧找到 `SESSDATA` 和 `bili_jct` 两项即可。
+3. 在左侧找到 **存储/Cookies**，并选中任一b站域名，在右侧找到对应三项即可。
 
 ![](https://pic.imgdb.cn/item/6038d5755f4313ce253571bb.jpg)
