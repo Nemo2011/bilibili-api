@@ -664,9 +664,9 @@ class Video:
             "bvid": self.get_bvid(),
             "progress": int(danmaku.dm_time.seconds * 1000),
             "color": danmaku.color.get_dec_color(),
-            "fontsize": danmaku.font_size,
+            "fontsize": danmaku.font_size.value,
             "pool": pool,
-            "mode": danmaku.mode,
+            "mode": danmaku.mode.value,
             "plat": 1
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)

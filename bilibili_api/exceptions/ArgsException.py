@@ -16,5 +16,5 @@ class ArgsException(ApiException):
         Args:
             msg (str):   错误消息。
         """
-        super.__call__(msg)
+        super().__init__(msg)
         self.msg = msg

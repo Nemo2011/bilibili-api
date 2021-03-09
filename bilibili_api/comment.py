@@ -92,7 +92,7 @@ async def send_comment(text: str, oid: int, type_: ResourceType, root: int = Non
 
     data = {
         "oid": oid,
-        "type": type_,
+        "type": type_.value,
         "message": text,
         "plat": 1,
     }
@@ -147,7 +147,7 @@ class Comment:
         """
         return {
             "oid": self.oid,
-            "type": self.type_,
+            "type": self.type_.value,
             "rpid": self.rpid,
             "action": 1 if status else 0
         }
@@ -238,7 +238,7 @@ class Comment:
         params = {
             "pn": page_index,
             "ps": 10,
-            "type": self.type_,
+            "type": self.type_.value,
             "oid": self.oid,
             "root": self.rpid
         }
@@ -270,8 +270,8 @@ async def get_comments(oid: int,
     api = API["comment"]["get"]
     params = {
         "pn": page_index,
-        "type": type_,
+        "type": type_.value,
         "oid": oid,
-        "sort": order
+        "sort": order.value
     }
     return await request("GET", api["url"], params=params, credential=credential)
