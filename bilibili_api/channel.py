@@ -68,7 +68,7 @@ async def get_top10(tid: int, day: int = 7, credential: Credential = None):
         day (int):               可选3或者7. Defaults to 7.
         credential (Credential, optional):  Credential 类. Defaults to None.
     Returns:
-        dict, 第一个是主分区，第二个是子分区，没有时返回None
+        list, 前10的视频信息
     """
     if credential is None:
         credential = Credential()
