@@ -1,3 +1,4 @@
+import time
 from bilibili_api.utils.Danmaku import Danmaku
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 from bilibili_api import video, exceptions
@@ -97,7 +98,7 @@ async def test_get_danmaku_history():
     return data
 
 async def test_send_danmaku():
-    dm = Danmaku("TESTING")
+    dm = Danmaku("TESTING" + str(int(time.time())))
     data = await video.send_danmaku(0, dm)
     return data
 
