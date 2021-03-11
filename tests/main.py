@@ -1,4 +1,4 @@
-from . import test_video
+from . import test_video, test_channel
 import asyncio
 from colorama import Fore, init, Style
 import datetime, time
@@ -65,6 +65,9 @@ async def main():
         "failed": 0
     }
     result = await test(test_video)
+    mixin(result, all_result)
+
+    result = await test(test_channel)
     mixin(result, all_result)
 
     # 打印结果
