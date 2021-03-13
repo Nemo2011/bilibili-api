@@ -1,24 +1,42 @@
-from . import test_video, test_channel
+"""
+代码自动化测试工具
+
+Usage:
+    python -m main.py [options]
+
+Options:
+    -m <模块名>:    运行指定测试脚本
+    -a:            运行所有测试脚本（以 test_ 开头的）
+
+Environment:
+    BILI_SESSDATA
+    BILI_CSRF
+    BILI_BUVID3
+    BILI_RATELIMIT
+"""
 import asyncio
 from colorama import Fore, init, Style
+import os
+import sys
+import getopt
 import datetime, time
 import traceback
 import os
+import importlib
 
 def collect_test_function(module):
     names = []
     for name in dir(module):
         if name.startswith("test"):
-            n: str = module.__name__
-            n = ".".join(n.split('.')[1:])
-            names.append(f"{n}.{name}")
+            names.append(f"{name}")
+    names.reverse()
     return names
 
 RATELIMIT = float(os.getenv('BILI_RATELIMIT')) if os.getenv('BILI_RATELIMIT') is not None else 0
 
 
 async def test(module):
-    print(Fore.YELLOW + f"=========== 开始测试 {module.__name__} ===========")
+    print(Fore.YELLOW + f"::group::=========== 开始测试 {module.__name__} ===========")
     funcs = collect_test_function(module)
 
     if "before_all" in dir(module):
@@ -31,7 +49,7 @@ async def test(module):
     }
     for func in funcs:
         print(f"{Fore.YELLOW}测试：{Fore.RESET}{func}   ", end="")
-        func = eval(func)
+        func = eval("module." + func)
         try:
             res = await func()
             print(Fore.GREEN + "[PASSED]")
@@ -49,12 +67,52 @@ async def test(module):
         print(Fore.CYAN + '执行 after_all()')
         await module.after_all()
 
-    print(Fore.YELLOW + f"=========== 结束测试 {module.__name__} ===========\n")
+    print(Fore.YELLOW + f"=========== 结束测试 {module.__name__} ===========\n::endgroup::")
     return result
 
 def mixin(source, target):
     target["failed"] += source["failed"]
     target["passed"] += source["passed"]
+
+
+def get_should_test_module():
+    """
+    获取将被测试的模块，仅寻找 tests 根目录下的模块
+    """
+    def get_all_modules():
+        modules = []
+        base_path = os.path.join(os.path.dirname(__file__), '.')
+        for root, dirs, files in os.walk(base_path):
+            for file in files:
+                if file.startswith('test_') and file.endswith(".py"):
+                    module_name = file[:-3]
+                    modules.append(importlib.import_module("tests." + module_name))
+            break
+        return modules
+
+    def find_module(name: str):
+        try:
+            m = importlib.import_module("tests." + name)
+            return m
+        except Exception as e:
+            print(e)
+            print("找不到模块：" + name)
+            return None
+
+    modules = []
+    opts, args = getopt.getopt(sys.argv[1:], 'am:')
+
+    for opt, arg in opts:
+        if opt == "-a":
+            # 测试所有模块
+            modules = get_all_modules()
+        elif opt == "-m":
+            m = find_module(arg)
+            if m is None:
+                exit(1)
+            else:
+                modules.append(m)
+    return modules
 
 
 async def main():
@@ -64,12 +122,11 @@ async def main():
         "passed": 0,
         "failed": 0
     }
-    result = await test(test_video)
-    mixin(result, all_result)
-
-    result = await test(test_channel)
-    mixin(result, all_result)
-
+    
+    modules = get_should_test_module()
+    for module in modules:
+        result = await test(module)
+        mixin(result, all_result)
     # 打印结果
     elapsed = str(datetime.timedelta(seconds=time.time() - start))
     print(f"{Fore.WHITE}{all_result['passed']} {Fore.GREEN}passed, {Fore.WHITE}{all_result['failed']} {Fore.RED}failed.")

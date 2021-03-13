@@ -1,13 +1,13 @@
 import time
 from bilibili_api.utils.Danmaku import Danmaku
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
-from bilibili_api import video, exceptions
+from bilibili_api import video as video_m, exceptions
 from .common import get_credential
 import datetime
 
 BVID = "BV1xx411c7Xg"
 AID = 271
-video = video.Video(BVID, credential=get_credential())
+video = video_m.Video(BVID, credential=get_credential())
 
 
 async def test_set_bvid():
@@ -49,58 +49,72 @@ async def test_get_stat():
     info = await video.get_stat()
     return info
 
+
 async def test_get_tags():
     tags = await video.get_tags()
     return tags
+
 
 async def test_get_chargers():
     chargers = await video.get_chargers()
     return chargers
 
+
 async def test_get_pages():
     pages = await video.get_pages()
     return pages
+
 
 async def test_get_download_url():
     pages = await video.get_download_url(0)
     return pages
 
+
 async def test_get_related():
     data = await video.get_related()
     return data
+
 
 async def test_has_liked():
     data = await video.has_liked()
     return data
 
+
 async def test_get_pay_coins():
     data = await video.get_pay_coins()
     return data
+
 
 async def test_has_favoured():
     data = await video.has_favoured()
     return data
 
+
 async def test_get_media_list():
     data = await video.get_media_list()
     return data
+
 
 async def test_get_danmaku_view():
     data = await video.get_danmaku_view(0)
     return data
 
+
 async def test_get_danmaku():
     data = await video.get_danmakus(0)
     return data
+
 
 async def test_get_danmaku_history():
     data = await video.get_danmakus(0, date=datetime.date(2020, 1, 1))
     return data
 
+
 async def test_send_danmaku():
     dm = Danmaku("TESTING" + str(int(time.time())))
     data = await video.send_danmaku(0, dm)
     return data
+
 
 async def test_like():
     try:
@@ -116,6 +130,7 @@ async def test_like():
         else:
             return e.raw
 
+
 async def test_pay_coin():
     try:
         data = await video.pay_coin(2)
@@ -129,6 +144,7 @@ async def test_pay_coin():
         else:
             return e.raw
 
+
 async def test_add_tag():
     try:
         data = await video.add_tag("测试标签")
@@ -138,6 +154,7 @@ async def test_add_tag():
             raise e
         else:
             return e.raw
+
 
 async def test_del_tag():
     try:
@@ -150,8 +167,19 @@ async def test_del_tag():
         else:
             return e.raw
 
+
 async def test_subscribe_and_unsubscribe_tag():
     data = await video.subscribe_tag(8583026)
     await video.unsubscribe_tag(8583026)
     return data
 
+
+async def test_VideoOnlineMonitor():
+    v = video_m.VideoOnlineMonitor(aid=AID, debug=True)
+    
+    async def handler(data):
+        print(data)
+        await v.disconnect()
+
+    v.add_event_listener("ONLINE", handler)
+    await v.connect()

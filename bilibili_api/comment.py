@@ -97,15 +97,14 @@ async def send_comment(text: str, oid: int, type_: ResourceType, root: int = Non
         "plat": 1,
     }
 
-    if parent is not None and root is None:
+    if root is None and parent is None:
         # 直接回复资源
-        data["root"] = oid
-        data["parent"] = parent
-    elif parent is None and root is not None:
+        pass
+    elif root is not None and parent is None:
         # 回复资源下面的评论
         data["root"] = root
         data["parent"] = root
-    elif parent is not None and root is not None:
+    elif root is not None and parent is not None:
         # 回复资源下面的评论的评论
         data["root"] = root
         data["parent"] = parent
