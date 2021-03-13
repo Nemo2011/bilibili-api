@@ -899,10 +899,17 @@ class VideoOnlineMonitor(AsyncEvent):
         self.credential = credential
         self.__video = Video(bvid, aid, credential=credential)
         
+        # 智能选择在 log 中展示的 ID。
+        id_showed = None
+        if bvid is not None:
+            id_showed = bvid
+        else:
+            id_showed = aid
+
         # logger 初始化
-        self.logger = logging.getLogger(f'VideoOnlineMonitor-{bvid}')
+        self.logger = logging.getLogger(f'VideoOnlineMonitor-{id_showed}')
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter("[" + str(bvid) + "][%(asctime)s][%(levelname)s] %(message)s"))
+        handler.setFormatter(logging.Formatter("[" + str(id_showed) + "][%(asctime)s][%(levelname)s] %(message)s"))
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO if not debug else logging.DEBUG)
 
