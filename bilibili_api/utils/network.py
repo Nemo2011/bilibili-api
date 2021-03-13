@@ -23,7 +23,7 @@ def __clean():
     async def __clean_task():
         await __session.close()
 
-    if __session.closed:
+    if __session is None or __session.closed:
         return
 
     loop = asyncio.new_event_loop()
