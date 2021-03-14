@@ -34,8 +34,14 @@ def __clean():
         loop.create_task(__clean_task())
 
 
-async def request(method: str, url: str, params: dict = None, data: dict = None,
-                  credential: Credential = None, **kwargs):
+async def request(method: str, 
+                  url: str, 
+                  params: dict = None, 
+                  data: dict = None,
+                  credential: Credential = None, 
+                  no_csrf: bool = False,
+                  json_body: bool = False,
+                  **kwargs):
     """
     向接口发送请求。
 
@@ -45,6 +51,7 @@ async def request(method: str, url: str, params: dict = None, data: dict = None,
         params (dict, optional):            请求参数。
         data (dict, optional):              请求载荷。
         credential (Credential, optional):  Credential 类。
+        no_csrf (boo, optional):            不要自动添加 CSRF。
 
     Returns:
         接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
@@ -68,7 +75,7 @@ async def request(method: str, url: str, params: dict = None, data: dict = None,
         params = {}
 
     # 自动添加 csrf
-    if method in ['POST', 'DELETE', 'PATCH']:
+    if not no_csrf and method in ['POST', 'DELETE', 'PATCH']:
         if data is None:
             data = {}
         data['csrf'] = credential.bili_jct
@@ -84,6 +91,10 @@ async def request(method: str, url: str, params: dict = None, data: dict = None,
     }
 
     config.update(kwargs)
+
+    if json_body:
+        config["headers"]["Content-Type"] = "application/json"
+        config["data"] = json.dumps(config["data"])
 
     # 如果用户提供代理则设置代理
     if settings.proxy:
