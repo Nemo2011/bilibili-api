@@ -1158,11 +1158,11 @@ class VideoUploader(AsyncEvent):
     def __init__(self, cover: io.BufferedIOBase, cover_type: str, pages: list[VideoUploaderPageObject], config: dict, credential: Credential):
         """
         Args:
-            cover (io.BufferedIOBase):                  封面 io 类，比如调用 open() 打开文件后的返回值。
-            cover_type (str):                           封面数据 MIME 类型。常见类型对照 jpg: image/jpeg, png: image/png
-            pages (list[VideoUploaderPageObject]):      分 P 视频列表。
-            config (dict): [description]                设置，格式参照 self.set_config()
-            credential (Credential): [description]      Credential 类。
+            cover      (io.BufferedIOBase)            : 封面 io 类，比如调用 open() 打开文件后的返回值。
+            cover_type (str)                          : 封面数据 MIME 类型。常见类型对照 jpg: image/jpeg, png: image/png
+            pages      (list[VideoUploaderPageObject]): 分 P 视频列表。
+            config     (dict)                         : 设置，格式参照 self.set_config()
+            credential (Credential)                   : Credential 类。
         """
         super().__init__()
         self.cover = cover
@@ -1233,7 +1233,10 @@ class VideoUploader(AsyncEvent):
 
     async def start(self):
         """
-        开始上传
+        开始上传。
+
+        Returns:
+            dict: 包含 bvid 和 aid 的字典。
         """
         # 上传封面
         cover_info = await self.__upload_cover()
@@ -1255,7 +1258,14 @@ class VideoUploader(AsyncEvent):
 
     async def __submit(self, cover: str, videos: list):
         """
-        提交视频
+        提交视频。
+
+        Args:
+            cover  (str) : 封面 URL。
+            videos (list): 要提交的视频，格式参照 self.start() 中的代码。
+        
+        Returns:
+            dict: 包含 bvid 和 aid 的字典。
         """
         config = copy(self.__config)
         config["cover"] = cover
@@ -1298,7 +1308,7 @@ class VideoUploader(AsyncEvent):
         上传视频。
 
         Args:
-            page (VideoUploaderPageObject): VideoUploaderPageObject
+            page (VideoUploaderPageObject): VideoUploaderPageObject。
 
         Returns:
             str: filename，用于最后提交视频。
@@ -1306,7 +1316,6 @@ class VideoUploader(AsyncEvent):
         self.dispatch("BEGIN", page)
         # 获取上传信息
         upload_info = await self.__get_upload_info(page)
-        
         # 最大并发数
         threads = upload_info["threads"]
         # chunk 大小
@@ -1342,11 +1351,11 @@ class VideoUploader(AsyncEvent):
         # 初始化 chunk
         chunks = []
         remain_size = total_size
-
         for i, offset in enumerate(chunk_offsets):
             length = chunk_size if remain_size > chunk_size else remain_size
             chunks.append(self.__upload_chunk(offset, length, total_size, total_chunks_count, page.stream, url, auth, i, upload_id, page))
             remain_size -= length
+
         # 分配并发线程
         tasks = []
         if len(chunks) <= threads:
@@ -1360,6 +1369,7 @@ class VideoUploader(AsyncEvent):
                 chunks_of_every_tasks.append([])
             i = 0
             for chunk in chunks:
+                # 平均打散到每个 Task
                 chunks_of_every_tasks[i].append(chunk)
                 i += 1
                 if i >= threads:
@@ -1398,11 +1408,15 @@ class VideoUploader(AsyncEvent):
         return filename
 
     async def __task(self, chunks: list[Coroutine]):
-        result = []
+        """
+        按顺序执行 chunk coroutine.
+
+        Args:
+            chunks (list[Coroutine]): Coroutine
+        """
         for chunk in chunks:
-            result.append(await chunk)
-        return result
-            
+            await chunk
+
     async def __upload_chunk(self, 
         start: int, 
         length: int, 
@@ -1461,7 +1475,7 @@ class VideoUploader(AsyncEvent):
         获取上传信息。
 
         Args:
-            page_object (VideoUploaderPageObject): VideoUploaderPageObject
+            page_object (VideoUploaderPageObject): VideoUploaderPageObject。
         """
         params = {
             "name": page_object.title,
@@ -1488,4 +1502,3 @@ class VideoUploader(AsyncEvent):
             if data["OK"] != 1:
                 raise VideoUploadException("获取上传信息失败：" + str(data))
             return data
-            
