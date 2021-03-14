@@ -4,7 +4,9 @@ bilibili_api.video
 视频相关操作
 """
 
+from copy import copy
 from enum import Enum
+from typing import Coroutine
 import aiohttp
 import re
 import json
@@ -14,11 +16,16 @@ import aiohttp
 import logging
 import json
 import struct
+import io
+import base64
+import math
 
-from bilibili_api.exceptions.ResponseException import ResponseException
-from .exceptions.NetworkException import NetworkException
-from .utils.Credential import Credential
+from .exceptions import VideoUploadException
+from .exceptions import ResponseException
+from .exceptions import NetworkException
 from .exceptions import ArgsException, DanmakuClosedException
+
+from .utils.Credential import Credential
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.utils import get_api
 from .utils.network import request, get_session
@@ -857,7 +864,7 @@ class VideoOnlineMonitor(AsyncEvent):
 
             # 连接房间
             await v.connect()
-        
+
 
         if __name__ == "__main__":
             asyncio.get_event_loop().run_until_complete(main())
@@ -873,7 +880,7 @@ class VideoOnlineMonitor(AsyncEvent):
         ERROR:          发生错误。     Args: aiohttp.ClientWebSocketResponse
         CONNECTED:      成功连接。     Args: None
     """
-    
+
     class Datapack(Enum):
         CLIENT_VERIFY = 0x7
         SERVER_VERIFY = 0x8
@@ -881,12 +888,12 @@ class VideoOnlineMonitor(AsyncEvent):
         SERVER_HEARTBEAT = 0x3
         DANMAKU = 0x3e8
 
-    def __init__(self, 
-                bvid: str = None, 
-                aid: int = None, 
-                page_index: int = 0, 
-                credential: Credential = None, 
-                debug: bool = False):
+    def __init__(self,
+                 bvid: str = None,
+                 aid: int = None,
+                 page_index: int = 0,
+                 credential: Credential = None,
+                 debug: bool = False):
         """
         Args:
             bvid (str, optional):                BVID. Defaults to None.
@@ -898,7 +905,7 @@ class VideoOnlineMonitor(AsyncEvent):
         super().__init__()
         self.credential = credential
         self.__video = Video(bvid, aid, credential=credential)
-        
+
         # 智能选择在 log 中展示的 ID。
         id_showed = None
         if bvid is not None:
@@ -909,7 +916,8 @@ class VideoOnlineMonitor(AsyncEvent):
         # logger 初始化
         self.logger = logging.getLogger(f'VideoOnlineMonitor-{id_showed}')
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter("[" + str(id_showed) + "][%(asctime)s][%(levelname)s] %(message)s"))
+        handler.setFormatter(logging.Formatter(
+            "[" + str(id_showed) + "][%(asctime)s][%(levelname)s] %(message)s"))
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO if not debug else logging.DEBUG)
 
@@ -975,14 +983,14 @@ class VideoOnlineMonitor(AsyncEvent):
                     self.dispatch("ERROR", msg)
                     break
 
-    
     async def __handle_data(self, data: list[dict]):
         for d in data:
             if d['type'] == VideoOnlineMonitor.Datapack.SERVER_VERIFY.value:
                 # 服务器认证反馈。
                 if d['data']['code'] == 0:
                     # 创建心跳 Task
-                    heartbeat = asyncio.create_task(self.__heartbeat_task(), name="Heartbeat-Task")
+                    heartbeat = asyncio.create_task(
+                        self.__heartbeat_task(), name="Heartbeat-Task")
                     self.__tasks.append(heartbeat)
 
                     self.logger.info('连接服务器并验证成功')
@@ -990,7 +998,8 @@ class VideoOnlineMonitor(AsyncEvent):
             elif d['type'] == VideoOnlineMonitor.Datapack.SERVER_HEARTBEAT.value:
                 # 心跳包反馈，同时包含在线人数。
                 self.logger.debug(f'收到服务器心跳包反馈，编号：{d["number"]}')
-                self.logger.info(f'实时观看人数：{d["data"]["data"]["room"]["online"]}')
+                self.logger.info(
+                    f'实时观看人数：{d["data"]["data"]["room"]["online"]}')
                 self.dispatch("ONLINE", d["data"])
 
             elif d['type'] == VideoOnlineMonitor.Datapack.DANMAKU.value:
@@ -1017,7 +1026,7 @@ class VideoOnlineMonitor(AsyncEvent):
             else:
                 # 未知类型数据包
                 self.logger.warning('收到未知的数据包类型，无法解析：' + json.dumps(d))
-    
+
     async def __heartbeat_task(self):
         """
         心跳 Task。
@@ -1043,7 +1052,7 @@ class VideoOnlineMonitor(AsyncEvent):
         打包数据。
 
         # 数据包格式：
-        
+
         16B 头部:
 
         | offset(bytes) | length(bytes) | type | description         |
@@ -1102,3 +1111,381 @@ class VideoOnlineMonitor(AsyncEvent):
             })
             offset += region_header[0]
         return tuple(real_data)
+
+
+class VideoUploaderPageObject:
+    """
+    分 P 对象。
+    """
+
+    def __init__(self, video_stream: io.BufferedIOBase, title: str, description: str = ""):
+        """
+        Args:
+            video_stream (io.BufferedIOBase):       分 P 视频流。可以是 open() 返回的 FileIO 对象。
+            title (str):                            分 P 标题。
+            description (str, optional):            分 P 描述. Defaults to "".
+        """
+        self.stream = video_stream
+        self.title = title
+        self.description = description
+        self.__total_size = None
+
+    def get_total_size(self):
+        """
+        获取总大小。
+
+        Returns:
+            int: 文件总大小。
+        """
+        if self.__total_size is None:
+            self.__total_size = len(self.stream.read())
+        return self.__total_size
+
+
+class VideoUploader(AsyncEvent):
+    """
+    视频上传。任何上传中的出错将会直接抛出错误并终止上传。
+
+    EventType:
+
+    COVER_SUCCESS   封面上传成功。回调数据：封面 URL。
+    BEGIN           开始上传分 P。回调参数：VideoUploaderPageObject
+    CHUNK_BEGIN     开始上传分 P 分块。回调参数：VideoUploaderPageObject, {"chunk_index": "int, 分块编号", "total_chunk": "int, 总共有多少个分块"}
+    CHUNK_END       分块上传结束。回调参数：VideoUploaderPageObject
+    END             分 P 上传结束。回调参数：VideoUploaderPageObject
+    """
+
+    def __init__(self, cover: io.BufferedIOBase, cover_type: str, pages: list[VideoUploaderPageObject], config: dict, credential: Credential):
+        """
+        Args:
+            cover (io.BufferedIOBase):                  封面 io 类，比如调用 open() 打开文件后的返回值。
+            cover_type (str):                           封面数据 MIME 类型。常见类型对照 jpg: image/jpeg, png: image/png
+            pages (list[VideoUploaderPageObject]):      分 P 视频列表。
+            config (dict): [description]                设置，格式参照 self.set_config()
+            credential (Credential): [description]      Credential 类。
+        """
+        super().__init__()
+        self.cover = cover
+        self.cover_type = cover_type
+        self.pages = pages
+        self.__config = {}
+        self.__session = get_session()
+        self.credential = credential
+        
+        credential.raise_for_no_sessdata()
+        credential.raise_for_no_bili_jct()
+
+        self.set_config(config)
+
+    def set_config(self, config: dict):
+        """
+        设置上传配置。
+
+        不可设置的参数：cover, videos。
+
+        参考如下：
+
+        ```json
+        {
+            "copyright": "int, 投稿类型。1 自制，2 转载。",
+            "source": "str, 视频来源。投稿类型为转载时注明来源，为原创时为空。",
+            "cover": "str, 封面 URL。。",
+            "desc": "str, 视频简介。",
+            "desc_format_id": 0,
+            "dynamic": "str, 动态信息。",
+            "interactive": 0,
+            "open_elec": "int, 是否展示充电信息。1 为是，0 为否。",
+            "no_reprint": "int, 显示未经作者授权禁止转载，仅当为原创视频时有效。1 为启用，0 为关闭。",
+            "subtitles": {
+                "lan": "字幕语言，不清楚作用请将该项设置为空",
+                "open": 0
+            },
+            "tag": "str, 视频标签。使用英文半角逗号分隔的标签组。示例：标签1,标签2,标签3",
+            "tid": "int, 分区ID。可以使用 channel 模块进行查询。",
+            "title": "视频标题",
+            "up_close_danmaku": "bool, 是否关闭弹幕。",
+            "up_close_reply": "bool, 是否关闭评论。",
+            "videos": [
+                {
+                    "desc": "str, 分 P 描述。",
+                    "filename": "str, 视频上传后的文件名。",
+                    "title": "str, 分 P 标题"
+                }
+            ]
+        }
+        ```
+
+        Args:
+            config (dict): 上传配置
+        """
+        if any(["videos" in config, "cover" in config]):
+            raise ArgsException("不可手动设置参数：cover, videos。将会自动设置。")
+        self.__config = copy(config)
+
+    def get_config(self):
+        """
+        获取配置。
+
+        Returns:
+            dict, 视频配置。
+        """
+        return copy(self.__config)
+
+    async def start(self):
+        """
+        开始上传
+        """
+        # 上传封面
+        cover_info = await self.__upload_cover()
+        cover_url = cover_info["url"]
+        self.dispatch("COVER_SUCCESS", cover_url)
+
+        # 上传视频
+        videos = []
+        for page in self.pages:
+            filename = await self.__upload_video(page)
+            videos.append({
+                "filename": filename,
+                "page": page
+            })
+        
+        # 提交视频
+        result = await self.__submit(cover_url, videos)
+        return result
+
+    async def __submit(self, cover: str, videos: list):
+        """
+        提交视频
+        """
+        config = copy(self.__config)
+        config["cover"] = cover
+        config["videos"] = []
+        for video in videos:
+            v = {
+                "desc": video["page"].description,
+                "title": video["page"].title,
+                "filename": video["filename"],
+                "cid": 0
+            }
+            config["videos"].append(v)
+        data = config
+        params = {
+            "csrf": self.credential.bili_jct
+        }
+        return await request("POST", "https://member.bilibili.com/x/vu/web/add", 
+        data=data, 
+        params=params, 
+        credential=self.credential, 
+        no_csrf=True,
+        json_body=True)
+
+    async def __upload_cover(self):
+        """
+        上传视频封面。
+
+        Returns:
+            str: 封面 URL。
+        """
+        b64 = base64.b64encode(self.cover.read())
+        data_url = f"data:{self.cover_type};base64,{b64.decode()}"
+        payload = {
+            "cover": data_url
+        }
+        return await request("POST", "https://member.bilibili.com/x/vu/web/cover/up", data=payload, credential=self.credential)
+
+    async def __upload_video(self, page: VideoUploaderPageObject):
+        """
+        上传视频。
+
+        Args:
+            page (VideoUploaderPageObject): VideoUploaderPageObject
+
+        Returns:
+            str: filename，用于最后提交视频。
+        """
+        self.dispatch("BEGIN", page)
+        # 获取上传信息
+        upload_info = await self.__get_upload_info(page)
+        
+        # 最大并发数
+        threads = upload_info["threads"]
+        # chunk 大小
+        chunk_size = upload_info["chunk_size"]
+        # X-Upos-Auth 头内容
+        auth = upload_info["auth"]
+        # 上传节点
+        endpoint = upload_info["endpoint"]
+        # 上传 URL
+        url = f"https:{endpoint}/{upload_info['upos_uri'][7:]}"
+        # 文件名
+        filename = upload_info["upos_uri"][7:].split("/")[1]
+        # 其他后面会用到的
+        biz_id = upload_info["biz_id"]
+
+        # 获取 upload_id
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Referer": "https://member.bilibili.com",
+            "X-Upos-Auth": auth,
+        }
+        async with self.__session.post(url, params= {"uploads": "", "output": "json"}, headers=headers, cookies=self.credential.get_cookies()) as resp:
+            data = await resp.read()
+            data = json.loads(data)
+            upload_id = data["upload_id"]
+
+        # 分配任务
+        total_size = page.get_total_size()
+        # 计算每 chunk 开始位置
+        chunk_offsets = list(range(0, total_size, chunk_size))
+        # 总 chunk 数量
+        total_chunks_count = len(chunk_offsets)
+        # 初始化 chunk
+        chunks = []
+        remain_size = total_size
+
+        for i, offset in enumerate(chunk_offsets):
+            length = chunk_size if remain_size > chunk_size else remain_size
+            chunks.append(self.__upload_chunk(offset, length, total_size, total_chunks_count, page.stream, url, auth, i, upload_id, page))
+            remain_size -= length
+        # 分配并发线程
+        tasks = []
+        if len(chunks) <= threads:
+            # chunks 长度比最大并发数小或相等
+            for chunk in chunks:
+                tasks.append(self.__task([chunk]))
+        else:
+            # chunks 长度比最大并发数大
+            chunks_of_every_tasks: list[list[Coroutine]] = []
+            for i in range(threads):
+                chunks_of_every_tasks.append([])
+            i = 0
+            for chunk in chunks:
+                chunks_of_every_tasks[i].append(chunk)
+                i += 1
+                if i >= threads:
+                    i = 0
+            for c in chunks_of_every_tasks:
+                tasks.append(self.__task(c))
+
+        # 开始上传
+        await asyncio.gather(*tasks)
+
+        # 确认是否上传成功
+        params = {
+            "output": "json",
+            "name": page.title,
+            "profile": "ugcupos/bup",
+            "uploadId": upload_id,
+            "biz_id": biz_id
+        }
+        data = {
+            "parts": []
+        }
+        for i in range(total_chunks_count):
+            data["parts"].append({
+                "eTag": "etag",
+                "partNumber": i + 1
+            })
+        headers.update({
+            "Content-Type": "application/json"
+        })
+        async with self.__session.post(url, params=params, data=json.dumps(data), headers=headers, cookies=self.credential.get_cookies()) as resp:
+            data = await resp.read()
+            data = json.loads(data)
+            if data["OK"] != 1:
+                raise VideoUploadException("上传失败")
+        self.dispatch("END", page)
+        return filename
+
+    async def __task(self, chunks: list[Coroutine]):
+        result = []
+        for chunk in chunks:
+            result.append(await chunk)
+        return result
+            
+    async def __upload_chunk(self, 
+        start: int, 
+        length: int, 
+        total_size: int, 
+        total_chunks_count: int, 
+        stream: io.BufferedIOBase, 
+        url: str, 
+        auth: str,
+        index: int,
+        upload_id: str,
+        page: VideoUploaderPageObject
+        ):
+        """
+        上传分块。
+
+        Args:
+            start              (int)                    : 起始位置。
+            length             (int)                    : 长度。
+            total_size         (int)                    : 视频总大小。
+            total_chunks_count (int)                    : 总共分块数量。
+            stream             (io.BufferedIOBase)      : IO 流。
+            url                (str)                    : 上传 URL。
+            auth               (str)                    : X-Upos-Auth 头内容。
+            index              (int)                    : 分块序号。
+            upload_id          (str)                    : upload_id。
+            page               (VideoUploaderPageObject): VideoUploaderPageObject
+        """
+        callback_data = {
+            "chunk_index": index + 1,
+            "total_chunk": total_chunks_count
+        }
+        self.dispatch("CHUNK_BEGIN", page, callback_data)
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Referer": "https://member.bilibili.com",
+            "X-Upos-Auth": auth,
+        }
+
+        params = {
+            "partNumber": index + 1,
+            "uploadId": upload_id,
+            "chunk": index,
+            "chunks": total_chunks_count,
+            "size": length,
+            "start": start,
+            "end": start + length,
+            "total": total_size
+        }
+        stream.seek(start)
+        async with self.__session.put(url, headers=headers, params=params, data=stream.read(length), cookies=self.credential.get_cookies()) as resp:
+            await resp.wait_for_close()
+        self.dispatch("CHUNK_END", page, callback_data)
+
+    async def __get_upload_info(self, page_object: VideoUploaderPageObject):
+        """
+        获取上传信息。
+
+        Args:
+            page_object (VideoUploaderPageObject): VideoUploaderPageObject
+        """
+        params = {
+            "name": page_object.title,
+            "size": page_object.get_total_size(),
+            "r": "upos",
+            "profile": "ugcupos/bup",
+            "ssl": 0,
+            "version": "2.8.12",
+            "build": 2081200,
+            "upcdn": "bda2",
+            "probe_version": 20200810
+        }
+        page_object.stream.seek(0)
+        async with self.__session.get(
+            "https://member.bilibili.com/preupload",
+            params=params,
+            cookies=self.credential.get_cookies(),
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://www.bilibili.com"
+            }
+            ) as resp:
+            data = await resp.json()
+            if data["OK"] != 1:
+                raise VideoUploadException("获取上传信息失败：" + str(data))
+            return data
+            
