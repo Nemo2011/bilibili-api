@@ -143,8 +143,7 @@
       "verify": false,
       "params": {
         "mid": "uid",
-        "jsonp": "jsonp",
-        "callback": "__jp8"
+        "jsonp": "jsonp"
       },
       "comment": "获取用户的简易订阅和投稿信息(主要是这些的数量统计)"
     },

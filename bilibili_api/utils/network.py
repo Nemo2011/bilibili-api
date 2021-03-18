@@ -81,6 +81,11 @@ async def request(method: str,
         data['csrf'] = credential.bili_jct
         data['csrf_token'] = credential.bili_jct
 
+    # jsonp
+
+    if params.get("jsonp", "") == "jsonp":
+        params["callback"] = "callback"
+
     config = {
         "method": method,
         "url": url,
@@ -125,7 +130,7 @@ async def request(method: str,
         raw_data = await resp.text()
         resp_data: dict
 
-        if 'jsonp' in params and 'callback' in params:
+        if 'callback' in params:
             # JSONP 请求
             resp_data = json.loads(
                 re.match("^.*?({.*}).*$", raw_data, re.S).group(1))
