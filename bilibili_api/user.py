@@ -18,33 +18,77 @@ API = get_api("user")
 
 
 class VideoOrder(Enum):
+    """
+    视频排序顺序。
+
+    + PUBDATE : 上传日期倒序。
+    + FAVORATE: 收藏量倒序。
+    + VIEW    : 播放量倒序。
+    """
     PUBDATE = "pubdate"
     FAVORATE = "stow"
     VIEW = "click"
 
 
 class AudioOrder(Enum):
+    """
+    音频排序顺序。
+
+    + PUBDATE : 上传日期倒序。
+    + FAVORATE: 收藏量倒序。
+    + VIEW    : 播放量倒序。
+    """
     PUBDATE = 1
     VIEW = 2
     FAVORATE = 3
 
 
 class ArticleOrder(Enum):
+    """
+    专栏排序顺序。
+
+    + PUBDATE : 发布日期倒序。
+    + FAVORATE: 收藏量倒序。
+    + VIEW    : 阅读量倒序。
+    """
     PUBDATE = "publish_time"
     FAVORATE = "fav"
     VIEW = "view"
 
 
 class ArticleListOrder(Enum):
+    """
+    文集排序顺序。
+
+    + LATEST: 最近更新倒序。
+    + VIEW  : 总阅读量倒序。
+    """
     LATEST = 0
     VIEW = 1
 
+
 class BangumiType(Enum):
+    """
+    番剧类型。
+
+    + BANGUMI: 番剧。
+    + DRAMA  : 电视剧/纪录片等。
+    """
     BANGUMI = 1
     DRAMA = 2
 
 
 class RelationType(Enum):
+    """
+    用户关系操作类型。
+
+    + SUBSCRIBE         : 关注。
+    + UNSUBSCRIBE       : 取关。
+    + SUBSCRIBE_SECRETLY: 悄悄关注。
+    + BLOCK             : 拉黑。
+    + UNBLOCK           : 取消拉黑。
+    + REMOVE_FANS       : 移除粉丝。
+    """
     SUBSCRIBE = 1
     UNSUBSCRIBE = 2
     SUBSCRIBE_SECRETLY = 3
@@ -67,7 +111,7 @@ class User:
         获取用户信息（昵称，性别，生日，签名，头像URL，空间横幅URL等）
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["info"]
         params = {
@@ -80,7 +124,7 @@ class User:
         获取自己的信息。
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         if self.__self_info is not None:
             return copy(self.__self_info)
@@ -96,7 +140,7 @@ class User:
         获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["relation"]
         params = {
@@ -104,12 +148,12 @@ class User:
         }
         return await request("GET", url=api["url"], params=params, credential=self.credential)
 
-    async def get_up_info(self):
+    async def get_up_stat(self):
         """
         获取UP主数据信息（视频总播放量，文章总阅读量，总点赞数）
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         self.credential.raise_for_no_bili_jct()
 
@@ -124,7 +168,7 @@ class User:
         获取用户直播间信息。
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["live"]
         params = {
@@ -150,7 +194,6 @@ class User:
         Returns:
             dict.
         """
-
         api = API["info"]["video"]
         params = {
             "mid": self.uid,
@@ -171,7 +214,7 @@ class User:
             pn    (int, optional)       : 页码数，从 1 开始。 Defaults to 1.
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["audio"]
         params = {
@@ -185,13 +228,13 @@ class User:
     async def get_articles(self, pn: int = 1, order: ArticleOrder = ArticleOrder.PUBDATE):
         """
         获取用户投稿专栏。
-        
+
         Args:
             order (ArticleOrder, optional): 排序方式. Defaults to ArticleOrder.PUBDATE.
             pn    (int, optional)         : 页码数，从 1 开始。 Defaults to 1.
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["article"]
         params = {
@@ -210,7 +253,7 @@ class User:
             order (ArticleListOrder, optional): 排序方式. Defaults to ArticleListOrder.LATEST
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["article_lists"]
         params = {
@@ -233,7 +276,7 @@ class User:
             need_top (bool, optional):  显示置顶动态. Defaults to False.
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["dynamic"]
         params = {
@@ -251,13 +294,13 @@ class User:
     async def get_subscribed_bangumis(self, pn: int = 1, type_: BangumiType = BangumiType.BANGUMI):
         """
         获取用户追番/追剧列表。
-        
+
         Args:
             pn    (int, optional)         : 页码数，从 1 开始。 Defaults to 1.
             type_ (ArticleOrder, optional): 资源类型. Defaults to BangumiType.BANGUMI
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["bangumi"]
         params = {
@@ -271,13 +314,13 @@ class User:
     async def get_followings(self,  pn: int = 1, desc: bool = True):
         """
         获取用户关注列表（不是自己只能访问前5页）
-        
+
         Args:
             pn   (int, optional) : 页码，从 1 开始. Defaults to 1.
             desc (bool, optional): 倒序排序. Defaults to True.
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["followings"]
         params = {
@@ -291,13 +334,13 @@ class User:
     async def get_followers(self, pn: int = 1, desc: bool = True):
         """
         获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）
-        
+
         Args:
             pn   (int, optional) : 页码，从 1 开始. Defaults to 1.
             desc (bool, optional): 倒序排序. Defaults to True.
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
 
         api = API["info"]["followers"]
@@ -312,9 +355,9 @@ class User:
     async def get_overview_stat(self):
         """
         获取用户的简易订阅和投稿信息。
-        
+
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["overview"]
         params = {
@@ -331,8 +374,11 @@ class User:
 
         Args:
             relation (RelationType): 用户关系。
+
+        Returns:
+            dict: 调用接口返回的内容。
         """
-        
+
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
@@ -344,13 +390,15 @@ class User:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
-
     async def send_msg(self, text: str):
         """
         给用户发送私聊信息。目前仅支持纯文本。
 
         Args:
             text (str): 信息内容。
+
+        Returns:
+            dict: 调用接口返回的内容。
         """
 
         api = API["operate"]["send_msg"]

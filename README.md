@@ -37,7 +37,7 @@ $ pip install bilibili-api
 
 ```python
 import asyncio
-from bilibili_api import video, close_session
+from bilibili_api import video
 
 async def main():
     # 实例化 Video 类
@@ -46,8 +46,6 @@ async def main():
     info = await v.get_info()
     # 打印信息
     print(info)
-    # 一定要记得在最末尾调用这个函数！
-    await close_session()
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(main())
@@ -79,7 +77,7 @@ if __name__ == '__main__':
 
 ```python
 import asyncio
-from bilibili_api import video, close_session, Credential
+from bilibili_api import video, Credential
 
 async def main():
     # 实例化 Credential 类
@@ -88,8 +86,6 @@ async def main():
     v = video.Video(bvid="BV1uv411q7Mv", credential=credential)
     # 给视频点赞
     await v.set_like(True)
-    # 一定要记得在最末尾调用这个函数！
-    await close_session()
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(main())
@@ -104,7 +100,6 @@ if __name__ == '__main__':
 **注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！**
 
 # FA♂Q
-
 
 ## Q: 关于 API 调用的正确姿势是什么？
 
@@ -149,11 +144,9 @@ A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在�
 
 # 脚注
 
-1. 这里只列出一部分，请以实际API为准。
-
-2. 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784>
-
-3. 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
++ \[1\] 这里只列出一部分，请以实际API为准。
++ \[2\] 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784>
++ \[3\] 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
 
 
 [docs]: https://github.com/Passkou/bilibili-api/blob/main/docs
