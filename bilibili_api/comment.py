@@ -5,20 +5,17 @@ bilibili_api.comment
 
 关于资源 ID（oid）的一些示例（{}部分为应该传入的参数）。
 
-视频：AV 号：av{170001}。
-
-专栏：cv{9762979}。
-
-动态（画册类型）：{116859542}。
-
-动态（纯文本）：{497080393649439253}。
++ 视频：AV 号：av{170001}。
++ 专栏：cv{9762979}。
++ 动态（画册类型）：{116859542}。
++ 动态（纯文本）：{497080393649439253}。
 """
 from enum import Enum
 
 from .utils.utils import get_api
-from .exceptions.ArgsException import ArgsException
 from .utils.network import request
 from .utils.Credential import Credential
+from .exceptions.ArgsException import ArgsException
 
 
 API = get_api("common")
@@ -28,17 +25,12 @@ class ResourceType(Enum):
     """
     评论类型枚举。
 
-    VIDEO: 视频。
-
-    ARTICLE: 专栏。
-
-    DYNAMIC_DRAW: 画册。
-
-    DYNAMIC: 动态（画册也属于动态的一种，只不过画册还有一个专门的 ID）。
-
-    AUDIO：音频。
-
-    AUDIO_LIST：歌单。
+    + VIDEO: 视频。
+    + ARTICLE: 专栏。
+    + DYNAMIC_DRAW: 画册。
+    + DYNAMIC: 动态（画册也属于动态的一种，只不过画册还有一个专门的 ID）。
+    + AUDIO：音频。
+    + AUDIO_LIST：歌单。
     """
     VIDEO = 1
     ARTICLE = 12
@@ -52,9 +44,8 @@ class OrderType(Enum):
     """
     评论排序方式枚举。
 
-    LIKE：按点赞数倒序。
-
-    TIME：按发布时间倒序。
+    + LIKE：按点赞数倒序。
+    + TIME：按发布时间倒序。
     """
     LIKE = 2
     TIME = 0
@@ -74,15 +65,15 @@ async def send_comment(text: str, oid: int, type_: ResourceType, root: int = Non
     当 root 为空时，parent 必须为空。
 
     Args:
-        text (str):                        评论内容。
-        oid (str):                         资源 ID。
-        type_ (ResourceType):              资源类型枚举。
-        root (int, optional):              根评论 ID, Defaults to None.
-        parent (int, optional):            父评论 ID, Defaults to None.
-        credential (Credential, optional)  验证类, Defaults to None.
+        text       (str)                 : 评论内容。
+        oid        (str)                 : 资源 ID。
+        type_      (ResourceType)        : 资源类型枚举。
+        root       (int, optional)       : 根评论 ID, Defaults to None.
+        parent     (int, optional)       : 父评论 ID, Defaults to None.
+        credential (Credential, optional): 验证类, Defaults to None.
 
     Returns:
-        dict, 调用接口返回的内容。
+        dict: 调用接口返回的内容。
     """
     if credential is None:
         credential = Credential()
@@ -124,10 +115,10 @@ class Comment:
     def __init__(self, oid: int, type_: str, rpid: int, credential: Credential):
         """
         Args:
-            oid (int):                评论所在资源 ID。
-            type_ (ResourceType):     评论所在资源类型枚举。
-            rpid (int):               评论 ID。
-            credential (Credential):  Credential 类。
+            oid        (int)         : 评论所在资源 ID。
+            type_      (ResourceType): 评论所在资源类型枚举。
+            rpid       (int)         : 评论 ID。
+            credential (Credential)  : Credential 类。
         """
         self.oid = oid
         self.rpid = rpid
@@ -142,7 +133,7 @@ class Comment:
             status (bool):  状态。
 
         Returns:
-            dict, 请求载荷数据。
+            dict: 请求载荷数据。
         """
         return {
             "oid": self.oid,
@@ -159,7 +150,7 @@ class Comment:
             status (bool, optional):  状态, Defaults to True.
 
         Returns:
-            dict, 调用接口返回的内容。
+            dict: 调用接口返回的内容。
         """
 
         self.credential.raise_for_no_sessdata()
@@ -176,7 +167,7 @@ class Comment:
             status (bool, optional):  状态, Defaults to True.
 
         Returns:
-            dict, 调用接口返回的内容。
+            dict: 调用接口返回的内容。
         """
 
         self.credential.raise_for_no_sessdata()
@@ -193,7 +184,7 @@ class Comment:
             status (bool, optional):  状态, Defaults to True.
 
         Returns:
-            dict, 调用接口返回的内容。
+            dict: 调用接口返回的内容。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -206,7 +197,7 @@ class Comment:
         删除评论。
 
         Returns:
-            dict, 调用接口返回的内容。
+            dict: 调用接口返回的内容。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -228,7 +219,7 @@ class Comment:
             page_index (bool, optional):  页码索引，从 1 开始。Defaults to 1.
 
         Returns:
-            dict, 调用接口返回的内容。
+            dict: 调用接口返回的内容。
         """
         if page_index <= 0:
             raise ArgsException("page_index 必须大于或等于 1")
@@ -254,14 +245,14 @@ async def get_comments(oid: int,
     获取资源评论列表。
 
     Args:
-        oid (int):                          资源 ID。
-        type_ (ResourceType):               资源类枚举。
-        page_index (int, optional):         页码索引. Defaults to 1.
-        order (OrderType, optional):        排序方式枚举. Defaults to OrderType.TIME.
-        credential (Credential, optional):  Credential 类。Defaults to None.
+        oid        (int)                 : 资源 ID。
+        type_      (ResourceType)        : 资源类枚举。
+        page_index (int, optional)       : 页码索引. Defaults to 1.
+        order      (OrderType, optional) : 排序方式枚举. Defaults to OrderType.TIME.
+        credential (Credential, optional): Credential 类。Defaults to None.
 
     Returns:
-        dict, 调用接口返回的内容。
+        dict: 调用接口返回的内容。
     """
     if page_index <= 0:
         raise ArgsException("page_index 必须大于或等于 1")

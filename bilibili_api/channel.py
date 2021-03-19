@@ -23,7 +23,7 @@ async def get_channel_info_by_tid(tid: int):
         tid (int):               频道的 tid。
 
     Returns:
-        tuple[dict or None, dict or None], 第一个是主分区，第二个是子分区，没有时返回 None。
+        tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8") as f:
         channel = json.loads(f.read())
@@ -52,7 +52,7 @@ async def get_channel_info_by_name(name: str):
         name (str):               频道的名称。
 
     Returns:
-        tuple[dict or None, dict or None], 第一个是主分区，第二个是子分区，没有时返回 None。
+        tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8") as f:
         channel = json.loads(f.read())
@@ -77,7 +77,7 @@ async def get_top10(tid: int, day: int = 7, credential: Credential = None):
         credential (Credential, optional):  Credential 类。Defaults to None.
 
     Returns:
-        list, 前 10 的视频信息。
+        list: 前 10 的视频信息。
     """
     if credential is None:
         credential = Credential()

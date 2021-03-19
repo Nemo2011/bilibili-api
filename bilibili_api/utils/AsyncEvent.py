@@ -27,6 +27,19 @@ class AsyncEvent:
         if name not in self.__handlers:
             self.__handlers[name] = []
         self.__handlers[name].append(handler)
+
+    def on(self, event_name: str):
+        """
+        装饰器注册事件监听器。
+
+        Args:
+            event_name (str): 事件名。
+        """
+        def decorator(func: Coroutine):
+            self.add_event_listener(event_name, func)
+            return func
+
+        return decorator
     
     def remove_event_listener(self, name: str, handler: Coroutine):
         """

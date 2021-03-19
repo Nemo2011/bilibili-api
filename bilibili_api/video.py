@@ -18,7 +18,6 @@ import json
 import struct
 import io
 import base64
-import math
 
 from .exceptions import VideoUploadException
 from .exceptions import ResponseException
@@ -45,9 +44,9 @@ class Video:
     def __init__(self, bvid: str = None, aid: int = None, credential: Credential = None):
         """
         Args:
-            bvid (str, optional):               BV 号. bvid 和 aid 必须提供其中之一。
-            aid (int, optional):                AV 号. bvid 和 aid 必须提供其中之一。
-            credential (Credential, optional):  Credential 类. Defaults to None.
+            bvid       (str, optional)       : BV 号. bvid 和 aid 必须提供其中之一。
+            aid        (int, optional)       : AV 号. bvid 和 aid 必须提供其中之一。
+            credential (Credential, optional): Credential 类. Defaults to None.
         """
         # ID 检查
         if bvid is not None:
@@ -86,7 +85,7 @@ class Video:
         获取 BVID。
 
         Returns:
-            str, BVID。
+            str: BVID。
         """
         return self.__bvid
 
@@ -95,7 +94,7 @@ class Video:
         设置 aid。
 
         Args:
-            aid (int):   AV 号。
+            aid (int): AV 号。
         """
         if aid <= 0:
             raise ArgsException("aid 不能小于或等于 0。")
@@ -108,7 +107,7 @@ class Video:
         获取 AID。
 
         Returns:
-            int, aid。
+            int: aid。
         """
         return self.__aid
 
@@ -117,7 +116,7 @@ class Video:
         获取视频信息。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         url = API["info"]["detail"]["url"]
         params = {
@@ -134,7 +133,7 @@ class Video:
         获取视频信息，如果已获取过则使用之前获取的信息，没有则重新获取。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         if self.__info is None:
             return await self.get_info()
@@ -145,7 +144,7 @@ class Video:
         获取视频统计数据（播放量，点赞数等）。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         url = API["info"]["stat"]["url"]
         params = {
@@ -159,7 +158,7 @@ class Video:
         获取视频标签。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         url = API["info"]["tags"]["url"]
         params = {
@@ -173,7 +172,7 @@ class Video:
         获取视频充电用户。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         info = await self.__get_info_cached()
         mid = info["owner"]["mid"]
@@ -190,7 +189,7 @@ class Video:
         获取分 P 信息。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         url = API["info"]["pages"]["url"]
         params = {
@@ -207,7 +206,7 @@ class Video:
             page_index (int):   分 P 号，从 0 开始。
 
         Returns:
-            int, 分 P 的唯一 ID。
+            int: 分 P 的唯一 ID。
         """
         if page_index < 0:
             raise ArgsException("分 p 号必须大于或等于 0。")
@@ -230,7 +229,7 @@ class Video:
             page_index (int):  分 P 号，从 0 开始。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         cid = await self.__get_page_id_by_index(page_index)
 
@@ -249,7 +248,7 @@ class Video:
         获取相关视频信息。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         url = API["info"]["related"]["url"]
         params = {
@@ -263,7 +262,7 @@ class Video:
         视频是否点赞过。
 
         Returns:
-            bool, 视频是否点赞过。
+            bool: 视频是否点赞过。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -279,7 +278,7 @@ class Video:
         获取视频已投币数量。
 
         Returns:
-            int, 视频已投币数量。
+            int: 视频已投币数量。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -295,7 +294,7 @@ class Video:
         是否已收藏。
 
         Returns:
-            bool, 视频是否已收藏。
+            bool: 视频是否已收藏。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -311,7 +310,7 @@ class Video:
         获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -333,7 +332,7 @@ class Video:
             page_index (int): 分 p 号，从 0 开始。
 
         Returns:
-            dict, 调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
 
         session = get_session()
@@ -502,11 +501,11 @@ class Video:
         获取弹幕。
 
         Args:
-            page_index (int):                分 p 号，从 0 开始。
-            data (datetime.Date, optional):  指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+            page_index (int)                    : 分 p 号，从 0 开始。
+            data       (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
 
         Returns:
-            list[Danmaku], Danmaku 类的列表。
+            list[Danmaku]: Danmaku 类的列表。
         """
 
         if date is not None:
@@ -612,11 +611,11 @@ class Video:
         获取特定月份存在历史弹幕的日期。
 
         Args:
-            page_index (int):       分 P 号，从 0 开始。
-            date (datetime.date):   精确到年月。
+            page_index (int)          : 分 P 号，从 0 开始。
+            date       (datetime.date): 精确到年月。
 
         Returns:
-            None or list[str], 调用 API 返回的结果。不存在时为 None。
+            None | list[str]: 调用 API 返回的结果。不存在时为 None。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -634,11 +633,11 @@ class Video:
         是否已点赞弹幕。
 
         Args:
-            page_index (int):  分 P 号，从 0 开始。
-            ids (list[int])：  要查询的弹幕 ID 列表。
+            page_index (int)      : 分 P 号，从 0 开始。
+            ids        (list[int]): 要查询的弹幕 ID 列表。
 
         Returns:
-            调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
 
         self.credential.raise_for_no_sessdata()
@@ -655,11 +654,11 @@ class Video:
         发送弹幕。
 
         Args:
-            page_index (int):   分 P 号，从 0 开始。
-            danmaku (Danmaku):  Danmaku 类。
+            page_index (int)    : 分 P 号，从 0 开始。
+            danmaku    (Danmaku): Danmaku 类。
 
         Returns:
-            调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -690,12 +689,12 @@ class Video:
         点赞弹幕。
 
         Args:
-            page_index (int):          分 P 号，从 0 开始。
-            dmid (int):                弹幕 ID。
-            status (bool, optional):   点赞状态。Defaults to True.
+            page_index (int)           : 分 P 号，从 0 开始。
+            dmid       (int)           : 弹幕 ID。
+            status     (bool, optional): 点赞状态。Defaults to True.
 
         Returns:
-            调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -718,7 +717,7 @@ class Video:
             status (bool, optional): 点赞状态。Defaults to True.
 
         Returns:
-            调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata
         self.credential.raise_for_no_bili_jct()
@@ -735,11 +734,11 @@ class Video:
         投币。
 
         Args:
-            num (int, optional):    硬币数量，为 1 ~ 2 个。Defaults to 1.
-            like (bool, optional):  是否同时点赞。Defaults to False.
+            num  (int, optional) : 硬币数量，为 1 ~ 2 个。Defaults to 1.
+            like (bool, optional): 是否同时点赞。Defaults to False.
 
         Returns:
-            调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -764,7 +763,7 @@ class Video:
             name (str): 标签名字。
 
         Returns:
-            调用 API 返回的结果。会返回标签 ID。
+            dict: 调用 API 返回的结果。会返回标签 ID。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -785,7 +784,7 @@ class Video:
             tag_id (int): 标签 ID。
 
         Returns:
-            调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -807,7 +806,7 @@ class Video:
             tag_id (int): 标签 ID。
 
         Returns:
-            调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -827,7 +826,7 @@ class Video:
             tag_id (int): 标签 ID。
 
         Returns:
-            调用 API 返回的结果。
+            dict: 调用 API 返回的结果。
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -848,40 +847,46 @@ class VideoOnlineMonitor(AsyncEvent):
 
     ```python
         import asyncio
-        from bilibili_api.video import VideoOnlineMonitor
+        from bilibili_api import video
 
+        # 实例化
+        r = video.VideoOnlineMonitor("BV1Bf4y1Q7QP")
 
+        # 装饰器方法注册事件监听器
+        @r.on("ONLINE")
         async def handler(data):
             print(data)
 
+        # 函数方法注册事件监听器
+        async def handler2(data):
+            print(data)
 
-        async def main():
-            # 实例化
-            v = VideoOnlineMonitor(aid=170001)
+        r.add_event_listener("ONLINE", handler2)
 
-            # 监听 ONLINE 事件
-            v.add_event_listener("ONLINE", handler)
-
-            # 连接房间
-            await v.connect()
-
-
-        if __name__ == "__main__":
-            asyncio.get_event_loop().run_until_complete(main())
+        asyncio.get_event_loop().run_until_complete(r.connect())
 
     ```
 
     Extends: AsyncEvent
 
-    EventTypes:
-        ONLINE：        在线人数更新。  Args: dict
-        DANMAKU：       收到实时弹幕。  Args: Danmaku
-        DISCONNECTED：    正常断开连接。  Args: None
-        ERROR:          发生错误。     Args: aiohttp.ClientWebSocketResponse
-        CONNECTED:      成功连接。     Args: None
+    Events:
+        ONLINE：        在线人数更新。  CallbackData: dict。
+        DANMAKU：       收到实时弹幕。  CallbackData: Danmaku。
+        DISCONNECTED：  正常断开连接。  CallbackData: None。
+        ERROR:          发生错误。     CallbackData: aiohttp.ClientWebSocketResponse。
+        CONNECTED:      成功连接。     CallbackData: None。
     """
 
     class Datapack(Enum):
+        """
+        数据包类型枚举。
+
+        + CLIENT_VERIFY   : 客户端发送验证信息。
+        + SERVER_VERIFY   : 服务端响应验证信息。
+        + CLIENT_HEARTBEAT: 客户端发送心跳包。
+        + SERVER_HEARTBEAT: 服务端响应心跳包。
+        + DANMAKU         : 实时弹幕更新。
+        """
         CLIENT_VERIFY = 0x7
         SERVER_VERIFY = 0x8
         CLIENT_HEARTBEAT = 0x2
@@ -896,11 +901,11 @@ class VideoOnlineMonitor(AsyncEvent):
                  debug: bool = False):
         """
         Args:
-            bvid (str, optional):                BVID. Defaults to None.
-            aid (int, optional):                 AID. Defaults to None.
-            page_index (int, optional):          分 P 序号. Defaults to 0.
-            credential (Credential, optional):   Credential 类. Defaults to None.
-            debug (bool, optional):              调试模式，将输出更详细信息. Defaults to False.
+            bvid       (str, optional)       : BVID. Defaults to None.
+            aid        (int, optional)       : AID. Defaults to None.
+            page_index (int, optional)       : 分 P 序号. Defaults to 0.
+            credential (Credential, optional): Credential 类. Defaults to None.
+            debug      (bool, optional)      : 调试模式，将输出更详细信息. Defaults to False.
         """
         super().__init__()
         self.credential = credential
@@ -940,6 +945,9 @@ class VideoOnlineMonitor(AsyncEvent):
         await self.__ws.close()
 
     async def __main(self):
+        """
+        入口。
+        """
         # 获取分 P id
         pages = await self.__video.get_pages()
         if self.__page_index >= len(pages):
@@ -949,7 +957,11 @@ class VideoOnlineMonitor(AsyncEvent):
         # 获取服务器信息
         self.logger.debug(f'准备连接：{self.__video.get_bvid()}')
         self.logger.debug(f'获取服务器信息中...')
-        resp = await request('GET', 'https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc', credential=self.credential)
+        resp = await request(
+            'GET', 
+            'https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc', 
+            credential=self.credential)
+
         uri = f"wss://{resp['domain']}:{resp['wss_port']}/sub"
         self.__heartbeat_interval = resp['heartbeat']
         self.logger.debug(f'服务器信息获取成功，URI：{uri}')
@@ -984,6 +996,12 @@ class VideoOnlineMonitor(AsyncEvent):
                     break
 
     async def __handle_data(self, data: list[dict]):
+        """
+        处理数据。
+
+        Args:
+            data (list[dict]): 收到的数据（已解析好）。
+        """
         for d in data:
             if d['type'] == VideoOnlineMonitor.Datapack.SERVER_VERIFY.value:
                 # 服务器认证反馈。
@@ -1077,7 +1095,7 @@ class VideoOnlineMonitor(AsyncEvent):
             data_type (VideoOnlineMonitor.DataType):  数据包类型枚举。
 
         Returns:
-            bytes, 打包好的数据。
+            bytes: 打包好的数据。
         """
         packed_data = bytearray()
         packed_data += struct.pack('>I', 0x00120001)
@@ -1097,7 +1115,7 @@ class VideoOnlineMonitor(AsyncEvent):
             data (bytes):  原始数据。
 
         Returns:
-            tuple(dict), 解包后的数据。
+            tuple(dict): 解包后的数据。
         """
         offset = 0
         real_data = []
@@ -1121,9 +1139,9 @@ class VideoUploaderPageObject:
     def __init__(self, video_stream: io.BufferedIOBase, title: str, description: str = ""):
         """
         Args:
-            video_stream (io.BufferedIOBase):       分 P 视频流。可以是 open() 返回的 FileIO 对象。
-            title (str):                            分 P 标题。
-            description (str, optional):            分 P 描述. Defaults to "".
+            video_stream (io.BufferedIOBase): 分 P 视频流。可以是 open() 返回的 FileIO 对象。
+            title        (str)              : 分 P 标题。
+            description  (str, optional)    : 分 P 描述. Defaults to "".
         """
         self.stream = video_stream
         self.title = title
@@ -1146,16 +1164,28 @@ class VideoUploader(AsyncEvent):
     """
     视频上传。任何上传中的出错将会直接抛出错误并终止上传。
 
-    EventType:
-
-    COVER_SUCCESS   封面上传成功。回调数据：封面 URL。
-    BEGIN           开始上传分 P。回调参数：VideoUploaderPageObject
-    CHUNK_BEGIN     开始上传分 P 分块。回调参数：VideoUploaderPageObject, {"chunk_index": "int, 分块编号", "total_chunk": "int, 总共有多少个分块"}
-    CHUNK_END       分块上传结束。回调参数：VideoUploaderPageObject
-    END             分 P 上传结束。回调参数：VideoUploaderPageObject
+    Events:
+        COVER_SUCCESS   封面上传成功。CallbackData：封面 URL。
+        BEGIN           开始上传分 P。CallbackData：VideoUploaderPageObject
+        CHUNK_BEGIN     开始上传分 P 分块。
+                        CallbackData：
+                            VideoUploaderPageObject, 
+                            {
+                                "chunk_index": "int: 分块编号", 
+                                "total_chunk": "int: 总共有多少个分块",
+                                "start": "int: 该 chunk 数据开始位置",
+                                "end": "int: 该 chunk 数据结束位置"
+                            }
+        CHUNK_END       分块上传结束。CallbackData：VideoUploaderPageObject
+        END             分 P 上传结束。CallbackData：VideoUploaderPageObject
     """
 
-    def __init__(self, cover: io.BufferedIOBase, cover_type: str, pages: list[VideoUploaderPageObject], config: dict, credential: Credential):
+    def __init__(self, 
+        cover: io.BufferedIOBase, 
+        cover_type: str, 
+        pages: list[VideoUploaderPageObject], 
+        config: dict, 
+        credential: Credential):
         """
         Args:
             cover      (io.BufferedIOBase)            : 封面 io 类，比如调用 open() 打开文件后的返回值。
@@ -1171,7 +1201,7 @@ class VideoUploader(AsyncEvent):
         self.__config = {}
         self.__session = get_session()
         self.credential = credential
-        
+
         credential.raise_for_no_sessdata()
         credential.raise_for_no_bili_jct()
 
@@ -1227,7 +1257,7 @@ class VideoUploader(AsyncEvent):
         获取配置。
 
         Returns:
-            dict, 视频配置。
+            dict: 视频配置。
         """
         return copy(self.__config)
 
@@ -1251,7 +1281,7 @@ class VideoUploader(AsyncEvent):
                 "filename": filename,
                 "page": page
             })
-        
+
         # 提交视频
         result = await self.__submit(cover_url, videos)
         return result
@@ -1263,7 +1293,7 @@ class VideoUploader(AsyncEvent):
         Args:
             cover  (str) : 封面 URL。
             videos (list): 要提交的视频，格式参照 self.start() 中的代码。
-        
+
         Returns:
             dict: 包含 bvid 和 aid 的字典。
         """
@@ -1282,12 +1312,12 @@ class VideoUploader(AsyncEvent):
         params = {
             "csrf": self.credential.bili_jct
         }
-        return await request("POST", "https://member.bilibili.com/x/vu/web/add", 
-        data=data, 
-        params=params, 
-        credential=self.credential, 
-        no_csrf=True,
-        json_body=True)
+        return await request("POST", "https://member.bilibili.com/x/vu/web/add",
+                             data=data,
+                             params=params,
+                             credential=self.credential,
+                             no_csrf=True,
+                             json_body=True)
 
     async def __upload_cover(self):
         """
@@ -1337,7 +1367,12 @@ class VideoUploader(AsyncEvent):
             "Referer": "https://member.bilibili.com",
             "X-Upos-Auth": auth,
         }
-        async with self.__session.post(url, params= {"uploads": "", "output": "json"}, headers=headers, cookies=self.credential.get_cookies()) as resp:
+        async with self.__session.post(
+            url=url, 
+            params={"uploads": "", "output": "json"}, 
+            headers=headers, 
+            cookies=self.credential.get_cookies()) as resp:
+
             data = await resp.read()
             data = json.loads(data)
             upload_id = data["upload_id"]
@@ -1353,7 +1388,9 @@ class VideoUploader(AsyncEvent):
         remain_size = total_size
         for i, offset in enumerate(chunk_offsets):
             length = chunk_size if remain_size > chunk_size else remain_size
-            chunks.append(self.__upload_chunk(offset, length, total_size, total_chunks_count, page.stream, url, auth, i, upload_id, page))
+            chunks.append(self.__upload_chunk(offset, length, total_size,
+                                              total_chunks_count, page.stream, 
+                                              url, auth, i, upload_id, page))
             remain_size -= length
 
         # 分配并发线程
@@ -1399,7 +1436,13 @@ class VideoUploader(AsyncEvent):
         headers.update({
             "Content-Type": "application/json"
         })
-        async with self.__session.post(url, params=params, data=json.dumps(data), headers=headers, cookies=self.credential.get_cookies()) as resp:
+        async with self.__session.post(
+            url=url, 
+            params=params, 
+            data=json.dumps(data), 
+            headers=headers, 
+            cookies=self.credential.get_cookies()) as resp:
+            
             data = await resp.read()
             data = json.loads(data)
             if data["OK"] != 1:
@@ -1417,18 +1460,18 @@ class VideoUploader(AsyncEvent):
         for chunk in chunks:
             await chunk
 
-    async def __upload_chunk(self, 
-        start: int, 
-        length: int, 
-        total_size: int, 
-        total_chunks_count: int, 
-        stream: io.BufferedIOBase, 
-        url: str, 
-        auth: str,
-        index: int,
-        upload_id: str,
-        page: VideoUploaderPageObject
-        ):
+    async def __upload_chunk(self,
+                             start: int,
+                             length: int,
+                             total_size: int,
+                             total_chunks_count: int,
+                             stream: io.BufferedIOBase,
+                             url: str,
+                             auth: str,
+                             index: int,
+                             upload_id: str,
+                             page: VideoUploaderPageObject
+                             ):
         """
         上传分块。
 
@@ -1446,7 +1489,9 @@ class VideoUploader(AsyncEvent):
         """
         callback_data = {
             "chunk_index": index + 1,
-            "total_chunk": total_chunks_count
+            "total_chunk": total_chunks_count,
+            "start": start,
+            "end": start + length
         }
         self.dispatch("CHUNK_BEGIN", page, callback_data)
         headers = {
@@ -1466,7 +1511,13 @@ class VideoUploader(AsyncEvent):
             "total": total_size
         }
         stream.seek(start)
-        async with self.__session.put(url, headers=headers, params=params, data=stream.read(length), cookies=self.credential.get_cookies()) as resp:
+        async with self.__session.put(
+            url=url, 
+            headers=headers, 
+            params=params, 
+            data=stream.read(length), 
+            cookies=self.credential.get_cookies()) as resp:
+
             await resp.wait_for_close()
         self.dispatch("CHUNK_END", page, callback_data)
 
@@ -1497,7 +1548,7 @@ class VideoUploader(AsyncEvent):
                 "User-Agent": "Mozilla/5.0",
                 "Referer": "https://www.bilibili.com"
             }
-            ) as resp:
+        ) as resp:
             data = await resp.json()
             if data["OK"] != 1:
                 raise VideoUploadException("获取上传信息失败：" + str(data))

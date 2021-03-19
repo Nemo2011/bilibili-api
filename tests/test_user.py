@@ -19,7 +19,7 @@ async def test_get_relation_info():
 
 
 async def test_get_up_info():
-    return await u.get_up_info()
+    return await u.get_up_stat()
 
 
 async def test_get_live_info():
