@@ -838,6 +838,28 @@ class Video:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
+    async def set_favorite(self, add_media_ids: list[int] = [], del_media_ids: list[int] = []):
+        """
+        设置视频收藏状况。
+
+        Args:
+            add_media_ids (list[int], optional): 要添加到的收藏夹 ID. Defaults to [].
+            del_media_ids (list[int], optional): 要移出的收藏夹 ID. Defaults to [].
+
+        Returns:
+            dict: 调用 API 返回结果。
+        """
+        if len(add_media_ids) + len(del_media_ids) == 0:
+            raise ArgsException("对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。")
+
+        api = API["opera"]["favorite"]
+        data = {
+            "rid": self.get_aid(),
+            "type": 2,
+            "add_media_ids": ",".join(add_media_ids),
+            "del_media_ids": ",".join(del_media_ids),
+        }
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
 
 class VideoOnlineMonitor(AsyncEvent):
     """
@@ -958,8 +980,8 @@ class VideoOnlineMonitor(AsyncEvent):
         self.logger.debug(f'准备连接：{self.__video.get_bvid()}')
         self.logger.debug(f'获取服务器信息中...')
         resp = await request(
-            'GET', 
-            'https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc', 
+            'GET',
+            'https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc',
             credential=self.credential)
 
         uri = f"wss://{resp['domain']}:{resp['wss_port']}/sub"
@@ -1169,9 +1191,9 @@ class VideoUploader(AsyncEvent):
         BEGIN           开始上传分 P。CallbackData：VideoUploaderPageObject
         CHUNK_BEGIN     开始上传分 P 分块。
                         CallbackData：
-                            VideoUploaderPageObject, 
+                            VideoUploaderPageObject,
                             {
-                                "chunk_index": "int: 分块编号", 
+                                "chunk_index": "int: 分块编号",
                                 "total_chunk": "int: 总共有多少个分块",
                                 "start": "int: 该 chunk 数据开始位置",
                                 "end": "int: 该 chunk 数据结束位置"
@@ -1180,11 +1202,11 @@ class VideoUploader(AsyncEvent):
         END             分 P 上传结束。CallbackData：VideoUploaderPageObject
     """
 
-    def __init__(self, 
-        cover: io.BufferedIOBase, 
-        cover_type: str, 
-        pages: list[VideoUploaderPageObject], 
-        config: dict, 
+    def __init__(self,
+        cover: io.BufferedIOBase,
+        cover_type: str,
+        pages: list[VideoUploaderPageObject],
+        config: dict,
         credential: Credential):
         """
         Args:
@@ -1368,9 +1390,9 @@ class VideoUploader(AsyncEvent):
             "X-Upos-Auth": auth,
         }
         async with self.__session.post(
-            url=url, 
-            params={"uploads": "", "output": "json"}, 
-            headers=headers, 
+            url=url,
+            params={"uploads": "", "output": "json"},
+            headers=headers,
             cookies=self.credential.get_cookies()) as resp:
 
             data = await resp.read()
@@ -1389,7 +1411,7 @@ class VideoUploader(AsyncEvent):
         for i, offset in enumerate(chunk_offsets):
             length = chunk_size if remain_size > chunk_size else remain_size
             chunks.append(self.__upload_chunk(offset, length, total_size,
-                                              total_chunks_count, page.stream, 
+                                              total_chunks_count, page.stream,
                                               url, auth, i, upload_id, page))
             remain_size -= length
 
@@ -1437,12 +1459,12 @@ class VideoUploader(AsyncEvent):
             "Content-Type": "application/json"
         })
         async with self.__session.post(
-            url=url, 
-            params=params, 
-            data=json.dumps(data), 
-            headers=headers, 
+            url=url,
+            params=params,
+            data=json.dumps(data),
+            headers=headers,
             cookies=self.credential.get_cookies()) as resp:
-            
+
             data = await resp.read()
             data = json.loads(data)
             if data["OK"] != 1:
@@ -1512,10 +1534,10 @@ class VideoUploader(AsyncEvent):
         }
         stream.seek(start)
         async with self.__session.put(
-            url=url, 
-            headers=headers, 
-            params=params, 
-            data=stream.read(length), 
+            url=url,
+            headers=headers,
+            params=params,
+            data=stream.read(length),
             cookies=self.credential.get_cookies()) as resp:
 
             await resp.wait_for_close()
