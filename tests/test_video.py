@@ -1,3 +1,4 @@
+import asyncio
 import time
 from bilibili_api.utils.Danmaku import Danmaku
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
@@ -176,10 +177,17 @@ async def test_subscribe_and_unsubscribe_tag():
 
 async def test_VideoOnlineMonitor():
     v = video_m.VideoOnlineMonitor(aid=AID, debug=True)
-    
+
     async def handler(data):
         print(data)
         await v.disconnect()
 
     v.add_event_listener("ONLINE", handler)
     await v.connect()
+
+
+async def test_set_favorite():
+    data = await video.set_favorite([1195349595])
+    await asyncio.sleep(0.5)
+    await video.set_favorite(del_media_ids=[1195349595])
+    return data

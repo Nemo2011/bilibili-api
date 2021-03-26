@@ -166,6 +166,18 @@
         "tag_id": "标签id"
       },
       "comment": "取消订阅标签"
+    },
+    "favorite": {
+      "url": "https://api.bilibili.com/x/v3/fav/resource/deal",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "rid": "int: av 号。",
+        "type": "int: 类型。目前为 2。",
+        "add_media_ids": "commaList[int]: 要添加到的收藏夹 ID。",
+        "del_media_ids": "commaList[int]: 要移出的收藏夹 ID。"
+      },
+      "comment": "设置视频收藏状态"
     }
   },
   "danmaku": {

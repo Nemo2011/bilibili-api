@@ -3,11 +3,13 @@ indent_size = 4
 indent_style = space
 insert_final_newline = true
 end_of_line = lf
+trim_trailing_whitespace = true
 
 [*.json]
 indent_size = 2
 end_of_line = lf
 indent_style = space
+trim_trailing_whitespace = true
 
 [*.*]
-end_of_line = lf
+end_of_line = crlf
