@@ -850,16 +850,18 @@ class Video:
             dict: 调用 API 返回结果。
         """
         if len(add_media_ids) + len(del_media_ids) == 0:
-            raise ArgsException("对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。")
+            raise ArgsException(
+                "对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。")
 
-        api = API["opera"]["favorite"]
+        api = API["operate"]["favorite"]
         data = {
             "rid": self.get_aid(),
             "type": 2,
-            "add_media_ids": ",".join(add_media_ids),
-            "del_media_ids": ",".join(del_media_ids),
+            "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
+            "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
+
 
 class VideoOnlineMonitor(AsyncEvent):
     """
@@ -1203,11 +1205,11 @@ class VideoUploader(AsyncEvent):
     """
 
     def __init__(self,
-        cover: io.BufferedIOBase,
-        cover_type: str,
-        pages: list[VideoUploaderPageObject],
-        config: dict,
-        credential: Credential):
+                 cover: io.BufferedIOBase,
+                 cover_type: str,
+                 pages: list[VideoUploaderPageObject],
+                 config: dict,
+                 credential: Credential):
         """
         Args:
             cover      (io.BufferedIOBase)            : 封面 io 类，比如调用 open() 打开文件后的返回值。
@@ -1390,10 +1392,10 @@ class VideoUploader(AsyncEvent):
             "X-Upos-Auth": auth,
         }
         async with self.__session.post(
-            url=url,
-            params={"uploads": "", "output": "json"},
-            headers=headers,
-            cookies=self.credential.get_cookies()) as resp:
+                url=url,
+                params={"uploads": "", "output": "json"},
+                headers=headers,
+                cookies=self.credential.get_cookies()) as resp:
 
             data = await resp.read()
             data = json.loads(data)
@@ -1459,11 +1461,11 @@ class VideoUploader(AsyncEvent):
             "Content-Type": "application/json"
         })
         async with self.__session.post(
-            url=url,
-            params=params,
-            data=json.dumps(data),
-            headers=headers,
-            cookies=self.credential.get_cookies()) as resp:
+                url=url,
+                params=params,
+                data=json.dumps(data),
+                headers=headers,
+                cookies=self.credential.get_cookies()) as resp:
 
             data = await resp.read()
             data = json.loads(data)
@@ -1534,11 +1536,11 @@ class VideoUploader(AsyncEvent):
         }
         stream.seek(start)
         async with self.__session.put(
-            url=url,
-            headers=headers,
-            params=params,
-            data=stream.read(length),
-            cookies=self.credential.get_cookies()) as resp:
+                url=url,
+                headers=headers,
+                params=params,
+                data=stream.read(length),
+                cookies=self.credential.get_cookies()) as resp:
 
             await resp.wait_for_close()
         self.dispatch("CHUNK_END", page, callback_data)
