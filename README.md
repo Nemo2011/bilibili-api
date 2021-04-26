@@ -7,7 +7,8 @@
 [![API数量](https://img.shields.io/badge/API数量-100+-blue)][api.json]
 [![STARS](https://img.shields.io/github/stars/Passkou/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
-![Python](https://img.shields.io/badge/Python-3.9|3.8|3.7-blue) 
+![Python](https://img.shields.io/badge/Python-3.9|3.8|3.7-blue)
+[![Testing](https://github.com/Passkou/bilibili-api/actions/workflows/test.yml/badge.svg)](https://github.com/Passkou/bilibili-api/actions/workflows/test.yml)
 
 **开发文档**: [bilibili_api 开发文档][docs]
 
