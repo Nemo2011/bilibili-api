@@ -30,7 +30,6 @@ def collect_test_function(module):
     for name in dir(module):
         if name.startswith("test"):
             names.append(f"{name}")
-    names.reverse()
     return names
 
 RATELIMIT = float(os.getenv('BILI_RATELIMIT')) if os.getenv('BILI_RATELIMIT') is not None else 0
