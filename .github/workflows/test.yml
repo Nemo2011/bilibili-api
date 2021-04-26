@@ -7,7 +7,7 @@ on:
      - 'bilibili_api/**'
   
   schedule:
-    - cron: '0 12 * * 6'
+    - cron: '0 4 * * 6'
 
 jobs:
   test:
