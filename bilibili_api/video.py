@@ -986,7 +986,7 @@ class VideoOnlineMonitor(AsyncEvent):
             'https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc',
             credential=self.credential)
 
-        uri = f"wss://{resp['domain']}:{resp['wss_port']}/sub"
+        uri = f"wss://{resp['domain']}:{resp['wssPort']}/sub"
         self.__heartbeat_interval = resp['heartbeat']
         self.logger.debug(f'服务器信息获取成功，URI：{uri}')
 
