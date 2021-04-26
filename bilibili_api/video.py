@@ -721,6 +721,7 @@ class Video:
         """
         self.credential.raise_for_no_sessdata
         self.credential.raise_for_no_bili_jct()
+        self.credential.raise_for_no_buvid3()
 
         api = API["operate"]["like"]
         data = {

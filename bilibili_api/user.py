@@ -121,19 +121,16 @@ class User:
 
     async def __get_self_info(self):
         """
-        获取自己的信息。
+        获取自己的信息。如果存在缓存则使用缓存。
 
         Returns:
             dict: 调用接口返回的内容。
         """
         if self.__self_info is not None:
-            return copy(self.__self_info)
+            return self.__self_info
 
-        self.credential.raise_for_no_bili_jct()
-
-        url = "https://api.bilibili.com/x/web-interface/nav"
-        self.__self_info = await request("GET", url, credential=self.credential)
-        return copy(self.__self_info)
+        self.__self_info = await get_self_info(credential=self.credential)
+        return self.__self_info
 
     async def get_relation_info(self):
         """
@@ -420,3 +417,16 @@ class User:
             "mobi_app": "web"
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+
+async def get_self_info(credential: Credential):
+    """
+    获取自己的信息
+
+    Args:
+        credential (Credential): Credential
+    """
+    api = API["info"]["my_info"]
+    credential.raise_for_no_sessdata()
+
+    return await request("GET", api["url"], credential=credential)
