@@ -5,6 +5,7 @@ on:
     branches: ["v5"]
     paths:
      - 'bilibili_api/**'
+     - 'tests/**'
   
   schedule:
     - cron: '0 4 * * 6'
