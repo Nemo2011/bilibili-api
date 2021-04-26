@@ -1,7 +1,7 @@
 from bilibili_api import channel
 
 
-async def test_get_channel_info_by_tid():
+async def test_a_get_channel_info_by_tid():
     main_ch, sub_ch = await channel.get_channel_info_by_tid(1)
     assert main_ch["name"] == "动画", "主分区测试，tid=1 时，应当返回 动画 分区内容。"
 
@@ -11,7 +11,7 @@ async def test_get_channel_info_by_tid():
     return main_ch, sub_ch
 
 
-async def test_get_channel_info_by_name():
+async def test_b_get_channel_info_by_name():
     main_ch, sub_ch = await channel.get_channel_info_by_name("动画")
     assert main_ch["tid"] == 1, "子分区测试，name=动画 时，应当返回 tid=1。"
 
@@ -21,6 +21,6 @@ async def test_get_channel_info_by_name():
     return main_ch, sub_ch
 
 
-async def test_get_top10():
+async def test_c_get_top10():
     data = await channel.get_top10(0)
     return data

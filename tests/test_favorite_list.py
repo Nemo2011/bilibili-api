@@ -10,7 +10,43 @@ default_media_id = 1195349595
 
 credential = common.get_credential()
 
-async def before_all():
+
+async def test_a_get_video_favorite_list():
+    data = await favorite_list.get_video_favorite_list(uid, credential=credential)
+    return data
+
+
+async def test_b_get_video_favorite_list_content():
+    data = await favorite_list.get_video_favorite_list_content(1195349595, credential=credential)
+    return data
+
+
+async def test_c_get_topic_favorite_list():
+    data = await favorite_list.get_topic_favorite_list(credential=credential)
+    return data
+
+
+async def test_d_get_note_favorite_list():
+    data = await favorite_list.get_note_favorite_list(credential=credential)
+    return data
+
+
+async def test_e_get_album_favorite_list():
+    data = await favorite_list.get_album_favorite_list(credential=credential)
+    return data
+
+
+async def test_f_get_course_favorite_list():
+    data = await favorite_list.get_course_favorite_list(credential=credential)
+    return data
+
+
+async def test_g_get_note_favorite_list():
+    data = await favorite_list.get_note_favorite_list(credential=credential)
+    return data
+
+
+async def test_h_create_video_favorite_list():
     # 创建临时收藏夹
     rnd_name = random.randint(100000, 999999)
     data = await favorite_list.create_video_favorite_list(f"TESTING_{rnd_name}", "", False, credential=credential)
@@ -23,69 +59,30 @@ async def before_all():
         await v.set_favorite([media_id])
     return data
 
-async def test_get_video_favorite_list():
-    data = await favorite_list.get_video_favorite_list(uid, credential=credential)
-    return data
 
-
-async def test_get_video_favorite_list_content():
-    data = await favorite_list.get_video_favorite_list_content(1195349595, credential=credential)
-    return data
-
-
-async def test_get_topic_favorite_list():
-    data = await favorite_list.get_topic_favorite_list(credential=credential)
-    return data
-
-
-async def test_get_note_favorite_list():
-    data = await favorite_list.get_note_favorite_list(credential=credential)
-    return data
-
-
-async def test_get_album_favorite_list():
-    data = await favorite_list.get_album_favorite_list(credential=credential)
-    return data
-
-
-async def test_get_course_favorite_list():
-    data = await favorite_list.get_course_favorite_list(credential=credential)
-    return data
-
-
-async def test_get_note_favorite_list():
-    data = await favorite_list.get_note_favorite_list(credential=credential)
-    return data
-
-
-async def test_create_video_favorite_list():
-    return "已在 before_all() 中测试"
-
-
-async def test_modify_video_favorite_list():
+async def test_i_modify_video_favorite_list():
     rnd_name = random.randint(100000, 999999)
     data = await favorite_list.modify_video_favorite_list(media_id, f"TESTING_{rnd_name}", credential=credential)
     return data
 
 
-async def test_copy_video_favorite_list_content():
+async def test_j_copy_video_favorite_list_content():
     data = await favorite_list.copy_video_favorite_list_content(media_id, default_media_id, [aids[0]], credential=credential)
     return data
 
-
-async def test_move_video_favorite_list_content():
+async def test_k_move_video_favorite_list_content():
     data = await favorite_list.move_video_favorite_list_content(media_id, default_media_id, [aids[1]], credential=credential)
     return data
 
-async def test_clean_video_favorite_list_content():
+async def test_l_clean_video_favorite_list_content():
     data = await favorite_list.clean_video_favorite_list_content(media_id, credential)
     return data
 
-async def test_delete_video_favorite_list_content():
+async def test_m_delete_video_favorite_list_content():
     data = await favorite_list.delete_video_favorite_list_content(default_media_id, [aids[0]], credential=credential)
     return data
 
-async def test_delete_video_favorite_list():
+async def test_n_delete_video_favorite_list():
     data = await favorite_list.delete_video_favorite_list([media_id], credential)
     return data
 
