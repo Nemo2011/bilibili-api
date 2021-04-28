@@ -2,6 +2,7 @@ import asyncio
 from bilibili_api import user
 from . import common
 import time
+import random
 
 
 UID = 660303135
@@ -63,12 +64,37 @@ async def test_m_get_overview_stat():
 
 
 async def test_n_modify_relation():
+    # 后面 test_r_set_subscribe_group 会用到
     result = await u.modify_relation(user.RelationType.SUBSCRIBE)
     await asyncio.sleep(0.5)
-    await u.modify_relation(user.RelationType.UNSUBSCRIBE)
     return result
 
 
 async def test_o_send_msg():
     return await u.send_msg("THIS IS A TEST MSG. " + str(time.time()))
+
+subscribe_id = None
+
+async def test_p_create_subscribe_group():
+    name = f"TEST{random.randint(100000, 999999)}"
+    result = await user.create_subscribe_group(name, credential)
+    global subscribe_id
+    subscribe_id = result["tagid"]
+    return result
+
+async def test_q_rename_subscribe_group():
+    name = f"TEST{random.randint(100000, 999999)}"
+    result = await user.rename_subscribe_group(subscribe_id, name, credential)
+    return result
+
+async def test_r_set_subscribe_group():
+    result = await user.set_subscribe_group([UID], [subscribe_id], credential)
+    return result
+
+async def test_s_delete_subscribe_group():
+    result = await user.delete_subscribe_group(subscribe_id, credential)
+    return result
+
+async def after_all():
+    await u.modify_relation(user.RelationType.UNSUBSCRIBE)
 

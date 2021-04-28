@@ -11,7 +11,7 @@ from bilibili_api import user
 from bilibili_api.utils.network import request
 from bilibili_api.exceptions.ArgsException import ArgsException
 from bilibili_api.utils.Credential import Credential
-from .utils.utils import get_api
+from .utils.utils import get_api, join
 
 API = get_api("favorite-list")
 
@@ -290,7 +290,7 @@ async def delete_video_favorite_list(media_ids: list[int], credential: Credentia
     credential.raise_for_no_bili_jct()
 
     data = {
-        "media_ids": ",".join(map(lambda x: str(x), media_ids))
+        "media_ids": join(",", media_ids)
     }
     api = API["operate"]["delete"]
 
