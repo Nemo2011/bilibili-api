@@ -70,9 +70,9 @@ class Color:
         Returns:
             tuple[int, int, int], 分别为 R, G, B 的十进制数值。
         """
-        r = self.__color & 0x0000ff
+        b = self.__color & 0x0000ff
         g = (self.__color & 0x00ff00) >> 8
-        b = (self.__color & 0xff0000) >> 16
+        r = (self.__color & 0xff0000) >> 16
         return r, g, b
 
     def get_dec_color(self):
