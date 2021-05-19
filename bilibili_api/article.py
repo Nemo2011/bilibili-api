@@ -378,8 +378,8 @@ class ParagraphNode:
         self.align = 'left'
 
     def markdown(self):
-        content = "".join([node.markdown() + '\n\n' for node in self.children])
-        return content
+        content = "".join([node.markdown() for node in self.children])
+        return content + '\n\n'
 
     def json(self):
         return {
@@ -432,7 +432,7 @@ class ItalicNode:
         text = ''.join([node.markdown() for node in self.children])
         if len(text) == 0:
             return ""
-        return f"*{text}*"
+        return f" *{text}*"
 
     def json(self):
         return {
@@ -465,7 +465,7 @@ class DelNode:
         text = ''.join([node.markdown() for node in self.children])
         if len(text) == 0:
             return ""
-        return f"~~{text}~~"
+        return f" ~~{text}~~"
 
     def json(self):
         return {
