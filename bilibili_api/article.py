@@ -570,7 +570,8 @@ class ImageNode:
         self.alt = ''
 
     def markdown(self):
-        return f"![{self.alt}]({self.url})\n\n"
+        alt = self.alt.replace('[', '\\[')
+        return f"![{alt}]({self.url})\n\n"
 
     def json(self):
         return {
@@ -719,7 +720,8 @@ class AnchorNode:
         self.text = ''
 
     def markdown(self):
-        return f"[{self.text}]({self.url})"
+        text = self.text.replace('[', '\\[')
+        return f"[{text}]({self.url})"
 
     def json(self):
         return {
