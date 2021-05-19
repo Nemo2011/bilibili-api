@@ -102,7 +102,7 @@ class User:
         self.uid = uid
 
         if credential is None:
-            credential = Credential
+            credential = Credential()
         self.credential = credential
         self.__self_info = None
 
