@@ -58,7 +58,7 @@ class Danmaku:
             text (str):                         弹幕文本。
             dm_time (float, optional):          弹幕在视频中的位置，单位为秒。Defaults to 0.0.
             send_time (float, optional):        弹幕发送的时间。Defaults to time.time().
-            crc32_id (str, optional):           弹幕发送者经 CRC32 算法取摘要后的值。Defaults to None.
+            crc32_id (str, optional):           弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None.
             color (Color, optional):            弹幕颜色。Defaults to None.
             weight (int, optional):             弹幕在弹幕列表显示的权重。Defaults to -1.
             id_ (int, optional):                弹幕 ID。Defaults to -1.
@@ -84,7 +84,7 @@ class Danmaku:
         self.is_sub = is_sub
         self.pool = pool
         self.attr = attr
-        
+
         self.uid = None
 
     def __str__(self):

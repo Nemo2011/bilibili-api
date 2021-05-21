@@ -192,7 +192,7 @@
       },
       "comment": "给用户发信息"
     },
-    "add_subscribe_group": {
+    "create_subscribe_group": {
       "url": "https://api.bilibili.com/x/relation/tag/create",
       "method": "POST",
       "verify": true,
@@ -220,7 +220,7 @@
       },
       "comment": "重命名分组"
     },
-    "move_user_subscribe_group": {
+    "set_user_subscribe_group": {
       "url": "https://api.bilibili.com/x/relation/tags/addUsers",
       "method": "POST",
       "verify": true,

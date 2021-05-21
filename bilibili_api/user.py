@@ -10,7 +10,7 @@ import time
 from copy import copy
 
 from .utils.network import request
-from .utils.utils import get_api
+from .utils.utils import get_api, join
 from .utils.Credential import Credential
 
 
@@ -102,7 +102,7 @@ class User:
         self.uid = uid
 
         if credential is None:
-            credential = Credential
+            credential = Credential()
         self.credential = credential
         self.__self_info = None
 
@@ -121,19 +121,16 @@ class User:
 
     async def __get_self_info(self):
         """
-        获取自己的信息。
+        获取自己的信息。如果存在缓存则使用缓存。
 
         Returns:
             dict: 调用接口返回的内容。
         """
         if self.__self_info is not None:
-            return copy(self.__self_info)
+            return self.__self_info
 
-        self.credential.raise_for_no_bili_jct()
-
-        url = "https://api.bilibili.com/x/web-interface/nav"
-        self.__self_info = await request("GET", url, credential=self.credential)
-        return copy(self.__self_info)
+        self.__self_info = await get_self_info(credential=self.credential)
+        return self.__self_info
 
     async def get_relation_info(self):
         """
@@ -400,6 +397,8 @@ class User:
         Returns:
             dict: 调用接口返回的内容。
         """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["send_msg"]
         self_info = await self.__get_self_info()
@@ -420,3 +419,105 @@ class User:
             "mobi_app": "web"
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+async def get_self_info(credential: Credential):
+    """
+    获取自己的信息
+
+    Args:
+        credential (Credential): Credential
+    """
+    api = API["info"]["my_info"]
+    credential.raise_for_no_sessdata()
+
+    return await request("GET", api["url"], credential=credential)
+
+async def create_subscribe_group(name: str, credential: Credential):
+    """
+    创建用户关注分组
+
+    Args:
+        name       (str)       : 分组名
+        credential (Credential): Credential
+
+    Returns:
+        API 调用返回结果。
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+
+    api = API["operate"]["create_subscribe_group"]
+    data = {
+        "tag": name
+    }
+
+    return await request("POST", api["url"], data=data, credential=credential)
+
+
+async def delete_subscribe_group(group_id: int, credential: Credential):
+    """
+    删除用户关注分组
+
+    Args:
+        group_id   (int)       : 分组 ID
+        credential (Credential): Credential
+
+    Returns:
+        调用 API 返回结果
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+
+    api = API["operate"]["del_subscribe_group"]
+    data = {
+        "tagid": group_id
+    }
+
+    return await request("POST", api["url"], data=data, credential=credential)
+
+
+async def rename_subscribe_group(group_id: int, new_name: str, credential: Credential):
+    """
+    重命名关注分组
+
+    Args:
+        group_id   (int)       : 分组 ID
+        new_name   (str)       : 新的分组名
+        credential (Credential): Credential
+
+    Returns:
+        调用 API 返回结果
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+
+    api = API["operate"]["rename_subscribe_group"]
+    data = {
+        "tagid": group_id,
+        "name": new_name
+    }
+
+    return await request("POST", api["url"], data=data, credential=credential)
+
+async def set_subscribe_group(uids: list[int], group_ids: list[int], credential: Credential):
+    """
+    设置用户关注分组
+
+    Args:
+        uids       (list[int]) : 要设置的用户 UID 列表，必须已关注。
+        group_ids  (list[int]) : 要复制到的分组列表
+        credential (Credential): Credential
+
+    Returns:
+        API 调用结果
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+
+    api = API["operate"]["set_user_subscribe_group"]
+    data = {
+        "fids": join(",", uids),
+        "tagids": join(",", group_ids)
+    }
+
+    return await request("POST", api["url"], data=data, credential=credential)

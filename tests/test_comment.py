@@ -10,7 +10,7 @@ AID = 271
 credential = common.get_credential()
 
 
-async def test_get_comments():
+async def test_a_get_comments():
     result = await comment.get_comments(oid=AID, type_=comment.ResourceType.VIDEO)
     return result
 
@@ -18,7 +18,7 @@ async def test_get_comments():
 comment_id = None
 
 
-async def test_send_comment():
+async def test_b_send_comment():
     print("测试回复视频")
     result = await comment.send_comment("测试" + str(random.random()), oid=AID, type_=comment.ResourceType.VIDEO, credential=credential)
     global comment_id
@@ -34,17 +34,17 @@ async def test_send_comment():
     return result
 
 
-async def test_like_comment():
+async def test_c_like_comment():
     cmt = comment.Comment(oid=AID, type_=comment.ResourceType.VIDEO, rpid=comment_id, credential=credential)
     return await cmt.like()
 
 
-async def test_hate_comment():
+async def test_d_hate_comment():
     cmt = comment.Comment(oid=AID, type_=comment.ResourceType.VIDEO, rpid=comment_id, credential=credential)
     return await cmt.hate()
 
 
-async def test_pin_comment():
+async def test_e_pin_comment():
     cmt = comment.Comment(oid=AID, type_=comment.ResourceType.VIDEO, rpid=comment_id, credential=credential)
     try:
         info = await cmt.pin()
@@ -56,12 +56,12 @@ async def test_pin_comment():
         return e.raw
 
 
-async def test_get_sub_comments():
+async def test_f_get_sub_comments():
     cmt = comment.Comment(oid=AID, type_=comment.ResourceType.VIDEO, rpid=comment_id, credential=credential)
     return await cmt.get_sub_comments()
 
 
-async def test_delete_comment():
+async def test_g_delete_comment():
     cmt = comment.Comment(oid=AID, type_=comment.ResourceType.VIDEO, rpid=comment_id, credential=credential)
     return await cmt.delete()
 

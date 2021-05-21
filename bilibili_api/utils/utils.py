@@ -14,7 +14,7 @@ def get_api(field: str):
 
     Args:
         field (str): API 所属分类，即 data/api 下的文件名（不含后缀名）
-    
+
     Returns:
         dict, 该 API 的内容。
     """
@@ -35,8 +35,8 @@ def crack_uid(crc32: str):
 
     Args:
         crc32 (str):  crc32 计算摘要后的 UID。
-    
-    Returns: 
+
+    Returns:
         int, 真实用户 UID，不一定准确。
     """
     __CRCPOLYNOMIAL = 0xEDB88320
@@ -122,3 +122,16 @@ def crack_uid(crc32: str):
     if i == 10000000:
         return -1
     return str(i) + deepCheckData[1]
+
+def join(seperator: str, array: list):
+    """
+    用指定字符连接数组
+
+    Args:
+        seperator (str) : 分隔字符
+        array     (list): 数组
+
+    Returns:
+        str: 连接结果
+    """
+    return seperator.join(map(lambda x: str(x) ,array))
