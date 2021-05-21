@@ -1,15 +1,15 @@
 ![LOGO](https://pic.imgdb.cn/item/6023d5aa3ffa7d37b3cb1d23.png)
 
-# 该分支目前正在开发，不能使用
-
+**该分支正在开发中**
 # bilibili-api
 
 [![API数量](https://img.shields.io/badge/API数量-100+-blue)][api.json]
 [![STARS](https://img.shields.io/github/stars/Passkou/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
-![Python](https://img.shields.io/badge/Python-3.9|3.8|3.7-blue) 
+![Python](https://img.shields.io/badge/Python-3.9|3.8|3.7-blue)
+[![Testing](https://github.com/Passkou/bilibili-api/actions/workflows/test.yml/badge.svg)](https://github.com/Passkou/bilibili-api/actions/workflows/test.yml)
 
-**开发文档**: [bilibili_api 开发文档][docs]
+开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
 
 # 简介
 
@@ -93,15 +93,11 @@ if __name__ == '__main__':
 
 如果没有报错，就代表调用 API 成功，你可以到视频页面确认是不是调用成功了。
 
-**注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！**
-
-**注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！**
-
-**注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！**
+!> 注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！
 
 # FA♂Q
 
-## Q: 关于 API 调用的正确姿势是什么？
+**Q: 关于 API 调用的正确姿势是什么？**
 
 A: 所有 API 调用，请尽量使用 **指名方式** 传参，
 因为 API 较多，可能不同函数的传参顺序不一样，例子：
@@ -120,7 +116,7 @@ video.get_info(**kwargs)
 video.get_info("BV1uv411q7Mv")
 ```
 
-## Q: 为什么会提示 412 Precondition Failed ？
+**Q: 为什么会提示 412 Precondition Failed ？**
 
 A: 你的请求速度太快了。造成请求速度过快的原因可能是你写了高并发的代码。
 
@@ -132,15 +128,19 @@ from bilibili_api import settings
 settings.proxy = "http://your-proxy.com" # 里头填写你的代理地址
 ```
 
-## Q: 怎么没有我想要的功能？
+**Q: 怎么没有我想要的功能？**
 
 A: 你可以发 Issue 来提交你的需求，但是，最好的办法是自己写（懒）
 
-## Q: 我有一个大胆的想法，如何给代码库贡献？
+**Q: 我有一个大胆的想法，如何给代码库贡献？**
 
 A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在该分支上工作。
 如果你觉得已经可以了，请向项目仓库的 develop 分支发起 Pull request。
 如果你不明白这些操作的话，可以百度。
+
+**Q: 稳定性怎么样？**
+
+A: 由于该模块比较特殊，是爬虫模块，如果b站的接口变更，可能会马上失效。因此请始终保证是最新版本。如果发现问题可以提 [Issues][issues-new]。
 
 # 脚注
 
@@ -149,8 +149,10 @@ A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在�
 + \[3\] 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
 
 
-[docs]: https://github.com/Passkou/bilibili-api/blob/main/docs
+[docs]: https://www.passkou.com/bilibili-api/
+[docs-github]: https://github.com/Passkou/bilibili-api-docs
 [api.json]: https://github.com/Passkou/bilibili-api/tree/main/bilibili-api/data/api/
 [license]: https://github.com/Passkou/bilibili-api/tree/main/LICENSE.md
 [stargazers]: https://github.com/Passkou/bilibili-api/stargazers
+[issues-new]: https://github.com/Passkou/bilibili-api/issues/new
 [get-credential]: https://github.com/Passkou/bilibili-api/blob/main/docs/获取%20Credential%20类所需信息

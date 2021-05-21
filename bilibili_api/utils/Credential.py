@@ -3,6 +3,7 @@ bilibili_api.utils.Credential
 
 凭据类，用于各种请求操作的验证。
 """
+from bilibili_api.exceptions.CredentialNoBuvid3Exception import CredentialNoBuvid3Exception
 from ..exceptions import CredentialNoBiliJctException, CredentialNoSessdataException
 
 
@@ -49,6 +50,15 @@ class Credential:
         """
         return self.bili_jct is not None
 
+    def has_buvid3(self):
+        """
+        是否提供 buvid3
+
+        Returns:
+            bool.
+        """
+        return self.buvid3 is not None
+
     def raise_for_no_sessdata(self):
         """
         没有提供 sessdata 则抛出异常。
@@ -62,3 +72,10 @@ class Credential:
         """
         if not self.has_bili_jct():
             raise CredentialNoBiliJctException()
+
+    def raise_for_no_buvid3(self):
+        """
+        没有提供 buvid3 时抛出异常。
+        """
+        if not self.has_buvid3():
+            raise CredentialNoBuvid3Exception()

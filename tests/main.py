@@ -13,6 +13,7 @@ Environment:
     BILI_CSRF
     BILI_BUVID3
     BILI_RATELIMIT
+
 """
 import asyncio
 from colorama import Fore, init, Style
@@ -29,7 +30,6 @@ def collect_test_function(module):
     for name in dir(module):
         if name.startswith("test"):
             names.append(f"{name}")
-    names.reverse()
     return names
 
 RATELIMIT = float(os.getenv('BILI_RATELIMIT')) if os.getenv('BILI_RATELIMIT') is not None else 0
@@ -42,7 +42,7 @@ async def test(module):
     if "before_all" in dir(module):
         print(Fore.CYAN + '执行 before_all()')
         await module.before_all()
-        
+
     result = {
         "passed": 0,
         "failed": 0
@@ -122,7 +122,7 @@ async def main():
         "passed": 0,
         "failed": 0
     }
-    
+
     modules = get_should_test_module()
     for module in modules:
         result = await test(module)
