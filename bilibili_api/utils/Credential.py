@@ -30,7 +30,7 @@ class Credential:
         Returns:
             dict, 用于请求 Cookie。
         """
-        return {"SESSDATA": self.sessdata, "buvid3": self.buvid3}
+        return {"SESSDATA": self.sessdata, "buvid3": self.buvid3, 'bili_jct': self.bili_jct}
 
     def has_sessdata(self):
         """
