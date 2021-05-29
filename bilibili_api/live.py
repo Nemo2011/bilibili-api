@@ -3,13 +3,26 @@ bilibili_api.live
 
 直播相关
 """
+from asyncio.tasks import Task
 import time
 from enum import Enum
+import logging
+import json
+import struct
+import base64
+import asyncio
+import aiohttp
+import zlib
+
+from aiohttp.client_ws import ClientWebSocketResponse
+from aiohttp.http_websocket import WSMsgType
 
 from .utils.Credential import Credential
-from .utils.network import request
+from .utils.network import get_session, request
 from .utils.utils import get_api
 from .utils.Danmaku import Danmaku
+from .utils.AsyncEvent import AsyncEvent
+from .exceptions.LiveException import LiveException
 
 API = get_api("live")
 
@@ -318,3 +331,290 @@ class LiveRoom:
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
 
+
+class LiveDanmaku(AsyncEvent):
+    """
+    Websocket实时获取直播弹幕
+
+    常见事件名：
+    + DANMU_MSG: 用户发送弹幕
+    + SEND_GIFT: 礼物
+    + COMBO_SEND：礼物连击
+    + GUARD_BUY：续费大航海
+    + SUPER_CHAT_MESSAGE：醒目留言（SC）
+    + SUPER_CHAT_MESSAGE_JPN：醒目留言（带日语翻译？）
+    + WELCOME: 老爷进入房间
+    + WELCOME_GUARD: 房管进入房间
+    + NOTICE_MSG: 系统通知（全频道广播之类的）
+    + PREPARING: 直播准备中
+    + LIVE: 直播开始
+    + ROOM_REAL_TIME_MESSAGE_UPDATE: 粉丝数等更新
+    + ENTRY_EFFECT: 进场特效
+    + ROOM_RANK: 房间排名更新
+    + INTERACT_WORD: 用户进入直播间
+    + ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个xx小时榜
+    + 本模块自定义事件：
+    + VIEW: 直播间人气更新
+    + ALL: 所有事件
+    + DISCONNECT: 断开连接（传入连接状态码参数）
+    """
+    PROTOCOL_VERSION_RAW_JSON = 0
+    PROTOCOL_VERSION_HEARTBEAT = 1
+    PROTOCOL_VERSION_ZLIB_JSON = 2
+
+    DATAPACK_TYPE_HEARTBEAT = 2
+    DATAPACK_TYPE_HEARTBEAT_RESPONSE = 3
+    DATAPACK_TYPE_NOTICE = 5
+    DATAPACK_TYPE_VERIFY = 7
+    DATAPACK_TYPE_VERIFY_SUCCESS_RESPONSE = 8
+
+    STATUS_INIT = 0
+    STATUS_CONNECTING = 1
+    STATUS_ESTABLISHED = 2
+    STATUS_CLOSING = 3
+    STATUS_CLOSED = 4
+    STATUS_ERROR = 5
+
+    def __init__(self, room_display_id: int, debug: bool = False,
+                    credential: Credential = None):
+        super().__init__()
+
+        self.credential = credential if credential is not None else Credential()
+        self.room_display_id = room_display_id
+        self.__room_real_id = None
+        self.__status = 0
+        self.__ws = None
+        self.__tasks = []
+        self.__debug = debug
+
+        # logging
+        self.logger = logging.getLogger(f"LiveDanmaku_{self.room_display_id}")
+        self.logger.setLevel(logging.DEBUG if debug else logging.INFO)
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("[" + str(room_display_id) + "][%(asctime)s][%(levelname)s] %(message)s"))
+        self.logger.addHandler(handler)
+
+    def get_status(self):
+        """
+        获取连接状态
+
+        Returns:
+            int: 0 未连接，1 连接建立中，2 已连接，3 已正常断开，4 异常断开
+        """
+        return self.__status
+
+    async def connect(self):
+        """
+        连接直播间
+        :param return_coroutine: 是否返回房间入口的 Coroutine 而不是直接连接单个房间。用以自行进行更精准的异步控制。
+        :return:
+        """
+        if self.get_status() == self.STATUS_CONNECTING:
+            raise LiveException('正在建立连接中')
+
+        if self.get_status() == self.STATUS_ESTABLISHED:
+            raise LiveException('连接已建立，不可重复调用')
+
+        if self.get_status() == self.STATUS_CLOSING:
+            raise LiveException('正在关闭连接，不可调用')
+
+        await self.__main()
+
+
+    async def disconnect(self):
+        """
+        断开连接
+        """
+        self.__status = self.STATUS_CLOSING
+        self.logger.info('连接正在关闭')
+
+        while len(self.__tasks) > 0:
+            self.__tasks.pop().cancel()
+
+        await self.__ws.close()
+        self.__status = self.STATUS_CLOSED
+
+        self.logger.info('连接已关闭')
+
+
+    async def __main(self):
+        """
+        入口
+        """
+        self.__status == self.STATUS_CONNECTING
+
+        room = LiveRoom(self.room_display_id, self.credential)
+        # 获取真实房间号
+        self.logger.debug("正在获取真实房间号")
+        self.__room_real_id = (await room.get_room_play_info())["room_id"]
+        self.logger.debug(f"获取成功，真实房间号：{self.__room_real_id}")
+
+        # 获取直播服务器配置
+        self.logger.debug("正在获取聊天服务器配置")
+        conf = await room.get_chat_conf()
+        self.logger.debug("聊天服务器配置获取成功")
+
+        # 连接直播间
+        self.logger.debug("准备连接直播间")
+        session = get_session()
+
+        for host in conf["host_server_list"]:
+            port = host['wss_port']
+            protocol = "wss"
+            uri = f"{protocol}://{host['host']}:{port}/sub"
+            self.logger.debug(f"正在尝试连接主机： {uri}")
+
+            try:
+                async with session.ws_connect(uri) as ws:
+                    self.__ws = ws
+                    self.logger.debug(f"连接主机成功, 准备发送认证信息")
+                    await self.__send_verify_data(ws, conf['token'])
+
+                    # 新建心跳任务
+                    self.__tasks.append(asyncio.create_task(self.__heartbeat(ws)))
+
+                    async for msg in ws:
+                        if msg.type == aiohttp.WSMsgType.BINARY:
+                            await self.__handle_data(msg.data)
+
+                        elif msg.type == aiohttp.WSMsgType.ERROR:
+                            self.__status = self.STATUS_ERROR
+                            self.logger.error('出现错误')
+
+                        elif msg.type == aiohttp.WSMsgType.CLOSING:
+                            self.logger.debug('连接正在关闭')
+                            self.__status = self.STATUS_CLOSING
+
+                        elif msg.type == aiohttp.WSMsgType.CLOSED:
+                            self.logger.info('连接已关闭')
+                            self.__status = self.STATUS_CLOSED
+                break
+
+            except Exception as e:
+                self.logger.error('出现错误：' + str(e))
+                if self.__debug:
+                    raise e
+
+    async def __handle_data(self, data):
+        """
+        处理数据
+        """
+        data = self.__unpack(data)
+        self.logger.debug(f"收到信息：{data}")
+
+        for info in data:
+            callback_info = {
+                'room_display_id': self.room_display_id,
+                'room_real_id': self.__room_real_id
+            }
+            # 依次处理并调用用户指定函数
+            if info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_VERIFY_SUCCESS_RESPONSE:
+                # 认证反馈
+                if info["data"]["code"] == 0:
+                    # 认证成功反馈
+                    self.logger.info("连接服务器并认证成功")
+                    self.__status = self.STATUS_ESTABLISHED
+
+            elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_HEARTBEAT_RESPONSE:
+                # 心跳包反馈，返回直播间人气
+                self.logger.debug("收到心跳包反馈")
+                callback_info["type"] = 'VIEW'
+                callback_info["data"] = info["data"]["view"]
+                self.dispatch('VIEW', callback_info)
+                self.dispatch('ALL', callback_info)
+
+            elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE:
+                # 直播间弹幕、礼物等信息
+                callback_info["type"] = info["data"]["cmd"]
+                callback_info["data"] = info["data"]
+                self.dispatch(callback_info["type"], callback_info)
+                self.dispatch('ALL', callback_info)
+
+            else:
+                self.logger.warning("检测到未知的数据包类型，无法处理")
+
+    async def __send_verify_data(self, ws: ClientWebSocketResponse, token: str):
+        verifyData = {"uid": 0, "roomid": self.__room_real_id,
+                        "protover": 2, "platform": "web", "type": 2, "key": token}
+        data = json.dumps(verifyData).encode()
+        await self.__send(data, self.PROTOCOL_VERSION_HEARTBEAT, self.DATAPACK_TYPE_VERIFY, ws)
+
+
+    async def __heartbeat(self, ws: ClientWebSocketResponse):
+        """
+        定时发送心跳包
+        :return:
+        """
+        HEARTBEAT = base64.b64decode("AAAAHwAQAAEAAAACAAAAAVtvYmplY3QgT2JqZWN0XQ==")
+        while True:
+            self.logger.debug("发送心跳包")
+            await ws.send_bytes(HEARTBEAT)
+            await asyncio.sleep(30.0)
+
+    async def __send(self, data: bytes, protocol_version: int, datapack_type: int, ws: ClientWebSocketResponse):
+        """
+        自动打包并发送数据
+        :param data: 待发送的二进制数据
+        :param protocol_version: 数据包协议版本
+        :param datapack_type: 数据包类型
+        :return:
+        """
+        data = self.__pack(data, protocol_version, datapack_type)
+        await ws.send_bytes(data)
+
+    @classmethod
+    def __pack(cls, data: bytes, protocol_version: int, datapack_type: int):
+        """
+        打包数据
+        :param data: 待发送的二进制数据
+        :param protocol_version: 数据包协议版本
+        :param datapack_type: 数据包类型
+        :return:
+        """
+        sendData = bytearray()
+        sendData += struct.pack(">H", 16)
+        assert 0 <= protocol_version <= 2, LiveException("数据包协议版本错误，范围0~2")
+        sendData += struct.pack(">H", protocol_version)
+        assert datapack_type in [2, 7], LiveException("数据包类型错误，可用类型：2, 7")
+        sendData += struct.pack(">I", datapack_type)
+        sendData += struct.pack(">I", 1)
+        sendData += data
+        sendData = struct.pack(">I", len(sendData) + 4) + sendData
+        return bytes(sendData)
+
+    @classmethod
+    def __unpack(cls, data: bytes):
+        """
+        解包数据
+        :param data: 服务器传来的原始数据
+        :return:
+        """
+        ret = []
+        offset = 0
+        header = struct.unpack(">IHHII", data[:16])
+        if header[2] == 2:
+            realData = zlib.decompress(data[16:])
+        else:
+            realData = data
+
+        while offset < len(realData):
+            header = struct.unpack(">IHHII", realData[offset:offset + 16])
+            length = header[0]
+            recvData = {
+                "protocol_version": header[2],
+                "datapack_type": header[3],
+                "data": None
+            }
+            chunkData = realData[(offset + 16):(offset + length)]
+            if header[2] == 0:
+                recvData["data"] = json.loads(chunkData.decode())
+            elif header[2] == 2:
+                recvData["data"] = json.loads(chunkData.decode())
+            elif header[2] == 1:
+                if header[3] == cls.DATAPACK_TYPE_HEARTBEAT_RESPONSE:
+                    recvData["data"] = {"view": struct.unpack(">I", chunkData)[0]}
+                elif header[3] == cls.DATAPACK_TYPE_VERIFY_SUCCESS_RESPONSE:
+                    recvData["data"] = json.loads(chunkData.decode())
+            ret.append(recvData)
+            offset += length
+        return ret
