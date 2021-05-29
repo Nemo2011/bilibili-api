@@ -334,9 +334,10 @@ class LiveRoom:
 
 class LiveDanmaku(AsyncEvent):
     """
-    Websocket实时获取直播弹幕
+    Websocket 实时获取直播弹幕
 
     常见事件名：
+
     + DANMU_MSG: 用户发送弹幕
     + SEND_GIFT: 礼物
     + COMBO_SEND：礼物连击
@@ -406,8 +407,6 @@ class LiveDanmaku(AsyncEvent):
     async def connect(self):
         """
         连接直播间
-        :param return_coroutine: 是否返回房间入口的 Coroutine 而不是直接连接单个房间。用以自行进行更精准的异步控制。
-        :return:
         """
         if self.get_status() == self.STATUS_CONNECTING:
             raise LiveException('正在建立连接中')
@@ -543,7 +542,6 @@ class LiveDanmaku(AsyncEvent):
     async def __heartbeat(self, ws: ClientWebSocketResponse):
         """
         定时发送心跳包
-        :return:
         """
         HEARTBEAT = base64.b64decode("AAAAHwAQAAEAAAACAAAAAVtvYmplY3QgT2JqZWN0XQ==")
         while True:
@@ -554,10 +552,6 @@ class LiveDanmaku(AsyncEvent):
     async def __send(self, data: bytes, protocol_version: int, datapack_type: int, ws: ClientWebSocketResponse):
         """
         自动打包并发送数据
-        :param data: 待发送的二进制数据
-        :param protocol_version: 数据包协议版本
-        :param datapack_type: 数据包类型
-        :return:
         """
         data = self.__pack(data, protocol_version, datapack_type)
         await ws.send_bytes(data)
@@ -566,10 +560,6 @@ class LiveDanmaku(AsyncEvent):
     def __pack(cls, data: bytes, protocol_version: int, datapack_type: int):
         """
         打包数据
-        :param data: 待发送的二进制数据
-        :param protocol_version: 数据包协议版本
-        :param datapack_type: 数据包类型
-        :return:
         """
         sendData = bytearray()
         sendData += struct.pack(">H", 16)
@@ -586,8 +576,6 @@ class LiveDanmaku(AsyncEvent):
     def __unpack(cls, data: bytes):
         """
         解包数据
-        :param data: 服务器传来的原始数据
-        :return:
         """
         ret = []
         offset = 0
