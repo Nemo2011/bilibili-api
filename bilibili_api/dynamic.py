@@ -4,7 +4,6 @@
 bilibili_api.dynamic
 """
 
-from bilibili_api_old.exceptions import BilibiliApiException, BilibiliException
 from bilibili_api.exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 from bilibili_api.utils.network import get_session, request
 from bilibili_api.utils.Credential import Credential
