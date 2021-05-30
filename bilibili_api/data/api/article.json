@@ -8,6 +8,15 @@
         "id": "cv号"
       },
       "comment": "专栏信息数据"
+    },
+    "list": {
+      "url": "https://api.bilibili.com/x/article/list/web/articles",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "id": "id"
+      },
+      "comment": "获取文集文章列表"
     }
   },
   "operate": {

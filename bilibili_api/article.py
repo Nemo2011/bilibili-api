@@ -2,7 +2,6 @@
 
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.Credential import Credential
-from bilibili_api_old.exceptions import BilibiliApiException
 import json
 import re
 
@@ -51,6 +50,22 @@ ARTICLE_COLOR_MAP = {
     'gray-02': Color('929292'),
     'gray-03': Color('5f5f5f'),
 }
+
+async def get_article_list(rlid: int, credential: Credential = None):
+    """
+    获取专栏文集文章列表
+
+    Args:
+        rlid (int): 文集 ID，如 https://www.bilibili.com/read/readlist/rl000010 省略前导 0
+        credential (Credential, optional): [description]. Defaults to None.
+    """
+    credential = credential if credential is not None else Credential()
+
+    api = API['info']['list']
+    params = {
+        "id": rlid
+    }
+    return await request('GET', api['url'], params, credential=credential)
 
 class Article:
     def __init__(self, cvid: int, credential: Credential = None):

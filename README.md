@@ -1,6 +1,6 @@
 ![LOGO](https://pic.imgdb.cn/item/6023d5aa3ffa7d37b3cb1d23.png)
 
-**该分支正在开发中**
+**文档正在编写中：[bilibili_api 开发文档][docs] ([GitHub][docs-github])**
 # bilibili-api
 
 [![API数量](https://img.shields.io/badge/API数量-100+-blue)][api.json]
@@ -94,6 +94,14 @@ if __name__ == '__main__':
 如果没有报错，就代表调用 API 成功，你可以到视频页面确认是不是调用成功了。
 
 !> 注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！
+
+# 异步迁移
+
+由于从 v5 版本开始，全部改为异步，如果你不会异步，可以参考 [asyncio](https://docs.python.org/zh-cn/3/library/asyncio.html)
+
+异步可以进行并发请求，性能更高，不过如果请求过快仍然会导致被屏蔽。
+
+总的来说，异步比同步更有优势，所以不会的话可以去学一下，会发现新天地（误
 
 # FA♂Q
 

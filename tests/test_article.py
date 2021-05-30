@@ -31,6 +31,9 @@ async def test_d_add_coins():
 async def test_e_get_info():
     return await ar.get_info()
 
+async def test_f_get_article_list():
+    return await article.get_article_list(10)
+
 async def after_all():
     await ar.set_like(False)
     await ar.set_favorite(False)
