@@ -22,5 +22,5 @@ async def test_b_get_channel_info_by_name():
 
 
 async def test_c_get_top10():
-    data = await channel.get_top10(0)
+    data = await channel.get_top10(1)
     return data

@@ -63,7 +63,6 @@ class Audio:
             "multiply": num
         }
 
-        # TODO: 需要 DedeUserID cookie?
         return await request('POST', api['url'], data=data, credential=self.credential)
 
 
