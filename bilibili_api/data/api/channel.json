@@ -1,7 +1,7 @@
 {
   "ranking": {
     "get_top10": {
-      "url": "https://api.bilibili.com/x/web-interface/ranking/region?rid=160&day=3&original=0",
+      "url": "https://api.bilibili.com/x/web-interface/ranking/region",
       "method": "GET",
       "verify": false,
       "params": {
