@@ -3,7 +3,6 @@ bilibili_api.live
 
 直播相关
 """
-from asyncio.tasks import Task
 import time
 from enum import Enum
 import logging
