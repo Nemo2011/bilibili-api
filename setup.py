@@ -30,7 +30,8 @@ setuptools.setup(
     package_data={
         "": [
             "data/**/*.*",
-            "requirements.txt"
+            "requirements.txt",
+            "data/*.*"
         ]
     },
     install_requires=requires.splitlines(),
