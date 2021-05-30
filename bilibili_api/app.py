@@ -1,0 +1,80 @@
+"""
+手机 APP 相关
+"""
+
+from .utils.utils import get_api
+from .utils.Credential import Credential
+from .utils.network import request
+from hashlib import md5
+import time
+
+API = get_api('app')
+
+
+async def get_loading_images(mobi_app: str = "android", platform: str = "android",
+                           height: int = 1920, width: int = 1080,
+                           build: int = 999999999, birth: str = "",
+                           credential: Credential = None):
+    """
+    获取开屏启动画面
+
+    Args:
+        build (int): 客户端内部版本号
+        mobi_app (str): android / iphone / ipad
+        platform (str): android / ios    / ios
+        height (str): 屏幕高度
+        width (str): 屏幕宽度
+        birth (str): 生日日期(四位数，例 0101)
+
+    Returns:
+        注意：返回的图片受到许多参数影响，详细对应表请参考 开发文档/API 参考/app.md
+    """
+    credential = credential if credential is not None else Credential()
+
+    api = API["splash"]["list"]
+    params = {
+        "build": build,
+        "mobi_app": mobi_app,
+        "platform": platform,
+        "height": height,
+        "width": width,
+        "birth": birth
+    }
+    return await request('GET', api['url'], params, credential=credential)
+
+async def get_loading_images_special(mobi_app: str = "android", platform: str = "android",
+                           height: int = 1920, width: int = 1080,
+                           ts: int = int(time.time()),
+                           appkey: str = "1d8b6e7d45233436",
+                           appsec: str = "560c52ccd288fed045859ed18bffd973",
+                           credential: Credential = None):
+    """
+    获取特殊开屏启动画面
+
+    Args:
+        mobi_app (str): android / iphone / ipad
+        platform (str): android / ios    / ios
+        height (str): 屏幕高度
+        width (str): 屏幕宽度
+        appkey (str):
+        appsec (str):
+    """
+    credential = credential if credential is not None else Credential()
+
+    api = API["splash"]["brand"]
+    sign_params = "appkey="+appkey+"&mobi_app="+mobi_app+"&platform="+platform+"&screen_height="+str(height)+"&screen_width="+str(width)+"&ts="+str(ts)+appsec
+
+    sign = md5()
+    sign.update(sign_params.encode(encoding='utf-8'))
+    sign = sign.hexdigest()
+
+    params = {
+        "appkey": appkey,
+        "mobi_app": mobi_app,
+        "platform": platform,
+        "screen_height": height,
+        "screen_width": width,
+        "ts": ts,
+        "sign": sign
+    }
+    return await request('GET', api['url'], params, credential=credential)
