@@ -334,7 +334,7 @@ class LiveRoom:
 class LiveDanmaku(AsyncEvent):
     """
     Websocket 实时获取直播弹幕
-
+    
     常见事件名：
 
     + DANMU_MSG: 用户发送弹幕
