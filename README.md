@@ -163,4 +163,4 @@ A: 由于该模块比较特殊，是爬虫模块，如果b站的接口变更，�
 [license]: https://github.com/Passkou/bilibili-api/tree/main/LICENSE.md
 [stargazers]: https://github.com/Passkou/bilibili-api/stargazers
 [issues-new]: https://github.com/Passkou/bilibili-api/issues/new
-[get-credential]: https://github.com/Passkou/bilibili-api/blob/main/docs/获取%20Credential%20类所需信息
+[get-credential]: https://www.passkou.com/bilibili-api/#/get-credential
