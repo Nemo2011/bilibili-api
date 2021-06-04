@@ -14,7 +14,7 @@ class AsyncEvent:
     """
     def __init__(self):
         self.__handlers = {}
-        
+
     def add_event_listener(self, name: str, handler: Coroutine):
         """
         注册事件监听器。
@@ -40,7 +40,7 @@ class AsyncEvent:
             return func
 
         return decorator
-    
+
     def remove_event_listener(self, name: str, handler: Coroutine):
         """
         移除事件监听函数。
