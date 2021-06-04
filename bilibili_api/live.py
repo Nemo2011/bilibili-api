@@ -334,7 +334,7 @@ class LiveRoom:
 class LiveDanmaku(AsyncEvent):
     """
     Websocket 实时获取直播弹幕
-    
+
     常见事件名：
 
     + DANMU_MSG: 用户发送弹幕
@@ -524,6 +524,12 @@ class LiveDanmaku(AsyncEvent):
             elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE:
                 # 直播间弹幕、礼物等信息
                 callback_info["type"] = info["data"]["cmd"]
+
+                # DANMU_MSG 事件名特殊：DANMU_MSG:4:0:2:2:2:0，需取出事件名，暂不知格式
+                if callback_info["type"].find('DANMU_MSG') > -1:
+                     callback_info["type"] = 'DANMU_MSG'
+                     info["data"]["cmd"] = 'DANMU_MSG'
+
                 callback_info["data"] = info["data"]
                 self.dispatch(callback_info["type"], callback_info)
                 self.dispatch('ALL', callback_info)
