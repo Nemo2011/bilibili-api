@@ -640,7 +640,7 @@ class Video:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        
+
         self.credential.raise_for_no_sessdata()
         page_id = self.__get_page_id_by_index(page_index)
         api = API["danmaku"]["has_liked_danmaku"]
@@ -1034,7 +1034,7 @@ class VideoOnlineMonitor(AsyncEvent):
                 if d['data']['code'] == 0:
                     # 创建心跳 Task
                     heartbeat = asyncio.create_task(
-                        self.__heartbeat_task(), name="Heartbeat-Task")
+                        self.__heartbeat_task())
                     self.__tasks.append(heartbeat)
 
                     self.logger.info('连接服务器并验证成功')
@@ -1087,7 +1087,6 @@ class VideoOnlineMonitor(AsyncEvent):
         取消所有 Task。
         """
         for task in self.__tasks:
-            self.logger.debug("正在取消任务：" + task.get_name())
             task.cancel()
 
     @staticmethod
