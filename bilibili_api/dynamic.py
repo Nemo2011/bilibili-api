@@ -39,9 +39,9 @@ async def _parse_at(text: str):
             u = user.User(int(uid))
             user_info = await u.get_user_info()
 
-        except BilibiliApiException as e:
+        except exceptions.ResponseCodeException as e:
             if e.code == -404:
-                raise exceptions.BilibiliApiException(f"用户 uid={uid} 不存在")
+                raise exceptions.ResponseCodeException(f"用户 uid={uid} 不存在")
             else:
                 raise e
 
@@ -112,7 +112,7 @@ async def upload_image(image_path: str, credential: Credential):
     data = await resp.read()
     j = json.loads(data.decode('utf8'))
     if j['code'] != 0:
-        raise BilibiliException(j['code'], j['message'])
+        raise exceptions.ResponseCodeException(j['code'], j['message'])
     return j['data']
 
 
