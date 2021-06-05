@@ -81,11 +81,13 @@ from bilibili_api import video, Credential
 
 async def main():
     # 实例化 Credential 类
-    credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct")
+    credential = Credential(sessdata=SESSDATA, bili_jct=BILI_JCT, buvid3=BUVID3)
     # 实例化 Video 类
-    v = video.Video(bvid="BV1uv411q7Mv", credential=credential)
+    v = video.Video(bvid="BVxxxxxxxx", credential=credential)
+    info = await v.get_info()
+    print(info)
     # 给视频点赞
-    await v.set_like(True)
+    await v.like(True)
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(main())

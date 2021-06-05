@@ -284,8 +284,9 @@ class User:
         }
         data = await request("GET", url=api["url"], params=params, credential=self.credential)
         # card 字段自动转换成 JSON。
-        for card in data["cards"]:
-            card["card"] = json.loads(card["card"])
+        if 'cards' in data:
+            for card in data["cards"]:
+              card["card"] = json.loads(card["card"])
             card["extend_json"] = json.loads(card["extend_json"])
         return data
 
