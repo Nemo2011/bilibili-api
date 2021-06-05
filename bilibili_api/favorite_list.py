@@ -12,6 +12,7 @@ from bilibili_api.utils.network import request
 from bilibili_api.exceptions.ArgsException import ArgsException
 from bilibili_api.utils.Credential import Credential
 from .utils.utils import get_api, join
+from typing import List
 
 API = get_api("favorite-list")
 
@@ -274,7 +275,7 @@ async def modify_video_favorite_list(
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def delete_video_favorite_list(media_ids: list[int], credential: Credential):
+async def delete_video_favorite_list(media_ids: List[int], credential: Credential):
     """
     删除视频收藏夹，可批量删除。
 
@@ -297,14 +298,14 @@ async def delete_video_favorite_list(media_ids: list[int], credential: Credentia
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def copy_video_favorite_list_content(media_id_from: int, media_id_to: int, aids: list[int], credential: Credential):
+async def copy_video_favorite_list_content(media_id_from: int, media_id_to: int, aids: List[int], credential: Credential):
     """
     复制视频收藏夹内容
 
     Args:
         media_id_from (int)       : 要复制的源收藏夹 ID。
         media_id_to   (int)       : 目标收藏夹 ID。
-        aids          (list[int]) : 被复制的视频 ID 列表。
+        aids          (List[int]) : 被复制的视频 ID 列表。
         credential    (Credential): Credential.
 
     Returns:
@@ -327,14 +328,14 @@ async def copy_video_favorite_list_content(media_id_from: int, media_id_to: int,
 
 
 
-async def move_video_favorite_list_content(media_id_from: int, media_id_to: int, aids: list[int], credential: Credential):
+async def move_video_favorite_list_content(media_id_from: int, media_id_to: int, aids: List[int], credential: Credential):
     """
     移动视频收藏夹内容
 
     Args:
         media_id_from (int)       : 要复制的源收藏夹 ID。
         media_id_to   (int)       : 目标收藏夹 ID。
-        aids          (list[int]) : 被复制的视频 ID 列表。
+        aids          (List[int]) : 被复制的视频 ID 列表。
         credential    (Credential): Credential.
 
     Returns:
@@ -353,13 +354,13 @@ async def move_video_favorite_list_content(media_id_from: int, media_id_to: int,
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def delete_video_favorite_list_content(media_id: int, aids: list[int], credential: Credential):
+async def delete_video_favorite_list_content(media_id: int, aids: List[int], credential: Credential):
     """
     删除视频收藏夹内容
 
     Args:
         media_id   (int)       : 收藏夹 ID。
-        aids       (list[int]) : 被复制的视频 ID 列表。
+        aids       (List[int]) : 被复制的视频 ID 列表。
         credential (Credential): Credential.
 
     Returns:

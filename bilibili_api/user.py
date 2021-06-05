@@ -12,6 +12,7 @@ from copy import copy
 from .utils.network import request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
+from typing import List
 
 
 API = get_api("user")
@@ -499,13 +500,13 @@ async def rename_subscribe_group(group_id: int, new_name: str, credential: Crede
 
     return await request("POST", api["url"], data=data, credential=credential)
 
-async def set_subscribe_group(uids: list[int], group_ids: list[int], credential: Credential):
+async def set_subscribe_group(uids: List[int], group_ids: List[int], credential: Credential):
     """
     设置用户关注分组
 
     Args:
-        uids       (list[int]) : 要设置的用户 UID 列表，必须已关注。
-        group_ids  (list[int]) : 要复制到的分组列表
+        uids       (List[int]) : 要设置的用户 UID 列表，必须已关注。
+        group_ids  (List[int]) : 要复制到的分组列表
         credential (Credential): Credential
 
     Returns:

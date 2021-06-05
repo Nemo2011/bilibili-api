@@ -18,6 +18,7 @@ import json
 import struct
 import io
 import base64
+from typing import List
 
 from .exceptions import VideoUploadException
 from .exceptions import ResponseException
@@ -505,7 +506,7 @@ class Video:
             data       (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
 
         Returns:
-            list[Danmaku]: Danmaku 类的列表。
+            List[Danmaku]: Danmaku 类的列表。
         """
 
         if date is not None:
@@ -534,7 +535,7 @@ class Video:
             sge_count = view['dm_seg']['total']
 
         # 循环获取所有 segment
-        danmakus: list[Danmaku] = []
+        danmakus: List[Danmaku] = []
         for i in range(sge_count):
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
@@ -615,7 +616,7 @@ class Video:
             date       (datetime.date): 精确到年月。
 
         Returns:
-            None | list[str]: 调用 API 返回的结果。不存在时为 None。
+            None | List[str]: 调用 API 返回的结果。不存在时为 None。
         """
         self.credential.raise_for_no_sessdata()
 
@@ -628,18 +629,18 @@ class Video:
         }
         return await request("GET", url=api["url"], params=params, credential=self.credential)
 
-    async def has_liked_danmakus(self, page_index: int, ids: list[int]):
+    async def has_liked_danmakus(self, page_index: int, ids: List[int]):
         """
         是否已点赞弹幕。
 
         Args:
             page_index (int)      : 分 P 号，从 0 开始。
-            ids        (list[int]): 要查询的弹幕 ID 列表。
+            ids        (List[int]): 要查询的弹幕 ID 列表。
 
         Returns:
             dict: 调用 API 返回的结果。
         """
-
+        
         self.credential.raise_for_no_sessdata()
         page_id = self.__get_page_id_by_index(page_index)
         api = API["danmaku"]["has_liked_danmaku"]
@@ -839,13 +840,13 @@ class Video:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
-    async def set_favorite(self, add_media_ids: list[int] = [], del_media_ids: list[int] = []):
+    async def set_favorite(self, add_media_ids: List[int] = [], del_media_ids: List[int] = []):
         """
         设置视频收藏状况。
 
         Args:
-            add_media_ids (list[int], optional): 要添加到的收藏夹 ID. Defaults to [].
-            del_media_ids (list[int], optional): 要移出的收藏夹 ID. Defaults to [].
+            add_media_ids (List[int], optional): 要添加到的收藏夹 ID. Defaults to [].
+            del_media_ids (List[int], optional): 要移出的收藏夹 ID. Defaults to [].
 
         Returns:
             dict: 调用 API 返回结果。
@@ -1020,12 +1021,12 @@ class VideoOnlineMonitor(AsyncEvent):
                     self.dispatch("ERROR", msg)
                     break
 
-    async def __handle_data(self, data: list[dict]):
+    async def __handle_data(self, data: List[dict]):
         """
         处理数据。
 
         Args:
-            data (list[dict]): 收到的数据（已解析好）。
+            data (List[dict]): 收到的数据（已解析好）。
         """
         for d in data:
             if d['type'] == VideoOnlineMonitor.Datapack.SERVER_VERIFY.value:
@@ -1208,14 +1209,14 @@ class VideoUploader(AsyncEvent):
     def __init__(self,
                  cover: io.BufferedIOBase,
                  cover_type: str,
-                 pages: list[VideoUploaderPageObject],
+                 pages: List[VideoUploaderPageObject],
                  config: dict,
                  credential: Credential):
         """
         Args:
             cover      (io.BufferedIOBase)            : 封面 io 类，比如调用 open() 打开文件后的返回值。
             cover_type (str)                          : 封面数据 MIME 类型。常见类型对照 jpg: image/jpeg, png: image/png
-            pages      (list[VideoUploaderPageObject]): 分 P 视频列表。
+            pages      (List[VideoUploaderPageObject]): 分 P 视频列表。
             config     (dict)                         : 设置，格式参照 self.set_config()
             credential (Credential)                   : Credential 类。
         """
@@ -1426,7 +1427,7 @@ class VideoUploader(AsyncEvent):
                 tasks.append(self.__task([chunk]))
         else:
             # chunks 长度比最大并发数大
-            chunks_of_every_tasks: list[list[Coroutine]] = []
+            chunks_of_every_tasks: List[List[Coroutine]] = []
             for i in range(threads):
                 chunks_of_every_tasks.append([])
             i = 0
@@ -1475,12 +1476,12 @@ class VideoUploader(AsyncEvent):
         self.dispatch("END", page)
         return filename
 
-    async def __task(self, chunks: list[Coroutine]):
+    async def __task(self, chunks: List[Coroutine]):
         """
         按顺序执行 chunk coroutine.
 
         Args:
-            chunks (list[Coroutine]): Coroutine
+            chunks (List[Coroutine]): Coroutine
         """
         for chunk in chunks:
             await chunk

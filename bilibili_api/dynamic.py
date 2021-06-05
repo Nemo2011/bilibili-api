@@ -13,6 +13,7 @@ import re
 import json
 import datetime
 from aiohttp import FormData
+from typing import List
 
 API = utils.get_api('dynamic')
 
@@ -115,13 +116,13 @@ async def upload_image(image_path: str, credential: Credential):
     return j['data']
 
 
-async def _get_draw_data(text: str, images_path: list[str], credential: Credential):
+async def _get_draw_data(text: str, images_path: List[str], credential: Credential):
     """
     获取图片动态请求参数，将会自动上传图片
 
     Args:
         text (str): 文本内容
-        images_path (list[str]): 图片路径
+        images_path (List[str]): 图片路径
 
     """
     new_text, at_uids, ctrl = await _parse_at(text)
@@ -166,7 +167,7 @@ async def _get_draw_data(text: str, images_path: list[str], credential: Credenti
     return data
 
 
-async def send_dynamic(text: str, images_path: list[str] = None, send_time: datetime.datetime = None, credential: Credential = None):
+async def send_dynamic(text: str, images_path: List[str] = None, send_time: datetime.datetime = None, credential: Credential = None):
     """
     自动判断动态类型选择合适的 API 并发送动态
 
@@ -174,7 +175,7 @@ async def send_dynamic(text: str, images_path: list[str] = None, send_time: date
 
     Args:
         text        (str)                        : 动态文本
-        images_path (list[str], optional)        : 图片路径列表. Defaults to None.
+        images_path (List[str], optional)        : 图片路径列表. Defaults to None.
         send_time   (datetime.datetime, optional): 定时动态发送时间. Defaults to None.
         credential  (Credential)                 : 凭据
 
