@@ -1161,15 +1161,17 @@ class VideoUploaderPageObject:
     分 P 对象。
     """
 
-    def __init__(self, video_stream: io.BufferedIOBase, title: str, description: str = ""):
+    def __init__(self, video_stream: io.BufferedIOBase, title: str, extension: str, description: str = ""):
         """
         Args:
             video_stream (io.BufferedIOBase): 分 P 视频流。可以是 open() 返回的 FileIO 对象。
             title        (str)              : 分 P 标题。
+            extension        (str)          : 分 P 后缀名。mp4, mkv
             description  (str, optional)    : 分 P 描述. Defaults to "".
         """
         self.stream = video_stream
         self.title = title
+        self.extension = extension
         self.description = description
         self.__total_size = None
 
@@ -1303,7 +1305,7 @@ class VideoUploader(AsyncEvent):
         for page in self.pages:
             filename = await self.__upload_video(page)
             videos.append({
-                "filename": filename,
+                "filename": filename.split(".")[0], # only need the filename without extension returned from B server
                 "page": page
             })
 
@@ -1554,7 +1556,7 @@ class VideoUploader(AsyncEvent):
             page_object (VideoUploaderPageObject): VideoUploaderPageObject。
         """
         params = {
-            "name": page_object.title,
+            "name": ".".join([page_object.title, page_object.extension]),
             "size": page_object.get_total_size(),
             "r": "upos",
             "profile": "ugcupos/bup",
@@ -1571,7 +1573,9 @@ class VideoUploader(AsyncEvent):
             cookies=self.credential.get_cookies(),
             headers={
                 "User-Agent": "Mozilla/5.0",
-                "Referer": "https://www.bilibili.com"
+                "Referer": "https://memeber.bilibili.com"
+                #"Referer": "https://www.bilibili.com"
+                #"Referer": "https://member.bilibili.com/video/upload.html"
             }
         ) as resp:
             data = await resp.json()
