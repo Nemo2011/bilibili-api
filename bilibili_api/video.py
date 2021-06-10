@@ -215,7 +215,7 @@ class Video:
         info = await self.__get_info_cached()
         pages = info["pages"]
 
-        if len(pages) > (page_index + 1):
+        if len(pages) <= page_index:
             raise ArgsException("不存在该分 p。")
 
         page = pages[page_index]
