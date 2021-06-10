@@ -28,11 +28,11 @@ UPLOAD_CONFIG = {
   "up_close_reply": False, #"bool, 是否关闭评论。",
 }
 
-async def upload_video(video_file, cover_img, extension, title):
+async def upload_video(video_file, cover_img, video_format, title):
   cover = open(cover_img, "r+b")
   filename = os.path.basename(video_file).split(".")[0]
   print(filename)
-  v = video.VideoUploaderPageObject(video_stream=open(video_file, "r+b"), title=filename, extension=extension)
+  v = video.VideoUploaderPageObject(video_stream=open(video_file, "r+b"), title=filename, video_format=video_format)
 
   config = UPLOAD_CONFIG
   config["title"] = title
