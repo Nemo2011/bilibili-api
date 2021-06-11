@@ -1161,13 +1161,13 @@ class VideoUploaderPageObject:
     分 P 对象。
     """
 
-    def __init__(self, video_stream: io.BufferedIOBase, title: str, video_format: str, description: str = ""):
+    def __init__(self, video_stream: io.BufferedIOBase, title: str, video_format: str = "mp4", description: str = ""):
         """
         Args:
             video_stream (io.BufferedIOBase): 分 P 视频流。可以是 open() 返回的 FileIO 对象。
             title        (str)              : 分 P 标题。
-            video_format (str)              : 分 P 的视频格式。可以是 mp4, mkv, mov, wmv
-            description  (str, optional)    : 分 P 描述. Defaults to "".
+            video_format (str)              : 分 P 的视频格式。可以是 mp4, mkv, mov, wmv。 Default to “mp4”。
+            description  (str, optional)    : 分 P 描述。 Defaults to ""。
         """
         self.stream = video_stream
         self.title = title
