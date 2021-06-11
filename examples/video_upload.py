@@ -32,7 +32,10 @@ async def upload_video(video_file, cover_img, video_format, title):
   cover = open(cover_img, "r+b")
   filename = os.path.basename(video_file).split(".")[0]
   print(filename)
-  v = video.VideoUploaderPageObject(video_stream=open(video_file, "r+b"), title=filename, video_format=video_format)
+  if video_format == "mp4": # Only the show case for default value of video_format, which equals to mp4
+    v = video.VideoUploaderPageObject(video_stream=open(video_file, "r+b"), title=filename)
+  else:
+    v = video.VideoUploaderPageObject(video_stream=open(video_file, "r+b"), title=filename, video_format=video_format)
 
   config = UPLOAD_CONFIG
   config["title"] = title
