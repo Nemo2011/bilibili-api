@@ -8,7 +8,7 @@ with open("bilibili_api/requirements.txt", "r", encoding="utf8") as f:
 
 setuptools.setup(
     name='bilibili-api',
-    version='5.1.0',
+    version='5.1.1',
     license='GPLv3+',
     author='Passkou',
     description='哔哩哔哩的各种API调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。',
