@@ -7,7 +7,7 @@ import re
 
 import yaml
 from bilibili_api.utils.network import get_session, request
-from bilibili_api.exceptions.NetworkException import NetworkException
+from bilibili_api.exceptions.NetworkException import NetworkException, ApiException
 from bs4 import BeautifulSoup, element
 from datetime import datetime
 from bilibili_api.utils.Color import Color
@@ -90,7 +90,7 @@ class Article:
         Returns:
             str
         """
-        if not self._has_parsed: raise BilibiliApiException('请先调用 get_content()')
+        if not self._has_parsed: raise ApiException('请先调用 get_content()')
 
         content = "".join([node.markdown() for node in self.children])
 
@@ -102,7 +102,7 @@ class Article:
         """
         转换为 JSON 数据
         """
-        if not self._has_parsed: raise BilibiliApiException('请先调用 get_content()')
+        if not self._has_parsed: raise ApiException('请先调用 get_content()')
 
         return {
             "type": "Article",
@@ -134,42 +134,35 @@ class Article:
             """
             meta = {}
 
-            head_el: BeautifulSoup = document.select_one('.head-container')
-            ldjson_el: BeautifulSoup = document.select_one('script[type="application/ld+json"]')
-
-            ldjson_text: str = ldjson_el.contents[0]
+            head_el: BeautifulSoup = document.select_one('.title-container')
 
             meta['cvid'] = self.meta['cvid']
 
-            # 替换制表符为空格
-            ldjson_text = ldjson_text.replace('\t', '    ')
-            ldjson = json.loads(ldjson_text)
-
             # 标题
-            meta['title'] = ldjson['title']
+            meta['title'] = document.select_one('.title-container .title').contents[0].strip()
 
             # 分区
-            category_el: BeautifulSoup = head_el.select_one('.category-link')
+            category_el: BeautifulSoup = head_el.select_one('.category-name')
             meta['category'] = category_el.text.strip()
 
             # 发布时间
-            ctime_el: BeautifulSoup = head_el.select_one('.create-time')
-            meta['ctime'] = datetime.fromtimestamp(int(ctime_el.attrs['data-ts'])).strftime("%Y-%m-%d %H:%M:%S")
+            ctime_el: BeautifulSoup = head_el.select_one('.publish-text')
+            meta['ctime'] = datetime.strptime(ctime_el.contents[0].strip(), "%Y-%m-%d").strftime("%Y-%m-%d")
 
-            author_el: BeautifulSoup = document.select_one('.author-container')
+            author_el: BeautifulSoup = document.select_one('.article-up-info')
 
             # 作者名字
-            author_name_el: BeautifulSoup = author_el.select_one('.author-name')
+            author_name_el: BeautifulSoup = author_el.select_one('.up-name')
             meta['author_name'] = author_name_el.text.strip()
 
             # 作者空间地址
             meta['author_space'] = 'https:' + author_name_el.attrs['href']
 
             # 头图
-            meta['banner'] = ldjson['images']
+            meta['banner'] = document.select_one('meta[property="og:image"]').attrs['content']
 
             # 标签
-            tags_items_el = document.select('.tag-container .tag-content')
+            tags_items_el = document.select('.article-tags .tag-item')
             meta['tags'] = []
             for tag_el in tags_items_el:
                 meta['tags'].append(tag_el.contents[0].strip())
@@ -395,7 +388,7 @@ class Article:
         self.meta = find_meta()
 
         # 解析正文
-        body = document.select_one('.article-holder')
+        body = document.select_one('#read-article-holder')
         self.children =  parse(body)
 
         self._has_parsed = True
