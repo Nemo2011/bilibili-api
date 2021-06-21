@@ -1,0 +1,22 @@
+{
+  "videolist": {
+    "url": "https://member.bilibili.com/x/web/archive/view",
+    "method": "GET",
+    "verify": true,
+    "params": {
+      "bvid": "bv号"
+    },
+    "comment": "视频列表数据"
+  },
+  "savestory": {
+    "url": "https://api.bilibili.com/x/stein/graph/save",
+    "method": "POST",
+    "verify": true,
+    "data": {
+      "preview": "0 不清楚是什么",
+      "data": "故事树信息",
+      "csrf": "csrf 值"
+    },
+    "comment": "保存故事树"
+  }
+ }
