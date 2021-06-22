@@ -7,9 +7,7 @@ bilibili_api.video
 from copy import copy
 from enum import Enum
 from typing import Coroutine
-import aiohttp
 import re
-import json
 import datetime
 import asyncio
 import aiohttp
@@ -35,8 +33,6 @@ from .utils.BytesReader import BytesReader
 from .utils.AsyncEvent import AsyncEvent
 
 API = get_api("video")
-I_VIDEO_API = get_api("interactive_video")
-
 
 class Video:
     """
@@ -864,44 +860,6 @@ class Video:
             "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
-
-    async def get_interactive_video_list(self):
-      """
-      获取交互视频的分P信息。
-      
-      Returns:
-        dict: 调用 API 返回结果
-      """
-      api = I_VIDEO_API["videolist"]
-      params = {"bvid": self.get_bvid()}
-      return await request("GET", url=api["url"], params=params, credential=self.credential)
-
-    async def save_story_tree(self, story_tree: str):
-      """
-      上传交互视频的情节树。
-
-      Args:
-        story_tree: 情节树的描述，参考 bilibili_storytree.StoryGraph, 需要 Serialize 这个结构
-
-      Returns:
-        dict: 调用 API 返回结果
-      """
-      api = I_VIDEO_API["savestory"]
-      form_data = {"preview": "0", "data": story_tree, "csrf": self.credential.bili_jct}
-      headers = {
-          "User-Agent": "Mozilla/5.0",
-          "Referer": "https://member.bilibili.com",
-          "Content-Encoding" : "gzip, deflate, br",
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Accept": "application/json, text/plain, */*"
-      }
-      from urllib import parse
-      data = parse.urlencode(form_data)
-      return await request("POST", url=api["url"], data=data,
-                           headers=headers,
-                           no_csrf=True,
-                           credential=self.credential)
-
 
 class VideoOnlineMonitor(AsyncEvent):
     """
