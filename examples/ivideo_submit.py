@@ -1,15 +1,14 @@
 import os
 import asyncio
-from bilibili_api import video, Credential
+from bilibili_api import video, interactive_video, Credential
 import re
 from best_story import Oscar
 import json
 import time
 
-SESSDATA = "记得填"
+SESSDATA = "记得填" 
 BILI_JCT = "记得填"
 BUVID3 = "记得填"
-
 
 def reform_videos(videos):
   video_objs = {}
@@ -22,22 +21,22 @@ async def save_tree(bvid):
   credential = Credential(sessdata=SESSDATA, bili_jct=BILI_JCT, buvid3=BUVID3)
 
   # 实例化 Video 类
-  v = video.Video(bvid=bvid, credential=credential)
+  v = interactive_video.IVideo(bvid=bvid, credential=credential)
 
   # 查询交互视频信息
-  info = await v.get_interactive_video_list()
+  info = await v.get_video_pages()
   vobjs = reform_videos(info["videos"])
   aid = info["videos"][0]["aid"]
 
   # 自定义一个情节树
   g = Oscar(videos=vobjs, aid=aid)
-  g.gen_simple_graph(root_title="root") # pick one video title 
+  g.gen_simple_graph(root_title="root") # 记得改 pick one video title 
   g.graph.pretty_print()
   story = json.dumps({"graph": g.graph._serialize()})
   #print(story)
   
   # 上传情节树
-  graph_result = await v.save_story_tree(story)
+  graph_result = await v.submit_story_tree(story)
   return graph_result
 
 
@@ -93,5 +92,5 @@ if __name__ == '__main__':
   bvid = info["bvid"]
   time.sleep(120) # 为了 B 站视频编码的时间, 躺平 2 分钟
   graph_result = asyncio.get_event_loop().run_until_complete(save_tree(bvid))
-  print(graph_result) # 成功之后，编辑树会延迟，不超过5分钟。 如果觉得有问题，就再执行一次上个存树的命令, 这时多半立即执行，推测是队列机制。
+  print(graph_result) # 成功之后，编辑树会延迟，不超过5分钟。 如果觉得有问题，就在执行一次上个存树的命令, 这时多半立即执行，推测是队列机制。
   
