@@ -287,7 +287,7 @@ class User:
         if 'cards' in data:
             for card in data["cards"]:
               card["card"] = json.loads(card["card"])
-            card["extend_json"] = json.loads(card["extend_json"])
+              card["extend_json"] = json.loads(card["extend_json"])
         return data
 
     async def get_subscribed_bangumis(self, pn: int = 1, type_: BangumiType = BangumiType.BANGUMI):
