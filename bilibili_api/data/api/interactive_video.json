@@ -1,0 +1,39 @@
+{
+  "info": {
+    "videolist": {
+      "url": "https://member.bilibili.com/x/web/archive/view",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "bvid": "bv号"
+      },
+      "comment": "视频列表数据"
+    },
+    "playurl": {
+      "url": "https://api.bilibili.com/x/player/playurl",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "avid": "av号",
+        "cid": "分P编号",
+        "qn": "视频质量编号，最高120",
+        "otype": "json",
+        "fnval": 16
+      },
+      "comment": "视频下载的信息，下载链接需要提供headers伪装浏览器请求（Referer和User-Agent）"
+    }
+  },
+  "operate": {
+    "savestory": {
+      "url": "https://api.bilibili.com/x/stein/graph/save",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "preview": "0 不清楚是什么",
+        "data": "故事树信息",
+        "csrf": "csrf 值"
+      },
+      "comment": "保存故事树"
+    }
+  }
+}
