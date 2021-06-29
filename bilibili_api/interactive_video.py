@@ -6,15 +6,20 @@ bilibili_api.interactive_video
 
 import re
 from .exceptions import ArgsException
-
 from .utils.Credential import Credential
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.utils import get_api
 from .utils.network import request, get_session
+from .utils.Danmaku import Danmaku
+from .video import Video
+from typing import List
+from urllib import parse
+import datetime
 
-IVIDEO_API = get_api("interactive_video")
 
-class IVideo:
+API = get_api("interactive_video")
+
+class IVideo(Video):
     """
     互动视频类，各种对互动视频的操作将均在里面。TODO：持续更新。
     """
@@ -26,105 +31,124 @@ class IVideo:
             aid        (int, optional)       : AV 号. bvid 和 aid 必须提供其中之一。
             credential (Credential, optional): Credential 类. Defaults to None.
         """
-        # ID 检查
-        if bvid is not None:
-            self.set_bvid(bvid)
-        elif aid is not None:
-            self.set_aid(aid)
-        else:
-            # 未提供任一 ID
-            raise ArgsException("请至少提供 bvid 和 aid 中的其中一个参数。")
+        super().__init__(bvid=bvid, aid=aid, credential=credential)
+        self.__pages = None
 
-        # 未提供 credential 时初始化该类
-        if credential is None:
-            self.credential = Credential()
-        else:
-            self.credential = credential
-
-        # 用于存储视频信息，避免接口依赖视频信息时重复调用
-        self.__info = None
-
-    def set_bvid(self, bvid: str):
+    async def get_pages(self):
         """
-        设置 bvid。
-
-        Args:
-            bvid (str):   要设置的 bvid。
-        """
-        # 检查 bvid 是否有效
-        if not re.search("^BV[a-zA-Z0-9]{10}$", bvid):
-            raise ArgsException(
-                "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）。")
-        self.__bvid = bvid
-        self.__aid = bvid2aid(bvid)
-
-    def get_bvid(self):
-        """
-        获取 BVID。
+        获取交互视频的分P信息。
 
         Returns:
-            str: BVID。
-        """
-        return self.__bvid
-
-    def set_aid(self, aid: int):
-        """
-        设置 aid。
-
-        Args:
-            aid (int): AV 号。
-        """
-        if aid <= 0:
-            raise ArgsException("aid 不能小于或等于 0。")
-
-        self.__aid = aid
-        self.__bvid = aid2bvid(aid)
-
-    def get_aid(self):
-        """
-        获取 AID。
-
-        Returns:
-            int: aid。
-        """
-        return self.__aid
-
-
-    async def get_video_pages(self):
-      """
-      获取交互视频的分P信息。
-      
-      Returns:
         dict: 调用 API 返回结果
-      """
-      api = IVIDEO_API["videolist"]
-      params = {"bvid": self.get_bvid()}
-      return await request("GET", url=api["url"], params=params, credential=self.credential)
+        """
+        url = API["info"]["videolist"]["url"]
+        params = {"bvid": self.get_bvid()}
+        return await request("GET", url=url, params=params, credential=self.credential)
+
+    async def __get_pages_cached(self):
+        """
+        获取视频信息，如果已获取过则使用之前获取的信息，没有则重新获取。
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        if self.__pages is None:
+            return await self.get_pages()
+        return self.__pages
+
+
+    async def __get_page_id_by_index(self, page_index: int):
+        """
+        根据分 p 号获取 page_id。
+
+        Args:
+            page_index (int):   分 P 号，从 0 开始。
+
+        Returns:
+            int: 分 P 的唯一 ID。
+        """
+        if page_index < 0:
+            raise ArgsException("分 p 号必须大于或等于 0。")
+
+        info = await self.__get_pages_cached()
+        pages = info["videos"]
+
+        if len(pages) <= page_index:
+            raise ArgsException("不存在该分 p。")
+
+        page = pages[page_index]
+        cid = page["cid"]
+        return cid
+
+    async def get_download_url(self, page_index: int):
+        """
+        获取视频下载信息。
+
+        Args:
+            page_index (int):  分 P 号，从 0 开始。
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        cid = await self.__get_page_id_by_index(page_index)
+
+        url = API["info"]["playurl"]["url"]
+        params = {
+            "avid": self.get_aid(),
+            "cid": cid,
+            "qn": "120",
+            "otype": "json",
+            "fnval": 16
+        }
+        return await request("GET", url, params=params, credential=self.credential)
 
     async def submit_story_tree(self, story_tree: str):
-      """
-      上传交互视频的情节树。
+        """
+        上传交互视频的情节树。
 
-      Args:
+        Args:
         story_tree: 情节树的描述，参考 bilibili_storytree.StoryGraph, 需要 Serialize 这个结构
 
-      Returns:
+        Returns:
         dict: 调用 API 返回结果
-      """
-      api = IVIDEO_API["savestory"]
-      form_data = {"preview": "0", "data": story_tree, "csrf": self.credential.bili_jct}
-      headers = {
+        """
+        url = API["operate"]["savestory"]["url"]
+        form_data = {"preview": "0", "data": story_tree, "csrf": self.credential.bili_jct}
+        headers = {
           "User-Agent": "Mozilla/5.0",
           "Referer": "https://member.bilibili.com",
           "Content-Encoding" : "gzip, deflate, br",
           "Content-Type": "application/x-www-form-urlencoded",
           "Accept": "application/json, text/plain, */*"
-      }
-      from urllib import parse
-      data = parse.urlencode(form_data)
-      return await request("POST", url=api["url"], data=data,
+        }
+        data = parse.urlencode(form_data)
+        return await request("POST", url=url, data=data,
                            headers=headers,
                            no_csrf=True,
                            credential=self.credential)
 
+
+    async def get_chargers(self):
+        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
+
+    async def get_danmaku_view(self, page_index: int):
+        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
+
+    async def get_danmakus(self, page_index: int, date: datetime.date = None):
+        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
+
+    async def get_history_danmaku_index(self, page_index: int, date: datetime.date):
+        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
+
+    async def has_liked_danmakus(self, page_index: int, ids: List[int]):
+        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
+
+    async def send_danmaku(self, page_index: int, danmaku: Danmaku):
+        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
+
+    async def subscribe_tag(self, tag_id: int):
+        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
+
+    async def unsubscribe_tag(self, tag_id: int):
+        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
 
