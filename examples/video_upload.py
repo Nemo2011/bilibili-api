@@ -42,7 +42,7 @@ async def upload_video(video_file, cover_img, video_format, title):
 
   credential = Credential(sessdata=SESSDATA, bili_jct=BILI_JCT, buvid3=BUVID3)
 
-  uploader = video.VideoUploader(cover=cover, cover_type="jpg", pages=[v], config=config, credential=credential) 
+  uploader = video.VideoUploader(cover=cover, cover_type="jpg", pages=[v], config=config, credential=credential)
 
   await uploader.start()
 
@@ -57,9 +57,9 @@ if __name__ == '__main__':
   avi_video = "example.avi"
   wmv_video = "example.wmv"
   
-  asyncio.get_event_loop().run_until_complete(upload_videos(mp4_video, img_123, 'mp4', "first mp4"))
+  asyncio.get_event_loop().run_until_complete(upload_video(mp4_video, img_123, 'mp4', "first mp4"))
   asyncio.get_event_loop().run_until_complete(upload_video(mov_video, img_124, 'mov', "first mov"))
   asyncio.get_event_loop().run_until_complete(upload_video(avi_video, img_125, 'avi', "first avi"))
   asyncio.get_event_loop().run_until_complete(upload_video(wmv_video, img_126, 'wmv', "first wmv"))
 
-  
+

@@ -110,6 +110,9 @@ async def test_get_danmaku_history():
     data = await video.get_danmakus(0, date=datetime.date(2020, 1, 1))
     return data
 
+async def test_get_history_danmaku_index():
+    return await video.get_history_danmaku_index(0, datetime.date(2021, 6, 1))
+
 
 async def test_send_danmaku():
     dm = Danmaku("TESTING" + str(int(time.time())))

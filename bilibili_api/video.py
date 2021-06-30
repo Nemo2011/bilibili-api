@@ -503,7 +503,7 @@ class Video:
 
         Args:
             page_index (int)                    : 分 p 号，从 0 开始。
-            data       (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+            date       (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
 
         Returns:
             List[Danmaku]: Danmaku 类的列表。
@@ -620,7 +620,7 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
 
-        page_id = self.__get_page_id_by_index(page_index)
+        page_id = await self.__get_page_id_by_index(page_index)
         api = API["danmaku"]["get_history_danmaku_index"]
         params = {
             "oid": page_id,
@@ -1158,18 +1158,18 @@ class VideoOnlineMonitor(AsyncEvent):
 
 class VideoUploaderPageObject:
     """
-    分 P 对象。
+    视频上传分 P 对象。
     """
 
     def __init__(self, video_stream: io.BufferedIOBase, title: str, video_format: str = "mp4", description: str = ""):
         """
         Args:
-            video_stream (io.BufferedIOBase): 分 P 视频流。可以是 open() 返回的 FileIO 对象。
+            video_stream (io.BufferedIOBase): 分 P 视频流。可以是 `open()` 返回的 FileIO 对象。
             title        (str)              : 分 P 标题。
-            video_format (str)              : 分 P 的视频格式。可以是 mp4, mkv, mov, wmv。 Default to “mp4”。
+            video_format (str)              : 分 P 的视频格式。可以是 mp4, mkv, mov, wmv。 Default to "mp4"。
             description  (str, optional)    : 分 P 描述。 Defaults to ""。
         """
-        self.stream = video_stream
+        self.__stream = video_stream
         self.title = title
         self.video_format = video_format
         self.description = description
@@ -1180,31 +1180,41 @@ class VideoUploaderPageObject:
         获取总大小。
 
         Returns:
-            int: 文件总大小。
+            int: 视频流总大小。
         """
         if self.__total_size is None:
-            self.__total_size = len(self.stream.read())
+            self.__total_size = len(self.__stream.read())
         return self.__total_size
+
+    def get_stream(self):
+        """
+        获取视频流。
+
+        Returns:
+            io.BufferedIOBase: 视频流
+        """
+        return self.__stream
 
 
 class VideoUploader(AsyncEvent):
     """
     视频上传。任何上传中的出错将会直接抛出错误并终止上传。
 
-    Events:
-        COVER_SUCCESS   封面上传成功。CallbackData：封面 URL。
-        BEGIN           开始上传分 P。CallbackData：VideoUploaderPageObject
-        CHUNK_BEGIN     开始上传分 P 分块。
-                        CallbackData：
-                            VideoUploaderPageObject,
-                            {
-                                "chunk_index": "int: 分块编号",
-                                "total_chunk": "int: 总共有多少个分块",
-                                "start": "int: 该 chunk 数据开始位置",
-                                "end": "int: 该 chunk 数据结束位置"
-                            }
-        CHUNK_END       分块上传结束。CallbackData：VideoUploaderPageObject
-        END             分 P 上传结束。CallbackData：VideoUploaderPageObject
+    | name         | description       | callback                                                     |
+    | ------------ | ----------------- | ------------------------------------------------------------ |
+    | COVER_BEGIN  | 准备上传封面      | None                                                         |
+    | COVER_END    | 封面上传成功      | str: 封面 URL。                                              |
+    | PAGE_BEGIN   | 开始上传分 P      | VideoUploaderPageObject: 当前分 P 对象                       |
+    | CHUNK_BEGIN  | 开始上传分 P 分块 | {
+                                            "page": VideoUploaderPageObject #  分 P 对象,
+                                            "chunk_index": int,   # 区块编号
+                                            "total_chunk": int,   # 总区块数量
+                                            "range": Tuple[int, int]  # 数据范围
+                                        } |
+    | CHUNK_END    | 分块上传结束      | 同 CHUNK_BEGIN                                               |
+    | PAGE_END     | 分 P 上传结束     | VideoUploaderPageObject: 当前分 P 对象                       |
+    | SUBMIT_BEGIN | 准备提交视频      | dict: 准备提交的数据                                         |
+    | SUBMIT_END   | 提交视频结束      | dict: 调用 API 返回结果                                      |
     """
 
     def __init__(self,
@@ -1218,7 +1228,7 @@ class VideoUploader(AsyncEvent):
             cover      (io.BufferedIOBase)            : 封面 io 类，比如调用 open() 打开文件后的返回值。
             cover_type (str)                          : 封面数据 MIME 类型。常见类型对照 jpg: image/jpeg, png: image/png
             pages      (List[VideoUploaderPageObject]): 分 P 视频列表。
-            config     (dict)                         : 设置，格式参照 self.set_config()
+            config     (dict)                         : 视频信息，格式参照 self.set_config()
             credential (Credential)                   : Credential 类。
         """
         super().__init__()
@@ -1273,7 +1283,7 @@ class VideoUploader(AsyncEvent):
         ```
 
         Args:
-            config (dict): 上传配置
+            config (dict): 视频信息
         """
         if any(["videos" in config, "cover" in config]):
             raise ArgsException("不可手动设置参数：cover, videos。将会自动设置。")
@@ -1281,10 +1291,10 @@ class VideoUploader(AsyncEvent):
 
     def get_config(self):
         """
-        获取配置。
+        获取视频信息。
 
         Returns:
-            dict: 视频配置。
+            dict: 视频信息。
         """
         return copy(self.__config)
 
@@ -1296,9 +1306,10 @@ class VideoUploader(AsyncEvent):
             dict: 包含 bvid 和 aid 的字典。
         """
         # 上传封面
+        self.dispatch("COVER_BEGIN")
         cover_info = await self.__upload_cover()
         cover_url = cover_info["url"]
-        self.dispatch("COVER_SUCCESS", cover_url)
+        self.dispatch("COVER_END", cover_url)
 
         # 上传视频
         videos = []
@@ -1339,12 +1350,15 @@ class VideoUploader(AsyncEvent):
         params = {
             "csrf": self.credential.bili_jct
         }
-        return await request("POST", "https://member.bilibili.com/x/vu/web/add",
+        self.dispatch("SUBMIT_BEGIN", config)
+        resp = await request("POST", "https://member.bilibili.com/x/vu/web/add",
                              data=data,
                              params=params,
                              credential=self.credential,
                              no_csrf=True,
                              json_body=True)
+        self.dispatch("SUBMIT_END", resp)
+        return resp
 
     async def __upload_cover(self):
         """
@@ -1370,7 +1384,7 @@ class VideoUploader(AsyncEvent):
         Returns:
             str: filename，用于最后提交视频。
         """
-        self.dispatch("BEGIN", page)
+        self.dispatch("PAGE_BEGIN", page)
         # 获取上传信息
         upload_info = await self.__get_upload_info(page)
         # 最大并发数
@@ -1413,10 +1427,12 @@ class VideoUploader(AsyncEvent):
         # 初始化 chunk
         chunks = []
         remain_size = total_size
+
+        stream = page.get_stream()
         for i, offset in enumerate(chunk_offsets):
             length = chunk_size if remain_size > chunk_size else remain_size
             chunks.append(self.__upload_chunk(offset, length, total_size,
-                                              total_chunks_count, page.stream,
+                                              total_chunks_count, stream,
                                               url, auth, i, upload_id, page))
             remain_size -= length
 
@@ -1474,7 +1490,7 @@ class VideoUploader(AsyncEvent):
             data = json.loads(data)
             if data["OK"] != 1:
                 raise VideoUploadException("上传失败")
-        self.dispatch("END", page)
+        self.dispatch("PAGE_END", page)
         return filename
 
     async def __task(self, chunks: List[Coroutine]):
@@ -1515,12 +1531,12 @@ class VideoUploader(AsyncEvent):
             page               (VideoUploaderPageObject): VideoUploaderPageObject
         """
         callback_data = {
+            "page": page,
             "chunk_index": index + 1,
             "total_chunk": total_chunks_count,
-            "start": start,
-            "end": start + length
+            "range": (start, start + length)
         }
-        self.dispatch("CHUNK_BEGIN", page, callback_data)
+        self.dispatch("CHUNK_BEGIN", callback_data)
         headers = {
             "User-Agent": "Mozilla/5.0",
             "Referer": "https://member.bilibili.com",
@@ -1546,7 +1562,7 @@ class VideoUploader(AsyncEvent):
                 cookies=self.credential.get_cookies()) as resp:
 
             await resp.wait_for_close()
-        self.dispatch("CHUNK_END", page, callback_data)
+        self.dispatch("CHUNK_END", callback_data)
 
     async def __get_upload_info(self, page_object: VideoUploaderPageObject):
         """
