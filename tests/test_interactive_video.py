@@ -9,6 +9,12 @@ import datetime
 BVID = "BV1pK4y197mm"
 AID = 931111241
 
+BVID= "BV12r4y1A7sa"
+AID = 756973024
+
+BVID = "BV1Xw411Z7p6"
+AID = 333546484
+
 video = video_m.IVideo(BVID, credential=get_credential())
 
 async def test_set_bvid():
@@ -107,6 +113,14 @@ async def test_get_danmaku():
 async def test_get_danmaku_history():
     data = await video.get_danmakus(0, date=datetime.date(2020, 1, 1))
     return data
+
+async def test_get_danmaku_history_index():
+    data = await video.get_history_danmaku_index(0, date=datetime.date(2020, 1, 1))
+    return data
+
+#async def test_has_liked_danmakus():
+#    data = await video.get_danmakus(0, date=datetime.date(2020, 1, 1))
+#    return data
 
 
 async def test_send_danmaku():
