@@ -127,26 +127,3 @@ class IVideo(Video):
                            no_csrf=True,
                            credential=self.credential)
 
-
-#    async def subscribe_tag(self, tag_id: int):
-#        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
-
-#    async def unsubscribe_tag(self, tag_id: int):
-#        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
-
-    async def get_danmaku_view(self, page_index: int):
-        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
-
-    async def get_danmakus(self, page_index: int, date: datetime.date = None):
-        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
-
-    async def get_history_danmaku_index(self, page_index: int, date: datetime.date):
-        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
-
-    async def has_liked_danmakus(self, page_index: int, ids: List[int]):
-        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
-
-    async def send_danmaku(self, page_index: int, danmaku: Danmaku):
-        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
-
-
