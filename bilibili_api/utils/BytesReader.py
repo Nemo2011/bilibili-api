@@ -54,7 +54,8 @@ class BytesReader:
         Returns:
             float。
         """
-        data = struct.unpack("<f" if LE else ">f", self.__stream[self.__offset:self.__offset + 4])
+        stream = self.__stream[self.__offset:self.__offset + 4]
+        data = struct.unpack("<f" if LE else ">f", stream)
         self.__offset += 4
         return data[0]
 
@@ -94,7 +95,7 @@ class BytesReader:
         data = self.__stream[self.__offset:self.__offset + str_len]
         self.__offset += str_len
         return data.decode(encoding=encoding, errors="ignore")
-    
+
     def bool(self):
         """
         读 bool。
