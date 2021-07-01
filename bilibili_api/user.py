@@ -99,6 +99,9 @@ class RelationType(Enum):
 
 
 class User:
+    """
+    用户相关
+    """
     def __init__(self, uid: int, credential: Credential = None):
         self.uid = uid
 
@@ -148,7 +151,7 @@ class User:
 
     async def get_up_stat(self):
         """
-        获取UP主数据信息（视频总播放量，文章总阅读量，总点赞数）
+        获取 UP 主数据信息（视频总播放量，文章总阅读量，总点赞数）
 
         Returns:
             dict: 调用接口返回的内容。
@@ -265,9 +268,9 @@ class User:
         获取用户动态。
 
         Args:
-            offset (str, optional):     该值为第一次调用本方法时，数据中会有个 offset 字段，
+            offset (str, optional):     该值为第一次调用本方法时，数据中会有个 next_offset 字段，
                                         指向下一动态列表第一条动态（类似单向链表）。
-                                        根据上一次获取结果中的 offset 字段值，
+                                        根据上一次获取结果中的 next_offset 字段值，
                                         循环填充该值即可获取到全部动态。
                                         0 为从头开始。
                                         Defaults to 0.
@@ -296,7 +299,7 @@ class User:
 
         Args:
             pn    (int, optional)         : 页码数，从 1 开始。 Defaults to 1.
-            type_ (ArticleOrder, optional): 资源类型. Defaults to BangumiType.BANGUMI
+            type_ (BangumiType, optional): 资源类型. Defaults to BangumiType.BANGUMI
 
         Returns:
             dict: 调用接口返回的内容。
@@ -369,7 +372,7 @@ class User:
 
     async def modify_relation(self, relation: RelationType):
         """
-        修改和用户关系。
+        修改和用户的关系，比如拉黑、关注、取关等。
 
         Args:
             relation (RelationType): 用户关系。
