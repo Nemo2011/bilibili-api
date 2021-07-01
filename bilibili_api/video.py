@@ -362,7 +362,7 @@ class Video:
             reader_ = BytesReader(stream)
             data = {}
             while not reader_.has_end():
-                t = reader_.byte() >> 3
+                t = reader_.varint() >> 3
                 if t == 1:
                     data['page_size'] = reader_.varint()
                 elif t == 2:
@@ -375,7 +375,7 @@ class Video:
             reader_ = BytesReader(stream)
             data = {}
             while not reader_.has_end():
-                t = reader_.byte() >> 3
+                t = reader_.varint() >> 3
                 if t == 1:
                     data['rec_flag'] = reader_.varint()
                 elif t == 2:
@@ -390,7 +390,7 @@ class Video:
             reader_ = BytesReader(stream)
             data = {}
             while not reader_.has_end():
-                t = reader_.byte() >> 3
+                t = reader_.varint() >> 3
                 if t == 1:
                     data['id'] = reader_.varint()
                 elif t == 2:
@@ -419,7 +419,7 @@ class Video:
             reader_ = BytesReader(stream)
             data = {}
             while not reader_.has_end():
-                t = reader_.byte() >> 3
+                t = reader_.varint() >> 3
 
                 if t == 1:
                     data['dm_switch'] = reader_.bool()
@@ -466,7 +466,7 @@ class Video:
             return data
 
         while not reader.has_end():
-            type_ = reader.byte() >> 3
+            type_ = reader.varint() >> 3
 
             if type_ == 1:
                 json_data['state'] = reader.varint()
@@ -562,7 +562,7 @@ class Video:
 
             reader = BytesReader(data)
             while not reader.has_end():
-                type_ = reader.byte() >> 3
+                type_ = reader.varint() >> 3
                 if type_ != 1:
                     raise ResponseException("解析响应数据错误")
 
@@ -571,7 +571,7 @@ class Video:
                 dm_reader = BytesReader(dm_pack_data)
 
                 while not dm_reader.has_end():
-                    data_type = dm_reader.byte() >> 3
+                    data_type = dm_reader.varint() >> 3
 
                     if data_type == 1:
                         dm.id = dm_reader.varint()
