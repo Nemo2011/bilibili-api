@@ -24,7 +24,7 @@ async def save_tree(bvid):
   v = interactive_video.IVideo(bvid=bvid, credential=credential)
 
   # 查询交互视频信息
-  info = await v.get_video_pages()
+  info = await v.get_pages()
   vobjs = reform_videos(info["videos"])
   aid = info["videos"][0]["aid"]
 

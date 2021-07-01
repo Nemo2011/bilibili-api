@@ -128,8 +128,11 @@ class IVideo(Video):
                            credential=self.credential)
 
 
-    async def get_chargers(self):
-        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
+#    async def subscribe_tag(self, tag_id: int):
+#        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
+
+#    async def unsubscribe_tag(self, tag_id: int):
+#        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
 
     async def get_danmaku_view(self, page_index: int):
         return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
@@ -146,9 +149,4 @@ class IVideo(Video):
     async def send_danmaku(self, page_index: int, danmaku: Danmaku):
         return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
 
-    async def subscribe_tag(self, tag_id: int):
-        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
-
-    async def unsubscribe_tag(self, tag_id: int):
-        return "{}目前不支持, 正在等待确认".format(self.__class__.__name__)
 
