@@ -9,12 +9,6 @@ import datetime
 BVID = "BV1pK4y197mm"
 AID = 931111241
 
-BVID= "BV12r4y1A7sa"
-AID = 756973024
-
-BVID = "BV1Xw411Z7p6"
-AID = 333546484
-
 video = video_m.IVideo(BVID, credential=get_credential())
 
 async def test_set_bvid():
