@@ -103,6 +103,11 @@ class User:
     用户相关
     """
     def __init__(self, uid: int, credential: Credential = None):
+        """
+        Args:
+            uid        (int)                 : 用户 UID
+            credential (Credential, optional): 凭据. Defaults to None.
+        """
         self.uid = uid
 
         if credential is None:
@@ -112,7 +117,7 @@ class User:
 
     async def get_user_info(self):
         """
-        获取用户信息（昵称，性别，生日，签名，头像URL，空间横幅URL等）
+        获取用户信息（昵称，性别，生日，签名，头像 URL，空间横幅 URL 等）
 
         Returns:
             dict: 调用接口返回的内容。
