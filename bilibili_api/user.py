@@ -7,7 +7,6 @@ bilibili_api.user
 from enum import Enum
 import json
 import time
-from copy import copy
 
 from .utils.network import request
 from .utils.utils import get_api, join
