@@ -14,7 +14,6 @@ import aiohttp
 import zlib
 
 from aiohttp.client_ws import ClientWebSocketResponse
-from aiohttp.http_websocket import WSMsgType
 
 from .utils.Credential import Credential
 from .utils.network import get_session, request
