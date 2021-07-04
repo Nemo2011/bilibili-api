@@ -30,7 +30,7 @@ async def test_h_get_fans_medal_rank():
     return await l.get_fans_medal_rank()
 
 async def test_i_get_self_info():
-    return await l.get_self_info()
+    return await live.get_self_info(get_credential())
 
 async def test_j_get_chat_conf():
     return await l.get_chat_conf()
@@ -60,4 +60,4 @@ async def test_o_LiveDanmaku():
     room = live.LiveDanmaku(22544798, True)
     room.add_event_listener('ALL', on_msg)
     await room.connect()
-    
+

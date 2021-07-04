@@ -1,13 +1,12 @@
+"""
+音频相关
+"""
+
 from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network import request
 
 API = get_api('audio')
-
-
-"""
-音频区域
-"""
 
 class Audio:
     def __init__(self, auid: int, credential: Credential) -> None:
