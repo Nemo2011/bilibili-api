@@ -9,9 +9,9 @@ def bvid2aid(bvid: str):
     """
     BV 号转 AV 号。
 
-    Args: 
+    Args:
         bvid (str):  BV 号。
-    
+
     Returns:
         int, AV 号。
     """
@@ -36,9 +36,9 @@ def aid2bvid(aid: int):
     """
     AV 号转 BV 号。
 
-    Args: 
+    Args:
         aid (int):  AV 号。
-    
+
     Returns:
         str, BV 号。
     """

@@ -1,8 +1,10 @@
+"""
+专栏相关
+"""
 
-
+from typing import List, overload
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.Credential import Credential
-import json
 import re
 
 import yaml
@@ -51,13 +53,14 @@ ARTICLE_COLOR_MAP = {
     'gray-03': Color('5f5f5f'),
 }
 
+
 async def get_article_list(rlid: int, credential: Credential = None):
     """
     获取专栏文集文章列表
 
     Args:
-        rlid (int): 文集 ID，如 https://www.bilibili.com/read/readlist/rl000010 省略前导 0
-        credential (Credential, optional): [description]. Defaults to None.
+        rlid       (int)                 : 文集 ID，如 https: //www.bilibili.com/read/readlist/rl000010 省略前导 0
+        credential (Credential, optional): 凭据. Defaults to None.
     """
     credential = credential if credential is not None else Credential()
 
@@ -67,11 +70,21 @@ async def get_article_list(rlid: int, credential: Credential = None):
     }
     return await request('GET', api['url'], params, credential=credential)
 
+
 class Article:
+    """
+    专栏类
+    """
+
     def __init__(self, cvid: int, credential: Credential = None):
-        self.children = []
-        self.credential = credential if credential is not None else Credential()
-        self.meta = {
+        """
+        Args:
+            cvid       (int)                 : cv 号
+            credential (Credential, optional): 凭据. Defaults to None.
+        """
+        self.__children: List[Node] = []
+        self.credential: Credential = credential if credential is not None else Credential()
+        self.__meta = {
             "title": None,
             "author_name": None,
             "author_space": None,
@@ -79,46 +92,60 @@ class Article:
             "banner": None,
             "category": None,
             "tags": None,
-            "cvid": cvid
+            "cvid": None
         }
-        self._has_parsed = False
+        self.cvid = cvid
+        self.__has_parsed: bool = False
 
     def markdown(self):
         """
-        转换为 Markdon
+        转换为 Markdown
+
+        请先调用 get_content()
 
         Returns:
-            str
+            str: Markdown 内容
         """
-        if not self._has_parsed: raise ApiException('请先调用 get_content()')
+        if not self.__has_parsed:
+            raise ApiException('请先调用 get_content()')
 
-        content = "".join([node.markdown() for node in self.children])
+        content = "".join([node.markdown() for node in self.__children])
 
-        meta_yaml = yaml.safe_dump(self.meta, allow_unicode=True)
+        self.__meta['cvid'] = self.cvid
+        meta_yaml = yaml.safe_dump(self.__meta, allow_unicode=True)
         content = f"---\n{meta_yaml}\n---\n\n{content}"
         return content
 
     def json(self):
         """
         转换为 JSON 数据
-        """
-        if not self._has_parsed: raise ApiException('请先调用 get_content()')
 
+        请先调用 get_content()
+
+        Returns:
+            dict: JSON 数据
+        """
+        if not self.__has_parsed:
+            raise ApiException('请先调用 get_content()')
+
+        self.__meta['cvid'] = self.cvid
         return {
             "type": "Article",
-            "meta": self.meta,
-            "children": list(map(lambda x: x.json(), self.children))
+            "meta": self.__meta,
+            "children": list(map(lambda x: x.json(), self.__children))
         }
 
-    async def get_content(self):
+    async def fetch_content(self):
         """
-        解析专栏内容
+        获取并解析专栏内容
 
-        Args:
-            cv (int): [description]
+        该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
+
+        Returns:
+            None
         """
         session = get_session()
-        resp = await session.get(f'https://www.bilibili.com/read/cv{self.meta["cvid"]}')
+        resp = await session.get(f'https://www.bilibili.com/read/cv{self.cvid}')
 
         resp.raise_for_status()
         html = (await resp.read()).decode()
@@ -136,10 +163,11 @@ class Article:
 
             head_el: BeautifulSoup = document.select_one('.title-container')
 
-            meta['cvid'] = self.meta['cvid']
+            meta['cvid'] = self.__meta['cvid']
 
             # 标题
-            meta['title'] = document.select_one('.title-container .title').contents[0].strip()
+            meta['title'] = document.select_one(
+                '.title-container .title').contents[0].strip()
 
             # 分区
             category_el: BeautifulSoup = head_el.select_one('.category-name')
@@ -147,7 +175,8 @@ class Article:
 
             # 发布时间
             ctime_el: BeautifulSoup = head_el.select_one('.publish-text')
-            meta['ctime'] = datetime.strptime(ctime_el.contents[0].strip(), "%Y-%m-%d").strftime("%Y-%m-%d")
+            meta['ctime'] = datetime.strptime(
+                ctime_el.contents[0].strip(), "%Y-%m-%d").strftime("%Y-%m-%d")
 
             author_el: BeautifulSoup = document.select_one('.article-up-info')
 
@@ -159,7 +188,8 @@ class Article:
             meta['author_space'] = 'https:' + author_name_el.attrs['href']
 
             # 头图
-            meta['banner'] = document.select_one('meta[property="og:image"]').attrs['content']
+            meta['banner'] = document.select_one(
+                'meta[property="og:image"]').attrs['content']
 
             # 标签
             tags_items_el = document.select('.article-tags .tag-item')
@@ -232,7 +262,8 @@ class Article:
                             node = FontSizeNode()
                             node_list.append(node)
 
-                            node.size = int(re.search('font-size-(\d\d)', className)[1])
+                            node.size = int(
+                                re.search('font-size-(\d\d)', className)[1])
                             node.children = parse(e)
 
                         elif 'color' in className:
@@ -240,7 +271,8 @@ class Article:
                             node = ColorNode()
                             node_list.append(node)
 
-                            color_text = re.search('color-(.*);?', className)[1]
+                            color_text = re.search(
+                                'color-(.*);?', className)[1]
                             node.color = copy(ARTICLE_COLOR_MAP[color_text])
 
                             node.children = parse(e)
@@ -327,9 +359,11 @@ class Article:
                                 node = ImageNode()
                                 node_list.append(node)
 
-                                node.url = "https:" + e.find('img').attrs['data-src']
+                                node.url = "https:" + \
+                                    e.find('img').attrs['data-src']
 
-                                figcaption_el: BeautifulSoup = e.find('figcaption')
+                                figcaption_el: BeautifulSoup = e.find(
+                                    'figcaption')
 
                                 if figcaption_el.contents:
                                     node.alt = figcaption_el.contents[0]
@@ -340,7 +374,8 @@ class Article:
                             node_list.append(node)
 
                             pre_el: BeautifulSoup = e.find('pre')
-                            node.lang = pre_el.attrs['data-lang'].split('@')[0].lower()
+                            node.lang = pre_el.attrs['data-lang'].split('@')[
+                                0].lower()
                             node.code = unquote(pre_el.attrs['codecontent'])
 
                 elif e.name == 'ol':
@@ -385,13 +420,13 @@ class Article:
             return node_list
 
         # 解析文章元数据
-        self.meta = find_meta()
+        self.__meta = find_meta()
 
         # 解析正文
         body = document.select_one('#read-article-holder')
-        self.children =  parse(body)
+        self.__children = parse(body)
 
-        self._has_parsed = True
+        self.__has_parsed = True
 
     async def get_info(self):
         """
@@ -400,10 +435,9 @@ class Article:
 
         api = API["info"]["view"]
         params = {
-            "id": self.meta['cvid']
+            "id": self.__meta['cvid']
         }
         return await request('GET', api['url'], params=params, credential=self.credential)
-
 
     async def set_like(self, status: bool = True):
         """
@@ -416,11 +450,10 @@ class Article:
 
         api = API["operate"]["like"]
         data = {
-            "id": self.meta['cvid'],
+            "id": self.__meta['cvid'],
             "type": 1 if status else 2
         }
         return await request('POST', api['url'], data=data, credential=self.credential)
-
 
     async def set_favorite(self, status: bool = True):
         """
@@ -433,28 +466,41 @@ class Article:
 
         api = API["operate"]["add_favorite"] if status else API["operate"]["del_favorite"]
         data = {
-            "id": self.meta['cvid']
+            "id": self.__meta['cvid']
         }
         return await request('POST', api['url'], data=data, credential=self.credential)
 
-
     async def add_coins(self):
         """
-        给专栏投币
+        给专栏投币，目前只能投一个
         """
         self.credential.raise_for_no_sessdata()
 
         upid = (await self.get_info())["mid"]
         api = API["operate"]["coin"]
         data = {
-            "aid": self.meta['cvid'],
+            "aid": self.__meta['cvid'],
             "multiply": 1,
             "upid": upid,
             "avtype": 2
         }
         return await request('POST', api['url'], data=data, credential=self.credential)
 
-class ParagraphNode:
+
+class Node:
+    def __init__(self):
+        pass
+
+    @overload
+    def markdown(self) -> str:
+        pass
+
+    @overload
+    def json(self) -> dict:
+        pass
+
+
+class ParagraphNode(Node):
     def __init__(self):
         self.children = []
         self.align = 'left'
@@ -469,7 +515,8 @@ class ParagraphNode:
             "children": list(map(lambda x: x.json(), self.children))
         }
 
-class HeadingNode:
+
+class HeadingNode(Node):
     def __init__(self):
         self.children = []
 
@@ -486,7 +533,7 @@ class HeadingNode:
         }
 
 
-class BlockquoteNode:
+class BlockquoteNode(Node):
     def __init__(self):
         self.children = []
 
@@ -505,7 +552,7 @@ class BlockquoteNode:
         }
 
 
-class ItalicNode:
+class ItalicNode(Node):
     def __init__(self):
         self.children = []
 
@@ -521,7 +568,8 @@ class ItalicNode:
             "children": list(map(lambda x: x.json(), self.children))
         }
 
-class BoldNode:
+
+class BoldNode(Node):
     def __init__(self):
         self.children = []
 
@@ -538,7 +586,7 @@ class BoldNode:
         }
 
 
-class DelNode:
+class DelNode(Node):
     def __init__(self):
         self.children = []
 
@@ -554,7 +602,8 @@ class DelNode:
             "children": list(map(lambda x: x.json(), self.children))
         }
 
-class UlNode:
+
+class UlNode(Node):
     def __init__(self):
         self.children = []
 
@@ -568,7 +617,7 @@ class UlNode:
         }
 
 
-class OlNode:
+class OlNode(Node):
     def __init__(self):
         self.children = []
 
@@ -584,7 +633,8 @@ class OlNode:
             "children": list(map(lambda x: x.json(), self.children))
         }
 
-class LiNode:
+
+class LiNode(Node):
     def __init__(self):
         self.children = []
 
@@ -597,7 +647,8 @@ class LiNode:
             "children": list(map(lambda x: x.json(), self.children))
         }
 
-class ColorNode:
+
+class ColorNode(Node):
     def __init__(self):
         self.color = Color('000000')
         self.children = []
@@ -613,7 +664,7 @@ class ColorNode:
         }
 
 
-class FontSizeNode:
+class FontSizeNode(Node):
     def __init__(self):
         self.size = 16
         self.children = []
@@ -628,10 +679,10 @@ class FontSizeNode:
             "children": list(map(lambda x: x.json(), self.children))
         }
 
+# 特殊节点，即无子节点
 
-## 特殊节点，即无子节点
 
-class TextNode:
+class TextNode(Node):
     def __init__(self, text: str):
         self.text = text
 
@@ -645,7 +696,7 @@ class TextNode:
         }
 
 
-class ImageNode:
+class ImageNode(Node):
     def __init__(self):
         self.url = ''
         self.alt = ''
@@ -661,7 +712,8 @@ class ImageNode:
             "alt": self.alt
         }
 
-class LatexNode:
+
+class LatexNode(Node):
     def __init__(self):
         self.code = ''
 
@@ -679,7 +731,8 @@ class LatexNode:
             "code": self.code
         }
 
-class CodeNode:
+
+class CodeNode(Node):
     def __init__(self):
         self.code = ''
         self.lang = ''
@@ -697,7 +750,7 @@ class CodeNode:
 # 卡片
 
 
-class VideoCardNode:
+class VideoCardNode(Node):
     def __init__(self):
         self.aid = 0
 
@@ -711,7 +764,7 @@ class VideoCardNode:
         }
 
 
-class ArticleCardNode:
+class ArticleCardNode(Node):
     def __init__(self):
         self.cvid = 0
 
@@ -725,7 +778,7 @@ class ArticleCardNode:
         }
 
 
-class BangumiCardNode:
+class BangumiCardNode(Node):
     def __init__(self):
         self.epid = 0
 
@@ -739,7 +792,7 @@ class BangumiCardNode:
         }
 
 
-class MusicCardNode:
+class MusicCardNode(Node):
     def __init__(self):
         self.auid = 0
 
@@ -753,7 +806,7 @@ class MusicCardNode:
         }
 
 
-class ShopCardNode:
+class ShopCardNode(Node):
     def __init__(self):
         self.pwid = 0
 
@@ -767,7 +820,7 @@ class ShopCardNode:
         }
 
 
-class ComicCardNode:
+class ComicCardNode(Node):
     def __init__(self):
         self.mcid = 0
 
@@ -781,7 +834,7 @@ class ComicCardNode:
         }
 
 
-class LiveCardNode:
+class LiveCardNode(Node):
     def __init__(self):
         self.room_id = 0
 
@@ -795,7 +848,7 @@ class LiveCardNode:
         }
 
 
-class AnchorNode:
+class AnchorNode(Node):
     def __init__(self):
         self.url = ''
         self.text = ''
@@ -812,7 +865,7 @@ class AnchorNode:
         }
 
 
-class SeparatorNode:
+class SeparatorNode(Node):
     def __init__(self):
         pass
 
@@ -823,4 +876,3 @@ class SeparatorNode:
         return {
             "type": "SeparatorNode"
         }
-

@@ -5,7 +5,7 @@ from .common import get_credential
 ar = article.Article(7099047, get_credential())
 
 async def test_a_get_content():
-    await ar.get_content()
+    await ar.fetch_content()
 
     md = ar.markdown()
 

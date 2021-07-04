@@ -1,7 +1,7 @@
 """
 bilibili_api.utils.network
 
-与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。 
+与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。
 """
 
 import aiohttp
@@ -34,11 +34,11 @@ def __clean():
         loop.create_task(__clean_task())
 
 
-async def request(method: str, 
-                  url: str, 
-                  params: dict = None, 
+async def request(method: str,
+                  url: str,
+                  params: dict = None,
                   data: dict = None,
-                  credential: Credential = None, 
+                  credential: Credential = None,
                   no_csrf: bool = False,
                   json_body: bool = False,
                   **kwargs):

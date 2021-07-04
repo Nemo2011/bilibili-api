@@ -17,7 +17,7 @@ async def test_a_send_dynamic():
     dyid.append(resp["dynamic_id"])
 
     print('测试立即发送图片动态')
-    resp = await dynamic.send_dynamic(text="测试立即发送图片动态", image_streams=['./design/logo.png'], credential=credential)
+    resp = await dynamic.send_dynamic(text="测试立即发送图片动态", image_streams=[open('./design/logo.png', 'rb')], credential=credential)
     dyid.append(resp["dynamic_id"])
     print(resp)
 
@@ -28,7 +28,7 @@ async def test_a_send_dynamic():
     draft_ids.append(resp['draft_id'])
 
     print('测试定时发布图片动态')
-    resp = await dynamic.send_dynamic(text="测试定时发送图片动态", send_time=date, image_streams=['./design/logo.png'], credential=credential)
+    resp = await dynamic.send_dynamic(text="测试定时发送图片动态", send_time=date, image_streams=[open('./design/logo.png', 'rb')], credential=credential)
     print(resp)
     draft_ids.append(resp['draft_id'])
 

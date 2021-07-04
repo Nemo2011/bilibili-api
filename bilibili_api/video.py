@@ -59,13 +59,10 @@ class Video:
             raise ArgsException("请至少提供 bvid 和 aid 中的其中一个参数。")
 
         # 未提供 credential 时初始化该类
-        if credential is None:
-            self.credential = Credential()
-        else:
-            self.credential = credential
+        self.credential: Credential = Credential() if credential is None else credential
 
         # 用于存储视频信息，避免接口依赖视频信息时重复调用
-        self.__info = None
+        self.__info: dict or None = None
 
     def set_bvid(self, bvid: str):
         """
