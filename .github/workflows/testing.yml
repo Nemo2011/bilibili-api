@@ -2,7 +2,7 @@ name: "Testing"
 
 on:
   push:
-    branches: ["v5", "dev"]
+    branches: ["v6", "dev"]
     paths:
      - 'bilibili_api/**'
      - 'tests/**'
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: '3.8'
 
       - name: Install dependencies
         run: |

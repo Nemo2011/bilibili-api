@@ -14,7 +14,6 @@ import aiohttp
 import zlib
 
 from aiohttp.client_ws import ClientWebSocketResponse
-from aiohttp.http_websocket import WSMsgType
 
 from .utils.Credential import Credential
 from .utils.network import get_session, request
@@ -92,25 +91,17 @@ class LiveCodec(Enum):
     DEFAULT = '0,1'
 
 
-def check_uid(func):
-    """
-    检查 uid 参数
-    """
-
-    async def wrapper(self, *args, **kwargs):
-        if not self._Live__uid:
-            await self.get_room_play_info()
-        return await func(self, *args, **kwargs)
-
-    return wrapper
-
-
 class LiveRoom:
     """
     直播类，获取各种直播间的操作均在里边。
     """
 
-    def __init__(self, room_display_id: int = None, credential: Credential = None):
+    def __init__(self, room_display_id: int, credential: Credential = None):
+        """
+        Args:
+            room_display_id (int)                 : 房间展示 ID（即 URL 中的 ID）
+            credential      (Credential, optional): 凭据. Defaults to None.
+        """
         self.room_display_id = room_display_id
 
         if credential is None:
@@ -124,17 +115,23 @@ class LiveRoom:
         """
         获取房间信息（真实房间号，封禁情况等）
 
-        :return: resp
+        Returns:
+            API 调用返回结果
         """
         api = API["info"]["room_play_info"]
         params = {
             "room_id": self.room_display_id,
         }
         resp = await request(api['method'], api['url'], params=params, credential=self.credential)
+
+        # 缓存真实房间 ID
         self.__ruid = resp['uid']
         return resp
 
     async def __get_ruid(self):
+        """
+        获取真实房间 ID，若有缓存则使用缓存
+        """
         if self.__ruid is None:
             await self.get_room_play_info()
 
@@ -172,15 +169,6 @@ class LiveRoom:
             "room_id": self.room_display_id
         }
         return await request(api['method'], api["url"], params, credential=self.credential)
-
-    async def get_self_info(self):
-        """
-        获取自己直播等级、排行等信息
-        """
-        self.credential.raise_for_no_sessdata()
-
-        api = API["info"]["user_info"]
-        return await request(api['method'], api["url"], credential=self.credential)
 
     async def get_dahanghai(self, page: int = 1):
         """
@@ -259,6 +247,12 @@ class LiveRoom:
                                     live_qn: ScreenResolution = ScreenResolution.ORIGINAL):
         """
         获取房间信息及可用清晰度列表
+
+        Args:
+            live_protocol (LiveProtocol, optional)    : 直播源流协议. Defaults to LiveProtocol.DEFAULT.
+            live_format   (LiveFormat, optional)      : 直播源容器格式. Defaults to LiveFormat.DEFAULT.
+            live_codec    (LiveCodec, optional)       : 直播源视频编码. Defaults to LiveCodec.DEFAULT.
+            live_qn       (ScreenResolution, optional): 直播源清晰度. Defaults to ScreenResolution.ORIGINAL.
         """
         api = API["info"]["room_play_info_v2"]
         params = {
@@ -279,7 +273,7 @@ class LiveRoom:
 
         Args:
             uid (int): 用户 UID
-            hour (int): 封禁时长. Defaults to 1
+            hour (int, optional): 封禁时长（小时）. Defaults to 1
         """
         self.credential.raise_for_no_sessdata()
 
@@ -298,7 +292,7 @@ class LiveRoom:
         解封用户
 
         Args:
-            block_id (int): 封禁用户时会返回该封禁的 ID，使用该值
+            block_id (int): 封禁用户时会返回该封禁事件的 ID，使用该值
         """
         self.credential.raise_for_no_sessdata()
         api = API["operate"]["del_block"]
@@ -325,7 +319,7 @@ class LiveRoom:
             "roomid": self.room_display_id,
             "bubble": 0,
             "rnd": int(time.time()),
-            "color": danmaku.color.get_dec_color(),
+            "color": int(danmaku.color, 16),
             "fontsize": danmaku.font_size.value
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
@@ -335,8 +329,7 @@ class LiveDanmaku(AsyncEvent):
     """
     Websocket 实时获取直播弹幕
 
-    常见事件名：
-
+    Events：
     + DANMU_MSG: 用户发送弹幕
     + SEND_GIFT: 礼物
     + COMBO_SEND：礼物连击
@@ -377,6 +370,12 @@ class LiveDanmaku(AsyncEvent):
 
     def __init__(self, room_display_id: int, debug: bool = False,
                     credential: Credential = None):
+        """
+        Args:
+            room_display_id (int)                 : 房间展示 ID
+            debug           (bool, optional)      : 调试模式，将输出更多信息。. Defaults to False.
+            credential      (Credential, optional): 凭据. Defaults to None.
+        """
         super().__init__()
 
         self.credential = credential if credential is not None else Credential()
@@ -399,7 +398,7 @@ class LiveDanmaku(AsyncEvent):
         获取连接状态
 
         Returns:
-            int: 0 未连接，1 连接建立中，2 已连接，3 已正常断开，4 异常断开
+            int: 0 初始化，1 连接建立中，2 已连接，3 断开连接中，4 已断开，5 错误
         """
         return self.__status
 
@@ -423,9 +422,13 @@ class LiveDanmaku(AsyncEvent):
         """
         断开连接
         """
+        if self.get_status() != self.STATUS_ESTABLISHED:
+            raise LiveException('尚未连接服务器')
+
         self.__status = self.STATUS_CLOSING
         self.logger.info('连接正在关闭')
 
+        # 取消所有任务
         while len(self.__tasks) > 0:
             self.__tasks.pop().cancel()
 
@@ -561,8 +564,8 @@ class LiveDanmaku(AsyncEvent):
         data = self.__pack(data, protocol_version, datapack_type)
         await ws.send_bytes(data)
 
-    @classmethod
-    def __pack(cls, data: bytes, protocol_version: int, datapack_type: int):
+    @staticmethod
+    def __pack(data: bytes, protocol_version: int, datapack_type: int):
         """
         打包数据
         """
@@ -577,8 +580,8 @@ class LiveDanmaku(AsyncEvent):
         sendData = struct.pack(">I", len(sendData) + 4) + sendData
         return bytes(sendData)
 
-    @classmethod
-    def __unpack(cls, data: bytes):
+    @staticmethod
+    def __unpack(data: bytes):
         """
         解包数据
         """
@@ -604,10 +607,20 @@ class LiveDanmaku(AsyncEvent):
             elif header[2] == 2:
                 recvData["data"] = json.loads(chunkData.decode())
             elif header[2] == 1:
-                if header[3] == cls.DATAPACK_TYPE_HEARTBEAT_RESPONSE:
+                if header[3] == LiveDanmaku.DATAPACK_TYPE_HEARTBEAT_RESPONSE:
                     recvData["data"] = {"view": struct.unpack(">I", chunkData)[0]}
-                elif header[3] == cls.DATAPACK_TYPE_VERIFY_SUCCESS_RESPONSE:
+                elif header[3] == LiveDanmaku.DATAPACK_TYPE_VERIFY_SUCCESS_RESPONSE:
                     recvData["data"] = json.loads(chunkData.decode())
             ret.append(recvData)
             offset += length
         return ret
+
+
+async def get_self_info(credential: Credential):
+    """
+    获取自己直播等级、排行等信息
+    """
+    credential.raise_for_no_sessdata()
+
+    api = API["info"]["user_info"]
+    return await request(api['method'], api["url"], credential=credential)

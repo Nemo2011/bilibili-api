@@ -14,7 +14,7 @@ setuptools.setup(
     description='哔哩哔哩的各种API调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=setuptools.find_packages(exclude=["tests", "examples"]),
+    packages=setuptools.find_packages(exclude=["tests"]),
     keywords=[
         "bilibili",
         "api",
@@ -23,7 +23,6 @@ setuptools.setup(
     classifiers=[
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Natural Language :: Chinese (Simplified)",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9"
     ],
@@ -36,5 +35,5 @@ setuptools.setup(
     },
     install_requires=requires.splitlines(),
     url="https://github.com/Passkou/bilibili-api",
-    python_requires=">=3.7"
+    python_requires=">=3.8"
 )

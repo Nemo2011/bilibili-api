@@ -9,11 +9,11 @@ def bvid2aid(bvid: str):
     """
     BV 号转 AV 号。
 
-    Args: 
+    Args:
         bvid (str):  BV 号。
-    
+
     Returns:
-        int, AV 号。
+        int: AV 号。
     """
     table = 'fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF'
     tr = {}
@@ -36,11 +36,11 @@ def aid2bvid(aid: int):
     """
     AV 号转 BV 号。
 
-    Args: 
+    Args:
         aid (int):  AV 号。
-    
+
     Returns:
-        str, BV 号。
+        str: BV 号。
     """
     table = 'fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF'
     tr = {}

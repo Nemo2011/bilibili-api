@@ -28,7 +28,6 @@ from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.utils import get_api
 from .utils.network import request, get_session
 from .utils.Danmaku import Danmaku
-from .utils.Color import Color
 from .utils.BytesReader import BytesReader
 from .utils.AsyncEvent import AsyncEvent
 
@@ -56,13 +55,10 @@ class Video:
             raise ArgsException("请至少提供 bvid 和 aid 中的其中一个参数。")
 
         # 未提供 credential 时初始化该类
-        if credential is None:
-            self.credential = Credential()
-        else:
-            self.credential = credential
+        self.credential: Credential = Credential() if credential is None else credential
 
         # 用于存储视频信息，避免接口依赖视频信息时重复调用
-        self.__info = None
+        self.__info: dict or None = None
 
     def set_bvid(self, bvid: str):
         """
@@ -573,22 +569,19 @@ class Video:
                     if data_type == 1:
                         dm.id = dm_reader.varint()
                     elif data_type == 2:
-                        dm.dm_time = datetime.timedelta(
-                            seconds=dm_reader.varint() / 1000)
+                        dm.dm_time = dm_reader.varint() / 1000
                     elif data_type == 3:
                         dm.mode = dm_reader.varint()
                     elif data_type == 4:
                         dm.font_size = dm_reader.varint()
                     elif data_type == 5:
-                        dm.color = Color()
-                        dm.color.set_dec_color(dm_reader.varint())
+                        dm.color = hex(dm_reader.varint())[2:]
                     elif data_type == 6:
                         dm.crc32_id = dm_reader.string()
                     elif data_type == 7:
                         dm.text = dm_reader.string()
                     elif data_type == 8:
-                        dm.send_time = datetime.datetime.fromtimestamp(
-                            dm_reader.varint())
+                        dm.send_time = dm_reader.varint()
                     elif data_type == 9:
                         dm.weight = dm_reader.varint()
                     elif data_type == 10:
@@ -673,8 +666,8 @@ class Video:
             "msg": danmaku.text,
             "aid": self.get_aid(),
             "bvid": self.get_bvid(),
-            "progress": int(danmaku.dm_time.seconds * 1000),
-            "color": danmaku.color.get_dec_color(),
+            "progress": int(danmaku.dm_time * 1000),
+            "color": int(danmaku.color, 16),
             "fontsize": danmaku.font_size.value,
             "pool": pool,
             "mode": danmaku.mode.value,

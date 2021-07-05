@@ -1,19 +1,19 @@
 """
 动态相关
-
-bilibili_api.dynamic
 """
 
-from bilibili_api.exceptions.DynamicExceedImagesException import DynamicExceedImagesException
-from bilibili_api.utils.network import get_session, request
-from bilibili_api.utils.Credential import Credential
-from . import user, exceptions
-from .utils import utils
 import re
 import json
 import datetime
 from aiohttp import FormData
 from typing import List
+import io
+
+from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
+from .utils.network import get_session, request
+from .utils.Credential import Credential
+from . import user, exceptions
+from .utils import utils
 
 API = utils.get_api('dynamic')
 
@@ -88,15 +88,16 @@ async def _get_text_data(text: str):
     return data
 
 
-async def upload_image(image_path: str, credential: Credential):
+async def upload_image(image_stream: io.BufferedIOBase, credential: Credential):
     """
     上传动态图片
 
     Args:
-        image_path (str): 图片路径
+        image_stream (io.BufferedIOBase): 图片流
+        credential   (Credential)       : 凭据
 
     Returns:
-        dict: 请求响应内容
+        API 调用返回结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -105,7 +106,7 @@ async def upload_image(image_path: str, credential: Credential):
     form = FormData({
         "biz": "draw",
         "category": "daily",
-        "file_up": open(image_path, "rb")
+        "file_up": image_stream
     })
     session = get_session()
     resp = await session.post(url=api["url"], data=form, cookies=credential.get_cookies())
@@ -116,19 +117,19 @@ async def upload_image(image_path: str, credential: Credential):
     return j['data']
 
 
-async def _get_draw_data(text: str, images_path: List[str], credential: Credential):
+async def _get_draw_data(text: str, image_streams: List[io.BufferedIOBase], credential: Credential):
     """
     获取图片动态请求参数，将会自动上传图片
 
     Args:
         text (str): 文本内容
-        images_path (List[str]): 图片路径
+        image_streams (List[io.BufferedIOBase]): 图片流
 
     """
     new_text, at_uids, ctrl = await _parse_at(text)
     images_info = []
-    for path in images_path:
-        i = await upload_image(path, credential)
+    for stream in image_streams:
+        i = await upload_image(stream, credential)
         images_info.append(i)
 
     def transformPicInfo(image):
@@ -167,17 +168,17 @@ async def _get_draw_data(text: str, images_path: List[str], credential: Credenti
     return data
 
 
-async def send_dynamic(text: str, images_path: List[str] = None, send_time: datetime.datetime = None, credential: Credential = None):
+async def send_dynamic(text: str, image_streams: List[io.BufferedIOBase] = None, send_time: datetime.datetime = None, credential: Credential = None):
     """
     自动判断动态类型选择合适的 API 并发送动态
 
     如需 @ 人，请使用格式 "@UID "，注意最后有一个空格
 
     Args:
-        text        (str)                        : 动态文本
-        images_path (List[str], optional)        : 图片路径列表. Defaults to None.
-        send_time   (datetime.datetime, optional): 定时动态发送时间. Defaults to None.
-        credential  (Credential)                 : 凭据
+        text          (str)                              : 动态文本
+        image_streams (List[io.BufferedIOBase], optional): 图片流列表. Defaults to None.
+        send_time     (datetime.datetime, optional)      : 定时动态发送时间. Defaults to None.
+        credential    (Credential, optional)             : 凭据. Defaults to None.
 
     Returns:
         dict: API 调用结果
@@ -196,14 +197,14 @@ async def send_dynamic(text: str, images_path: List[str] = None, send_time: date
 
     async def instant_draw():
         api = API["send"]["instant_draw"]
-        data = await _get_draw_data(text, images_path, credential)
+        data = await _get_draw_data(text, image_streams, credential)
         return await request("POST", api["url"], data=data, credential=credential)
 
     async def schedule(type_: int):
         api = API["send"]["schedule"]
         if type_ == 2:
             # 画册动态
-            request_data = await _get_draw_data(text, images_path, credential)
+            request_data = await _get_draw_data(text, image_streams, credential)
             request_data.pop("setting")
         else:
             # 文字动态
@@ -216,10 +217,10 @@ async def send_dynamic(text: str, images_path: List[str] = None, send_time: date
         }
         return await request("POST", api["url"], data=data, credential=credential)
 
-    if images_path is None:
-        images_path = []
+    if image_streams is None:
+        image_streams = []
 
-    if len(images_path) == 0:
+    if len(image_streams) == 0:
         # 纯文本动态
         if send_time is None:
             ret = await instant_text()
@@ -227,7 +228,7 @@ async def send_dynamic(text: str, images_path: List[str] = None, send_time: date
             ret = await schedule(2)
     else:
         # 图片动态
-        if len(images_path) > 9:
+        if len(image_streams) > 9:
             raise DynamicExceedImagesException()
         if send_time is None:
             ret = await instant_draw()
@@ -288,6 +289,11 @@ async def delete_schedule(draft_id: int, credential: Credential):
 
 class Dynamic:
     def __init__(self, dynamic_id: int, credential: Credential = None):
+        """
+        Args:
+            dynamic_id (int): 动态 ID
+            credential (Credential, optional): [description]. Defaults to None.
+        """
         self.dynamic_id = dynamic_id
         self.credential = credential if credential is not None else Credential()
 
@@ -313,7 +319,7 @@ class Dynamic:
         获取动态转发列表
 
         Args:
-            offset (str, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），该结构为单向链表结构. Defaults to "0"
+            offset (str, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0"
         """
         api = API["info"]["repost"]
         params = {"dynamic_id": self.dynamic_id}
@@ -362,7 +368,7 @@ class Dynamic:
         转发动态
 
         Args:
-            text (str): 转发动态时的文本内容
+            text (str, optional): 转发动态时的文本内容. Defaults to "转发动态"
         """
         self.credential.raise_for_no_sessdata()
 

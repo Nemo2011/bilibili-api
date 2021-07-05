@@ -15,15 +15,15 @@ from .utils.Credential import Credential
 API = get_api("channel")
 
 
-async def get_channel_info_by_tid(tid: int):
+def get_channel_info_by_tid(tid: int):
     """
-    根据tid获取频道信息。
+    根据 tid 获取频道信息。
 
     Args:
         tid (int):               频道的 tid。
 
     Returns:
-        tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
+        `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8") as f:
         channel = json.loads(f.read())
@@ -44,7 +44,7 @@ async def get_channel_info_by_tid(tid: int):
         return None, None
 
 
-async def get_channel_info_by_name(name: str):
+def get_channel_info_by_name(name: str):
     """
     根据频道名称获取频道信息。
 
@@ -73,7 +73,7 @@ async def get_top10(tid: int, day: int = 7, credential: Credential = None):
 
     Args:
         tid (int):                          频道的 tid。
-        day (int):                          3 天排行还是 7 天排行。 Defaults to 7.
+        day (int, optional):                          3 天排行还是 7 天排行。 Defaults to 7.
         credential (Credential, optional):  Credential 类。Defaults to None.
 
     Returns:
