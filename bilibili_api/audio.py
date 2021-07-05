@@ -1,16 +1,20 @@
+"""
+音频相关
+"""
+
 from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network import request
 
 API = get_api('audio')
 
-
-"""
-音频区域
-"""
-
 class Audio:
-    def __init__(self, auid: int, credential: Credential) -> None:
+    def __init__(self, auid: int, credential: Credential = None):
+        """
+        Args:
+            auid       (int)                 : 音频 AU 号
+            credential (Credential, optional): 凭据. Defaults to None
+        """
         self.auid = auid
         self.credential = credential if credential is not None else Credential()
 
@@ -66,23 +70,17 @@ class Audio:
         return await request('POST', api['url'], data=data, credential=self.credential)
 
 
-async def get_user_stat(uid: int, credential: Credential = None):
-    """
-    获取用户数据（收听数，粉丝数等）
-    """
-    credential = credential if credential is not None else Credential()
-    api = API["audio_info"]["user"]
-    params = {
-        "uid": uid
-    }
-    return await request('GET', api['url'], params, credential=credential)
-
-
 class AudioList:
     """
     歌单
     """
-    def __init__(self, amid: int, credential: Credential = None) -> None:
+    def __init__(self, amid: int, credential: Credential = None):
+        """
+
+        Args:
+            amid       (int)                 : 歌单 ID
+            credential (Credential, optional): 凭据. Defaults to None.
+        """
         self.amid = amid
         self.credential = credential if credential is not None else Credential()
 
@@ -126,3 +124,19 @@ class AudioList:
         }
 
         return await request('GET', api['url'], params, credential=self.credential)
+
+
+async def get_user_stat(uid: int, credential: Credential = None):
+    """
+    获取用户数据（收听数，粉丝数等）
+
+    Args:
+        uid        (int)                 : 用户 UID
+        credential (Credential, optional): 凭据. Defaults to None
+    """
+    credential = credential if credential is not None else Credential()
+    api = API["audio_info"]["user"]
+    params = {
+        "uid": uid
+    }
+    return await request('GET', api['url'], params, credential=credential)

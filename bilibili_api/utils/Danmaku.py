@@ -4,11 +4,9 @@ bilibili_api.utils.Danmaku
 弹幕类。
 """
 
-import datetime
 import time
 from enum import Enum
 
-from .Color import Color
 from .utils import crack_uid
 
 
@@ -43,7 +41,7 @@ class Danmaku:
                  dm_time: float = 0.0,
                  send_time: float = time.time(),
                  crc32_id: str = None,
-                 color: Color = None,
+                 color: str = 'ffffff',
                  weight: int = -1,
                  id_: int = -1,
                  id_str: str = "",
@@ -55,26 +53,26 @@ class Danmaku:
                  attr: int = -1):
         """
         Args:
-            text (str):                         弹幕文本。
-            dm_time (float, optional):          弹幕在视频中的位置，单位为秒。Defaults to 0.0.
-            send_time (float, optional):        弹幕发送的时间。Defaults to time.time().
-            crc32_id (str, optional):           弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None.
-            color (Color, optional):            弹幕颜色。Defaults to None.
-            weight (int, optional):             弹幕在弹幕列表显示的权重。Defaults to -1.
-            id_ (int, optional):                弹幕 ID。Defaults to -1.
-            id_str (str, optional):             弹幕字符串 ID。Defaults to "".
-            action (str, optional):             暂不清楚。Defaults to "".
-            mode (Mode, optional):              弹幕模式。Defaults to Mode.FLY.
-            font_size (FontSize, optional):     弹幕字体大小。Defaults to FontSize.NORMAL.
-            is_sub (bool, optional):            是否为字幕弹幕。Defaults to False.
-            pool (int, optional):               暂不清楚。Defaults to -1.
-            attr (int, optional):               暂不清楚。 Defaults to -1.
+            text      (str)               : 弹幕文本。
+            dm_time   (float, optional)   : 弹幕在视频中的位置，单位为秒。Defaults to 0.0.
+            send_time (float, optional)   : 弹幕发送的时间。Defaults to time.time().
+            crc32_id  (str, optional)     : 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None.
+            color     (str, optional)     : 弹幕十六进制颜色。Defaults to "ffffff".
+            weight    (int, optional)     : 弹幕在弹幕列表显示的权重。Defaults to -1.
+            id_       (int, optional)     : 弹幕 ID。Defaults to -1.
+            id_str    (str, optional)     : 弹幕字符串 ID。Defaults to "".
+            action    (str, optional)     : 暂不清楚。Defaults to "".
+            mode      (Mode, optional)    : 弹幕模式。Defaults to Mode.FLY.
+            font_size (FontSize, optional): 弹幕字体大小。Defaults to FontSize.NORMAL.
+            is_sub    (bool, optional)    : 是否为字幕弹幕。Defaults to False.
+            pool      (int, optional)     : 暂不清楚。Defaults to -1.
+            attr      (int, optional)     : 暂不清楚。 Defaults to -1.
         """
         self.text = text
-        self.dm_time = datetime.timedelta(seconds=dm_time)
-        self.send_time = datetime.datetime.fromtimestamp(send_time)
+        self.dm_time = dm_time
+        self.send_time = send_time
         self.crc32_id = crc32_id
-        self.color = color if color else Color()
+        self.color = color
         self.weight = weight
         self.id = id_
         self.id_str = id_str
@@ -99,7 +97,7 @@ class Danmaku:
         暴力破解 UID，可能存在误差，请慎重使用。
 
         Returns:
-            int, 真实 UID。
+            int: 真实 UID。
         """
         self.uid = int(crack_uid(self.crc32_id))
         return self.uid
