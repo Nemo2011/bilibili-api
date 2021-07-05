@@ -26,8 +26,8 @@ async def test_c_get_topic_favorite_list():
     return data
 
 
-async def test_d_get_note_favorite_list():
-    data = await favorite_list.get_note_favorite_list(credential=credential)
+async def test_d_get_article_favorite_list():
+    data = await favorite_list.get_article_favorite_list(credential=credential)
     return data
 
 

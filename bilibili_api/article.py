@@ -12,45 +12,43 @@ from bilibili_api.utils.network import get_session, request
 from bilibili_api.exceptions.NetworkException import NetworkException, ApiException
 from bs4 import BeautifulSoup, element
 from datetime import datetime
-from bilibili_api.utils.Color import Color
-from copy import copy
 from urllib.parse import unquote
 
 API = get_api('article')
 
 
 ARTICLE_COLOR_MAP = {
-    'blue-01': Color('56c1fe'),
-    'lblue-01': Color('73fdea'),
-    'green-01': Color('89fa4e'),
-    'yellow-01': Color('fff359'),
-    'pink-01': Color('ff968d'),
-    'purple-01': Color('ff8cc6'),
+    'blue-01': '56c1fe',
+    'lblue-01': '73fdea',
+    'green-01': '89fa4e',
+    'yellow-01': 'fff359',
+    'pink-01': 'ff968d',
+    'purple-01': 'ff8cc6',
 
-    'blue-02': Color('02a2ff'),
-    'lblue-02': Color('18e7cf'),
-    'green-02': Color('60d837'),
-    'yellow-02': Color('fbe231'),
-    'pink-02': Color('ff654e'),
-    'purple-02': Color('ef5fa8'),
+    'blue-02': '02a2ff',
+    'lblue-02': '18e7cf',
+    'green-02': '60d837',
+    'yellow-02': 'fbe231',
+    'pink-02': 'ff654e',
+    'purple-02': 'ef5fa8',
 
-    'blue-03': Color('0176ba'),
-    'lblue-03': Color('068f86'),
-    'green-03': Color('1db100'),
-    'yellow-03': Color('f8ba00'),
-    'pink-03': Color('ee230d'),
-    'purple-03': Color('cb297a'),
+    'blue-03': '0176ba',
+    'lblue-03': '068f86',
+    'green-03': '1db100',
+    'yellow-03': 'f8ba00',
+    'pink-03': 'ee230d',
+    'purple-03': 'cb297a',
 
-    'blue-04': Color('004e80'),
-    'lblue-04': Color('017c76'),
-    'green-04': Color('017001'),
-    'yellow-04': Color('ff9201'),
-    'pink-04': Color('b41700'),
-    'purple-04': Color('99195e'),
+    'blue-04': '004e80',
+    'lblue-04': '017c76',
+    'green-04': '017001',
+    'yellow-04': 'ff9201',
+    'pink-04': 'b41700',
+    'purple-04': '99195e',
 
-    'gray-01': Color('d6d5d5'),
-    'gray-02': Color('929292'),
-    'gray-03': Color('5f5f5f'),
+    'gray-01': 'd6d5d5',
+    'gray-02': '929292',
+    'gray-03': '5f5f5f',
 }
 
 
@@ -273,7 +271,7 @@ class Article:
 
                             color_text = re.search(
                                 'color-(.*);?', className)[1]
-                            node.color = copy(ARTICLE_COLOR_MAP[color_text])
+                            node.color = ARTICLE_COLOR_MAP[color_text]
 
                             node.children = parse(e)
 
@@ -492,11 +490,11 @@ class Node:
         pass
 
     @overload
-    def markdown(self) -> str:
+    def markdown(self):
         pass
 
     @overload
-    def json(self) -> dict:
+    def json(self):
         pass
 
 
@@ -650,7 +648,7 @@ class LiNode(Node):
 
 class ColorNode(Node):
     def __init__(self):
-        self.color = Color('000000')
+        self.color = '000000'
         self.children = []
 
     def markdown(self):
@@ -659,7 +657,7 @@ class ColorNode(Node):
     def json(self):
         return {
             "type": "ColorNode",
-            "color": self.color.get_hex_color(),
+            "color": self.color,
             "children": list(map(lambda x: x.json(), self.children))
         }
 

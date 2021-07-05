@@ -16,6 +16,18 @@ from typing import List
 
 API = get_api("favorite-list")
 
+class FavoriteListContentOrder(Enum):
+    """
+    收藏夹列表内容排序方式枚举。
+
+    + MTIME  : 最近收藏
+    + VIEW   : 最多播放
+    + PUBTIME: 最新投稿
+    """
+    MTIME = 'mtime'
+    VIEW = 'view'
+    PUBTIME = 'pubtime'
+
 
 async def get_video_favorite_list(uid: int, video: Video = None, credential: Credential = None):
     """
@@ -24,7 +36,7 @@ async def get_video_favorite_list(uid: int, video: Video = None, credential: Cre
     Args:
         uid        (int)                 : 用户 UID。
         video      (Video)               : 视频类。若提供该参数则结果会附带该收藏夹是否存在该视频。Defaults to None.
-        credential (Credential, optional): Credential. Defaults to None.
+        credential (Credential, optional): 凭据. Defaults to None.
 
     Returns:
         dict: API 调用结果。
@@ -40,17 +52,6 @@ async def get_video_favorite_list(uid: int, video: Video = None, credential: Cre
 
     return await request("GET", url=api["url"], params=params, credential=credential)
 
-class FavoriteListContentOrder(Enum):
-    """
-    收藏夹列表内容排序方式枚举。
-
-    + MTIME  : 最近收藏
-    + VIEW   : 最多播放
-    + PUBTIME: 最新投稿
-    """
-    MTIME = 'mtime'
-    VIEW = 'view'
-    PUBTIME = 'pubtime'
 
 async def get_video_favorite_list_content(
     media_id: int,
@@ -111,7 +112,7 @@ async def get_topic_favorite_list(page: int = 1, credential: Credential = None):
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_note_favorite_list(page: int = 1, credential: Credential = None):
+async def get_article_favorite_list(page: int = 1, credential: Credential = None):
     """
     获取自己的专栏收藏夹内容。
 
@@ -215,7 +216,7 @@ async def create_video_favorite_list(
         title        (str)                 : 收藏夹名。
         introduction (str, optional)       : 收藏夹简介. Defaults to ''.
         private      (bool, optional)      : 是否为私有. Defaults to False.
-        credential   (Credential, optional): Credential. Defaults to None.
+        credential   (Credential, optional): 凭据. Defaults to None.
 
     Returns:
         dict: API 调用结果。
@@ -280,7 +281,7 @@ async def delete_video_favorite_list(media_ids: List[int], credential: Credentia
     删除视频收藏夹，可批量删除。
 
     Args:
-        media_ids  (List(int)) : 收藏夹 ID 列表。
+        media_ids  (List[int]) : 收藏夹 ID 列表。
         credential (Credential): Credential.
 
     Returns:
@@ -306,7 +307,7 @@ async def copy_video_favorite_list_content(media_id_from: int, media_id_to: int,
         media_id_from (int)       : 要复制的源收藏夹 ID。
         media_id_to   (int)       : 目标收藏夹 ID。
         aids          (List[int]) : 被复制的视频 ID 列表。
-        credential    (Credential): Credential.
+        credential    (Credential): 凭据
 
     Returns:
         dict: API 调用结果。
@@ -333,10 +334,10 @@ async def move_video_favorite_list_content(media_id_from: int, media_id_to: int,
     移动视频收藏夹内容
 
     Args:
-        media_id_from (int)       : 要复制的源收藏夹 ID。
+        media_id_from (int)       : 要移动的源收藏夹 ID。
         media_id_to   (int)       : 目标收藏夹 ID。
-        aids          (List[int]) : 被复制的视频 ID 列表。
-        credential    (Credential): Credential.
+        aids          (List[int]) : 被移动的视频 ID 列表。
+        credential    (Credential): 凭据
 
     Returns:
         dict: API 调用结果。
@@ -360,8 +361,8 @@ async def delete_video_favorite_list_content(media_id: int, aids: List[int], cre
 
     Args:
         media_id   (int)       : 收藏夹 ID。
-        aids       (List[int]) : 被复制的视频 ID 列表。
-        credential (Credential): Credential.
+        aids       (List[int]) : 被删除的视频 ID 列表。
+        credential (Credential): 凭据
 
     Returns:
         dict: API 调用结果。
@@ -383,8 +384,8 @@ async def clean_video_favorite_list_content(media_id: int, credential: Credentia
     清除视频收藏夹失效内容
 
     Args:
-        media_id (int): 收藏夹 ID
-        credential (Credential): Credential.
+        media_id   (int)       : 收藏夹 ID
+        credential (Credential): 凭据
 
     Returns:
         dict: API 调用结果。
