@@ -14,6 +14,8 @@ class Credential:
 
     def __init__(self, sessdata: str = None, bili_jct: str = None, buvid3: str = None):
         """
+        各字段获取方式查看：https://www.passkou.com/bilibili-api/#/get-credential.md
+
         Args:
             sessdata (str, optional):  浏览器 Cookies 中的 SESSDATA 字段值
             bili_jct (str, optional):  浏览器 Cookies 中的 bili_jct 字段值
@@ -25,10 +27,10 @@ class Credential:
 
     def get_cookies(self):
         """
-        获取 Cookies。
+        获取请求 Cookies 字典
 
         Returns:
-            dict, 用于请求 Cookie。
+            dict: 请求 Cookies 字典
         """
         return {"SESSDATA": self.sessdata, "buvid3": self.buvid3, 'bili_jct': self.bili_jct}
 

@@ -10,7 +10,7 @@ def sync(coroutine: Coroutine):
         coroutine (Coroutine): 异步函数
 
     Returns:
-        该函数的返回值
+        该异步函数的返回值
     """
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(coroutine)

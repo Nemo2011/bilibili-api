@@ -319,7 +319,7 @@ class LiveRoom:
             "roomid": self.room_display_id,
             "bubble": 0,
             "rnd": int(time.time()),
-            "color": danmaku.color.get_dec_color(),
+            "color": int(danmaku.color, 16),
             "fontsize": danmaku.font_size.value
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
