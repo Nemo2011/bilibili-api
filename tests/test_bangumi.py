@@ -27,8 +27,8 @@ async def test_e_get_stat():
 async def test_f_get_episode_info():
     return await bangumi.get_episode_info(epid, credential)
 
-async def test_g_get_collective_info():
-    return await bangumi.get_collective_info(season_id, credential)
+async def test_g_get_overview():
+    return await bangumi.get_overview(season_id, credential)
 
 async def test_h_set_follow():
     return await bangumi.set_follow(season_id, credential=credential)
