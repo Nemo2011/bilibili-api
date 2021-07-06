@@ -1,5 +1,5 @@
 """
-bilibili_api.interactive_video
+此模块尚完善，暂不可用
 
 互动视频相关操作
 """
