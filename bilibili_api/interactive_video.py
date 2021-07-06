@@ -13,29 +13,17 @@ from .exceptions import ArgsException
 
 API = get_api("interactive_video")
 
-class IVideo(Video):
-    """
-    互动视频类，各种对互动视频的操作将均在里面。
-    """
-
-    async def get_pages(self):
-        return "未实现互动视频的获取分P功能"
-  
+ 
 async def get_ivideo_pages(bvid: str, credential: Credential):
     """
     获取交互视频的分P信息。up 主需要拥有视频所有权。
+    Args:
+        bvid       (str)       : BV 号.
+        credential (Credential): Credential 类.
 
     Returns:
       dict: 调用 API 返回结果
     """
-    # ID 检查
-    if bvid is None:
-        raise ArgsException("请提供 bvid。")
-
-    if credential is None:
-        raise ArgsException("请提供 Credential。")
-
-
     url = API["info"]["videolist"]["url"]
     params = {"bvid": bvid}
     return await request("GET", url=url, params=params, credential=credential)
@@ -45,14 +33,11 @@ async def submit_story_tree(story_tree: str, credential: Credential):
     上传交互视频的情节树。up 主需要拥有视频所有权。
 
     Args:
-    story_tree: 情节树的描述，参考 bilibili_storytree.StoryGraph, 需要 Serialize 这个结构
+      story_tree  (str): 情节树的描述，参考 bilibili_storytree.StoryGraph, 需要 Serialize 这个结构
 
     Returns:
       dict: 调用 API 返回结果
     """
-    if credential is None:
-        raise ArgsException("请提供 Credential。")
-
     url = API["operate"]["savestory"]["url"]
     form_data = {"preview": "0", "data": story_tree, "csrf": credential.bili_jct}
     headers = {
