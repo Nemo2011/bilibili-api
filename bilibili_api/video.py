@@ -1172,6 +1172,7 @@ class VideoUploaderPageObject:
             int: 视频流总大小。
         """
         if self.__total_size is None:
+            self.__stream.seek(0)
             self.__total_size = len(self.__stream.read())
         return self.__total_size
 
@@ -1571,7 +1572,7 @@ class VideoUploader(AsyncEvent):
             "upcdn": "bda2",
             "probe_version": 20200810
         }
-        page_object.stream.seek(0)
+
         async with self.__session.get(
             "https://member.bilibili.com/preupload",
             params=params,
