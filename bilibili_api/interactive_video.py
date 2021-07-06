@@ -14,7 +14,7 @@ from .exceptions import ArgsException
 API = get_api("interactive_video")
 
  
-async def get_ivideo_pages(bvid: str, credential: Credential):
+async def up_get_ivideo_pages(bvid: str, credential: Credential):
     """
     获取交互视频的分P信息。up 主需要拥有视频所有权。
     Args:
@@ -28,7 +28,7 @@ async def get_ivideo_pages(bvid: str, credential: Credential):
     params = {"bvid": bvid}
     return await request("GET", url=url, params=params, credential=credential)
 
-async def submit_story_tree(story_tree: str, credential: Credential):
+async def up_submit_story_tree(story_tree: str, credential: Credential):
     """
     上传交互视频的情节树。up 主需要拥有视频所有权。
 
