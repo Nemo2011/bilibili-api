@@ -161,7 +161,7 @@ class Article:
 
             head_el: BeautifulSoup = document.select_one('.title-container')
 
-            meta['cvid'] = self.__meta['cvid']
+            meta['cvid'] = self.cvid
 
             # 标题
             meta['title'] = document.select_one(
@@ -433,7 +433,7 @@ class Article:
 
         api = API["info"]["view"]
         params = {
-            "id": self.__meta['cvid']
+            "id": self.cvid
         }
         return await request('GET', api['url'], params=params, credential=self.credential)
 
@@ -448,7 +448,7 @@ class Article:
 
         api = API["operate"]["like"]
         data = {
-            "id": self.__meta['cvid'],
+            "id": self.cvid,
             "type": 1 if status else 2
         }
         return await request('POST', api['url'], data=data, credential=self.credential)
@@ -463,8 +463,9 @@ class Article:
         self.credential.raise_for_no_sessdata()
 
         api = API["operate"]["add_favorite"] if status else API["operate"]["del_favorite"]
+
         data = {
-            "id": self.__meta['cvid']
+            "id": self.cvid
         }
         return await request('POST', api['url'], data=data, credential=self.credential)
 
@@ -477,7 +478,7 @@ class Article:
         upid = (await self.get_info())["mid"]
         api = API["operate"]["coin"]
         data = {
-            "aid": self.__meta['cvid'],
+            "aid": self.cvid,
             "multiply": 1,
             "upid": upid,
             "avtype": 2
