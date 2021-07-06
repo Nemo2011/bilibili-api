@@ -39,7 +39,7 @@ class IVideo(Video):
         获取交互视频的分P信息。
 
         Returns:
-        dict: 调用 API 返回结果
+          dict: 调用 API 返回结果
         """
         url = API["info"]["videolist"]["url"]
         params = {"bvid": self.get_bvid()}
@@ -110,7 +110,7 @@ class IVideo(Video):
         story_tree: 情节树的描述，参考 bilibili_storytree.StoryGraph, 需要 Serialize 这个结构
 
         Returns:
-        dict: 调用 API 返回结果
+          dict: 调用 API 返回结果
         """
         url = API["operate"]["savestory"]["url"]
         form_data = {"preview": "0", "data": story_tree, "csrf": self.credential.bili_jct}
