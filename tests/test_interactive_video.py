@@ -16,7 +16,3 @@ async def test_get_pages():
     return pages
 
 
-async def test_get_download_url():
-    pages = await video.get_download_url(1)
-    return pages
-
