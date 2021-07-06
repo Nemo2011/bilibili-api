@@ -7,9 +7,7 @@ bilibili_api.video
 from copy import copy
 from enum import Enum
 from typing import Coroutine
-import aiohttp
 import re
-import json
 import datetime
 import asyncio
 import aiohttp
@@ -34,7 +32,6 @@ from .utils.BytesReader import BytesReader
 from .utils.AsyncEvent import AsyncEvent
 
 API = get_api("video")
-
 
 class Video:
     """
@@ -856,7 +853,6 @@ class Video:
             "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
-
 
 class VideoOnlineMonitor(AsyncEvent):
     """
