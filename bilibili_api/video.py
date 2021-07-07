@@ -2,6 +2,8 @@
 bilibili_api.video
 
 视频相关操作
+
+注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 """
 
 from copy import copy
@@ -215,17 +217,24 @@ class Video:
         cid = page["cid"]
         return cid
 
-    async def get_download_url(self, page_index: int):
+    async def get_download_url(self, page_index: int = None, cid: int = None):
         """
         获取视频下载信息。
 
+        page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
+
         Args:
-            page_index (int):  分 P 号，从 0 开始。
+            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
+            cid        (int, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             dict: 调用 API 返回的结果。
         """
-        cid = await self.__get_page_id_by_index(page_index)
+        if cid is None:
+            if page_index is None:
+                raise ArgsException('page_index 和 cid 至少提供一个。')
+
+            cid = await self.__get_page_id_by_index(page_index)
 
         url = API["info"]["playurl"]["url"]
         params = {
@@ -318,23 +327,29 @@ class Video:
         }
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_danmaku_view(self, page_index: int):
+    async def get_danmaku_view(self, page_index: int = None, cid: int = None):
         """
         获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
         Args:
-            page_index (int): 分 p 号，从 0 开始。
+            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
+            cid        (int, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             dict: 调用 API 返回的结果。
         """
+        if cid is None:
+            if page_index is None:
+                raise ArgsException('page_index 和 cid 至少提供一个。')
+
+            cid = await self.__get_page_id_by_index(page_index)
 
         session = get_session()
         api = API["danmaku"]["view"]['url']
-        oid = await self.__get_page_id_by_index(page_index)
+
         resp = await session.get(api, params={
             "type": 1,
-            "oid": oid,
+            "oid": cid,
             "pid": self.get_aid()
         }, cookies=self.credential.get_cookies(), headers={
             "Referer": "https://www.bilibili.com",
@@ -490,26 +505,31 @@ class Video:
                 continue
         return json_data
 
-    async def get_danmakus(self, page_index: int, date: datetime.date = None):
+    async def get_danmakus(self, page_index: int = None, date: datetime.date = None, cid: int = None):
         """
         获取弹幕。
 
         Args:
-            page_index (int)                    : 分 p 号，从 0 开始。
+            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
             date       (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+            cid        (int, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             List[Danmaku]: Danmaku 类的列表。
         """
-
         if date is not None:
             self.credential.raise_for_no_sessdata()
 
+        if cid is None:
+            if page_index is None:
+                raise ArgsException('page_index 和 cid 至少提供一个。')
+
+            cid = await self.__get_page_id_by_index(page_index)
+
         session = get_session()
-        page_id = await self.__get_page_id_by_index(page_index)
         aid = self.get_aid()
         params = {
-            "oid": page_id,
+            "oid": cid,
             "type": 1,
             "pid": aid
         }
@@ -524,7 +544,7 @@ class Video:
             api = API["danmaku"]["get_danmaku"]
             params["segment_index"] = 1
             # view 信息
-            view = await self.get_danmaku_view(page_index)
+            view = await self.get_danmaku_view(cid=cid)
             sge_count = view['dm_seg']['total']
 
         # 循环获取所有 segment
@@ -597,72 +617,102 @@ class Video:
                 danmakus.append(dm)
         return danmakus
 
-    async def get_history_danmaku_index(self, page_index: int, date: datetime.date):
+    async def get_history_danmaku_index(self, page_index: int = None, date: datetime.date = None, cid: int = None):
         """
         获取特定月份存在历史弹幕的日期。
 
         Args:
-            page_index (int)          : 分 P 号，从 0 开始。
-            date       (datetime.date): 精确到年月。
+            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
+            date       (datetime.date): 精确到年月. Defaults to None。
+            cid        (int, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             None | List[str]: 调用 API 返回的结果。不存在时为 None。
         """
+        if date is None:
+            raise ArgsException('请提供 date 参数')
+
         self.credential.raise_for_no_sessdata()
 
-        page_id = await self.__get_page_id_by_index(page_index)
+        if cid is None:
+            if page_index is None:
+                raise ArgsException('page_index 和 cid 至少提供一个。')
+
+            cid = await self.__get_page_id_by_index(page_index)
+
         api = API["danmaku"]["get_history_danmaku_index"]
         params = {
-            "oid": page_id,
+            "oid": cid,
             "month": date.strftime("%Y-%m"),
             "type": 1
         }
         return await request("GET", url=api["url"], params=params, credential=self.credential)
 
-    async def has_liked_danmakus(self, page_index: int, ids: List[int]):
+    async def has_liked_danmakus(self, page_index: int = None, ids: List[int] = None, cid: int = None):
         """
         是否已点赞弹幕。
 
         Args:
-            page_index (int)      : 分 P 号，从 0 开始。
+            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
             ids        (List[int]): 要查询的弹幕 ID 列表。
+            cid        (int, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             dict: 调用 API 返回的结果。
         """
+        if ids is None or len(ids) == 0:
+            raise ArgsException('请提供 ids 参数并至少有一个元素')
 
         self.credential.raise_for_no_sessdata()
-        page_id = self.__get_page_id_by_index(page_index)
+
+        if cid is None:
+            if page_index is None:
+                raise ArgsException('page_index 和 cid 至少提供一个。')
+
+            cid = await self.__get_page_id_by_index(page_index)
+
         api = API["danmaku"]["has_liked_danmaku"]
         params = {
-            "oid": page_id,
+            "oid": cid,
             "ids": ','.join(ids)
         }
         return await request("GET", url=api["url"], params=params, credential=self.credential)
 
-    async def send_danmaku(self, page_index: int, danmaku: Danmaku):
+    async def send_danmaku(self, page_index: int = None, danmaku: Danmaku = None, cid: int = None):
         """
         发送弹幕。
 
         Args:
-            page_index (int)    : 分 P 号，从 0 开始。
+            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
             danmaku    (Danmaku): Danmaku 类。
+            cid        (int, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             dict: 调用 API 返回的结果。
         """
+
+        if danmaku is None:
+            raise ArgsException('请提供 danmaku 参数')
+
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
+        if cid is None:
+            if page_index is None:
+                raise ArgsException('page_index 和 cid 至少提供一个。')
+
+            cid = await self.__get_page_id_by_index(page_index)
+
         api = API["danmaku"]["send_danmaku"]
-        oid = await self.__get_page_id_by_index(page_index)
+
+
         if danmaku.is_sub:
             pool = 1
         else:
             pool = 0
         data = {
             "type": 1,
-            "oid": oid,
+            "oid": cid,
             "msg": danmaku.text,
             "aid": self.get_aid(),
             "bvid": self.get_bvid(),
@@ -675,26 +725,37 @@ class Video:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
-    async def like_danmaku(self, page_index: int, dmid: int, status: bool = True):
+    async def like_danmaku(self, page_index: int = None, dmid: int = None, status: bool = True, cid: int = None):
         """
         点赞弹幕。
 
         Args:
-            page_index (int)           : 分 P 号，从 0 开始。
+            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
             dmid       (int)           : 弹幕 ID。
             status     (bool, optional): 点赞状态。Defaults to True.
+            cid        (int, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             dict: 调用 API 返回的结果。
         """
+        if dmid is None:
+            raise ArgsException('请提供 dmid 参数')
+
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
+        if cid is None:
+            if page_index is None:
+                raise ArgsException('page_index 和 cid 至少提供一个。')
+
+            cid = await self.__get_page_id_by_index(page_index)
+
         api = API["danmaku"]["like_danmaku"]
-        page_id = await self.__get_page_id_by_index(page_index)
+
+
         data = {
             "dmid": dmid,
-            "oid": page_id,
+            "oid": cid,
             "op": 1 if status else 2,
             "platform": "web_player"
         }

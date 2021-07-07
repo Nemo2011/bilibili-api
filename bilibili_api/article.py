@@ -2,6 +2,8 @@
 专栏相关
 """
 
+from copy import copy
+import json
 from typing import List, overload
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.Credential import Credential
@@ -142,60 +144,9 @@ class Article:
         Returns:
             None
         """
-        session = get_session()
-        resp = await session.get(f'https://www.bilibili.com/read/cv{self.cvid}')
+        resp = await self.get_all()
 
-        resp.raise_for_status()
-        html = (await resp.read()).decode()
-
-        if '页面不存在或已被删除' in html:
-            raise NetworkException(404, '专栏不存在')
-
-        document = BeautifulSoup(html, 'lxml')
-
-        def find_meta():
-            """
-            收集元数据
-            """
-            meta = {}
-
-            head_el: BeautifulSoup = document.select_one('.title-container')
-
-            meta['cvid'] = self.cvid
-
-            # 标题
-            meta['title'] = document.select_one(
-                '.title-container .title').contents[0].strip()
-
-            # 分区
-            category_el: BeautifulSoup = head_el.select_one('.category-name')
-            meta['category'] = category_el.text.strip()
-
-            # 发布时间
-            ctime_el: BeautifulSoup = head_el.select_one('.publish-text')
-            meta['ctime'] = datetime.strptime(
-                ctime_el.contents[0].strip(), "%Y-%m-%d").strftime("%Y-%m-%d")
-
-            author_el: BeautifulSoup = document.select_one('.article-up-info')
-
-            # 作者名字
-            author_name_el: BeautifulSoup = author_el.select_one('.up-name')
-            meta['author_name'] = author_name_el.text.strip()
-
-            # 作者空间地址
-            meta['author_space'] = 'https:' + author_name_el.attrs['href']
-
-            # 头图
-            meta['banner'] = document.select_one(
-                'meta[property="og:image"]').attrs['content']
-
-            # 标签
-            tags_items_el = document.select('.article-tags .tag-item')
-            meta['tags'] = []
-            for tag_el in tags_items_el:
-                meta['tags'].append(tag_el.contents[0].strip())
-
-            return meta
+        document = BeautifulSoup(f"<div>{resp['readInfo']['content']}</div>", 'lxml')
 
         def parse(el: BeautifulSoup):
             node_list = []
@@ -417,12 +368,12 @@ class Article:
 
             return node_list
 
-        # 解析文章元数据
-        self.__meta = find_meta()
+        # 文章元数据
+        self.__meta = copy(resp['readInfo'])
+        del self.__meta['content']
 
         # 解析正文
-        body = document.select_one('#read-article-holder')
-        self.__children = parse(body)
+        self.__children = parse(document.find('div'))
 
         self.__has_parsed = True
 
@@ -436,6 +387,26 @@ class Article:
             "id": self.cvid
         }
         return await request('GET', api['url'], params=params, credential=self.credential)
+
+    async def get_all(self):
+        """
+        一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等
+
+        Returns:
+            API 调用返回结果。
+        """
+        sess = get_session()
+        async with sess.get(f'https://www.bilibili.com/read/cv{11717206}') as resp:
+            html = await resp.text()
+
+            match = re.search('window\.__INITIAL_STATE__=(\{.+?\});', html, re.I)
+
+            if not match:
+                raise ApiException('找不到信息')
+
+            data = json.loads(match[1])
+
+            return data
 
     async def set_like(self, status: bool = True):
         """
