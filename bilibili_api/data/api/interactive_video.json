@@ -8,6 +8,17 @@
         "bvid": "bv号"
       },
       "comment": "视频列表数据"
+    },
+    "edge_info": {
+      "url": "https://api.bilibili.com/x/stein/edgeinfo_v2",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "bvid": "str: BV 号",
+        "graph_version": "int: 剧情图版本",
+        "edge_id": "int?: 节点 ID"
+      },
+      "comment": "互动视频节点信息"
     }
   },
   "operate": {
