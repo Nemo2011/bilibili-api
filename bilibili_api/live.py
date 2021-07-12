@@ -10,6 +10,7 @@ import json
 import struct
 import base64
 import asyncio
+from typing import List
 import aiohttp
 import zlib
 
@@ -346,10 +347,13 @@ class LiveDanmaku(AsyncEvent):
     + ROOM_RANK: 房间排名更新
     + INTERACT_WORD: 用户进入直播间
     + ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个xx小时榜
+    + ===========================
     + 本模块自定义事件：
+    + ==========================
     + VIEW: 直播间人气更新
     + ALL: 所有事件
     + DISCONNECT: 断开连接（传入连接状态码参数）
+    + TIMEOUT: 心跳响应超时
     """
     PROTOCOL_VERSION_RAW_JSON = 0
     PROTOCOL_VERSION_HEARTBEAT = 1
@@ -369,22 +373,27 @@ class LiveDanmaku(AsyncEvent):
     STATUS_ERROR = 5
 
     def __init__(self, room_display_id: int, debug: bool = False,
-                    credential: Credential = None):
+                    credential: Credential = None, max_retry: int = 5, retry_after: float = 1):
         """
         Args:
             room_display_id (int)                 : 房间展示 ID
             debug           (bool, optional)      : 调试模式，将输出更多信息。. Defaults to False.
             credential      (Credential, optional): 凭据. Defaults to None.
+            max_retry       (int, optional)       : 连接出错后最大重试次数. Defaults to 5
+            retry_after     (int, optional)       : 连接出错后重试间隔时间（秒）. Defaults to 1
         """
         super().__init__()
 
         self.credential = credential if credential is not None else Credential()
         self.room_display_id = room_display_id
+        self.max_retry = max_retry
+        self.retry_after = retry_after
         self.__room_real_id = None
         self.__status = 0
         self.__ws = None
         self.__tasks = []
         self.__debug = debug
+        self.__heartbeat_timer = 30.0
 
         # logging
         self.logger = logging.getLogger(f"LiveDanmaku_{self.room_display_id}")
@@ -432,8 +441,8 @@ class LiveDanmaku(AsyncEvent):
         while len(self.__tasks) > 0:
             self.__tasks.pop().cancel()
 
-        await self.__ws.close()
         self.__status = self.STATUS_CLOSED
+        await self.__ws.close()
 
         self.logger.info('连接已关闭')
 
@@ -445,6 +454,7 @@ class LiveDanmaku(AsyncEvent):
         self.__status == self.STATUS_CONNECTING
 
         room = LiveRoom(self.room_display_id, self.credential)
+        self.logger.info(f'准备连接直播间 {self.room_display_id}')
         # 获取真实房间号
         self.logger.debug("正在获取真实房间号")
         self.__room_real_id = (await room.get_room_play_info())["room_id"]
@@ -458,15 +468,35 @@ class LiveDanmaku(AsyncEvent):
         # 连接直播间
         self.logger.debug("准备连接直播间")
         session = get_session()
+        available_hosts: List[dict] = conf["host_server_list"]
+        retry = self.max_retry
+        host = None
 
-        for host in conf["host_server_list"]:
+        while True:
+            # 重置心跳计时器
+            self.__heartbeat_timer = 0
+            if not available_hosts:
+                raise LiveException('已尝试所有主机但仍无法连接')
+
+
+            if host is None or retry <= 0:
+                host = available_hosts.pop()
+                retry = self.max_retry
+
             port = host['wss_port']
             protocol = "wss"
             uri = f"{protocol}://{host['host']}:{port}/sub"
-            self.logger.debug(f"正在尝试连接主机： {uri}")
+            self.__status == self.STATUS_CONNECTING
+            self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
+                @self.on('TIMEOUT')
+                async def on_timeout():
+                    # 连接超时，抛出异常
+                    raise LiveException('心跳响应超时')
+
                 async with session.ws_connect(uri) as ws:
+
                     self.__ws = ws
                     self.logger.debug(f"连接主机成功, 准备发送认证信息")
                     await self.__send_verify_data(ws, conf['token'])
@@ -489,12 +519,24 @@ class LiveDanmaku(AsyncEvent):
                         elif msg.type == aiohttp.WSMsgType.CLOSED:
                             self.logger.info('连接已关闭')
                             self.__status = self.STATUS_CLOSED
-                break
+
+                # 正常断开情况下跳出循环
+                if self.__status != self.STATUS_CLOSED:
+                    # 非用户手动调用关闭，触发重连
+                    raise LiveException('非正常关闭连接')
+                else:
+                    break
 
             except Exception as e:
                 self.logger.error('出现错误：' + str(e))
-                if self.__debug:
-                    raise e
+                if retry <= 0 or len(available_hosts) == 0:
+                    self.logger.error('无法连接服务器')
+                    break
+
+                self.logger.warning(f'将在 {self.retry_after} 秒后重新连接...')
+                self.__status = self.STATUS_ERROR
+                retry -= 1
+                await asyncio.sleep(self.retry_after)
 
     async def __handle_data(self, data):
         """
@@ -519,6 +561,8 @@ class LiveDanmaku(AsyncEvent):
             elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_HEARTBEAT_RESPONSE:
                 # 心跳包反馈，返回直播间人气
                 self.logger.debug("收到心跳包反馈")
+                # 重置心跳计时器
+                self.__heartbeat_timer = 30.0
                 callback_info["type"] = 'VIEW'
                 callback_info["data"] = info["data"]["view"]
                 self.dispatch('VIEW', callback_info)
@@ -553,9 +597,16 @@ class LiveDanmaku(AsyncEvent):
         """
         HEARTBEAT = base64.b64decode("AAAAHwAQAAEAAAACAAAAAVtvYmplY3QgT2JqZWN0XQ==")
         while True:
-            self.logger.debug("发送心跳包")
-            await ws.send_bytes(HEARTBEAT)
-            await asyncio.sleep(30.0)
+            if self.__heartbeat_timer == 0:
+                self.logger.debug("发送心跳包")
+                await ws.send_bytes(HEARTBEAT)
+            elif self.__heartbeat_timer <= -30:
+                # 视为已异常断开连接，发布 TIMEOUT 事件
+                self.dispatch('TIMEOUT')
+                break
+
+            await asyncio.sleep(1.0)
+            self.__heartbeat_timer -= 1
 
     async def __send(self, data: bytes, protocol_version: int, datapack_type: int, ws: ClientWebSocketResponse):
         """
