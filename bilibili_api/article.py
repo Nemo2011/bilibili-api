@@ -84,16 +84,7 @@ class Article:
         """
         self.__children: List[Node] = []
         self.credential: Credential = credential if credential is not None else Credential()
-        self.__meta = {
-            "title": None,
-            "author_name": None,
-            "author_space": None,
-            "ctime": None,
-            "banner": None,
-            "category": None,
-            "tags": None,
-            "cvid": None
-        }
+        self.__meta = None
         self.cvid = cvid
         self.__has_parsed: bool = False
 
@@ -111,7 +102,6 @@ class Article:
 
         content = "".join([node.markdown() for node in self.__children])
 
-        self.__meta['cvid'] = self.cvid
         meta_yaml = yaml.safe_dump(self.__meta, allow_unicode=True)
         content = f"---\n{meta_yaml}\n---\n\n{content}"
         return content
@@ -128,7 +118,6 @@ class Article:
         if not self.__has_parsed:
             raise ApiException('请先调用 get_content()')
 
-        self.__meta['cvid'] = self.cvid
         return {
             "type": "Article",
             "meta": self.__meta,
@@ -396,7 +385,7 @@ class Article:
             API 调用返回结果。
         """
         sess = get_session()
-        async with sess.get(f'https://www.bilibili.com/read/cv{11717206}') as resp:
+        async with sess.get(f'https://www.bilibili.com/read/cv{self.cvid}') as resp:
             html = await resp.text()
 
             match = re.search('window\.__INITIAL_STATE__=(\{.+?\});', html, re.I)
