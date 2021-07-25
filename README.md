@@ -3,10 +3,10 @@
 # bilibili-api
 
 [![API数量](https://img.shields.io/badge/API数量-100+-blue)][api.json]
-[![STARS](https://img.shields.io/github/stars/Passkou/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]
+[![STARS](https://img.shields.io/github/stars/MoyuScript/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
 ![Python](https://img.shields.io/badge/Python-3.9|3.8|3.7-blue)
-[![Testing](https://github.com/Passkou/bilibili-api/actions/workflows/test.yml/badge.svg)](https://github.com/Passkou/bilibili-api/actions/workflows/test.yml)
+[![Testing](https://github.com/MoyuScript/bilibili-api/actions/workflows/test.yml/badge.svg)](https://github.com/MoyuScript/bilibili-api/actions/workflows/test.yml)
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
 
@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
 总的来说，异步比同步更有优势，所以不会的话可以去学一下，会发现新天地（误
 
-如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://www.passkou.com/bilibili-api/#/sync-executor)
+如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://www.moyu.moe/bilibili-api/#/sync-executor)
 
 # FA♂Q
 
@@ -160,10 +160,10 @@ A: 由于该模块比较特殊，是爬虫模块，如果b站的接口变更，�
 + \[3\] 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
 
 
-[docs]: https://www.passkou.com/bilibili-api/
-[docs-github]: https://github.com/Passkou/bilibili-api-docs
-[api.json]: https://github.com/Passkou/bilibili-api/tree/main/bilibili-api/data/api/
-[license]: https://github.com/Passkou/bilibili-api/tree/main/LICENSE.md
-[stargazers]: https://github.com/Passkou/bilibili-api/stargazers
-[issues-new]: https://github.com/Passkou/bilibili-api/issues/new
-[get-credential]: https://www.passkou.com/bilibili-api/#/get-credential
+[docs]: https://www.moyu.moe/bilibili-api/
+[docs-github]: https://github.com/MoyuScript/bilibili-api-docs
+[api.json]: https://github.com/MoyuScript/bilibili-api/tree/main/bilibili-api/data/api/
+[license]: https://github.com/MoyuScript/bilibili-api/tree/main/LICENSE.md
+[stargazers]: https://github.com/MoyuScript/bilibili-api/stargazers
+[issues-new]: https://github.com/MoyuScript/bilibili-api/issues/new
+[get-credential]: https://www.moyu.moe/bilibili-api/#/get-credential
