@@ -4,7 +4,7 @@ import asyncio
 
 def sync(coroutine: Coroutine):
     """
-    同步执行异步函数，使用可参考 [同步执行异步代码](https://www.passkou.com/bilibili-api/#/sync-executor)
+    同步执行异步函数，使用可参考 [同步执行异步代码](https://www.moyu.moe/bilibili-api/#/sync-executor)
 
     Args:
         coroutine (Coroutine): 异步函数
