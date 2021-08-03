@@ -75,6 +75,7 @@ async def test_o_send_msg():
 
 subscribe_id = None
 
+
 async def test_p_create_subscribe_group():
     name = f"TEST{random.randint(100000, 999999)}"
     result = await user.create_subscribe_group(name, credential)
@@ -82,19 +83,30 @@ async def test_p_create_subscribe_group():
     subscribe_id = result["tagid"]
     return result
 
+
 async def test_q_rename_subscribe_group():
     name = f"TEST{random.randint(100000, 999999)}"
     result = await user.rename_subscribe_group(subscribe_id, name, credential)
     return result
 
+
 async def test_r_set_subscribe_group():
     result = await user.set_subscribe_group([UID], [subscribe_id], credential)
     return result
+
 
 async def test_s_delete_subscribe_group():
     result = await user.delete_subscribe_group(subscribe_id, credential)
     return result
 
+
 async def after_all():
     await u.modify_relation(user.RelationType.UNSUBSCRIBE)
 
+
+async def test_a_get_user_history():
+    return await u.get_user_history()
+
+
+async def test_b_get_user_history():
+    return await u.get_user_history(page_num=1, per_page_item=10)
