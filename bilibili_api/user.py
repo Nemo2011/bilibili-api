@@ -429,24 +429,6 @@ class User:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
-    async def get_user_history(self, page_num: int, per_page_item: int):
-        """
-        获取用户浏览历史记录
-
-        Args:
-            page_num (int): 页码数
-            per_page_item (int): 每页多少条历史记录
-
-        Returns:
-            list(dict): 返回当前页的指定历史记录列表，每条历史记录为字典结构，
-        """
-        api = API["info"]["history"]
-        params = {
-            "pn": page_num,
-            "ps": per_page_item
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
-
 
 async def get_self_info(credential: Credential):
     """
@@ -551,3 +533,27 @@ async def set_subscribe_group(uids: List[int], group_ids: List[int], credential:
     }
 
     return await request("POST", api["url"], data=data, credential=credential)
+
+
+async def get_self_history(page_num: int, per_page_item: int, credential: Credential):
+    """
+    获取用户浏览历史记录
+
+    Args:
+        page_num (int): 页码数
+        per_page_item (int): 每页多少条历史记录
+        credential (Credential): Credential
+
+    Returns:
+        list(dict): 返回当前页的指定历史记录列表，每条历史记录为字典结构，
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+
+    api = API["info"]["history"]
+    params = {
+        "pn": page_num,
+        "ps": per_page_item
+    }
+
+    return await request("GET", url=api["url"], params=params, credential=credential)

@@ -100,13 +100,13 @@ async def test_s_delete_subscribe_group():
     return result
 
 
+page_num = 1
+per_page_item = 10
+
+
+async def test_t_get_self_history():
+    return await user.get_self_history(page_num, per_page_item, credential)
+
+
 async def after_all():
     await u.modify_relation(user.RelationType.UNSUBSCRIBE)
-
-
-async def test_a_get_user_history():
-    return await u.get_user_history()
-
-
-async def test_b_get_user_history():
-    return await u.get_user_history(page_num=1, per_page_item=10)
