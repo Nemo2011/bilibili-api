@@ -162,6 +162,16 @@
         "fid": "uid"
       },
       "comment": "获取用户在哪一个分组"
+    },
+    "history": {
+      "url": "https://api.bilibili.com/x/v2/history",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "pn": 1,
+        "ps": 100
+      },
+      "comment": "用户浏览历史记录"
     }
   },
   "operate": {
