@@ -535,7 +535,7 @@ async def set_subscribe_group(uids: List[int], group_ids: List[int], credential:
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def get_self_history(page_num: int, per_page_item: int, credential: Credential):
+async def get_self_history(page_num: int = 1, per_page_item: int = 100, credential: Credential = None):
     """
     获取用户浏览历史记录
 
@@ -545,10 +545,12 @@ async def get_self_history(page_num: int, per_page_item: int, credential: Creden
         credential (Credential): Credential
 
     Returns:
-        list(dict): 返回当前页的指定历史记录列表，每条历史记录为字典结构，
+        list(dict): 返回当前页的指定历史记录列表
     """
+    if not credential:
+        credential = Credential()
+
     credential.raise_for_no_sessdata()
-    credential.raise_for_no_bili_jct()
 
     api = API["info"]["history"]
     params = {

@@ -6,6 +6,7 @@ bilibili_api.utils.utils
 
 import json
 import os
+from typing import TypeVar
 
 
 def get_api(field: str):
@@ -135,3 +136,24 @@ def join(seperator: str, array: list):
         str: 连接结果
     """
     return seperator.join(map(lambda x: str(x) ,array))
+
+ChunkT = TypeVar('ChunkT', list, list)
+
+def chunk(arr: ChunkT, size: int) -> list[ChunkT]:
+    if size <= 0:
+        raise Exception('Parameter "size" must greater than 0')
+
+    result = []
+    temp = []
+
+    for i in range(len(arr)):
+        temp.append(arr[i])
+
+        if i % size == size - 1:
+            result.append(temp)
+            temp = []
+
+    if temp:
+        result.append(temp)
+
+    return result

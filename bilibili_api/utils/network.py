@@ -4,6 +4,7 @@ bilibili_api.utils.network
 与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。
 """
 
+from urllib.parse import quote
 import aiohttp
 import json
 import re
@@ -183,3 +184,11 @@ def set_session(session: aiohttp.ClientSession):
     """
     global __session
     __session = session
+
+
+def to_form_urlencoded(data: dict) -> str:
+    temp = []
+    for [k, v] in data.items():
+        temp.append(f'{k}={quote(v).replace("/", "%2F")}')
+
+    return '&'.join(temp)
