@@ -6,7 +6,7 @@ bilibili_api.utils.utils
 
 import json
 import os
-from typing import TypeVar
+from typing import List, TypeVar
 
 
 def get_api(field: str):
@@ -137,9 +137,9 @@ def join(seperator: str, array: list):
     """
     return seperator.join(map(lambda x: str(x) ,array))
 
-ChunkT = TypeVar('ChunkT', list, list)
+ChunkT = TypeVar('ChunkT', List, List)
 
-def chunk(arr: ChunkT, size: int) -> list[ChunkT]:
+def chunk(arr: ChunkT, size: int) -> List[ChunkT]:
     if size <= 0:
         raise Exception('Parameter "size" must greater than 0')
 
