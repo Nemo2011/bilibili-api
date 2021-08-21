@@ -4,13 +4,15 @@ bilibili_api.utils.AsyncEvent
 发布-订阅模式异步事件类支持。
 """
 
-from typing import Coroutine
+from typing import Any, Coroutine
 import asyncio
 
 
 class AsyncEvent:
     """
     发布-订阅模式异步事件类支持。
+
+    特殊事件：__ALL__ 所有事件均触发
     """
     def __init__(self):
         self.__handlers = {}
@@ -59,7 +61,7 @@ class AsyncEvent:
                 return True
         return False
 
-    def dispatch(self, name: str, *args, **kwargs):
+    def dispatch(self, name: str, data: Any = None):
         """
         异步发布事件。
 
@@ -70,4 +72,10 @@ class AsyncEvent:
         name = name.upper()
         if name in self.__handlers:
             for coroutine in self.__handlers[name]:
-                asyncio.create_task(coroutine(*args, **kwargs))
+                asyncio.create_task(coroutine(data))
+
+        if name != '__ALL__':
+            self.dispatch('__ALL__', {
+                "name": name,
+                "data": data
+            })

@@ -1,0 +1,77 @@
+{
+  "prelogin": {
+    "url": "https://passport.bilibili.com/x/passport-login/web/key",
+    "method": "GET",
+    "verify": false,
+    "comment": "登录前获取用于加密密码的 RSA 公钥信息"
+  },
+
+  "login": {
+    "url": "https://passport.bilibili.com/x/passport-login/oauth2/login",
+    "method": "POST",
+    "verify": false,
+    "data": {
+      "buvid": "str: 八位随机 ID + '-' + 设备 ID，如 000906ED-005056C00001",
+      "device_id": "str: 12 位随机设备 ID，如 005056C00001",
+      "device_name": "str: 设备名，可设置随机",
+      "device_platform": "str: 操作系统",
+      "password": "str: RSA 公钥加密后的密码",
+      "username": "str: 用户名"
+    },
+    "comment": "登录，用以获取 access_key"
+  },
+
+  "preupload": {
+    "url": "http://member.bilibili.com/preupload",
+    "method": "GET",
+    "verify": true,
+    "params": {
+      "mid": "int: 自己的 UID",
+      "profile": "ugcfr/pc3"
+    },
+    "comment": "获取上传配置"
+  },
+
+  "cover_up": {
+    "url": "http://member.bilibili.com/x/vu/client/cover/up",
+    "method": "POST",
+    "verify": true,
+    "multipart_data": {
+      "file": "图片数据"
+    }
+  },
+
+  "submit": {
+    "url": "http://member.bilibili.com/x/vu/client/add",
+    "method": "POST",
+    "verify": true,
+    "data": {
+      "copyright": "int, 投稿类型。1 自制，2 转载。",
+      "source": "str, 视频来源。投稿类型为转载时注明来源，为原创时为空。",
+      "cover": "str: 封面 URL",
+      "desc": "str, 视频简介。",
+      "desc_format_id": 0,
+      "dynamic": "str, 动态信息。",
+      "interactive": 0,
+      "open_elec": "int, 是否展示充电信息。1 为是，0 为否。",
+      "no_reprint": "int, 显示未经作者授权禁止转载，仅当为原创视频时有效。1 为启用，0 为关闭。",
+      "subtitles # 字幕设置": {
+          "lan": "str: 字幕投稿语言，不清楚作用请将该项设置为空",
+          "open": "int: 是否启用字幕投稿，1 or 0"
+      },
+      "tag": "str, 视频标签。使用英文半角逗号分隔的标签组。示例：标签1,标签2,标签3",
+      "tid": "int, 分区ID。可以使用 channel 模块进行查询。",
+      "title": "str: 视频标题",
+      "up_close_danmaku": "bool, 是否关闭弹幕。",
+      "up_close_reply": "bool, 是否关闭评论。",
+      "videos # 分 P 列表": [
+        {
+          "title": "str: 标题",
+          "desc": "str: 简介",
+          "filename": "str: preupload 时返回的 filename"
+        }
+      ],
+      "dtime": "int?: 可选，定时发布时间戳（秒）"
+    }
+  }
+}
