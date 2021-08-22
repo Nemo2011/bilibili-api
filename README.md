@@ -3,7 +3,7 @@
 # bilibili-api
 
 [![API数量](https://img.shields.io/badge/API数量-100+-blue)][api.json]
-[![STARS](https://img.shields.io/github/stars/MoyuScript/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]
+[![STARS](https://img.shields.io/github/stars/MoyuScript/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
 ![Python](https://img.shields.io/badge/Python-3.9|3.8-blue)
 [![Testing](https://github.com/MoyuScript/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/MoyuScript/bilibili-api/actions/workflows/testing.yml)
