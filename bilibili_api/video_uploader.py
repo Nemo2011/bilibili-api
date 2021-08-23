@@ -11,7 +11,7 @@ from bilibili_api.exceptions.ApiException import ApiException
 from bilibili_api.exceptions.NetworkException import NetworkException
 from bilibili_api.exceptions.ArgsException import ArgsException
 from io import BufferedIOBase
-from typing import TypedDict
+from typing import TypedDict, List
 from hashlib import md5
 import rsa
 import time
@@ -329,7 +329,7 @@ class VideoUploader(AsyncEvent):
     视频上传
     """
     def __init__(self,
-                 pages: list[VideoUploaderPage],
+                 pages: List[VideoUploaderPage],
                  meta: dict,
                  credential: VideoUploaderCredential,
                  threads: int = 5,
@@ -338,7 +338,7 @@ class VideoUploader(AsyncEvent):
                  cover_type: str = 'image/jpeg'):
         """
         Args:
-            pages        (list[VideoUploaderPage]): 分 P 列表
+            pages        (List[VideoUploaderPage]): 分 P 列表
             meta         (dict)                   : 视频信息
             credential   (VideoUploaderCredential): 凭据（注意，是 VideoUploaderCredential）
             threads      (int, optional)          : 最大并发. Defaults to 5.
