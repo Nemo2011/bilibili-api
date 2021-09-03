@@ -1,7 +1,7 @@
 {
   "info": {
     "videolist": {
-      "url": "https://member.bilibili.com/x/web/archive/view",
+      "url": "https://member.bilibili.com/x/vupre/web/archive/view",
       "method": "GET",
       "verify": true,
       "params": {
