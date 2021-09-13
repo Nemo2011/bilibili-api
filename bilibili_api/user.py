@@ -92,8 +92,8 @@ class RelationType(Enum):
     SUBSCRIBE = 1
     UNSUBSCRIBE = 2
     SUBSCRIBE_SECRETLY = 3
-    BLOCK = 4
-    UNBLOCK = 5
+    BLOCK = 5
+    UNBLOCK = 6
     REMOVE_FANS = 7
 
 
