@@ -76,12 +76,12 @@
       "comment": "获取粉丝勋章排行榜"
     },
     "black_list": {
-      "url": "https://api.live.bilibili.com/liveact/ajaxGetBlockList",
-      "method": "GET",
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/GetSilentUserList",
+      "method": "POST",
       "verify": true,
       "params": {
-        "roomid": "真实房间号",
-        "page": "页码"
+        "room_id": "真实房间号",
+        "ps": 1
       },
       "comment": "获取房间黑名单列表，登录账号需要是该房间房管"
     },
@@ -132,13 +132,13 @@
       "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
     },
     "add_block": {
-      "url": "https://api.live.bilibili.com/banned_service/v2/Silent/add_block_user",
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/AddSilentUser",
       "method": "POST",
       "verify": true,
       "params": {
-        "roomid": "真实房间号",
-        "block_uid": "封禁用户UID",
-        "hour": "小时",
+        "room_id": "真实房间号",
+        "tuid": "封禁用户UID",
+        "mobile_app": "设备类型",
         "visit_id": "空"
       },
       "comment": "封禁用户"

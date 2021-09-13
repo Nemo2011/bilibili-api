@@ -265,6 +265,18 @@
         "platform": "web_player"
       },
       "comment": "点赞弹幕"
+    },
+    "edit_danmaku": {
+      "url": "https://api.bilibili.com/x/v2/dm/edit/state",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "type": "1",
+        "dmids": "弹幕ID",
+        "oid": "视频cid",
+        "state": "1删除2保护3取消保护"
+      },
+      "comment": "编辑弹幕"
     }
   }
 }
