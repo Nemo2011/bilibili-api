@@ -52,8 +52,8 @@ async def test_j_subscribed_bangumis():
     return await u.get_subscribed_bangumis()
 
 
-async def test_k_get_followings():
-    return await u.get_followings()
+async def test_k_get_followers():
+    return await u.get_followers()
 
 
 async def test_l_get_followings():
