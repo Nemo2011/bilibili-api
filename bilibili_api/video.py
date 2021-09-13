@@ -35,6 +35,11 @@ from .utils.AsyncEvent import AsyncEvent
 
 API = get_api("video")
 
+class DanmakuOperatorType(Enum):
+    DELETE = 1
+    PROTECT = 2
+    UNPROTECT = 3
+
 class Video:
     """
     视频类，各种对视频的操作均在里面。
@@ -732,7 +737,7 @@ class Video:
         Args:
             page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
             dmid       (int)           : 弹幕 ID。
-            status     (bool, optional): 点赞状态。Defaults to True.
+            status     (bool, optional): 点赞状态。Defaults to True
             cid        (int, optional): 分 P 的 ID。Defaults to None
 
         Returns:
@@ -761,6 +766,51 @@ class Video:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
+    async def operate_danmaku(self,
+                              page_index: int = None,
+                              dmids: List[int] = None,
+                              cid: int = None,
+                              type_: DanmakuOperatorType = None):
+        """
+        操作弹幕
+
+        Args:
+            page_index (int, optional)      : 分 P 号，从 0 开始。Defaults to None
+            dmids      (List[int])          : 弹幕 ID 列表。
+            cid        (int, optional)      : 分 P 的 ID。Defaults to None
+            type_      (DanmakuOperatorType): 操作类型
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+
+        if dmids is None or len(dmids) == 0:
+            raise ArgsException('请提供 dmid 参数')
+
+        if type_ is None:
+            raise ArgsException('请提供 type_ 参数')
+
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        if cid is None:
+            if page_index is None:
+                raise ArgsException('page_index 和 cid 至少提供一个。')
+
+            cid = await self.__get_page_id_by_index(page_index)
+
+        api = API["danmaku"]["edit_danmaku"]
+
+        data = {
+            "type": 1,
+            "dmids": ",".join(map(lambda x: str(x), dmids)),
+            "oid": cid,
+            "state": type_.value,
+        }
+
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+
     async def like(self, status: bool = True):
         """
         点赞视频。
@@ -771,7 +821,7 @@ class Video:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        self.credential.raise_for_no_sessdata
+        self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["like"]

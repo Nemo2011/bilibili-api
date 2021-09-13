@@ -35,19 +35,20 @@ async def test_i_get_self_info():
 async def test_j_get_chat_conf():
     return await l.get_chat_conf()
 
-banid = None
-
 async def test_k_ban_user():
-    resp = await l.ban_user(1)
-    global banid
-    banid = resp['id']
-    return resp
+    return await l.ban_user(1)
+
+black_list = None
 
 async def test_l_get_black_list():
-    return await l.get_black_list()
+    global black_list
+    black_list = await l.get_black_list()
+    return black_list
 
 async def test_m_unban_user():
-    return await l.unban_user(banid)
+    for item in black_list["data"]:
+        if item["tuid"] == 1:
+            return await l.unban_user(item["id"])
 
 async def test_n_send_danmaku():
     return await l.send_danmaku(Danmaku(f'test_{random.randint(10000, 99999)}'))
