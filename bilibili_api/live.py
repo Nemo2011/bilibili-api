@@ -210,7 +210,7 @@ class LiveRoom:
         }
         return await request(api['method'], api["url"], params, credential=self.credential)
 
-    async def get_black_list(self, page: int = 1):
+    async def get_black_list(self):
         """
         获取黑名单列表
 
@@ -219,8 +219,8 @@ class LiveRoom:
         """
         api = API["info"]["black_list"]
         params = {
-            "roomid": self.room_display_id,
-            "page": page
+            "room_id": self.room_display_id,
+            "ps": 1
         }
 
         return await request(api['method'], api["url"], params, credential=self.credential)
@@ -268,21 +268,20 @@ class LiveRoom:
         return await request(api['method'], api['url'], params=params, credential=self.credential)
 
 
-    async def ban_user(self, uid: int, hour: int = 1):
+    async def ban_user(self, uid: int):
         """
         封禁用户
 
         Args:
             uid (int): 用户 UID
-            hour (int, optional): 封禁时长（小时）. Defaults to 1
         """
         self.credential.raise_for_no_sessdata()
 
         api = API["operate"]["add_block"]
         data = {
-            "roomid": self.room_display_id,
-            "block_uid": uid,
-            "hour": hour,
+            "room_id": self.room_display_id,
+            "tuid": uid,
+            "mobile_app": "web",
             "visit_id": ""
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
