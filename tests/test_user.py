@@ -3,6 +3,7 @@ from bilibili_api import user
 from . import common
 import time
 import random
+from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 
 
 UID = 660303135
@@ -56,7 +57,13 @@ async def test_k_get_followings():
 
 
 async def test_l_get_followings():
-    return await u.get_followers()
+    try:
+        return await u.get_followers()
+    except ResponseCodeException as e:
+        if e.code != 22115:
+            raise e
+
+        return e.raw
 
 
 async def test_m_get_overview_stat():
