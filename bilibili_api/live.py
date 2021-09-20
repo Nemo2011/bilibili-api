@@ -393,6 +393,7 @@ class LiveDanmaku(AsyncEvent):
         self.__tasks = []
         self.__debug = debug
         self.__heartbeat_timer = 30.0
+        self.err_reason = ""
 
         # logging
         self.logger = logging.getLogger(f"LiveDanmaku_{self.room_display_id}")
@@ -471,12 +472,19 @@ class LiveDanmaku(AsyncEvent):
         retry = self.max_retry
         host = None
 
+        @self.on('TIMEOUT')
+        async def on_timeout(ev):
+            # 连接超时
+            self.err_reason = '心跳响应超时'
+            await self.__ws.close()
+
         while True:
+            self.err_reason = ''
             # 重置心跳计时器
             self.__heartbeat_timer = 0
             if not available_hosts:
-                raise LiveException('已尝试所有主机但仍无法连接')
-
+                self.err_reason = '已尝试所有主机但仍无法连接'
+                break
 
             if host is None or retry <= 0:
                 host = available_hosts.pop()
@@ -489,11 +497,6 @@ class LiveDanmaku(AsyncEvent):
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
-                @self.on('TIMEOUT')
-                async def on_timeout():
-                    # 连接超时，抛出异常
-                    raise LiveException('心跳响应超时')
-
                 async with session.ws_connect(uri) as ws:
 
                     self.__ws = ws
@@ -520,9 +523,9 @@ class LiveDanmaku(AsyncEvent):
                             self.__status = self.STATUS_CLOSED
 
                 # 正常断开情况下跳出循环
-                if self.__status != self.STATUS_CLOSED:
+                if self.__status != self.STATUS_CLOSED or self.err_reason:
                     # 非用户手动调用关闭，触发重连
-                    raise LiveException('非正常关闭连接')
+                    raise LiveException('非正常关闭连接' if not self.err_reason else self.err_reason)
                 else:
                     break
 
@@ -530,6 +533,7 @@ class LiveDanmaku(AsyncEvent):
                 self.logger.error('出现错误：' + str(e))
                 if retry <= 0 or len(available_hosts) == 0:
                     self.logger.error('无法连接服务器')
+                    self.err_reason = '无法连接服务器'
                     break
 
                 self.logger.warning(f'将在 {self.retry_after} 秒后重新连接...')

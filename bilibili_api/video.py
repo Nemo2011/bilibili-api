@@ -955,6 +955,9 @@ class Video:
             raise ArgsException(
                 "对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。")
 
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
         api = API["operate"]["favorite"]
         data = {
             "rid": self.get_aid(),
@@ -963,6 +966,72 @@ class Video:
             "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+
+    async def submit_subtitle(self,
+                              lan: str,
+                              data: dict,
+                              submit: bool,
+                              sign: bool,
+                              page_index: int = None,
+                              cid: int = None):
+        """
+        上传字幕
+
+        字幕数据 data 参考：
+
+        ```json
+        {
+          "font_size": "float: 字体大小，默认 0.4",
+          "font_color": "str: 字体颜色，默认 \"#FFFFFF\"",
+          "background_alpha": "float: 背景不透明度，默认 0.5",
+          "background_color": "str: 背景颜色，默认 \"#9C27B0\"",
+          "Stroke": "str: 描边，目前作用未知，默认为 \"none\"",
+          "body": [
+            {
+              "from": "int: 字幕开始时间（秒）",
+              "to": "int: 字幕结束时间（秒）",
+              "location": "int: 字幕位置，默认为 2",
+              "content": "str: 字幕内容"
+            }
+          ]
+        }
+        ```
+
+        Args:
+            lan        (str)          : 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm
+            data       (dict)         : 字幕数据
+            submit     (bool)         : 是否提交，不提交为草稿
+            sign       (bool)         : 是否署名
+            page_index (int, optional): 分 P 索引. Defaults to None.
+            cid        (int, optional): 分 P id. Defaults to None.
+
+        Returns:
+            dict: API 调用返回结果
+
+        """
+        if cid is None:
+            if page_index is None:
+                raise ArgsException('page_index 和 cid 至少提供一个。')
+
+            cid = await self.__get_page_id_by_index(page_index)
+
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["submit_subtitle"]
+
+        payload = {
+            "type": 1,
+            "oid": cid,
+            "lan": lan,
+            "data": json.dumps(data),
+            "submit": submit,
+            "sign": sign,
+            "bvid": self.get_bvid()
+        }
+
+        return await request("POST", api["url"], data=payload, credential=self.credential)
 
 class VideoOnlineMonitor(AsyncEvent):
     """

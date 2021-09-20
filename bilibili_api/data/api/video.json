@@ -178,6 +178,36 @@
         "del_media_ids": "commaList[int]: 要移出的收藏夹 ID。"
       },
       "comment": "设置视频收藏状态"
+    },
+
+    "submit_subtitle": {
+      "url": "https://api.bilibili.com/x/v2/dm/subtitle/draft/save",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "type": 1,
+        "oid": "int: 分 P id",
+        "lan": "str: 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm",
+        "data": {
+          "font_size": "float: 字体大小，默认 0.4",
+          "font_color": "str: 字体颜色，默认 \"#FFFFFF\"",
+          "background_alpha": "float: 背景不透明度，默认 0.5",
+          "background_color": "str: 背景颜色，默认 \"#9C27B0\"",
+          "Stroke": "str: 描边，目前作用未知，默认为 \"none\"",
+          "body": [
+            {
+              "from": "int: 字幕开始时间（秒）",
+              "to": "int: 字幕结束时间（秒）",
+              "location": "int: 字幕位置，默认为 2",
+              "content": "str: 字幕内容"
+            }
+          ]
+        },
+        "submit": "bool: 是否提交，不提交为草稿",
+        "sign": "bool: 是否署名",
+        "bvid": "str: 视频 BV 号"
+      },
+      "comment": "上传字幕"
     }
   },
   "danmaku": {

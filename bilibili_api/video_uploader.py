@@ -1,6 +1,7 @@
 import asyncio
 from asyncio.exceptions import CancelledError
 from asyncio.tasks import Task, create_task
+from bilibili_api.utils.Credential import Credential
 from copy import copy, deepcopy
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 import json
@@ -23,7 +24,7 @@ from aiohttp import FormData
 import mimetypes
 
 from .utils.AsyncEvent import AsyncEvent
-from .utils.network import get_session, to_form_urlencoded
+from .utils.network import get_session, request, to_form_urlencoded
 from .utils.utils import get_api
 
 _APP_KEY = "aae92bc66f3edfab"
@@ -355,6 +356,7 @@ class VideoUploader(AsyncEvent):
             "desc": "str, 视频简介。",
             "desc_format_id": 0,
             "dynamic": "str, 动态信息。",
+            "mission_id": "int, 参加活动 ID，若不参加不要提供该项",
             "interactive": 0,
             "open_elec": "int, 是否展示充电信息。1 为是，0 为否。",
             "no_reprint": "int, 显示未经作者授权禁止转载，仅当为原创视频时有效。1 为启用，0 为关闭。",
@@ -702,3 +704,22 @@ class VideoUploader(AsyncEvent):
             self.__task.cancel('用户手动取消')
 
         self.dispatch(VideoUploaderEvents.ABORTED.value, None)
+
+async def get_missions(tid: int = 0, credential: Credential = None):
+    """
+    获取活动信息
+
+    Args:
+        tid        (int, optional)       : 分区 ID. Defaults to 0.
+        credential (Credential, optional): 凭据. Defaults to None.
+
+    Returns:
+        dict API 调用返回结果
+    """
+    api = _API["missions"]
+
+    params = {
+        "tid": tid
+    }
+
+    return await request("GET", api["url"], params=params, credential=credential)

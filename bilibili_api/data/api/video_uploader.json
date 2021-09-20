@@ -73,5 +73,15 @@
       ],
       "dtime": "int?: 可选，定时发布时间戳（秒）"
     }
+  },
+
+  "missions": {
+    "url": "https://member.bilibili.com/x/vupre/app/h5/mission/type/all",
+    "method": "GET",
+    "verify": false,
+    "params": {
+      "tid": "int: 分区 ID"
+    },
+    "comment": "获取活动列表"
   }
 }
