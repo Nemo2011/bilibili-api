@@ -43,6 +43,23 @@
       "params": null,
       "comment": "获取直播用户等级等信息"
     },
+    "user_guards": {
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/guards",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "page": "页码",
+        "page_size": "每页数量， 过多可能报错 默认：10"
+      },
+      "comment":　"获取用户开通的大航海列表"
+    },
+    "bag_list": {
+      "url": "https://api.live.bilibili.com/xlive/web-room/v1/gift/bag_list",
+      "method": "GET",
+      "verify": "true",
+      "params": null,
+      "comment": "获取自己的礼物包裹"
+    },
     "dahanghai": {
       "url": "https://api.live.bilibili.com/xlive/app-room/v1/guardTab/topList",
       "method": "GET",
@@ -54,6 +71,13 @@
         "page_size": 29
       },
       "comment": "获取大航海列表"
+    },
+    "live_info":{
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/live_info",
+      "method": "GET",
+      "verify": false,
+      "params": null,
+      "comment":"获取自己粉丝牌,大航海等数据"
     },
     "seven_rank": {
       "url": "https://api.live.bilibili.com/rankdb/v1/RoomRank/webSevenRank",
@@ -153,6 +177,46 @@
         "visit_id": "空"
       },
       "comment": "解封用户"
+    },
+    "dahanghai_sign_up": {
+      "url": "https://api.live.bilibili.com/xlive/activity-interface/v2/userTask/UserTaskSignUp",
+      "method":" POST",
+      "verify": true,
+      "params": {
+        "task_id": "任务id， 签到：1447 ，可能还有别的",
+        "r_uid": "房间真实id",
+        "csrf,csrf_token": "要给两个"
+      },
+      "comment": "航海日志签到"
+    },
+    "send_gift":{
+      "url": "https://api.live.bilibili.com/xlive/revenue/v1/gift/sendBag",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "uid": "自己的uid",
+        "bag_id": "包裹id",
+        "gift_id": "礼物id",
+        "gift_num": "发送数量",
+        "platform": "pc",
+        "send_ruid": "0 未知作用",
+        "storm_beat_id": "0 未知作用",
+        "price": "0 未知作用",
+        "biz_code": "live",
+        "biz_id": "room_display_id 房间显示id",
+        "ruid": "全称room_uid，从room_play_info里头的uid可以找到"
+      },
+      "comment": "在直播间中发送礼物"
+    },
+    "receive_reward":{
+      "url": "https://api.live.bilibili.com/xlive/activity-interface/v2/spec-act/sep-guard/receive/awards",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "ruid": "房间真实id",
+        "receive_type": "领取类型, 2为全部领取"
+      },
+      "comment": "领取航海日志奖励"
     }
   }
 }
