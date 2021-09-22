@@ -82,7 +82,7 @@ async def get_top10(tid: int, day: int = 7, credential: Credential = None):
     if credential is None:
         credential = Credential()
     if day not in (3, 7):
-        raise ArgsException("参数 day 只能是3，7。")
+        raise ArgsException("参数 day 只能是 3，7。")
 
     url = API["ranking"]["get_top10"]["url"]
     params = {

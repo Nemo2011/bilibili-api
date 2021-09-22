@@ -122,7 +122,7 @@
         "src_media_id": "int: 源收藏夹 ID。",
         "tar_media_id": "int: 目标收藏夹 ID。",
         "mid": "int: 自己的 UID。",
-        "resources": "commaList<str>: 要操作的资源，格式：'资源ID:资源类型'。视频类型为 2。如：'83051349:2'"
+        "resources": "commaList<str>: 要操作的资源，格式：'资源 ID:资源类型'。视频类型为 2。如：'83051349:2'"
       },
       "comment": "复制资源到另一收藏夹。"
     },
@@ -133,7 +133,7 @@
       "data": {
         "src_media_id": "int: 源收藏夹 ID。",
         "tar_media_id": "int: 目标收藏夹 ID。",
-        "resources": "commaList: 要操作的资源，格式：'资源ID:资源类型'。视频类型为 2。如：'83051349:2'"
+        "resources": "commaList: 要操作的资源，格式：'资源 ID:资源类型'。视频类型为 2。如：'83051349:2'"
       },
       "comment": "移动资源到另一收藏夹。"
     },
@@ -143,7 +143,7 @@
       "verify": true,
       "data": {
         "media_id": "int: 收藏夹 ID。",
-        "resources": "commaList: 要操作的资源，格式：'资源ID:资源类型'。视频类型为 2。如：'83051349:2'"
+        "resources": "commaList: 要操作的资源，格式：'资源 ID:资源类型'。视频类型为 2。如：'83051349:2'"
       },
       "comment": "删除收藏夹中的资源。"
     },
