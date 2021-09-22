@@ -72,12 +72,24 @@
       },
       "comment": "获取大航海列表"
     },
-    "live_info":{
+    "live_info": {
       "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/live_info",
       "method": "GET",
       "verify": false,
       "params": null,
       "comment":"获取自己粉丝牌,大航海等数据"
+    },
+    "general_info":{
+      "url": "https://api.live.bilibili.com/xlive/fuxi-interface/general/half/initial",
+      "method": "GET",
+      "verify": true,
+      "params": {
+          "actId": "未知，大航海信息：100061",
+          "roomId": "真实房间号",
+          "uid": "直播者uid",
+          "csrf,csrf_token": "要给两个"
+      },
+      "comment": "获取自己在当前房间的大航海信息, 是否开通，等级，当前经验，同时可获得自己开通的所有航海日志"
     },
     "seven_rank": {
       "url": "https://api.live.bilibili.com/rankdb/v1/RoomRank/webSevenRank",
@@ -178,7 +190,7 @@
       },
       "comment": "解封用户"
     },
-    "dahanghai_sign_up": {
+    "sign_up_dahanghai": {
       "url": "https://api.live.bilibili.com/xlive/activity-interface/v2/userTask/UserTaskSignUp",
       "method":" POST",
       "verify": true,
@@ -214,7 +226,8 @@
       "verify": true,
       "params": {
         "ruid": "房间真实id",
-        "receive_type": "领取类型, 2为全部领取"
+        "receive_type": "领取类型， 全部领取：2",
+        "csrf,csrf_token": "要给两个"
       },
       "comment": "领取航海日志奖励"
     }
