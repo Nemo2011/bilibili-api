@@ -364,8 +364,8 @@ class VideoUploader(AsyncEvent):
                 "lan": "str: 字幕投稿语言，不清楚作用请将该项设置为空",
                 "open": "int: 是否启用字幕投稿，1 or 0"
             },
-            "tag": "str, 视频标签。使用英文半角逗号分隔的标签组。示例：标签1,标签2,标签3",
-            "tid": "int, 分区ID。可以使用 channel 模块进行查询。",
+            "tag": "str, 视频标签。使用英文半角逗号分隔的标签组。示例：标签 1,标签 1,标签 1",
+            "tid": "int, 分区 ID。可以使用 channel 模块进行查询。",
             "title": "str: 视频标题",
             "up_close_danmaku": "bool, 是否关闭弹幕。",
             "up_close_reply": "bool, 是否关闭评论。",

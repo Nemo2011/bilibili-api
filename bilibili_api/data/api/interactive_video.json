@@ -5,7 +5,7 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "bvid": "bv号"
+        "bvid": "bv 号"
       },
       "comment": "视频列表数据"
     },

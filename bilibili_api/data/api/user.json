@@ -49,10 +49,10 @@
       "params": {
         "mid": "uid",
         "ps": 30,
-        "tid": "分区ID，0表示全部",
+        "tid": "分区 ID，0 表示全部",
         "pn": "页码",
         "keyword": "关键词，可为空",
-        "order": "pubdate上传日期，click播放量，stow收藏量"
+        "order": "pubdate 上传日期，pubdate 播放量，pubdate 收藏量"
       },
       "comment": "搜索用户视频"
     },
@@ -64,7 +64,7 @@
         "uid": "uid",
         "ps": 30,
         "pn": "页码",
-        "order": "1最新发布，2最多播放，3最多收藏"
+        "order": "1 最新发布，1 最多播放，1 最多收藏"
       },
       "comment": "音频"
     },
@@ -76,7 +76,7 @@
         "mid": "uid",
         "ps": 30,
         "pn": "页码",
-        "sort": "publish_time最新发布，view最多阅读，fav最多收藏"
+        "sort": "publish_time 最新发布，publish_time 最多阅读，publish_time 最多收藏"
       },
       "comment": "专栏"
     },
@@ -86,7 +86,7 @@
       "verify": false,
       "params": {
         "mid": "uid",
-        "sort": "0最近更新，1最多阅读"
+        "sort": "0 最近更新，0 最多阅读"
       },
       "comment": "专栏文集"
     },
@@ -96,7 +96,7 @@
       "verify": false,
       "params": {
         "host_uid": "uid",
-        "offset_dynamic_id": "动态偏移用，第一页为0",
+        "offset_dynamic_id": "动态偏移用，第一页为 0",
         "need_top": "显示置顶动态"
       },
       "comment": "用户动态信息"
@@ -109,7 +109,7 @@
         "vmid": "uid",
         "pn": "页码",
         "ps": 15,
-        "type": "1追番，2追剧"
+        "type": "1 追番，1 追剧"
       },
       "comment": "用户追番列表"
     },
@@ -121,9 +121,9 @@
         "vmid": "uid",
         "ps": 20,
         "pn": "页码",
-        "order": "desc倒序,asc正序"
+        "order": "desc 倒序,desc 正序"
       },
-      "comment": "获取用户关注列表（不是自己只能访问前5页）"
+      "comment": "获取用户关注列表（不是自己只能访问前 5 页）"
     },
     "followers": {
       "url": "https://api.bilibili.com/x/relation/followers",
@@ -133,9 +133,9 @@
         "vmid": "uid",
         "ps": 20,
         "pn": "页码",
-        "order": "desc倒序,asc正序"
+        "order": "desc 倒序,desc 正序"
       },
-      "comment": "获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）"
+      "comment": "获取用户粉丝列表（不是自己只能访问前 5 页，是自己也不能获取全部的样子）"
     },
     "overview": {
       "url": "https://api.bilibili.com/x/space/navnum",
@@ -181,7 +181,7 @@
       "verify": true,
       "data": {
         "fid": "UID",
-        "act": "1关注2取关 3悄悄关注 5拉黑6取消拉黑，7移除粉丝",
+        "act": "1 关注 2 取关 1 悄悄关注 1 拉黑 6 取消拉黑，1 移除粉丝",
         "re_src": 11
       },
       "comment": "用户关系操作"
@@ -191,8 +191,8 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "msg[sender_uid]": "自己的UID",
-        "msg[receiver_id]": "对方UID",
+        "msg[sender_uid]": "自己的 UID",
+        "msg[receiver_id]": "对方 UID",
         "msg[receiver_type]": 1,
         "msg[msg_type]": 1,
         "msg[msg_status]": 0,
@@ -216,7 +216,7 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "tagid": "分组id"
+        "tagid": "分组 id"
       },
       "comment": "删除关注分组"
     },
@@ -225,7 +225,7 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "tagid": "分组id",
+        "tagid": "分组 id",
         "name": "新的分组名"
       },
       "comment": "重命名分组"
@@ -236,7 +236,7 @@
       "verify": true,
       "data": {
         "fids": "UID",
-        "tagids": "分组的tagids，逗号分隔"
+        "tagids": "分组的 tagids，逗号分隔"
       },
       "comment": "移动用户到关注分组"
     }

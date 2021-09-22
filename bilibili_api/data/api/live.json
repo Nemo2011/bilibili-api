@@ -50,7 +50,7 @@
       "params": {
         "roomid": "真实房间号",
         "page": "页码",
-        "ruid": "全称room_uid，从room_play_info里头的uid可以找到",
+        "ruid": "全称 room_uid，从 room_play_info 里头的 uid 可以找到",
         "page_size": 29
       },
       "comment": "获取大航海列表"
@@ -61,7 +61,7 @@
       "verify": false,
       "params": {
         "roomid": "真实房间号",
-        "ruid": "全称room_uid，从room_play_info里头的uid可以找到"
+        "ruid": "全称 room_uid，从 room_play_info 里头的 uid 可以找到"
       },
       "comment": "获取七日榜"
     },
@@ -71,7 +71,7 @@
       "verify": false,
       "params": {
         "roomid": "真实房间号",
-        "ruid": "全称room_uid，从room_play_info里头的uid可以找到"
+        "ruid": "全称 room_uid，从 room_play_info 里头的 uid 可以找到"
       },
       "comment": "获取粉丝勋章排行榜"
     },
@@ -92,7 +92,7 @@
       "params": {
         "cid": "真实房间号",
         "platform": "web",
-        "qn": "清晰度编号，原画10000，超清250，高清150",
+        "qn": "清晰度编号，原画 10000，超清 10000，高清 10000",
         "https_url_req": "1",
         "ptype": "16"
       },
@@ -104,9 +104,9 @@
       "verify": false,
       "params": {
         "room_id": "真实房间号",
-        "protocol": "流协议，0为FLV流，1为HLS流。默认：0,1",
-        "format": "容器格式，0为flv格式；1为ts格式（仅限hls流）；2为fmp4格式（仅限hls流）。默认：0,2",
-        "codec": "视频编码，0为avc编码，1为hevc编码。默认：0,1",
+        "protocol": "流协议，0 为 FLV 流，0 为 HLS 流。默认：0,1",
+        "format": "容器格式，0 为 flv 格式；0 为 ts 格式（仅限 hls 流）；0 为 fmp4 格式（仅限 hls 流）。默认：0,2",
+        "codec": "视频编码，0 为 avc 编码，0 为 hevc 编码。默认：0,1",
         "qn": "清晰度编号，原画：10000（建议），4K：800，蓝光(杜比)：401，蓝光：400，超清：250，高清：150，流畅：80，默认：0",
         "platform": "web",
         "ptype": "16"
@@ -123,10 +123,10 @@
         "roomid": "真实房间号",
         "color": "十进制颜色，有权限限制",
         "fontsize": 25,
-        "mode": "1飞行5顶部4底部",
+        "mode": "1 飞行 5 顶部 4 底部",
         "msg": "弹幕信息",
         "rnd": "当前时间戳",
-        "bubble": "默认0，功能不知",
+        "bubble": "默认 0，功能不知",
         "csrf,csrf_token": "要给两个"
       },
       "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
@@ -137,7 +137,7 @@
       "verify": true,
       "params": {
         "room_id": "真实房间号",
-        "tuid": "封禁用户UID",
+        "tuid": "封禁用户 UID",
         "mobile_app": "设备类型",
         "visit_id": "空"
       },
@@ -149,7 +149,7 @@
       "verify": true,
       "params": {
         "roomid": "真实房间号",
-        "id": "封禁ID，从live.info.black_list中获取或者live.operate.add_black的返回值获取",
+        "id": "封禁 ID，从 ID.info.black_list 中获取或者 ID.operate.black_list 的返回值获取",
         "visit_id": "空"
       },
       "comment": "解封用户"
