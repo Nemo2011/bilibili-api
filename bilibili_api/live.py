@@ -345,7 +345,7 @@ class LiveDanmaku(AsyncEvent):
     + ENTRY_EFFECT: 进场特效
     + ROOM_RANK: 房间排名更新
     + INTERACT_WORD: 用户进入直播间
-    + ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个xx小时榜
+    + ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个 xx 小时榜
     + ===========================
     + 本模块自定义事件：
     + ==========================
@@ -625,7 +625,7 @@ class LiveDanmaku(AsyncEvent):
         """
         sendData = bytearray()
         sendData += struct.pack(">H", 16)
-        assert 0 <= protocol_version <= 2, LiveException("数据包协议版本错误，范围0~2")
+        assert 0 <= protocol_version <= 2, LiveException("数据包协议版本错误，范围 0~2")
         sendData += struct.pack(">H", protocol_version)
         assert datapack_type in [2, 7], LiveException("数据包类型错误，可用类型：2, 7")
         sendData += struct.pack(">I", datapack_type)

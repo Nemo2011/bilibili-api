@@ -319,7 +319,7 @@ class User:
 
     async def get_followings(self,  pn: int = 1, desc: bool = True):
         """
-        获取用户关注列表（不是自己只能访问前5页）
+        获取用户关注列表（不是自己只能访问前 5 页）
 
         Args:
             pn   (int, optional) : 页码，从 1 开始. Defaults to 1.
@@ -339,7 +339,7 @@ class User:
 
     async def get_followers(self, pn: int = 1, desc: bool = True):
         """
-        获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）
+        获取用户粉丝列表（不是自己只能访问前 5 页，是自己也不能获取全部的样子）
 
         Args:
             pn   (int, optional) : 页码，从 1 开始. Defaults to 1.
