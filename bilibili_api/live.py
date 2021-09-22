@@ -337,7 +337,7 @@ class LiveRoom:
         api = API["operate"]["sign_up_dahanghai"]
         data = {
             "task_id": task_id,
-            "r_uid": await self.__get_ruid(),
+            "uid": await self.__get_ruid(),
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
 
@@ -375,7 +375,7 @@ class LiveRoom:
             "price": price,
             "biz_code": biz_code,
             "biz_id": self.room_display_id,
-            "r_uid": await self.__get_ruid(),
+            "ruid": await self.__get_ruid(),
 
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)

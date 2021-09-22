@@ -196,7 +196,7 @@
       "verify": true,
       "params": {
         "task_id": "任务id， 签到：1447 ，可能还有别的",
-        "r_uid": "房间真实id",
+        "uid": "真实房间号",
         "csrf,csrf_token": "要给两个"
       },
       "comment": "航海日志签到"
@@ -206,7 +206,7 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "uid": "自己的uid",
+        "uid": "送礼者的uid",
         "bag_id": "包裹id",
         "gift_id": "礼物id",
         "gift_num": "发送数量",
