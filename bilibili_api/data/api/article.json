@@ -5,7 +5,7 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "id": "cv号"
+        "id": "cv 号"
       },
       "comment": "专栏信息数据"
     },
@@ -25,8 +25,8 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "id": "cv号",
-        "type": "1点赞2取消"
+        "id": "cv 号",
+        "type": "1 点赞 2 取消"
       },
       "comment": "专栏点赞"
     },
@@ -35,7 +35,7 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "id": "cv号"
+        "id": "cv 号"
       },
       "comment": "专栏收藏"
     },
@@ -44,7 +44,7 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "id": "cv号"
+        "id": "cv 号"
       },
       "comment": "专栏取消收藏"
     },
@@ -53,9 +53,9 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "aid": "cv号",
-        "multiply": "硬币数量，目前只能是1个",
-        "upid": "up主的uid",
+        "aid": "cv 号",
+        "multiply": "硬币数量，目前只能是 1 个",
+        "upid": "up 主的 uid",
         "avtype": 2
       },
       "comment": "专栏投币"

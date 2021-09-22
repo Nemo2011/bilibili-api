@@ -33,7 +33,7 @@ class BangumiCommentOrder(Enum):
 
 async def get_meta(media_id: int, credential: Credential = None):
     """
-    获取番剧元数据信息（评分，封面URL，标题等）
+    获取番剧元数据信息（评分，封面 URL，标题等）
 
     Args:
         media_id (int): media_id

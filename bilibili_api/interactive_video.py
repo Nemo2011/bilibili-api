@@ -17,7 +17,7 @@ API = get_api("interactive_video")
 
 async def up_get_ivideo_pages(bvid: str, credential: Credential):
     """
-    获取交互视频的分P信息。up 主需要拥有视频所有权。
+    获取交互视频的分 P 信息。up 主需要拥有视频所有权。
     Args:
         bvid       (str)       : BV 号.
         credential (Credential): Credential 类.
