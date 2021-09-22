@@ -324,7 +324,7 @@ class LiveRoom:
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
 
-    async def sign_up_dahanghai(self,task_id: int = 1447):
+    async def sign_up_dahanghai(self, task_id: int = 1447):
         """
         大航海签到
 
@@ -332,6 +332,7 @@ class LiveRoom:
             task_id (int, optional): 签到任务 ID. Defaults to 1447
         """
         self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["sign_up_dahanghai"]
         data = {
@@ -340,7 +341,16 @@ class LiveRoom:
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
 
-    async def send_gift(self,uid: int, bag_id: int, gift_id: int, gift_num: int,platform: str="pc",send_ruid: int=0,storm_beat_id: int=0, price: int=0, biz_code: str="live"):
+    async def send_gift(self,
+                        uid: int,
+                        bag_id: int,
+                        gift_id: int,
+                        gift_num: int,
+                        platform: str = "pc",
+                        send_ruid: int = 0,
+                        storm_beat_id: int = 0,
+                        price: int = 0,
+                        biz_code: str = "live"):
         """
         直播间发送礼物
 
@@ -351,6 +361,7 @@ class LiveRoom:
             gift_num (int)  : 礼物数量
         """
         self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["send_gift"]
         data = {
@@ -368,7 +379,7 @@ class LiveRoom:
 
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
-        
+
     async def receive_reward(self, receive_type: int = 2):
         """
         领取自己在某个直播间的航海日志奖励
@@ -384,24 +395,24 @@ class LiveRoom:
             "receive_type": receive_type,
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
-    
-    async def get_general_info(self, uid: int, actId: int = 100061):
+
+    async def get_general_info(self, uid: int, act_id: int = 100061):
         """
         获取自己在该房间的大航海信息, 比如是否开通, 等级等
 
         Args:
             uid (int)   : 直播者的用户id
-            actId (int) : 未知，Defaults to 100061
+            act_id (int) : 未知，Defaults to 100061
 
         """
         uid = (await self.get_room_play_info())["uid"]
-        api = API["info"]["get_general_info"]
+        api = API["info"]["general_info"]
         params = {
-            "actId": actId,
+            "actId": act_id,
             "roomId": self.room_display_id,
             "uid": uid
         }
-        return await request(api['method'], api["url"], params=params, credential=self.credential)        
+        return await request(api['method'], api["url"], params=params, credential=self.credential)
 
 
 class LiveDanmaku(AsyncEvent):
@@ -758,6 +769,7 @@ async def get_self_info(credential: Credential):
     api = API["info"]["user_info"]
     return await request(api['method'], api["url"], credential=credential)
 
+
 async def get_self_live_info(credential: Credential):
     """
     获取自己的粉丝牌、大航海等信息
@@ -768,7 +780,8 @@ async def get_self_live_info(credential: Credential):
     api = API["info"]["live_info"]
     return await request(api['method'], api["url"], credential=credential)
 
-async def get_self_guards(credential: Credential, page: int = 1,page_size: int = 10):
+
+async def get_self_guards(credential: Credential, page: int = 1, page_size: int = 10):
     """
     获取自己开通的大航海信息
 
@@ -777,15 +790,22 @@ async def get_self_guards(credential: Credential, page: int = 1,page_size: int =
         page_size (int, optional): 每页数量. Defaults to 10.
 
     总页数取得方法:
-    >>> info = live.get_self_live_info(credential)
-        pages = math.ceil(info['data']['guards']/10)
 
+    ```python
+    info = live.get_self_live_info(credential)
+    pages = math.ceil(info['data']['guards'] / 10)
+    ```
     """
 
     credential.raise_for_no_sessdata()
 
     api = API["info"]["user_guards"]
-    return await request(api['method'], api["url"], credential=credential)
+    params = {
+        "page": page,
+        "page_size": page_size
+    }
+    return await request(api['method'], api["url"], params=params, credential=credential)
+
 
 async def get_self_bag(credential: Credential):
     """

@@ -51,7 +51,7 @@
         "page": "页码",
         "page_size": "每页数量， 过多可能报错 默认：10"
       },
-      "comment":　"获取用户开通的大航海列表"
+      "comment": "获取用户开通的大航海列表"
     },
     "bag_list": {
       "url": "https://api.live.bilibili.com/xlive/web-room/v1/gift/bag_list",
@@ -77,17 +77,17 @@
       "method": "GET",
       "verify": false,
       "params": null,
-      "comment":"获取自己粉丝牌,大航海等数据"
+      "comment": "获取自己粉丝牌,大航海等数据"
     },
-    "general_info":{
+    "general_info": {
       "url": "https://api.live.bilibili.com/xlive/fuxi-interface/general/half/initial",
       "method": "GET",
       "verify": true,
       "params": {
-          "actId": "未知，大航海信息：100061",
-          "roomId": "真实房间号",
-          "uid": "直播者uid",
-          "csrf,csrf_token": "要给两个"
+        "actId": "未知，大航海信息：100061",
+        "roomId": "真实房间号",
+        "uid": "直播者uid",
+        "csrf,csrf_token": "要给两个"
       },
       "comment": "获取自己在当前房间的大航海信息, 是否开通，等级，当前经验，同时可获得自己开通的所有航海日志"
     },
@@ -192,7 +192,7 @@
     },
     "sign_up_dahanghai": {
       "url": "https://api.live.bilibili.com/xlive/activity-interface/v2/userTask/UserTaskSignUp",
-      "method":" POST",
+      "method": " POST",
       "verify": true,
       "params": {
         "task_id": "任务id， 签到：1447 ，可能还有别的",
@@ -201,7 +201,7 @@
       },
       "comment": "航海日志签到"
     },
-    "send_gift":{
+    "send_gift": {
       "url": "https://api.live.bilibili.com/xlive/revenue/v1/gift/sendBag",
       "method": "POST",
       "verify": true,
@@ -216,11 +216,11 @@
         "price": "0 未知作用",
         "biz_code": "live",
         "biz_id": "room_display_id 房间显示id",
-        "ruid": "全称room_uid，从room_play_info里头的uid可以找到"
+        "ruid": "全称 room_uid，从 room_play_info 里头的uid可以找到"
       },
       "comment": "在直播间中发送礼物"
     },
-    "receive_reward":{
+    "receive_reward": {
       "url": "https://api.live.bilibili.com/xlive/activity-interface/v2/spec-act/sep-guard/receive/awards",
       "method": "POST",
       "verify": true,

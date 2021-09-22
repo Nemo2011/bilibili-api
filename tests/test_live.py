@@ -62,3 +62,23 @@ async def test_o_LiveDanmaku():
     room.add_event_listener('ALL', on_msg)
     await room.connect()
 
+async def test_p_sign_up_dahanghai():
+    return await l.sign_up_dahanghai()
+
+async def test_q_send_gift():
+    return await l.send_gift(5702480, 254617846, 30725, 1)
+
+async def test_r_receive_reward():
+    return await l.receive_reward(2)
+
+async def test_s_get_general_info():
+    return await l.get_general_info(660303135)
+
+async def test_t_get_self_live_info():
+    return await live.get_self_live_info(get_credential())
+
+async def test_u_get_self_guards():
+    return await live.get_self_guards(get_credential())
+
+async def test_v_get_self_bag():
+    return await live.get_self_bag(get_credential())
