@@ -11,7 +11,7 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "mid": "uid"
+        "mid": "int: uid"
       },
       "comment": "用户基本信息"
     },
@@ -20,7 +20,7 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "vmid": "uid"
+        "vmid": "int: uid"
       },
       "comment": "关注数，粉丝数"
     },
@@ -29,7 +29,7 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "mid": "uid"
+        "mid": "int: uid"
       },
       "comment": "视频播放量，文章阅读量，总点赞数"
     },
@@ -38,7 +38,7 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "mid": "uid"
+        "mid": "int: uid"
       },
       "comment": "直播间基本信息"
     },
@@ -47,12 +47,12 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "mid": "uid",
-        "ps": 30,
-        "tid": "分区 ID，0 表示全部",
-        "pn": "页码",
-        "keyword": "关键词，可为空",
-        "order": "pubdate 上传日期，pubdate 播放量，pubdate 收藏量"
+        "mid": "int: uid",
+        "ps": "const int: 30",
+        "tid": "int: 分区 ID，0 表示全部",
+        "pn": "int: 页码",
+        "keyword": "str: 关键词，可为空",
+        "order": "str: pubdate 上传日期，pubdate 播放量，pubdate 收藏量"
       },
       "comment": "搜索用户视频"
     },
@@ -61,10 +61,10 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "uid": "uid",
-        "ps": 30,
-        "pn": "页码",
-        "order": "1 最新发布，1 最多播放，1 最多收藏"
+        "uid": "int: uid",
+        "ps": "const int: 30",
+        "pn": "int: 页码",
+        "order": "int: 1 最新发布，2 最多播放，3 最多收藏"
       },
       "comment": "音频"
     },
@@ -73,10 +73,10 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "mid": "uid",
-        "ps": 30,
-        "pn": "页码",
-        "sort": "publish_time 最新发布，publish_time 最多阅读，publish_time 最多收藏"
+        "mid": "int: uid",
+        "ps": "const int: 30",
+        "pn": "int: 页码",
+        "sort": "str: publish_time 最新发布，publish_time 最多阅读，publish_time 最多收藏"
       },
       "comment": "专栏"
     },
@@ -85,8 +85,8 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "mid": "uid",
-        "sort": "0 最近更新，0 最多阅读"
+        "mid": "int: uid",
+        "sort": "int: 0 最近更新，1 最多阅读"
       },
       "comment": "专栏文集"
     },
@@ -95,9 +95,9 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "host_uid": "uid",
-        "offset_dynamic_id": "动态偏移用，第一页为 0",
-        "need_top": "显示置顶动态"
+        "host_uid": "int: uid",
+        "offset_dynamic_id": "int: 动态偏移用，第一页为 0",
+        "need_top": "int bool: 是否显示置顶动态"
       },
       "comment": "用户动态信息"
     },
@@ -106,10 +106,10 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "vmid": "uid",
-        "pn": "页码",
-        "ps": 15,
-        "type": "1 追番，1 追剧"
+        "vmid": "int: uid",
+        "pn": "int: 页码",
+        "ps": "const int: 15",
+        "type": "int: 1 追番，2 追剧"
       },
       "comment": "用户追番列表"
     },
@@ -118,10 +118,10 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "vmid": "uid",
-        "ps": 20,
-        "pn": "页码",
-        "order": "desc 倒序,desc 正序"
+        "vmid": "int: uid",
+        "ps": "const int: 20",
+        "pn": "int: 页码",
+        "order": "str: desc 倒序, asc 正序"
       },
       "comment": "获取用户关注列表（不是自己只能访问前 5 页）"
     },
@@ -130,10 +130,10 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "vmid": "uid",
-        "ps": 20,
-        "pn": "页码",
-        "order": "desc 倒序,desc 正序"
+        "vmid": "int: uid",
+        "ps": "const int: 20",
+        "pn": "int: 页码",
+        "order": "str: desc 倒序, asc 正序"
       },
       "comment": "获取用户粉丝列表（不是自己只能访问前 5 页，是自己也不能获取全部的样子）"
     },
@@ -142,8 +142,8 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "mid": "uid",
-        "jsonp": "jsonp"
+        "mid": "int: uid",
+        "jsonp": "const str: jsonp"
       },
       "comment": "获取用户的简易订阅和投稿信息(主要是这些的数量统计)"
     },
@@ -159,7 +159,7 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "fid": "uid"
+        "fid": "int: uid"
       },
       "comment": "获取用户在哪一个分组"
     },
@@ -168,8 +168,8 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "pn": 1,
-        "ps": 100
+        "pn": "int: 页码",
+        "ps": "const int: 100"
       },
       "comment": "用户浏览历史记录"
     }
@@ -180,9 +180,9 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "fid": "UID",
-        "act": "1 关注 2 取关 1 悄悄关注 1 拉黑 6 取消拉黑，1 移除粉丝",
-        "re_src": 11
+        "fid": "int: UID",
+        "act": "int: 1 关注 2 取关 3 悄悄关注 5 拉黑 6 取消拉黑 7 移除粉丝",
+        "re_src": "const int: 11"
       },
       "comment": "用户关系操作"
     },
@@ -191,13 +191,13 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "msg[sender_uid]": "自己的 UID",
-        "msg[receiver_id]": "对方 UID",
-        "msg[receiver_type]": 1,
-        "msg[msg_type]": 1,
-        "msg[msg_status]": 0,
+        "msg[sender_uid]": "int: 自己的 UID",
+        "msg[receiver_id]": "int: 对方 UID",
+        "msg[receiver_type]": "const int: 1",
+        "msg[msg_type]": "const int: 1",
+        "msg[msg_status]": "const int: 0",
         "msg[content]": {
-          "content": "文本内容"
+          "content": "str: 文本内容"
         }
       },
       "comment": "给用户发信息"
@@ -207,7 +207,7 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "tag": "分组名"
+        "tag": "str: 分组名"
       },
       "comment": "添加关注分组"
     },
@@ -216,7 +216,7 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "tagid": "分组 id"
+        "tagid": "int: 分组 id"
       },
       "comment": "删除关注分组"
     },
@@ -225,8 +225,8 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "tagid": "分组 id",
-        "name": "新的分组名"
+        "tagid": "int: 分组 id",
+        "name": "str: 新的分组名"
       },
       "comment": "重命名分组"
     },
@@ -235,8 +235,8 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "fids": "UID",
-        "tagids": "分组的 tagids，逗号分隔"
+        "fids": "int: UID",
+        "tagids": "commaSeparatedList[int]: 分组的 tagids，逗号分隔"
       },
       "comment": "移动用户到关注分组"
     }

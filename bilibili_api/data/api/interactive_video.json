@@ -5,7 +5,7 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "bvid": "bv 号"
+        "bvid": "str: bv 号"
       },
       "comment": "视频列表数据"
     },
@@ -27,9 +27,8 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "preview": "0 不清楚是什么",
-        "data": "故事树信息",
-        "csrf": "csrf 值"
+        "preview": "int: 0 不清楚是什么",
+        "data": "故事树信息"
       },
       "comment": "保存故事树"
     }

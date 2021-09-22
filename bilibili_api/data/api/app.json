@@ -5,11 +5,11 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "mobi_app": "android / iphone / ipad",
-        "platform": "android / ios    / ios",
-        "height": "屏幕高度",
-        "width": "屏幕宽度",
-        "birth": "生日日期(四位数，例 0101)"
+        "mobi_app": "str: android, iphone, ipad",
+        "platform": "str: android, ios",
+        "height": "int: 屏幕高度",
+        "width": "int: 屏幕宽度",
+        "birth": "str: 生日日期(四位数，例 0101)"
       },
       "comment": "获取开屏启动画面"
     },
@@ -18,10 +18,10 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "mobi_app": "android / iphone / ipad",
-        "platform": "android / ios    / ios",
-        "screen_height": "屏幕高度",
-        "screen_width": "屏幕宽度"
+        "mobi_app": "str: android, iphone, ipad",
+        "platform": "str: android, ios",
+        "screen_height": "int: 屏幕高度",
+        "screen_width": "int: 屏幕宽度"
       },
       "comment": "获取特殊开屏启动画面"
     }

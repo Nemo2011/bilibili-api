@@ -275,12 +275,12 @@
         "oid": "int: 分 P 编号",
         "msg": "int: 弹幕内容",
         "bvid": "int: bvid",
-        "progress": "发送时间（毫秒）",
-        "color": "颜色（十六进制转十进制）",
-        "fontsize": "字体大小（小 18 普通 25 大 36）",
-        "pool": "字幕弹幕（1 是 0 否）",
-        "mode": "模式（滚动 1 顶部 5 底部 4）",
-        "plat": "1"
+        "progress": "int: 发送时间（毫秒）",
+        "color": "int: 颜色（十六进制转十进制）",
+        "fontsize": "int: 字体大小（小 18 普通 25 大 36）",
+        "pool": "int bool: 字幕弹幕（1 是 0 否）",
+        "mode": "int: 模式（滚动 1 顶部 5 底部 4）",
+        "plat": "const int: 1"
       },
       "comment": "发送弹幕"
     },
@@ -289,10 +289,10 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "dmid": "弹幕 ID",
-        "oid": "分 P 编号",
-        "op": "1 点赞 2 取消点赞",
-        "platform": "web_player"
+        "dmid": "int: 弹幕 ID",
+        "oid": "int: 分 P 编号",
+        "op": "int: 1 点赞 2 取消点赞",
+        "platform": "const str: web_player"
       },
       "comment": "点赞弹幕"
     },
@@ -301,10 +301,10 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "type": "1",
-        "dmids": "弹幕 ID",
-        "oid": "视频 cid",
-        "state": "1 删除 2 保护 3 取消保护"
+        "type": "const int: 1",
+        "dmids": "int: 弹幕 ID",
+        "oid": "int: 视频 cid",
+        "state": "int: 1 删除 2 保护 3 取消保护"
       },
       "comment": "编辑弹幕"
     }
