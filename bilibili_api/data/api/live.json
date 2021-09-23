@@ -192,7 +192,7 @@
     },
     "sign_up_dahanghai": {
       "url": "https://api.live.bilibili.com/xlive/activity-interface/v2/userTask/UserTaskSignUp",
-      "method": " POST",
+      "method": "POST",
       "verify": true,
       "params": {
         "task_id": "任务id， 签到：1447 ，可能还有别的",

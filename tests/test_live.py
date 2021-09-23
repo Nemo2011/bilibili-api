@@ -66,7 +66,7 @@ async def test_p_sign_up_dahanghai():
     return await l.sign_up_dahanghai()
 
 async def test_q_send_gift():
-    return await l.send_gift(5702480, 254617846, 30725, 1)
+    return await l.send_gift(5702480, 254667454, 30607, 1)
 
 async def test_r_receive_reward():
     return await l.receive_reward(2)
