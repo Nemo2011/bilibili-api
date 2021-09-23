@@ -39,17 +39,27 @@ async def test(module):
     print(Fore.YELLOW + f"::group::=========== 开始测试 {module.__name__} ===========")
     funcs = collect_test_function(module)
 
-    if "before_all" in dir(module):
-        print(Fore.CYAN + '执行 before_all()')
-        await module.before_all()
-
     result = {
         "passed": 0,
-        "failed": 0
+        "failed": 0,
+        "failed_items": []
     }
-    for func in funcs:
-        print(f"{Fore.YELLOW}测试：{Fore.RESET}{func}   ", end="")
-        func = eval("module." + func)
+
+    if "before_all" in dir(module):
+        print(Fore.CYAN + '执行 before_all()')
+        try:
+            await module.before_all()
+            result["passed"] += 1
+        except Exception as e:
+            print(f"{Fore.RED} before_all() 报错：{Fore.RESET}")
+            print(traceback.format_exc())
+            result["failed_items"].append(f"{module.__name__}.before_all()")
+            result["failed"] += 1
+            return result
+
+    for func_name in funcs:
+        print(f"{Fore.YELLOW}测试：{Fore.RESET}{func_name}   ", end="")
+        func = eval("module." + func_name)
         try:
             res = await func()
             print(Fore.GREEN + "[PASSED]")
@@ -59,13 +69,24 @@ async def test(module):
         except Exception as e:
             print(Fore.RED + "[FAILED]")
             print(Fore.BLUE)
+            print(str(e))
             print(traceback.format_exc())
             result["failed"] += 1
+            result["failed_items"].append(f"{module.__name__}.{func_name}")
+
         await asyncio.sleep(RATELIMIT)
 
     if "after_all" in dir(module):
         print(Fore.CYAN + '执行 after_all()')
-        await module.after_all()
+        try:
+            await module.after_all()
+            result["passed"] += 1
+        except Exception as e:
+            print(f"{Fore.RED} after_all() 报错：{Fore.RESET}")
+            print(traceback.format_exc())
+            result["failed_items"].append(f"{module.__name__}.after_all()")
+            result["failed"] += 1
+            return result
 
     print(Fore.YELLOW + f"=========== 结束测试 {module.__name__} ===========\n::endgroup::")
     return result
@@ -73,6 +94,7 @@ async def test(module):
 def mixin(source, target):
     target["failed"] += source["failed"]
     target["passed"] += source["passed"]
+    target["failed_items"].extend(source["failed_items"])
 
 
 def get_should_test_module():
@@ -120,7 +142,8 @@ async def main():
     init(True)
     all_result = {
         "passed": 0,
-        "failed": 0
+        "failed": 0,
+        "failed_items": []
     }
 
     modules = get_should_test_module()
@@ -132,6 +155,9 @@ async def main():
     print(f"{Fore.WHITE}{all_result['passed']} {Fore.GREEN}passed, {Fore.WHITE}{all_result['failed']} {Fore.RED}failed.")
     print(f"耗时 {Fore.YELLOW}{elapsed}")
     if all_result["failed"] > 0:
+        print(f"{Fore.RED} 出错测试项目：{Fore.RESET}")
+        for item in all_result["failed_items"]:
+            print(f"- {item}")
         exit(1)
     else:
         exit(0)
