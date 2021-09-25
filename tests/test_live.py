@@ -65,14 +65,14 @@ async def test_o_LiveDanmaku():
 async def test_p_sign_up_dahanghai():
     return await l.sign_up_dahanghai()
 
-async def test_q_send_gift():
-    return await l.send_gift(5702480, 254667454, 30607, 1)
+async def test_q_send_gift_from_bag():
+    return await l.send_gift_from_bag(5702480, 255051127, 30607, 1)
 
 async def test_r_receive_reward():
     return await l.receive_reward(2)
 
 async def test_s_get_general_info():
-    return await l.get_general_info(660303135)
+    return await l.get_general_info()
 
 async def test_t_get_self_live_info():
     return await live.get_self_live_info(get_credential())
@@ -82,3 +82,21 @@ async def test_u_get_self_guards():
 
 async def test_v_get_self_bag():
     return await live.get_self_bag(get_credential())
+
+async def test_w_get_gift_config():
+    return await live.get_gift_config()
+
+async def test_x_get_gift_common():
+    return await l.get_gift_common()
+
+async def test_y_get_gift_sepcial():
+    return await l.get_gift_special(tab_id=2)
+
+async def test_z_send_gift_gold():
+    return await l.send_gift_gold(5702480,31060,1,100)
+
+async def test_aa_send_gift_silver():
+    return await l.send_gift_silver(5702480,1,1,100)
+
+async def test_ab_get_area_info():
+    return await live.get_area_info()

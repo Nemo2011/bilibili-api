@@ -341,7 +341,7 @@ class LiveRoom:
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
 
-    async def send_gift(self,
+    async def send_gift_from_bag(self,
                         uid: int,
                         bag_id: int,
                         gift_id: int,
@@ -352,7 +352,7 @@ class LiveRoom:
                         price: int = 0,
                         biz_code: str = "live"):
         """
-        直播间发送礼物
+        赠送包裹中的礼物，获取包裹信息可以使用 get_self_bag 方法
 
         Args:
             uid (int)       : 用户 UID
@@ -363,7 +363,7 @@ class LiveRoom:
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
-        api = API["operate"]["send_gift"]
+        api = API["operate"]["send_gift_from_bag"]
         data = {
             "uid": uid,
             "bag_id": bag_id,
@@ -396,7 +396,7 @@ class LiveRoom:
         }
         return await request(api['method'], api["url"], data=data, credential=self.credential)
 
-    async def get_general_info(self, uid: int, act_id: int = 100061):
+    async def get_general_info(self, act_id: int = 100061):
         """
         获取自己在该房间的大航海信息, 比如是否开通, 等级等
 
@@ -405,15 +405,141 @@ class LiveRoom:
             act_id (int) : 未知，Defaults to 100061
 
         """
-        uid = (await self.get_room_play_info())["uid"]
+        self.credential.raise_for_no_sessdata()
+
         api = API["info"]["general_info"]
         params = {
             "actId": act_id,
             "roomId": self.room_display_id,
-            "uid": uid
+            "uid": await self.__get_ruid()
         }
         return await request(api['method'], api["url"], params=params, credential=self.credential)
 
+    async def get_gift_common(self, area_id: int="",area_parent_id: int=""):
+        """
+        获取当前直播间内的通用礼物列表
+
+        Args:
+            area_id (int, optional): 子分区id. Defaults to None
+            area_parent_id (int, optional): 父分区id. Defaults to None
+        
+        """
+        api = API["info"]["gift_common"]
+        params = {
+            "room_id": self.room_display_id,
+            "area_id": area_id,
+            "area_parent_id": area_parent_id,
+            "platform": "pc",
+            "source": "live"
+        }
+        return await request(api['method'], api["url"], params=params, credential=self.credential)
+
+    async def get_gift_special(self, tab_id: int,area_id: int="",area_parent_id: int=""):
+        """
+        获取当前直播间内的特殊礼物列表
+
+        Args:
+            tab_id (int) : 特权礼物:2  , 定制礼物:3
+        
+        """
+        api = API["info"]["gift_special"]
+        params = {
+            "tab_id": tab_id,
+            "area_id": area_id,
+            "area_parent_id": area_parent_id,
+            "room_id": await self.__get_ruid(),
+            "source": "live",
+            "platform": "pc",
+            "build": 1
+        }
+        return await request(api['method'], api["url"], params=params, credential=self.credential)
+    
+
+    
+    async def send_gift_gold(self,
+                        uid: int,
+                        gift_id: int,
+                        gift_num: int,
+                        price: int,
+                        platform: str = "pc",
+                        send_ruid: int = 0,
+                        storm_beat_id: int = 0,
+                        biz_code: str = "live"):
+
+        """
+        赠送金瓜子礼物
+
+        Args:
+            uid (int)       : 用户 UID
+            gift_id (int)   : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
+            gift_num (int)  : 赠送礼物数量
+            price (int)     : 礼物单价
+
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+        
+        api = API["operate"]["send_gift_gold"]
+        data = {
+            "uid": uid,
+            "gift_id": gift_id,
+            "gift_num": gift_num,
+            "price": price,
+            "ruid": await self.__get_ruid(),
+            "biz_code": biz_code,
+            "biz_id": self.room_display_id,
+            "platform": platform,
+            "storm_beat_id": 0,
+            "send_ruid": 0,
+            "coin_type": "gold",
+            "bag_id": "0",
+            "rnd": int(time.time()),
+            "visit_id": ""
+        }
+        return await request(api['method'], api["url"], data=data, credential=self.credential)
+        
+
+    async def send_gift_silver(self,
+                        uid: int,
+                        gift_id: int,
+                        gift_num: int,
+                        price: int,
+                        platform: str = "pc",
+                        send_ruid: int = 0,
+                        storm_beat_id: int = 0,
+                        biz_code: str = "live"):
+
+        """
+        赠送银瓜子礼物
+
+        Args:
+            uid (int)       : 用户 UID
+            gift_id (int)   : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
+            gift_num (int)  : 赠送礼物数量
+            price (int)     : 礼物单价
+
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+        
+        api = API["operate"]["send_gift_silver"]
+        data = {
+            "uid": uid,
+            "gift_id": gift_id,
+            "gift_num": gift_num,
+            "price": price,
+            "ruid": await self.__get_ruid(),
+            "biz_code": biz_code,
+            "biz_id": self.room_display_id,
+            "platform": platform,
+            "storm_beat_id": 0,
+            "send_ruid": 0,
+            "coin_type": "silver",
+            "bag_id": "0",
+            "rnd": int(time.time()),
+            "visit_id": ""
+        }
+        return await request(api['method'], api["url"], data=data, credential=self.credential)
 
 class LiveDanmaku(AsyncEvent):
     """
@@ -816,3 +942,30 @@ async def get_self_bag(credential: Credential):
 
     api = API["info"]["bag_list"]
     return await request(api['method'], api["url"], credential=credential)
+
+async def get_gift_config(room_id: int = "",
+                 area_id: int="",
+                 area_parent_id: int="",
+                 platform: str="pc",
+                 source: str="live",):
+    """
+    获取所有礼物的信息，包括礼物id、名称、价格、等级等。
+    同时填了room_id、area_id、area_parent_id，则返回一个较小的json，只包含该房间、该子区域、父区域的礼物。
+    但即使限定了三个条件，仍然会返回约1.5w行的json。不加限定则是2.8w行。
+    """
+    api = API["info"]["gift_config"]
+    params = {
+        "room_id": room_id,
+        "area_id": area_id,
+        "area_parent_id": area_parent_id,
+        "platform": platform,
+        "source": source
+    }
+    return await request(api['method'], api["url"], params=params)
+    
+async def get_area_info():
+    """
+    获取所有分区信息
+    """
+    api = API["info"]["area_info"]
+    return await request(api['method'], api["url"])
