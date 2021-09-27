@@ -342,19 +342,18 @@ class LiveRoom:
                                  bag_id: int,
                                  gift_id: int,
                                  gift_num: int,
-                                 platform: str = "pc",
-                                 send_ruid: int = 0,
                                  storm_beat_id: int = 0,
-                                 price: int = 0,
-                                 biz_code: str = "live"):
+                                 price: int = 0):
         """
         赠送包裹中的礼物，获取包裹信息可以使用 get_self_bag 方法
 
         Args:
-            uid (int)       : 用户 UID
-            bag_id (int)    : 礼物背包 ID
-            gift_id (int)   : 礼物 ID
-            gift_num (int)  : 礼物数量
+            uid (int)                       : 赠送用户的 UID
+            bag_id (int)                    : 礼物背包 ID
+            gift_id (int)                   : 礼物 ID
+            gift_num (int)                  : 礼物数量
+            storm_beat_id (int, optional)   : 未知， Defaults to 0
+            price (int, optional)           : 礼物单价，Defaults to 0
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -365,11 +364,11 @@ class LiveRoom:
             "bag_id": bag_id,
             "gift_id": gift_id,
             "gift_num": gift_num,
-            "platform": platform,
-            "send_ruid": send_ruid,
+            "platform": "pc",
+            "send_ruid": 0,
             "storm_beat_id": storm_beat_id,
             "price": price,
-            "biz_code": biz_code,
+            "biz_code": "live",
             "biz_id": self.room_display_id,
             "ruid": await self.__get_ruid(),
 
@@ -397,9 +396,7 @@ class LiveRoom:
         获取自己在该房间的大航海信息, 比如是否开通, 等级等
 
         Args:
-            uid (int)   : 直播者的用户id
             act_id (int) : 未知，Defaults to 100061
-
         """
         self.credential.raise_for_no_sessdata()
 
@@ -411,15 +408,17 @@ class LiveRoom:
         }
         return await request(api['method'], api["url"], params=params, credential=self.credential)
 
-    async def get_gift_common(self, area_id: int = "", area_parent_id: int = ""):
+    async def get_gift_common(self):
         """
-        获取当前直播间内的通用礼物列表
-
-        Args:
-            area_id (int, optional): 子分区id. Defaults to None
-            area_parent_id (int, optional): 父分区id. Defaults to None
-
+        获取当前直播间内的普通礼物列表
         """
+        api_room_info = API["info"]["room_info"]
+        params_room_info = {
+            "room_id": self.room_display_id,
+        }
+        res_room_info = await request(api_room_info['method'], api_room_info["url"], params=params_room_info, credential=self.credential)
+        area_id, area_parent_id = res_room_info["room_info"]["area_id"], res_room_info["room_info"]["parent_area_id"]
+
         api = API["info"]["gift_common"]
         params = {
             "room_id": self.room_display_id,
@@ -430,15 +429,22 @@ class LiveRoom:
         }
         return await request(api['method'], api["url"], params=params, credential=self.credential)
 
-    async def get_gift_special(self, tab_id: int, area_id: int = "", area_parent_id: int = ""):
+    async def get_gift_special(self, tab_id: int):
         """
         获取当前直播间内的特殊礼物列表
 
         Args:
-            tab_id (int) : 特权礼物:2  , 定制礼物:3
-
+            tab_id (int) : 2：特权礼物，3：定制礼物
         """
+        api_room_info = API["info"]["room_info"]
+        params_room_info = {
+            "room_id": self.room_display_id,
+        }
+        res_room_info = await request(api_room_info['method'], api_room_info["url"], params=params_room_info, credential=self.credential)
+        area_id, area_parent_id = res_room_info["room_info"]["area_id"], res_room_info["room_info"]["parent_area_id"]
+
         api = API["info"]["gift_special"]
+
         params = {
             "tab_id": tab_id,
             "area_id": area_id,
@@ -455,19 +461,17 @@ class LiveRoom:
                              gift_id: int,
                              gift_num: int,
                              price: int,
-                             platform: str = "pc",
-                             send_ruid: int = 0,
-                             storm_beat_id: int = 0,
-                             biz_code: str = "live"):
+                             storm_beat_id: int = 0):
 
         """
         赠送金瓜子礼物
 
         Args:
-            uid (int)       : 用户 UID
-            gift_id (int)   : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
-            gift_num (int)  : 赠送礼物数量
-            price (int)     : 礼物单价
+            uid (int)                     : 赠送用户的 UID
+            gift_id (int)                 : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
+            gift_num (int)                : 赠送礼物数量
+            price (int)                   : 礼物单价
+            storm_beat_id (int, Optional) : 未知，Defaults to 0
 
         """
         self.credential.raise_for_no_sessdata()
@@ -480,10 +484,10 @@ class LiveRoom:
             "gift_num": gift_num,
             "price": price,
             "ruid": await self.__get_ruid(),
-            "biz_code": biz_code,
+            "biz_code": "live",
             "biz_id": self.room_display_id,
-            "platform": platform,
-            "storm_beat_id": 0,
+            "platform": "pc",
+            "storm_beat_id": storm_beat_id,
             "send_ruid": 0,
             "coin_type": "gold",
             "bag_id": "0",
@@ -497,19 +501,17 @@ class LiveRoom:
                                gift_id: int,
                                gift_num: int,
                                price: int,
-                               platform: str = "pc",
-                               send_ruid: int = 0,
-                               storm_beat_id: int = 0,
-                               biz_code: str = "live"):
+                               storm_beat_id: int = 0,):
 
         """
         赠送银瓜子礼物
 
         Args:
-            uid (int)       : 用户 UID
-            gift_id (int)   : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
-            gift_num (int)  : 赠送礼物数量
-            price (int)     : 礼物单价
+            uid (int)                       : 赠送用户的 UID
+            gift_id (int)                   : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
+            gift_num (int)                  : 赠送礼物数量
+            price (int)                     : 礼物单价
+            storm_beat_id(int, Optional)    : 未知, Defaults to 0
 
         """
         self.credential.raise_for_no_sessdata()
@@ -522,13 +524,13 @@ class LiveRoom:
             "gift_num": gift_num,
             "price": price,
             "ruid": await self.__get_ruid(),
-            "biz_code": biz_code,
+            "biz_code": "live",
             "biz_id": self.room_display_id,
-            "platform": platform,
-            "storm_beat_id": 0,
+            "platform": "pc",
+            "storm_beat_id": storm_beat_id,
             "send_ruid": 0,
             "coin_type": "silver",
-            "bag_id": "0",
+            "bag_id": 0,
             "rnd": int(time.time()),
             "visit_id": ""
         }
@@ -942,23 +944,26 @@ async def get_self_bag(credential: Credential):
     return await request(api['method'], api["url"], credential=credential)
 
 
-async def get_gift_config(room_id: int = "",
-                          area_id: int = "",
-                          area_parent_id: int = "",
-                          platform: str = "pc",
-                          source: str = "live",):
+async def get_gift_config(room_id: str = "",
+                          area_id: str = "",
+                          area_parent_id: str = ""):
     """
     获取所有礼物的信息，包括礼物 id、名称、价格、等级等。
     同时填了 room_id、area_id、area_parent_id，则返回一个较小的 json，只包含该房间、该子区域、父区域的礼物。
     但即使限定了三个条件，仍然会返回约 1.5w 行的 json。不加限定则是 2.8w 行。
+
+    Args:
+        room_id (str, optional)         : 房间显示id. Defaults to None.
+        area_id (str, optional)         : 子分区id. Defaults to None.
+        area_parent_id (str, optional)  : 父分区id. Defaults to None.
     """
     api = API["info"]["gift_config"]
     params = {
+        "platform": "pc",
+        "source": "live",
         "room_id": room_id,
         "area_id": area_id,
-        "area_parent_id": area_parent_id,
-        "platform": platform,
-        "source": source
+        "area_parent_id": area_parent_id
     }
     return await request(api['method'], api["url"], params=params)
 
