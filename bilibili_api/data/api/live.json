@@ -255,18 +255,19 @@
       "verify": true,
       "params": {
         "uid": "赠送用户的uid",
-        "bag_id": "礼物背id",
+        "bag_id": "礼物包裹的id",
         "gift_id": "礼物id",
-        "gift_num": "发送数量",
+        "gift_num": "赠送数量",
         "platform": "pc",
         "send_ruid": "未知作用，默认：0",
         "storm_beat_id": "未知作用，默认：0",
         "price": "礼物单价， 背包中的礼物价值默认：0",
         "biz_code": "live",
         "biz_id": "room_display_id 房间显示id",
-        "ruid": "全称 room_uid，从 room_play_info 里头的uid可以找到"
+        "ruid": "全称 room_uid，从 room_play_info 里头的uid可以找到",
+        "csrf,csrf_token": "要给两个"
       },
-      "comment": "在直播间中赠送包裹中的礼物"
+      "comment": "在直播间中赠送包裹中的礼物，包裹信息可用 get_self_bag 方法获取"
     },
     "send_gift_gold": {
       "url": "https://api.live.bilibili.com/xlive/revenue/v1/gift/sendGold",
@@ -277,7 +278,7 @@
         "gift_id": "礼物id",
         "ruid":"全称 room_uid，从 room_play_info 里头的uid可以找到",
         "send_ruid":"未知作用，默认：0",
-        "gift_num": "发送数量",
+        "gift_num": "赠送数量",
         "coin_type": "gold",
         "bag_id": "0",
         "platform": "pc",
@@ -286,8 +287,8 @@
         "rnd": "当前时间戳",
         "storm_beat_id": "未知作用，默认：0",
         "price": "礼物单价",
-        "csrf,csrf_token": "要给两个",
-        "visit_id": "空"
+        "visit_id": "空",
+        "csrf,csrf_token": "要给两个"
       },
       "comment": "在直播间中赠送金瓜子礼物"
     },
@@ -296,11 +297,11 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "uid": "送礼者的uid",
+        "uid": "赠送用户的uid",
         "gift_id": "礼物id 辣条的id为1",
         "ruid":"全称 room_uid，从 room_play_info 里头的uid可以找到",
         "send_ruid":"未知作用，默认：0",
-        "gift_num": "发送数量",
+        "gift_num": "赠送数量",
         "coin_type": "silver",
         "bag_id": "0",
         "platform": "pc",
@@ -309,8 +310,8 @@
         "rnd": "当前时间戳",
         "storm_beat_id": "未知作用，默认：0",
         "price": "礼物单价 辣条单价为100",
-        "csrf,csrf_token": "要给两个",
-        "visit_id": "空"
+        "visit_id": "空",
+        "csrf,csrf_token": "要给两个"
       },
       "comment": "在直播间中赠送银瓜子礼物"
     },
