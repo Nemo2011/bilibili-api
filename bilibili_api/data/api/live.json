@@ -164,8 +164,8 @@
         "room_id": "显示房间号",
         "platform": "pc",
         "source": "live",
-        "area_id":"分区子id 可以不用填",
-        "area_parent_id":"分区父id 可以不用填, 获取分区id可使用 get_area_info 方法"
+        "area_id":"子分区id 可以不用填",
+        "area_parent_id":"父分区id 可以不用填, 获取分区id可使用 get_area_info 方法"
       },
       "comment": "获取该直播间通用礼物的信息，此api只返回gift_id ，不包含礼物price参数"
     },
@@ -179,8 +179,8 @@
         "source": "live",
         "tab_id": "礼物tab编号，2为特权礼物，3为定制礼物",
         "build": "未知作用， 默认1",
-        "area_id":"分区子id 可以不用填",
-        "area_parent_id":"分区父id 可以不用填, 获取分区id可使用 get_area_info 方法"
+        "area_id":"子分区id 可以不用填",
+        "area_parent_id":"父分区id 可以不用填, 获取分区id可使用 get_area_info 方法"
       },
       "comment": "获取该直播间特殊礼物的信息"
     },
@@ -192,8 +192,8 @@
         "room_id": "显示房间号 可以不用填",
         "platform": "pc",
         "source": "live",
-        "area_id": "分区子id 可以不用填",
-        "area_parent_id": "分区父id 可以不用填, 获取分区id可使用 get_area_info 方法"
+        "area_id": "子分区id 可以不用填",
+        "area_parent_id": "父分区id 可以不用填, 获取分区id可使用 get_area_info 方法"
       },
       "comment":"获取所有礼物信息，三个字段可以不用填，但填了有助于减小返回内容的大小，置空返回约2.7w行，填了三个对应值返回约1.4w行"
     }
@@ -254,14 +254,14 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "uid": "送礼者的uid",
-        "bag_id": "包裹id",
+        "uid": "赠送用户的uid",
+        "bag_id": "礼物背id",
         "gift_id": "礼物id",
         "gift_num": "发送数量",
         "platform": "pc",
-        "send_ruid": "0 未知作用",
-        "storm_beat_id": "0 未知作用",
-        "price": "0 未知作用",
+        "send_ruid": "未知作用，默认：0",
+        "storm_beat_id": "未知作用，默认：0",
+        "price": "礼物单价， 背包中的礼物价值默认：0",
         "biz_code": "live",
         "biz_id": "room_display_id 房间显示id",
         "ruid": "全称 room_uid，从 room_play_info 里头的uid可以找到"
@@ -273,10 +273,10 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "uid": "送礼者的uid",
+        "uid": "赠送用户的uid",
         "gift_id": "礼物id",
         "ruid":"全称 room_uid，从 room_play_info 里头的uid可以找到",
-        "send_ruid":"0 未知作用",
+        "send_ruid":"未知作用，默认：0",
         "gift_num": "发送数量",
         "coin_type": "gold",
         "bag_id": "0",
@@ -284,7 +284,7 @@
         "biz_code": "Live",
         "biz_id": "room_display_id 房间显示id",
         "rnd": "当前时间戳",
-        "storm_beat_id": "0 未知作用 可能是节奏风暴相关",
+        "storm_beat_id": "未知作用，默认：0",
         "price": "礼物单价",
         "csrf,csrf_token": "要给两个",
         "visit_id": "空"
@@ -299,7 +299,7 @@
         "uid": "送礼者的uid",
         "gift_id": "礼物id 辣条的id为1",
         "ruid":"全称 room_uid，从 room_play_info 里头的uid可以找到",
-        "send_ruid":"0 未知作用",
+        "send_ruid":"未知作用，默认：0",
         "gift_num": "发送数量",
         "coin_type": "silver",
         "bag_id": "0",
@@ -307,7 +307,7 @@
         "biz_code": "Live",
         "biz_id": "room_display_id 房间显示id",
         "rnd": "当前时间戳",
-        "storm_beat_id": "0 未知作用 可能是节奏风暴相关",
+        "storm_beat_id": "未知作用，默认：0",
         "price": "礼物单价 辣条单价为100",
         "csrf,csrf_token": "要给两个",
         "visit_id": "空"
