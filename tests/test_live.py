@@ -84,7 +84,13 @@ async def test_p_sign_up_dahanghai():
 
 
 async def test_q_send_gift_from_bag():
-    return await l.send_gift_from_bag(5702480, 255051127, 30607, 1)
+    try:
+
+        return await l.send_gift_from_bag(5702480, 255051127, 30607, 1)
+    except ResponseCodeException as e:
+        if e.code != 200161:
+            raise e
+        return e.raw
 
 
 async def test_r_receive_reward():
@@ -100,7 +106,7 @@ async def test_t_get_self_live_info():
 
 
 async def test_u_get_self_guards():
-    return await live.get_self_guards(credential=get_credential())
+    return await live.get_self_dahanghai_info(credential=get_credential())
 
 
 async def test_v_get_self_bag():

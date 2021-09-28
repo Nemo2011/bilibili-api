@@ -467,11 +467,11 @@ class LiveRoom:
         赠送金瓜子礼物
 
         Args:
-            uid (int)                     : 赠送用户的 UID
-            gift_id (int)                 : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
-            gift_num (int)                : 赠送礼物数量
-            price (int)                   : 礼物单价
-            storm_beat_id (int, Optional) : 未知，Defaults to 0
+            uid           (int)          : 赠送用户的 UID
+            gift_id       (int)          : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
+            gift_num      (int)          : 赠送礼物数量
+            price         (int)          : 礼物单价
+            storm_beat_id (int, Optional): 未知，Defaults to 0
 
         """
         self.credential.raise_for_no_sessdata()
@@ -507,11 +507,11 @@ class LiveRoom:
         赠送银瓜子礼物
 
         Args:
-            uid (int)                       : 赠送用户的 UID
-            gift_id (int)                   : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
-            gift_num (int)                  : 赠送礼物数量
-            price (int)                     : 礼物单价
-            storm_beat_id(int, Optional)    : 未知, Defaults to 0
+            uid           (int)          : 赠送用户的 UID
+            gift_id       (int)          : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
+            gift_num      (int)          : 赠送礼物数量
+            price         (int)          : 礼物单价
+            storm_beat_id (int, Optional): 未知, Defaults to 0
 
         """
         self.credential.raise_for_no_sessdata()
@@ -905,17 +905,19 @@ async def get_self_live_info(credential: Credential):
     return await request(api['method'], api["url"], credential=credential)
 
 
-async def get_self_guards(page: int = 1, page_size: int = 10, credential: Credential = None):
+async def get_self_dahanghai_info(page: int = 1, page_size: int = 10, credential: Credential = None):
     """
     获取自己开通的大航海信息
 
     Args:
-        page (int, optional): 页数. Defaults to 1.
+        page      (int, optional): 页数. Defaults to 1.
         page_size (int, optional): 每页数量. Defaults to 10.
 
     总页数取得方法:
 
     ```python
+    import math
+
     info = live.get_self_live_info(credential)
     pages = math.ceil(info['data']['guards'] / 10)
     ```
@@ -944,26 +946,26 @@ async def get_self_bag(credential: Credential):
     return await request(api['method'], api["url"], credential=credential)
 
 
-async def get_gift_config(room_id: str = "",
-                          area_id: str = "",
-                          area_parent_id: str = ""):
+async def get_gift_config(room_id: int = None,
+                          area_id: int = None,
+                          area_parent_id: int = None):
     """
     获取所有礼物的信息，包括礼物 id、名称、价格、等级等。
     同时填了 room_id、area_id、area_parent_id，则返回一个较小的 json，只包含该房间、该子区域、父区域的礼物。
     但即使限定了三个条件，仍然会返回约 1.5w 行的 json。不加限定则是 2.8w 行。
 
     Args:
-        room_id (str, optional)         : 房间显示id. Defaults to None.
-        area_id (str, optional)         : 子分区id. Defaults to None.
-        area_parent_id (str, optional)  : 父分区id. Defaults to None.
+        room_id (int, optional)         : 房间显示id. Defaults to None.
+        area_id (int, optional)         : 子分区id. Defaults to None.
+        area_parent_id (int, optional)  : 父分区id. Defaults to None.
     """
     api = API["info"]["gift_config"]
     params = {
         "platform": "pc",
         "source": "live",
-        "room_id": room_id,
-        "area_id": area_id,
-        "area_parent_id": area_parent_id
+        "room_id": room_id if room_id is not None else "",
+        "area_id": area_id if area_id is not None else "",
+        "area_parent_id": area_parent_id if area_parent_id is not None else ""
     }
     return await request(api['method'], api["url"], params=params)
 
