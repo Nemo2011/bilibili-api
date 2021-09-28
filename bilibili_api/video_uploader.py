@@ -484,7 +484,7 @@ class VideoUploader(AsyncEvent):
 
             data = await resp.json()
 
-            if data['code'] < 0:
+            if data['code'] != 0:
                 err = ResponseCodeException(data['code'], data['message'])
                 self.dispatch(VideoUploaderEvents.COVER_FAILED.value, {"err": err})
                 raise err
