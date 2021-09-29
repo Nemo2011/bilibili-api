@@ -396,7 +396,7 @@ class LiveRoom:
         获取自己在该房间的大航海信息, 比如是否开通, 等级等
 
         Args:
-            act_id (int) : 未知，Defaults to 100061
+            act_id (int, optional) : 未知，Defaults to 100061
         """
         self.credential.raise_for_no_sessdata()
 
@@ -955,9 +955,9 @@ async def get_gift_config(room_id: int = None,
     但即使限定了三个条件，仍然会返回约 1.5w 行的 json。不加限定则是 2.8w 行。
 
     Args:
-        room_id (int, optional)         : 房间显示id. Defaults to None.
-        area_id (int, optional)         : 子分区id. Defaults to None.
-        area_parent_id (int, optional)  : 父分区id. Defaults to None.
+        room_id (int, optional)         : 房间显示 ID. Defaults to None.
+        area_id (int, optional)         : 子分区 ID. Defaults to None.
+        area_parent_id (int, optional)  : 父分区 ID. Defaults to None.
     """
     api = API["info"]["gift_config"]
     params = {

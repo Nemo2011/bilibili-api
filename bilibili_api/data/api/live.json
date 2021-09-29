@@ -161,26 +161,26 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "room_id": "显示房间号",
-        "platform": "pc",
-        "source": "live",
-        "area_id":"子分区id 可以不用填",
-        "area_parent_id":"父分区id 可以不用填, 获取分区id可使用 get_area_info 方法"
+        "room_id": "int: 显示房间号",
+        "platform": "const str: pc",
+        "source": "const str: live",
+        "area_id":"int: 子分区 ID 可以不用填",
+        "area_parent_id":"int: 父分区 ID 可以不用填, 获取分区 ID 可使用 get_area_info 方法"
       },
-      "comment": "获取该直播间通用礼物的信息，此api只返回gift_id ，不包含礼物price参数"
+      "comment": "获取该直播间通用礼物的信息，此 API 只返回 gift_id ，不包含礼物 price 参数"
     },
     "gift_special": {
       "url": "https://api.live.bilibili.com//xlive/web-room/v1/giftPanel/tabRoomGiftList",
       "method": "GET",
       "verify": false,
       "params": {
-        "room_id": "显示房间号",
-        "platform": "pc",
-        "source": "live",
-        "tab_id": "礼物tab编号，2为特权礼物，3为定制礼物",
-        "build": "未知作用， 默认1",
-        "area_id":"子分区id 可以不用填",
-        "area_parent_id":"父分区id 可以不用填, 获取分区id可使用 get_area_info 方法"
+        "room_id": "int: 显示房间号",
+        "platform": "const str: pc",
+        "source": "const str: live",
+        "tab_id": "int: 礼物tab编号，2 为特权礼物，3 为定制礼物",
+        "build": "int: 未知作用， 默认 1",
+        "area_id":"int: 子分区 ID 可以不用填",
+        "area_parent_id":"int: 父分区 ID 可以不用填, 获取分区id可使用 get_area_info 方法"
       },
       "comment": "获取该直播间特殊礼物的信息"
     },
@@ -189,13 +189,13 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "room_id": "显示房间号 可以不用填",
-        "platform": "pc",
-        "source": "live",
-        "area_id": "子分区id 可以不用填",
-        "area_parent_id": "父分区id 可以不用填, 获取分区id可使用 get_area_info 方法"
+        "room_id": "int: 显示房间号 可以不用填",
+        "platform": "const str: pc",
+        "source": "const str: live",
+        "area_id": "int: 子分区 ID 可以不用填",
+        "area_parent_id": "int: 父分区 ID 可以不用填, 获取分区id可使用 get_area_info 方法"
       },
-      "comment":"获取所有礼物信息，三个字段可以不用填，但填了有助于减小返回内容的大小，置空返回约2.7w行，填了三个对应值返回约1.4w行"
+      "comment":"获取所有礼物信息，三个字段可以不用填，但填了有助于减小返回内容的大小，置空返回约 2.7w 行，填了三个对应值返回约 1.4w 行"
     }
   },
   "operate": {
@@ -243,8 +243,8 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "task_id": "任务id， 签到：1447 ，可能还有别的",
-        "uid": "真实房间号",
+        "task_id": "int: 任务 id，签到：1447，可能还有别的",
+        "uid": "int: 真实房间号",
         "csrf,csrf_token": "要给两个"
       },
       "comment": "航海日志签到"
@@ -254,17 +254,17 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "uid": "赠送用户的uid",
-        "bag_id": "礼物包裹的id",
-        "gift_id": "礼物id",
-        "gift_num": "赠送数量",
-        "platform": "pc",
-        "send_ruid": "未知作用，默认：0",
-        "storm_beat_id": "未知作用，默认：0",
-        "price": "礼物单价， 背包中的礼物价值默认：0",
-        "biz_code": "live",
-        "biz_id": "room_display_id 房间显示id",
-        "ruid": "全称 room_uid，从 room_play_info 里头的uid可以找到",
+        "uid": "int: 赠送用户的 UID",
+        "bag_id": "int: 礼物包裹的id",
+        "gift_id": "int: 礼物id",
+        "gift_num": "int: 赠送数量",
+        "platform": "const str: pc",
+        "send_ruid": "int: 未知作用，默认：0",
+        "storm_beat_id": "int: 未知作用，默认：0",
+        "price": "int: 礼物单价，背包中的礼物价值默认：0",
+        "biz_code": "const str: live",
+        "biz_id": "int: room_display_id 房间显示 ID",
+        "ruid": "int: 全称 room_uid，从 room_play_info 里头的 UID 可以找到",
         "csrf,csrf_token": "要给两个"
       },
       "comment": "在直播间中赠送包裹中的礼物，包裹信息可用 get_self_bag 方法获取"
@@ -274,20 +274,20 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "uid": "赠送用户的uid",
-        "gift_id": "礼物id",
-        "ruid":"全称 room_uid，从 room_play_info 里头的uid可以找到",
-        "send_ruid":"未知作用，默认：0",
-        "gift_num": "赠送数量",
-        "coin_type": "gold",
-        "bag_id": "0",
-        "platform": "pc",
-        "biz_code": "Live",
-        "biz_id": "room_display_id 房间显示id",
-        "rnd": "当前时间戳",
-        "storm_beat_id": "未知作用，默认：0",
-        "price": "礼物单价",
-        "visit_id": "空",
+        "uid": "int: 赠送用户的 UID",
+        "gift_id": "int: 礼物 ID",
+        "ruid":"int: 全称 room_uid，从 room_play_info 里头的uid可以找到",
+        "send_ruid":"int: 未知作用，默认：0",
+        "gift_num": "int: 赠送数量",
+        "coin_type": "const str: gold",
+        "bag_id": "int: 0",
+        "platform": "const str: pc",
+        "biz_code": "const str: Live",
+        "biz_id": "int: room_display_id 房间显示 ID",
+        "rnd": "int: 当前时间戳",
+        "storm_beat_id": "int: 未知作用，默认：0",
+        "price": "int: 礼物单价",
+        "visit_id": "void: 空",
         "csrf,csrf_token": "要给两个"
       },
       "comment": "在直播间中赠送金瓜子礼物"
@@ -297,20 +297,20 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "uid": "赠送用户的uid",
-        "gift_id": "礼物id 辣条的id为1",
-        "ruid":"全称 room_uid，从 room_play_info 里头的uid可以找到",
-        "send_ruid":"未知作用，默认：0",
-        "gift_num": "赠送数量",
-        "coin_type": "silver",
-        "bag_id": "0",
-        "platform": "pc",
-        "biz_code": "Live",
-        "biz_id": "room_display_id 房间显示id",
-        "rnd": "当前时间戳",
-        "storm_beat_id": "未知作用，默认：0",
-        "price": "礼物单价 辣条单价为100",
-        "visit_id": "空",
+        "uid": "int: 赠送用户的 UID",
+        "gift_id": "int: 礼物 ID 辣条的 ID 为 1",
+        "ruid":"int: 全称 room_uid，从 room_play_info 里头的 UID 可以找到",
+        "send_ruid":"int: 未知作用，默认：0",
+        "gift_num": "int: 赠送数量",
+        "coin_type": "const str: silver",
+        "bag_id": "int: 0",
+        "platform": "const str: pc",
+        "biz_code": "const str: Live",
+        "biz_id": "int: room_display_id 房间显示id",
+        "rnd": "int: 当前时间戳",
+        "storm_beat_id": "int: 未知作用，默认：0",
+        "price": "int: 礼物单价 辣条单价为100",
+        "visit_id": "int: 空",
         "csrf,csrf_token": "要给两个"
       },
       "comment": "在直播间中赠送银瓜子礼物"
@@ -320,8 +320,8 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "ruid": "房间真实id",
-        "receive_type": "领取类型， 全部领取：2",
+        "ruid": "int: 房间真实id",
+        "receive_type": "int: 领取类型， 全部领取：2",
         "csrf,csrf_token": "要给两个"
       },
       "comment": "领取航海日志奖励"
