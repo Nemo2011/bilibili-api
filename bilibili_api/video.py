@@ -247,7 +247,8 @@ class Video:
             "cid": cid,
             "qn": "120",
             "otype": "json",
-            "fnval": 16
+            "fnval": 16,
+            "fourk": 1
         }
         return await request("GET", url, params=params, credential=self.credential)
 
