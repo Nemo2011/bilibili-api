@@ -12,7 +12,7 @@ import base64
 import asyncio
 from typing import List
 import aiohttp
-import zlib
+import brotli
 
 from aiohttp.client_ws import ClientWebSocketResponse
 
@@ -565,10 +565,11 @@ class LiveDanmaku(AsyncEvent):
     + ALL: 所有事件
     + DISCONNECT: 断开连接（传入连接状态码参数）
     + TIMEOUT: 心跳响应超时
+    + VERIFICATION_SUCCESSFUL: 认证成功
     """
     PROTOCOL_VERSION_RAW_JSON = 0
     PROTOCOL_VERSION_HEARTBEAT = 1
-    PROTOCOL_VERSION_ZLIB_JSON = 2
+    PROTOCOL_VERSION_BROTLI_JSON = 3
 
     DATAPACK_TYPE_HEARTBEAT = 2
     DATAPACK_TYPE_HEARTBEAT_RESPONSE = 3
@@ -709,17 +710,19 @@ class LiveDanmaku(AsyncEvent):
 
             try:
                 async with session.ws_connect(uri) as ws:
+                    @self.on('VERIFICATION_SUCCESSFUL')
+                    async def on_verification_successful(data):
+                        # 新建心跳任务
+                        self.__tasks.append(
+                            asyncio.create_task(self.__heartbeat(ws)))
 
                     self.__ws = ws
                     self.logger.debug(f"连接主机成功, 准备发送认证信息")
                     await self.__send_verify_data(ws, conf['token'])
 
-                    # 新建心跳任务
-                    self.__tasks.append(
-                        asyncio.create_task(self.__heartbeat(ws)))
-
                     async for msg in ws:
                         if msg.type == aiohttp.WSMsgType.BINARY:
+                            self.logger.debug(f'收到原始数据：{msg.data}')
                             await self.__handle_data(msg.data)
 
                         elif msg.type == aiohttp.WSMsgType.ERROR:
@@ -743,7 +746,7 @@ class LiveDanmaku(AsyncEvent):
                     break
 
             except Exception as e:
-                self.logger.error('出现错误：' + str(e))
+                self.logger.exception(e)
                 if retry <= 0 or len(available_hosts) == 0:
                     self.logger.error('无法连接服务器')
                     self.err_reason = '无法连接服务器'
@@ -773,6 +776,10 @@ class LiveDanmaku(AsyncEvent):
                     # 认证成功反馈
                     self.logger.info("连接服务器并认证成功")
                     self.__status = self.STATUS_ESTABLISHED
+                    callback_info['type'] = 'VERIFICATION_SUCCESSFUL'
+                    callback_info['data'] = None
+                    self.dispatch('VERIFICATION_SUCCESSFUL', callback_info)
+                    self.dispatch('ALL', callback_info)
 
             elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_HEARTBEAT_RESPONSE:
                 # 心跳包反馈，返回直播间人气
@@ -802,7 +809,7 @@ class LiveDanmaku(AsyncEvent):
 
     async def __send_verify_data(self, ws: ClientWebSocketResponse, token: str):
         verifyData = {"uid": 0, "roomid": self.__room_real_id,
-                      "protover": 2, "platform": "web", "type": 2, "key": token}
+                      "protover": 3, "platform": "web", "type": 2, "key": token}
         data = json.dumps(verifyData).encode()
         await self.__send(data, self.PROTOCOL_VERSION_HEARTBEAT, self.DATAPACK_TYPE_VERIFY, ws)
 
@@ -810,8 +817,7 @@ class LiveDanmaku(AsyncEvent):
         """
         定时发送心跳包
         """
-        HEARTBEAT = base64.b64decode(
-            "AAAAHwAQAAEAAAACAAAAAVtvYmplY3QgT2JqZWN0XQ==")
+        HEARTBEAT = self.__pack(b'[object Object]', self.PROTOCOL_VERSION_HEARTBEAT, self.DATAPACK_TYPE_HEARTBEAT)
         while True:
             if self.__heartbeat_timer == 0:
                 self.logger.debug("发送心跳包")
@@ -829,6 +835,7 @@ class LiveDanmaku(AsyncEvent):
         自动打包并发送数据
         """
         data = self.__pack(data, protocol_version, datapack_type)
+        self.logger.debug(f'发送原始数据：{data}')
         await ws.send_bytes(data)
 
     @staticmethod
@@ -855,10 +862,23 @@ class LiveDanmaku(AsyncEvent):
         ret = []
         offset = 0
         header = struct.unpack(">IHHII", data[:16])
-        if header[2] == 2:
-            realData = zlib.decompress(data[16:])
+        if header[2] == LiveDanmaku.PROTOCOL_VERSION_BROTLI_JSON:
+            realData = brotli.decompress(data[16:])
         else:
             realData = data
+
+        if header[2] == LiveDanmaku.PROTOCOL_VERSION_HEARTBEAT and header[3] == LiveDanmaku.DATAPACK_TYPE_HEARTBEAT_RESPONSE:
+            realData = realData[16:]
+            # 心跳包协议特殊处理
+            recvData = {
+                "protocol_version": header[2],
+                "datapack_type": header[3],
+                "data": {
+                    "view": struct.unpack('>I', realData[0:4])[0]
+                }
+            }
+            ret.append(recvData)
+            return ret
 
         while offset < len(realData):
             header = struct.unpack(">IHHII", realData[offset:offset + 16])
