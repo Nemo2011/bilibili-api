@@ -4,6 +4,7 @@ bilibili_api.utils.network
 与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。
 """
 
+from typing import Any
 from urllib.parse import quote
 import aiohttp
 import json
@@ -38,7 +39,7 @@ def __clean():
 async def request(method: str,
                   url: str,
                   params: dict = None,
-                  data: dict = None,
+                  data: Any = None,
                   credential: Credential = None,
                   no_csrf: bool = False,
                   json_body: bool = False,
@@ -47,12 +48,13 @@ async def request(method: str,
     向接口发送请求。
 
     Args:
-        method (str):                       请求方法。
-        url (str):                          请求 URL。
-        params (dict, optional):            请求参数。
-        data (dict, optional):              请求载荷。
-        credential (Credential, optional):  Credential 类。
-        no_csrf (boo, optional):            不要自动添加 CSRF。
+        method     (str)                 : 请求方法。
+        url        (str)                 : 请求 URL。
+        params     (dict, optional)      : 请求参数。
+        data       (Any, optional)       : 请求载荷。
+        credential (Credential, optional): Credential 类。
+        no_csrf    (bool, optional)      : 不要自动添加 CSRF。
+        json_body (bool, optional) 载荷是否为 JSON
 
     Returns:
         接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
@@ -61,8 +63,8 @@ async def request(method: str,
         credential = Credential()
 
     method = method.upper()
-    # 请求为非 GET 时要求 bili_jct
-    if method != 'GET':
+    # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
+    if method != 'GET' and not no_csrf:
         credential.raise_for_no_bili_jct()
 
     # 使用 Referer 和 UA 请求头以绕过反爬虫机制
@@ -189,6 +191,6 @@ def set_session(session: aiohttp.ClientSession):
 def to_form_urlencoded(data: dict) -> str:
     temp = []
     for [k, v] in data.items():
-        temp.append(f'{k}={quote(v).replace("/", "%2F")}')
+        temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
 
     return '&'.join(temp)
