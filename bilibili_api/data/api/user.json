@@ -34,7 +34,7 @@
       "comment": "视频播放量，文章阅读量，总点赞数"
     },
     "live": {
-      "url": "https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld",
+      "url": "https://api.bilibili.com/x/space/acc/info",
       "method": "GET",
       "verify": false,
       "params": {
