@@ -5,5 +5,5 @@ colorama~=0.4.4
 lxml~=4.6.1
 pyyaml~=5.4.1
 yarl~=1.6.0
-rsa~=4.7.2
 brotli~=1.0.9
+# ffmpeg-python~=0.2.0
