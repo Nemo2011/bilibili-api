@@ -509,6 +509,7 @@ class VideoUploader(AsyncEvent):
         session = get_session()
 
         stream = open(page.path, 'rb')
+        stream.seek(offset)
         chunk = stream.read(preupload["chunk_size"])
         stream.close()
 
