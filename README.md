@@ -1,4 +1,4 @@
-![LOGO](https://pic.imgdb.cn/item/6023d5aa3ffa7d37b3cb1d23.png)
+![LOGO](https://raw.githubusercontent.com/MoyuScript/bilibili-api/HEAD/design/logo.png)
 
 # bilibili-api
 
