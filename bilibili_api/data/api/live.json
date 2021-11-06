@@ -135,7 +135,7 @@
       "params": {
         "cid": "int: 真实房间号",
         "platform": "const str: web",
-        "qn": "int: 清晰度编号，原画 10000，超清 10000，高清 10000",
+        "qn": "int: 清晰度编号，原画 10000，蓝光 400，超清 250，高清 150，流畅 80",
         "https_url_req": "const int: 1",
         "ptype": "const int: 16"
       },
