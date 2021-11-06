@@ -16,20 +16,18 @@ from ..exceptions import ResponseCodeException, ResponseException, NetworkExcept
 from .Credential import Credential
 from .. import settings
 
+__session_pool = {}
 
 @atexit.register
 def __clean():
     """
     程序退出清理操作。
     """
+    loop = asyncio.get_event_loop()
+
     async def __clean_task():
-        await __session.close()
+        await __session_pool[loop].close()
 
-    if __session is None or __session.closed:
-        return
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
     if loop.is_closed():
         loop.run_until_complete(__clean_task())
     else:
@@ -161,9 +159,6 @@ async def request(method: str,
         return real_data
 
 
-__session: aiohttp.ClientSession = None
-
-
 def get_session():
     """
     获取当前模块的 aiohttp.ClientSession 对象，用于自定义请求
@@ -171,10 +166,13 @@ def get_session():
     Returns:
         aiohttp.ClientSession
     """
-    global __session
-    if __session is None:
-        __session = aiohttp.ClientSession(loop=asyncio.get_event_loop())
-    return __session
+    loop = asyncio.get_event_loop()
+    session = __session_pool.get(loop, None)
+    if session is None:
+        session = aiohttp.ClientSession(loop=loop)
+        __session_pool[loop] = session
+
+    return session
 
 
 def set_session(session: aiohttp.ClientSession):
@@ -184,8 +182,8 @@ def set_session(session: aiohttp.ClientSession):
     Args:
         session (aiohttp.ClientSession):  aiohttp.ClientSession 实例。
     """
-    global __session
-    __session = session
+    loop = asyncio.get_event_loop()
+    __session_pool[loop] = session
 
 
 def to_form_urlencoded(data: dict) -> str:
