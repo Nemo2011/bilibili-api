@@ -186,6 +186,22 @@ class LiveRoom:
         }
         return await request(api['method'], api["url"], params, credential=self.credential)
 
+    async def get_gaonengbang(self, page: int = 1):
+        """
+        获取高能榜列表
+
+        Args:
+            page (int, optional): 页码. Defaults to 1
+        """
+        api = API["info"]["gaonengbang"]
+        params = {
+            "roomId": self.room_display_id,
+            "ruid": await self.__get_ruid(),
+            "pageSize": 50,
+            "page": page
+        }
+        return await request(api['method'], api["url"], params, credential=self.credential)
+
     async def get_seven_rank(self):
         """
         获取七日榜
