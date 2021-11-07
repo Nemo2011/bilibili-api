@@ -79,6 +79,18 @@
       },
       "comment": "获取大航海列表"
     },
+    "gaonengbang": {
+      "url": "https://api.live.bilibili.com/xlive/general-interface/v1/rank/getOnlineGoldRank",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "roomId": "int: 真实房间号",
+        "page": "int: 页码",
+        "ruid": "int: 全称 room_uid，从 room_play_info 里头的 uid 可以找到",
+        "pageSize": 50
+      },
+      "comment": "获取高能榜"
+    },
     "live_info": {
       "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/live_info",
       "method": "GET",
