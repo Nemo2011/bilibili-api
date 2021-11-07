@@ -147,3 +147,7 @@ async def test_za_send_gift_silver():
 
 async def test_zb_get_area_info():
     return await live.get_area_info()
+
+async def test_zc_get_gaonengbang():
+    return await l.get_gaonengbang()
+
