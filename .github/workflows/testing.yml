@@ -6,12 +6,6 @@ on:
     paths:
      - 'bilibili_api/**'
      - 'tests/**'
-
-  pull_request:
-    branches: ["v*", "dev"]
-    paths:
-     - 'bilibili_api/**'
-     - 'tests/**'
   
   schedule:
     - cron: '0 4 * * 6'
