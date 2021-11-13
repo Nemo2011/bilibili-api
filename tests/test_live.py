@@ -151,3 +151,8 @@ async def test_zb_get_area_info():
 async def test_zc_get_gaonengbang():
     return await l.get_gaonengbang()
 
+async def test_zc_get_live_followers_info():
+    return await live.get_live_followers_info(credential=get_credential())
+
+async def test_zd_get_unlive_followers_info():
+    return await live.get_unlive_followers_info(page=1, credential=get_credential())
