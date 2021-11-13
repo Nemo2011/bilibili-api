@@ -208,6 +208,26 @@
         "area_parent_id": "int: 父分区 ID 可以不用填, 获取分区id可使用 get_area_info 方法"
       },
       "comment":"获取所有礼物信息，三个字段可以不用填，但填了有助于减小返回内容的大小，置空返回约 2.7w 行，填了三个对应值返回约 1.4w 行"
+    },
+    "followers_live_info":{
+      "url": "https://api.live.bilibili.com/xlive/app-interface/v1/relation/liveAnchor",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "filterRule": "int: 0 ,未知",
+        "need_recommend": "int: 是否接受推荐直播间, 0为不接受, 1为接受"
+      },
+      "comment": "获取关注列表中正在直播的直播间信息, 包括房间直播热度, 房间名称及标题, 清晰度, 是否官方认证等信息."
+    },
+    "followers_unlive_info":{
+      "url": "https://api.live.bilibili.com/xlive/app-interface/v1/relation/unliveAnchor",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "page": "int: 页码",
+        "pagesize": "每页数量，过多可能报错 默认：30"
+      },
+      "comment": "获取关注列表中未在直播的直播间信息, 包括上次开播时间, 上次开播的类别, 直播间公告, 是否有录播等."
     }
   },
   "operate": {
