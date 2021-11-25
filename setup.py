@@ -3,7 +3,7 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
-with open("bilibili_api/requirements.txt", "r", encoding="utf8") as f:
+with open("requirements.txt", "r", encoding="utf8") as f:
     requires = f.read()
 
 setuptools.setup(
@@ -14,7 +14,7 @@ setuptools.setup(
     description='哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=setuptools.find_packages(exclude=["tests"]),
+    packages=["bilibili_api"],
     keywords=[
         "bilibili",
         "api",
@@ -26,13 +26,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9"
     ],
-    package_data={
-        "": [
-            "data/**/*.*",
-            "requirements.txt",
-            "data/*.*"
-        ]
-    },
+    data_files=["requirements.txt"],
     install_requires=requires.splitlines(),
     url="https://github.com/MoyuScript/bilibili-api",
     python_requires=">=3.8"
