@@ -2,7 +2,7 @@ name: "Testing"
 
 on:
   push:
-    branches: ["v*", "dev"]
+    branches: ["main", "dev"]
     paths:
      - 'bilibili_api/**'
      - 'tests/**'
