@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    #tag-box {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    #tag-box a {
+      margin: .5em .5em;
+      padding: 0 .5em;
+      background-color: #43b0ff;
+      border-radius: 5em;
+      color: white;
+      text-decoration: none;
+      transition: background-color .3s;
+    }
+
+    #tag-box a:hover {
+      background-color: #6cc2ff;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id='app'>加载中，请稍候...</div>
+  <script>
+    function createTag(tagname) {
+      var el = document.createElement('a');
+      el.href = 'https://github.com/MoyuScript/bilibili-api-docs/tree/' + tagname + '/docs/';
+      el.innerHTML = tagname;
+      el.target = '_blank';
+      return el;
+    }
+
+    var $app = document.getElementById('app');
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://api.github.com/repos/MoyuScript/bilibili-api-docs/tags');
+    xhr.responseType = 'json';
+    xhr.send();
+    xhr.onloadend = function () {
+      var res = xhr.response;
+      $app.innerHTML = '';
+
+      var tagBox = document.createElement('div');
+      tagBox.id = 'tag-box';
+
+      for (var i = 0; i < res.length; i++) {
+        v = res[i];
+        tagBox.append(createTag(v.name));
+      }
+
+      $app.append(tagBox);
+    };
+
+    xhr.onerror = function () {
+      $app.innerHTML = '加载失败，请稍后重试。';
+    };
+  </script>
+</body>
+
+</html>
