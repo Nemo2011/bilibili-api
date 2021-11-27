@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+# coding=utf-8
+
+import os
+
+CONSOLE_COLORS = {
+  'RED': '\x1b[0;31m',
+  'RESET': '\x1b[0m'
+}
+
+code = os.system("python scripts/lint.py")
+
+if code != 0:
+  print(CONSOLE_COLORS['RED'] + "Please check above problems of your code before commit!")
+  exit(1)
