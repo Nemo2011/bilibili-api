@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+import re
+import sys
+
+print('检查提交信息格式中...')
+
+CONSOLE_COLORS = {
+  'RED': '\x1b[0;31m'
+}
+
+VALID_MSG_PATTERN = r'^(new|build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)(\([\w\-]+\))?:\s.*$'
+
+commit_msg_path = sys.argv[1]
+commit_msg: str
+
+
+with open(commit_msg_path, encoding="utf8") as f:
+  commit_msg = f.readline(0)
+
+if not re.match(VALID_MSG_PATTERN, commit_msg):
+  print(CONSOLE_COLORS["RED"] + "提交描述格式不规范，参考：https://www.conventionalcommits.org/zh-hans/v1.0.0/")
+  exit(1)
