@@ -41,7 +41,7 @@ async def _parse_at(text: str):
 
         except exceptions.ResponseCodeException as e:
             if e.code == -404:
-                raise exceptions.ResponseCodeException(f"用户 uid={uid} 不存在")
+                raise exceptions.ResponseCodeException(-404, f"用户 uid={uid} 不存在")
             else:
                 raise e
 

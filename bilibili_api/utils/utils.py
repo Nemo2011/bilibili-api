@@ -111,6 +111,7 @@ def crack_uid(crc32: str):
     i = 3
     while i >= 0:
         __index[3-i] = __getcrcindex(ht >> (i*8))
+        # pylint: disable=invalid-sequence-index
         snum = __crctable[__index[3-i]]
         ht ^= snum >> ((3-i)*8)
         i -= 1

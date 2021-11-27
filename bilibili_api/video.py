@@ -1227,7 +1227,7 @@ class VideoOnlineMonitor(AsyncEvent):
                     dm_time=float(info[0]),
                     send_time=int(info[4]),
                     crc32_id=info[6],
-                    color=Color(info[3]),
+                    color=info[3],
                     mode=info[1],
                     font_size=info[2],
                     is_sub=is_sub,
