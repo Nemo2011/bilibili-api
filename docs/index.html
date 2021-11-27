@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>bilibili-api 开发文档</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Description">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    .notice {
+      display: none;
+      position: relative;
+      z-index: 99;
+      text-align: center;
+      padding: .5em 2em;
+      background-color: #fef3c7;
+      color: #db7e12;
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .notice-confirm {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="notice">
+    原地址 https://www.passkou.com/bilibili-api/ 已改为 https://www.moyu.moe/bilibili-api/，旧地址已进行重定向处理，将于 2022 年 1 月失效
+    &nbsp;&nbsp;<a class="notice-confirm">知道了</a>
+  </div>
+  <nav>
+    <a href="https://github.com/MoyuScript/bilibili-api-docs" target="_blank">贡献文档</a>
+  </nav>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: 'bilibili-api',
+      repo: 'https://github.com/MoyuScript/bilibili-api',
+      loadSidebar: true
+    }
+    
+    window.addEventListener('load', function () {
+      const $notice = document.querySelector('.notice')
+      if (!window.localStorage) {
+        $notice.classList.add('show');
+        return;
+      }
+
+      const noticeConfirmed = window.localStorage.getItem('bilibili-api/noticeConfirmed') === '1';
+
+      if (!noticeConfirmed) {
+        $notice.classList.add('show');
+        document.querySelector('.notice-confirm').addEventListener('click', function() {
+          $notice.classList.remove('show');
+          window.localStorage.setItem('bilibili-api/noticeConfirmed', '1');
+        })
+      }
+    })
+  </script>
+  <!-- Docsify v4 -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/docsify/4.12.1/docsify.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/prism/1.23.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/prism/1.23.0/components/prism-json.min.js"></script>
+</body>
+</html>
