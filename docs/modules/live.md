@@ -81,7 +81,7 @@ from bilibili_api import live
 
 #### async def get_room_play_info()
 
-获取房间信息（真实房间号，封禁情况等）
+获取房间信息（真实房间号，直播状态，封禁情况等）
 
 **Returns:** API 调用返回结果
 
@@ -93,7 +93,7 @@ from bilibili_api import live
 
 #### async def get_room_info()
 
-获取直播间信息（标题，简介等）
+获取直播间信息（标题，简介，直播状态，直播开始时间，分区信息等）
 
 **Returns:** API 调用返回结果
 
@@ -180,6 +180,23 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
+#### async def get_live_followers_info()
+
+| name           | type           | description                          |
+| -------------- | -------------- | ------------------------------------ |
+| need_recommend | bool, optional | 是否接受推荐直播间. Defaults to True |
+
+获取关注列表中正在直播的直播间信息，包括房间直播热度，房间名称及标题，清晰度，是否官方认证等信息。
+
+#### async def get_unlive_followers_info()
+
+| name      | type          | description              |
+| --------- | ------------- | ------------------------ |
+| page      | int, optional | 页码. Defaults to 1      |
+| page_size | int, optional | 每页数量. Defaults to 30 |
+
+获取关注列表中未在直播的直播间信息，包括上次开播时间，上次开播的类别，直播间公告，是否有录播等。
+
 #### async def ban_user()
 
 | name | type | description |
@@ -212,9 +229,9 @@ from bilibili_api import live
 
 #### async def sign_up_dahanghai()
 
-| name    | type          | description              |
-| ------- | ------------- | ------------------------ |
-| task_id | int, optional | 任务id. Defaults to 1447 |
+| name    | type          | description               |
+| ------- | ------------- | ------------------------- |
+| task_id | int, optional | 任务 ID. Defaults to 1447 |
 
 航海日志每日签到
 
@@ -354,7 +371,7 @@ Websocket 实时获取直播弹幕
 | ---------- | ---------- | ----------- |
 | credential | Credential | 凭据        |
 
-获取自己直播等级、排行等信息
+获取自己直播等级、排行、硬币数、金银瓜子数等信息
 
 **Returns:** API 调用返回结果
 
@@ -364,7 +381,7 @@ Websocket 实时获取直播弹幕
 | ---------- | ---------- | ----------- |
 | credential | Credential | 凭据        |
 
-获取自己的粉丝牌、大航海等信息
+获取自己直播间的等级、粉丝牌、自己开通的大航海数量等信息
 
 **Returns:** API 调用返回结果
 

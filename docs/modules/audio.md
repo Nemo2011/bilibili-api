@@ -88,12 +88,6 @@ from bilibili_api import audio
 
 **Returns:** API 调用返回结果
 
-#### async def get_info()
-
-获取音频信息
-
-**Returns:** API 调用返回结果
-
 #### async def get_song_list()
 
 | name | type          | description         |
