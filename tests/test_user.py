@@ -106,7 +106,6 @@ async def test_s_delete_subscribe_group():
     result = await user.delete_subscribe_group(subscribe_id, credential)
     return result
 
-
 page_num = 1
 per_page_item = 10
 
@@ -114,6 +113,8 @@ per_page_item = 10
 async def test_t_get_self_history():
     return await user.get_self_history(page_num, per_page_item, credential)
 
+async def test_u_get_channel_series():
+    return await u.get_channel_series()
 
 async def after_all():
     await u.modify_relation(user.RelationType.UNSUBSCRIBE)

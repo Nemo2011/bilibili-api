@@ -8,9 +8,9 @@ with open("requirements.txt", "r", encoding="utf8") as f:
 
 setuptools.setup(
     name='bilibili-api',
-    version='9.1.0',
+    version='9.1.1',
     license='GPLv3+',
-    author='MoyuScript',
+    author='MoyuScript, Nemo2011',
     description='哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -29,6 +29,6 @@ setuptools.setup(
     ],
     data_files=["requirements.txt"],
     install_requires=requires.splitlines(),
-    url="https://github.com/MoyuScript/bilibili-api",
+    url="https://github.com/Nemo2011/bilibili-api",
     python_requires=">=3.8"
 )
