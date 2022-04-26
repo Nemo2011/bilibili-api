@@ -4,13 +4,13 @@
 
 # 开发流程
 
-1. 使用 `git clone git@github.com:MoyuScript/bilibili-api.git` 将本仓库拉取到本地。
+1. 使用 `git clone git@github.com:Nemo2011/bilibili-api.git` 将本仓库拉取到本地。
 2. 使用 `cd bilibili-api` 切换到仓库位置。
 3. 使用 `python -r requirements.txt` 安装相关依赖。
 4. **使用 `python install.py` 进行初始化**，该项非常重要，将会初始化 Git Hooks。
 5. 使用 `git checkout dev && git checkout -b {分支名}` 从 dev 分支切换到一个新的分支再进行编码。
 6. 开发完毕后，使用 `git push -u origin {分支名}` 将分支推送到你 fork 的仓库。
-7. **向 `dev` 分支**发起 [Pull Requests](https://github.com/MoyuScript/bilibili-api/pulls)。
+7. **向 `dev` 分支**发起 [Pull Requests](https://github.com/Nemo2011/bilibili-api/pulls)。
 
 # 代码风格规范
 
@@ -67,6 +67,7 @@ fix!: 给 method() 增加了一个必需参数
 
 1. 如果你增加了一个新功能，请在对应位置补充文档（docs/）和测试用例（tests/）。
 2. 尽量复用现有代码。
+
 # 附录
 
 附 1：Git 使用参考

@@ -172,6 +172,14 @@
         "ps": "const int: 100"
       },
       "comment": "用户浏览历史记录"
+    },
+    "channel_series": {
+      "url": "https://api.bilibili.com/x/space/channel/index",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "mid": "int: uid"
+      }
     }
   },
   "operate": {

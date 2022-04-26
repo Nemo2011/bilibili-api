@@ -429,6 +429,19 @@ class User:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
+    async def get_channel_series(self):
+        """
+        获取用户的合集与列表。
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["channel_series"]
+        param = {
+            "mid": self.uid
+        }
+        return await request("GET", url=api["url"], params=param, credential=self.credential)
+
 
 async def get_self_info(credential: Credential):
     """
