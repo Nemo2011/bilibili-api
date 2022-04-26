@@ -2,5 +2,5 @@
 /.idea
 /test*.*
 **/__pycache__
-/bilibili_api.egg-info
+/bilibili_api_python.egg-info
 /.vscode
