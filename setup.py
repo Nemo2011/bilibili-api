@@ -7,7 +7,7 @@ with open("requirements.txt", "r", encoding="utf8") as f:
     requires = f.read()
 
 setuptools.setup(
-    name='bilibili_api',
+    name='bilibili-api-python',
     version='9.1.1',
     license='GPLv3+',
     author='MoyuScript, Nemo2011',
