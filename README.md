@@ -1,13 +1,3 @@
-# 停止维护公告
-
-由于本人已参加工作，很难再腾出时间来维护这个库了，故作出永久停止维护的决定。感谢大家一直以来的贡献和支持。
-
-Pypi 上仍然能下载和使用该库，只是不再更新。如果你动手能力强，也可以 fork 下来自己更新再发布，但是开源协议 GPL 仍然有效。
-
-再发布无需经过我的许可。
-
-![LOGO](https://raw.githubusercontent.com/MoyuScript/bilibili-api/HEAD/design/logo.png)
-
 # bilibili-api
 
 [![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
