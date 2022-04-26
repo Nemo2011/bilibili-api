@@ -29,7 +29,7 @@
 首先使用以下指令安装本模块：
 
 ```
-$ pip install bilibili-api
+$ pip install bilibili_api
 ```
 
 接下来我们来获取视频的播放量等信息：
