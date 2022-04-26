@@ -168,6 +168,12 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_channel_series()
+
+获取用户的系列与合集。
+
+**Returns:** 调用接口返回的内容。
+
 #### async def get_dynamics()
 
 | name     | type           | description                                                  |
@@ -319,4 +325,3 @@ from bilibili_api import user
 **Returns:** 返回当前页的指定历史记录列表。
 
 ---
-
