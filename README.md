@@ -8,7 +8,7 @@
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
 
-此存储库是 fork MoyuScript 的，这个库本来已经停更了，我的初衷就是继续维护它。希望可以一起合作。
+此存储库是 fork MoyuScript 的，这个库本来已经停止维护了，我的初衷就是继续维护它。希望可以一起合作。
 
 # 简介
 
@@ -161,9 +161,9 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 
 
 [docs]: https://bili.moyu.moe/
-[docs-github]: https://github.com/Nemo2011/bilibili_api-docs
-[api.json]: https://github.com/Nemo2011/bilibili_api/tree/main/bilibili-api/data/api/
+[docs-github]: https://github.com/Nemo2011/bilibili-api-docs
+[api.json]: https://github.com/Nemo2011/bilibili_api/tree/main/bilibili_api/data/api/
 [license]: https://github.com/Nemo2011/bilibili_api/tree/main/LICENSE.md
 [stargazers]: https://github.com/Nemo2011/bilibili_api/stargazers
 [issues-new]: https://github.com/Nemo2011/bilibili_api/issues/new
-[get-credential]: https://bili.moyu.moe/#/get-credential
+[get-credential]: https://nemo2011.github.io/bilibili-api-docs/#/get-credential
