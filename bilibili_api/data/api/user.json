@@ -173,13 +173,35 @@
       },
       "comment": "用户浏览历史记录"
     },
-    "channel_series": {
+    "channel": {
       "url": "https://api.bilibili.com/x/space/channel/index",
       "method": "GET",
       "verify": true,
       "params": {
         "mid": "int: uid"
-      }
+      },
+      "comment": "查看部分用户的合集和列表及部分内容"
+    },
+    "channel_list": {
+      "url": "https://api.bilibili.com/x/space/channel/list",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "mid": "int: uid"
+      },
+      "comment": "查看用户合集和列表"
+    },
+    "channel_video": {
+      "url": "https://api.bilibili.com/x/space/channel/video",
+      "method": "GET",
+      "verity": true,
+      "params": {
+        "mid": "int: uid",
+        "cid": "int: cid",
+        "pn": "int: 页码",
+        "ps": "const int: 100"
+      },
+      "comment": "查看列表内视频"
     }
   },
   "operate": {
