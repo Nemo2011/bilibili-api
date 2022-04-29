@@ -526,6 +526,8 @@ class Video:
         if date is not None:
             self.credential.raise_for_no_sessdata()
 
+        self.credential.raise_for_no_sessdata()
+
         if cid is None:
             if page_index is None:
                 raise ArgsException('page_index 和 cid 至少提供一个。')

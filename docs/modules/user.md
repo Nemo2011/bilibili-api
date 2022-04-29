@@ -168,11 +168,25 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### async def get_channel_series()
+#### async def get_channel()
 
-获取用户的系列与合集。
+查看用户部分的合集和列表及部分内容。
 
 **Returns:** 调用接口返回的内容。
+
+#### async def get_channel_list()
+
+查看用户合集和列表。
+
+**Returns:** 调用接口返回的内容。
+
+#### async def get_channel_videos()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| cid  | int  | 合集的频道id(cid) |
+| pn   | int  | 页数，默认为1 |
+| ps   | int  | 每一页显示的视频数量，默认为100 |
 
 #### async def get_dynamics()
 
