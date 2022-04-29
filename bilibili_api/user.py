@@ -429,19 +429,52 @@ class User:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
-    async def get_channel_series(self):
+    async def get_channel(self):
         """
-        获取用户的合集与列表。
+        查看用户部分的合集和列表及部分内容。
 
         Returns:
-            dict: 调用接口返回的内容。
+            dict: 调用接口返回的内容
         """
-        api = API["info"]["channel_series"]
+        api = API["info"]["channel"]
         param = {
             "mid": self.uid
         }
         return await request("GET", url=api["url"], params=param, credential=self.credential)
 
+    async def get_channel_list(self):
+        """
+        查看用户合集和列表。
+
+        Returns: 
+            dict: 调用接口返回的内容
+        """
+        api = API["info"]["channel_list"]
+        param = {
+            "mid": self.uid
+        }
+        return await request("GET", url=api["url"], params=param, credential=self.credential)
+
+    async def get_channel_videos(self, cid: int, pn: int=1, ps: int=100):
+        """
+        查看频道内所有视频。
+
+        Args:
+            cid: 频道的 cid
+            pn: 页数，默认为 1
+            ps: 每一页显示的视频数量
+
+        Returns: 
+            dict: 调用接口返回的内容
+        """
+        api = API["info"]["channel_video"]
+        param = {
+            "mid": self.uid,
+            "cid": cid,
+            "pn": pn,
+            "ps": ps
+        }
+        return await request("GET", url=api["url"], params=param, credential=self.credential)
 
 async def get_self_info(credential: Credential):
     """
