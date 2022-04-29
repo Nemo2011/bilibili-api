@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf8") as f:
 
 setuptools.setup(
     name='bilibili-api-python',
-    version='9.1.2',
+    version='9.2.0',
     license='GPLv3+',
     author='MoyuScript, Nemo2011',
     description='哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。',
@@ -24,7 +24,8 @@ setuptools.setup(
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Natural Language :: Chinese (Simplified)",
         "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9"
+        "Programming Language :: Python :: 3.9", 
+        "Programming Language :: Python :: 3.10"
     ],
     package_data={
         "": [
@@ -34,6 +35,6 @@ setuptools.setup(
         ]
     },
     install_requires=requires.splitlines(),
-    url="https://github.com/Nemo2011/bilibili-api",
+    url="https://github.com/Nemo2011/bilibili_api",
     python_requires=">=3.8"
 )

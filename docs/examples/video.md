@@ -57,9 +57,15 @@ if __name__ == '__main__':
 # 示例：获取视频弹幕
 
 ```python
-from bilibili_api import video, sync
+from bilibili_api import video, sync, Credential
 
-v = video.Video(bvid='BV1AV411x7Gs')
+SESSDATA = ""
+BILI_JCT = ""
+BUVID3 = ""
+
+credential = Credential(sessdata=SESSDATA, bili_jct=BILI_JCT, buvid3=BUVID3)
+
+v = video.Video(bvid='BV1AV411x7Gs', credential=credential)
 
 dms = sync(v.get_danmakus(0))
 
