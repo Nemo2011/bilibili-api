@@ -113,8 +113,14 @@ per_page_item = 10
 async def test_t_get_self_history():
     return await user.get_self_history(page_num, per_page_item, credential)
 
-async def test_u_get_channel_series():
-    return await u.get_channel_series()
+async def test_u_get_channel():
+    return await u.get_channel()
+
+async def test_v_get_channel_list():
+    return await u.get_channel_list()
+
+async def test_w_get_channel_video():
+    return await u.get_channel_videos(202263)
 
 async def after_all():
     await u.modify_relation(user.RelationType.UNSUBSCRIBE)
