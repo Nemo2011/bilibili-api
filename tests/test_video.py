@@ -194,3 +194,6 @@ async def test_set_favorite():
     await asyncio.sleep(0.5)
     await video.set_favorite(del_media_ids=[1195349595])
     return data
+
+async def test_get_danmaku_xml():
+    return video.get_danmaku_xml(0)
