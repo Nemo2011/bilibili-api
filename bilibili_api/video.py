@@ -20,6 +20,8 @@ import io
 import base64
 from typing import List
 
+import requests
+
 from .exceptions import VideoUploadException
 from .exceptions import ResponseException
 from .exceptions import NetworkException
@@ -732,6 +734,22 @@ class Video:
             "plat": 1
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
+
+    
+    async def get_danmaku_xml(self, page_index):
+        """
+            获取所有弹幕的 xml 源文件（非装填）
+
+            Args:
+                page_index: 分 P 序号
+
+            Return:
+                xml 文件源
+        """
+        cid = await self.__get_page_id_by_index(page_index)
+        url = f"https://comment.bilibili.com/{cid}.xml"
+        res = requests.get(url)
+        return res.content
 
     async def like_danmaku(self, page_index: int = None, dmid: int = None, status: bool = True, cid: int = None):
         """

@@ -162,6 +162,16 @@ from bilibili_api import video
 
 **Returns:** List[Danmaku]: Danmaku 类的列表。
 
+#### async def get_danmaku_xml()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| page_index | int, optional | 分 P 号，从 0 开始。 |
+
+获取所有弹幕的 XML 源
+
+**Returns** String: XML 源
+
 #### async def get_history_danmaku_index()
 
 | name       | type                    | description                                               |
