@@ -11,7 +11,7 @@ CONSOLE_COLORS = {
   'RESET': '\x1b[0m'
 }
 
-VALID_MSG_PATTERN = r'^(new|build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)(\(.+\)!?)?:\s.*$'
+VALID_MSG_PATTERN = r'^(new|build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)(\(?.+\)?!?)?:\s.*$'
 
 commit_msg_path = sys.argv[1]
 commit_msg: str

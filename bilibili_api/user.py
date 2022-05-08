@@ -429,9 +429,9 @@ class User:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
-    async def get_channel(self):
+    async def get_channel_old(self):
         """
-        查看用户部分的合集和列表及部分内容。
+        查看用户部分的合集和列表及部分内容。（旧版）
 
         Returns:
             dict: 调用接口返回的内容
@@ -442,9 +442,9 @@ class User:
         }
         return await request("GET", url=api["url"], params=param, credential=self.credential)
 
-    async def get_channel_list(self):
+    async def get_channel_list_series(self):
         """
-        查看用户合集和列表。
+        查看用户合集和列表。仅供 series_list。
 
         Returns: 
             dict: 调用接口返回的内容
@@ -455,9 +455,9 @@ class User:
         }
         return await request("GET", url=api["url"], params=param, credential=self.credential)
 
-    async def get_channel_videos(self, cid: int, pn: int=1, ps: int=100):
+    async def get_channel_videos_series(self, cid: int, pn: int=1, ps: int=100):
         """
-        查看频道内所有视频。
+        查看频道内所有视频。仅供 series_list。
 
         Args:
             cid: 频道的 cid
@@ -474,6 +474,47 @@ class User:
             "pn": pn,
             "ps": ps
         }
+        return await request("GET", url=api["url"], params=param, credential=self.credential)
+
+    async def get_channel_videos_season(self, sid: int, pn: int=1, ps: int=100):
+        """
+        查看频道内所有视频。仅供 season_list。
+
+        Args:
+            sid: 频道的 season_id
+            pn: 页数，默认为 1
+            ps: 每一页显示的视频数量
+
+        Returns: 
+            dict: 调用接口返回的内容
+        """
+        api = API["new_channel"]["channel_video"]
+        param = {
+            "mid": self.uid,
+            "season_id": sid,
+            "pn": pn,
+            "ps": ps
+        }
+        return await request("GET", url=api["url"], params=param, credential=self.credential)
+
+    async def get_channel_list(self):
+        """
+        查看用户所有的频道（包括新版）和部分视频。
+        适用于获取列表。
+
+        Returns:
+            dict: 调用接口返回的结果
+        """
+        api = API["new_channel"]["channel_info"]
+        param = {
+            "mid": self.uid, 
+            "page_num": 1, 
+            "page_size": 1
+        }
+        res = await request("GET", url=api["url"], params=param, credential=self.credential)
+        items = res["items_lists"]["page"]["total"]
+        time.sleep(0.5)
+        param["page_size"] = items
         return await request("GET", url=api["url"], params=param, credential=self.credential)
 
 async def get_self_info(credential: Credential):
