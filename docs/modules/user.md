@@ -168,25 +168,48 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### async def get_channel()
+#### async def get_channel_old()
 
-查看用户部分的合集和列表及部分内容。
+查看用户部分的合集和列表及部分内容。（旧版）
 
 **Returns:** 调用接口返回的内容。
 
 #### async def get_channel_list()
 
-查看用户合集和列表。
+查看用户所有的频道（包括新版）和部分视频。
+适用于获取列表。
 
 **Returns:** 调用接口返回的内容。
 
-#### async def get_channel_videos()
+#### async def get_channel_list_series()
+
+查看用户合集和列表。仅供 series_list。
+
+**Returns:** 调用接口返回的内容。
+
+#### async def get_channel_videos_series()
+
+查看频道内所有视频。仅供 series_list。
 
 | name | type | description |
 | ---- | ---- | ----------- |
 | cid  | int  | 合集的频道id(cid) |
 | pn   | int  | 页数，默认为1 |
 | ps   | int  | 每一页显示的视频数量，默认为100 |
+
+**Returns:** 调用接口返回的内容。
+
+#### async def get_channel_videos_season()
+
+查看频道内所有视频。仅供 series_list。
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| sid  | int  | 季度 id(season_id) |
+| pn   | int  | 页数，默认为1 |
+| ps   | int  | 每一页显示的视频数量，默认为100 |
+
+**Returns:** 调用接口返回的内容。
 
 #### async def get_dynamics()
 

@@ -204,6 +204,32 @@
       "comment": "查看列表内视频"
     }
   },
+  "new_channel": {
+    "channel_info": {
+      "url": "http://api.bilibili.com/x/polymer/space/seasons_series_list", 
+      "method": "GET", 
+      "verity": true, 
+      "params": {
+        "mid": "int: uid", 
+        "page_num": "int: 开始项",
+        "page_size": "int: 开始项后面的项数"
+      }, 
+      "comment": "查看用户合集的列表（新版）"
+    }, 
+    "channel_video": {
+      "url": "http://api.bilibili.com/x/polymer/space/seasons_archives_list", 
+      "method": "GET", 
+      "verity": true, 
+      "params": {
+        "mid": "int: uid", 
+        "season_id": "int: media_id",
+        "sort_reverse": "bool: 是否升序排序，否则默认排序",
+        "page_num": "int: 页码",
+        "page_size": "int: 每一页的项数"
+      }, 
+      "comment": "查看用户合集中的视频（新版）"
+    }
+  }, 
   "operate": {
     "modify": {
       "url": "https://api.bilibili.com/x/relation/modify",
