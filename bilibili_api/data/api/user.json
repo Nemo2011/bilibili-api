@@ -173,39 +173,7 @@
       },
       "comment": "用户浏览历史记录"
     },
-    "channel": {
-      "url": "https://api.bilibili.com/x/space/channel/index",
-      "method": "GET",
-      "verify": true,
-      "params": {
-        "mid": "int: uid"
-      },
-      "comment": "查看部分用户的合集和列表及部分内容"
-    },
     "channel_list": {
-      "url": "https://api.bilibili.com/x/space/channel/list",
-      "method": "GET",
-      "verify": true,
-      "params": {
-        "mid": "int: uid"
-      },
-      "comment": "查看用户合集和列表"
-    },
-    "channel_video": {
-      "url": "https://api.bilibili.com/x/space/channel/video",
-      "method": "GET",
-      "verity": true,
-      "params": {
-        "mid": "int: uid",
-        "cid": "int: cid",
-        "pn": "int: 页码",
-        "ps": "const int: 100"
-      },
-      "comment": "查看列表内视频"
-    }
-  },
-  "new_channel": {
-    "channel_info": {
       "url": "http://api.bilibili.com/x/polymer/space/seasons_series_list", 
       "method": "GET", 
       "verity": true, 
@@ -216,7 +184,19 @@
       }, 
       "comment": "查看用户合集的列表（新版）"
     }, 
-    "channel_video": {
+    "channel_video_series": {
+      "url": "http://api.bilibili.com/x/series/archives",
+      "method": "GET",
+      "verity": true,
+      "params": {
+        "mid": "int: uid",
+        "series_id": "int: series_id",
+        "pn": "int: 页码",
+        "ps": "const int: 100"
+      },
+      "comment": "查看列表内视频（旧版）"
+    },
+    "channel_video_season": {
       "url": "http://api.bilibili.com/x/polymer/space/seasons_archives_list", 
       "method": "GET", 
       "verity": true, 
@@ -228,6 +208,27 @@
         "page_size": "int: 每一页的项数"
       }, 
       "comment": "查看用户合集中的视频（新版）"
+    },
+    "del_channel_aids_series": {
+      "url": "https://api.bilibili.com/x/series/series/delArchives",
+      "method": "POST", 
+      "verity": true, 
+      "params": {
+        "mid": "int: uid",
+        "series_id": "int: series_id",
+        "aids": "int: aid 列表"
+      }
+    },
+    "del_channel_series": {
+      "url": "https://api.bilibili.com/x/series/series/delete", 
+      "method": "POST",
+      "verity": true, 
+      "query": {
+        "mid": "int: uid",
+        "series_id": "int: series_id",
+        "aids": "list: 所有 aid 列表",
+        "csrf": "string: bili_jct 的值"
+      }
     }
   }, 
   "operate": {
