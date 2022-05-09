@@ -18,6 +18,17 @@ from bilibili_api import user
 
 ---
 
+## class ChannelOrder
+
+**Extends:** enum.Enum
+
+合集视频排序顺序。
+
++ DEFAULT: 默认排序
++ CHANGE : 升序排序
+
+---
+
 ## class AudioOrder
 
 **Extends:** enum.Enum
@@ -129,6 +140,7 @@ from bilibili_api import user
 | ------- | -------------------- | ---------------------------------------- |
 | tid     | int, optional        | 分区 ID. Defaults to 0（全部）           |
 | pn      | int, optional        | 页码，从 1 开始. Defaults to 1.          |
+| ps      |(int, optional)       | 每一页的视频数. Defaults to 30. |
 | keyword | str, optional        | 搜索关键词. Defaults to "".              |
 | order   | VideoOrder, optional | 排序方式. Defaults to VideoOrder.PUBDATE |
 
@@ -142,6 +154,7 @@ from bilibili_api import user
 | ----- | -------------------- | ----------------------------------------- |
 | order | AudioOrder, optional | 排序方式. Defaults to AudioOrder.PUBDATE. |
 | pn    | int, optional        | 页码，从 1 开始. Defaults to 1.           |
+| ps     | (int, optional)       | 每一页的视频数. Defaults to 30. |
 
 获取用户投稿音频。
 
@@ -163,14 +176,10 @@ from bilibili_api import user
 | name  | type                       | description                                   |
 | ----- | -------------------------- | --------------------------------------------- |
 | order | ArticleListOrder, optional | 排序方式. Defaults to ArticleListOrder.LATEST |
+|pn    |(int, optional)         | 页码数，从 1 开始。 Defaults to 1.
+|ps     | (int, optional)       | 每一页的视频数. Defaults to 30. |
 
 获取用户专栏文集。
-
-**Returns:** 调用接口返回的内容。
-
-#### async def get_channel_old()
-
-查看用户部分的合集和列表及部分内容。（旧版）
 
 **Returns:** 调用接口返回的内容。
 
@@ -181,19 +190,13 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### async def get_channel_list_series()
-
-查看用户合集和列表。仅供 series_list。
-
-**Returns:** 调用接口返回的内容。
-
 #### async def get_channel_videos_series()
 
 查看频道内所有视频。仅供 series_list。
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| cid  | int  | 合集的频道id(cid) |
+| sid  | int  | 合集的 series_id (通过 get_channel_list 获取) |
 | pn   | int  | 页数，默认为1 |
 | ps   | int  | 每一页显示的视频数量，默认为100 |
 
@@ -201,11 +204,12 @@ from bilibili_api import user
 
 #### async def get_channel_videos_season()
 
-查看频道内所有视频。仅供 series_list。
+查看频道内所有视频。仅供 season_list。
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| sid  | int  | 季度 id(season_id) |
+| sid  | int  | 季度 id(season_id) (通过 get_channel_list 获取) |
+| sort | ChannelOrder | 排序方式，默认为“默认排序” |
 | pn   | int  | 页数，默认为1 |
 | ps   | int  | 每一页显示的视频数量，默认为100 |
 

@@ -29,6 +29,14 @@ class VideoOrder(Enum):
     FAVORATE = "stow"
     VIEW = "click"
 
+class ChannelOrder(Enum):
+    """
+    合集视频排序顺序。
+    + DEFAULT: 默认排序
+    + CHANGE : 升序排序
+    """
+    DEFAULT = "false"
+    CHANGE = "true"
 
 class AudioOrder(Enum):
     """
@@ -65,7 +73,6 @@ class ArticleListOrder(Enum):
     """
     LATEST = 0
     VIEW = 1
-
 
 class BangumiType(Enum):
     """
@@ -184,6 +191,7 @@ class User:
     async def get_videos(self,
                          tid: int = 0,
                          pn: int = 1,
+                         ps: int = 30,
                          keyword: str = "",
                          order: VideoOrder = VideoOrder.PUBDATE
                          ):
@@ -193,6 +201,7 @@ class User:
         Args:
             tid     (int, optional)       : 分区 ID. Defaults to 0（全部）.
             pn      (int, optional)       : 页码，从 1 开始. Defaults to 1.
+            ps      (int, optional)       : 每一页的视频数. Defaults to 30. 
             keyword (str, optional)       : 搜索关键词. Defaults to "".
             order   (VideoOrder, optional): 排序方式. Defaults to VideoOrder.PUBDATE
 
@@ -202,7 +211,7 @@ class User:
         api = API["info"]["video"]
         params = {
             "mid": self.uid,
-            "ps": 30,
+            "ps": ps,
             "tid": tid,
             "pn": pn,
             "keyword": keyword,
@@ -210,13 +219,14 @@ class User:
         }
         return await request("GET", url=api["url"], params=params, credential=self.credential)
 
-    async def get_audios(self, order: AudioOrder = AudioOrder.PUBDATE, pn: int = 1):
+    async def get_audios(self, order: AudioOrder = AudioOrder.PUBDATE, pn: int = 1, ps: int = 30):
         """
         获取用户投稿音频。
 
         Args:
             order (AudioOrder, optional): 排序方式. Defaults to AudioOrder.PUBDATE.
             pn    (int, optional)       : 页码数，从 1 开始。 Defaults to 1.
+            ps      (int, optional)       : 每一页的视频数. Defaults to 30. 
 
         Returns:
             dict: 调用接口返回的内容。
@@ -224,19 +234,20 @@ class User:
         api = API["info"]["audio"]
         params = {
             "uid": self.uid,
-            "ps": 30,
+            "ps": ps,
             "pn": pn,
             "order": order.value
         }
         return await request("GET", url=api["url"], params=params, credential=self.credential)
 
-    async def get_articles(self, pn: int = 1, order: ArticleOrder = ArticleOrder.PUBDATE):
+    async def get_articles(self, pn: int = 1, order: ArticleOrder = ArticleOrder.PUBDATE, ps: int = 30):
         """
         获取用户投稿专栏。
 
         Args:
             order (ArticleOrder, optional): 排序方式. Defaults to ArticleOrder.PUBDATE.
             pn    (int, optional)         : 页码数，从 1 开始。 Defaults to 1.
+            ps      (int, optional)       : 每一页的视频数. Defaults to 30. 
 
         Returns:
             dict: 调用接口返回的内容。
@@ -244,7 +255,7 @@ class User:
         api = API["info"]["article"]
         params = {
             "mid": self.uid,
-            "ps": 30,
+            "ps": ps,
             "pn": pn,
             "sort": order.value
         }
@@ -429,71 +440,46 @@ class User:
         }
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
-    async def get_channel_old(self):
-        """
-        查看用户部分的合集和列表及部分内容。（旧版）
-
-        Returns:
-            dict: 调用接口返回的内容
-        """
-        api = API["info"]["channel"]
-        param = {
-            "mid": self.uid
-        }
-        return await request("GET", url=api["url"], params=param, credential=self.credential)
-
-    async def get_channel_list_series(self):
-        """
-        查看用户合集和列表。仅供 series_list。
-
-        Returns: 
-            dict: 调用接口返回的内容
-        """
-        api = API["info"]["channel_list"]
-        param = {
-            "mid": self.uid
-        }
-        return await request("GET", url=api["url"], params=param, credential=self.credential)
-
-    async def get_channel_videos_series(self, cid: int, pn: int=1, ps: int=100):
+    async def get_channel_videos_series(self, sid: int, pn: int=1, ps: int=100):
         """
         查看频道内所有视频。仅供 series_list。
 
         Args:
-            cid: 频道的 cid
+            sid: 频道的 series_id
             pn: 页数，默认为 1
             ps: 每一页显示的视频数量
 
         Returns: 
             dict: 调用接口返回的内容
         """
-        api = API["info"]["channel_video"]
+        api = API["info"]["channel_video_series"]
         param = {
             "mid": self.uid,
-            "cid": cid,
+            "series_id": sid,
             "pn": pn,
             "ps": ps
         }
         return await request("GET", url=api["url"], params=param, credential=self.credential)
 
-    async def get_channel_videos_season(self, sid: int, pn: int=1, ps: int=100):
+    async def get_channel_videos_season(self, sid: int, sort: ChannelOrder=ChannelOrder.DEFAULT, pn: int=1, ps: int=100):
         """
         查看频道内所有视频。仅供 season_list。
 
         Args:
-            sid: 频道的 season_id
+            sid: 频道的 media_id
             pn: 页数，默认为 1
             ps: 每一页显示的视频数量
 
         Returns: 
             dict: 调用接口返回的内容
         """
-        api = API["new_channel"]["channel_video"]
+        api = API["info"]["channel_video_season"]
         param = {
             "mid": self.uid,
             "season_id": sid,
-            "pn": pn,
-            "ps": ps
+            "sort_reverse": sort.value,
+            "page_num": pn,
+            "page_size": ps
         }
         return await request("GET", url=api["url"], params=param, credential=self.credential)
 
@@ -505,7 +491,7 @@ class User:
         Returns:
             dict: 调用接口返回的结果
         """
-        api = API["new_channel"]["channel_info"]
+        api = API["info"]["channel_list"]
         param = {
             "mid": self.uid, 
             "page_num": 1, 
