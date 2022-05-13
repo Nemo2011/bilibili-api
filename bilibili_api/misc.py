@@ -22,6 +22,9 @@ async def web_search(keyword: str):
 
     Args:
         keyword (str): 搜索关键词
+
+    Returns:
+        调用 api 返回的结果
     """
     api = API["search"]["web_search"]
     params = {
@@ -37,6 +40,8 @@ async def web_search_by_type(keyword: str, search_type: SearchObjectType):
     Args:
         keyword     (str): 搜索关键词
         search_type (str): 搜索类型
+    Returns:
+        调用 api 返回的结果
     """
     api = API["search"]["web_search_by_type"]
     params = {
