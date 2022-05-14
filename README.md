@@ -8,7 +8,7 @@
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
 
-此存储库是 fork MoyuScript 的，这个库本来已经停止维护了，我的初衷就是继续维护它。希望可以一起合作。
+原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
 # 简介
 
