@@ -6,9 +6,7 @@ bilibili_api.video
 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 """
 
-from copy import copy
 from enum import Enum
-from typing import Coroutine
 import re
 import datetime
 import asyncio
@@ -528,7 +526,7 @@ class Video:
         if date is not None:
             self.credential.raise_for_no_sessdata()
 
-        self.credential.raise_for_no_sessdata()
+        #self.credential.raise_for_no_sessdata()
 
         if cid is None:
             if page_index is None:
@@ -548,21 +546,19 @@ class Video:
             api = API["danmaku"]["get_history_danmaku"]
             params["date"] = date.strftime("%Y-%m-%d")
             params["type"] = 1
-            # 仅需要获取一次
-            sge_count = 1
         else:
             api = API["danmaku"]["get_danmaku"]
-            params["segment_index"] = 1
+            # params["segment_index"] = 1
             # view 信息
-            view = await self.get_danmaku_view(cid=cid)
-            sge_count = view['dm_seg']['total']
+            info = await self.get_info()
+            danmaku_number = info['stat']['danmaku']
 
-        # 循环获取所有 segment
         danmakus: List[Danmaku] = []
-        for i in range(sge_count):
+        cnt = 1
+        while True:
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
-                params['segment_index'] = i + 1
+                params['segment_index'] = cnt
 
             req = await session.get(api["url"], params=params, headers={
                 "Referer": "https://www.bilibili.com",
@@ -572,10 +568,13 @@ class Video:
                 req.raise_for_status()
             except aiohttp.ClientResponseError as e:
                 raise NetworkException(e.status, e.message)
-
-            content_type = req.headers['content-type']
-            if content_type != 'application/octet-stream':
-                raise ResponseException("返回数据类型错误：")
+            
+            if 'content-type' not in req.headers.keys():
+                break
+            else:
+                content_type = req.headers['content-type']
+                if content_type != 'application/octet-stream':
+                    raise ResponseException("返回数据类型错误：")
 
             # 解析二进制流数据
             data = await req.read()
@@ -587,14 +586,19 @@ class Video:
             while not reader.has_end():
                 type_ = reader.varint() >> 3
                 if type_ != 1:
-                    raise ResponseException("解析响应数据错误")
+                    if type_ == 4:
+                        break
+                    else:
+                        raise ResponseException("解析响应数据错误")
 
                 dm = Danmaku('')
                 dm_pack_data = reader.bytes_string()
                 dm_reader = BytesReader(dm_pack_data)
+                #print(type_)
 
                 while not dm_reader.has_end():
                     data_type = dm_reader.varint() >> 3
+                    #print("abc: ", data_type)
 
                     if data_type == 1:
                         dm.id = dm_reader.varint()
@@ -625,6 +629,9 @@ class Video:
                     else:
                         break
                 danmakus.append(dm)
+            if date:
+                break
+            cnt += 1
         return danmakus
 
     async def get_history_danmaku_index(self, page_index: int = None, date: datetime.date = None, cid: int = None):
