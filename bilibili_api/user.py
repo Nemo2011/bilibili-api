@@ -8,6 +8,8 @@ from enum import Enum
 import json
 import time
 
+from pytest import param
+
 from .utils.network import request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
@@ -502,6 +504,19 @@ class User:
         time.sleep(0.5)
         param["page_size"] = items
         return await request("GET", url=api["url"], params=param, credential=self.credential)
+
+    async def get_cheese(self):
+        """
+        查看用户的所有课程
+
+        Returns:
+            dict: 调用接口返回的结果
+        """
+        api = API["info"]["pugv"]
+        params = {
+            "mid": self.uid
+        }
+        return await request("GET", api['url'], params=params)
 
 async def get_self_info(credential: Credential):
     """

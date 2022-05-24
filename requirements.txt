@@ -1,5 +1,5 @@
 urllib3~=1.26.3
-aiohttp~=3.7.4.post0
+aiohttp~=3.8.1
 beautifulsoup4~=4.9.3
 colorama~=0.4.4
 lxml~=4.6.1

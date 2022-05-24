@@ -49,7 +49,7 @@ class Danmaku:
                  mode: Mode = Mode.FLY,
                  font_size: FontSize = FontSize.NORMAL,
                  is_sub: bool = False,
-                 pool: int = -1,
+                 pool: int = 0,
                  attr: int = -1):
         """
         Args:
@@ -65,7 +65,7 @@ class Danmaku:
             mode      (Mode, optional)    : 弹幕模式。Defaults to Mode.FLY.
             font_size (FontSize, optional): 弹幕字体大小。Defaults to FontSize.NORMAL.
             is_sub    (bool, optional)    : 是否为字幕弹幕。Defaults to False.
-            pool      (int, optional)     : 暂不清楚。Defaults to -1.
+            pool      (int, optional)     : 池。Defaults to 0.
             attr      (int, optional)     : 暂不清楚。 Defaults to -1.
         """
         self.text = text
@@ -101,3 +101,7 @@ class Danmaku:
         """
         self.uid = int(crack_uid(self.crc32_id))
         return self.uid
+
+    def to_xml(self):
+        string = f'<d p="{self.dm_time},{self.mode},{self.font_size},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id},11">{self.text}</d>'
+        return string

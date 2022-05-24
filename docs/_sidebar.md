@@ -1,9 +1,11 @@
 + [主页](/)
 + [获取 Credential 类所需信息](/get-credential.md)
 + [同步执行异步代码](/sync-executor.md)
++ [短链接支持](/b23tv.md)
 + [配置](/configuration.md)
 + 示例
 	+ [视频](/examples/video.md)
+  + [弹幕文件](/examples/ass.md)
 	+ [互动视频](/examples/interactive_video.md)
 	+ [用户](/examples/user.md)
 	+ [直播](/examples/live.md)
@@ -17,6 +19,7 @@
 + API 参考
   + [根模块](/modules/bilibili_api.md)
   + [video.py - 视频](/modules/video.md)
+  + [ass.py - ASS 弹幕](/modules/ass.md)
   + [interactive_video.py - 互动视频](/modules/interactive_video.md)
   + [user.py - 用户](/modules/user.md)
   + [live.py - 直播](/modules/live.md)

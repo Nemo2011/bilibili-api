@@ -19,62 +19,63 @@ from bilibili_api import bangumi
 
 ---
 
-## async def get_meta()
+## class Bangumi
 
-| name       | type                 | description             |
-| ---------- | -------------------- | ----------------------- |
-| media_id   | int                  | media_id                |
-| credential | Credential, optional | 凭据. Defaults to None. |
+番剧类
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| media_id | int | 教程 ID（不与番剧相通） |
+| ssid | int | 教程季度 ID（不与番剧相通） |
+| credential | Credential | 认证 |
+
+#### async def get_meta()
 
 获取番剧元数据信息（评分，封面URL，标题等）
 
 **Returns:** API 调用返回结果。
 
-## async def get_short_comment_list()
+#### async def get_short_comment_list()
 
 | name       | type                          | description                                                  |
 | ---------- | ----------------------------- | ------------------------------------------------------------ |
-| media_id   | int                           | media_id                                                     |
 | order      | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT            |
 | next       | str, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None |
-| credential | Credential, optional          | 凭据. Defaults to None                                       |
 
 获取短评列表
 
 **Returns:** API 调用返回结果。
 
-## async def get_long_comment_list()
+#### async def get_long_comment_list()
 
 | name       | type                          | description                                                  |
 | ---------- | ----------------------------- | ------------------------------------------------------------ |
-| media_id   | int                           | media_id                                                     |
 | order      | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT            |
 | next       | str, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None |
-| credential | Credential, optional          | 凭据. Defaults to None                                       |
 
 获取长评列表
 
 **Returns:** API 调用返回结果。
 
-## async def get_episode_list()
-
-| name       | type                 | description            |
-| ---------- | -------------------- | ---------------------- |
-| season_id  | int                  | season_id              |
-| credential | Credential, optional | 凭据. Defaults to None |
+#### async def get_episode_list()
 
 获取季度分集列表
 
 **Returns:** API 调用返回结果。
 
-## async def get_stat()
-
-| name       | type                 | description            |
-| ---------- | -------------------- | ---------------------- |
-| season_id  | int                  | season_id              |
-| credential | Credential, optional | 凭据. Defaults to None |
+#### async def get_stat()
 
 获取番剧播放量，追番等信息
+
+**Returns:** API 调用返回结果。
+
+#### async def get_overview()
+
+获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
 
 **Returns:** API 调用返回结果。
 
@@ -86,17 +87,6 @@ from bilibili_api import bangumi
 | credential | Credential, optional | 凭据. Defaults to None |
 
 获取番剧单集信息
-
-**Returns:** API 调用返回结果。
-
-## async def get_overview()
-
-| name       | type                 | description            |
-| ---------- | -------------------- | ---------------------- |
-| season_id  | int                  | season_id              |
-| credential | Credential, optional | 凭据. Defaults to None |
-
-获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
 
 **Returns:** API 调用返回结果。
 
@@ -112,3 +102,13 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
+## def get_bangumi_from_episode()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| epid | int | epid |
+| credential | Credential | 认证 |
+
+通过一个 epid 获取番剧信息
+
+**Returns**:输入的集对应的番剧类

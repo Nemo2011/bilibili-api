@@ -63,9 +63,7 @@ SESSDATA = ""
 BILI_JCT = ""
 BUVID3 = ""
 
-credential = Credential(sessdata=SESSDATA, bili_jct=BILI_JCT, buvid3=BUVID3)
-
-v = video.Video(bvid='BV1AV411x7Gs', credential=credential)
+v = video.Video(bvid='BV1AV411x7Gs')
 
 dms = sync(v.get_danmakus(0))
 
