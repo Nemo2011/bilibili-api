@@ -199,7 +199,7 @@ def get_bangumi_from_episode(epid: int, credential: Credential=None):
         通过一个 epid 获取番剧信息
         Args:
             epid(int)             : epid
-            credential(Credential): 认证
+            credential(Credential): 凭据
         Returns:
             输入的集对应的番剧类
     """

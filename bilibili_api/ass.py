@@ -63,7 +63,7 @@ async def make_ass_file_subtitle(bvid, out, name, credential=None):
         bvid(str)             : 视频 BVID
         out(str)              : 输出位置
         name(str)             : 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。
-        credential(Credential): 认证
+        credential(Credential): 凭据
     Returns:
         None
     """
@@ -89,7 +89,7 @@ async def make_ass_file_danmakus(bvid, page, out, credential=None, date=None, fo
         bvid(str)             : BVID
         page(int)             : 分 P 号
         out(str)              : 输出文件
-        credential(Credential): 认证
+        credential(Credential): 凭据
         date(datetime.date)   : 获取时间
         font_name(str)        : 字体
         font_size(float)      : 字体大小

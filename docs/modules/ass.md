@@ -50,7 +50,7 @@ from bilibili_api import ass
 | bvid | (str)             | BVID |
 | page | (int)                | 分 P 号 |
 | out | (str)              | 输出文件 |
-| credential | (Credential)| 认证 |
+| credential | (Credential)| 凭据 |
 | date | (datetime.date)   | 获取时间 |
 | stage_size | (tuple|list)| 尺寸，一般都是 1920x1080 |
 | font_name | (str)        | 字体 |
@@ -71,7 +71,7 @@ from bilibili_api import ass
 | bvid | str | 视频 BVID |
 | out | str | 输出位置 |
 | name | str | 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。|
-| credential | Credential | 认证 |
+| credential | Credential | 凭据 |
 
 生成视频字幕文件
 
