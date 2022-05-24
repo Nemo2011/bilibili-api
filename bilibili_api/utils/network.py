@@ -106,6 +106,9 @@ async def request(method: str,
     if settings.proxy:
         config["proxy"] = settings.proxy
 
+    #config["verify_ssl"] = False
+    #config["ssl"] = False
+
     session = get_session()
 
     async with session.request(**config) as resp:

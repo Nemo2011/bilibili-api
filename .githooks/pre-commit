@@ -12,4 +12,5 @@ code = os.system("python scripts/lint.py")
 
 if code != 0:
   print(CONSOLE_COLORS['RED'] + "Please check above problems of your code before commit!")
+  print(CONSOLE_COLORS['RESET'])
   exit(1)

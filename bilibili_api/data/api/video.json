@@ -53,9 +53,9 @@
       "params": {
         "avid": "int: av 号",
         "cid": "int: 分 P 编号",
-        "qn": "int: 视频质量编号，最高 120",
+        "qn": "int: 视频质量编号，最高 127",
         "otype": "const str: json",
-        "fnval": "const int: 16"
+        "fnval": "const int: 4048"
       },
       "comment": "视频下载的信息，下载链接需要提供 headers 伪装浏览器请求（Referer 和 User-Agent）"
     },

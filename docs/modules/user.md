@@ -226,6 +226,12 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_cheese()
+
+查看用户的所有课程
+
+**Returns**:调用接口返回的结果
+
 #### async def get_subscribed_bangumis()
 
 | name  | type                  | description                               |

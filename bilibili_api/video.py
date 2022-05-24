@@ -245,9 +245,9 @@ class Video:
         params = {
             "avid": self.get_aid(),
             "cid": cid,
-            "qn": "120",
+            "qn": "127",
             "otype": "json",
-            "fnval": 16,
+            "fnval": 4048,
             "fourk": 1
         }
         return await request("GET", url, params=params, credential=self.credential)
@@ -511,7 +511,7 @@ class Video:
                 continue
         return json_data
 
-    async def get_danmakus(self, page_index: int = None, date: datetime.date = None, cid: int = None):
+    async def get_danmakus(self, page_index: int = None, date: datetime.date = None, cid: int = None) -> list[Danmaku]:
         """
         获取弹幕。
 

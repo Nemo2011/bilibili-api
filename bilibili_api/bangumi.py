@@ -9,6 +9,8 @@
 """
 
 from enum import Enum
+
+from bilibili_api.utils.sync import sync
 from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network import get_session, request
@@ -30,110 +32,137 @@ class BangumiCommentOrder(Enum):
     DEFAULT = 0
     CTIME = 1
 
+class Bangumi:
+    def __init__(self, media_id: int=-1, ssid: int=-1, credential: Credential = None):
+        """ 番剧类 """
+        if media_id == -1 and ssid == -1:
+            raise ValueError("需要 Media_id 或 Season_id 中的一个 !")
+        self.media_id = media_id
+        self.credential = credential
+        self.ssid = ssid if ssid != -1 else sync(self.get_meta())['season_id']
+        if self.media_id == -1:
+            self.media_id = sync(self.get_overview())['media_id']
 
-async def get_meta(media_id: int, credential: Credential = None):
+    async def get_meta(self):
+        """
+        获取番剧元数据信息（评分，封面 URL，标题等）
+
+        Args:
+            media_id (int): media_id
+            credential (Credential, optional): 凭据. Defaults to None.
+        """
+        credential = self.credential if self.credential is not None else Credential()
+
+        api = API["info"]["meta"]
+        params = {
+            "media_id": self.media_id
+        }
+        return await request('GET', api['url'], params, credential=credential)
+
+
+
+    async def get_short_comment_list(self, order: BangumiCommentOrder = BangumiCommentOrder.DEFAULT,
+                            next: str = None):
+        """
+        获取短评列表
+
+        Args:
+            order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
+            next       (str, optional)                : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
+        """
+        credential = credential if credential is not None else Credential()
+
+        api = API["info"]["short_comment"]
+        params = {
+            "media_id": self.media_id,
+            "ps": 20,
+            "sort": order.value
+        }
+        if next is not None:
+            params["cursor"] = next
+
+        return await request('GET', api['url'], params, credential=self.credential)
+
+
+
+    async def get_long_comment_list(self, order: BangumiCommentOrder = BangumiCommentOrder.DEFAULT,
+                            next: str = None):
+        """
+        获取长评列表
+
+        Args:
+            order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
+            next       (str, optional)                : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
+        """
+        credential = credential if credential is not None else Credential()
+
+        api = API["info"]["long_comment"]
+        params = {
+            "media_id": self.media_id,
+            "ps": 20,
+            "sort": order.value
+        }
+        if next is not None:
+            params["cursor"] = next
+
+        return await request('GET', api['url'], params, credential=self.credential)
+
+
+
+    async def get_episode_list(self):
+        """
+        获取季度分集列表
+        """
+        credential = self.credential if self.credential is not None else Credential()
+
+        api = API["info"]["episodes_list"]
+        params = {
+            "season_id": self.ssid
+        }
+        return await request('GET', api['url'], params, credential=credential)
+
+
+    async def get_stat(self):
+        """
+        获取番剧播放量，追番等信息
+        """
+        credential = self.credential if self.credential is not None else Credential()
+
+        api = API["info"]["season_status"]
+        params = {
+            "season_id": self.ssid
+        }
+        return await request('GET', api['url'], params, credential=credential)
+
+    async def get_overview(self):
+        """
+        获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
+        """
+        credential = self.credential if self.credential is not None else Credential()
+
+        api = API["info"]["collective_info"]
+        params = {
+            "season_id": self.ssid
+        }
+        return await request('GET', api['url'], params, credential=credential)
+
+async def set_follow(bangumi: Bangumi, status: bool = True, credential: Credential = None):
     """
-    获取番剧元数据信息（评分，封面 URL，标题等）
+    追番状态设置
 
     Args:
-        media_id (int): media_id
-        credential (Credential, optional): 凭据. Defaults to None.
-    """
-    credential = credential if credential is not None else Credential()
-
-    api = API["info"]["meta"]
-    params = {
-        "media_id": media_id
-    }
-    return await request('GET', api['url'], params, credential=credential)
-
-
-
-async def get_short_comment_list(media_id: int, order: BangumiCommentOrder = BangumiCommentOrder.DEFAULT,
-                           next: str = None, credential: Credential = None):
-    """
-    获取短评列表
-
-    Args:
-        media_id   (int)                          : media_id
-        order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
-        next       (str, optional)                : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
-        credential (Credential, optional)         : 凭据. Defaults to None
-    """
-    credential = credential if credential is not None else Credential()
-
-    api = API["info"]["short_comment"]
-    params = {
-        "media_id": media_id,
-        "ps": 20,
-        "sort": order.value
-    }
-    if next is not None:
-        params["cursor"] = next
-
-    return await request('GET', api['url'], params, credential=credential)
-
-
-
-async def get_long_comment_list(media_id: int, order: BangumiCommentOrder = BangumiCommentOrder.DEFAULT,
-                           next: str = None, credential: Credential = None):
-    """
-    获取长评列表
-
-    Args:
-        media_id   (int)                          : media_id
-        order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
-        next       (str, optional)                : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
-        credential (Credential, optional)         : 凭据. Defaults to None
-    """
-    credential = credential if credential is not None else Credential()
-
-    api = API["info"]["long_comment"]
-    params = {
-        "media_id": media_id,
-        "ps": 20,
-        "sort": order.value
-    }
-    if next is not None:
-        params["cursor"] = next
-
-    return await request('GET', api['url'], params, credential=credential)
-
-
-
-async def get_episode_list(season_id: int, credential: Credential = None):
-    """
-    获取季度分集列表
-
-    Args:
-        season_id  (int)                 : season_id，从 get_meta() 中获取
+        bangumi  (bangumi)               : 番剧类
+        status     (bool, optional)      : 追番状态，Defaults to True
         credential (Credential, optional): 凭据. Defaults to None
     """
     credential = credential if credential is not None else Credential()
+    credential.raise_for_no_sessdata()
 
-    api = API["info"]["episodes_list"]
-    params = {
-        "season_id": season_id
+    api = API["operate"]["follow_add"] if status else API["operate"]["follow_del"]
+    data = {
+        "season_id": bangumi.ssid
     }
-    return await request('GET', api['url'], params, credential=credential)
-
-
-async def get_stat(season_id: int, credential: Credential = None):
-    """
-    获取番剧播放量，追番等信息
-
-    Args:
-        season_id  (int)                 : season_id，从 get_meta() 中获取
-        credential (Credential, optional): 凭据. Defaults to None
-    """
-    credential = credential if credential is not None else Credential()
-
-    api = API["info"]["season_status"]
-    params = {
-        "season_id": season_id
-    }
-    return await request('GET', api['url'], params, credential=credential)
-
+    return await request('POST', api['url'], data=data, credential=credential)
 
 async def get_episode_info(epid: int, credential: Credential = None):
     """
@@ -165,41 +194,15 @@ async def get_episode_info(epid: int, credential: Credential = None):
 
         return content
 
-
-async def get_overview(season_id: int, credential: Credential = None):
+def get_bangumi_from_episode(epid: int, credential: Credential=None):
     """
-    获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
-
-    Args:
-        season_id  (int)                 : season_id，从 get_meta() 中获取
-        credential (Credential, optional): 凭据. Defaults to None
+        通过一个 epid 获取番剧信息
+        Args:
+            epid(int)             : epid
+            credential(Credential): 认证
+        Returns:
+            输入的集对应的番剧类
     """
-    credential = credential if credential is not None else Credential()
-
-    api = API["info"]["collective_info"]
-    params = {
-        "season_id": season_id
-    }
-    return await request('GET', api['url'], params, credential=credential)
-
-
-# 番剧操作
-
-
-async def set_follow(season_id: int, status: bool = True, credential: Credential = None):
-    """
-    追番状态设置
-
-    Args:
-        season_id  (int)                 : season_id，从 get_meta() 中获取
-        status     (bool, optional)      : 追番状态，Defaults to True
-        credential (Credential, optional): 凭据. Defaults to None
-    """
-    credential = credential if credential is not None else Credential()
-    credential.raise_for_no_sessdata()
-
-    api = API["operate"]["follow_add"] if status else API["operate"]["follow_del"]
-    data = {
-        "season_id": season_id
-    }
-    return await request('POST', api['url'], data=data, credential=credential)
+    info = sync(get_episode_info(epid, credential))
+    ssid = info['mediaInfo']['season_id']
+    return Bangumi(ssid=ssid)
