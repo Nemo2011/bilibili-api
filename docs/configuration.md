@@ -7,6 +7,5 @@ from bilibili_api import settings
 ## 代理
 
 ```python
-settings.proxy = "" # 此处填写你的代理地址（仅支持 HTTP）
+settings.proxy = "" # 此处填写你的代理地址
 ```
-

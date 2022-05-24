@@ -19,12 +19,14 @@ from .utils.network import get_session, request
 API = get_api("cheese")
 
 class CheeseList:
-    def __init__(self, season_id=-1, ep_id=-1, credential:Credential=None):
+    def __init__(self, season_id: int=-1, ep_id: int=-1, credential:Credential=None):
         """
         教程类
         season_id(int): ssid
         ep_id(int): 单集 ep_id
-        credential(Credential): 认证类
+        credential(Credential): 凭据类
+        注意：season_id 和 ep_id 任选一个即可，两个都选的话
+        以 season_id 为主
         """
         if (season_id == -1) and (ep_id == -1):
             raise ValueError("season id 和 ep id 必须选一个")
@@ -37,6 +39,8 @@ class CheeseList:
     async def get_meta(self):
         """
         获取教程元数据
+        Returns:
+            调用 API 所得的结果。
         """
         api = API['info']['meta']
         params = {
@@ -48,6 +52,8 @@ class CheeseList:
     async def get_list(self, pn: int=1, ps: int=50):
         """
         获取教程所有视频
+        Returns:
+            调用 API 所得的结果。
         """
         api = API['info']['list']
         params = {
@@ -64,7 +70,7 @@ class CheeseVideo:
         教程视频类
         因为不和其他视频相通，所以这里是一个新的类，无继承
         ep_id(int): 单集 ep_id
-        credential(Credential): 认证类
+        credential(Credential): 凭据类
         """
         self.epid = epid
         self.cheese = CheeseList(ep_id=self.epid)
@@ -77,12 +83,18 @@ class CheeseVideo:
     def set_epid(self, epid: int):
         """
         设置 epid
+
+        Returns:
+            None
         """
         self.__init__(epid, self.credential)
     
     async def get_download_url(self):
         """
         获取下载链接
+
+        Returns:
+            调用 API 所得的结果。
         """
         api = API['info']['playurl']
         params = {

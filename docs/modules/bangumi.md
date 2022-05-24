@@ -31,7 +31,7 @@ from bilibili_api import bangumi
 | ---- | ---- | ----------- |
 | media_id | int | 教程 ID（不与番剧相通） |
 | ssid | int | 教程季度 ID（不与番剧相通） |
-| credential | Credential | 认证 |
+| credential | Credential | 凭据 |
 
 #### async def get_meta()
 
@@ -79,6 +79,8 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
+***
+
 ## async def get_episode_info()
 
 | name       | type                 | description            |
@@ -107,7 +109,7 @@ from bilibili_api import bangumi
 | name | type | description |
 | ---- | ---- | ----------- |
 | epid | int | epid |
-| credential | Credential | 认证 |
+| credential | Credential | 凭据 |
 
 通过一个 epid 获取番剧信息
 
