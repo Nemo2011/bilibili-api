@@ -13,7 +13,7 @@ def __ensure_event_loop():
 
 def sync(coroutine: Coroutine):
     """
-    同步执行异步函数，使用可参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api-docs/#/sync-executor)
+    同步执行异步函数，使用可参考 [同步执行异步代码](https://nemo2011.github.io/bilibili_api/#/sync-executor)
 
     Args:
         coroutine (Coroutine): 异步函数

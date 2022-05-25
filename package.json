@@ -9,15 +9,15 @@
     },
     "repository": {
       "type": "git",
-      "url": "git+https://github.com/Nemo2011/bilibili-api-docs.git"
+      "url": "git+https://github.com/Nemo2011/bilibili_api.git"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "bugs": {
-      "url": "https://github.com/Nemo2011/bilibili-api-docs/issues"
+      "url": "https://github.com/Nemo2011/bilibili_api/issues"
     },
-    "homepage": "https://github.com/Nemo2011/bilibili-api-docs#readme",
+    "homepage": "https://github.com/Nemo2011/bilibili_api#readme",
     "dependencies": {
       "docsify": "^4.12.2",
       "docsify-cli": "^4.4.3",
