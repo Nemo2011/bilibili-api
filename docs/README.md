@@ -1,14 +1,13 @@
-![LOGO](https://pic.imgdb.cn/item/6023d5aa3ffa7d37b3cb1d23.png)
-
 # bilibili-api
 
-[![API数量](https://img.shields.io/badge/API数量-100+-blue)][api.json]
+[![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
 [![STARS](https://img.shields.io/github/stars/MoyuScript/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
 ![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
-[![Testing](https://github.com/MoyuScript/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/MoyuScript/bilibili-api/actions/workflows/testing.yml)
 
-开发文档: [bilibili-api 开发文档][docs] ([GitHub][docs-github])
+开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
+
+原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
 # 简介
 
@@ -18,10 +17,10 @@
 ## 特色
 
 - 范围涵盖广，基本覆盖常用的爬虫，操作。
-- 可使用代理，绕过b站风控策略。
+- 可使用代理，绕过 b 站风控策略。
 - 全面支持 BV 号（bvid），同时也兼容 AV 号（aid）。
 - 调用简便，函数命名易懂，代码注释详细。
-- 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查[[3]](#脚注)、专栏内容爬取等。
+- 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查[[3]](#脚注)、下载弹幕、字幕文件、专栏内容爬取等。
 - **全部是异步操作**。
 
 # 快速上手
@@ -61,7 +60,7 @@ if __name__ == '__main__':
     "tname": "单机游戏",
     "copyright": 1,
     "pic": "http://i2.hdslb.com/bfs/archive/82e52df9d0221836c260c82f2890e3761a46716b.jpg",
-    "title": "爆肝９８小时！在MC中还原糖调小镇",
+    "title": "爆肝９８小时！在 MC 中还原糖调小镇",
     "pubdate": 1595203214,
     "ctime": 1595168654,
     ...and more
@@ -147,23 +146,23 @@ A: 你可以发 Issue 来提交你的需求，但是，最好的办法是自己�
 
 A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在该分支上工作。
 如果你觉得已经可以了，请向项目仓库的 develop 分支发起 Pull request。
-如果你不明白这些操作的话，可以百度。
+如果你不明白这些操作的话，可以百度。完整指南：[CONTRIBUTING.md](/.github/CONTRIBUTING.md)
 
 **Q: 稳定性怎么样？**
 
-A: 由于该模块比较特殊，是爬虫模块，如果b站的接口变更，可能会马上失效。因此请始终保证是最新版本。如果发现问题可以提 [Issues][issues-new]。
+A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更，可能会马上失效。因此请始终保证是最新版本。如果发现问题可以提 [Issues][issues-new]。
 
 # 脚注
 
-+ \[1\] 这里只列出一部分，请以实际API为准。
++ \[1\] 这里只列出一部分，请以实际 API 为准。
 + \[2\] 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784>
 + \[3\] 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
 
 
-[docs]: https://nemo2011.github.io/bilibili-api-docs
-[docs-github]: https://github.com/Nemo2011/bilibili-api-docs
-[api.json]: https://github.com/Nemo2011/bilibili_api/tree/main/bilibili-api/data/api/
+[docs]: https://nemo2011.github.io/bilibili_api
+[docs-github]: https://github.com/Nemo2011/bilibili_api/tree/main/docs
+[api.json]: https://github.com/Nemo2011/bilibili_api/tree/main/bilibili_api/data/api/
 [license]: https://github.com/Nemo2011/bilibili_api/tree/main/LICENSE.md
-[stargazers]: https://github.com/MoyuScript/bilibili-api/stargazers
+[stargazers]: https://github.com/Nemo2011/bilibili_api/stargazers
 [issues-new]: https://github.com/Nemo2011/bilibili_api/issues/new
 [get-credential]: https://nemo2011.github.io/bilibili-api-docs/#/get-credential

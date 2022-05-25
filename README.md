@@ -159,8 +159,8 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 + \[3\] 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
 
 
-[docs]: https://nemo2011.github.io/bilibili-api-docs
-[docs-github]: https://github.com/Nemo2011/bilibili-api-docs
+[docs]: https://nemo2011.github.io/bilibili_api
+[docs-github]: https://github.com/Nemo2011/bilibili_api/tree/main/docs
 [api.json]: https://github.com/Nemo2011/bilibili_api/tree/main/bilibili_api/data/api/
 [license]: https://github.com/Nemo2011/bilibili_api/tree/main/LICENSE.md
 [stargazers]: https://github.com/Nemo2011/bilibili_api/stargazers
