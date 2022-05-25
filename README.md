@@ -146,7 +146,7 @@ A: 你可以发 Issue 来提交你的需求，但是，最好的办法是自己�
 
 A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在该分支上工作。
 如果你觉得已经可以了，请向项目仓库的 develop 分支发起 Pull request。
-如果你不明白这些操作的话，可以百度。
+如果你不明白这些操作的话，可以百度。完整指南：[CONTRIBUTING.md](/.github/CONTRIBUTING.md)
 
 **Q: 稳定性怎么样？**
 

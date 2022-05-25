@@ -39,7 +39,7 @@ class Bangumi:
             raise ValueError("需要 Media_id 或 Season_id 中的一个 !")
         self.media_id = media_id
         self.credential = credential
-        self.ssid = ssid if ssid != -1 else sync(self.get_meta())['season_id']
+        self.ssid = ssid if ssid != -1 else sync(self.get_meta())['media']['season_id']
         if self.media_id == -1:
             self.media_id = sync(self.get_overview())['media_id']
 
@@ -70,7 +70,7 @@ class Bangumi:
             order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
             next       (str, optional)                : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
         """
-        credential = credential if credential is not None else Credential()
+        credential = self.credential if self.credential is not None else Credential()
 
         api = API["info"]["short_comment"]
         params = {
@@ -81,7 +81,7 @@ class Bangumi:
         if next is not None:
             params["cursor"] = next
 
-        return await request('GET', api['url'], params, credential=self.credential)
+        return await request('GET', api['url'], params, credential=credential)
 
 
 
@@ -94,7 +94,7 @@ class Bangumi:
             order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
             next       (str, optional)                : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
         """
-        credential = credential if credential is not None else Credential()
+        credential = self.credential if self.credential is not None else Credential()
 
         api = API["info"]["long_comment"]
         params = {
@@ -105,7 +105,7 @@ class Bangumi:
         if next is not None:
             params["cursor"] = next
 
-        return await request('GET', api['url'], params, credential=self.credential)
+        return await request('GET', api['url'], params, credential=credential)
 
 
 

@@ -21,20 +21,21 @@ sync(main())
 
 ```python
 from bilibili_api import bangumi, sync
+from bilibili_api import settings
 
+settings.nest_asyncio = True
 
 async def main():
+    b = bangumi.Bangumi(28231846)
     next = None
     cmts = []
     while next != 0:
-        b = await bangumi.get_long_comment_list(28231846, next=next)
-        cmts.extend(b['list'])
-        next = b['next']
+        cm = await b.get_long_comment_list(next=next)
+        cmts.extend(cm['list'])
+        next = cm['next']
 
     for cmt in cmts:
         print(cmt)
 
-
 sync(main())
 ```
-

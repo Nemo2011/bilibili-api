@@ -33,7 +33,7 @@
   <script>
     function createTag(tagname) {
       var el = document.createElement('a');
-      el.href = 'https://github.com/MoyuScript/bilibili-api-docs/tree/' + tagname + '/docs/';
+      el.href = 'https://github.com/nemo2011/bilibili-api-docs/tree/' + tagname + '/docs/';
       el.innerHTML = tagname;
       el.target = '_blank';
       return el;
@@ -41,7 +41,7 @@
 
     var $app = document.getElementById('app');
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://api.github.com/repos/MoyuScript/bilibili-api-docs/tags');
+    xhr.open('GET', 'https://api.github.com/repos/nemo2011/bilibili-api-docs/tags');
     xhr.responseType = 'json';
     xhr.send();
     xhr.onloadend = function () {

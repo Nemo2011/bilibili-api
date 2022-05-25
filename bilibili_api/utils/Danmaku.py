@@ -6,6 +6,7 @@ bilibili_api.utils.Danmaku
 
 import time
 from enum import Enum
+import zlib
 
 from .utils import crack_uid
 
@@ -94,14 +95,17 @@ class Danmaku:
 
     def crack_uid(self):
         """
-        暴力破解 UID，可能存在误差，请慎重使用。
+        暴力破解 UID。
+        10.0.1: 已改为 zlib，误差可以看官方文档。
+        几个测试和原来结果一样。
 
         Returns:
             int: 真实 UID。
         """
-        self.uid = int(crack_uid(self.crc32_id))
+        self.uid = zlib.crc32(self.crc32_id.encode('utf8'))
         return self.uid
 
     def to_xml(self):
-        string = f'<d p="{self.dm_time},{self.mode},{self.font_size},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id},11">{self.text}</d>'
+        txt = self.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        string = f'<d p="{self.dm_time},{self.mode},{self.font_size},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id},11">{txt}</d>'
         return string
