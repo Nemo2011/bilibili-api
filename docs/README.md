@@ -5,7 +5,7 @@
 [![API数量](https://img.shields.io/badge/API数量-100+-blue)][api.json]
 [![STARS](https://img.shields.io/github/stars/MoyuScript/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
-![Python](https://img.shields.io/badge/Python-3.9|3.8-blue)
+![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
 [![Testing](https://github.com/MoyuScript/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/MoyuScript/bilibili-api/actions/workflows/testing.yml)
 
 开发文档: [bilibili-api 开发文档][docs] ([GitHub][docs-github])
@@ -160,10 +160,10 @@ A: 由于该模块比较特殊，是爬虫模块，如果b站的接口变更，�
 + \[3\] 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
 
 
-[docs]: https://bili.moyu.moe/
-[docs-github]: https://github.com/MoyuScript/bilibili-api-docs
-[api.json]: https://github.com/MoyuScript/bilibili-api/tree/main/bilibili-api/data/api/
-[license]: https://github.com/MoyuScript/bilibili-api/tree/main/LICENSE.md
+[docs]: https://nemo2011.github.io/bilibili-api-docs
+[docs-github]: https://github.com/Nemo2011/bilibili-api-docs
+[api.json]: https://github.com/Nemo2011/bilibili_api/tree/main/bilibili-api/data/api/
+[license]: https://github.com/Nemo2011/bilibili_api/tree/main/LICENSE.md
 [stargazers]: https://github.com/MoyuScript/bilibili-api/stargazers
-[issues-new]: https://github.com/MoyuScript/bilibili-api/issues/new
-[get-credential]: https://bili.moyu.moe/#/get-credential
+[issues-new]: https://github.com/Nemo2011/bilibili_api/issues/new
+[get-credential]: https://nemo2011.github.io/bilibili-api-docs/#/get-credential

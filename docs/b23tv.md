@@ -1,6 +1,6 @@
 # 短链接支持
 
-bilibili_api 从 10.0 开始支持短链接了（说白了就是支持查看短链目标了）
+bilibili_api 从 10.0.0 开始支持短链接了（说白了就是支持查看短链目标了）
 
 ``` python
 from bilibili_api import get_real_url, sync

@@ -1,0 +1,29 @@
+{
+    "name": "bilibili-api-docs",
+    "version": "1.0.0",
+    "description": "",
+    "private": "true",
+    "scripts": {
+      "start": "docsify start ./docs",
+      "dev": "docsify serve ./docs"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/Nemo2011/bilibili-api-docs.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/Nemo2011/bilibili-api-docs/issues"
+    },
+    "homepage": "https://github.com/Nemo2011/bilibili-api-docs#readme",
+    "dependencies": {
+      "docsify": "^4.12.2",
+      "docsify-cli": "^4.4.3",
+      "greenlock-express": "^2.7.18",
+      "koa": "^2.13.1",
+      "koa-bodyparser": "^4.3.0"
+    }
+  }
+  

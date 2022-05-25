@@ -5,3 +5,7 @@
 /bilibili_api_python.egg-info
 /.vscode
 build/
+*.ass
+*.srt
+danmaku*.*
+node_modules/
