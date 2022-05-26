@@ -232,7 +232,7 @@ from bilibili_api import user
 
 **Returns**:调用接口返回的结果
 
-#### async def get_subscribed_bangumis()
+#### async def get_subscribed_bangumi()
 
 | name  | type                  | description                               |
 | ----- | --------------------- | ----------------------------------------- |

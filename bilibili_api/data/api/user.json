@@ -202,7 +202,7 @@
       "verity": false, 
       "params": {
         "mid": "int: uid", 
-        "season_id": "int: media_id",
+        "season_id": "int: season_id",
         "sort_reverse": "bool: 是否升序排序，否则默认排序",
         "page_num": "int: 页码",
         "page_size": "int: 每一页的项数"
