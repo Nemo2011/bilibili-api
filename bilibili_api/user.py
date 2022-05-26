@@ -310,7 +310,7 @@ class User:
                 card["extend_json"] = json.loads(card["extend_json"])
         return data
 
-    async def get_subscribed_bangumis(self, pn: int = 1, type_: BangumiType = BangumiType.BANGUMI):
+    async def get_subscribed_bangumi(self, pn: int = 1, type_: BangumiType = BangumiType.BANGUMI):
         """
         获取用户追番/追剧列表。
 
@@ -468,7 +468,7 @@ class User:
         查看频道内所有视频。仅供 season_list。
 
         Args:
-            sid: 频道的 media_id
+            sid: 频道的 season_id
             pn: 页数，默认为 1
             ps: 每一页显示的视频数量
 
