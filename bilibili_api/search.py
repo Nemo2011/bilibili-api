@@ -1,5 +1,7 @@
 """
-杂项
+bilibili_api.search
+
+搜索
 """
 from enum import Enum
 from .utils.utils import get_api

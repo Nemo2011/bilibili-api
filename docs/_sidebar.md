@@ -29,6 +29,7 @@
   + [cheese.py - 课程](/modules/cheese.md)
   + [audio.py - 音频](/modules/audio.md)
   + [bangumi.py - 番剧](/modules/bangumi.md)
+  + [search.py - 搜索](/modules/search.md)
   + [favorite_list.py - 收藏夹](/modules/favorite_list.md)
   + [app.py - 手机 APP](/modules/app.md)
   + [video_uploader.py - 视频上传](/modules/video_uploader.md)

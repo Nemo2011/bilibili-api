@@ -161,7 +161,7 @@ BV 号转 AV 号。
 
 #### def crack_uid()
 
-暴力破解 UID，可能存在误差，请慎重使用。
+破解 uid, 依赖 zlib
 
 **Returns:** int: 真实 UID。
 
