@@ -96,8 +96,8 @@ class Danmaku:
     def crack_uid(self):
         """
         暴力破解 UID。
-        10.0.1: 已改为 zlib，误差可以看官方文档。
-        几个测试和原来结果一样。
+        10.0.1: 已改为 zlib，误差可以看 zlib 官方文档(找 PSF 的文档，应该没误差)。
+        几个测试和原来暴力破解结果一样。
 
         Returns:
             int: 真实 UID。

@@ -9,6 +9,8 @@
 
 原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
+这个项目是对原项目的继续维护，欢迎[贡献](#contribute)！
+
 # 简介
 
 这是一个用 Python 写的调用 [Bilibili](https://www.bilibili.com) 各种 API 的库，
@@ -142,7 +144,7 @@ settings.proxy = "http://your-proxy.com" # 里头填写你的代理地址
 
 A: 你可以发 Issue 来提交你的需求，但是，最好的办法是自己写（懒）
 
-**Q: 我有一个大胆的想法，如何给代码库贡献？**
+<span id="contribute">**Q: 我有一个大胆的想法，如何给代码库贡献？**</span>
 
 A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在该分支上工作。
 如果你觉得已经可以了，请向项目仓库的 develop 分支发起 Pull request。

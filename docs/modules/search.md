@@ -1,7 +1,7 @@
-# Module misc.py
+# Module search.py
 
 ```python
-from bilibili_api import misc
+from bilibili_api import search
 ```
 
 各种杂类操作（主页搜索 API）
