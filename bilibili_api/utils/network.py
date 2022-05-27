@@ -12,6 +12,8 @@ import re
 import asyncio
 import atexit
 
+import aiohttp_proxy
+
 from ..exceptions import ResponseCodeException, ResponseException, NetworkException
 from .Credential import Credential
 from .. import settings
@@ -106,6 +108,8 @@ async def request(method: str,
     if settings.proxy:
         config["proxy"] = settings.proxy
 
+    #config["ssl"] = False
+
     #config["verify_ssl"] = False
     #config["ssl"] = False
 
@@ -172,7 +176,7 @@ def get_session():
     loop = asyncio.get_event_loop()
     session = __session_pool.get(loop, None)
     if session is None:
-        session = aiohttp.ClientSession(loop=loop, connector=aiohttp.TCPConnector(verify_ssl=False))
+        session = aiohttp.ClientSession(loop=loop, connector=aiohttp_proxy.ProxyConnector(settings.proxy, ssl=False))
         __session_pool[loop] = session
 
     return session
