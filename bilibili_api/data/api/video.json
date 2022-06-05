@@ -28,7 +28,7 @@
       "comment": "视频标签信息"
     },
     "chargers": {
-      "url": "https://api.bilibili.com/x/web-interface/elec/show",
+      "url": "https://api.bilibili.com/x/web-interface/elec/show", 
       "method": "GET",
       "verify": false,
       "params": {
