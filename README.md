@@ -9,7 +9,7 @@
 
 原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
-这个项目是对原项目的继续维护，欢迎[贡献](#contribute)！
+这个项目是对原项目的继续维护，欢迎[贡献](.github/CONTRIBUTING.md)！
 
 # 简介
 
@@ -22,6 +22,7 @@
 - 可使用代理，绕过 b 站风控策略。
 - 全面支持 BV 号（bvid），同时也兼容 AV 号（aid）。
 - 调用简便，函数命名易懂，代码注释详细。
+- 依赖少，无需第三方命令行工具，装完即用，无需其他配置。
 - 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查、下载弹幕、字幕文件、专栏内容爬取等。
 - **全部是异步操作**。
 
