@@ -6,7 +6,7 @@ bilibili_api.video
 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 """
 
-from enum import Enum
+from enum import Enum 
 import re
 import datetime
 import asyncio
