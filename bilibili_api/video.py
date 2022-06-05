@@ -248,7 +248,8 @@ class Video:
             "qn": "127",
             "otype": "json",
             "fnval": 4048,
-            "fourk": 1
+            "fourk": 1, 
+            "platform": "html5"
         }
         return await request("GET", url, params=params, credential=self.credential)
 
@@ -511,7 +512,7 @@ class Video:
                 continue
         return json_data
 
-    async def get_danmakus(self, page_index: int = None, date: datetime.date = None, cid: int = None) -> list[Danmaku]:
+    async def get_danmakus(self, page_index: int = None, date: datetime.date = None, cid: int = None):
         """
         获取弹幕。
 
