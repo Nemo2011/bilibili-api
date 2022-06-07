@@ -75,7 +75,7 @@ for dm in dms:
 
 ```python
 import asyncio
-from bilibili_api import video, Credential
+from bilibili_api import video, Credential, HEADERS
 import aiohttp
 import os
 
@@ -97,10 +97,6 @@ async def main():
     video_url = url["dash"]["video"][0]['baseUrl']
     # 音频轨链接
     audio_url = url["dash"]["audio"][0]['baseUrl']
-    HEADERS = {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://www.bilibili.com/"
-    }
     async with aiohttp.ClientSession() as sess:
         # 下载视频流
         async with sess.get(video_url, headers=HEADERS) as resp:

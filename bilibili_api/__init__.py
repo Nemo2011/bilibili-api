@@ -11,6 +11,11 @@ from .utils.network import get_session, request, set_session
 from .utils.short import get_real_url
 from .utils.sync import sync
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0", 
+    "Referer": "https://bilibili.com"
+}
+
 # 支持嵌套事件
 nest_asyncio.apply()
 
