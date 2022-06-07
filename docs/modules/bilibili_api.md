@@ -6,6 +6,10 @@ import bilibili_api
 
 根模块
 
+## const dict HEADERS
+
+访问 bilibili 视频下载链接等内部网址用的 HEADERS
+
 ## def set_session()
 
 | name    | type                  | description                |
