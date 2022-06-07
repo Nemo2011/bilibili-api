@@ -4,7 +4,7 @@
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
 ![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
 
-<!--[![STARS](https://img.shields.io/github/stars/MoyuScript/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]-->
+<!--[![STARS](https://img.shields.io/github/stars/MoyuScript/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]--> 
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
 
