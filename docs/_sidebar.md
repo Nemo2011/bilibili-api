@@ -22,7 +22,7 @@
   + [interactive_video.py - 互动视频](/modules/interactive_video.md)
   + [user.py - 用户](/modules/user.md)
   + [search.py - 搜索](/modules/search.md)
-  + [homepage.py - 主页](/modules/rank.md)
+  + [homepage.py - 主页](/modules/homepage.md)
   + [live.py - 直播](/modules/live.md)
   + [dynamic.py - 动态](/modules/dynamic.md)
   + [comment.py - 评论](/modules/comment.md)
