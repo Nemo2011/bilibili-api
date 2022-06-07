@@ -222,15 +222,16 @@ class Video:
         cid = page["cid"]
         return cid
 
-    async def get_download_url(self, page_index: int = None, cid: int = None):
+    async def get_download_url(self, page_index: int = None, cid: int = None, html5: bool=False):
         """
         获取视频下载信息。
 
         page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
         Args:
-            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
-            cid        (int, optional): 分 P 的 ID。Defaults to None
+            page_index (int, optional) : 分 P 号，从 0 开始。Defaults to None
+            cid        (int, optional) : 分 P 的 ID。Defaults to None
+            html5      (bool, optional): 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。
 
         Returns:
             dict: 调用 API 返回的结果。
@@ -242,15 +243,25 @@ class Video:
             cid = await self.__get_page_id_by_index(page_index)
 
         url = API["info"]["playurl"]["url"]
-        params = {
-            "avid": self.get_aid(),
-            "cid": cid,
-            "qn": "127",
-            "otype": "json",
-            "fnval": 4048,
-            "fourk": 1, 
-            "platform": "html5"
-        }
+        if html5:
+            params = {
+                "avid": self.get_aid(),
+                "cid": cid,
+                "qn": "127",
+                "otype": "json",
+                "fnval": 4048,
+                "fourk": 1, 
+                "platform": "html5"
+            }
+        else:
+            params = {
+                "avid": self.get_aid(),
+                "cid": cid,
+                "qn": "127",
+                "otype": "json",
+                "fnval": 4048,
+                "fourk": 1, 
+            }
         return await request("GET", url, params=params, credential=self.credential)
 
     async def get_related(self):

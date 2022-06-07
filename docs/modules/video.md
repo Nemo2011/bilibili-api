@@ -104,6 +104,7 @@ from bilibili_api import video
 | ---------- | ------------- | ------------------------------------ |
 | page_index | int, optional | 分 P 号，从 0 开始。Defaults to None |
 | cid        | int, optional | 分 P 的 ID。Defaults to None         |
+| html5      | bool, optional | 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。 |
 
 获取视频下载信息。
 
