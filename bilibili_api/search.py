@@ -7,9 +7,20 @@ from enum import Enum
 from .utils.utils import get_api
 from .utils.network import request
 
-API = get_api('misc')
+API = get_api('search')
 
 class SearchObjectType(Enum):
+    """
+    搜索对象。
+    + VIDEO : 视频
+    + BANGUMI : 番剧
+    + FT : 影视
+    + LIVE : 直播
+    + ARTICLE : 专栏
+    + TOPIC : 话题
+    + USER : 用户
+
+    """
     VIDEO = "video"
     BANGUMI = "media_bangumi"
     FT = "media_ft"
@@ -18,23 +29,25 @@ class SearchObjectType(Enum):
     TOPIC = "topic"
     USER = "bili_user"
 
-async def web_search(keyword: str):
+async def web_search(keyword: str, page: int=1):
     """
     只指定关键字在 web 进行搜索，返回未经处理的字典
 
     Args:
         keyword (str): 搜索关键词
+        page (int)   : 页码
 
     Returns:
         调用 api 返回的结果
     """
     api = API["search"]["web_search"]
     params = {
-        "keyword": keyword
+        "keyword": keyword, 
+        "page": page
     }
     return await request('GET', url=api["url"], params=params)
 
-async def web_search_by_type(keyword: str, search_type: SearchObjectType):
+async def web_search_by_type(keyword: str, search_type: SearchObjectType, page: int=1):
     """
     指定关键字和类型进行搜索，返回未经处理的字典
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、专栏(article)、话题(topic)、用户(bili_user)
@@ -42,12 +55,14 @@ async def web_search_by_type(keyword: str, search_type: SearchObjectType):
     Args:
         keyword     (str): 搜索关键词
         search_type (str): 搜索类型
+        page        (int): 页码
     Returns:
         调用 api 返回的结果
     """
     api = API["search"]["web_search_by_type"]
     params = {
         "keyword": keyword,
-        "search_type": search_type.value
+        "search_type": search_type.value, 
+        "page": page
     }
     return await request('GET', url=api["url"], params=params)
