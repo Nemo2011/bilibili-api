@@ -11,7 +11,7 @@
             "comment": "获取课程元数据。"
         }, 
         "list": {
-            "url": "http://api.bilibili.com/pugv/view/web/ep/list",
+            "url": "https://api.bilibili.com/pugv/view/web/ep/list",
             "verify": false,
             "params": {
                 "season_id": "int: 季度 id，不与 bangumi 互通",
@@ -21,7 +21,7 @@
             "comment": "获取全部视频"
         }, 
         "playurl": {
-            "url": "http://api.bilibili.com/pugv/player/web/playurl", 
+            "url": "https://api.bilibili.com/pugv/player/web/playurl", 
             "verify": false,
             "params": {
                 "avid": "int: aid",

@@ -174,7 +174,7 @@
       "comment": "用户浏览历史记录"
     },
     "channel_list": {
-      "url": "http://api.bilibili.com/x/polymer/space/seasons_series_list", 
+      "url": "https://api.bilibili.com/x/polymer/space/seasons_series_list", 
       "method": "GET", 
       "verity": false, 
       "params": {
@@ -185,7 +185,7 @@
       "comment": "查看用户合集的列表（新版）"
     }, 
     "channel_video_series": {
-      "url": "http://api.bilibili.com/x/series/archives",
+      "url": "https://api.bilibili.com/x/series/archives",
       "method": "GET",
       "verity": false,
       "params": {
@@ -197,7 +197,7 @@
       "comment": "查看列表内视频（旧版）"
     },
     "channel_video_season": {
-      "url": "http://api.bilibili.com/x/polymer/space/seasons_archives_list", 
+      "url": "https://api.bilibili.com/x/polymer/space/seasons_archives_list", 
       "method": "GET", 
       "verity": false, 
       "params": {

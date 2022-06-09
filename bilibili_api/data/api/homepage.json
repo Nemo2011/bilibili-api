@@ -1,7 +1,7 @@
 {
     "info": {
         "top_photo": {
-            "url": "http://api.bilibili.com/x/web-show/page/header",
+            "url": "https://api.bilibili.com/x/web-show/page/header",
             "params": {
                 "resource_id": "int: 142"
             }, 
@@ -9,7 +9,7 @@
             "comment": "获取主页最上方的图像"
         },
         "links": {
-            "url": "http://api.bilibili.com/x/web-show/res/locs",
+            "url": "https://api.bilibili.com/x/web-show/res/locs",
             "params": {
                 "pf": "int: 0", 
                 "ids": "int: 4694"
@@ -18,7 +18,7 @@
             "comment": "获取主页左面的链接列表"
         },
         "popularize": {
-            "url": "http://api.bilibili.com/x/web-show/res/locs", 
+            "url": "https://api.bilibili.com/x/web-show/res/locs", 
             "params": {
                 "pf": "int: 0", 
                 "ids": "int: 34"
@@ -27,7 +27,7 @@
             "comment": "获取推广的项目"
         }, 
         "videos": {
-            "url": "http://api.bilibili.com/x/web-interface/index/top/rcmd", 
+            "url": "https://api.bilibili.com/x/web-interface/index/top/rcmd", 
             "params": {
                 "fresh_type": "int: 0", 
                 "version": "int: 1", 

@@ -37,7 +37,7 @@
       "comment": "获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）"
     },
     "area_info": {
-      "url": "http://api.live.bilibili.com/room/v1/Area/getList",
+      "url": "https://api.live.bilibili.com/room/v1/Area/getList",
       "method": "GET",
       "verify": false,
       "params": null,
