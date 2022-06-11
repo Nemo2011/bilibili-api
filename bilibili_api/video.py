@@ -434,7 +434,12 @@ class Video:
                 elif t == 8:
                     data['mtime'] = reader_.string()
                 elif t == 9:
-                    data['extra'] = json.loads(reader_.string())
+                    print(reader_.string())
+                    try:
+                        data['extra'] = json.loads(reader_.string())
+                    except Exception as e:
+                        print("error", reader_.string())
+
                 elif t == 10:
                     data['id_str'] = reader_.string()
                 else:
@@ -491,6 +496,9 @@ class Video:
                     continue
             return data
 
+        def read_special_danmakus(string: bytes):
+            pass
+
         while not reader.has_end():
             type_ = reader.varint() >> 3
 
@@ -519,6 +527,9 @@ class Video:
                     read_command_danmakus(reader.bytes_string()))
             elif type_ == 10:
                 json_data['dm_setting'] = read_settings(reader.bytes_string())
+            elif type_ == 12:
+                reader.bytes_string()
+                pass
             else:
                 continue
         return json_data

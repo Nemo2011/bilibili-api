@@ -3,18 +3,17 @@ bilibili_api.cheese
 
 有关 bilibili 课程的 api。
 注意，注意！课程中的视频和其他视频几乎没有任何相通的 API！
+不能将 CheeseVideo 转成 Video 类，后果自负（因为改动太多，所以我都不敢继承）
+课程的视频好像都没有 bvid，有也没用。而且这种连官方的 html5 播放器都不能看课程！
+呵呵，官方是只打算保留 aid 和 cid 啊，我太难了！
 获取下载链接需要使用 bilibili_api.cheese.get_download_url，video.get_download_url 不适用。
 还有，课程的 season_id 和 ep_id 不与番剧相通，井水不犯河水，请不要错用!
 """
 
-import json
-import re
-from bilibili_api.exceptions import ApiException, ResponseException
 from bilibili_api.utils.Credential import Credential
-from bilibili_api.video import Video
 from .utils.utils import get_api
 from .utils.sync import sync
-from .utils.network import get_session, request
+from .utils.network import request
 
 API = get_api("cheese")
 

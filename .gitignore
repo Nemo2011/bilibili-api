@@ -9,3 +9,5 @@ build/
 *.srt
 danmaku*.*
 node_modules/
+*.proto
+*.bin
