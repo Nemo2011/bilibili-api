@@ -434,11 +434,7 @@ class Video:
                 elif t == 8:
                     data['mtime'] = reader_.string()
                 elif t == 9:
-                    print(reader_.string())
-                    try:
-                        data['extra'] = json.loads(reader_.string())
-                    except Exception as e:
-                        print("error", reader_.string())
+                    data['extra'] = json.loads(reader_.string())
 
                 elif t == 10:
                     data['id_str'] = reader_.string()
@@ -569,19 +565,17 @@ class Video:
             api = API["danmaku"]["get_history_danmaku"]
             params["date"] = date.strftime("%Y-%m-%d")
             params["type"] = 1
+            all_seg = 1
         else:
             api = API["danmaku"]["get_danmaku"]
-            # params["segment_index"] = 1
-            # view 信息
-            info = await self.get_info()
-            danmaku_number = info['stat']['danmaku']
+            view = await self.get_danmaku_view(cid=cid)
+            all_seg = view['dm_seg']['total']
 
         danmakus: List[Danmaku] = []
-        cnt = 1
-        while True:
+        for seg in range(all_seg):
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
-                params['segment_index'] = cnt
+                params['segment_index'] = seg + 1
 
             req = await session.get(api["url"], params=params, headers={
                 "Referer": "https://www.bilibili.com",
@@ -617,11 +611,9 @@ class Video:
                 dm = Danmaku('')
                 dm_pack_data = reader.bytes_string()
                 dm_reader = BytesReader(dm_pack_data)
-                #print(type_)
 
                 while not dm_reader.has_end():
                     data_type = dm_reader.varint() >> 3
-                    #print("abc: ", data_type)
 
                     if data_type == 1:
                         dm.id = dm_reader.varint()
@@ -652,9 +644,6 @@ class Video:
                     else:
                         break
                 danmakus.append(dm)
-            if date:
-                break
-            cnt += 1
         return danmakus
 
     async def get_history_danmaku_index(self, page_index: int = None, date: datetime.date = None, cid: int = None):
