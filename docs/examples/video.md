@@ -59,10 +59,6 @@ if __name__ == '__main__':
 ```python
 from bilibili_api import video, sync, Credential
 
-SESSDATA = ""
-BILI_JCT = ""
-BUVID3 = ""
-
 v = video.Video(bvid='BV1AV411x7Gs')
 
 dms = sync(v.get_danmakus(0))
