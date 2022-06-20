@@ -8,8 +8,6 @@ from enum import Enum
 import json
 import time
 
-from pytest import param
-
 from .utils.network import request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
