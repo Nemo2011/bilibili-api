@@ -11,9 +11,11 @@ assignees: ''
 
 **模块版本：** x.x.x
 
-**运行环境：** Windows / Linux
+**运行环境：** Windows / Linux / MacOS
 
 **模块路径：** bilibili_api.xxxx
+
+**解释器：** cpython / pypi
 
 **报错信息：**
 
