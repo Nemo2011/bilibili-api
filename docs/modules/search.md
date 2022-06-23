@@ -25,6 +25,7 @@ from bilibili_api import search
 | name | type | description |
 | ---- | ---- | ----------- |
 | keyword | string | 搜索关键词 |
+| page | int | 页数，defaults to 1 |
 
 **Returns:** 调用 API 返回的结果
 
@@ -34,5 +35,6 @@ from bilibili_api import search
 | ---- | ---- | ----------- |
 | keyword | string | 搜索关键词 |
 | search_type | SearchObjectType | 搜索类别 |
+| page | int | 页数，defaults to 1 |
 
 **Returns:** 调用 API 返回的结果
