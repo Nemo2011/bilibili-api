@@ -6,6 +6,7 @@ bilibili_api.video
 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 """
 
+from ast import Bytes
 from enum import Enum 
 import re
 import datetime
@@ -492,8 +493,35 @@ class Video:
                     continue
             return data
 
-        def read_special_danmakus(string: bytes):
-            pass
+        def read_image_danmakus(string: bytes):
+            image_list = []
+            reader_ = BytesReader(string)
+            while not reader_.has_end():
+                type_ = reader_.varint() >> 3
+                if type_ == 1:
+                    details_dict = {}
+                    details_dict['texts'] = []
+                    img_details = reader_.bytes_string()
+                    reader_details = BytesReader(img_details)
+                    while not reader_details.has_end():
+                        type_details = reader_details.varint() >> 3
+                        if type_details == 1:
+                            details_dict['texts'].append(reader_details.string())
+                        elif type_details == 2:
+                            details_dict['image'] = reader_details.string()
+                        elif type_details == 3:
+                            id_string = reader_details.bytes_string()
+                            id_reader = BytesReader(id_string)
+                            while not id_reader.has_end():
+                                type_id = id_reader.varint() >> 3
+                                if type_id == 2:
+                                    details_dict['id'] = id_reader.varint()
+                                else:
+                                    raise ResponseException("解析响应数据错误")
+                    image_list.append(details_dict)
+                else:
+                    raise ResponseException("解析响应数据错误")
+            return image_list
 
         while not reader.has_end():
             type_ = reader.varint() >> 3
@@ -524,8 +552,7 @@ class Video:
             elif type_ == 10:
                 json_data['dm_setting'] = read_settings(reader.bytes_string())
             elif type_ == 12:
-                reader.bytes_string()
-                pass
+                json_data['image_dms'] = read_image_danmakus(reader.bytes_string())
             else:
                 continue
         return json_data
@@ -571,7 +598,8 @@ class Video:
             view = await self.get_danmaku_view(cid=cid)
             all_seg = view['dm_seg']['total']
 
-        danmakus: List[Danmaku] = []
+        danmakus = []
+
         for seg in range(all_seg):
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
@@ -585,13 +613,6 @@ class Video:
                 req.raise_for_status()
             except aiohttp.ClientResponseError as e:
                 raise NetworkException(e.status, e.message)
-            
-            if 'content-type' not in req.headers.keys():
-                break
-            else:
-                content_type = req.headers['content-type']
-                if content_type != 'application/octet-stream':
-                    raise ResponseException("返回数据类型错误：")
 
             # 解析二进制流数据
             data = await req.read()
@@ -604,7 +625,8 @@ class Video:
                 type_ = reader.varint() >> 3
                 if type_ != 1:
                     if type_ == 4:
-                        break
+                        reader.bytes_string()
+                        # 什么鬼？我用 protoc 解析出乱码！
                     else:
                         raise ResponseException("解析响应数据错误")
 
