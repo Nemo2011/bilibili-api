@@ -614,6 +614,13 @@ class Video:
             except aiohttp.ClientResponseError as e:
                 raise NetworkException(e.status, e.message)
 
+            if 'Content-Type' not in req.headers.keys():
+                break
+            else:
+                content_type = req.headers['Content-Type']
+                if content_type != 'application/octet-stream':
+                    raise ResponseException("返回数据类型错误：")
+
             # 解析二进制流数据
             data = await req.read()
             if data == b'\x10\x01':
