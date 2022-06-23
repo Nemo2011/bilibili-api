@@ -11,7 +11,7 @@ assignees: ''
 
 **模块版本：** x.x.x
 
-**运行环境：** Windows / Linux
+**运行环境：** Windows / Linux / MacOS
 
 ---
 
