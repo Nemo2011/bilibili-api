@@ -45,25 +45,25 @@ from bilibili_api import bangumi
 
 **Returns:** season_id
 
-#### async def set_ssid()
+#### _async_ def set_ssid()
 
 设置 season_id
 
 **Returns:** None
 
-#### async def set_media_id()
+#### _async_ def set_media_id()
 
 设置 media_id
 
 **Returns:** None
 
-#### async def get_meta()
+#### _async_ def get_meta()
 
 获取番剧元数据信息（评分，封面URL，标题等）
 
 **Returns:** API 调用返回结果。
 
-#### async def get_short_comment_list()
+#### _async_ def get_short_comment_list()
 
 | name       | type                          | description                                                  |
 | ---------- | ----------------------------- | ------------------------------------------------------------ |
@@ -74,7 +74,7 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
-#### async def get_long_comment_list()
+#### _async_ def get_long_comment_list()
 
 | name       | type                          | description                                                  |
 | ---------- | ----------------------------- | ------------------------------------------------------------ |
@@ -85,19 +85,19 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
-#### async def get_episode_list()
+#### _async_ def get_episode_list()
 
 获取季度分集列表
 
 **Returns:** API 调用返回结果。
 
-#### async def get_stat()
+#### _async_ def get_stat()
 
 获取番剧播放量，追番等信息
 
 **Returns:** API 调用返回结果。
 
-#### async def get_overview()
+#### _async_ def get_overview()
 
 获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
 
@@ -105,7 +105,7 @@ from bilibili_api import bangumi
 
 ***
 
-## async def set_follow()
+## _async_ def set_follow()
 
 | name       | type                 | description                |
 | ---------- | -------------------- | -------------------------- |
@@ -130,25 +130,25 @@ from bilibili_api import bangumi
 | epid | int | epid | 
 | credential | Credential | 凭据 |
 
-#### async def get_bangumi()
+#### _async_ def get_bangumi()
 
 获取对应的番剧
 
 **Returns:** 番剧类
 
-#### async def set_epid()
+#### _async_ def set_epid()
 
 设置 epid
 
 **Returns:** None
 
-#### async def get_epid()
+#### _async_ def get_epid()
 
 获取 epid
 
 **Returns:** epid
 
-#### async def get_episode_info()
+#### _async_ def get_episode_info()
 
 获取番剧单集信息
 

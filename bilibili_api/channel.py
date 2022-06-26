@@ -6,6 +6,7 @@ bilibili_api.channel
 
 import json
 import os
+import copy
 
 from .exceptions import ArgsException
 from .utils.utils import get_api
@@ -90,3 +91,37 @@ async def get_top10(tid: int, day: int = 7, credential: Credential = None):
         "day": day
     }
     return await request("GET", url, params=params, credential=credential)
+
+
+def get_channel_list():
+    """
+    获取所有分区的数据
+
+    Returns:
+        dict: 所有分区的数据
+    """
+    with open(os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8") as f:
+        channel = json.loads(f.read())
+    channel_list = []
+    for channel_big in channel:
+        channel_big_copy = copy.copy(channel_big)
+        channel_big_copy.pop("sub")
+        channel_list.append(channel_big_copy)
+        for channel_sub in channel_big['sub']:
+            channel_sub_copy = copy.copy(channel_sub)
+            channel_sub_copy['father'] = channel_big_copy
+            channel_list.append(channel_sub_copy)
+    return channel_list
+
+
+def get_channel_list_sub():
+    """
+    获取所有分区的数据
+    含父子关系（即一层次只有主分区）
+
+    Returns:
+        dict: 所有分区的数据
+    """
+    with open(os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8") as f:
+        channel = json.loads(f.read())
+    return channel

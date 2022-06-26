@@ -57,13 +57,13 @@ ep_id(int): 单集 ep_id
 
 **Returns:** season_id
 
-#### async def get_meta()
+#### _async_ def get_meta()
 
 获取教程元数据。
 
 **Returns**: 调用 API 所得的结果。
 
-#### async def get_list()
+#### _async_ def get_list()
 
 获取教程所有视频。
 
@@ -96,7 +96,7 @@ ep_id(int): 单集 ep_id
 
 **Returns**: None
 
-#### async def get_download_url()
+#### _async_ def get_download_url()
 
 获取下载链接
 

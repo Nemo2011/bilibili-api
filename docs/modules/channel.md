@@ -30,7 +30,7 @@ from bilibili_api import channel
 
 ---
 
-## async def get_top10()
+## _async_ def get_top10()
 
 | name       | type                 | description                            |
 | ---------- | -------------------- | -------------------------------------- |

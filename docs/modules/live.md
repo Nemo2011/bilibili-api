@@ -79,31 +79,31 @@ from bilibili_api import live
 | room_display_id | int                  | 房间展示 ID（即 URL 中的 ID） |
 | credential      | Credential, optional | 凭据. Defaults to None.       |
 
-#### async def get_room_play_info()
+#### _async_ def get_room_play_info()
 
 获取房间信息（真实房间号，直播状态，封禁情况等）
 
 **Returns:** API 调用返回结果
 
-#### async def get_chat_conf()
+#### _async_ def get_chat_conf()
 
 获取聊天弹幕服务器配置信息(websocket)
 
 **Returns:** API 调用返回结果
 
-#### async def get_room_info()
+#### _async_ def get_room_info()
 
 获取直播间信息（标题，简介，直播状态，直播开始时间，分区信息等）
 
 **Returns:** API 调用返回结果
 
-#### async def get_user_info_in_room()
+#### _async_ def get_user_info_in_room()
 
 获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）
 
 **Returns:** API 调用返回结果
 
-#### async def get_dahanghai()
+#### _async_ def get_dahanghai()
 
 | name | type          | description         |
 | ---- | ------------- | ------------------- |
@@ -113,25 +113,25 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
-#### async def get_seven_rank()
+#### _async_ def get_seven_rank()
 
 获取七日榜
 
 **Returns:** API 调用返回结果
 
-#### async def get_fans_medal_rank()
+#### _async_ def get_fans_medal_rank()
 
 获取粉丝勋章排行
 
 **Returns:** API 调用返回结果
 
-#### async def get_black_list()
+#### _async_ def get_black_list()
 
 获取房间黑名单
 
 **Returns:** API 调用返回结果
 
-#### async def get_room_play_url()
+#### _async_ def get_room_play_url()
 
 | name              | type                       | description                                   |
 | ----------------- | -------------------------- | --------------------------------------------- |
@@ -141,7 +141,7 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
-#### async def get_room_play_info_v2()
+#### _async_ def get_room_play_info_v2()
 
 | name          | type                       | description                                          |
 | ------------- | -------------------------- | ---------------------------------------------------- |
@@ -154,7 +154,7 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
-#### async def get_general_info()
+#### _async_ def get_general_info()
 
 | name   | type          | description              |
 | ------ | ------------- | ------------------------ |
@@ -164,13 +164,13 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
-#### async def get_gift_common()
+#### _async_ def get_gift_common()
 
 获取当前直播间内的普通礼物列表，此 API 只返回 `gift_id`，不包含礼物 `price` 参数
 
 **Returns:** API 调用返回结果
 
-#### async def get_gift_special()
+#### _async_ def get_gift_special()
 
 | name   | type | description                           |
 | ------ | ---- | ------------------------------------- |
@@ -180,7 +180,7 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
-#### async def get_live_followers_info()
+#### _async_ def get_live_followers_info()
 
 | name           | type           | description                          |
 | -------------- | -------------- | ------------------------------------ |
@@ -188,7 +188,7 @@ from bilibili_api import live
 
 获取关注列表中正在直播的直播间信息，包括房间直播热度，房间名称及标题，清晰度，是否官方认证等信息。
 
-#### async def get_unlive_followers_info()
+#### _async_ def get_unlive_followers_info()
 
 | name      | type          | description              |
 | --------- | ------------- | ------------------------ |
@@ -197,7 +197,7 @@ from bilibili_api import live
 
 获取关注列表中未在直播的直播间信息，包括上次开播时间，上次开播的类别，直播间公告，是否有录播等。
 
-#### async def ban_user()
+#### _async_ def ban_user()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -207,7 +207,7 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
-#### async def unban_user()
+#### _async_ def unban_user()
 
 | name     | type | description                               |
 | -------- | ---- | ----------------------------------------- |
@@ -217,7 +217,7 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
-#### async def receive_reward()
+#### _async_ def receive_reward()
 
 | name         | type | description             |
 | ------------ | ---- | ----------------------- |
@@ -227,7 +227,7 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
-#### async def sign_up_dahanghai()
+#### _async_ def sign_up_dahanghai()
 
 | name    | type          | description               |
 | ------- | ------------- | ------------------------- |
@@ -237,7 +237,7 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
-#### async def send_danmaku()
+#### _async_ def send_danmaku()
 
 | name    | type    | description |
 | ------- | ------- | ----------- |
@@ -294,7 +294,7 @@ from bilibili_api import live
 
 ## class LiveDanmaku
 
-**Extends:** bilibili_api.utils.AsyncEvent.AsyncEvent
+**Extends:** bilibili_api.utils._async_Event._async_Event
 
 Websocket 实时获取直播弹幕
 
@@ -351,13 +351,13 @@ Websocket 实时获取直播弹幕
 
 **Returns:** int: 0 初始化，1 连接建立中，2 已连接，3 断开连接中，4 已断开，5 错误
 
-#### async def connect()
+#### _async_ def connect()
 
 连接直播间
 
 **Returns:** None
 
-#### async def disconnect()
+#### _async_ def disconnect()
 
 断开连接
 
@@ -365,7 +365,7 @@ Websocket 实时获取直播弹幕
 
 ---
 
-## async def get_self_info()
+## _async_ def get_self_info()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -375,7 +375,7 @@ Websocket 实时获取直播弹幕
 
 **Returns:** API 调用返回结果
 
-## async def get_self_live_info()
+## _async_ def get_self_live_info()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -385,7 +385,7 @@ Websocket 实时获取直播弹幕
 
 **Returns:** API 调用返回结果
 
-## async def get_self_bag()
+## _async_ def get_self_bag()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -395,13 +395,13 @@ Websocket 实时获取直播弹幕
 
 **Returns:** API 调用返回结果
 
-## async def get_area_info()
+## _async_ def get_area_info()
 
 获取所有分区信息
 
 **Returns:** API 调用返回结果
 
-## async def get_gift_config()
+## _async_ def get_gift_config()
 
 | name           | type          | description                  |
 | -------------- | ------------- | ---------------------------- |
@@ -417,7 +417,7 @@ Websocket 实时获取直播弹幕
 
 **Returns:** API 调用返回结果
 
-## async def get_self_dahanghai_info()
+## _async_ def get_self_dahanghai_info()
 
 | name       | type          | description              |
 | ---------- | ------------- | ------------------------ |

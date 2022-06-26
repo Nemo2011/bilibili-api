@@ -6,7 +6,7 @@ from bilibili_api import homepage
 
 主页相关操作。
 
-## async def get_top_photo()
+## _async_ def get_top_photo()
 
 获取主页最上方的图像。
 例如：b 站的风叶穿行，通过这个 API 获取的图片就是风叶穿行的图片。
@@ -14,7 +14,7 @@ from bilibili_api import homepage
 **Returns:** 调用 API 返回的结果。
 
 
-## async def get_links()
+## _async_ def get_links()
 
 | name | type | description |
 | - | - | - |
@@ -25,7 +25,7 @@ from bilibili_api import homepage
 
 **Returns:** 调用 API 返回的结果
 
-## async def get_popularize()
+## _async_ def get_popularize()
 
 | name | type | description |
 | - | - | - |
@@ -36,7 +36,7 @@ from bilibili_api import homepage
 
 **Returns:** 调用 API 返回的结果
 
-## async def get_videos()
+## _async_ def get_videos()
 
 | name | type | description |
 | - | - | - |

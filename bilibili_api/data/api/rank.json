@@ -18,7 +18,7 @@
             }, 
             "comment": "小破站每周必看一期的详细信息"
         }, 
-        "popular": {
+        "history_popular": {
             "url": "https://api.bilibili.com/x/web-interface/popular/precious", 
             "verify": false, 
             "params": {
@@ -31,7 +31,7 @@
             "url": "https://api.bilibili.com/x/web-interface/ranking/v2", 
             "verify": false, 
             "params": {
-                "tid": "int: 频道的 tid", 
+                "rid": "int: 频道的 tid", 
                 "type": "string: all"
             }, 
             "comment": "获取各个分区的排行榜"
