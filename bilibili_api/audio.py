@@ -15,8 +15,11 @@ class Audio:
             auid       (int)                 : 音频 AU 号
             credential (Credential, optional): 凭据. Defaults to None
         """
-        self.auid = auid
         self.credential = credential if credential is not None else Credential()
+        self.auid = auid
+
+    async def get_auid(self):
+        return self.auid
 
     async def get_info(self):
         """

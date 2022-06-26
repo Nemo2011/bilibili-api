@@ -26,6 +26,12 @@ from bilibili_api import audio
 | auid       | int                  | 音频 AU 号             |
 | credential | Credential, optional | 凭据. Defaults to None |
 
+#### _async_ def get_auid()
+
+获取 auid
+
+**Returns:** auid
+
 #### _async_ def get_info()
 
 获取音频信息
