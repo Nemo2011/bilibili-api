@@ -28,6 +28,35 @@ ep_id(int): 单集 ep_id
 注意：season_id 和 ep_id 任选一个即可，两个都选的话
 以 season_id 为主
 
+**Returns:** None
+
+#### def set_season_id()
+
+设置 season_id
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| season_id | int | 课程的 ssid（不与番剧相通）|
+
+**Returns:** None
+
+#### def set_ep_id(self, ep_id: int):
+
+设置 ep_id
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| season_id | int | 课程的 ssid（不与番剧相通）|
+| ep_id | int | 单集的 epid（不与番剧相通） |
+
+**Returns:** None
+
+#### def get_season_id(self):
+
+获取 season_id
+
+**Returns:** season_id
+
 #### async def get_meta()
 
 获取教程元数据。
@@ -50,6 +79,12 @@ ep_id(int): 单集 ep_id
 | ---- | ---- | ----------- |
 | ep_id | int | epid（不与番剧相通） |
 | credential | Credential | 凭据 |
+
+#### def get_cheese()
+
+获取所属课程
+
+**Returns:** 课程类
 
 #### def set_epid()
 

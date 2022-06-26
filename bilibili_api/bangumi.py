@@ -50,6 +50,12 @@ class Bangumi:
     async def get_season_id(self):
         return self.ssid
 
+    async def set_media_id(self, media_id: int):
+        self.__init__(media_id=media_id, credential=self.credential)
+
+    async def set_ssid(self, ssid: int):
+        self.__init__(ssid=ssid, credential=self.credential)
+
     async def get_meta(self):
         """
         获取番剧元数据信息（评分，封面 URL，标题等）
@@ -186,7 +192,16 @@ class Episode(Video):
         self.bangumi = self.get_bangumi_from_episode()
 
     async def get_epid(self):
+        """
+        获取 epid
+        """
         return self.epid
+
+    def get_bangumi(self):
+        """
+        获取对应的番剧
+        """
+        return self.bangumi
 
     async def set_epid(self, epid: int):
         """
@@ -196,7 +211,7 @@ class Episode(Video):
         Returns:
             None
         """
-        self.__init__(epid)
+        self.__init__(epid, self.credential)
 
     async def get_episode_info(self):
         """

@@ -35,6 +35,15 @@ class CheeseList:
         if self.season_id == -1:
             self.season_id = str(sync(self.get_meta())['season_id'])
 
+    def set_season_id(self, season_id: int):
+        self.__init__(season_id=season_id)
+
+    def set_ep_id(self, ep_id: int):
+        self.__init__(ep_id=ep_id)
+
+    def get_season_id(self):
+        return self.season_id
+
     async def get_meta(self):
         """
         获取教程元数据
@@ -78,6 +87,12 @@ class CheeseVideo:
             if v['id'] == epid:
                 self.aid = v['aid']
                 self.cid = v['cid']
+
+    def get_cheese(self):
+        """
+        获取所属课程
+        """
+        return self.cheese
 
     def set_epid(self, epid: int):
         """

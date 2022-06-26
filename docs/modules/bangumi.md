@@ -33,6 +33,30 @@ from bilibili_api import bangumi
 | ssid | int | 教程季度 ID（不与番剧相通） |
 | credential | Credential | 凭据 |
 
+#### def get_media_id()
+
+获取 media_id
+
+**Returns:** media_id
+
+#### def get_season_id()
+
+获取 season_id
+
+**Returns:** season_id
+
+#### async def set_ssid()
+
+设置 season_id
+
+**Returns:** None
+
+#### async def set_media_id()
+
+设置 media_id
+
+**Returns:** None
+
 #### async def get_meta()
 
 获取番剧元数据信息（评分，封面URL，标题等）
@@ -105,6 +129,24 @@ from bilibili_api import bangumi
 | ---- | ---- | ----------- |
 | epid | int | epid | 
 | credential | Credential | 凭据 |
+
+#### async def get_bangumi()
+
+获取对应的番剧
+
+**Returns:** 番剧类
+
+#### async def set_epid()
+
+设置 epid
+
+**Returns:** None
+
+#### async def get_epid()
+
+获取 epid
+
+**Returns:** epid
 
 #### async def get_episode_info()
 
