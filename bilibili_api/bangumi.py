@@ -44,6 +44,12 @@ class Bangumi:
         if self.media_id == -1:
             self.media_id = sync(self.get_overview())['media_id']
 
+    async def get_media_id(self):
+        return self.media_id
+
+    async def get_season_id(self):
+        return self.ssid
+
     async def get_meta(self):
         """
         获取番剧元数据信息（评分，封面 URL，标题等）
@@ -152,7 +158,7 @@ async def set_follow(bangumi: Bangumi, status: bool = True, credential: Credenti
     追番状态设置
 
     Args:
-        bangumi  (bangumi)               : 番剧类
+        bangumi  (Bangumi)               : 番剧类
         status     (bool, optional)      : 追番状态，Defaults to True
         credential (Credential, optional): 凭据. Defaults to None
     """
@@ -178,6 +184,9 @@ class Episode(Video):
         bvid = sync(self.get_episode_info())['epInfo']['bvid']
         super().__init__(bvid=bvid)
         self.bangumi = self.get_bangumi_from_episode()
+
+    async def get_epid(self):
+        return self.epid
 
     async def set_epid(self, epid: int):
         """

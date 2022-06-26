@@ -81,22 +81,11 @@ from bilibili_api import bangumi
 
 ***
 
-## async def get_episode_info()
-
-| name       | type                 | description            |
-| ---------- | -------------------- | ---------------------- |
-| epid       | int                  | episode_id             |
-| credential | Credential, optional | 凭据. Defaults to None |
-
-获取番剧单集信息
-
-**Returns:** API 调用返回结果。
-
 ## async def set_follow()
 
 | name       | type                 | description                |
 | ---------- | -------------------- | -------------------------- |
-| season_id  | int                  | season_id                  |
+| bangumi | Bangumi | 番剧类 |
 | status     | bool, optional       | 追番状态，Defaults to True |
 | credential | Credential, optional | 凭据. Defaults to None     |
 
@@ -104,12 +93,26 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
-## def get_bangumi_from_episode()
+## class Bangumi
+
+番剧剧集类
+
+### Functions
+
+#### def \_\_init\_\_()
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| epid | int | epid |
+| epid | int | epid | 
 | credential | Credential | 凭据 |
+
+#### async def get_episode_info()
+
+获取番剧单集信息
+
+**Returns:** API 调用返回结果。
+
+#### def get_bangumi_from_episode()
 
 通过一个 epid 获取番剧信息
 

@@ -9,10 +9,9 @@ from bilibili_api import bangumi, sync
 
 
 async def main():
-    b = await bangumi.get_episode_info(374717)
+    ep = bangumi.Episode(374717)
     # 打印 bv 号
-    print(b['epInfo']['bvid'])
-
+    print(ep.get_bvid())
 
 sync(main())
 ```
