@@ -23,6 +23,7 @@
   + [user.py - 用户](/modules/user.md)
   + [search.py - 搜索](/modules/search.md)
   + [homepage.py - 主页](/modules/homepage.md)
+  + [rank.py - 排行榜](/modules/rank.md)
   + [live.py - 直播](/modules/live.md)
   + [dynamic.py - 动态](/modules/dynamic.md)
   + [comment.py - 评论](/modules/comment.md)
