@@ -20,7 +20,7 @@ from bilibili_api import search
 + TOPIC : 话题
 + USER : 用户
 
-## async def web_search()
+## _async_ def web_search()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -29,7 +29,7 @@ from bilibili_api import search
 
 **Returns:** 调用 API 返回的结果
 
-## async def web_search_by_type()
+## _async_ def web_search_by_type()
 
 | name | type | description |
 | ---- | ---- | ----------- |

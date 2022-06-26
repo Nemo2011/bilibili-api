@@ -18,7 +18,7 @@ from bilibili_api import favorite_list
 
 ---
 
-## async def get_video_favorite_list()
+## _async_ def get_video_favorite_list()
 
 | name       | type                 | description                                                  |
 | ---------- | -------------------- | ------------------------------------------------------------ |
@@ -32,7 +32,7 @@ from bilibili_api import favorite_list
 
 ---
 
-## async def get_video_favorite_list_content()
+## _async_ def get_video_favorite_list_content()
 
 | name       | type                               | description                                           |
 | ---------- | ---------------------------------- | :---------------------------------------------------- |
@@ -49,7 +49,7 @@ from bilibili_api import favorite_list
 
 ---
 
-## async def get_topic_favorite_list()
+## _async_ def get_topic_favorite_list()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | :---------------------- |
@@ -62,7 +62,7 @@ from bilibili_api import favorite_list
 
 ---
 
-## async def get_article_favorite_list()
+## _async_ def get_article_favorite_list()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | :---------------------- |
@@ -75,7 +75,7 @@ from bilibili_api import favorite_list
 
 ---
 
-## async def get_album_favorite_list()
+## _async_ def get_album_favorite_list()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | :---------------------- |
@@ -88,7 +88,7 @@ from bilibili_api import favorite_list
 
 ---
 
-## async def get_course_favorite_list()
+## _async_ def get_course_favorite_list()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | :---------------------- |
@@ -101,7 +101,7 @@ from bilibili_api import favorite_list
 
 ---
 
-## async def get_note_favorite_list()
+## _async_ def get_note_favorite_list()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | :---------------------- |
@@ -114,7 +114,7 @@ from bilibili_api import favorite_list
 
 ---
 
-## async def create_video_favorite_list()
+## _async_ def create_video_favorite_list()
 
 | name         | type                 | description                    |
 | ------------ | -------------------- | :----------------------------- |
@@ -127,7 +127,7 @@ from bilibili_api import favorite_list
 
 **Returns:** API 调用返回结果
 
-## async def modify_video_favorite_list()
+## _async_ def modify_video_favorite_list()
 
 | name         | type                 | description                    |
 | ------------ | -------------------- | :----------------------------- |
@@ -141,7 +141,7 @@ from bilibili_api import favorite_list
 
 **Returns:** API 调用返回结果
 
-## async def delete_video_favorite_list()
+## _async_ def delete_video_favorite_list()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | :---------------------- |
@@ -152,7 +152,7 @@ from bilibili_api import favorite_list
 
 **Returns:** API 调用返回结果
 
-## async def copy_video_favorite_list_content()
+## _async_ def copy_video_favorite_list_content()
 
 | name          | type       | description            |
 | ------------- | ---------- | :--------------------- |
@@ -165,7 +165,7 @@ from bilibili_api import favorite_list
 
 **Returns:** API 调用返回结果
 
-## async def move_video_favorite_list_content()
+## _async_ def move_video_favorite_list_content()
 
 | name          | type       | description            |
 | ------------- | ---------- | :--------------------- |
@@ -178,7 +178,7 @@ from bilibili_api import favorite_list
 
 **Returns:** API 调用返回结果
 
-## async def delete_video_favorite_list_content()
+## _async_ def delete_video_favorite_list_content()
 
 | name       | type       | description            |
 | ---------- | ---------- | :--------------------- |
@@ -190,7 +190,7 @@ from bilibili_api import favorite_list
 
 **Returns:** API 调用返回结果
 
-## async def clean_video_favorite_list_content()
+## _async_ def clean_video_favorite_list_content()
 
 | name       | type       | description |
 | ---------- | ---------- | :---------- |
