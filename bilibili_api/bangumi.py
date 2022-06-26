@@ -16,6 +16,7 @@ from .utils.Credential import Credential
 from .utils.network import get_session, request
 from .exceptions.ResponseException import ResponseException
 from .exceptions.ApiException import ApiException
+from .video import Video
 
 import json
 import re
@@ -164,45 +165,64 @@ async def set_follow(bangumi: Bangumi, status: bool = True, credential: Credenti
     }
     return await request('POST', api['url'], data=data, credential=credential)
 
-async def get_episode_info(epid: int, credential: Credential = None):
-    """
-    获取番剧单集信息
+class Episode(Video):
+    def __init__(self, epid: int, credential: Credential = None):
+        """
+        番剧视频类（没错重构了）
+        epid: epid
+        credential: 凭据
+        bangumi: 自动获取：番剧剧集所属的番剧
+        """
+        self.credential = credential
+        self.epid = epid
+        bvid = sync(self.get_episode_info())['epInfo']['bvid']
+        super().__init__(bvid=bvid)
+        self.bangumi = self.get_bangumi_from_episode()
 
-    Args:
-        epid       (int)                 : episode_id
-        credential (Credential, optional): 凭据. Defaults to None
-    """
-    credential = credential if credential is not None else Credential()
-    session = get_session()
-
-    async with session.get(f"https://www.bilibili.com/bangumi/play/ep{epid}", cookies=credential.get_cookies(), headers={
-        "User-Agent": "Mozilla/5.0"
-    }) as resp:
-        if resp.status != 200:
-            raise ResponseException(resp.status)
-
-        content = await resp.text()
-
-        pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
-        match = re.search(pattern, content)
-        if match is None:
-            raise ApiException("未找到番剧信息")
-        try:
-            content = json.loads(match.group(1))
-        except json.JSONDecodeError:
-            raise ApiException("信息解析错误")
-
-        return content
-
-def get_bangumi_from_episode(epid: int, credential: Credential=None):
-    """
-        通过一个 epid 获取番剧信息
+    async def set_epid(self, epid: int):
+        """
+        设置 epid
         Args:
-            epid(int)             : epid
-            credential(Credential): 凭据
+            epid: epid
         Returns:
-            输入的集对应的番剧类
-    """
-    info = sync(get_episode_info(epid, credential))
-    ssid = info['mediaInfo']['season_id']
-    return Bangumi(ssid=ssid)
+            None
+        """
+        self.__init__(epid)
+
+    async def get_episode_info(self):
+        """
+        获取番剧单集信息
+        Returns:
+            HTML 中的数据
+        """
+        credential = self.credential if self.credential else Credential()
+        session = get_session()
+
+        async with session.get(f"https://www.bilibili.com/bangumi/play/ep{self.epid}", cookies=credential.get_cookies(), headers={
+            "User-Agent": "Mozilla/5.0"
+        }) as resp:
+            if resp.status != 200:
+                raise ResponseException(resp.status)
+
+            content = await resp.text()
+
+            pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
+            match = re.search(pattern, content)
+            if match is None:
+                raise ApiException("未找到番剧信息")
+            try:
+                content = json.loads(match.group(1))
+            except json.JSONDecodeError:
+                raise ApiException("信息解析错误")
+
+            return content
+
+    def get_bangumi_from_episode(self):
+        """
+            获取番剧信息
+            Returns:
+                输入的集对应的番剧类
+        """
+        info = sync(self.get_episode_info())
+        ssid = info['mediaInfo']['season_id']
+        return Bangumi(ssid=ssid)
