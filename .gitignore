@@ -12,3 +12,4 @@ node_modules/
 *.proto
 *.bin
 package-lock.json
+site.bat
