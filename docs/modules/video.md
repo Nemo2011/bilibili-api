@@ -20,12 +20,6 @@ from bilibili_api import video
 
 视频类，各种对视频的操作均在里面。
 
-### Attributes
-
-| name       | type       | description   |
-| ---------- | ---------- | ------------- |
-| credential | Credential | Credential 类 |
-
 ### Functions
 
 #### def \_\_init\_\_()

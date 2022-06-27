@@ -4,7 +4,7 @@
 + [同步执行异步代码](/sync-executor.md)
 + [短链接支持](/b23tv.md)
 + [配置](/configuration.md)
-+ 示例
++ API 示例
     + [视频](/examples/video.md)
     + [互动视频](/examples/interactive_video.md)
     + [用户](/examples/user.md)
@@ -17,7 +17,7 @@
     + [收藏夹](/examples/favorite_list.md)
     + [视频上传](/examples/video_uploader.md)
     + [弹幕文件](/examples/ass.md)
-+ API 参考
++ API 文档
   + [根模块](/modules/bilibili_api.md)
   + [video.py - 视频](/modules/video.md)
   + [interactive_video.py - 互动视频](/modules/interactive_video.md)

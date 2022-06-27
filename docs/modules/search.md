@@ -22,6 +22,8 @@ from bilibili_api import search
 
 ## _async_ def web_search()
 
+只指定关键字在 web 进行搜索，返回未经处理的字典
+
 | name | type | description |
 | ---- | ---- | ----------- |
 | keyword | string | 搜索关键词 |
@@ -30,6 +32,8 @@ from bilibili_api import search
 **Returns:** 调用 API 返回的结果
 
 ## _async_ def web_search_by_type()
+
+指定关键字和类型进行搜索，返回未经处理的字典
 
 | name | type | description |
 | ---- | ---- | ----------- |

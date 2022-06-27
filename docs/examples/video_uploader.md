@@ -1,12 +1,10 @@
 # 示例：上传视频
 
 ```python
-from bilibili_api import sync, video_uploader
+from bilibili_api import sync, video_uploader, Credential
 
 async def main():
-    credential = video_uploader.VideoUploaderCredential(account='账号', password='密码')
-
-    await credential.login()
+    credential = Credential(sessdata="", bili_jct="", buvid3="")
     # 具体请查阅相关文档
     meta = {
             "copyright": 1,
