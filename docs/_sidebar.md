@@ -34,6 +34,7 @@
   + [cheese.py - 课程](/modules/cheese.md)
   + [ass.py - ASS 弹幕](/modules/ass.md)
   + [favorite_list.py - 收藏夹](/modules/favorite_list.md)
+  + [vote.py - 投票](/modules/vote.md)
   + [app.py - 手机 APP](/modules/app.md)
   + [video_uploader.py - 视频上传](/modules/video_uploader.md)
 + [历史文档](/history.md)
