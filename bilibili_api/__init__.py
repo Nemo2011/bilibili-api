@@ -7,7 +7,6 @@ import nest_asyncio
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku
-from .utils.network import get_session, request, set_session
 from .utils.short import get_real_url
 from .utils.sync import sync
 
