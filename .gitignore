@@ -11,3 +11,4 @@ danmaku*.*
 node_modules/
 *.proto
 *.bin
+package-lock.json
