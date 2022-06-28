@@ -28,14 +28,6 @@
         }, 
         "videos": {
             "url": "https://api.bilibili.com/x/web-interface/index/top/rcmd", 
-            "params": {
-                "fresh_type": "int: 0", 
-                "version": "int: 1", 
-                "ps": "int: 获取数量（最大为10）。Defaults to 10. ", 
-                "fresh_idx": "int: 0", 
-                "fresh_idx_1h": "int: 0", 
-                "homepage_ver": "int: 主页版本。没有用！设 1"
-            },
             "verify": false, 
             "comment": "获取主页推荐的视频"
         }

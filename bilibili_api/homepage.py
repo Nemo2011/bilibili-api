@@ -54,18 +54,11 @@ async def get_popularize(credential: Credential = None):
 async def get_videos(credential: Credential = None):
     """
     获取首页推荐的视频。
+    注意：推荐视频更新有冷却时间！
     Args:
         credential(Credential): 凭据类
     Returns:
         调用 API 返回的结果
     """
     api = API["info"]["videos"]
-    params = {
-        "fresh_type": 0,
-        "version": 1,
-        "ps": 10,
-        "fresh_idx": 0,
-        "fresh_idx_1h": 0,
-        "homepage_ver": 1,
-    }
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await request("GET", api["url"], credential=credential)
