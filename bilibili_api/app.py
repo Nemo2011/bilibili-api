@@ -8,13 +8,18 @@ from .utils.network_httpx import request
 from hashlib import md5
 import time
 
-API = get_api('app')
+API = get_api("app")
 
 
-async def get_loading_images(mobi_app: str = "android", platform: str = "android",
-                           height: int = 1920, width: int = 1080,
-                           build: int = 999999999, birth: str = "",
-                           credential: Credential = None):
+async def get_loading_images(
+    mobi_app: str = "android",
+    platform: str = "android",
+    height: int = 1920,
+    width: int = 1080,
+    build: int = 999999999,
+    birth: str = "",
+    credential: Credential = None,
+):
     """
     获取开屏启动画面
 
@@ -39,13 +44,18 @@ async def get_loading_images(mobi_app: str = "android", platform: str = "android
         "platform": platform,
         "height": height,
         "width": width,
-        "birth": birth
+        "birth": birth,
     }
-    return await request('GET', api['url'], params, credential=credential)
+    return await request("GET", api["url"], params, credential=credential)
 
-async def get_loading_images_special(mobi_app: str = "android", platform: str = "android",
-                           height: int = 1920, width: int = 1080,
-                           credential: Credential = None):
+
+async def get_loading_images_special(
+    mobi_app: str = "android",
+    platform: str = "android",
+    height: int = 1920,
+    width: int = 1080,
+    credential: Credential = None,
+):
     """
     获取特殊开屏启动画面
 
@@ -67,10 +77,24 @@ async def get_loading_images_special(mobi_app: str = "android", platform: str = 
     credential = credential if credential is not None else Credential()
 
     api = API["splash"]["brand"]
-    sign_params = "appkey="+APPKEY+"&mobi_app="+mobi_app+"&platform="+platform+"&screen_height="+str(height)+"&screen_width="+str(width)+"&ts="+str(ts)+APPSEC
+    sign_params = (
+        "appkey="
+        + APPKEY
+        + "&mobi_app="
+        + mobi_app
+        + "&platform="
+        + platform
+        + "&screen_height="
+        + str(height)
+        + "&screen_width="
+        + str(width)
+        + "&ts="
+        + str(ts)
+        + APPSEC
+    )
 
     sign = md5()
-    sign.update(sign_params.encode(encoding='utf-8'))
+    sign.update(sign_params.encode(encoding="utf-8"))
     sign = sign.hexdigest()
 
     params = {
@@ -80,6 +104,6 @@ async def get_loading_images_special(mobi_app: str = "android", platform: str = 
         "screen_height": height,
         "screen_width": width,
         "ts": ts,
-        "sign": sign
+        "sign": sign,
     }
-    return await request('GET', api['url'], params, credential=credential)
+    return await request("GET", api["url"], params, credential=credential)

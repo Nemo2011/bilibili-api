@@ -11,6 +11,7 @@ class VideoUploadException(ApiException):
     """
     视频上传错误。
     """
+
     def __init__(self, msg: str):
         """
         Args:

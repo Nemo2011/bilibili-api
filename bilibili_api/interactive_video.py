@@ -29,6 +29,7 @@ async def up_get_ivideo_pages(bvid: str, credential: Credential):
     params = {"bvid": bvid}
     return await request("GET", url=url, params=params, credential=credential)
 
+
 async def up_submit_story_tree(story_tree: str, credential: Credential):
     """
     上传交互视频的情节树。up 主需要拥有视频所有权。
@@ -42,17 +43,17 @@ async def up_submit_story_tree(story_tree: str, credential: Credential):
     url = API["operate"]["savestory"]["url"]
     form_data = {"preview": "0", "data": story_tree, "csrf": credential.bili_jct}
     headers = {
-      "User-Agent": "Mozilla/5.0",
-      "Referer": "https://member.bilibili.com",
-      "Content-Encoding" : "gzip, deflate, br",
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Accept": "application/json, text/plain, */*"
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://member.bilibili.com",
+        "Content-Encoding": "gzip, deflate, br",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept": "application/json, text/plain, */*",
     }
     data = parse.urlencode(form_data)
-    return await request("POST", url=url, data=data,
-                       headers=headers,
-                       no_csrf=True,
-                       credential=credential)
+    return await request(
+        "POST", url=url, data=data, headers=headers, no_csrf=True, credential=credential
+    )
+
 
 async def get_graph_version(bvid: str, credential: Credential = None):
     """
@@ -68,21 +69,19 @@ async def get_graph_version(bvid: str, credential: Credential = None):
     # 取得初始顶点 cid
     v = video.Video(bvid=bvid, credential=credential)
     page_list = await v.get_pages()
-    cid = page_list[0]['cid']
+    cid = page_list[0]["cid"]
 
     # 获取剧情图版本号
-    api = 'https://api.bilibili.com/x/player/v2'
-    params = {
-        "bvid": bvid,
-        "cid": cid
-    }
+    api = "https://api.bilibili.com/x/player/v2"
+    params = {"bvid": bvid, "cid": cid}
 
-    resp = await request('GET', api, params, credential=credential)
-    return resp['interaction']['graph_version']
+    resp = await request("GET", api, params, credential=credential)
+    return resp["interaction"]["graph_version"]
 
 
-
-async def get_edge_info(bvid: str, graph_version: int, edge_id: int = None, credential: Credential = None):
+async def get_edge_info(
+    bvid: str, graph_version: int, edge_id: int = None, credential: Credential = None
+):
     """
     获取剧情图节点信息
 
@@ -94,13 +93,10 @@ async def get_edge_info(bvid: str, graph_version: int, edge_id: int = None, cred
     """
     credential = credential if credential is not None else Credential()
 
-    url = API['info']['edge_info']['url']
-    params = {
-        "bvid": bvid,
-        "graph_version": graph_version
-    }
+    url = API["info"]["edge_info"]["url"]
+    params = {"bvid": bvid, "graph_version": graph_version}
 
     if edge_id is not None:
-        params['edge_id'] = edge_id
+        params["edge_id"] = edge_id
 
-    return await request('GET', url, params, credential=credential)
+    return await request("GET", url, params, credential=credential)

@@ -3,7 +3,9 @@ bilibili_api.utils.Credential
 
 凭据类，用于各种请求操作的验证。
 """
-from bilibili_api.exceptions.CredentialNoBuvid3Exception import CredentialNoBuvid3Exception
+from bilibili_api.exceptions.CredentialNoBuvid3Exception import (
+    CredentialNoBuvid3Exception,
+)
 from ..exceptions import CredentialNoBiliJctException, CredentialNoSessdataException
 
 
@@ -32,7 +34,11 @@ class Credential:
         Returns:
             dict: 请求 Cookies 字典
         """
-        return {"SESSDATA": self.sessdata, "buvid3": self.buvid3, 'bili_jct': self.bili_jct}
+        return {
+            "SESSDATA": self.sessdata,
+            "buvid3": self.buvid3,
+            "bili_jct": self.bili_jct,
+        }
 
     def has_sessdata(self):
         """

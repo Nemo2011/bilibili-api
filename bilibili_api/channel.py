@@ -26,7 +26,9 @@ def get_channel_info_by_tid(tid: int):
     Returns:
         `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
-    with open(os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8") as f:
+    with open(
+        os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
+    ) as f:
         channel = json.loads(f.read())
 
     for main_ch in channel:
@@ -55,7 +57,9 @@ def get_channel_info_by_name(name: str):
     Returns:
         tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
-    with open(os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8") as f:
+    with open(
+        os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
+    ) as f:
         channel = json.loads(f.read())
 
     for main_ch in channel:
@@ -86,10 +90,7 @@ async def get_top10(tid: int, day: int = 7, credential: Credential = None):
         raise ArgsException("参数 day 只能是 3，7。")
 
     url = API["ranking"]["get_top10"]["url"]
-    params = {
-        "rid": tid,
-        "day": day
-    }
+    params = {"rid": tid, "day": day}
     return await request("GET", url, params=params, credential=credential)
 
 
@@ -100,16 +101,18 @@ def get_channel_list():
     Returns:
         dict: 所有分区的数据
     """
-    with open(os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8") as f:
+    with open(
+        os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
+    ) as f:
         channel = json.loads(f.read())
     channel_list = []
     for channel_big in channel:
         channel_big_copy = copy.copy(channel_big)
         channel_big_copy.pop("sub")
         channel_list.append(channel_big_copy)
-        for channel_sub in channel_big['sub']:
+        for channel_sub in channel_big["sub"]:
             channel_sub_copy = copy.copy(channel_sub)
-            channel_sub_copy['father'] = channel_big_copy
+            channel_sub_copy["father"] = channel_big_copy
             channel_list.append(channel_sub_copy)
     return channel_list
 
@@ -122,6 +125,8 @@ def get_channel_list_sub():
     Returns:
         dict: 所有分区的数据
     """
-    with open(os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8") as f:
+    with open(
+        os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
+    ) as f:
         channel = json.loads(f.read())
     return channel

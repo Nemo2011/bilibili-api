@@ -11,6 +11,7 @@ class ResponseException(ApiException):
     """
     API 响应异常。
     """
+
     def __init__(self, msg: str):
         """
 

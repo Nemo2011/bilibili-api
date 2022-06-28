@@ -16,6 +16,7 @@ from typing import List
 
 API = get_api("favorite-list")
 
+
 class FavoriteListContentOrder(Enum):
     """
     收藏夹列表内容排序方式枚举。
@@ -24,12 +25,15 @@ class FavoriteListContentOrder(Enum):
     + VIEW   : 最多播放
     + PUBTIME: 最新投稿
     """
-    MTIME = 'mtime'
-    VIEW = 'view'
-    PUBTIME = 'pubtime'
+
+    MTIME = "mtime"
+    VIEW = "view"
+    PUBTIME = "pubtime"
 
 
-async def get_video_favorite_list(uid: int, video: Video = None, credential: Credential = None):
+async def get_video_favorite_list(
+    uid: int, video: Video = None, credential: Credential = None
+):
     """
     获取视频收藏夹列表。
 
@@ -42,10 +46,7 @@ async def get_video_favorite_list(uid: int, video: Video = None, credential: Cre
         dict: API 调用结果。
     """
     api = API["info"]["list_list"]
-    params = {
-        "up_mid": uid,
-        "type": 2
-    }
+    params = {"up_mid": uid, "type": 2}
 
     if video is not None:
         params["rid"] = video.get_aid()
@@ -59,8 +60,8 @@ async def get_video_favorite_list_content(
     keyword: str = None,
     order: FavoriteListContentOrder = FavoriteListContentOrder.MTIME,
     tid: int = 0,
-    credential: Credential = None
-    ):
+    credential: Credential = None,
+):
     """
     获取视频收藏夹列表内容。
 
@@ -81,11 +82,11 @@ async def get_video_favorite_list_content(
         "pn": page,
         "ps": 20,
         "order": order.value,
-        "tid": tid
+        "tid": tid,
     }
 
     if keyword is not None:
-        params['keyword'] = keyword
+        params["keyword"] = keyword
 
     return await request("GET", api["url"], params=params, credential=credential)
 
@@ -104,10 +105,7 @@ async def get_topic_favorite_list(page: int = 1, credential: Credential = None):
     credential.raise_for_no_sessdata()
 
     api = API["info"]["list_topics"]
-    params = {
-        "pn": page,
-        "ps": 16
-    }
+    params = {"pn": page, "ps": 16}
 
     return await request("GET", api["url"], params=params, credential=credential)
 
@@ -126,10 +124,7 @@ async def get_article_favorite_list(page: int = 1, credential: Credential = None
     credential.raise_for_no_sessdata()
 
     api = API["info"]["list_articles"]
-    params = {
-        "pn": page,
-        "ps": 16
-    }
+    params = {"pn": page, "ps": 16}
 
     return await request("GET", api["url"], params=params, credential=credential)
 
@@ -148,11 +143,7 @@ async def get_album_favorite_list(page: int = 1, credential: Credential = None):
     credential.raise_for_no_sessdata()
 
     api = API["info"]["list_albums"]
-    params = {
-        "page": page,
-        "pagesize": 30,
-        "biz_type": 2
-    }
+    params = {"page": page, "pagesize": 30, "biz_type": 2}
 
     return await request("GET", api["url"], params=params, credential=credential)
 
@@ -172,11 +163,7 @@ async def get_course_favorite_list(page: int = 1, credential: Credential = None)
 
     api = API["info"]["list_courses"]
     self_info = await user.get_self_info(credential)
-    params = {
-        "pn": page,
-        "ps": 10,
-        "mid": self_info["mid"]
-    }
+    params = {"pn": page, "ps": 10, "mid": self_info["mid"]}
 
     return await request("GET", api["url"], params=params, credential=credential)
 
@@ -195,20 +182,17 @@ async def get_note_favorite_list(page: int = 1, credential: Credential = None):
     credential.raise_for_no_sessdata()
 
     api = API["info"]["list_notes"]
-    params = {
-        "pn": page,
-        "ps": 16
-    }
+    params = {"pn": page, "ps": 16}
 
     return await request("GET", api["url"], params=params, credential=credential)
 
 
 async def create_video_favorite_list(
     title: str,
-    introduction: str = '',
+    introduction: str = "",
     private: bool = False,
-    credential: Credential = None
-    ):
+    credential: Credential = None,
+):
     """
     新建视频收藏夹列表。
 
@@ -232,7 +216,7 @@ async def create_video_favorite_list(
         "title": title,
         "intro": introduction,
         "privacy": 1 if private else 0,
-        "cover": ""
+        "cover": "",
     }
 
     return await request("POST", api["url"], data=data, credential=credential)
@@ -241,9 +225,10 @@ async def create_video_favorite_list(
 async def modify_video_favorite_list(
     media_id: int,
     title: str,
-    introduction: str = '',
+    introduction: str = "",
     private: bool = False,
-    credential: Credential = None):
+    credential: Credential = None,
+):
     """
     修改视频收藏夹信息。
 
@@ -270,7 +255,7 @@ async def modify_video_favorite_list(
         "intro": introduction,
         "privacy": 1 if private else 0,
         "cover": "",
-        "media_id": media_id
+        "media_id": media_id,
     }
 
     return await request("POST", api["url"], data=data, credential=credential)
@@ -291,15 +276,15 @@ async def delete_video_favorite_list(media_ids: List[int], credential: Credentia
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
 
-    data = {
-        "media_ids": join(",", media_ids)
-    }
+    data = {"media_ids": join(",", media_ids)}
     api = API["operate"]["delete"]
 
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def copy_video_favorite_list_content(media_id_from: int, media_id_to: int, aids: List[int], credential: Credential):
+async def copy_video_favorite_list_content(
+    media_id_from: int, media_id_to: int, aids: List[int], credential: Credential
+):
     """
     复制视频收藏夹内容
 
@@ -322,14 +307,15 @@ async def copy_video_favorite_list_content(media_id_from: int, media_id_to: int,
         "src_media_id": media_id_from,
         "tar_media_id": media_id_to,
         "mid": self_info["mid"],
-        "resources": ",".join(map(lambda x: f"{str(x)}:2", aids))
+        "resources": ",".join(map(lambda x: f"{str(x)}:2", aids)),
     }
 
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-
-async def move_video_favorite_list_content(media_id_from: int, media_id_to: int, aids: List[int], credential: Credential):
+async def move_video_favorite_list_content(
+    media_id_from: int, media_id_to: int, aids: List[int], credential: Credential
+):
     """
     移动视频收藏夹内容
 
@@ -349,13 +335,15 @@ async def move_video_favorite_list_content(media_id_from: int, media_id_to: int,
     data = {
         "src_media_id": media_id_from,
         "tar_media_id": media_id_to,
-        "resources": ",".join(map(lambda x: f"{str(x)}:2", aids))
+        "resources": ",".join(map(lambda x: f"{str(x)}:2", aids)),
     }
 
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def delete_video_favorite_list_content(media_id: int, aids: List[int], credential: Credential):
+async def delete_video_favorite_list_content(
+    media_id: int, aids: List[int], credential: Credential
+):
     """
     删除视频收藏夹内容
 
@@ -373,7 +361,7 @@ async def delete_video_favorite_list_content(media_id: int, aids: List[int], cre
 
     data = {
         "media_id": media_id,
-        "resources": ",".join(map(lambda x: f"{str(x)}:2", aids))
+        "resources": ",".join(map(lambda x: f"{str(x)}:2", aids)),
     }
 
     return await request("POST", api["url"], data=data, credential=credential)
@@ -394,8 +382,6 @@ async def clean_video_favorite_list_content(media_id: int, credential: Credentia
     credential.raise_for_no_bili_jct()
     api = API["operate"]["content_clean"]
 
-    data = {
-        "media_id": media_id
-    }
+    data = {"media_id": media_id}
 
     return await request("POST", api["url"], data=data, credential=credential)

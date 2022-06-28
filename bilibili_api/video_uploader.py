@@ -20,14 +20,17 @@ import mimetypes
 from .utils.AsyncEvent import AsyncEvent
 from .utils.network import get_session, request, to_form_urlencoded
 from .utils.utils import chunk, get_api
+
 # import ffmpeg
 
 _API = get_api("video_uploader")
+
 
 class VideoUploaderPage:
     """
     分 P 对象
     """
+
     def __init__(self, path: str, title: str, description: str = ""):
         """
         Args:
@@ -52,7 +55,7 @@ class VideoUploaderPage:
             return self.cached_size
 
         size: int = 0
-        stream = open(self.path, 'rb')
+        stream = open(self.path, "rb")
         while True:
             s: bytes = stream.read(1024)
 
@@ -65,6 +68,7 @@ class VideoUploaderPage:
 
         self.cached_size = size
         return size
+
 
 class VideoUploaderEvents(Enum):
     """
@@ -91,6 +95,7 @@ class VideoUploaderEvents(Enum):
     + ABORTED  用户中止
     + FAILED  上传失败
     """
+
     PREUPLOAD = "PREUPLOAD"
     PREUPLOAD_FAILED = "PREUPLOAD_FAILED"
     PRE_PAGE = "PRE_PAGE"
@@ -117,17 +122,20 @@ class VideoUploaderEvents(Enum):
     ABORTED = "ABORTED"
     FAILED = "FAILED"
 
+
 class VideoUploader(AsyncEvent):
     """
     视频上传
     """
-    def __init__(self,
-                 pages: List[VideoUploaderPage],
-                 meta: dict,
-                 credential: Credential,
-                 cover_path: str = None,
-                #  ffprobe_path: str = 'ffprobe'
-                 ):
+
+    def __init__(
+        self,
+        pages: List[VideoUploaderPage],
+        meta: dict,
+        credential: Credential,
+        cover_path: str = None,
+        #  ffprobe_path: str = 'ffprobe'
+    ):
         """
         Args:
             pages        (List[VideoUploaderPage]): 分 P 列表
@@ -189,26 +197,30 @@ class VideoUploader(AsyncEvent):
             dict: 初始化信息
         """
         self.dispatch(VideoUploaderEvents.PREUPLOAD.value, {page: page})
-        api = _API['preupload']
+        api = _API["preupload"]
 
         # 首先获取视频文件预检信息
         session = get_session()
 
-        async with session.get(api["url"], params={
-            "profile": "ugcfx/bup",
-            "name": os.path.basename(page.path),
-            "size": page.get_size(),
-            "r": "upos",
-            "ssl": "0",
-            "version": "2.10.4",
-            "build": "2100400",
-            "upcdn": "bda2",
-            "probe_version": "20211012"
-        }, cookies=self.credential.get_cookies(),
+        async with session.get(
+            api["url"],
+            params={
+                "profile": "ugcfx/bup",
+                "name": os.path.basename(page.path),
+                "size": page.get_size(),
+                "r": "upos",
+                "ssl": "0",
+                "version": "2.10.4",
+                "build": "2100400",
+                "upcdn": "bda2",
+                "probe_version": "20211012",
+            },
+            cookies=self.credential.get_cookies(),
             headers={
                 "User-Agent": "Mozilla/5.0",
-                "Referer": "https://www.bilibili.com"
-            }, proxy=settings.proxy
+                "Referer": "https://www.bilibili.com",
+            },
+            proxy=settings.proxy,
         ) as resp:
             if resp.status >= 400:
                 self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
@@ -216,25 +228,30 @@ class VideoUploader(AsyncEvent):
 
             preupload = await resp.json()
 
-            if preupload['OK'] != 1:
+            if preupload["OK"] != 1:
                 self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
                 raise ApiException(json.dumps(preupload))
 
         url = self._get_upload_url(preupload)
 
         # 获取 upload_id
-        async with session.post(url, headers={
-            "x-upos-auth": preupload["auth"],
-            "user-agent": "Mozilla/5.0",
-            "referer": "https://www.bilibili.com"
-        }, params={
-            "uploads": "",
-            "output": "json",
-            "profile": "ugcfx/bup",
-            "filesize": page.get_size(),
-            "partsize": preupload["chunk_size"],
-            "biz_id": preupload["biz_id"]
-        }, proxy=settings.proxy) as resp:
+        async with session.post(
+            url,
+            headers={
+                "x-upos-auth": preupload["auth"],
+                "user-agent": "Mozilla/5.0",
+                "referer": "https://www.bilibili.com",
+            },
+            params={
+                "uploads": "",
+                "output": "json",
+                "profile": "ugcfx/bup",
+                "filesize": page.get_size(),
+                "partsize": preupload["chunk_size"],
+                "biz_id": preupload["biz_id"],
+            },
+            proxy=settings.proxy,
+        ) as resp:
             if resp.status >= 400:
                 self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
                 raise ApiException("获取 upload_id 错误")
@@ -372,14 +389,16 @@ class VideoUploader(AsyncEvent):
         videos = []
         for page in self.pages:
             data = await self._upload_page(page)
-            videos.append({
-                "title": page.title,
-                "desc": page.description,
-                "filename": data["filename"],
-                "cid": data["cid"]
-            })
+            videos.append(
+                {
+                    "title": page.title,
+                    "desc": page.description,
+                    "filename": data["filename"],
+                    "cid": data["cid"],
+                }
+            )
 
-        cover_url = ''
+        cover_url = ""
 
         if self.cover_path:
             cover_url = await self._upload_cover()
@@ -418,18 +437,20 @@ class VideoUploader(AsyncEvent):
             str: 封面 URL
         """
         self.dispatch(VideoUploaderEvents.PRE_COVER.value, None)
-        api = _API['cover_up']
+        api = _API["cover_up"]
         mime = mimetypes.guess_type(self.cover_path)[0]
 
-        with open(self.cover_path, 'rb') as f:
+        with open(self.cover_path, "rb") as f:
             data = {
                 "cover": f"data:{mime};base64,{base64.b64encode(f.read()).decode()}"
             }
 
         try:
-            resp = await request("POST", api['url'], data=data, credential=self.credential)
-            self.dispatch(VideoUploaderEvents.AFTER_COVER.value, {"url": resp['url']})
-            return resp['url']
+            resp = await request(
+                "POST", api["url"], data=data, credential=self.credential
+            )
+            self.dispatch(VideoUploaderEvents.AFTER_COVER.value, {"url": resp["url"]})
+            return resp["url"]
 
         except Exception as e:
             self.dispatch(VideoUploaderEvents.COVER_FAILED.value, {"err": e})
@@ -460,8 +481,12 @@ class VideoUploader(AsyncEvent):
         # 缓存 upload_id，这玩意只能从上传的分块预检结果获得
         upload_id = preupload["upload_id"]
         for offset in chunk_offset_list:
-            chunks_pending.insert(0, self._upload_chunk(
-                page, offset, chunk_number, total_chunk_count, preupload))
+            chunks_pending.insert(
+                0,
+                self._upload_chunk(
+                    page, offset, chunk_number, total_chunk_count, preupload
+                ),
+            )
             chunk_number += 1
 
         while chunks_pending:
@@ -473,9 +498,17 @@ class VideoUploader(AsyncEvent):
             result = await asyncio.gather(*tasks)
 
             for r in result:
-                if not r['ok']:
-                    chunks_pending.insert(0, self._upload_chunk(
-                        page, r['offset'], r['chunk_number'], total_chunk_count, preupload))
+                if not r["ok"]:
+                    chunks_pending.insert(
+                        0,
+                        self._upload_chunk(
+                            page,
+                            r["offset"],
+                            r["chunk_number"],
+                            total_chunk_count,
+                            preupload,
+                        ),
+                    )
 
         data = await self._complete_page(page, total_chunk_count, preupload, upload_id)
 
@@ -486,9 +519,21 @@ class VideoUploader(AsyncEvent):
     @staticmethod
     def _get_upload_url(preupload: dict) -> str:
         # 上传目标 URL
-        return "https:" + preupload["endpoint"] + "/" + preupload["upos_uri"].removeprefix("upos://")
+        return (
+            "https:"
+            + preupload["endpoint"]
+            + "/"
+            + preupload["upos_uri"].removeprefix("upos://")
+        )
 
-    async def _upload_chunk(self, page: VideoUploaderPage, offset: int, chunk_number: int, total_chunk_count: int, preupload: dict) -> dict:
+    async def _upload_chunk(
+        self,
+        page: VideoUploaderPage,
+        offset: int,
+        chunk_number: int,
+        total_chunk_count: int,
+        preupload: dict,
+    ) -> dict:
         """
         上传视频分块
 
@@ -502,13 +547,16 @@ class VideoUploader(AsyncEvent):
         Returns:
             dict: 上传结果和分块信息。
         """
-        chunk_event_callback_data = {"page": page, "offset": offset,
-                                     "chunk_number": chunk_number, "total_chunk_count": total_chunk_count}
-        self.dispatch(VideoUploaderEvents.PRE_CHUNK.value,
-                      chunk_event_callback_data)
+        chunk_event_callback_data = {
+            "page": page,
+            "offset": offset,
+            "chunk_number": chunk_number,
+            "total_chunk_count": total_chunk_count,
+        }
+        self.dispatch(VideoUploaderEvents.PRE_CHUNK.value, chunk_event_callback_data)
         session = get_session()
 
-        stream = open(page.path, 'rb')
+        stream = open(page.path, "rb")
         stream.seek(offset)
         chunk = stream.read(preupload["chunk_size"])
         stream.close()
@@ -520,58 +568,68 @@ class VideoUploader(AsyncEvent):
             "ok": False,
             "chunk_number": chunk_number,
             "offset": offset,
-            "page": page
+            "page": page,
         }
 
         real_chunk_size = len(chunk)
 
         params = {
-            'partNumber': str(chunk_number + 1),
-            'uploadId': str(preupload["upload_id"]),
-            'chunk': str(chunk_number),
-            'chunks': str(total_chunk_count),
-            'size': str(real_chunk_size),
-            'start': str(offset),
-            'end': str(offset + real_chunk_size),
-            'total': page.get_size()
+            "partNumber": str(chunk_number + 1),
+            "uploadId": str(preupload["upload_id"]),
+            "chunk": str(chunk_number),
+            "chunks": str(total_chunk_count),
+            "size": str(real_chunk_size),
+            "start": str(offset),
+            "end": str(offset + real_chunk_size),
+            "total": page.get_size(),
         }
 
         ok_return = {
             "ok": True,
             "chunk_number": chunk_number,
             "offset": offset,
-            "page": page
+            "page": page,
         }
 
         try:
-            async with session.put(url, data=chunk, params=params, headers={
-                "x-upos-auth": preupload["auth"]
-            }, proxy=settings.proxy) as resp:
+            async with session.put(
+                url,
+                data=chunk,
+                params=params,
+                headers={"x-upos-auth": preupload["auth"]},
+                proxy=settings.proxy,
+            ) as resp:
                 if resp.status >= 400:
-                    chunk_event_callback_data['info'] = f'Status {resp.status}'
-                    self.dispatch(VideoUploaderEvents.CHUNK_FAILED.value,
-                                chunk_event_callback_data)
+                    chunk_event_callback_data["info"] = f"Status {resp.status}"
+                    self.dispatch(
+                        VideoUploaderEvents.CHUNK_FAILED.value,
+                        chunk_event_callback_data,
+                    )
                     return err_return
 
                 data = await resp.text()
 
                 if data != "MULTIPART_PUT_SUCCESS":
-                    chunk_event_callback_data['info'] = "分块上传失败"
-                    self.dispatch(VideoUploaderEvents.CHUNK_FAILED.value,
-                                chunk_event_callback_data)
+                    chunk_event_callback_data["info"] = "分块上传失败"
+                    self.dispatch(
+                        VideoUploaderEvents.CHUNK_FAILED.value,
+                        chunk_event_callback_data,
+                    )
                     return err_return
 
         except Exception as e:
-            chunk_event_callback_data['info'] = str(e)
-            self.dispatch(VideoUploaderEvents.CHUNK_FAILED.value,
-                                chunk_event_callback_data)
+            chunk_event_callback_data["info"] = str(e)
+            self.dispatch(
+                VideoUploaderEvents.CHUNK_FAILED.value, chunk_event_callback_data
+            )
             return err_return
 
-        self.dispatch(VideoUploaderEvents.AFTER_CHUNK.value,
-                      chunk_event_callback_data)
+        self.dispatch(VideoUploaderEvents.AFTER_CHUNK.value, chunk_event_callback_data)
         return ok_return
 
-    async def _complete_page(self, page: VideoUploaderPage, chunks: int, preupload: dict, upload_id: str) -> None:
+    async def _complete_page(
+        self, page: VideoUploaderPage, chunks: int, preupload: dict, upload_id: str
+    ) -> None:
         """
         提交分 P 上传
 
@@ -584,11 +642,12 @@ class VideoUploader(AsyncEvent):
         Returns:
             dict: filename: 该分 P 的标识符，用于最后提交视频。cid: 分 P 的 cid
         """
-        self.dispatch(VideoUploaderEvents.PRE_PAGE_SUBMIT.value,
-                      {"page": page})
+        self.dispatch(VideoUploaderEvents.PRE_PAGE_SUBMIT.value, {"page": page})
 
         data = {
-            "parts": list(map(lambda x: {"partNumber": x, "eTag": "etag"}, range(1, chunks + 1)))
+            "parts": list(
+                map(lambda x: {"partNumber": x, "eTag": "etag"}, range(1, chunks + 1))
+            )
         }
 
         params = {
@@ -596,38 +655,49 @@ class VideoUploader(AsyncEvent):
             "name": os.path.basename(page.path),
             "profile": "ugcfx/bup",
             "uploadId": upload_id,
-            "biz_id": preupload["biz_id"]
+            "biz_id": preupload["biz_id"],
         }
 
         url = self._get_upload_url(preupload)
 
         session = get_session()
 
-        async with session.post(url=url, data=json.dumps(data), headers={
-            "x-upos-auth": preupload["auth"],
-            "content-type": "application/json; charset=UTF-8"
-        }, params=params, proxy=settings.proxy) as resp:
+        async with session.post(
+            url=url,
+            data=json.dumps(data),
+            headers={
+                "x-upos-auth": preupload["auth"],
+                "content-type": "application/json; charset=UTF-8",
+            },
+            params=params,
+            proxy=settings.proxy,
+        ) as resp:
             if resp.status >= 400:
-                err = NetworkException(resp.status, '状态码错误，提交分 P 失败')
-                self.dispatch(VideoUploaderEvents.PAGE_SUBMIT_FAILED.value, {"page": page, "err": err})
+                err = NetworkException(resp.status, "状态码错误，提交分 P 失败")
+                self.dispatch(
+                    VideoUploaderEvents.PAGE_SUBMIT_FAILED.value,
+                    {"page": page, "err": err},
+                )
                 raise err
 
             data = json.loads(await resp.read())
 
-            if data['OK'] != 1:
+            if data["OK"] != 1:
                 err = ResponseCodeException(-1, f'提交分 P 失败，原因: {data["message"]}')
-                self.dispatch(VideoUploaderEvents.PAGE_SUBMIT_FAILED.value, {"page": page, "err": err})
+                self.dispatch(
+                    VideoUploaderEvents.PAGE_SUBMIT_FAILED.value,
+                    {"page": page, "err": err},
+                )
                 raise err
 
-        self.dispatch(
-            VideoUploaderEvents.AFTER_PAGE_SUBMIT.value, {"page": page})
+        self.dispatch(VideoUploaderEvents.AFTER_PAGE_SUBMIT.value, {"page": page})
 
         return {
             "filename": os.path.splitext(data["key"].removeprefix("/"))[0],
-            "cid": preupload["biz_id"]
+            "cid": preupload["biz_id"],
         }
 
-    async def _submit(self, videos: list, cover_url: str = '') -> dict:
+    async def _submit(self, videos: list, cover_url: str = "") -> dict:
         """
         提交视频
 
@@ -639,16 +709,22 @@ class VideoUploader(AsyncEvent):
             dict: 含 bvid 和 aid 的字典
         """
         meta = copy(self.meta)
-        meta['cover'] = cover_url
-        meta['videos'] = videos
+        meta["cover"] = cover_url
+        meta["videos"] = videos
 
         self.dispatch(VideoUploaderEvents.PRE_SUBMIT.value, deepcopy(meta))
-        api = _API['submit']
+        api = _API["submit"]
 
         try:
-            resp = await request('POST', api['url'], params={"csrf": self.credential.bili_jct}, data=json.dumps(meta), headers={
-                'content-type': 'application/json'
-            }, credential=self.credential, no_csrf=True)
+            resp = await request(
+                "POST",
+                api["url"],
+                params={"csrf": self.credential.bili_jct},
+                data=json.dumps(meta),
+                headers={"content-type": "application/json"},
+                credential=self.credential,
+                no_csrf=True,
+            )
 
             self.dispatch(VideoUploaderEvents.AFTER_SUBMIT.value, resp)
             return resp
@@ -657,15 +733,15 @@ class VideoUploader(AsyncEvent):
             self.dispatch(VideoUploaderEvents.SUBMIT_FAILED.value, {"err": err})
             raise err
 
-
     async def abort(self):
         """
         中断上传
         """
         if self.__task:
-            self.__task.cancel('用户手动取消')
+            self.__task.cancel("用户手动取消")
 
         self.dispatch(VideoUploaderEvents.ABORTED.value, None)
+
 
 async def get_missions(tid: int = 0, credential: Credential = None):
     """
@@ -680,8 +756,6 @@ async def get_missions(tid: int = 0, credential: Credential = None):
     """
     api = _API["missions"]
 
-    params = {
-        "tid": tid
-    }
+    params = {"tid": tid}
 
     return await request("GET", api["url"], params=params, credential=credential)

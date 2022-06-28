@@ -12,6 +12,7 @@ from .utils.utils import get_api
 
 API = get_api("rank")
 
+
 async def get_hot_videos():
     """
     获取热门视频
@@ -19,8 +20,9 @@ async def get_hot_videos():
     Returns:
         调用 API 返回的结果
     """
-    api = API['info']['hot']
-    return await request("GET", url=api['url'])
+    api = API["info"]["hot"]
+    return await request("GET", url=api["url"])
+
 
 async def get_weakly_hot_videos_list():
     """
@@ -29,10 +31,11 @@ async def get_weakly_hot_videos_list():
     Returns:
         调用 API 返回的结果
     """
-    api = API['info']['weakly_series']
-    return await request("GET", url=api['url'])
+    api = API["info"]["weakly_series"]
+    return await request("GET", url=api["url"])
 
-async def get_weakly_hot_videos(week: int=1):
+
+async def get_weakly_hot_videos(week: int = 1):
     """
     获取一周的每周必看视频列表
 
@@ -42,11 +45,10 @@ async def get_weakly_hot_videos(week: int=1):
     Returns:
         调用 API 返回的结果
     """
-    api = API['info']['weakly_details']
-    params = {
-        "number": week
-    }
-    return await request("GET", url=api['url'], params=params)
+    api = API["info"]["weakly_details"]
+    params = {"number": week}
+    return await request("GET", url=api["url"], params=params)
+
 
 async def get_history_popular_videos():
     """
@@ -55,12 +57,10 @@ async def get_history_popular_videos():
     Returns:
         调用 API 返回的结果
     """
-    api = API['info']['history_popular']
-    params = {
-        "page_size": 85, 
-        "page": 1
-    }
-    return await request("GET", url=api['url'], params=params)
+    api = API["info"]["history_popular"]
+    params = {"page_size": 85, "page": 1}
+    return await request("GET", url=api["url"], params=params)
+
 
 async def get_rank():
     """
@@ -69,9 +69,6 @@ async def get_rank():
     Returns:
         调用 API 返回的结果
     """
-    api = API['info']['ranking']
-    params = {
-        "type": "all", 
-        "rid": 0
-    }
-    return await request("GET", api['url'], params=params)
+    api = API["info"]["ranking"]
+    params = {"type": "all", "rid": 0}
+    return await request("GET", api["url"], params=params)

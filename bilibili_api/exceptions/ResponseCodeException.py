@@ -11,6 +11,7 @@ class ResponseCodeException(ApiException):
     """
     API 返回 code 错误。
     """
+
     def __init__(self, code: int, msg: str, raw: dict = None):
         """
 

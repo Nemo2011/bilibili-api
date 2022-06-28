@@ -19,8 +19,11 @@ def get_api(field: str):
     Returns:
         dict, 该 API 的内容。
     """
-    path = os.path.abspath(os.path.join(os.path.dirname(
-        __file__), "..", "data", "api", f"{field.lower()}.json"))
+    path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), "..", "data", "api", f"{field.lower()}.json"
+        )
+    )
     if os.path.exists(path):
         with open(path, encoding="utf8") as f:
             return json.loads(f.read())
@@ -110,10 +113,10 @@ def crack_uid(crc32: str):
     ht = int(crc32, 16) ^ 0xFFFFFFFF
     i = 3
     while i >= 0:
-        __index[3-i] = __getcrcindex(ht >> (i*8))
+        __index[3 - i] = __getcrcindex(ht >> (i * 8))
         # pylint: disable=invalid-sequence-index
-        snum = __crctable[__index[3-i]]
-        ht ^= snum >> ((3-i)*8)
+        snum = __crctable[__index[3 - i]]
+        ht ^= snum >> ((3 - i) * 8)
         i -= 1
     for i in range(10000000):
         lastindex = __crc32lastindex(i)
@@ -124,6 +127,7 @@ def crack_uid(crc32: str):
     if i == 10000000:
         return -1
     return str(i) + deepCheckData[1]
+
 
 def join(seperator: str, array: list):
     """
@@ -136,9 +140,11 @@ def join(seperator: str, array: list):
     Returns:
         str: 连接结果
     """
-    return seperator.join(map(lambda x: str(x) ,array))
+    return seperator.join(map(lambda x: str(x), array))
 
-ChunkT = TypeVar('ChunkT', List, List)
+
+ChunkT = TypeVar("ChunkT", List, List)
+
 
 def chunk(arr: ChunkT, size: int) -> List[ChunkT]:
     if size <= 0:
