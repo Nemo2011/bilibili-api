@@ -6,7 +6,7 @@ bilibili_api.interactive_video
 
 from .utils.Credential import Credential
 from .utils.utils import get_api
-from .utils.network import request, get_session
+from .utils.network_httpx import request, get_session
 from .video import Video
 from urllib import parse
 from .exceptions import ArgsException

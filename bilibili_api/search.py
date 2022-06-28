@@ -5,7 +5,7 @@ bilibili_api.search
 """
 from enum import Enum
 from .utils.utils import get_api
-from .utils.network import request
+from .utils.network_httpx import request
 
 API = get_api('search')
 

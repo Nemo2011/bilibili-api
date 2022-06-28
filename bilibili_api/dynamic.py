@@ -10,7 +10,8 @@ from typing import List
 import io
 
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
-from .utils.network import get_session, request
+from .utils.network import get_session as get_session_aiohttp
+from .utils.network_httpx import request
 from .utils.Credential import Credential
 from . import user, exceptions
 from .utils import utils
@@ -108,7 +109,7 @@ async def upload_image(image_stream: io.BufferedIOBase, credential: Credential):
         "category": "daily",
         "file_up": image_stream
     })
-    session = get_session()
+    session = get_session_aiohttp()
     resp = await session.post(url=api["url"], data=form, cookies=credential.get_cookies())
     data = await resp.read()
     j = json.loads(data.decode('utf8'))

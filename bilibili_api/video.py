@@ -7,16 +7,17 @@ bilibili_api.video
 """
 
 from ast import Bytes
-from enum import Enum 
+from enum import Enum
 import re
 import datetime
 import asyncio
-import aiohttp
+import httpx
 import logging
 import json
 import struct
 import io
 import base64
+import aiohttp
 from typing import List
 
 import requests
@@ -29,10 +30,12 @@ from .exceptions import ArgsException, DanmakuClosedException
 from .utils.Credential import Credential
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.utils import get_api
-from .utils.network import request, get_session
+from .utils.network_httpx import request, get_session
+from .utils.network import get_session as get_session_aiohttp
 from .utils.Danmaku import Danmaku
 from .utils.BytesReader import BytesReader
 from .utils.AsyncEvent import AsyncEvent
+from . import settings
 
 API = get_api("video")
 
@@ -364,23 +367,27 @@ class Video:
             cid = await self.__get_page_id_by_index(page_index)
 
         session = get_session()
-        api = API["danmaku"]["view"]['url']
+        api = API["danmaku"]["view"]
 
-        resp = await session.get(api, params={
+        config = {}
+        config['url'] = api['url']
+        config['params'] = {
             "type": 1,
             "oid": cid,
             "pid": self.get_aid()
-        }, cookies=self.credential.get_cookies(), headers={
+        }
+        config['cookies'] = self.credential.get_cookies()
+        config['headers'] = {
             "Referer": "https://www.bilibili.com",
             "User-Agent": "Mozilla/5.0"
-        })
+        }
 
         try:
-            resp.raise_for_status()
-        except aiohttp.ClientResponseError as e:
-            raise NetworkException(e.status, e.message)
+            resp = await session.get(**config)
+        except Exception as e:
+            raise NetworkException(-1, str(e))
 
-        resp_data = await resp.read()
+        resp_data = resp.read()
         json_data = {}
         reader = BytesReader(resp_data)
         # 解析二进制数据流
@@ -605,24 +612,29 @@ class Video:
                 # 仅当获取当前弹幕时需要该参数
                 params['segment_index'] = seg + 1
 
-            req = await session.get(api["url"], params=params, headers={
+            config = {}
+            config['url'] = api['url']
+            config['params'] = params
+            config['headers'] = {
                 "Referer": "https://www.bilibili.com",
                 "User-Agent": "Mozilla/5.0"
-            }, cookies=self.credential.get_cookies())
-            try:
-                req.raise_for_status()
-            except aiohttp.ClientResponseError as e:
-                raise NetworkException(e.status, e.message)
+            }
+            config['cookies'] = self.credential.get_cookies()
 
-            if 'Content-Type' not in req.headers.keys():
+            try:
+                req = await session.get(**config)
+            except Exception as e:
+                raise NetworkException(-1, str(e))
+
+            if 'content-type' not in req.headers.keys():
                 break
             else:
-                content_type = req.headers['Content-Type']
+                content_type = req.headers['content-type']
                 if content_type != 'application/octet-stream':
                     raise ResponseException("返回数据类型错误：")
 
             # 解析二进制流数据
-            data = await req.read()
+            data = req.read()
             if data == b'\x10\x01':
                 # 视频弹幕被关闭
                 raise DanmakuClosedException()
@@ -1231,7 +1243,7 @@ class VideoOnlineMonitor(AsyncEvent):
 
         # 连接服务器
         self.logger.debug('准备连接服务器...')
-        session = get_session()
+        session = get_session_aiohttp()
         async with session.ws_connect(uri) as ws:
             self.__ws = ws
 

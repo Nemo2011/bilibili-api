@@ -7,7 +7,7 @@ bilibili_api.bank
 https://www.bilibili.com/v/popular/all
 """
 
-from .utils.network import request
+from .utils.network_httpx import request
 from .utils.utils import get_api
 
 API = get_api("rank")

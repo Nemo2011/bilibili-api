@@ -102,10 +102,6 @@ async def request(method: str,
         config["headers"]["Content-Type"] = "application/json"
         config["data"] = json.dumps(config["data"])
 
-    # 如果用户提供代理则设置代理
-    if settings.proxy:
-        config['proxies'] = {settings.proxy_type: settings.proxy}
-
     #config["ssl"] = False
 
     #config["verify_ssl"] = False
@@ -163,15 +159,19 @@ async def request(method: str,
 
 def get_session():
     """
-    获取当前模块的 aiohttp.ClientSession 对象，用于自定义请求
+    获取当前模块的 httpx.AsyncClient 对象，用于自定义请求
 
     Returns:
-        aiohttp.ClientSession
+        httpx.AsyncClient
     """
     loop = asyncio.get_event_loop()
     session = __session_pool.get(loop, None)
     if session is None:
-        session = httpx.AsyncClient()
+        if settings.proxy:
+            proxies = {settings.proxy_type: settings.proxy}
+            session = httpx.AsyncClient(proxies=proxies)
+        else:
+            session = httpx.AsyncClient()
         __session_pool[loop] = session
 
     return session

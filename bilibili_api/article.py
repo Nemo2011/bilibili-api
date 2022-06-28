@@ -10,7 +10,7 @@ from .utils.Credential import Credential
 import re
 
 import yaml
-from .utils.network import get_session, request
+from .utils.network_httpx import get_session, request
 from .exceptions.NetworkException import NetworkException, ApiException
 from bs4 import BeautifulSoup, element
 from datetime import datetime

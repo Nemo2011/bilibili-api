@@ -6,7 +6,7 @@ import os
 import aiohttp
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku
-from .utils.network import get_session
+from .utils.network_httpx import get_session
 from .utils.danmaku2ass import Danmaku2ASS
 from .utils.json2srt import json2srt
 from .utils.srt2ass import srt2ass
