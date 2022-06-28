@@ -1,4 +1,4 @@
-![](/design/logo.png)
+![](/logo.png)
 
 # bilibili-api
 
