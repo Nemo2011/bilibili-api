@@ -219,8 +219,7 @@ class VideoUploader(AsyncEvent):
             headers={
                 "User-Agent": "Mozilla/5.0",
                 "Referer": "https://www.bilibili.com",
-            },
-            proxy=settings.proxy,
+            }
         ) as resp:
             if resp.status >= 400:
                 self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
@@ -249,8 +248,7 @@ class VideoUploader(AsyncEvent):
                 "filesize": page.get_size(),
                 "partsize": preupload["chunk_size"],
                 "biz_id": preupload["biz_id"],
-            },
-            proxy=settings.proxy,
+            }
         ) as resp:
             if resp.status >= 400:
                 self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
@@ -596,8 +594,7 @@ class VideoUploader(AsyncEvent):
                 url,
                 data=chunk,
                 params=params,
-                headers={"x-upos-auth": preupload["auth"]},
-                proxy=settings.proxy,
+                headers={"x-upos-auth": preupload["auth"]}
             ) as resp:
                 if resp.status >= 400:
                     chunk_event_callback_data["info"] = f"Status {resp.status}"
@@ -669,8 +666,7 @@ class VideoUploader(AsyncEvent):
                 "x-upos-auth": preupload["auth"],
                 "content-type": "application/json; charset=UTF-8",
             },
-            params=params,
-            proxy=settings.proxy,
+            params=params
         ) as resp:
             if resp.status >= 400:
                 err = NetworkException(resp.status, "状态码错误，提交分 P 失败")
