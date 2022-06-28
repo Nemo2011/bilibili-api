@@ -8,7 +8,7 @@ from enum import Enum
 import json
 import time
 
-from .utils.network import request
+from .utils.network_httpx import request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
 from typing import List

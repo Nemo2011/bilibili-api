@@ -8,7 +8,6 @@ from bilibili_api import settings
 
 ```python
 settings.proxy = "" # 此处填写你的代理地址
-settings.proxy_use = "all://" # 何时采用代理，默认为所有时候，这里可以不设置
 ```
 
 ## nest_asyncio
