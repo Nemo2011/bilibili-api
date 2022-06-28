@@ -6,11 +6,11 @@ bilibili_api.favorite_list
 
 from enum import Enum
 
-from bilibili_api.video import Video
-from bilibili_api import user
-from bilibili_api.utils.network import request
-from bilibili_api.exceptions.ArgsException import ArgsException
-from bilibili_api.utils.Credential import Credential
+from .video import Video
+from . import user
+from .utils.network import request
+from .exceptions.ArgsException import ArgsException
+from .utils.Credential import Credential
 from .utils.utils import get_api, join
 from typing import List
 
