@@ -9,6 +9,7 @@ from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku
 from .utils.short import get_real_url
 from .utils.sync import sync
+from .utils.network_httpx import get_session, set_session
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0", 

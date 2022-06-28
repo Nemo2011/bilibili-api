@@ -5,7 +5,7 @@ bilibili_api.homepage
 """
 
 from .utils.utils import get_api
-from .utils.network import request
+from .utils.network_httpx import request
 from .utils.Credential import Credential
 
 API = get_api("homepage")

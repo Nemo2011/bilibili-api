@@ -8,7 +8,7 @@ from enum import Enum
 
 from .video import Video
 from . import user
-from .utils.network import request
+from .utils.network_httpx import request
 from .exceptions.ArgsException import ArgsException
 from .utils.Credential import Credential
 from .utils.utils import get_api, join

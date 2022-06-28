@@ -13,7 +13,7 @@ bilibili_api.cheese
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.sync import sync
-from .utils.network import request
+from .utils.network_httpx import request
 
 API = get_api("cheese")
 

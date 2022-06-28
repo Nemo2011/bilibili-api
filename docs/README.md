@@ -109,6 +109,12 @@ if __name__ == '__main__':
 
 如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili_api/#/sync-executor)
 
+# 框架迁移
+
+在 `10.2.0` 时，本项目已经基本将 web 请求框架从 `aiohttp` 迁移到了 `httpx`，主要是 `aiohttp` 的代理……
+当然，还有一部分未迁移。如 `VideoOnlineMonitor`。
+注意：`httpx` 也支持异步，性能不会受到太大影响。
+
 # FA♂Q
 
 **Q: 关于 API 调用的正确姿势是什么？**
