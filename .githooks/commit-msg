@@ -4,8 +4,6 @@
 import re
 import sys
 
-print('Checking commit message ...')
-
 CONSOLE_COLORS = {
   'RED': '\x1b[0;31m',
   'RESET': '\x1b[0m'
