@@ -10,7 +10,7 @@
  
 from enum import Enum
 
-from bilibili_api.utils.sync import sync
+from .utils.sync import sync
 from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network import get_session, request

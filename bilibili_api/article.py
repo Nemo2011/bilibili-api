@@ -5,13 +5,13 @@
 from copy import copy
 import json
 from typing import List, overload
-from bilibili_api.utils.utils import get_api
-from bilibili_api.utils.Credential import Credential
+from .utils.utils import get_api
+from .utils.Credential import Credential
 import re
 
 import yaml
-from bilibili_api.utils.network import get_session, request
-from bilibili_api.exceptions.NetworkException import NetworkException, ApiException
+from .utils.network import get_session, request
+from .exceptions.NetworkException import NetworkException, ApiException
 from bs4 import BeautifulSoup, element
 from datetime import datetime
 from urllib.parse import unquote

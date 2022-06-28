@@ -6,4 +6,5 @@ bilibili_api.settings
 
 # 代理设置
 proxy: str = ""
+proxy_type: str = ""
 nest_asyncio = True

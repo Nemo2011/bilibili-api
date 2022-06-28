@@ -2,15 +2,15 @@ import asyncio
 from asyncio.exceptions import CancelledError
 from asyncio.tasks import Task, create_task
 import os
-from bilibili_api import settings
-from bilibili_api.utils.Credential import Credential
+from . import settings
+from .utils.Credential import Credential
 from copy import copy, deepcopy
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 import json
 from enum import Enum
 
-from bilibili_api.exceptions.ApiException import ApiException
-from bilibili_api.exceptions.NetworkException import NetworkException
+from .exceptions.ApiException import ApiException
+from .exceptions.NetworkException import NetworkException
 from typing import TypedDict, List
 from hashlib import md5
 import base64

@@ -10,7 +10,7 @@ bilibili_api.cheese
 还有，课程的 season_id 和 ep_id 不与番剧相通，井水不犯河水，请不要错用!
 """
 
-from bilibili_api.utils.Credential import Credential
+from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.sync import sync
 from .utils.network import request

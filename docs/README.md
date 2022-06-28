@@ -1,11 +1,13 @@
-![](logo.png)
+![](/design/logo.png)
 
 # bilibili-api
 
 [![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
+<!--[![STARS](https://img.shields.io/github/stars/Nemo2011/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]-->
+![Test](https://img.shields.io/badge/Test-passing-brightgreen)
 ![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
-<!--[![STARS](https://img.shields.io/github/stars/MoyuScript/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]-->
+
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
 
 原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
@@ -21,7 +23,8 @@
 - 可使用代理，绕过 b 站风控策略。
 - 全面支持 BV 号（bvid），同时也兼容 AV 号（aid）。
 - 调用简便，函数命名易懂，代码注释详细。
-- 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查[[3]](#脚注)、下载弹幕、字幕文件、专栏内容爬取等。
+- 依赖少，无需第三方命令行工具，装完即用，无需其他配置。
+- 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查、下载弹幕、字幕文件、专栏内容爬取等。
 - **全部是异步操作**。
 
 # 快速上手
@@ -104,7 +107,7 @@ if __name__ == '__main__':
 
 总的来说，异步比同步更有优势，所以不会的话可以去学一下，会发现新天地（误
 
-如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://bili.moyu.moe/#/sync-executor)
+如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili_api/#/sync-executor)
 
 # FA♂Q
 
@@ -143,11 +146,11 @@ settings.proxy = "http://your-proxy.com" # 里头填写你的代理地址
 
 A: 你可以发 Issue 来提交你的需求，但是，最好的办法是自己写（懒）
 
-**Q: 我有一个大胆的想法，如何给代码库贡献？**
+<span id="contribute">**Q: 我有一个大胆的想法，如何给代码库贡献？**</span>
 
 A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在该分支上工作。
 如果你觉得已经可以了，请向项目仓库的 develop 分支发起 Pull request。
-如果你不明白这些操作的话，可以百度。完整指南：[CONTRIBUTING.md](/.github/CONTRIBUTING.md)
+如果你不明白这些操作的话，可以百度。完整指南：[CONTRIBUTING.md](https://github.com/Nemo2011/bilibili_api/blob/main/.github/CONTRIBUTING.md)
 
 **Q: 稳定性怎么样？**
 
@@ -157,7 +160,6 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 
 + \[1\] 这里只列出一部分，请以实际 API 为准。
 + \[2\] 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784>
-+ \[3\] 代码翻译自：<https://github.com/esterTion/BiliBili_crc2mid>
 
 
 [docs]: https://nemo2011.github.io/bilibili_api
