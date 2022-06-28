@@ -32,6 +32,7 @@ class ResourceType(Enum):
     + AUDIO：音频。
     + AUDIO_LIST：歌单。
     """
+
     VIDEO = 1
     ARTICLE = 12
     DYNAMIC_DRAW = 11
@@ -47,6 +48,7 @@ class OrderType(Enum):
     + LIKE：按点赞数倒序。
     + TIME：按发布时间倒序。
     """
+
     LIKE = 2
     TIME = 0
 
@@ -56,7 +58,9 @@ class Comment:
     对单条评论的相关操作。
     """
 
-    def __init__(self, oid: int, type_: ResourceType, rpid: int, credential: Credential):
+    def __init__(
+        self, oid: int, type_: ResourceType, rpid: int, credential: Credential
+    ):
         """
         Args:
             oid        (int)         : 评论所在资源 ID。
@@ -83,7 +87,7 @@ class Comment:
             "oid": self.oid,
             "type": self.type_.value,
             "rpid": self.rpid,
-            "action": 1 if status else 0
+            "action": 1 if status else 0,
         }
 
     async def like(self, status: bool = True):
@@ -101,7 +105,9 @@ class Comment:
         self.credential.raise_for_no_bili_jct()
 
         api = API["comment"]["like"]
-        return await request("POST", api["url"], data=self.__get_data(status), credential=self.credential)
+        return await request(
+            "POST", api["url"], data=self.__get_data(status), credential=self.credential
+        )
 
     async def hate(self, status: bool = True):
         """
@@ -118,7 +124,9 @@ class Comment:
         self.credential.raise_for_no_bili_jct()
 
         api = API["comment"]["hate"]
-        return await request("POST", api["url"], data=self.__get_data(status), credential=self.credential)
+        return await request(
+            "POST", api["url"], data=self.__get_data(status), credential=self.credential
+        )
 
     async def pin(self, status: bool = True):
         """
@@ -134,7 +142,9 @@ class Comment:
         self.credential.raise_for_no_bili_jct()
 
         api = API["comment"]["pin"]
-        return await request("POST", api["url"], data=self.__get_data(status), credential=self.credential)
+        return await request(
+            "POST", api["url"], data=self.__get_data(status), credential=self.credential
+        )
 
     async def delete(self):
         """
@@ -170,14 +180,22 @@ class Comment:
             "ps": 10,
             "type": self.type_.value,
             "oid": self.oid,
-            "root": self.rpid
+            "root": self.rpid,
         }
 
-        return await request("GET", api["url"], params=params, credential=self.credential)
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
 
-async def send_comment(text: str, oid: int, type_: ResourceType, root: int = None,
-                       parent: int = None, credential: Credential = None):
+async def send_comment(
+    text: str,
+    oid: int,
+    type_: ResourceType,
+    root: int = None,
+    parent: int = None,
+    credential: Credential = None,
+):
     """
     通用发送评论 API。
 
@@ -231,11 +249,13 @@ async def send_comment(text: str, oid: int, type_: ResourceType, root: int = Non
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def get_comments(oid: int,
-                       type_: ResourceType,
-                       page_index: int = 1,
-                       order: OrderType = OrderType.TIME,
-                       credential: Credential = None):
+async def get_comments(
+    oid: int,
+    type_: ResourceType,
+    page_index: int = 1,
+    order: OrderType = OrderType.TIME,
+    credential: Credential = None,
+):
     """
     获取资源评论列表。
 
@@ -253,10 +273,5 @@ async def get_comments(oid: int,
         raise ArgsException("page_index 必须大于或等于 1")
 
     api = API["comment"]["get"]
-    params = {
-        "pn": page_index,
-        "type": type_.value,
-        "oid": oid,
-        "sort": order.value
-    }
+    params = {"pn": page_index, "type": type_.value, "oid": oid, "sort": order.value}
     return await request("GET", api["url"], params=params, credential=credential)

@@ -19,7 +19,7 @@ async def get_real_url(short_url: str):
         config['url'] = short_url
         config['follow_redirects'] = False
         if settings.proxy:
-            config['proxies'] = {settings.proxy_type: settings.proxy}
+            config['proxies'] = {settings.proxy_use: settings.proxy}
         resp = await get_session().request("GET", url=short_url, follow_redirects=False)
         return resp.headers['Location']
     except:

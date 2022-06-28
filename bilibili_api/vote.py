@@ -11,6 +11,7 @@ from .utils.network_httpx import request
 
 API = get_api("common")
 
+
 async def get_vote_info(vote_id: int):
     """
     获取投票详情
@@ -20,8 +21,6 @@ async def get_vote_info(vote_id: int):
     Returns:
         调用 API 返回的结果
     """
-    api = API['vote']['info']['get_info']
-    params = {
-        "vote_id": vote_id 
-    }
-    return await request("GET", api['url'], params=params)
+    api = API["vote"]["info"]["get_info"]
+    params = {"vote_id": vote_id}
+    return await request("GET", api["url"], params=params)

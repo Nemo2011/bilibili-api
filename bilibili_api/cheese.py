@@ -17,8 +17,11 @@ from .utils.network_httpx import request
 
 API = get_api("cheese")
 
+
 class CheeseList:
-    def __init__(self, season_id: int=-1, ep_id: int=-1, credential:Credential=None):
+    def __init__(
+        self, season_id: int = -1, ep_id: int = -1, credential: Credential = None
+    ):
         """
         教程类
         season_id(int): ssid
@@ -33,7 +36,7 @@ class CheeseList:
         self.ep_id = ep_id
         self.credential = credential
         if self.season_id == -1:
-            self.season_id = str(sync(self.get_meta())['season_id'])
+            self.season_id = str(sync(self.get_meta())["season_id"])
 
     def set_season_id(self, season_id: int):
         self.__init__(season_id=season_id)
@@ -50,30 +53,27 @@ class CheeseList:
         Returns:
             调用 API 所得的结果。
         """
-        api = API['info']['meta']
-        params = {
-            "season_id": self.season_id, 
-            "ep_id": self.ep_id
-        }
-        return await request("GET", api['url'], params=params, credential=self.credential)
+        api = API["info"]["meta"]
+        params = {"season_id": self.season_id, "ep_id": self.ep_id}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
-    async def get_list(self, pn: int=1, ps: int=50):
+    async def get_list(self, pn: int = 1, ps: int = 50):
         """
         获取教程所有视频
         Returns:
             调用 API 所得的结果。
         """
-        api = API['info']['list']
-        params = {
-            "season_id": self.season_id,
-            "pn": pn, 
-            "ps": ps
-        }
-        return await request("GET", api['url'], params=params, credential=self.credential)
+        api = API["info"]["list"]
+        params = {"season_id": self.season_id, "pn": pn, "ps": ps}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
 
 class CheeseVideo:
-    def __init__(self, epid, credential: Credential=None):
+    def __init__(self, epid, credential: Credential = None):
         """
         教程视频类
         因为不和其他视频相通，所以这里是一个新的类，无继承
@@ -83,10 +83,10 @@ class CheeseVideo:
         self.epid = epid
         self.cheese = CheeseList(ep_id=self.epid)
         self.credential = credential
-        for v in sync(self.cheese.get_meta())['episodes']:
-            if v['id'] == epid:
-                self.aid = v['aid']
-                self.cid = v['cid']
+        for v in sync(self.cheese.get_meta())["episodes"]:
+            if v["id"] == epid:
+                self.aid = v["aid"]
+                self.cid = v["cid"]
 
     def get_cheese(self):
         """
@@ -102,7 +102,7 @@ class CheeseVideo:
             None
         """
         self.__init__(epid, self.credential)
-    
+
     async def get_download_url(self):
         """
         获取下载链接
@@ -110,13 +110,15 @@ class CheeseVideo:
         Returns:
             调用 API 所得的结果。
         """
-        api = API['info']['playurl']
+        api = API["info"]["playurl"]
         params = {
             "avid": self.aid,
             "ep_id": self.epid,
             "cid": self.cid,
-            "qn": 127, 
+            "qn": 127,
             "fnval": 4048,
-            "fourk": 1
+            "fourk": 1,
         }
-        return await request("GET", api['url'], params=params, credential=self.credential)
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )

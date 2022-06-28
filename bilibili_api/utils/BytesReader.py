@@ -12,6 +12,7 @@ class BytesReader:
     """
     读字节流助手类。
     """
+
     def __init__(self, stream: bytes):
         """
 
@@ -40,7 +41,9 @@ class BytesReader:
         Returns:
             float。
         """
-        data = struct.unpack("<d" if LE else ">d", self.__stream[self.__offset:self.__offset + 8])
+        data = struct.unpack(
+            "<d" if LE else ">d", self.__stream[self.__offset : self.__offset + 8]
+        )
         self.__offset += 8
         return data[0]
 
@@ -54,7 +57,7 @@ class BytesReader:
         Returns:
             float。
         """
-        stream = self.__stream[self.__offset:self.__offset + 4]
+        stream = self.__stream[self.__offset : self.__offset + 4]
         data = struct.unpack("<f" if LE else ">f", stream)
         self.__offset += 4
         return data[0]
@@ -66,7 +69,7 @@ class BytesReader:
         Returns:
             int。
         """
-        d, l = read_varint(self.__stream[self.__offset:])
+        d, l = read_varint(self.__stream[self.__offset :])
         self.__offset += l
         return d
 
@@ -92,7 +95,7 @@ class BytesReader:
             str。
         """
         str_len = self.varint()
-        data = self.__stream[self.__offset:self.__offset + str_len]
+        data = self.__stream[self.__offset : self.__offset + str_len]
         self.__offset += str_len
         return data.decode(encoding=encoding, errors="ignore")
 
@@ -115,7 +118,7 @@ class BytesReader:
             bytes。
         """
         str_len = self.varint()
-        data = self.__stream[self.__offset:self.__offset + str_len]
+        data = self.__stream[self.__offset : self.__offset + str_len]
         self.__offset += str_len
         return data
 
@@ -129,7 +132,9 @@ class BytesReader:
         Returns:
             int。
         """
-        data = struct.unpack("<h" if LE else ">h", self.__stream[self.__offset:self.__offset + 2])
+        data = struct.unpack(
+            "<h" if LE else ">h", self.__stream[self.__offset : self.__offset + 2]
+        )
         self.__offset += 2
         return data[0]
 
@@ -143,7 +148,9 @@ class BytesReader:
         Returns:
             int。
         """
-        data = struct.unpack("<i" if LE else ">i", self.__stream[self.__offset:self.__offset + 4])
+        data = struct.unpack(
+            "<i" if LE else ">i", self.__stream[self.__offset : self.__offset + 4]
+        )
         self.__offset += 4
         return data[0]
 
@@ -157,7 +164,9 @@ class BytesReader:
         Returns:
             int。
         """
-        data = struct.unpack("<q" if LE else ">q", self.__stream[self.__offset:self.__offset + 8])
+        data = struct.unpack(
+            "<q" if LE else ">q", self.__stream[self.__offset : self.__offset + 8]
+        )
         self.__offset += 8
         return data[0]
 
@@ -171,7 +180,9 @@ class BytesReader:
         Returns:
             int。
         """
-        data = struct.unpack("<H" if LE else ">H", self.__stream[self.__offset:self.__offset + 2])
+        data = struct.unpack(
+            "<H" if LE else ">H", self.__stream[self.__offset : self.__offset + 2]
+        )
         self.__offset += 2
         return data[0]
 
@@ -185,7 +196,9 @@ class BytesReader:
         Returns:
             int。
         """
-        data = struct.unpack("<I" if LE else ">I", self.__stream[self.__offset:self.__offset + 4])
+        data = struct.unpack(
+            "<I" if LE else ">I", self.__stream[self.__offset : self.__offset + 4]
+        )
         self.__offset += 4
         return data[0]
 
@@ -199,7 +212,9 @@ class BytesReader:
         Returns:
             int。
         """
-        data = struct.unpack("<Q" if LE else ">Q", self.__stream[self.__offset:self.__offset + 8])
+        data = struct.unpack(
+            "<Q" if LE else ">Q", self.__stream[self.__offset : self.__offset + 8]
+        )
         self.__offset += 8
         return data[0]
 

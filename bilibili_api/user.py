@@ -25,9 +25,11 @@ class VideoOrder(Enum):
     + FAVORATE: 收藏量倒序。
     + VIEW    : 播放量倒序。
     """
+
     PUBDATE = "pubdate"
     FAVORATE = "stow"
     VIEW = "click"
+
 
 class ChannelOrder(Enum):
     """
@@ -35,8 +37,10 @@ class ChannelOrder(Enum):
     + DEFAULT: 默认排序
     + CHANGE : 升序排序
     """
+
     DEFAULT = "false"
     CHANGE = "true"
+
 
 class AudioOrder(Enum):
     """
@@ -46,6 +50,7 @@ class AudioOrder(Enum):
     + FAVORATE: 收藏量倒序。
     + VIEW    : 播放量倒序。
     """
+
     PUBDATE = 1
     VIEW = 2
     FAVORATE = 3
@@ -59,6 +64,7 @@ class ArticleOrder(Enum):
     + FAVORATE: 收藏量倒序。
     + VIEW    : 阅读量倒序。
     """
+
     PUBDATE = "publish_time"
     FAVORATE = "fav"
     VIEW = "view"
@@ -71,8 +77,10 @@ class ArticleListOrder(Enum):
     + LATEST: 最近更新倒序。
     + VIEW  : 总阅读量倒序。
     """
+
     LATEST = 0
     VIEW = 1
+
 
 class BangumiType(Enum):
     """
@@ -81,6 +89,7 @@ class BangumiType(Enum):
     + BANGUMI: 番剧。
     + DRAMA  : 电视剧/纪录片等。
     """
+
     BANGUMI = 1
     DRAMA = 2
 
@@ -96,6 +105,7 @@ class RelationType(Enum):
     + UNBLOCK           : 取消拉黑。
     + REMOVE_FANS       : 移除粉丝。
     """
+
     SUBSCRIBE = 1
     UNSUBSCRIBE = 2
     SUBSCRIBE_SECRETLY = 3
@@ -108,6 +118,7 @@ class User:
     """
     用户相关
     """
+
     def __init__(self, uid: int, credential: Credential = None):
         """
         Args:
@@ -129,10 +140,10 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["info"]
-        params = {
-            "mid": self.uid
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"mid": self.uid}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
     async def __get_self_info(self):
         """
@@ -155,10 +166,10 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["relation"]
-        params = {
-            "vmid": self.uid
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"vmid": self.uid}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
     async def get_up_stat(self):
         """
@@ -170,10 +181,10 @@ class User:
         self.credential.raise_for_no_bili_jct()
 
         api = API["info"]["upstat"]
-        params = {
-            "mid": self.uid
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"mid": self.uid}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
     async def get_live_info(self):
         """
@@ -183,25 +194,26 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["live"]
-        params = {
-            "mid": self.uid
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"mid": self.uid}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
-    async def get_videos(self,
-                         tid: int = 0,
-                         pn: int = 1,
-                         ps: int = 30,
-                         keyword: str = "",
-                         order: VideoOrder = VideoOrder.PUBDATE
-                         ):
+    async def get_videos(
+        self,
+        tid: int = 0,
+        pn: int = 1,
+        ps: int = 30,
+        keyword: str = "",
+        order: VideoOrder = VideoOrder.PUBDATE,
+    ):
         """
         获取用户投稿视频信息。
 
         Args:
             tid     (int, optional)       : 分区 ID. Defaults to 0（全部）.
             pn      (int, optional)       : 页码，从 1 开始. Defaults to 1.
-            ps      (int, optional)       : 每一页的视频数. Defaults to 30. 
+            ps      (int, optional)       : 每一页的视频数. Defaults to 30.
             keyword (str, optional)       : 搜索关键词. Defaults to "".
             order   (VideoOrder, optional): 排序方式. Defaults to VideoOrder.PUBDATE
 
@@ -215,51 +227,51 @@ class User:
             "tid": tid,
             "pn": pn,
             "keyword": keyword,
-            "order": order.value
+            "order": order.value,
         }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
-    async def get_audios(self, order: AudioOrder = AudioOrder.PUBDATE, pn: int = 1, ps: int = 30):
+    async def get_audios(
+        self, order: AudioOrder = AudioOrder.PUBDATE, pn: int = 1, ps: int = 30
+    ):
         """
         获取用户投稿音频。
 
         Args:
             order (AudioOrder, optional): 排序方式. Defaults to AudioOrder.PUBDATE.
             pn    (int, optional)       : 页码数，从 1 开始。 Defaults to 1.
-            ps      (int, optional)       : 每一页的视频数. Defaults to 30. 
+            ps      (int, optional)       : 每一页的视频数. Defaults to 30.
 
         Returns:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["audio"]
-        params = {
-            "uid": self.uid,
-            "ps": ps,
-            "pn": pn,
-            "order": order.value
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"uid": self.uid, "ps": ps, "pn": pn, "order": order.value}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
-    async def get_articles(self, pn: int = 1, order: ArticleOrder = ArticleOrder.PUBDATE, ps: int = 30):
+    async def get_articles(
+        self, pn: int = 1, order: ArticleOrder = ArticleOrder.PUBDATE, ps: int = 30
+    ):
         """
         获取用户投稿专栏。
 
         Args:
             order (ArticleOrder, optional): 排序方式. Defaults to ArticleOrder.PUBDATE.
             pn    (int, optional)         : 页码数，从 1 开始。 Defaults to 1.
-            ps      (int, optional)       : 每一页的视频数. Defaults to 30. 
+            ps      (int, optional)       : 每一页的视频数. Defaults to 30.
 
         Returns:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["article"]
-        params = {
-            "mid": self.uid,
-            "ps": ps,
-            "pn": pn,
-            "sort": order.value
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"mid": self.uid, "ps": ps, "pn": pn, "sort": order.value}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
     async def get_article_list(self, order: ArticleListOrder = ArticleListOrder.LATEST):
         """
@@ -272,11 +284,10 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["article_lists"]
-        params = {
-            "mid": self.uid,
-            "sort": order.value
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"mid": self.uid, "sort": order.value}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
     async def get_dynamics(self, offset: int = 0, need_top: bool = False):
         """
@@ -298,17 +309,21 @@ class User:
         params = {
             "host_uid": self.uid,
             "offset_dynamic_id": offset,
-            "need_top": 1 if need_top else 0
+            "need_top": 1 if need_top else 0,
         }
-        data = await request("GET", url=api["url"], params=params, credential=self.credential)
+        data = await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
         # card 字段自动转换成 JSON。
-        if 'cards' in data:
+        if "cards" in data:
             for card in data["cards"]:
                 card["card"] = json.loads(card["card"])
                 card["extend_json"] = json.loads(card["extend_json"])
         return data
 
-    async def get_subscribed_bangumi(self, pn: int = 1, type_: BangumiType = BangumiType.BANGUMI):
+    async def get_subscribed_bangumi(
+        self, pn: int = 1, type_: BangumiType = BangumiType.BANGUMI
+    ):
         """
         获取用户追番/追剧列表。
 
@@ -320,15 +335,12 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["bangumi"]
-        params = {
-            "vmid": self.uid,
-            "pn": pn,
-            "ps": 15,
-            "type": type_.value
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"vmid": self.uid, "pn": pn, "ps": 15, "type": type_.value}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
-    async def get_followings(self,  pn: int = 1, desc: bool = True):
+    async def get_followings(self, pn: int = 1, desc: bool = True):
         """
         获取用户关注列表（不是自己只能访问前 5 页）
 
@@ -344,9 +356,11 @@ class User:
             "vmid": self.uid,
             "ps": 20,
             "pn": pn,
-            "order": "desc" if desc else "asc"
+            "order": "desc" if desc else "asc",
         }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
     async def get_followers(self, pn: int = 1, desc: bool = True):
         """
@@ -365,9 +379,11 @@ class User:
             "vmid": self.uid,
             "ps": 20,
             "pn": pn,
-            "order": "desc" if desc else "asc"
+            "order": "desc" if desc else "asc",
         }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
     async def get_overview_stat(self):
         """
@@ -377,11 +393,10 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["overview"]
-        params = {
-            "mid": self.uid,
-            "jsonp": "jsonp"
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"mid": self.uid, "jsonp": "jsonp"}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
     # 操作用户
 
@@ -400,12 +415,10 @@ class User:
         self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["modify"]
-        data = {
-            "fid": self.uid,
-            "act": relation.value,
-            "re_src": 11
-        }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        data = {"fid": self.uid, "act": relation.value, "re_src": 11}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
     async def send_msg(self, text: str):
         """
@@ -436,11 +449,13 @@ class User:
             "msg[timestamp]": int(time.time()),
             "from_filework": 0,
             "build": 0,
-            "mobi_app": "web"
+            "mobi_app": "web",
         }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
-    async def get_channel_videos_series(self, sid: int, pn: int=1, ps: int=100):
+    async def get_channel_videos_series(self, sid: int, pn: int = 1, ps: int = 100):
         """
         查看频道内所有视频。仅供 series_list。
 
@@ -449,19 +464,22 @@ class User:
             pn: 页数，默认为 1
             ps: 每一页显示的视频数量
 
-        Returns: 
+        Returns:
             dict: 调用接口返回的内容
         """
         api = API["info"]["channel_video_series"]
-        param = {
-            "mid": self.uid,
-            "series_id": sid,
-            "pn": pn,
-            "ps": ps
-        }
-        return await request("GET", url=api["url"], params=param, credential=self.credential)
+        param = {"mid": self.uid, "series_id": sid, "pn": pn, "ps": ps}
+        return await request(
+            "GET", url=api["url"], params=param, credential=self.credential
+        )
 
-    async def get_channel_videos_season(self, sid: int, sort: ChannelOrder=ChannelOrder.DEFAULT, pn: int=1, ps: int=100):
+    async def get_channel_videos_season(
+        self,
+        sid: int,
+        sort: ChannelOrder = ChannelOrder.DEFAULT,
+        pn: int = 1,
+        ps: int = 100,
+    ):
         """
         查看频道内所有视频。仅供 season_list。
 
@@ -470,7 +488,7 @@ class User:
             pn: 页数，默认为 1
             ps: 每一页显示的视频数量
 
-        Returns: 
+        Returns:
             dict: 调用接口返回的内容
         """
         api = API["info"]["channel_video_season"]
@@ -479,9 +497,11 @@ class User:
             "season_id": sid,
             "sort_reverse": sort.value,
             "page_num": pn,
-            "page_size": ps
+            "page_size": ps,
         }
-        return await request("GET", url=api["url"], params=param, credential=self.credential)
+        return await request(
+            "GET", url=api["url"], params=param, credential=self.credential
+        )
 
     async def get_channel_list(self):
         """
@@ -492,16 +512,16 @@ class User:
             dict: 调用接口返回的结果
         """
         api = API["info"]["channel_list"]
-        param = {
-            "mid": self.uid, 
-            "page_num": 1, 
-            "page_size": 1
-        }
-        res = await request("GET", url=api["url"], params=param, credential=self.credential)
+        param = {"mid": self.uid, "page_num": 1, "page_size": 1}
+        res = await request(
+            "GET", url=api["url"], params=param, credential=self.credential
+        )
         items = res["items_lists"]["page"]["total"]
         time.sleep(0.5)
         param["page_size"] = items
-        return await request("GET", url=api["url"], params=param, credential=self.credential)
+        return await request(
+            "GET", url=api["url"], params=param, credential=self.credential
+        )
 
     async def get_cheese(self):
         """
@@ -511,10 +531,9 @@ class User:
             dict: 调用接口返回的结果
         """
         api = API["info"]["pugv"]
-        params = {
-            "mid": self.uid
-        }
-        return await request("GET", api['url'], params=params)
+        params = {"mid": self.uid}
+        return await request("GET", api["url"], params=params)
+
 
 async def get_self_info(credential: Credential):
     """
@@ -544,9 +563,7 @@ async def create_subscribe_group(name: str, credential: Credential):
     credential.raise_for_no_bili_jct()
 
     api = API["operate"]["create_subscribe_group"]
-    data = {
-        "tag": name
-    }
+    data = {"tag": name}
 
     return await request("POST", api["url"], data=data, credential=credential)
 
@@ -566,9 +583,7 @@ async def delete_subscribe_group(group_id: int, credential: Credential):
     credential.raise_for_no_bili_jct()
 
     api = API["operate"]["del_subscribe_group"]
-    data = {
-        "tagid": group_id
-    }
+    data = {"tagid": group_id}
 
     return await request("POST", api["url"], data=data, credential=credential)
 
@@ -589,15 +604,14 @@ async def rename_subscribe_group(group_id: int, new_name: str, credential: Crede
     credential.raise_for_no_bili_jct()
 
     api = API["operate"]["rename_subscribe_group"]
-    data = {
-        "tagid": group_id,
-        "name": new_name
-    }
+    data = {"tagid": group_id, "name": new_name}
 
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def set_subscribe_group(uids: List[int], group_ids: List[int], credential: Credential):
+async def set_subscribe_group(
+    uids: List[int], group_ids: List[int], credential: Credential
+):
     """
     设置用户关注分组
 
@@ -613,15 +627,14 @@ async def set_subscribe_group(uids: List[int], group_ids: List[int], credential:
     credential.raise_for_no_bili_jct()
 
     api = API["operate"]["set_user_subscribe_group"]
-    data = {
-        "fids": join(",", uids),
-        "tagids": join(",", group_ids)
-    }
+    data = {"fids": join(",", uids), "tagids": join(",", group_ids)}
 
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def get_self_history(page_num: int = 1, per_page_item: int = 100, credential: Credential = None):
+async def get_self_history(
+    page_num: int = 1, per_page_item: int = 100, credential: Credential = None
+):
     """
     获取用户浏览历史记录
 
@@ -639,9 +652,6 @@ async def get_self_history(page_num: int = 1, per_page_item: int = 100, credenti
     credential.raise_for_no_sessdata()
 
     api = API["info"]["history"]
-    params = {
-        "pn": page_num,
-        "ps": per_page_item
-    }
+    params = {"pn": page_num, "ps": per_page_item}
 
     return await request("GET", url=api["url"], params=params, credential=credential)

@@ -6,7 +6,8 @@ from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network import request
 
-API = get_api('audio')
+API = get_api("audio")
+
 
 class Audio:
     def __init__(self, auid: int, credential: Credential = None):
@@ -27,33 +28,24 @@ class Audio:
         """
 
         api = API["audio_info"]["info"]
-        params = {
-            "sid": self.auid
-        }
-        return await request('GET', api['url'], params, credential=self.credential)
-
+        params = {"sid": self.auid}
+        return await request("GET", api["url"], params, credential=self.credential)
 
     async def get_tags(self):
         """
         获取音频 tags
         """
         api = API["audio_info"]["tag"]
-        params = {
-            "sid": self.auid
-        }
-        return await request('GET', api['url'], params, credential=self.credential)
+        params = {"sid": self.auid}
+        return await request("GET", api["url"], params, credential=self.credential)
 
     async def get_download_url(self):
         """
         获取音频下载链接
         """
         api = API["audio_info"]["download_url"]
-        params = {
-            "sid": self.auid,
-            "privilege": 2,
-            "quality": 2
-        }
-        return await request('GET', api['url'], params, credential=self.credential)
+        params = {"sid": self.auid, "privilege": 2, "quality": 2}
+        return await request("GET", api["url"], params, credential=self.credential)
 
     async def add_coins(self, num: int = 2):
         """
@@ -65,18 +57,16 @@ class Audio:
         self.credential.raise_for_no_sessdata()
 
         api = API["audio_operate"]["coin"]
-        data = {
-            "sid": self.auid,
-            "multiply": num
-        }
+        data = {"sid": self.auid, "multiply": num}
 
-        return await request('POST', api['url'], data=data, credential=self.credential)
+        return await request("POST", api["url"], data=data, credential=self.credential)
 
 
 class AudioList:
     """
     歌单
     """
+
     def __init__(self, amid: int, credential: Credential = None):
         """
 
@@ -87,18 +77,14 @@ class AudioList:
         self.amid = amid
         self.credential = credential if credential is not None else Credential()
 
-
     async def get_info(self):
         """
         获取歌单信息
         """
 
         api = API["list_info"]["info"]
-        params = {
-            "sid": self.amid
-        }
-        return await request('GET', api['url'], params, credential=self.credential)
-
+        params = {"sid": self.amid}
+        return await request("GET", api["url"], params, credential=self.credential)
 
     async def get_tags(self):
         """
@@ -106,11 +92,8 @@ class AudioList:
         """
 
         api = API["list_info"]["tag"]
-        params = {
-            "sid": self.amid
-        }
-        return await request('GET', api['url'], params, credential=self.credential)
-
+        params = {"sid": self.amid}
+        return await request("GET", api["url"], params, credential=self.credential)
 
     async def get_song_list(self, pn: int = 1):
         """
@@ -120,13 +103,9 @@ class AudioList:
             pn (int, optional): 页码. Defaults to 1
         """
         api = API["list_info"]["song_list"]
-        params = {
-            "sid": self.amid,
-            "pn": pn,
-            "ps": 100
-        }
+        params = {"sid": self.amid, "pn": pn, "ps": 100}
 
-        return await request('GET', api['url'], params, credential=self.credential)
+        return await request("GET", api["url"], params, credential=self.credential)
 
 
 async def get_user_stat(uid: int, credential: Credential = None):
@@ -139,7 +118,5 @@ async def get_user_stat(uid: int, credential: Credential = None):
     """
     credential = credential if credential is not None else Credential()
     api = API["audio_info"]["user"]
-    params = {
-        "uid": uid
-    }
-    return await request('GET', api['url'], params, credential=credential)
+    params = {"uid": uid}
+    return await request("GET", api["url"], params, credential=credential)

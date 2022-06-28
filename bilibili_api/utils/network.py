@@ -18,6 +18,7 @@ from .. import settings
 
 __session_pool = {}
 
+
 @atexit.register
 def __clean():
     """
@@ -34,14 +35,16 @@ def __clean():
         loop.create_task(__clean_task())
 
 
-async def request(method: str,
-                  url: str,
-                  params: dict = None,
-                  data: Any = None,
-                  credential: Credential = None,
-                  no_csrf: bool = False,
-                  json_body: bool = False,
-                  **kwargs):
+async def request(
+    method: str,
+    url: str,
+    params: dict = None,
+    data: Any = None,
+    credential: Credential = None,
+    no_csrf: bool = False,
+    json_body: bool = False,
+    **kwargs,
+):
     """
     向接口发送请求。
 
@@ -62,13 +65,13 @@ async def request(method: str,
 
     method = method.upper()
     # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
-    if method != 'GET' and not no_csrf:
+    if method != "GET" and not no_csrf:
         credential.raise_for_no_bili_jct()
 
     # 使用 Referer 和 UA 请求头以绕过反爬虫机制
     DEFAULT_HEADERS = {
         "Referer": "https://www.bilibili.com",
-        "User-Agent": "Mozilla/5.0"
+        "User-Agent": "Mozilla/5.0",
     }
     headers = DEFAULT_HEADERS
 
@@ -76,11 +79,11 @@ async def request(method: str,
         params = {}
 
     # 自动添加 csrf
-    if not no_csrf and method in ['POST', 'DELETE', 'PATCH']:
+    if not no_csrf and method in ["POST", "DELETE", "PATCH"]:
         if data is None:
             data = {}
-        data['csrf'] = credential.bili_jct
-        data['csrf_token'] = credential.bili_jct
+        data["csrf"] = credential.bili_jct
+        data["csrf_token"] = credential.bili_jct
 
     # jsonp
 
@@ -93,7 +96,7 @@ async def request(method: str,
         "params": params,
         "data": data,
         "headers": headers,
-        "cookies": credential.get_cookies()
+        "cookies": credential.get_cookies(),
     }
 
     config.update(kwargs)
@@ -106,10 +109,10 @@ async def request(method: str,
     if settings.proxy:
         config["proxy"] = settings.proxy
 
-    #config["ssl"] = False
+    # config["ssl"] = False
 
-    #config["verify_ssl"] = False
-    #config["ssl"] = False
+    # config["verify_ssl"] = False
+    # config["ssl"] = False
 
     session = get_session()
 
@@ -136,10 +139,9 @@ async def request(method: str,
         raw_data = await resp.text()
         resp_data: dict
 
-        if 'callback' in params:
+        if "callback" in params:
             # JSONP 请求
-            resp_data = json.loads(
-                re.match("^.*?({.*}).*$", raw_data, re.S).group(1))
+            resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1))
         else:
             # JSON
             resp_data = json.loads(raw_data)
@@ -151,9 +153,9 @@ async def request(method: str,
             raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
 
         if code != 0:
-            msg = resp_data.get('msg', None)
+            msg = resp_data.get("msg", None)
             if msg is None:
-                msg = resp_data.get('message', None)
+                msg = resp_data.get("message", None)
             if msg is None:
                 msg = "接口未返回错误信息"
             raise ResponseCodeException(code, msg, resp_data)
@@ -196,4 +198,4 @@ def to_form_urlencoded(data: dict) -> str:
     for [k, v] in data.items():
         temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
 
-    return '&'.join(temp)
+    return "&".join(temp)

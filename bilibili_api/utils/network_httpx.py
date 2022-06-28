@@ -168,7 +168,7 @@ def get_session():
     session = __session_pool.get(loop, None)
     if session is None:
         if settings.proxy:
-            proxies = {settings.proxy_type: settings.proxy}
+            proxies = {settings.proxy_use: settings.proxy}
             session = httpx.AsyncClient(proxies=proxies)
         else:
             session = httpx.AsyncClient()

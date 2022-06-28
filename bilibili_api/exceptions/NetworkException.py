@@ -11,6 +11,7 @@ class NetworkException(ApiException):
     """
     网络错误。
     """
+
     def __init__(self, status: int, msg: str):
         """
 

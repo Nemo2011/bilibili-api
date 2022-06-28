@@ -11,10 +11,7 @@ from .utils.short import get_real_url
 from .utils.sync import sync
 from .utils.network_httpx import get_session, set_session
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0", 
-    "Referer": "https://bilibili.com"
-}
+HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://bilibili.com"}
 
 # 支持嵌套事件
 nest_asyncio.apply()

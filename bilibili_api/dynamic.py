@@ -16,7 +16,7 @@ from .utils.Credential import Credential
 from . import user, exceptions
 from .utils import utils
 
-API = utils.get_api('dynamic')
+API = utils.get_api("dynamic")
 
 
 async def _parse_at(text: str):
@@ -56,12 +56,9 @@ async def _parse_at(text: str):
     for i, name in enumerate(names):
         index = new_text.index(f"@{name}")
         length = 2 + len(name)
-        ctrl.append({
-            "location": index,
-            "type": 1,
-            "length": length,
-            "data": int(uid_list[i])
-        })
+        ctrl.append(
+            {"location": index, "type": 1, "length": length, "data": int(uid_list[i])}
+        )
 
     return new_text, at_uids, json.dumps(ctrl, ensure_ascii=False)
 
@@ -82,9 +79,9 @@ async def _get_text_data(text: str):
         "type": 4,
         "rid": 0,
         "content": new_text,
-        "extension": "{\"emoji_type\":1}",
+        "extension": '{"emoji_type":1}',
         "at_uids": at_uids,
-        "ctrl": ctrl
+        "ctrl": ctrl,
     }
     return data
 
@@ -104,21 +101,21 @@ async def upload_image(image_stream: io.BufferedIOBase, credential: Credential):
     credential.raise_for_no_bili_jct()
 
     api = API["send"]["upload_img"]
-    form = FormData({
-        "biz": "draw",
-        "category": "daily",
-        "file_up": image_stream
-    })
+    form = FormData({"biz": "draw", "category": "daily", "file_up": image_stream})
     session = get_session_aiohttp()
-    resp = await session.post(url=api["url"], data=form, cookies=credential.get_cookies())
+    resp = await session.post(
+        url=api["url"], data=form, cookies=credential.get_cookies()
+    )
     data = await resp.read()
-    j = json.loads(data.decode('utf8'))
-    if j['code'] != 0:
-        raise exceptions.ResponseCodeException(j['code'], j['message'])
-    return j['data']
+    j = json.loads(data.decode("utf8"))
+    if j["code"] != 0:
+        raise exceptions.ResponseCodeException(j["code"], j["message"])
+    return j["data"]
 
 
-async def _get_draw_data(text: str, image_streams: List[io.BufferedIOBase], credential: Credential):
+async def _get_draw_data(
+    text: str, image_streams: List[io.BufferedIOBase], credential: Credential
+):
     """
     获取图片动态请求参数，将会自动上传图片
 
@@ -143,8 +140,11 @@ async def _get_draw_data(text: str, image_streams: List[io.BufferedIOBase], cred
         Returns:
             [type]: [description]
         """
-        return {"img_src": image["image_url"], "img_width": image["image_width"],
-                "img_height": image["image_height"]}
+        return {
+            "img_src": image["image_url"],
+            "img_width": image["image_width"],
+            "img_height": image["image_height"],
+        }
 
     pictures = list(map(transformPicInfo, images_info))
     data = {
@@ -158,18 +158,22 @@ async def _get_draw_data(text: str, image_streams: List[io.BufferedIOBase], cred
         "content": new_text,
         "from": "create.dynamic.web",
         "up_choose_comment": 0,
-        "extension": json.dumps({"emoji_type": 1, "from": {"emoji_type": 1}, "flag_cfg": {}}),
+        "extension": json.dumps(
+            {"emoji_type": 1, "from": {"emoji_type": 1}, "flag_cfg": {}}
+        ),
         "at_uids": at_uids,
         "at_control": ctrl,
-        "setting": json.dumps({
-            "copy_forbidden": 0,
-            "cachedTime": 0
-        })
+        "setting": json.dumps({"copy_forbidden": 0, "cachedTime": 0}),
     }
     return data
 
 
-async def send_dynamic(text: str, image_streams: List[io.BufferedIOBase] = None, send_time: datetime.datetime = None, credential: Credential = None):
+async def send_dynamic(
+    text: str,
+    image_streams: List[io.BufferedIOBase] = None,
+    send_time: datetime.datetime = None,
+    credential: Credential = None,
+):
     """
     自动判断动态类型选择合适的 API 并发送动态
 
@@ -214,7 +218,7 @@ async def send_dynamic(text: str, image_streams: List[io.BufferedIOBase] = None,
         data = {
             "type": type_,
             "publish_time": int(send_time.timestamp()),
-            "request": json.dumps(request_data, ensure_ascii=False)
+            "request": json.dumps(request_data, ensure_ascii=False),
         }
         return await request("POST", api["url"], data=data, credential=credential)
 
@@ -239,6 +243,7 @@ async def send_dynamic(text: str, image_streams: List[io.BufferedIOBase] = None,
 
 
 # 定时动态操作
+
 
 async def get_schedules_list(credential: Credential):
     """
@@ -265,9 +270,7 @@ async def send_schedule_now(draft_id: int, credential: Credential):
     credential.raise_for_no_sessdata()
 
     api = API["schedule"]["publish_now"]
-    data = {
-        "draft_id": draft_id
-    }
+    data = {"draft_id": draft_id}
     return await request("POST", api["url"], data=data, credential=credential)
 
 
@@ -282,9 +285,7 @@ async def delete_schedule(draft_id: int, credential: Credential):
     credential.raise_for_no_sessdata()
 
     api = API["schedule"]["delete"]
-    data = {
-        "draft_id": draft_id
-    }
+    data = {"draft_id": draft_id}
     return await request("POST", api["url"], data=data, credential=credential)
 
 
@@ -298,22 +299,20 @@ class Dynamic:
         self.dynamic_id = dynamic_id
         self.credential = credential if credential is not None else Credential()
 
-
     async def get_info(self):
         """
         获取动态信息
         """
 
         api = API["info"]["detail"]
-        params = {
-            "dynamic_id": self.dynamic_id
-        }
-        data = await request("GET", api["url"], params=params, credential=self.credential)
+        params = {"dynamic_id": self.dynamic_id}
+        data = await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
         data["card"]["card"] = json.loads(data["card"]["card"])
         data["card"]["extend_json"] = json.loads(data["card"]["extend_json"])
         return data["card"]
-
 
     async def get_reposts(self, offset: str = "0"):
         """
@@ -324,9 +323,11 @@ class Dynamic:
         """
         api = API["info"]["repost"]
         params = {"dynamic_id": self.dynamic_id}
-        if offset != '0':
-            params['offset'] = offset
-        return await request("GET", api["url"], params=params, credential=self.credential)
+        if offset != "0":
+            params["offset"] = offset
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
     async def set_like(self, status: bool = True):
         """
@@ -346,10 +347,9 @@ class Dynamic:
         data = {
             "dynamic_id": self.dynamic_id,
             "up": 1 if status else 2,
-            "uid": self_uid
+            "uid": self_uid,
         }
         return await request("POST", api["url"], data=data, credential=self.credential)
-
 
     async def delete(self):
         """
@@ -358,11 +358,8 @@ class Dynamic:
         self.credential.raise_for_no_sessdata()
 
         api = API["operate"]["delete"]
-        data = {
-            "dynamic_id": self.dynamic_id
-        }
+        data = {"dynamic_id": self.dynamic_id}
         return await request("POST", api["url"], data=data, credential=self.credential)
-
 
     async def repost(self, text: str = "转发动态"):
         """
@@ -375,5 +372,5 @@ class Dynamic:
 
         api = API["operate"]["repost"]
         data = await _get_text_data(text)
-        data['dynamic_id'] = self.dynamic_id
+        data["dynamic_id"] = self.dynamic_id
         return await request("POST", api["url"], data=data, credential=self.credential)

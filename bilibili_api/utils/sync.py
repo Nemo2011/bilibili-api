@@ -3,6 +3,7 @@ import asyncio
 import nest_asyncio
 from .. import settings
 
+
 def __ensure_event_loop():
     try:
         asyncio.get_event_loop()
@@ -26,4 +27,3 @@ def sync(coroutine: Coroutine):
     __ensure_event_loop()
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(coroutine)
-

@@ -11,6 +11,7 @@ class ArgsException(ApiException):
     """
     参数错误。
     """
+
     def __init__(self, msg: str):
         """
         Args:

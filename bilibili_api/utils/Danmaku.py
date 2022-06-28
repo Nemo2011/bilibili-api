@@ -15,6 +15,7 @@ class FontSize(Enum):
     """
     字体大小枚举。
     """
+
     EXTREME_SMALL = 12
     SUPER_SMALL = 16
     SMALL = 18
@@ -28,30 +29,35 @@ class Mode(Enum):
     """
     弹幕模式枚举。
     """
+
     FLY = 1
     TOP = 5
     BOTTOM = 4
     REVERSE = 6
 
+
 class Danmaku:
     """
     弹幕类。
     """
-    def __init__(self,
-                 text: str,
-                 dm_time: float = 0.0,
-                 send_time: float = time.time(),
-                 crc32_id: str = None,
-                 color: str = 'ffffff',
-                 weight: int = -1,
-                 id_: int = -1,
-                 id_str: str = "",
-                 action: str = "",
-                 mode: Mode = Mode.FLY,
-                 font_size: FontSize = FontSize.NORMAL,
-                 is_sub: bool = False,
-                 pool: int = 0,
-                 attr: int = -1):
+
+    def __init__(
+        self,
+        text: str,
+        dm_time: float = 0.0,
+        send_time: float = time.time(),
+        crc32_id: str = None,
+        color: str = "ffffff",
+        weight: int = -1,
+        id_: int = -1,
+        id_str: str = "",
+        action: str = "",
+        mode: Mode = Mode.FLY,
+        font_size: FontSize = FontSize.NORMAL,
+        is_sub: bool = False,
+        pool: int = 0,
+        attr: int = -1,
+    ):
         """
         Args:
             text      (str)               : 弹幕文本。
@@ -102,7 +108,7 @@ class Danmaku:
         Returns:
             int: 真实 UID。
         """
-        self.uid = zlib.crc32(self.crc32_id.encode('utf8'))
+        self.uid = zlib.crc32(self.crc32_id.encode("utf8"))
         return self.uid
 
     def to_xml(self):

@@ -14,6 +14,7 @@ class AsyncEvent:
 
     特殊事件：__ALL__ 所有事件均触发
     """
+
     def __init__(self):
         self.__handlers = {}
 
@@ -37,6 +38,7 @@ class AsyncEvent:
         Args:
             event_name (str): 事件名。
         """
+
         def decorator(func: Coroutine):
             self.add_event_listener(event_name, func)
             return func
@@ -74,8 +76,5 @@ class AsyncEvent:
             for coroutine in self.__handlers[name]:
                 asyncio.create_task(coroutine(data))
 
-        if name != '__ALL__':
-            self.dispatch('__ALL__', {
-                "name": name,
-                "data": data
-            })
+        if name != "__ALL__":
+            self.dispatch("__ALL__", {"name": name, "data": data})
