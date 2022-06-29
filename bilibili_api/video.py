@@ -1124,6 +1124,7 @@ class Video:
         Args:
             page_index: 分 P 号
             dmid: 弹幕 id
+            cid: 分 P 编码
         Returns:
             调用 API 返回的结果
         """
