@@ -370,14 +370,6 @@ asyncio.get_event_loop().run_until_complete(r.connect())
 | ERROR        | 发生错误       | aiohttp.ClientWebSocketResponse |
 | CONNECTED    | 成功连接       | None                            |
 
-### Attributes
-
-| name       | type           | description   |
-| ---------- | -------------- | ------------- |
-| credential | Credential     | Credential 类 |
-| logger     | logging.Logger | Logger 类     |
-
-
 ### Sub classes
 
 #### class Datapack

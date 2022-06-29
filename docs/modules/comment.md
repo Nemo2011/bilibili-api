@@ -44,15 +44,6 @@ from bilibili_api import comment
 
 对单条评论的相关操作
 
-### Attributes
-
-| name       | type         | description            |
-| ---------- | ------------ | ---------------------- |
-| oid        | int          | 评论所在资源 ID。      |
-| type\_      | ResourceType | 评论所在资源类型枚举。 |
-| rpid       | int          | 评论 ID。              |
-| credential | Credential   | 凭据                   |
-
 ### Functions
 
 #### def \_\_init\_\_()

@@ -19,13 +19,6 @@ from bilibili_api import article
 
 专栏类
 
-### Attributes
-
-| name       | type       | description |
-| ---------- | ---------- | ----------- |
-| cvid       | int        | 专栏 ID     |
-| credential | Credential | 凭据        |
-
 ### Functions
 
 #### def \_\_init\_\_()

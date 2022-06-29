@@ -39,17 +39,21 @@ from . import settings
 
 API = get_api("video")
 
+
 class DanmakuOperatorType(Enum):
     DELETE = 1
     PROTECT = 2
     UNPROTECT = 3
+
 
 class Video:
     """
     视频类，各种对视频的操作均在里面。
     """
 
-    def __init__(self, bvid: str = None, aid: int = None, credential: Credential = None):
+    def __init__(
+        self, bvid: str = None, aid: int = None, credential: Credential = None
+    ):
         """
         Args:
             bvid       (str, optional)       : BV 号. bvid 和 aid 必须提供其中之一。
@@ -80,8 +84,7 @@ class Video:
         """
         # 检查 bvid 是否有效
         if not re.search("^BV[a-zA-Z0-9]{10}$", bvid):
-            raise ArgsException(
-                "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）。")
+            raise ArgsException("bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）。")
         self.__bvid = bvid
         self.__aid = bvid2aid(bvid)
 
@@ -124,10 +127,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         url = API["info"]["detail"]["url"]
-        params = {
-            "bvid": self.get_bvid(),
-            "aid": self.get_aid()
-        }
+        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         resp = await request("GET", url, params=params, credential=self.credential)
         # 存入 self.__info 中以备后续调用
         self.__info = resp
@@ -152,10 +152,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         url = API["info"]["stat"]["url"]
-        params = {
-            "bvid": self.get_bvid(),
-            "aid": self.get_aid()
-        }
+        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential)
 
     async def get_tags(self):
@@ -166,10 +163,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         url = API["info"]["tags"]["url"]
-        params = {
-            "bvid": self.get_bvid(),
-            "aid": self.get_aid()
-        }
+        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential)
 
     async def get_chargers(self):
@@ -182,11 +176,7 @@ class Video:
         info = await self.__get_info_cached()
         mid = info["owner"]["mid"]
         url = API["info"]["chargers"]["url"]
-        params = {
-            "aid": self.get_aid(),
-            "bvid": self.get_bvid(),
-            "mid": mid
-        }
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "mid": mid}
         return await request("GET", url, params=params, credential=self.credential)
 
     async def get_pages(self):
@@ -197,10 +187,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         url = API["info"]["pages"]["url"]
-        params = {
-            "aid": self.get_aid(),
-            "bvid": self.get_bvid()
-        }
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
         return await request("GET", url, params=params, credential=self.credential)
 
     async def __get_page_id_by_index(self, page_index: int):
@@ -226,7 +213,9 @@ class Video:
         cid = page["cid"]
         return cid
 
-    async def get_download_url(self, page_index: int = None, cid: int = None, html5: bool=False):
+    async def get_download_url(
+        self, page_index: int = None, cid: int = None, html5: bool = False
+    ):
         """
         获取视频下载信息。
 
@@ -242,7 +231,7 @@ class Video:
         """
         if cid is None:
             if page_index is None:
-                raise ArgsException('page_index 和 cid 至少提供一个。')
+                raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
 
@@ -254,8 +243,8 @@ class Video:
                 "qn": "127",
                 "otype": "json",
                 "fnval": 4048,
-                "fourk": 1, 
-                "platform": "html5"
+                "fourk": 1,
+                "platform": "html5",
             }
         else:
             params = {
@@ -264,7 +253,7 @@ class Video:
                 "qn": "127",
                 "otype": "json",
                 "fnval": 4048,
-                "fourk": 1, 
+                "fourk": 1,
             }
         return await request("GET", url, params=params, credential=self.credential)
 
@@ -276,10 +265,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         url = API["info"]["related"]["url"]
-        params = {
-            "aid": self.get_aid(),
-            "bvid": self.get_bvid()
-        }
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
         return await request("GET", url, params=params, credential=self.credential)
 
     async def has_liked(self):
@@ -292,10 +278,7 @@ class Video:
         self.credential.raise_for_no_sessdata()
 
         url = API["info"]["has_liked"]["url"]
-        params = {
-            "bvid": self.get_bvid(),
-            "aid": self.get_aid()
-        }
+        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential) == 1
 
     async def get_pay_coins(self):
@@ -308,11 +291,10 @@ class Video:
         self.credential.raise_for_no_sessdata()
 
         url = API["info"]["get_pay_coins"]["url"]
-        params = {
-            "bvid": self.get_bvid(),
-            "aid": self.get_aid()
-        }
-        return (await request("GET", url, params=params, credential=self.credential))["multiply"]
+        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+        return (await request("GET", url, params=params, credential=self.credential))[
+            "multiply"
+        ]
 
     async def has_favoured(self):
         """
@@ -324,11 +306,10 @@ class Video:
         self.credential.raise_for_no_sessdata()
 
         url = API["info"]["has_favoured"]["url"]
-        params = {
-            "bvid": self.get_bvid(),
-            "aid": self.get_aid()
-        }
-        return (await request("GET", url, params=params, credential=self.credential))["favoured"]
+        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+        return (await request("GET", url, params=params, credential=self.credential))[
+            "favoured"
+        ]
 
     async def get_media_list(self):
         """
@@ -342,11 +323,7 @@ class Video:
         info = await self.__get_info_cached()
 
         url = API["info"]["media_list"]["url"]
-        params = {
-            "type": 2,
-            "rid": self.get_aid(),
-            "up_mid": info["owner"]["mid"]
-        }
+        params = {"type": 2, "rid": self.get_aid(), "up_mid": info["owner"]["mid"]}
         return await request("GET", url, params=params, credential=self.credential)
 
     async def get_danmaku_view(self, page_index: int = None, cid: int = None):
@@ -362,7 +339,7 @@ class Video:
         """
         if cid is None:
             if page_index is None:
-                raise ArgsException('page_index 和 cid 至少提供一个。')
+                raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
 
@@ -370,16 +347,12 @@ class Video:
         api = API["danmaku"]["view"]
 
         config = {}
-        config['url'] = api['url']
-        config['params'] = {
-            "type": 1,
-            "oid": cid,
-            "pid": self.get_aid()
-        }
-        config['cookies'] = self.credential.get_cookies()
-        config['headers'] = {
+        config["url"] = api["url"]
+        config["params"] = {"type": 1, "oid": cid, "pid": self.get_aid()}
+        config["cookies"] = self.credential.get_cookies()
+        config["headers"] = {
             "Referer": "https://www.bilibili.com",
-            "User-Agent": "Mozilla/5.0"
+            "User-Agent": "Mozilla/5.0",
         }
 
         try:
@@ -398,9 +371,9 @@ class Video:
             while not reader_.has_end():
                 t = reader_.varint() >> 3
                 if t == 1:
-                    data['page_size'] = reader_.varint()
+                    data["page_size"] = reader_.varint()
                 elif t == 2:
-                    data['total'] = reader_.varint()
+                    data["total"] = reader_.varint()
                 else:
                     continue
             return data
@@ -411,11 +384,11 @@ class Video:
             while not reader_.has_end():
                 t = reader_.varint() >> 3
                 if t == 1:
-                    data['rec_flag'] = reader_.varint()
+                    data["rec_flag"] = reader_.varint()
                 elif t == 2:
-                    data['rec_text'] = reader_.string()
+                    data["rec_text"] = reader_.string()
                 elif t == 3:
-                    data['rec_switch'] = reader_.varint()
+                    data["rec_switch"] = reader_.varint()
                 else:
                     continue
             return data
@@ -426,26 +399,26 @@ class Video:
             while not reader_.has_end():
                 t = reader_.varint() >> 3
                 if t == 1:
-                    data['id'] = reader_.varint()
+                    data["id"] = reader_.varint()
                 elif t == 2:
-                    data['oid'] = reader_.varint()
+                    data["oid"] = reader_.varint()
                 elif t == 3:
-                    data['mid'] = reader_.varint()
+                    data["mid"] = reader_.varint()
                 elif t == 4:
-                    data['commend'] = reader_.string()
+                    data["commend"] = reader_.string()
                 elif t == 5:
-                    data['content'] = reader_.string()
+                    data["content"] = reader_.string()
                 elif t == 6:
-                    data['progress'] = reader_.varint()
+                    data["progress"] = reader_.varint()
                 elif t == 7:
-                    data['ctime'] = reader_.string()
+                    data["ctime"] = reader_.string()
                 elif t == 8:
-                    data['mtime'] = reader_.string()
+                    data["mtime"] = reader_.string()
                 elif t == 9:
-                    data['extra'] = json.loads(reader_.string())
+                    data["extra"] = json.loads(reader_.string())
 
                 elif t == 10:
-                    data['id_str'] = reader_.string()
+                    data["id_str"] = reader_.string()
                 else:
                     continue
             return data
@@ -457,45 +430,45 @@ class Video:
                 t = reader_.varint() >> 3
 
                 if t == 1:
-                    data['dm_switch'] = reader_.bool()
+                    data["dm_switch"] = reader_.bool()
                 elif t == 2:
-                    data['ai_switch'] = reader_.bool()
+                    data["ai_switch"] = reader_.bool()
                 elif t == 3:
-                    data['ai_level'] = reader_.varint()
+                    data["ai_level"] = reader_.varint()
                 elif t == 4:
-                    data['enable_top'] = reader_.bool()
+                    data["enable_top"] = reader_.bool()
                 elif t == 5:
-                    data['enable_scroll'] = reader_.bool()
+                    data["enable_scroll"] = reader_.bool()
                 elif t == 6:
-                    data['enable_bottom'] = reader_.bool()
+                    data["enable_bottom"] = reader_.bool()
                 elif t == 7:
-                    data['enable_color'] = reader_.bool()
+                    data["enable_color"] = reader_.bool()
                 elif t == 8:
-                    data['enable_special'] = reader_.bool()
+                    data["enable_special"] = reader_.bool()
                 elif t == 9:
-                    data['prevent_shade'] = reader_.bool()
+                    data["prevent_shade"] = reader_.bool()
                 elif t == 10:
-                    data['dmask'] = reader_.bool()
+                    data["dmask"] = reader_.bool()
                 elif t == 11:
-                    data['opacity'] = reader_.float(True)
+                    data["opacity"] = reader_.float(True)
                 elif t == 12:
-                    data['dm_area'] = reader_.varint()
+                    data["dm_area"] = reader_.varint()
                 elif t == 13:
-                    data['speed_plus'] = reader_.float(True)
+                    data["speed_plus"] = reader_.float(True)
                 elif t == 14:
-                    data['font_size'] = reader_.float(True)
+                    data["font_size"] = reader_.float(True)
                 elif t == 15:
-                    data['screen_sync'] = reader_.bool()
+                    data["screen_sync"] = reader_.bool()
                 elif t == 16:
-                    data['speed_sync'] = reader_.bool()
+                    data["speed_sync"] = reader_.bool()
                 elif t == 17:
-                    data['font_family'] = reader_.string()
+                    data["font_family"] = reader_.string()
                 elif t == 18:
-                    data['bold'] = reader_.bool()
+                    data["bold"] = reader_.bool()
                 elif t == 19:
-                    data['font_border'] = reader_.varint()
+                    data["font_border"] = reader_.varint()
                 elif t == 20:
-                    data['draw_type'] = reader_.string()
+                    data["draw_type"] = reader_.string()
                 else:
                     continue
             return data
@@ -507,22 +480,22 @@ class Video:
                 type_ = reader_.varint() >> 3
                 if type_ == 1:
                     details_dict = {}
-                    details_dict['texts'] = []
+                    details_dict["texts"] = []
                     img_details = reader_.bytes_string()
                     reader_details = BytesReader(img_details)
                     while not reader_details.has_end():
                         type_details = reader_details.varint() >> 3
                         if type_details == 1:
-                            details_dict['texts'].append(reader_details.string())
+                            details_dict["texts"].append(reader_details.string())
                         elif type_details == 2:
-                            details_dict['image'] = reader_details.string()
+                            details_dict["image"] = reader_details.string()
                         elif type_details == 3:
                             id_string = reader_details.bytes_string()
                             id_reader = BytesReader(id_string)
                             while not id_reader.has_end():
                                 type_id = id_reader.varint() >> 3
                                 if type_id == 2:
-                                    details_dict['id'] = id_reader.varint()
+                                    details_dict["id"] = id_reader.varint()
                                 else:
                                     raise ResponseException("解析响应数据错误")
                     image_list.append(details_dict)
@@ -534,37 +507,40 @@ class Video:
             type_ = reader.varint() >> 3
 
             if type_ == 1:
-                json_data['state'] = reader.varint()
+                json_data["state"] = reader.varint()
             elif type_ == 2:
-                json_data['text'] = reader.string()
+                json_data["text"] = reader.string()
             elif type_ == 3:
-                json_data['text_side'] = reader.string()
+                json_data["text_side"] = reader.string()
             elif type_ == 4:
-                json_data['dm_seg'] = read_dm_seg(reader.bytes_string())
+                json_data["dm_seg"] = read_dm_seg(reader.bytes_string())
             elif type_ == 5:
-                json_data['flag'] = read_flag(reader.bytes_string())
+                json_data["flag"] = read_flag(reader.bytes_string())
             elif type_ == 6:
-                if 'special_dms' not in json_data:
-                    json_data['special_dms'] = []
-                json_data['special_dms'].append(reader.string())
+                if "special_dms" not in json_data:
+                    json_data["special_dms"] = []
+                json_data["special_dms"].append(reader.string())
             elif type_ == 7:
-                json_data['check_box'] = reader.bool()
+                json_data["check_box"] = reader.bool()
             elif type_ == 8:
-                json_data['count'] = reader.varint()
+                json_data["count"] = reader.varint()
             elif type_ == 9:
-                if 'command_dms' not in json_data:
-                    json_data['command_dms'] = []
-                json_data['command_dms'].append(
-                    read_command_danmakus(reader.bytes_string()))
+                if "command_dms" not in json_data:
+                    json_data["command_dms"] = []
+                json_data["command_dms"].append(
+                    read_command_danmakus(reader.bytes_string())
+                )
             elif type_ == 10:
-                json_data['dm_setting'] = read_settings(reader.bytes_string())
+                json_data["dm_setting"] = read_settings(reader.bytes_string())
             elif type_ == 12:
-                json_data['image_dms'] = read_image_danmakus(reader.bytes_string())
+                json_data["image_dms"] = read_image_danmakus(reader.bytes_string())
             else:
                 continue
         return json_data
 
-    async def get_danmakus(self, page_index: int = None, date: datetime.date = None, cid: int = None):
+    async def get_danmakus(
+        self, page_index: int = None, date: datetime.date = None, cid: int = None
+    ):
         """
         获取弹幕。
 
@@ -579,21 +555,17 @@ class Video:
         if date is not None:
             self.credential.raise_for_no_sessdata()
 
-        #self.credential.raise_for_no_sessdata()
+        # self.credential.raise_for_no_sessdata()
 
         if cid is None:
             if page_index is None:
-                raise ArgsException('page_index 和 cid 至少提供一个。')
+                raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
 
         session = get_session()
         aid = self.get_aid()
-        params = {
-            "oid": cid,
-            "type": 1,
-            "pid": aid
-        }
+        params = {"oid": cid, "type": 1, "pid": aid}
         if date is not None:
             # 获取历史弹幕
             api = API["danmaku"]["get_history_danmaku"]
@@ -603,39 +575,39 @@ class Video:
         else:
             api = API["danmaku"]["get_danmaku"]
             view = await self.get_danmaku_view(cid=cid)
-            all_seg = view['dm_seg']['total']
+            all_seg = view["dm_seg"]["total"]
 
         danmakus = []
 
         for seg in range(all_seg):
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
-                params['segment_index'] = seg + 1
+                params["segment_index"] = seg + 1
 
             config = {}
-            config['url'] = api['url']
-            config['params'] = params
-            config['headers'] = {
+            config["url"] = api["url"]
+            config["params"] = params
+            config["headers"] = {
                 "Referer": "https://www.bilibili.com",
-                "User-Agent": "Mozilla/5.0"
+                "User-Agent": "Mozilla/5.0",
             }
-            config['cookies'] = self.credential.get_cookies()
+            config["cookies"] = self.credential.get_cookies()
 
             try:
                 req = await session.get(**config)
             except Exception as e:
                 raise NetworkException(-1, str(e))
 
-            if 'content-type' not in req.headers.keys():
+            if "content-type" not in req.headers.keys():
                 break
             else:
-                content_type = req.headers['content-type']
-                if content_type != 'application/octet-stream':
+                content_type = req.headers["content-type"]
+                if content_type != "application/octet-stream":
                     raise ResponseException("返回数据类型错误：")
 
             # 解析二进制流数据
             data = req.read()
-            if data == b'\x10\x01':
+            if data == b"\x10\x01":
                 # 视频弹幕被关闭
                 raise DanmakuClosedException()
 
@@ -649,7 +621,7 @@ class Video:
                     else:
                         raise ResponseException("解析响应数据错误")
 
-                dm = Danmaku('')
+                dm = Danmaku("")
                 dm_pack_data = reader.bytes_string()
                 dm_reader = BytesReader(dm_pack_data)
 
@@ -687,7 +659,9 @@ class Video:
                 danmakus.append(dm)
         return danmakus
 
-    async def get_history_danmaku_index(self, page_index: int = None, date: datetime.date = None, cid: int = None):
+    async def get_history_danmaku_index(
+        self, page_index: int = None, date: datetime.date = None, cid: int = None
+    ):
         """
         获取特定月份存在历史弹幕的日期。
 
@@ -700,25 +674,25 @@ class Video:
             None | List[str]: 调用 API 返回的结果。不存在时为 None。
         """
         if date is None:
-            raise ArgsException('请提供 date 参数')
+            raise ArgsException("请提供 date 参数")
 
         self.credential.raise_for_no_sessdata()
 
         if cid is None:
             if page_index is None:
-                raise ArgsException('page_index 和 cid 至少提供一个。')
+                raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
 
         api = API["danmaku"]["get_history_danmaku_index"]
-        params = {
-            "oid": cid,
-            "month": date.strftime("%Y-%m"),
-            "type": 1
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"oid": cid, "month": date.strftime("%Y-%m"), "type": 1}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
-    async def has_liked_danmakus(self, page_index: int = None, ids: List[int] = None, cid: int = None):
+    async def has_liked_danmakus(
+        self, page_index: int = None, ids: List[int] = None, cid: int = None
+    ):
         """
         是否已点赞弹幕。
 
@@ -731,24 +705,25 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         if ids is None or len(ids) == 0:
-            raise ArgsException('请提供 ids 参数并至少有一个元素')
+            raise ArgsException("请提供 ids 参数并至少有一个元素")
 
         self.credential.raise_for_no_sessdata()
 
         if cid is None:
             if page_index is None:
-                raise ArgsException('page_index 和 cid 至少提供一个。')
+                raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
 
         api = API["danmaku"]["has_liked_danmaku"]
-        params = {
-            "oid": cid,
-            "ids": ','.join(ids)
-        }
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        params = {"oid": cid, "ids": ",".join(ids)}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
-    async def send_danmaku(self, page_index: int = None, danmaku: Danmaku = None, cid: int = None):
+    async def send_danmaku(
+        self, page_index: int = None, danmaku: Danmaku = None, cid: int = None
+    ):
         """
         发送弹幕。
 
@@ -762,19 +737,18 @@ class Video:
         """
 
         if danmaku is None:
-            raise ArgsException('请提供 danmaku 参数')
+            raise ArgsException("请提供 danmaku 参数")
 
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
         if cid is None:
             if page_index is None:
-                raise ArgsException('page_index 和 cid 至少提供一个。')
+                raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
 
         api = API["danmaku"]["send_danmaku"]
-
 
         if danmaku.is_sub:
             pool = 1
@@ -791,27 +765,34 @@ class Video:
             "fontsize": danmaku.font_size.value,
             "pool": pool,
             "mode": danmaku.mode.value,
-            "plat": 1
+            "plat": 1,
         }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
-    
     async def get_danmaku_xml(self, page_index):
         """
-            获取所有弹幕的 xml 源文件（非装填）
+        获取所有弹幕的 xml 源文件（非装填）
 
-            Args:
-                page_index: 分 P 序号
+        Args:
+            page_index: 分 P 序号
 
-            Return:
-                xml 文件源
+        Return:
+            xml 文件源
         """
         cid = await self.__get_page_id_by_index(page_index)
         url = f"https://comment.bilibili.com/{cid}.xml"
         res = requests.get(url)
         return res.content
 
-    async def like_danmaku(self, page_index: int = None, dmid: int = None, status: bool = True, cid: int = None):
+    async def like_danmaku(
+        self,
+        page_index: int = None,
+        dmid: int = None,
+        status: bool = True,
+        cid: int = None,
+    ):
         """
         点赞弹幕。
 
@@ -825,33 +806,36 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         if dmid is None:
-            raise ArgsException('请提供 dmid 参数')
+            raise ArgsException("请提供 dmid 参数")
 
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
         if cid is None:
             if page_index is None:
-                raise ArgsException('page_index 和 cid 至少提供一个。')
+                raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
 
         api = API["danmaku"]["like_danmaku"]
 
-
         data = {
             "dmid": dmid,
             "oid": cid,
             "op": 1 if status else 2,
-            "platform": "web_player"
+            "platform": "web_player",
         }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
-    async def operate_danmaku(self,
-                              page_index: int = None,
-                              dmids: List[int] = None,
-                              cid: int = None,
-                              type_: DanmakuOperatorType = None):
+    async def operate_danmaku(
+        self,
+        page_index: int = None,
+        dmids: List[int] = None,
+        cid: int = None,
+        type_: DanmakuOperatorType = None,
+    ):
         """
         操作弹幕
 
@@ -866,17 +850,17 @@ class Video:
         """
 
         if dmids is None or len(dmids) == 0:
-            raise ArgsException('请提供 dmid 参数')
+            raise ArgsException("请提供 dmid 参数")
 
         if type_ is None:
-            raise ArgsException('请提供 type_ 参数')
+            raise ArgsException("请提供 type_ 参数")
 
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
         if cid is None:
             if page_index is None:
-                raise ArgsException('page_index 和 cid 至少提供一个。')
+                raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
 
@@ -889,8 +873,9 @@ class Video:
             "state": type_.value,
         }
 
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
-
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
     async def like(self, status: bool = True):
         """
@@ -906,11 +891,10 @@ class Video:
         self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["like"]
-        data = {
-            "aid": self.get_aid(),
-            "like": 1 if status else 2
-        }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        data = {"aid": self.get_aid(), "like": 1 if status else 2}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
     async def pay_coin(self, num: int = 1, like: bool = False):
         """
@@ -934,9 +918,11 @@ class Video:
             "aid": self.get_aid(),
             "bvid": self.get_bvid(),
             "multiply": num,
-            "like": 1 if like else 0
+            "like": 1 if like else 0,
         }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
     async def add_tag(self, name: str):
         """
@@ -952,12 +938,10 @@ class Video:
         self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["add_tag"]
-        data = {
-            "aid": self.get_aid(),
-            "bvid": self.get_bvid(),
-            "tag_name": name
-        }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        data = {"aid": self.get_aid(), "bvid": self.get_bvid(), "tag_name": name}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
     async def delete_tag(self, tag_id: int):
         """
@@ -974,12 +958,10 @@ class Video:
 
         api = API["operate"]["del_tag"]
 
-        data = {
-            "tag_id": tag_id,
-            "aid": self.get_aid(),
-            "bvid": self.get_bvid()
-        }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        data = {"tag_id": tag_id, "aid": self.get_aid(), "bvid": self.get_bvid()}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
     async def subscribe_tag(self, tag_id: int):
         """
@@ -996,10 +978,10 @@ class Video:
 
         api = API["operate"]["subscribe_tag"]
 
-        data = {
-            "tag_id": tag_id
-        }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        data = {"tag_id": tag_id}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
     async def unsubscribe_tag(self, tag_id: int):
         """
@@ -1016,12 +998,14 @@ class Video:
 
         api = API["operate"]["unsubscribe_tag"]
 
-        data = {
-            "tag_id": tag_id
-        }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        data = {"tag_id": tag_id}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
-    async def set_favorite(self, add_media_ids: List[int] = [], del_media_ids: List[int] = []):
+    async def set_favorite(
+        self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
+    ):
         """
         设置视频收藏状况。
 
@@ -1033,8 +1017,7 @@ class Video:
             dict: 调用 API 返回结果。
         """
         if len(add_media_ids) + len(del_media_ids) == 0:
-            raise ArgsException(
-                "对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。")
+            raise ArgsException("对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。")
 
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -1046,16 +1029,19 @@ class Video:
             "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
             "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
         }
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
-
-    async def submit_subtitle(self,
-                              lan: str,
-                              data: dict,
-                              submit: bool,
-                              sign: bool,
-                              page_index: int = None,
-                              cid: int = None):
+    async def submit_subtitle(
+        self,
+        lan: str,
+        data: dict,
+        submit: bool,
+        sign: bool,
+        page_index: int = None,
+        cid: int = None,
+    ):
         """
         上传字幕
 
@@ -1093,7 +1079,7 @@ class Video:
         """
         if cid is None:
             if page_index is None:
-                raise ArgsException('page_index 和 cid 至少提供一个。')
+                raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
 
@@ -1109,10 +1095,55 @@ class Video:
             "data": json.dumps(data),
             "submit": submit,
             "sign": sign,
-            "bvid": self.get_bvid()
+            "bvid": self.get_bvid(),
         }
 
-        return await request("POST", api["url"], data=payload, credential=self.credential)
+        return await request(
+            "POST", api["url"], data=payload, credential=self.credential
+        )
+
+    async def get_danmaku_snapshot(self):
+        """
+        获取弹幕快照
+
+        Returns:
+            调用 API 返回的结果
+        """
+        api = API["danmaku"]["snapshot"]
+
+        params = {"aid": self.get_aid()}
+
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
+    async def recall_danmaku(self, page_index: int=None, dmid: int=0, cid: int=None):
+        """
+        撤回弹幕
+
+        Args:
+            page_index: 分 P 号
+            dmid: 弹幕 id
+        Returns:
+            调用 API 返回的结果
+        """
+        if cid is None:
+            if page_index is None:
+                raise ArgsException("page_index 和 cid 至少提供一个。")
+
+            cid = await self.__get_page_id_by_index(page_index)
+
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["danmaku"]["recall"]
+        data = {
+            "dmid": dmid, 
+            "cid": cid, 
+            "csrf": self.credential.bili_jct
+        }
+
+        return await request("POST", url=api["url"], data=data, credential=self.credential)
 
 class VideoOnlineMonitor(AsyncEvent):
     """
@@ -1162,18 +1193,21 @@ class VideoOnlineMonitor(AsyncEvent):
         + SERVER_HEARTBEAT: 服务端响应心跳包。
         + DANMAKU         : 实时弹幕更新。
         """
+
         CLIENT_VERIFY = 0x7
         SERVER_VERIFY = 0x8
         CLIENT_HEARTBEAT = 0x2
         SERVER_HEARTBEAT = 0x3
-        DANMAKU = 0x3e8
+        DANMAKU = 0x3E8
 
-    def __init__(self,
-                 bvid: str = None,
-                 aid: int = None,
-                 page_index: int = 0,
-                 credential: Credential = None,
-                 debug: bool = False):
+    def __init__(
+        self,
+        bvid: str = None,
+        aid: int = None,
+        page_index: int = 0,
+        credential: Credential = None,
+        debug: bool = False,
+    ):
         """
         Args:
             bvid       (str, optional)       : BVID. Defaults to None.
@@ -1194,10 +1228,13 @@ class VideoOnlineMonitor(AsyncEvent):
             id_showed = aid
 
         # logger 初始化
-        self.logger = logging.getLogger(f'VideoOnlineMonitor-{id_showed}')
+        self.logger = logging.getLogger(f"VideoOnlineMonitor-{id_showed}")
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter(
-            "[" + str(id_showed) + "][%(asctime)s][%(levelname)s] %(message)s"))
+        handler.setFormatter(
+            logging.Formatter(
+                "[" + str(id_showed) + "][%(asctime)s][%(levelname)s] %(message)s"
+            )
+        )
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO if not debug else logging.DEBUG)
 
@@ -1227,45 +1264,50 @@ class VideoOnlineMonitor(AsyncEvent):
         pages = await self.__video.get_pages()
         if self.__page_index >= len(pages):
             raise ArgsException("不存在该分 P。")
-        cid = pages[self.__page_index]['cid']
+        cid = pages[self.__page_index]["cid"]
 
         # 获取服务器信息
-        self.logger.debug(f'准备连接：{self.__video.get_bvid()}')
-        self.logger.debug(f'获取服务器信息中...')
+        self.logger.debug(f"准备连接：{self.__video.get_bvid()}")
+        self.logger.debug(f"获取服务器信息中...")
         resp = await request(
-            'GET',
-            'https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc',
-            credential=self.credential)
+            "GET",
+            "https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc",
+            credential=self.credential,
+        )
 
         uri = f"wss://{resp['domain']}:{resp['wss_port']}/sub"
-        self.__heartbeat_interval = resp['heartbeat']
-        self.logger.debug(f'服务器信息获取成功，URI：{uri}')
+        self.__heartbeat_interval = resp["heartbeat"]
+        self.logger.debug(f"服务器信息获取成功，URI：{uri}")
 
         # 连接服务器
-        self.logger.debug('准备连接服务器...')
+        self.logger.debug("准备连接服务器...")
         session = get_session_aiohttp()
         async with session.ws_connect(uri) as ws:
             self.__ws = ws
 
             # 发送认证信息
-            self.logger.debug('服务器连接成功，准备发送认证信息...')
+            self.logger.debug("服务器连接成功，准备发送认证信息...")
             verify_info = {
-                'room_id': f'video://{self.__video.get_aid()}/{cid}',
-                'platform': 'web',
-                'accepts': [1000, 1015]
+                "room_id": f"video://{self.__video.get_aid()}/{cid}",
+                "platform": "web",
+                "accepts": [1000, 1015],
             }
-            verify_info = json.dumps(verify_info, separators=(',', ':'))
-            await ws.send_bytes(self.__pack(VideoOnlineMonitor.Datapack.CLIENT_VERIFY, 1, verify_info.encode()))
+            verify_info = json.dumps(verify_info, separators=(",", ":"))
+            await ws.send_bytes(
+                self.__pack(
+                    VideoOnlineMonitor.Datapack.CLIENT_VERIFY, 1, verify_info.encode()
+                )
+            )
 
             # 循环接收消息
             async for msg in ws:
                 if msg.type == aiohttp.WSMsgType.BINARY:
                     data = self.__unpack(msg.data)
-                    self.logger.debug(f'收到消息：{data}')
+                    self.logger.debug(f"收到消息：{data}")
                     await self.__handle_data(data)
 
                 elif msg.type == aiohttp.WSMsgType.ERROR:
-                    self.logger.warning('连接被异常断开')
+                    self.logger.warning("连接被异常断开")
                     await self.__cancel_all_tasks()
                     self.dispatch("ERROR", msg)
                     break
@@ -1278,28 +1320,26 @@ class VideoOnlineMonitor(AsyncEvent):
             data (List[dict]): 收到的数据（已解析好）。
         """
         for d in data:
-            if d['type'] == VideoOnlineMonitor.Datapack.SERVER_VERIFY.value:
+            if d["type"] == VideoOnlineMonitor.Datapack.SERVER_VERIFY.value:
                 # 服务器认证反馈。
-                if d['data']['code'] == 0:
+                if d["data"]["code"] == 0:
                     # 创建心跳 Task
-                    heartbeat = asyncio.create_task(
-                        self.__heartbeat_task())
+                    heartbeat = asyncio.create_task(self.__heartbeat_task())
                     self.__tasks.append(heartbeat)
 
-                    self.logger.info('连接服务器并验证成功')
+                    self.logger.info("连接服务器并验证成功")
 
-            elif d['type'] == VideoOnlineMonitor.Datapack.SERVER_HEARTBEAT.value:
+            elif d["type"] == VideoOnlineMonitor.Datapack.SERVER_HEARTBEAT.value:
                 # 心跳包反馈，同时包含在线人数。
                 self.logger.debug(f'收到服务器心跳包反馈，编号：{d["number"]}')
-                self.logger.info(
-                    f'实时观看人数：{d["data"]["data"]["room"]["online"]}')
+                self.logger.info(f'实时观看人数：{d["data"]["data"]["room"]["online"]}')
                 self.dispatch("ONLINE", d["data"])
 
-            elif d['type'] == VideoOnlineMonitor.Datapack.DANMAKU.value:
+            elif d["type"] == VideoOnlineMonitor.Datapack.DANMAKU.value:
                 # 实时弹幕。
-                info = d['data'][0].split(",")
-                text = d['data'][1]
-                if info[5] == '0':
+                info = d["data"][0].split(",")
+                text = d["data"][1]
+                if info[5] == "0":
                     is_sub = False
                 else:
                     is_sub = True
@@ -1311,14 +1351,14 @@ class VideoOnlineMonitor(AsyncEvent):
                     mode=info[1],
                     font_size=info[2],
                     is_sub=is_sub,
-                    text=text
+                    text=text,
                 )
-                self.logger.info(f'收到实时弹幕：{dm.text}')
+                self.logger.info(f"收到实时弹幕：{dm.text}")
                 self.dispatch("DANMAKU", dm)
 
             else:
                 # 未知类型数据包
-                self.logger.warning('收到未知的数据包类型，无法解析：' + json.dumps(d))
+                self.logger.warning("收到未知的数据包类型，无法解析：" + json.dumps(d))
 
     async def __heartbeat_task(self):
         """
@@ -1326,8 +1366,14 @@ class VideoOnlineMonitor(AsyncEvent):
         """
         index = 2
         while True:
-            self.logger.debug(f'发送心跳包，编号：{index}')
-            await self.__ws.send_bytes(self.__pack(VideoOnlineMonitor.Datapack.CLIENT_HEARTBEAT, index, b'[object Object]'))
+            self.logger.debug(f"发送心跳包，编号：{index}")
+            await self.__ws.send_bytes(
+                self.__pack(
+                    VideoOnlineMonitor.Datapack.CLIENT_HEARTBEAT,
+                    index,
+                    b"[object Object]",
+                )
+            )
             index += 1
             await asyncio.sleep(self.__heartbeat_interval)
 
@@ -1372,12 +1418,12 @@ class VideoOnlineMonitor(AsyncEvent):
             bytes: 打包好的数据。
         """
         packed_data = bytearray()
-        packed_data += struct.pack('>I', 0x00120001)
-        packed_data += struct.pack('>I', data_type.value)
-        packed_data += struct.pack('>I', number)
-        packed_data += struct.pack('>H', 0)
+        packed_data += struct.pack(">I", 0x00120001)
+        packed_data += struct.pack(">I", data_type.value)
+        packed_data += struct.pack(">I", number)
+        packed_data += struct.pack(">H", 0)
         packed_data += data
-        packed_data = struct.pack('>I', len(packed_data) + 4) + packed_data
+        packed_data = struct.pack(">I", len(packed_data) + 4) + packed_data
         return bytes(packed_data)
 
     @staticmethod
@@ -1394,12 +1440,16 @@ class VideoOnlineMonitor(AsyncEvent):
         offset = 0
         real_data = []
         while offset < len(data):
-            region_header = struct.unpack('>IIII', data[:16])
-            region_data = data[offset:offset+region_header[0]]
-            real_data.append({
-                'type': region_header[2],
-                'number': region_header[3],
-                'data': json.loads(region_data[offset+18:offset+18+(region_header[0]-16)])
-            })
+            region_header = struct.unpack(">IIII", data[:16])
+            region_data = data[offset : offset + region_header[0]]
+            real_data.append(
+                {
+                    "type": region_header[2],
+                    "number": region_header[3],
+                    "data": json.loads(
+                        region_data[offset + 18 : offset + 18 + (region_header[0] - 16)]
+                    ),
+                }
+            )
             offset += region_header[0]
         return tuple(real_data)
