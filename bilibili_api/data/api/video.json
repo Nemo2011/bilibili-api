@@ -106,6 +106,16 @@
         "type": "const int: 2"
       },
       "comment": "获取收藏夹列表信息，用于收藏操作"
+    }, 
+    "pbp": {
+      "url": "https://bvc.bilivideo.com/pbp/data", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "cid": "int: 分 P 编号", 
+        "bvid": "string: bvid", 
+        "aid": "int: av 号"
+      }
     }
   },
   "operate": {

@@ -125,6 +125,8 @@ from bilibili_api import bangumi
 
 ### Functions
 
+**这里仅列出新增的或重写过的函数，Video 类的其他函数都可使用**
+
 #### def \_\_init\_\_()
 
 | name | type | description |

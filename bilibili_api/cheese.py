@@ -97,6 +97,9 @@ class CheeseVideo:
     def get_aid(self):
         return self.aid
 
+    def get_cid(self):
+        return self.cid
+
     def get_cheese(self):
         """
         获取所属课程
@@ -469,3 +472,26 @@ class CheeseVideo:
                         break
                 danmakus.append(dm)
         return danmakus
+
+    async def get_pbp(self):
+        """
+        获取高能进度条
+
+        Args:
+            page_index(int): 分 P 号
+            cid(int)       : 分 P 编码
+
+        Returns:
+            调用 API 返回的结果
+        """
+        cid = self.cid
+
+        api = API_video["info"]["pbp"]
+
+        params = {
+            "cid": cid
+        }
+
+        session = get_session()
+
+        return json.loads((await session.get(api["url"], params=params, cookies=self.credential.get_cookies())).text)
