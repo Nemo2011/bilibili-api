@@ -320,11 +320,31 @@ class Dynamic:
 
         Args:
             offset (str, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0"
+
+        Returns:
+            调用 API 返回的结果
         """
         api = API["info"]["repost"]
         params = {"dynamic_id": self.dynamic_id}
         if offset != "0":
             params["offset"] = offset
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
+    async def get_likes(self, pn: int = 1, ps: int = 30):
+        """
+        获取动态点赞列表
+
+        Args:
+            pn(int): 页码，defaults to 1
+            ps(int): 每页大小，defaults to 30
+
+        Returns:
+            调用 API 返回的结果
+        """
+        api = API["info"]["likes"]
+        params = {"dynamic_id": self.dynamic_id, "pn": pn, "ps": ps}
         return await request(
             "GET", api["url"], params=params, credential=self.credential
         )
