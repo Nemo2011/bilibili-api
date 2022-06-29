@@ -1,11 +1,15 @@
 """
 bilibili_api.cheese
 
+注意：这里查看弹幕、发送弹幕、get_downlaod_url 无需 page_index 或 cid!
+
+ohhhh!!!!!!!!!!!(误
+
 有关 bilibili 课程的 api。
+
 注意，注意！课程中的视频和其他视频几乎没有任何相通的 API！
-不能将 CheeseVideo 转成 Video 类，后果自负（因为改动太多，所以我都不敢继承）
-课程的视频好像都没有 bvid，有也没用。而且这种连官方的 html5 播放器都不能看课程！
-呵呵，官方是只打算保留 aid 和 cid 啊，我太难了！
+不能将 CheeseVideo 换成 Video 类。
+
 获取下载链接需要使用 bilibili_api.cheese.get_download_url，video.get_download_url 不适用。
 还有，课程的 season_id 和 ep_id 不与番剧相通，井水不犯河水，请不要错用!
 """
@@ -495,3 +499,43 @@ class CheeseVideo:
         session = get_session()
 
         return json.loads((await session.get(api["url"], params=params, cookies=self.credential.get_cookies())).text)
+
+    async def send_danmaku(
+        self, danmaku: Danmaku = None
+    ):
+        """
+        发送弹幕。
+
+        Args:
+            danmaku    (Danmaku): Danmaku 类。
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+
+        if danmaku is None:
+            raise ArgsException("请提供 danmaku 参数")
+
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API_video["danmaku"]["send_danmaku"]
+
+        if danmaku.is_sub:
+            pool = 1
+        else:
+            pool = 0
+        data = {
+            "type": 1,
+            "oid": self.cid,
+            "msg": danmaku.text,
+            "aid": self.get_aid(),
+            "progress": int(danmaku.dm_time * 1000),
+            "color": int(danmaku.color, 16),
+            "fontsize": danmaku.font_size.value,
+            "pool": pool,
+            "mode": danmaku.mode.value,
+            "plat": 1,
+        }
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
