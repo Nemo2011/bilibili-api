@@ -1122,9 +1122,9 @@ class Video:
         撤回弹幕
 
         Args:
-            page_index: 分 P 号
-            dmid: 弹幕 id
-            cid: 分 P 编码
+            page_index(int): 分 P 号
+            dmid(int)      : 弹幕 id
+            cid(int)       : 分 P 编码
         Returns:
             调用 API 返回的结果
         """

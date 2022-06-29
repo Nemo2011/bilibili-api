@@ -128,6 +128,17 @@
       },
       "comment": "动态转发信息，最多获取 560 条左右"
     },
+    "likes": {
+      "url": "https://api.vc.bilibili.com/dynamic_like/v1/dynamic_like/spec_item_likes",
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "dynamic_id": "int: 动态 ID", 
+        "pn": "页码",
+        "ps": "每页数量"
+      }, 
+      "comment": "动态点赞信息"
+    },
     "detail": {
       "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail",
       "method": "GET",
