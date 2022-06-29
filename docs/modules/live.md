@@ -63,13 +63,6 @@ from bilibili_api import live
 
 直播类，获取各种直播间的操作均在里边。
 
-### Attributes
-
-| name            | type       | description                   |
-| --------------- | ---------- | ----------------------------- |
-| room_display_id | int        | 房间展示 ID（即 URL 中的 ID） |
-| credential      | Credential | 凭据                          |
-
 ### Functions
 
 #### def \_\_init\_\_()
@@ -322,16 +315,6 @@ Websocket 实时获取直播弹幕
 + DISCONNECT: 断开连接（传入连接状态码参数）
 + TIMEOUT: 心跳响应超时
 + VERIFICATION_SUCCESSFUL: 认证成功
-
-### Attributes
-
-| name            | type           | description                                 |
-| --------------- | -------------- | ------------------------------------------- |
-| room_display_id | int            | 房间展示 ID                                 |
-| logger          | logging.Logger | 日志记录                                    |
-| credential      | Credential     | 凭据                                        |
-| max_retry       | int            | 连接出错后最大重试次数. Defaults to 5       |
-| retry_after     | int            | 连接出错后重试间隔时间（秒）. Defaults to 1 |
 
 ### Functions
 

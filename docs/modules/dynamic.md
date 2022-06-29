@@ -78,13 +78,6 @@ from bilibili_api import dynamic
 
 动态类
 
-### Attributes
-
-| name       | type       | description |
-| ---------- | ---------- | ----------- |
-| dynamic_id | int        | 动态 ID     |
-| credential | Credential | 凭据        |
-
 ### Functions
 
 #### def \_\_init\_\_()

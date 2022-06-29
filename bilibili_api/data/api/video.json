@@ -308,6 +308,26 @@
         "state": "int: 1 删除 2 保护 3 取消保护"
       },
       "comment": "编辑弹幕"
+    }, 
+    "snapshot": {
+      "url": "http://api.bilibili.com/x/v2/dm/ajax",
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "aid": "int: av 号"
+      }, 
+      "comment": "获取弹幕快照"
+    }, 
+    "recall": {
+      "url": "http://api.bilibili.com/x/dm/recall", 
+      "method": "GET", 
+      "verify": false, 
+      "data": {
+        "dmid": "int: 弹幕 ID", 
+        "cid":"int: 分 P 编号", 
+        "csrf": "cookies: bili_jct"
+      }, 
+      "comment": "撤回弹幕"
     }
   }
 }

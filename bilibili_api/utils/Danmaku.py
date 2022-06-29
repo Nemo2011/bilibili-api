@@ -11,7 +11,7 @@ import zlib
 from .utils import crack_uid
 
 
-class FontSize(Enum):
+class DmFontSize(Enum):
     """
     字体大小枚举。
     """
@@ -25,7 +25,7 @@ class FontSize(Enum):
     EXTREME_BIG = 64
 
 
-class Mode(Enum):
+class DmMode(Enum):
     """
     弹幕模式枚举。
     """
@@ -52,8 +52,8 @@ class Danmaku:
         id_: int = -1,
         id_str: str = "",
         action: str = "",
-        mode: Mode = Mode.FLY,
-        font_size: FontSize = FontSize.NORMAL,
+        mode: DmMode = DmMode.FLY,
+        font_size: DmFontSize = DmFontSize.NORMAL,
         is_sub: bool = False,
         pool: int = 0,
         attr: int = -1,
@@ -102,7 +102,7 @@ class Danmaku:
     def crack_uid(self):
         """
         暴力破解 UID。
-        10.0.1: 已改为 zlib，误差可以看 zlib 官方文档(找 PSF 的文档，应该没误差)。
+        10.0.1: 已改为 zlib。
         几个测试和原来暴力破解结果一样。
 
         Returns:

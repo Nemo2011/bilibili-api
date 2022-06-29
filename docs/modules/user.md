@@ -94,13 +94,6 @@ from bilibili_api import user
 
 用户相关
 
-### Attributes
-
-| name       | type       | description |
-| ---------- | ---------- | ----------- |
-| uid        | int        | 用户 UID    |
-| credential | Credential | 凭据        |
-
 ### Functions
 
 #### def \_\_init\_\_()

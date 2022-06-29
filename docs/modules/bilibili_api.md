@@ -34,14 +34,6 @@ import bilibili_api
 
 凭据类，用于各种请求操作的验证。
 
-### Attributes
-
-| name     | type | description                         |
-| -------- | ---- | ----------------------------------- |
-| sessdata | str  | 浏览器 Cookies 中的 SESSDATA 字段值 |
-| bili_jct | str  | 浏览器 Cookies 中的 bili_jct 字段值 |
-| buvid3   | str  | 浏览器 Cookies 中的 BUVID3 字段值   |
-
 ### Functions
 
 #### def \_\_init\_\_()
@@ -137,10 +129,6 @@ BV 号转 AV 号。
 ## class Danmaku
 
 弹幕类
-
-### Attributes
-
-同 `__init__()`
 
 ### Functions
 

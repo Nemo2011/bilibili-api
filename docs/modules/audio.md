@@ -10,13 +10,6 @@ from bilibili_api import audio
 
 音频类。
 
-### Attributes
-
-| name       | type       | description |
-| ---------- | ---------- | ----------- |
-| auid       | int        | 音频 AU 号  |
-| credential | Credential | 凭据        |
-
 ### Functions
 
 #### def \_\_init\_\_()
@@ -65,13 +58,6 @@ from bilibili_api import audio
 ## class AudioList
 
 歌单
-
-### Attributes
-
-| name       | type       | description |
-| ---------- | ---------- | ----------- |
-| amid       | int        | 歌单 ID     |
-| credential | Credential | 凭据        |
 
 ### Functions
 
