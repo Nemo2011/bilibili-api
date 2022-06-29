@@ -101,3 +101,31 @@ ep_id(int): 单集 ep_id
 获取下载链接
 
 **Returns**: 调用 API 所得的结果。
+
+#### _async_ def get_stat()
+
+获取视频统计数据（播放量，点赞数等）。
+
+**Returns**: 调用 API 所得的结果。
+
+#### _async_ def get_pages()
+
+获取分 P 信息。
+
+**Returns**: 调用 API 所得的结果。
+
+#### _async_ def get_danmaku_view()
+
+获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
+
+**Returns**: 调用 API 所得的结果。
+
+#### _async_ def get_danmakus()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| date | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+
+获取弹幕。
+
+**Returns**: 调用 API 所得的结果。

@@ -176,12 +176,20 @@ class Episode(Video):
         bvid = sync(self.get_episode_info())["epInfo"]["bvid"]
         super().__init__(bvid=bvid)
         self.bangumi = self.get_bangumi_from_episode()
+        self.set_aid = self.set_aid_e
+        self.set_bvid = self.set_bvid_e
 
     async def get_epid(self):
         """
         获取 epid
         """
         return self.epid
+
+    def set_aid_e(self, aid: str):
+        print("Set aid is not allowed in Episode")
+
+    def set_bvid_e(self, bvid: str):
+        print("Set bvid is not allowed in Episode")
 
     def get_bangumi(self):
         """
@@ -208,15 +216,16 @@ class Episode(Video):
         credential = self.credential if self.credential else Credential()
         session = get_session()
 
-        async with session.get(
-            f"https://www.bilibili.com/bangumi/play/ep{self.epid}",
-            cookies=credential.get_cookies(),
-            headers={"User-Agent": "Mozilla/5.0"},
-        ) as resp:
-            if resp.status != 200:
-                raise ResponseException(resp.status)
-
-            content = await resp.text()
+        try:
+            resp = await session.get(
+                f"https://www.bilibili.com/bangumi/play/ep{self.epid}",
+                cookies=credential.get_cookies(),
+                headers={"User-Agent": "Mozilla/5.0"},
+            )
+        except Exception as e:
+            raise ResponseException(str(e))
+        else:
+            content = resp.text
 
             pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
             match = re.search(pattern, content)

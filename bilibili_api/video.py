@@ -126,9 +126,9 @@ class Video:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        url = API["info"]["detail"]["url"]
+        api = API["info"]["detail"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        resp = await request("GET", url, params=params, credential=self.credential)
+        resp = await request("GET", api["url"], params=params, credential=self.credential)
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
