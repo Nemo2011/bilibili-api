@@ -332,6 +332,23 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
+#### _async_ def get_danmaku_snapshot()
+
+获取弹幕快照
+
+**Returns:** API 调用返回结果。
+
+#### _async_ def recall_danmaku()
+
+| name | type | description |
+| page_index | int | 分 P 号 |
+| dmid | int | 弹幕 id |
+| cid | int | 分 P 编码 |
+
+撤回弹幕
+
+**Returns:** API 调用返回结果。
+
 ---
 
 ## class VideoOnlineMonitor
