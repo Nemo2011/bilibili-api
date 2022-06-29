@@ -128,7 +128,9 @@ class Video:
         """
         api = API["info"]["detail"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        resp = await request("GET", api["url"], params=params, credential=self.credential)
+        resp = await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
@@ -771,17 +773,21 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def get_danmaku_xml(self, page_index):
+    async def get_danmaku_xml(self, page_index, cid):
         """
         获取所有弹幕的 xml 源文件（非装填）
 
         Args:
             page_index: 分 P 序号
+            cid: cid
 
         Return:
             xml 文件源
         """
-        cid = await self.__get_page_id_by_index(page_index)
+        if not cid:
+            if not page_index:
+                raise ArgsException("page_index 和 cid 至少提供一个。")
+            cid = await self.__get_page_id_by_index(page_index)
         url = f"https://comment.bilibili.com/{cid}.xml"
         res = requests.get(url)
         return res.content
@@ -1117,7 +1123,9 @@ class Video:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def recall_danmaku(self, page_index: int=None, dmid: int=0, cid: int=None):
+    async def recall_danmaku(
+        self, page_index: int = None, dmid: int = 0, cid: int = None
+    ):
         """
         撤回弹幕
 
@@ -1138,15 +1146,13 @@ class Video:
         self.credential.raise_for_no_bili_jct()
 
         api = API["danmaku"]["recall"]
-        data = {
-            "dmid": dmid, 
-            "cid": cid, 
-            "csrf": self.credential.bili_jct
-        }
+        data = {"dmid": dmid, "cid": cid, "csrf": self.credential.bili_jct}
 
-        return await request("POST", url=api["url"], data=data, credential=self.credential)
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
-    async def get_pbp(self, page_index: int=None, cid: int=None):
+    async def get_pbp(self, page_index: int = None, cid: int = None):
         """
         获取高能进度条
 
@@ -1165,13 +1171,18 @@ class Video:
 
         api = API["info"]["pbp"]
 
-        params = {
-            "cid": cid
-        }
+        params = {"cid": cid}
 
         session = get_session()
 
-        return json.loads((await session.get(api["url"], params=params, cookies=self.credential.get_cookies())).text)
+        return json.loads(
+            (
+                await session.get(
+                    api["url"], params=params, cookies=self.credential.get_cookies()
+                )
+            ).text
+        )
+
 
 class VideoOnlineMonitor(AsyncEvent):
     """
