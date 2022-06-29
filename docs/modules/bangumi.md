@@ -117,7 +117,9 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
-## class Bangumi
+## class Episode
+
+**Extends: bilibili_api.video.Video**
 
 番剧剧集类
 
