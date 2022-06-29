@@ -349,6 +349,16 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
+#### _async_ def get_pbp()
+
+| name | type | description |
+| page_index | int | 分 P 号 |
+| cid | int | 分 P 编码 |
+
+获取高能进度条
+
+**Returns**: 调用 API 所得的结果。
+
 ---
 
 ## class VideoOnlineMonitor

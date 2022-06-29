@@ -1146,6 +1146,33 @@ class Video:
 
         return await request("POST", url=api["url"], data=data, credential=self.credential)
 
+    async def get_pbp(self, page_index: int=None, cid: int=None):
+        """
+        获取高能进度条
+
+        Args:
+            page_index(int): 分 P 号
+            cid(int)       : 分 P 编码
+
+        Returns:
+            调用 API 返回的结果
+        """
+        if cid is None:
+            if page_index is None:
+                raise ArgsException("page_index 和 cid 至少提供一个。")
+
+            cid = await self.__get_page_id_by_index(page_index)
+
+        api = API["info"]["pbp"]
+
+        params = {
+            "cid": cid
+        }
+
+        session = get_session()
+
+        return json.loads((await session.get(api["url"], params=params, cookies=self.credential.get_cookies())).text)
+
 class VideoOnlineMonitor(AsyncEvent):
     """
     视频在线人数实时监测。

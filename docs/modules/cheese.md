@@ -86,6 +86,18 @@ ep_id(int): 单集 ep_id
 
 **Returns:** 课程类
 
+#### def get_aid()
+
+获取 aid
+
+**Returns:** aid
+
+#### def get_cid()
+
+获取 cid
+
+**Returns:** cid
+
 #### def set_epid()
 
 | name | type | description |
@@ -127,5 +139,11 @@ ep_id(int): 单集 ep_id
 | date | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
 
 获取弹幕。
+
+**Returns**: 调用 API 所得的结果。
+
+#### _async_ def get_pbp()
+
+获取高能进度条
 
 **Returns**: 调用 API 所得的结果。
