@@ -1,0 +1,17 @@
+{
+    "qrcode": {
+        "get_qrcode_and_token": {
+            "url": "http://passport.bilibili.com/qrcode/getLoginUrl", 
+            "verify": false, 
+            "comment": "请求二维码及登录密钥"
+        }, 
+        "get_events": {
+            "url": "http://passport.bilibili.com/qrcode/getLoginInfo", 
+            "verify": false, 
+            "data": {
+                "oauthKey": "str: 登陆密钥"
+            }, 
+            "comment": "获取最新信息"
+        }
+    }
+}
