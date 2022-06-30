@@ -16,7 +16,11 @@ ohhhh!!!!!!!!!!!(误
 
 import datetime
 import json
-from bilibili_api.exceptions import DanmakuClosedException, NetworkException, ResponseException
+from bilibili_api.exceptions import (
+    DanmakuClosedException,
+    NetworkException,
+    ResponseException,
+)
 from bilibili_api.exceptions.ArgsException import ArgsException
 from bilibili_api.utils.BytesReader import BytesReader
 from bilibili_api.utils.Danmaku import Danmaku
@@ -82,8 +86,9 @@ class CheeseList:
             "GET", api["url"], params=params, credential=self.credential
         )
 
+
 class CheeseVideo:
-    def __init__(self, epid, credential: Credential=Credential(), meta=None):
+    def __init__(self, epid, credential: Credential = Credential(), meta=None):
         """
         教程视频类
         因为不和其他视频相通，所以这里是一个新的类，无继承
@@ -100,8 +105,8 @@ class CheeseVideo:
         if meta != None:
             self.meta = None
         else:
-            for v in sync(self.cheese.get_list())['items']:
-                if v['id'] == self.epid:
+            for v in sync(self.cheese.get_list())["items"]:
+                if v["id"] == self.epid:
                     self.meta = v
 
     def get_aid(self):
@@ -370,9 +375,7 @@ class CheeseVideo:
                 continue
         return json_data
 
-    async def get_danmakus(
-        self, date: datetime.date = None
-    ):
+    async def get_danmakus(self, date: datetime.date = None):
         """
         获取弹幕。
 
@@ -498,17 +501,19 @@ class CheeseVideo:
 
         api = API_video["info"]["pbp"]
 
-        params = {
-            "cid": cid
-        }
+        params = {"cid": cid}
 
         session = get_session()
 
-        return json.loads((await session.get(api["url"], params=params, cookies=self.credential.get_cookies())).text)
+        return json.loads(
+            (
+                await session.get(
+                    api["url"], params=params, cookies=self.credential.get_cookies()
+                )
+            ).text
+        )
 
-    async def send_danmaku(
-        self, danmaku: Danmaku = None
-    ):
+    async def send_danmaku(self, danmaku: Danmaku = None):
         """
         发送弹幕。
 

@@ -536,14 +536,22 @@ class User:
         """
         channel_data = await self.get_channel_list()
         channels = []
-        for item in channel_data['items_lists']['seasons_list']:
-            id_ = item['meta']['season_id']
-            meta = item['meta']
-            channels.append(ChannelSeries(self.uid, ChannelSeriesType.SEASON, id_, self.credential, meta=meta))
-        for item in channel_data['items_lists']['series_list']:
-            id_ = item['meta']['series_id']
-            meta = item['meta']
-            channels.append(ChannelSeries(self.uid, ChannelSeriesType.SERIES, id_, self.credential, meta=meta))
+        for item in channel_data["items_lists"]["seasons_list"]:
+            id_ = item["meta"]["season_id"]
+            meta = item["meta"]
+            channels.append(
+                ChannelSeries(
+                    self.uid, ChannelSeriesType.SEASON, id_, self.credential, meta=meta
+                )
+            )
+        for item in channel_data["items_lists"]["series_list"]:
+            id_ = item["meta"]["series_id"]
+            meta = item["meta"]
+            channels.append(
+                ChannelSeries(
+                    self.uid, ChannelSeriesType.SERIES, id_, self.credential, meta=meta
+                )
+            )
         return channels
 
     async def get_cheese(self):
@@ -567,14 +575,24 @@ class ChannelSeriesType(Enum):
 
     **新版合集名字为`合集·XXX`，请注意区别**
     """
+
     SERIES = 0
     SEASON = 1
+
 
 class ChannelSeries:
     """
     合集与列表类
     """
-    def __init__(self, uid: int, type_: ChannelSeriesType=ChannelSeriesType.SEASON, id_: int=0, credential: Credential=None, meta=None):
+
+    def __init__(
+        self,
+        uid: int,
+        type_: ChannelSeriesType = ChannelSeriesType.SEASON,
+        id_: int = 0,
+        credential: Credential = None,
+        meta=None,
+    ):
         """
         uid(int)                : 用户 uid
         type_(ChannelSeriesType): 合集与列表类型
@@ -593,10 +611,10 @@ class ChannelSeries:
             look_type = "series"
         if meta == None:
             channel_list = sync(self.owner.get_channel_list())
-            for channel in channel_list['items_lists'][look_type + "_list"]:
-                type_id = channel['meta']["season_id" if self.is_new else "series_id"]
+            for channel in channel_list["items_lists"][look_type + "_list"]:
+                type_id = channel["meta"]["season_id" if self.is_new else "series_id"]
                 if type_id == self.id_:
-                    self.meta = channel['meta']
+                    self.meta = channel["meta"]
             if self.meta == None:
                 raise ValueError("未找到频道信息。")
         else:
@@ -611,7 +629,9 @@ class ChannelSeries:
         """
         return self.meta
 
-    async def get_videos(self, sort: ChannelOrder = ChannelOrder.DEFAULT, pn: int = 1, ps: int = 100):
+    async def get_videos(
+        self, sort: ChannelOrder = ChannelOrder.DEFAULT, pn: int = 1, ps: int = 100
+    ):
         """
         获取合集视频
         Args:
@@ -626,6 +646,7 @@ class ChannelSeries:
             return await self.owner.get_channel_videos_season(self.id_, sort, pn, ps)
         else:
             return await self.owner.get_channel_videos_series(self.id_, pn, ps)
+
 
 async def get_self_info(credential: Credential):
     """
