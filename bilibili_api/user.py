@@ -8,6 +8,8 @@ from enum import Enum
 import json
 import time
 
+from bilibili_api.utils.sync import sync
+
 from .utils.network_httpx import request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
@@ -460,9 +462,9 @@ class User:
         查看频道内所有视频。仅供 series_list。
 
         Args:
-            sid: 频道的 series_id
-            pn: 页数，默认为 1
-            ps: 每一页显示的视频数量
+            sid(int): 频道的 series_id
+            pn(int) : 页数，默认为 1
+            ps(int) : 每一页显示的视频数量
 
         Returns:
             dict: 调用接口返回的内容
@@ -484,9 +486,10 @@ class User:
         查看频道内所有视频。仅供 season_list。
 
         Args:
-            sid: 频道的 season_id
-            pn: 页数，默认为 1
-            ps: 每一页显示的视频数量
+            sid(int)          : 频道的 season_id
+            sort(ChannelOrder): 排序方式
+            pn(int)           : 页数，默认为 1
+            ps(int)           : 每一页显示的视频数量
 
         Returns:
             dict: 调用接口返回的内容
@@ -534,6 +537,66 @@ class User:
         params = {"mid": self.uid}
         return await request("GET", api["url"], params=params)
 
+
+class ChannelSeriesType(Enum):
+    """
+    合集与列表类型
+
+    + SERIES: 旧版
+    + SEASON: 新版
+    """
+    SERIES = 0
+    SEASON = 1
+
+class ChannelSeries:
+    """
+    合集与列表类
+    """
+    def __init__(self, uid: int, type_: ChannelSeriesType=ChannelSeriesType.SEASON, id_: int=0, credential: Credential=None):
+        """
+        uid(int)                : 用户 uid
+        type_(ChannelSeriesType): 合集与列表类型
+        id_(int)                : season_id 或 series_id
+        credential(Credential)  : 凭证
+        """
+        self.uid = uid
+        self.is_new = type_.value
+        self.id_ = id_
+        self.owner = User(self.uid, credential=credential)
+        self.meta = None
+        channel_list = sync(self.owner.get_channel_list())
+        if self.is_new:
+            look_type = "season"
+        else:
+            look_type = "series"
+        for channel in channel_list['items_lists'][look_type + "s_list"]:
+            type_id = channel['meta'][look_type + "_id"]
+            if type_id == self.id_:
+                self.meta = channel['meta']
+        if self.meta == None:
+            raise ValueError("未找到频道信息。")
+
+    def get_meta(self):
+        """
+        获取元数据
+
+        Returns:
+            调用 API 返回的结果
+        """
+        return self.meta
+
+    async def get_videos(self, sort: ChannelOrder = ChannelOrder.DEFAULT, pn: int = 1, ps: int = 100):
+        """
+        获取合集视频
+        Args:
+            sort(ChannelOrder): 排序方式，在旧版列表此参数不起效果。
+            pn(int)           : 页数，默认为 1
+            ps(int)           : 每一页显示的视频数量
+        """
+        if self.is_new:
+            return await self.owner.get_channel_videos_season(self.id_, sort, pn, ps)
+        else:
+            return await self.owner.get_channel_videos_series(self.id_, pn, ps)
 
 async def get_self_info(credential: Credential):
     """

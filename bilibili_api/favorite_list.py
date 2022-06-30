@@ -40,7 +40,7 @@ class VideoFavoriteList:
         self.media_id = media_id
         self.credential = credential
 
-    async def get_video_list(
+    async def get_meta(
         self,
         page=1,
         keyword=None,
@@ -48,7 +48,7 @@ class VideoFavoriteList:
         tid=0,
     ):
         """
-        获取视频收藏夹列表内容。
+        获取视频收藏夹列表元数据。
 
         Args:
             page       (int, optional)                     : 页码. Defaults to 1.
