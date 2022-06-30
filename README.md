@@ -5,7 +5,6 @@
 [![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
 <!--[![STARS](https://img.shields.io/github/stars/Nemo2011/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]-->
-![Test](https://img.shields.io/badge/Test-passing-brightgreen)
 ![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
