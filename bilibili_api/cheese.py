@@ -83,7 +83,7 @@ class CheeseList:
         )
 
 class CheeseVideo:
-    def __init__(self, epid, credential: Credential=Credential()):
+    def __init__(self, epid, credential: Credential=Credential(), meta=None):
         """
         教程视频类
         因为不和其他视频相通，所以这里是一个新的类，无继承
@@ -97,6 +97,12 @@ class CheeseVideo:
             if v["id"] == epid:
                 self.aid = v["aid"]
                 self.cid = v["cid"]
+        if meta != None:
+            self.meta = None
+        else:
+            for v in sync(self.cheese.get_list())['items']:
+                if v['id'] == self.epid:
+                    self.meta = v
 
     def get_aid(self):
         return self.aid

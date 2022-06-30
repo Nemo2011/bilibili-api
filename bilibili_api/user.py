@@ -585,6 +585,7 @@ class ChannelSeries:
         self.is_new = type_.value
         self.id_ = id_
         self.owner = User(self.uid, credential=credential)
+        self.credential = credential
         self.meta = None
         if self.is_new:
             look_type = "seasons"

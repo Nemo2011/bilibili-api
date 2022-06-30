@@ -21,6 +21,9 @@ async def get_real_url(short_url: str):
         if settings.proxy:
             config['proxies'] = {settings.proxy_use: settings.proxy}
         resp = await get_session().request("GET", url=short_url, follow_redirects=False)
-        return resp.headers['Location']
+        if 'Location' in resp.headers.keys():
+            return resp.headers['Location']
+        else:
+            return short_url
     except:
         raise ValueError("无法查看目标链接！")
