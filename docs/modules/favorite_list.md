@@ -31,7 +31,7 @@ from bilibili_api import favorite_list
 | media_id   | int                                | 收藏夹 ID                                             |
 | credential | Credential, optional               | 凭据. Defaults to None.                               |
 
-#### _async_ def get_video_list()
+#### _async_ def get_meta()
 
 | name       | type                               | description                                           |
 | ---------- | ---------------------------------- | :---------------------------------------------------- |
@@ -40,7 +40,7 @@ from bilibili_api import favorite_list
 | order      | FavoriteListContentOrder, optional | 排序方式. Defaults to FavoriteListContentOrder.MTIME. |
 | tid        | int, optional                      | 分区 ID. Defaults to 0.                               |
 
-获取视频收藏夹列表内容。
+获取视频收藏夹列表元数据。
 
 **Returns:** API 调用返回结果
 
