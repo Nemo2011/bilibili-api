@@ -126,6 +126,49 @@ BV 号转 AV 号。
 
 ---
 
+## _async_ def get_real_url()
+
+| name | type | description |
+| - | - | - |
+| short_url | str | 短链接 |
+
+获取短链接对应的真实链接。
+
+**注意：**这个函数可以用于获取一个跳转`url`的目标。
+
+**Returns:**目标链接（如果不是有效的链接会报错）
+
+## _async_ def parse_link()
+
+| name | type | description |
+| - | - | - |
+| url | str | 链接 |
+| credential | Credential | 凭据类 |
+
+获取链接对应的对象。举个例子：如果有一个视频链接，想要获取对应的对象需要读取 `bvid` 或 `aid`，然后初始化 `Video` 类。
+但是 `parse_link` 可以自动读取 `bvid` 或 `aid` 并生成对应的对象。
+
+**注意：** `parse_link` 会读取可跳转链接的目标链接！
+
+目前 `parse_link` 函数支持解析：
+
+- 视频
+- 番剧
+- 番剧剧集
+- 收藏夹
+- 课程视频
+- 音频
+- 歌单
+- 专栏
+- 用户
+
+[查看示例](../parse_link.md#example)
+
+**Returns:**`Union[tuple, int]`:如果成功返回元组，失败返回 `-1`。
+**元组第一项是对象，第二项是类型**
+
+---
+
 ## class DmMode
 
 弹幕模式
