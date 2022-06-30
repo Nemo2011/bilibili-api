@@ -17,7 +17,9 @@
 - 专栏
 - 用户
 
-<span id="example">下面是一个例子：</span>
+具体的参数、返回值参考[正文](/modules/bilibili_api.md#parse)。
+
+**<span id="example">下面是一个例子： </span>**
 
 ``` python
 from bilibili_api import parse_link, sync

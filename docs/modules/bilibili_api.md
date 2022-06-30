@@ -134,11 +134,11 @@ BV 号转 AV 号。
 
 获取短链接对应的真实链接。
 
-**注意：**这个函数可以用于获取一个跳转`url`的目标。
+**注意：** 这个函数可以用于获取一个跳转`url`的目标。
 
-**Returns:**目标链接（如果不是有效的链接会报错）
+**Returns:** 目标链接（如果不是有效的链接会报错）
 
-## _async_ def parse_link()
+## <span id="parse">_async_ def parse_link()</span>
 
 | name | type | description |
 | - | - | - |
@@ -164,7 +164,8 @@ BV 号转 AV 号。
 
 [查看示例](../parse_link.md#example)
 
-**Returns:**`Union[tuple, int]`:如果成功返回元组，失败返回 `-1`。
+**Returns:** `Union[tuple, int]`:如果成功返回元组，失败返回 `-1`。
+
 **元组第一项是对象，第二项是类型**
 
 ---
