@@ -4,6 +4,8 @@ bilibili_api.login
 登录
 
 **虽然可能有其他函数，但是请忽略他们，这些并不重要**
+
+**login_with_qrcode 用到了 tkinter，linux 的小伙伴请注意安装**
 """
 
 import json
