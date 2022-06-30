@@ -14,16 +14,24 @@ async def get_real_url(short_url: str):
         目标链接（如果不是有效的链接会报错）
     """
     try:
-        config = {}
-        config['method'] = "GET"
-        config['url'] = short_url
-        config['follow_redirects'] = False
-        if settings.proxy:
-            config['proxies'] = {settings.proxy_use: settings.proxy}
-        resp = await get_session().request("GET", url=short_url, follow_redirects=False)
-        if 'Location' in resp.headers.keys():
-            return resp.headers['Location']
-        else:
-            return short_url # 已经是最终路径
+        url = short_url
+        headers = await get_headers(url)
+        while 'location' in headers.keys():
+            url = headers['location']
+            headers = await get_headers(url)
+        return url # 已经是最终路径
     except:
         raise ValueError("无法查看目标链接！")
+
+async def get_headers(short_url):
+    """
+    获取链接的 headers
+    """
+    config = {}
+    config['method'] = "GET"
+    config['url'] = short_url
+    config['follow_redirects'] = False
+    if settings.proxy:
+        config['proxies'] = {settings.proxy_use: settings.proxy}
+    resp = await get_session().request("GET", url=short_url, follow_redirects=False)
+    return resp.headers
