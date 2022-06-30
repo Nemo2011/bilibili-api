@@ -18,6 +18,34 @@ from bilibili_api import favorite_list
 
 ---
 
+## class VideoFavoriteList
+
+一个简单的视频收藏夹类。
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| media_id   | int                                | 收藏夹 ID                                             |
+| credential | Credential, optional               | 凭据. Defaults to None.                               |
+
+#### _async_ def get_video_list()
+
+| name       | type                               | description                                           |
+| ---------- | ---------------------------------- | :---------------------------------------------------- |
+| page       | int, optional                      | 页码. Defaults to 1.                                  |
+| keyword    | str, optional                      | 搜索关键词. Defaults to None.                         |
+| order      | FavoriteListContentOrder, optional | 排序方式. Defaults to FavoriteListContentOrder.MTIME. |
+| tid        | int, optional                      | 分区 ID. Defaults to 0.                               |
+
+获取视频收藏夹列表内容。
+
+**Returns:** API 调用返回结果
+
+---
+
 ## _async_ def get_video_favorite_list()
 
 | name       | type                 | description                                                  |
