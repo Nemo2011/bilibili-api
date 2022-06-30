@@ -13,3 +13,4 @@ node_modules/
 *.bin
 package-lock.json
 site.bat
+.DS_Store
