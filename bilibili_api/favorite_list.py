@@ -31,7 +31,7 @@ class FavoriteListContentOrder(Enum):
     PUBTIME = "pubtime"
 
 
-class VideoFavouriteList:
+class VideoFavoriteList:
     """
     一个简单的视频收藏夹类
     """
