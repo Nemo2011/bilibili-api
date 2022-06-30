@@ -24,6 +24,6 @@ async def get_real_url(short_url: str):
         if 'Location' in resp.headers.keys():
             return resp.headers['Location']
         else:
-            return short_url
+            return short_url # 已经是最终路径
     except:
         raise ValueError("无法查看目标链接！")
