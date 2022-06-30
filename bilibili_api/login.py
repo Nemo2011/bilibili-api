@@ -2,6 +2,8 @@
 bilibili_api.login
 
 登录
+
+**虽然可能有其他函数，但是请忽略他们，这些并不重要**
 """
 
 import json
@@ -87,15 +89,14 @@ def login_with_qrcode(root=None):
             global credential
             credential = c
             log.configure(text="成功！", fg="green", font=big_font)
-            root.update()
-            time.sleep(2)
-            root.destroy()
+            root.after(2000, root.destroy)
         root.after(1000, update_events)
     root.after(1000, update_events)
     while True:
         root.update()
         if credential != None:
             return credential
+
 
 def update_qrcode():
     global login_key, qrcode_image
