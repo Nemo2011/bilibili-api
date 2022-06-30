@@ -162,7 +162,7 @@ BV 号转 AV 号。
 - 专栏
 - 用户
 
-[查看示例](../parse_link.md#example)
+[查看示例](https://nemo2011.github.io/bilibili_api/#/parse_link)
 
 **Returns:** `Union[tuple, int]`:如果成功返回元组，失败返回 `-1`。
 
