@@ -90,6 +90,19 @@ from bilibili_api import user
 
 ---
 
+## class ChannelSeriesType
+
+**Extends:** enum.Enum
+
+合集与列表类型
+
++ SERIES: 旧版
++ SEASON: 新版
+
+**新版合集名字为`合集·XXX`，请注意区别**
+
+---
+
 ## class User
 
 用户相关
@@ -293,6 +306,35 @@ from bilibili_api import user
 | credential | Credential | 凭据        |
 
 获取自己的信息。
+
+**Returns:** 调用接口返回的内容。
+
+---
+
+## class ChannelSeries
+
+合集与列表类
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| uid | int | 用户 uid |
+| type_ | ChannelSeriesType | 合集与列表的类型，分旧版和新版 |
+| id_ | int | season_id 或 series_id |
+| credential | Credential | 凭据类 |
+
+#### def get_meta()
+
+获取元数据
+
+**Returns:** 调用接口返回的内容。
+
+#### _async_ def get_videos()
+
+获取合集视频
 
 **Returns:** 调用接口返回的内容。
 
