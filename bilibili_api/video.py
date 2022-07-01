@@ -657,6 +657,7 @@ class Video:
                     else:
                         break
                 danmakus.append(dm)
+        danmakus.pop() # 最后一个弹幕是乱码
         return danmakus
 
     async def get_history_danmaku_index(
@@ -782,11 +783,13 @@ class Video:
         Return:
             xml 文件源
         """
-        if cid == None:
-            if page_index == None:
+        if cid is None:
+            if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
+
             cid = await self.__get_page_id_by_index(page_index)
         url = f"https://comment.bilibili.com/{cid}.xml"
+        print(url)
         sess = get_session()
         config = {"url": url}
         # 代理
