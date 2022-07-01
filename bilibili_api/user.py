@@ -522,6 +522,8 @@ class User:
         )
         items = res["items_lists"]["page"]["total"]
         time.sleep(0.5)
+        if items == 0:
+            items = 1
         param["page_size"] = items
         return await request(
             "GET", url=api["url"], params=param, credential=self.credential
