@@ -110,8 +110,8 @@ async def make_ass_file_subtitle(bvid, out, name, credential=None):
 async def make_ass_file_danmakus_protobuf(
     bvid,
     page: int=None,
-    cid: int=None,
     out=None,
+    cid: int=None,
     credential=None,
     date=None,
     font_name="Simsun",
@@ -173,7 +173,6 @@ async def make_ass_file_from_danmaku_xml(
     cid: int=None,
     out=None,
     credential=None,
-    date=None,
     font_name="Simsun",
     font_size=25.0,
     alpha=1,
@@ -190,7 +189,6 @@ async def make_ass_file_from_danmaku_xml(
         out(str)              : 输出文件
         cid(int)              : cid
         credential(Credential): 凭据
-        date(datetime.date)   : 获取时间
         font_name(str)        : 字体
         font_size(float)      : 字体大小
         alpha(float)          : 透明度(0-1)
@@ -199,7 +197,7 @@ async def make_ass_file_from_danmaku_xml(
     Returns:
         None
     """
-    v = Video(bvid)
+    v = Video(bvid, credential=credential)
     if cid is None:
         if page is None:
             raise ArgsException("page_index 和 cid 至少提供一个。")

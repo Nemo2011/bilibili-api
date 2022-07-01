@@ -14,6 +14,7 @@ from bilibili_api.utils.Credential import Credential
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.sync import sync
 from bilibili_api.utils.network_httpx import get_session, request
+from PIL.ImageTk import PhotoImage
 import qrcode
 import os
 import tempfile
@@ -66,7 +67,7 @@ def login_with_qrcode(root=None):
         root = tkinter.Tk()
     root.title("扫码登录")
     qrcode_image = update_qrcode()
-    photo = tkinter.PhotoImage(file=qrcode_image)
+    photo = PhotoImage(file=qrcode_image)
     qrcode_label = tkinter.Label(root, image=photo, width=500, height=500)
     qrcode_label.pack()
     big_font = tkinter.font.Font(root, size=25)
