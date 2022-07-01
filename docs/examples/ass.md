@@ -2,5 +2,5 @@
 
 ``` python
 from bilibili_api import ass, sync
-sync(ass.make_ass_file_danmakus("BV1AV411x7Gs", 0, "out.ass"))
+sync(ass.make_ass_file_danmakus_protobuf("BV1AV411x7Gs", 0, "out.ass"))
 ```

@@ -4,6 +4,9 @@ bilibili_api.ass
 """
 import os
 import aiohttp
+from bilibili_api.exceptions.ArgsException import ArgsException
+
+from bilibili_api.utils.sync import sync
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku
 from .utils.network_httpx import get_session
@@ -104,10 +107,11 @@ async def make_ass_file_subtitle(bvid, out, name, credential=None):
     raise ValueError("没有找到指定字幕")
 
 
-async def make_ass_file_danmakus(
+async def make_ass_file_danmakus_protobuf(
     bvid,
-    page,
-    out,
+    page: int=None,
+    cid: int=None,
+    out=None,
     credential=None,
     date=None,
     font_name="Simsun",
@@ -119,10 +123,12 @@ async def make_ass_file_danmakus(
     """
     生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
     强烈推荐 PotPlayer, 电影与电视全部都是静态的，不能滚动。
+    来源：protobuf
     Args:
         bvid(str)             : BVID
         page(int)             : 分 P 号
         out(str)              : 输出文件
+        cid(int)              : cid
         credential(Credential): 凭据
         date(datetime.date)   : 获取时间
         font_name(str)        : 字体
@@ -136,16 +142,75 @@ async def make_ass_file_danmakus(
     if date:
         credential.raise_for_no_sessdata()
     v = Video(bvid, credential=credential)
+    if cid is None:
+        if page is None:
+            raise ArgsException("page_index 和 cid 至少提供一个。")
+        cid = await v._Video__get_page_id_by_index(page)
     info = await v.get_info()
     width = info["dimension"]["width"]
     height = info["dimension"]["height"]
     stage_size = (width, height)
-    danmakus = await v.get_danmakus(page, date=date)
+    danmakus = await v.get_danmakus(cid=cid, date=date)
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write("<i>")
         for d in danmakus:
             file.write(d.to_xml())
         file.write("</i>")
+    export_ass_from_xml(
+        gettempdir() + "/danmaku_temp.xml",
+        out,
+        stage_size,
+        font_name,
+        font_size,
+        alpha,
+        fly_time,
+        static_time,
+    )
+
+async def make_ass_file_from_danmaku_xml(
+    bvid,
+    page: int=None,
+    cid: int=None,
+    out=None,
+    credential=None,
+    date=None,
+    font_name="Simsun",
+    font_size=25.0,
+    alpha=1,
+    fly_time=7,
+    static_time=5,
+):
+    """
+    生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
+    强烈推荐 PotPlayer, 电影与电视全部都是静态的，不能滚动。
+    来源：xml
+    Args:
+        bvid(str)             : BVID
+        page(int)             : 分 P 号
+        out(str)              : 输出文件
+        cid(int)              : cid
+        credential(Credential): 凭据
+        date(datetime.date)   : 获取时间
+        font_name(str)        : 字体
+        font_size(float)      : 字体大小
+        alpha(float)          : 透明度(0-1)
+        fly_time(float)       : 滚动弹幕持续时间
+        static_time(float)    : 静态弹幕持续时间
+    Returns:
+        None
+    """
+    v = Video(bvid)
+    if cid is None:
+        if page is None:
+            raise ArgsException("page_index 和 cid 至少提供一个。")
+        cid = await v._Video__get_page_id_by_index(page)
+    info = await v.get_info()
+    width = info["dimension"]["width"]
+    height = info["dimension"]["height"]
+    stage_size = (width, height)
+    xml_content = await v.get_danmaku_xml(cid=cid)
+    with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
+        file.write(xml_content)
     export_ass_from_xml(
         gettempdir() + "/danmaku_temp.xml",
         out,
