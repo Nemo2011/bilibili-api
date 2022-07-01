@@ -20,8 +20,6 @@ import base64
 import aiohttp
 from typing import List
 
-import requests
-
 from .exceptions import VideoUploadException
 from .exceptions import ResponseException
 from .exceptions import NetworkException
@@ -773,7 +771,7 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def get_danmaku_xml(self, page_index, cid):
+    async def get_danmaku_xml(self, page_index: int=None, cid: int=None):
         """
         获取所有弹幕的 xml 源文件（非装填）
 
@@ -784,13 +782,18 @@ class Video:
         Return:
             xml 文件源
         """
-        if not cid:
-            if not page_index:
+        if cid == None:
+            if page_index == None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
             cid = await self.__get_page_id_by_index(page_index)
         url = f"https://comment.bilibili.com/{cid}.xml"
-        res = requests.get(url)
-        return res.content
+        sess = get_session()
+        config = {"url": url}
+        # 代理
+        if settings.proxy:
+            config["proxies"] = {"all://", settings.proxy}
+        resp = await sess.get(**config)
+        return resp.content.decode("utf-8")
 
     async def like_danmaku(
         self,
