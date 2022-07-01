@@ -36,7 +36,6 @@ from bilibili_api import ass
 | out | (str)              | 输出文件 |
 | cid | (int) | cid |
 | credential | (Credential)| 凭据 |
-| date | (datetime.date)   | 获取时间 |
 | stage_size | (tuple|list)| 尺寸，一般都是 1920x1080 |
 | font_name | (str)        | 字体 |
 | font_size | (float)      | 字体大小 |
