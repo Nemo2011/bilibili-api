@@ -9,6 +9,7 @@ bilibili_api.login
 """
 
 import json
+import webbrowser
 from bilibili_api.utils.Credential import Credential
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.sync import sync
@@ -19,10 +20,25 @@ import tempfile
 import tkinter
 import tkinter.font
 import time
+import base64
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5
 
 API = get_api("login")
 
-global photo
+# ----------------------------------------------------------------
+# 二维码登录
+# ----------------------------------------------------------------
+
+photo = None  # 图片的全局变量
+
+start = time.perf_counter()
+login_key = ""
+qrcode_image = None
+credential = Credential()
+is_destroy = False
+id_ = 0 # 事件 id,用于取消 after 绑定
+
 
 def make_qrcode(url):
     qr = qrcode.QRCode()
@@ -31,10 +47,6 @@ def make_qrcode(url):
     img.save(os.path.join(tempfile.gettempdir(), "qrcode.png"))
     return os.path.join(tempfile.gettempdir(), "qrcode.png")
 
-start = time.perf_counter()
-login_key = ""
-qrcode_image = None
-credential = None
 
 def login_with_qrcode(root=None):
     """
@@ -49,6 +61,7 @@ def login_with_qrcode(root=None):
     global photo
     global login_key, qrcode_image
     global credential
+    global id_
     if root == None:
         root = tkinter.Tk()
     root.title("扫码登录")
@@ -59,24 +72,20 @@ def login_with_qrcode(root=None):
     big_font = tkinter.font.Font(root, size=25)
     log = tkinter.Label(root, text="请扫描二维码↑", font=big_font, fg="red")
     log.pack()
+
     def update_events():
-        global start
-        events_api = API['qrcode']['get_events']
-        data = {
-            "oauthKey": login_key
-        }
+        global id_
+        global start, credential, is_destroy
+        events_api = API["qrcode"]["get_events"]
+        data = {"oauthKey": login_key}
         session = get_session()
-        events = json.loads(sync(session.request("POST", events_api['url'], data=data)).text)
+        events = json.loads(
+            sync(session.request("POST", events_api["url"], data=data)).text
+        )
         if events["data"] == -4:
             log.configure(text="请扫描二维码↑", fg="red", font=big_font)
         elif events["data"] == -5:
             log.configure(text="点下确认啊！", fg="orange", font=big_font)
-        elif events["data"] == -2:
-            qrcode_image = update_qrcode()
-            photo = tkinter.PhotoImage(file=qrcode_image)
-            qrcode_label.configure(image=photo)
-            qrcode_label.grid()
-            start = time.perf_counter()
         elif isinstance(events["data"], dict):
             url = events["data"]["url"]
             cookies_list = url.split("&")
@@ -91,20 +100,36 @@ def login_with_qrcode(root=None):
             global credential
             credential = c
             log.configure(text="成功！", fg="green", font=big_font)
-            root.after(2000, root.destroy)
-        root.after(1000, update_events)
-    root.after(1000, update_events)
-    while True:
-        root.update()
-        if credential != None:
-            return credential
-
+            global start
+            start = time.perf_counter()
+            root.after(2000, destroy)
+        id_ = root.after(50, update_events)
+        # 刷新
+        if time.perf_counter() - start > 120:
+            update_qrcode()
+            start = time.perf_counter()
+    def destroy():
+        global id_
+        root.after_cancel(id_)
+        root.destroy()
+    root.after(50, update_events)
+    root.mainloop()
+    root.after_cancel(id_)
+    return credential
 
 def update_qrcode():
     global login_key, qrcode_image
-    api = API['qrcode']['get_qrcode_and_token']
-    qrcode_login_data = sync(request("GET", api['url']))
-    login_key = qrcode_login_data['oauthKey']
-    qrcode = qrcode_login_data['url']
+    api = API["qrcode"]["get_qrcode_and_token"]
+    qrcode_login_data = sync(request("GET", api["url"]))
+    login_key = qrcode_login_data["oauthKey"]
+    qrcode = qrcode_login_data["url"]
     qrcode_image = make_qrcode(qrcode)
     return qrcode_image
+
+# ----------------------------------------------------------------
+# 密码登录
+# ----------------------------------------------------------------
+
+def encrypt(Hash, key, password):
+    encryptor = PKCS1_v1_5.new(RSA.importKey(bytes(key,'utf-8')))
+    return str(base64.b64encode(encryptor.encrypt(bytes(Hash+password,'utf-8'))),'utf-8')

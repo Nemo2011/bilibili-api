@@ -1,5 +1,7 @@
 # 获取 Credential 类所需信息
 
+**重大消息，重大消息！** `bilibili_api` 在 `10.2.0` 添加了扫码登录、密码登录等功能，无需自行获取所需的数据。[点击跳转](/login.md)
+
 Credential 类实例化代码如下：
 
 ```python
