@@ -160,6 +160,15 @@ class User:
         self.__self_info = await get_self_info(credential=self.credential)
         return self.__self_info
 
+    def get_uid(self):
+        """
+        获取用户 uid
+
+        Returns:
+            用户 uid
+        """
+        return self.uid
+
     async def get_relation_info(self):
         """
         获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
