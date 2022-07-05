@@ -13,5 +13,27 @@
             }, 
             "comment": "获取最新信息"
         }
+    }, 
+    "password": {
+        "get_token": {
+            "url": "https://passport.bilibili.com/x/passport-login/web/key", 
+            "verify": false, 
+            "comment": "获取登录盐值、加密公钥"
+        }, 
+        "login": {
+            "url": "https://passport.bilibili.com/x/passport-login/web/login", 
+            "verify": false, 
+            "data": {
+                "captchaType": "int: 6", 
+                "username": "string: 账号",
+                "password": "string: 加密的密码",
+                "keep": "bool: true", 
+                "key": "string: 密钥",
+                "challenge": "string: 极验 challenge", 
+                "validate": "string: 极验 validate", 
+                "seccode": "string: 极验 seccode"
+            }, 
+            "comment": "登录"
+        }
     }
 }

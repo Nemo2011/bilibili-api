@@ -3,6 +3,7 @@ bilibili_api.utils.captcha
 
 人机测试
 """
+import copy
 import json
 import os
 import time
@@ -11,6 +12,9 @@ import requests
 
 validate = None
 seccode = None
+gt = None
+challenge = None
+key = None
 server = None
 thread = None
 
@@ -18,11 +22,8 @@ def _geetest_urlhandler(url, content_type):
     """
     极验验证服务器 html 源获取函数
     """
+    global gt, challenge, key
     url = url[1:]
-    data = requests.get("https://passport.bilibili.com/x/passport-login/captcha?source=main_web").text
-    json_data = json.loads(data)
-    gt = json_data['data']['geetest']['gt']
-    challenge = json_data['data']['geetest']['challenge']
     if url[:7] == "result/":
         global validate, seccode
         datas = url[7:]
@@ -31,18 +32,25 @@ def _geetest_urlhandler(url, content_type):
             if data[:8] == "validate":
                 validate = data[9:]
             elif data[:7] == "seccode":
-                seccode = data[8:]
+                seccode = data[8:].replace("%7C", "|")
         with open(
             os.path.join(os.path.dirname(__file__), "../html/done.html"), encoding="utf8"
         ) as f:
             html_source_bytes = f.read()
         return html_source_bytes
-    else:
+    elif url[:7] == "":
+        data = requests.get("https://passport.bilibili.com/x/passport-login/captcha").text
+        json_data = json.loads(data)
+        gt = json_data['data']['geetest']['gt']
+        challenge = json_data['data']['geetest']['challenge']
+        key = json_data['data']['token']
         with open(
             os.path.join(os.path.dirname(__file__), "../html/captcha.html"), encoding="utf8"
         ) as f:
             html_source_bytes = f.read().replace("{Python_Interface: GT}", f'"{gt}"').replace("{Python_Interface: CHALLENGE}", f'"{challenge}"')
         return html_source_bytes
+    else:
+        return ""
 
 def _start_server(urlhandler, hostname, port):
     """Start an HTTP server thread on a specific port.
@@ -201,6 +209,7 @@ def start_server():
     """
     global thread
     thread = _start_server(_geetest_urlhandler, "127.0.0.1", 0)
+    print("请打开 " + thread.url + " 进行验证。")
     webbrowser.open(thread.url)
 
 def close_server():
@@ -214,8 +223,14 @@ def get_result():
     """
     获取结果
     """
-    global validate, seccode
-    if validate is None or seccode is None:
+    global validate, seccode, challenge, gt, key
+    if validate is None or seccode is None or gt is None or challenge is None or key is None:
         return -1
     else:
-        return (validate, seccode)
+        dct = {"gt": copy.copy(gt), "challenge": copy.copy(challenge), "validate": copy.copy(validate), "seccode": copy.copy(seccode), "token": copy.copy(key)}
+        gt = None
+        challenge = None
+        validate = None
+        seccode = None
+        key = None
+        return dct
