@@ -9,11 +9,11 @@ bilibili_api.login
 """
 
 import json
-import webbrowser
 from bilibili_api.utils.Credential import Credential
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.sync import sync
 from bilibili_api.utils.network_httpx import get_session, request
+from bilibili_api.utils.captcha import start_server, close_server, get_result
 from PIL.ImageTk import PhotoImage
 import qrcode
 import os
@@ -56,7 +56,7 @@ def login_with_qrcode(root=None):
     Args:
         root: 根窗口，默认为 tkinter.Tk()，如果有需要可以换成 tkinter.Toplevel()
     Returns:
-        Cookies(凭据类)
+        Credential: 凭据
     """
     global start
     global photo
@@ -131,6 +131,50 @@ def update_qrcode():
 # 密码登录
 # ----------------------------------------------------------------
 
-def encrypt(Hash, key, password):
+def encrypt(_hash, key, password):
     encryptor = PKCS1_v1_5.new(RSA.importKey(bytes(key,'utf-8')))
-    return str(base64.b64encode(encryptor.encrypt(bytes(Hash+password,'utf-8'))),'utf-8')
+    return str(base64.b64encode(encryptor.encrypt(bytes(_hash + password,'utf-8'))),'utf-8')
+
+def get_geetest():
+    start_server()
+    while True:
+        result = get_result()
+        if result != -1:
+            close_server()
+            return result
+
+def login_with_password(username: str, password: str):
+    """
+    密码登录。
+
+    Args:
+        username(str): 用户手机号、邮箱
+        password(str): 密码
+
+    Returns:
+        Credential: 凭据
+    """
+    geetest_data = get_geetest()
+    api_token = API['password']['get_token']
+    sess = get_session()
+    token_data = json.loads(sync(sess.get(api_token['url'])).text)
+    hash_ = token_data['data']['hash']
+    key = token_data['data']['key']
+    final_password = encrypt(hash_, key, password)
+    login_api = API['password']['login']
+    params = {
+        "source": 'main_h5',
+        "username": username, 
+        "password": final_password, 
+        "keep": "true", 
+        "go_url": 'https://www.bilibili.com/',
+        "token": geetest_data['token'],
+        "challenge": geetest_data['challenge'], 
+        "validate": geetest_data['validate'], 
+        "seccode": geetest_data['seccode']
+    }
+    print(sync(sess.request("POST", login_api['url'], params=params, headers={
+          'content-type': 'application/x-www-form-urlencoded', 
+          'user-agent': 'Mozilla/5.0',
+          "referer": "https://passport.bilibili.com/login"
+        })).text)
