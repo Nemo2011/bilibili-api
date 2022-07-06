@@ -32,3 +32,5 @@ except:
     exit()
 print("欢迎，", sync(user.get_self_info(credential))['name'], "!")
 ```
+
+**目前仅支持二维码登录，密码登录和验证码登陆正在开发。**
