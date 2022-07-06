@@ -9,6 +9,9 @@ bilibili_api.login
 """
 
 import json
+import webbrowser
+
+import requests
 from bilibili_api.utils.Credential import Credential
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.sync import sync
@@ -173,8 +176,22 @@ def login_with_password(username: str, password: str):
         "validate": geetest_data['validate'], 
         "seccode": geetest_data['seccode']
     }
-    print(sync(sess.request("POST", login_api['url'], params=params, headers={
+    login_data = json.loads(sync(sess.request("POST", login_api['url'], params=params, headers={
           'content-type': 'application/x-www-form-urlencoded', 
           'user-agent': 'Mozilla/5.0',
           "referer": "https://passport.bilibili.com/login"
         })).text)
+    url = login_data['data']['url']
+    if 'https://passport.bilibili.com/account/mobile/security/managephone/phone/verify' in url:
+        pass
+    else:
+        cookies_list = url.split("&")
+        sessdata = ""
+        bili_jct = ""
+        for cookie in cookies_list:
+            if cookie[:8] == "SESSDATA":
+                sessdata = cookie[9:]
+            if cookie[:8] == "bili_jct":
+                bili_jct = cookie[9:]
+        c = Credential(sessdata, bili_jct)
+        return c
