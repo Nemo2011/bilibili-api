@@ -177,7 +177,6 @@ class Article:
 
                 elif e.name == "span":
                     # 各种样式
-
                     if "style" in e.attrs:
                         style = e.attrs["style"]
 
@@ -208,12 +207,20 @@ class Article:
                             node.color = ARTICLE_COLOR_MAP[color_text]
 
                             node.children = parse(e)
+                        else:
+                            if e.text != "":
+                                #print(e.text.replace("\n", ""))
+                                #print()
+                                node = TextNode(e.text)
+                                # print("Add a text node: ", e.text)
+                                node_list.append(node)
+                                node.children = parse(e)
 
                 elif e.name == "blockquote":
                     # 引用块
+                    # print(e.text)
                     node = BlockquoteNode()
                     node_list.append(node)
-
                     node.children = parse(e)
 
                 elif e.name == "figure":
@@ -376,17 +383,17 @@ class Article:
             API 调用返回结果。
         """
         sess = get_session()
-        async with sess.get(f"https://www.bilibili.com/read/cv{self.cvid}") as resp:
-            html = await resp.text()
+        resp = await sess.get(f"https://www.bilibili.com/read/cv{self.cvid}")
+        html = resp.text
 
-            match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", html, re.I)
+        match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", html, re.I)
 
-            if not match:
-                raise ApiException("找不到信息")
+        if not match:
+            raise ApiException("找不到信息")
 
-            data = json.loads(match[1])
+        data = json.loads(match[1])
 
-            return data
+        return data
 
     async def set_like(self, status: bool = True):
         """
@@ -481,9 +488,8 @@ class BlockquoteNode(Node):
 
     def markdown(self):
         t = "".join([node.markdown() for node in self.children])
-
         # 填补空白行的 > 并加上标识符
-        t = "\n".join(["> " + line for line in t.split("\n")])
+        t = "\n".join(["> " + line for line in t.split("\n")]) + "\n\n"
 
         return t
 
