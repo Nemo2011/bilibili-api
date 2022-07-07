@@ -9,6 +9,7 @@ import os
 import time
 import webbrowser
 import requests
+from .utils import get_api
 
 validate = None
 seccode = None
@@ -17,6 +18,8 @@ challenge = None
 key = None
 server = None
 thread = None
+
+API = get_api("login")
 
 def _geetest_urlhandler(url, content_type):
     """
@@ -39,7 +42,8 @@ def _geetest_urlhandler(url, content_type):
             html_source_bytes = f.read()
         return html_source_bytes
     elif url[:7] == "":
-        data = requests.get("https://passport.bilibili.com/x/passport-login/captcha").text
+        api = API['password']['captcha']
+        data = requests.get(api['url']).text
         json_data = json.loads(data)
         gt = json_data['data']['geetest']['gt']
         challenge = json_data['data']['geetest']['challenge']
