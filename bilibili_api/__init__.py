@@ -1,5 +1,4 @@
 import asyncio
-from modulefinder import Module
 import platform
 
 import nest_asyncio
