@@ -20,6 +20,11 @@
             "verify": false, 
             "comment": "获取登录盐值、加密公钥"
         }, 
+        "captcha": {
+            "url": "https://passport.bilibili.com/x/passport-login/captcha", 
+            "verify": false, 
+            "comment": "获取极验信息"
+        },
         "login": {
             "url": "https://passport.bilibili.com/x/passport-login/web/login", 
             "verify": false, 

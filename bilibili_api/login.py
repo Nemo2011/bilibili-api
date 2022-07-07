@@ -9,6 +9,7 @@ bilibili_api.login
 """
 
 import json
+import re
 import webbrowser
 
 import requests
@@ -140,11 +141,15 @@ def encrypt(_hash, key, password):
 
 def get_geetest():
     start_server()
-    while True:
-        result = get_result()
-        if result != -1:
-            close_server()
-            return result
+    try:
+        while True:
+            result = get_result()
+            if result != -1:
+                close_server()
+                return result
+    except KeyboardInterrupt:
+        close_server()
+        exit()
 
 def login_with_password(username: str, password: str):
     """
@@ -155,7 +160,7 @@ def login_with_password(username: str, password: str):
         password(str): 密码
 
     Returns:
-        Credential: 凭据
+        Union[Credential, Check): 凭据或验证码认证类。
     """
     geetest_data = get_geetest()
     api_token = API['password']['get_token']
@@ -170,7 +175,6 @@ def login_with_password(username: str, password: str):
         "username": username, 
         "password": final_password, 
         "keep": "true", 
-        "go_url": 'https://www.bilibili.com/',
         "token": geetest_data['token'],
         "challenge": geetest_data['challenge'], 
         "validate": geetest_data['validate'], 
@@ -183,7 +187,7 @@ def login_with_password(username: str, password: str):
         })).text)
     url = login_data['data']['url']
     if 'https://passport.bilibili.com/account/mobile/security/managephone/phone/verify' in url:
-        pass
+        return Check(url)
     else:
         cookies_list = url.split("&")
         sessdata = ""
@@ -195,3 +199,14 @@ def login_with_password(username: str, password: str):
                 bili_jct = cookie[9:]
         c = Credential(sessdata, bili_jct)
         return c
+
+class Check():
+    def __init__(self, check_url):
+        self.check_url = check_url
+        self.now_time = time.perf_counter()
+
+    def check_time(self):
+        if time.perf_counter() - self.now_time > 120:
+            return False
+        else:
+            return True
