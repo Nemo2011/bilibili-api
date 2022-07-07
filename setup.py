@@ -31,7 +31,8 @@ setuptools.setup(
         "": [
             "data/**/*.*",
             "requirements.txt",
-            "data/*.*"
+            "data/*.*", 
+            "html/*.*"
         ]
     },
     install_requires=requires.splitlines(),
