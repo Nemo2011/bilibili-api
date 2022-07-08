@@ -12,9 +12,11 @@
 6. 开发完毕后，使用 `git push -u origin {分支名}` 将分支推送到你 fork 的仓库。
 7. **向 `dev` 分支**发起 [Pull Requests](https://github.com/Nemo2011/bilibili_api/pulls)。
 
-# 代码风格规范
+# 代码风格、格式规范
 
 代码风格遵循 [Google Python Style](https://google.github.io/styleguide/pyguide.html)（[中文版](https://google-styleguide.readthedocs.io/zh_CN/latest/google-python-styleguide/contents.html)）
+
+代码格式请遵循 [PEP8]，可以用自动格式化工具(如 `black`)
 
 请务必严格遵循该规范，特别是命名、空格的正确使用。在提交前，会自动运行代码检查工具，检查代码中存在的明显问题。
 
