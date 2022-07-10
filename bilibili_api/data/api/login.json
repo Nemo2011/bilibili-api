@@ -2,11 +2,13 @@
     "qrcode": {
         "get_qrcode_and_token": {
             "url": "http://passport.bilibili.com/qrcode/getLoginUrl", 
+            "method": "GET", 
             "verify": false, 
             "comment": "请求二维码及登录密钥"
         }, 
         "get_events": {
             "url": "http://passport.bilibili.com/qrcode/getLoginInfo", 
+            "method": "POST", 
             "verify": false, 
             "data": {
                 "oauthKey": "str: 登陆密钥"
@@ -17,27 +19,48 @@
     "password": {
         "get_token": {
             "url": "https://passport.bilibili.com/x/passport-login/web/key", 
+            "method": "GET",
             "verify": false, 
             "comment": "获取登录盐值、加密公钥"
         }, 
         "captcha": {
             "url": "https://passport.bilibili.com/x/passport-login/captcha", 
+            "method": "GET",
             "verify": false, 
             "comment": "获取极验信息"
         },
         "login": {
             "url": "https://passport.bilibili.com/x/passport-login/web/login", 
+            "method": "POST",
             "verify": false, 
             "data": {
                 "username": "string: 账号",
                 "password": "string: 加密的密码",
                 "keep": "bool: true", 
                 "key": "string: 密钥",
+                "token": "string: 极验信息中的登陆密钥 token",
                 "challenge": "string: 极验 challenge", 
                 "validate": "string: 极验 validate", 
                 "seccode": "string: 极验 seccode"
             }, 
             "comment": "登录"
+        }
+    }, 
+    "sms": {
+        "send": {
+            "url": "https://passport.bilibili.com/x/passport-login/web/sms/send", 
+            "method": "POST",
+            "verify": false, 
+            "data": {
+                "tell": "string: 手机号码", 
+                "cid": "int: 地区对应的 id (contries_codes.json 中对应的一个地区的 id 项，不是 country_id。", 
+                "source": "string: main_web", 
+                "token": "string: 极验信息中的登陆密钥 token",
+                "challenge": "string: 极验 challenge", 
+                "validate": "string: 极验 validate", 
+                "seccode": "string: 极验 seccode"
+            }, 
+            "comment": "发送验证码"
         }
     }
 }
