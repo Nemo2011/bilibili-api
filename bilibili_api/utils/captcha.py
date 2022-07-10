@@ -37,7 +37,7 @@ def _geetest_urlhandler(url, content_type):
             elif data[:7] == "seccode":
                 seccode = data[8:].replace("%7C", "|")
         with open(
-            os.path.join(os.path.dirname(__file__), "../html/done.html"), encoding="utf8"
+            os.path.join(os.path.dirname(__file__), "..", "html/done.html"), encoding="utf8"
         ) as f:
             html_source_bytes = f.read()
         return html_source_bytes
