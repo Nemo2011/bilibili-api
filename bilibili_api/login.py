@@ -10,6 +10,7 @@ bilibili_api.login
 
 import json
 import re
+from typing import Union
 import webbrowser
 
 import requests
@@ -160,7 +161,7 @@ def login_with_password(username: str, password: str):
         password(str): 密码
 
     Returns:
-        Union[Credential, Check): 凭据或验证码认证类。
+        Union[Credential, Check]: 凭据或验证码认证类。
     """
     geetest_data = get_geetest()
     api_token = API['password']['get_token']
@@ -210,3 +211,80 @@ class Check():
             return False
         else:
             return True
+
+# ----------------------------------------------------------------
+# 验证码登录
+# ----------------------------------------------------------------
+
+def get_countries_list():
+    """
+    获取国际地区代码列表
+
+    Returns:
+        List[dict]: 地区列表
+    """
+    with open(
+        os.path.join(os.path.dirname(__file__), "data/countries_codes.json"), encoding="utf8"
+    ) as f:
+        codes_list = json.loads(f.read())
+    countries = []
+    for country in codes_list:
+        name = country['cname']
+        id_ = country['country_id']
+        countries.append({"name": name, "code": int(id_)})
+    return countries
+
+def search_countries(keyword: str):
+    """
+    搜索一个地区及其国际地区代码
+
+    Args:
+        keyword(str): 关键词
+    Returns:
+        List[dict]: 地区列表
+    """
+    list_ = get_countries_list()
+    countries = []
+    for country in list_:
+        if keyword in country['name'] or keyword.lstrip("+") in country['code']:
+            countries.append(country)
+    return countries
+
+def have_country(keyword: str):
+    """
+    是否有地区
+
+    Args:
+        keyword(str): 关键词
+
+    Returns:
+        bool: 是否存在
+    """
+    list_ = get_countries_list()
+    for country in list_:
+        if country['name'] == keyword:
+            return True
+    return False
+
+def have_code(code: Union[str, int]):
+    """
+    是否存在地区代码
+
+    Args:
+        code(Union[str, int]): 代码
+
+    Returns:
+        bool: 是否存在
+    """
+    list_ = get_countries_list()
+    if isinstance(code, str):
+        code = code.lstrip("+")
+        int_code = int(code)
+    elif isinstance(code, int):
+        int_code = code
+    else:
+        return False
+    for country in list_:
+        if country['code'] == int_code:
+            return True
+    return False
