@@ -229,7 +229,8 @@ def get_countries_list():
     for country in codes_list:
         name = country['cname']
         id_ = country['country_id']
-        countries.append({"name": name, "code": int(id_)})
+        code = country['id']
+        countries.append({"name": name, "id": code, "code": int(id_)})
     return countries
 
 def search_countries(keyword: str):
@@ -306,6 +307,22 @@ def get_code_by_country(country: str):
             return country_['code']
     return -1
 
+def get_id_by_code(code: int):
+    """
+    获取地区码对应的地区 id
+
+    Args:
+        code(int): 地区吗
+
+    Returns:
+        int: 对应的代码，没有返回 -1
+    """
+    list_ = get_countries_list()
+    for country_ in list_:
+        if country_['code'] == code:
+            return country_['id']
+    return -1
+
 class PhoneNumber():
     def __init__(self, country: Union[str, int], number: str):
         number = number.replace("-", "")
@@ -318,6 +335,7 @@ class PhoneNumber():
             code = get_code_by_country(country)
         self.number = number
         self.code = code
+        self.id_ = get_id_by_code(self.code)
 
     def __str__(self):
-        return f"+{self.code} {self.number}"
+        return f"+{self.code} {self.number} (bilibili 地区 id {self.id_})"
