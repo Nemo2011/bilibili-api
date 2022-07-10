@@ -11,9 +11,7 @@ bilibili_api.login
 import json
 import re
 from typing import Union
-import webbrowser
 
-import requests
 from bilibili_api.utils.Credential import Credential
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.sync import sync
@@ -279,7 +277,10 @@ def have_code(code: Union[str, int]):
     list_ = get_countries_list()
     if isinstance(code, str):
         code = code.lstrip("+")
-        int_code = int(code)
+        try:
+            int_code = int(code)
+        except ValueError:
+            raise ValueError("地区代码参数错误")
     elif isinstance(code, int):
         int_code = code
     else:
@@ -288,3 +289,35 @@ def have_code(code: Union[str, int]):
         if country['code'] == int_code:
             return True
     return False
+
+def get_code_by_country(country: str):
+    """
+    获取地区对应代码
+
+    Args:
+        country(str): 地区名
+
+    Returns:
+        int: 对应的代码，没有返回 -1
+    """
+    list_ = get_countries_list()
+    for country_ in list_:
+        if country_['name'] == country:
+            return country_['code']
+    return -1
+
+class PhoneNumber():
+    def __init__(self, country: Union[str, int], number: str):
+        number = number.replace("-", "")
+        if not have_country(country):
+            if not have_code(country):
+                raise ValueError("地区代码或地区名错误")
+            else:
+                code = country if isinstance(country, int) else int(country.lstrip("+"))
+        else:
+            code = get_code_by_country(country)
+        self.number = number
+        self.code = code
+
+    def __str__(self):
+        return f"+{self.code} {self.number}"
