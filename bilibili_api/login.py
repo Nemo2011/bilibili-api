@@ -11,6 +11,8 @@ bilibili_api.login
 import json
 from typing import Union
 import webbrowser
+
+import requests
 from bilibili_api.exceptions.LoginError import LoginError
 
 from bilibili_api.utils.Credential import Credential
@@ -18,6 +20,7 @@ from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.sync import sync
 from bilibili_api.utils.network_httpx import get_session, request
 from bilibili_api.utils.captcha import start_server, close_server, get_result
+from bilibili_api import settings
 from PIL.ImageTk import PhotoImage
 import qrcode
 import os
@@ -81,12 +84,15 @@ def login_with_qrcode(root=None):
     def update_events():
         global id_
         global start, credential, is_destroy
+        #log.configure(text="点下确认啊！", fg="orange", font=big_font)
         events_api = API["qrcode"]["get_events"]
         data = {"oauthKey": login_key}
-        session = get_session()
         events = json.loads(
-            sync(session.request("POST", events_api["url"], data=data)).text
+            requests.post(events_api["url"], data=data).text
         )
+        print(events)
+        if events['code'] == -412:
+            raise LoginError("传说中的风控!")
         if events["data"] == -4:
             log.configure(text="请扫描二维码↑", fg="red", font=big_font)
         elif events["data"] == -5:
@@ -108,16 +114,17 @@ def login_with_qrcode(root=None):
             global start
             start = time.perf_counter()
             root.after(2000, destroy)
-        id_ = root.after(50, update_events)
+        id_ = root.after(100, update_events)
         # 刷新
         if time.perf_counter() - start > 120:
             update_qrcode()
             start = time.perf_counter()
+        root.update()
     def destroy():
         global id_
         root.after_cancel(id_)
         root.destroy()
-    root.after(50, update_events)
+    root.after(100, update_events)
     root.mainloop()
     root.after_cancel(id_)
     return credential
@@ -141,7 +148,8 @@ def encrypt(_hash, key, password):
 
 def get_geetest():
     thread = start_server()
-    webbrowser.open(thread.url)
+    if settings.geetest_auto_open:
+        webbrowser.open(thread.url)
     try:
         while True:
             result = get_result()
