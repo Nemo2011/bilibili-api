@@ -29,7 +29,6 @@
             "url": "https://passport.bilibili.com/x/passport-login/web/login", 
             "verify": false, 
             "data": {
-                "captchaType": "int: 6", 
                 "username": "string: 账号",
                 "password": "string: 加密的密码",
                 "keep": "bool: true", 
