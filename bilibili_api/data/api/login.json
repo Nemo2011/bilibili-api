@@ -52,7 +52,7 @@
             "method": "POST",
             "verify": false, 
             "data": {
-                "tell": "string: 手机号码", 
+                "tel": "string: 手机号码", 
                 "cid": "int: 地区对应的 id (contries_codes.json 中对应的一个地区的 id 项，不是 country_id。", 
                 "source": "string: main_web", 
                 "token": "string: 极验信息中的登陆密钥 token",
@@ -61,6 +61,21 @@
                 "seccode": "string: 极验 seccode"
             }, 
             "comment": "发送验证码"
+        }, 
+        "login": {
+            "url": "https://passport.bilibili.com/x/passport-login/web/login/sms",
+            "method": "POST", 
+            "verify": false, 
+            "data":{
+                "tel": "string: 手机号码", 
+                "cid": "int: 地区对应的 id (contries_codes.json 中对应的一个地区的 id 项，不是 country_id。",
+                "code": "string: 验证码", 
+                "source": "string: main_web", 
+                "captcha_key": "string: 发送验证码时产生的返回值", 
+                "keep":"bool: true", 
+                "go_url": "跳转 url"
+            }, 
+            "comment": "验证码登录"
         }
     }
 }

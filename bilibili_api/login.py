@@ -9,8 +9,9 @@ bilibili_api.login
 """
 
 import json
-import re
 from typing import Union
+import webbrowser
+from bilibili_api.exceptions.LoginError import LoginError
 
 from bilibili_api.utils.Credential import Credential
 from bilibili_api.utils.utils import get_api
@@ -139,7 +140,8 @@ def encrypt(_hash, key, password):
     return str(base64.b64encode(encryptor.encrypt(bytes(_hash + password,'utf-8'))),'utf-8')
 
 def get_geetest():
-    start_server()
+    thread = start_server()
+    webbrowser.open(thread.url)
     try:
         while True:
             result = get_result()
@@ -184,35 +186,29 @@ def login_with_password(username: str, password: str):
           'user-agent': 'Mozilla/5.0',
           "referer": "https://passport.bilibili.com/login"
         })).text)
-    url = login_data['data']['url']
-    if 'https://passport.bilibili.com/account/mobile/security/managephone/phone/verify' in url:
-        return Check(url)
-    else:
-        cookies_list = url.split("&")
-        sessdata = ""
-        bili_jct = ""
-        for cookie in cookies_list:
-            if cookie[:8] == "SESSDATA":
-                sessdata = cookie[9:]
-            if cookie[:8] == "bili_jct":
-                bili_jct = cookie[9:]
-        c = Credential(sessdata, bili_jct)
-        return c
-
-class Check():
-    def __init__(self, check_url):
-        self.check_url = check_url
-        self.now_time = time.perf_counter()
-
-    def check_time(self):
-        if time.perf_counter() - self.now_time > 120:
-            return False
+    if login_data['code'] == 0:
+        url = login_data['data']['url']
+        if 'https://passport.bilibili.com/account/mobile/security/managephone/phone/verify' in url:
+            return Check(url)
         else:
-            return True
+            cookies_list = url.split("&")
+            sessdata = ""
+            bili_jct = ""
+            for cookie in cookies_list:
+                if cookie[:8] == "SESSDATA":
+                    sessdata = cookie[9:]
+                if cookie[:8] == "bili_jct":
+                    bili_jct = cookie[9:]
+            c = Credential(sessdata, bili_jct)
+            return c
+    else:
+        raise LoginError(login_data['message'])
 
 # ----------------------------------------------------------------
 # 验证码登录
 # ----------------------------------------------------------------
+
+captcha_id = None
 
 def get_countries_list():
     """
@@ -323,8 +319,12 @@ def get_id_by_code(code: int):
             return country_['id']
     return -1
 
-class PhoneNumber():
-    def __init__(self, country: Union[str, int], number: str):
+class PhoneNumber:
+    def __init__(self, number: str, country: Union[str, int]="+86"):
+        """
+        number(string): 手机号
+        country(string): 地区/地区码，如 +86
+        """
         number = number.replace("-", "")
         if not have_country(country):
             if not have_code(country):
@@ -339,3 +339,131 @@ class PhoneNumber():
 
     def __str__(self):
         return f"+{self.code} {self.number} (bilibili 地区 id {self.id_})"
+
+def send_sms(phonenumber: PhoneNumber):
+    """
+    发送验证码
+
+    Args:
+        phonenumber: 手机号类
+
+    Returns:
+        None
+    """
+    global captcha_id
+    api = API['sms']['send']
+    code = phonenumber.code
+    tell = phonenumber.number
+    geetest_data = get_geetest()
+    sess = get_session()
+    return_data = json.loads(sync(sess.post(
+        url=api['url'], 
+        data={
+            "tel": tell, 
+            "cid": code, 
+            "source": "main_web", 
+            "token": geetest_data['token'], 
+            "challenge": geetest_data['challenge'], 
+            "validate": geetest_data['validate'], 
+            "seccode": geetest_data['seccode']
+        }
+    )).text)
+    if return_data['code'] == 0:
+        captcha_id = return_data['data']['captcha_key']
+    else:
+        raise LoginError(return_data['message'])
+
+def login_with_sms(phonenumber: PhoneNumber, code: str):
+    """
+    验证码登录
+
+    Args:
+        phonenumber(string): 手机号类
+        code(string)       : 验证码
+
+    Returns:
+        Credential: 凭据类
+    """
+    global captcha_id
+    sess = get_session()
+    api = API['sms']['login']
+    if captcha_id == None:
+        raise LoginError("请申请或重新申请发送验证码")
+    return_data = json.loads(
+        sync(
+            sess.request(
+                "POST", 
+                url=api['url'], 
+                data={
+                    "tel": phonenumber.number, 
+                    "cid": phonenumber.code, 
+                    "code": code, 
+                    "source": "main_web", 
+                    "captcha_key": captcha_id, 
+                    "keep": "true"
+                }
+            )
+        ).text
+    )
+    if return_data['code'] == 0:
+        captcha_id = None
+        url = return_data['data']['url']
+        cookies_list = url.split("&")
+        sessdata = ""
+        bili_jct = ""
+        for cookie in cookies_list:
+            if cookie[:8] == "SESSDATA":
+                sessdata = cookie[9:]
+            if cookie[:8] == "bili_jct":
+                bili_jct = cookie[9:]
+        c = Credential(sessdata, bili_jct)
+        return c
+    else:
+        raise LoginError(return_data['message'])
+
+# 验证类
+
+class Check():
+    """
+    验证类，如果密码登录需要验证会返回此类
+    """
+    def __init__(self, check_url):
+        self.check_url = check_url
+        self.now_time = time.perf_counter()
+
+    def set_phone(self, phonenumber):
+        """
+        设置手机号
+
+        Args:
+            phonenumber: 手机号类
+
+        Returns:
+            None
+        """
+        self.phonenumber = phonenumber
+
+    def send_code(self):
+        """
+        发送验证码
+
+        Returns:
+            None
+        """
+        if self.phonenumber == None:
+            raise LoginError("请使用 self.set_phone 函数设置手机号")
+        send_sms(self.phonenumber)
+
+    def login(self, code: str):
+        """
+        验证码登录
+
+        Args:
+            code(string)       : 验证码
+
+        Returns:
+            None
+        """
+        if self.phonenumber == None:
+            raise LoginError("请使用 self.set_phone 函数设置手机号")
+        return login_with_sms(self.phonenumber, code)
