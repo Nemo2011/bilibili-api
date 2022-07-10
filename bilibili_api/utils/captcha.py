@@ -214,7 +214,7 @@ def start_server():
     global thread
     thread = _start_server(_geetest_urlhandler, "127.0.0.1", 0)
     print("请打开 " + thread.url + " 进行验证。")
-    webbrowser.open(thread.url)
+    return thread
 
 def close_server():
     """
