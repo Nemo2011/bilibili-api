@@ -21,6 +21,7 @@ thread = None
 
 API = get_api("login")
 
+
 def _geetest_urlhandler(url, content_type):
     """
     极验验证服务器 html 源获取函数
@@ -37,24 +38,31 @@ def _geetest_urlhandler(url, content_type):
             elif data[:7] == "seccode":
                 seccode = data[8:].replace("%7C", "|")
         with open(
-            os.path.join(os.path.dirname(__file__), "..", "html/done.html"), encoding="utf8"
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "html", "done.html")),
+            encoding="utf8",
         ) as f:
             html_source_bytes = f.read()
         return html_source_bytes
     elif url[:7] == "":
-        api = API['password']['captcha']
-        data = requests.get(api['url']).text
+        api = API["password"]["captcha"]
+        data = requests.get(api["url"]).text
         json_data = json.loads(data)
-        gt = json_data['data']['geetest']['gt']
-        challenge = json_data['data']['geetest']['challenge']
-        key = json_data['data']['token']
+        gt = json_data["data"]["geetest"]["gt"]
+        challenge = json_data["data"]["geetest"]["challenge"]
+        key = json_data["data"]["token"]
         with open(
-            os.path.join(os.path.dirname(__file__), "../html/captcha.html"), encoding="utf8"
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "html", "captcha.html")),
+            encoding="utf8",
         ) as f:
-            html_source_bytes = f.read().replace("{Python_Interface: GT}", f'"{gt}"').replace("{Python_Interface: CHALLENGE}", f'"{challenge}"')
+            html_source_bytes = (
+                f.read()
+                .replace("{Python_Interface: GT}", f'"{gt}"')
+                .replace("{Python_Interface: CHALLENGE}", f'"{challenge}"')
+            )
         return html_source_bytes
     else:
         return ""
+
 
 def _start_server(urlhandler, hostname, port):
     """Start an HTTP server thread on a specific port.
@@ -111,36 +119,33 @@ def _start_server(urlhandler, hostname, port):
 
         >>> print(serverthread.error)
         None
-   """
+    """
     import http.server
     import email.message
     import select
     import threading
 
     class DocHandler(http.server.BaseHTTPRequestHandler):
-
         def do_GET(self):
             """Process a request from an HTML browser.
 
             The URL received is in self.path.
             Get an HTML page from self.urlhandler and send it.
             """
-            if self.path.endswith('.css'):
-                content_type = 'text/css'
+            if self.path.endswith(".css"):
+                content_type = "text/css"
             else:
-                content_type = 'text/html'
+                content_type = "text/html"
             self.send_response(200)
-            self.send_header('Content-Type', '%s; charset=UTF-8' % content_type)
+            self.send_header("Content-Type", "%s; charset=UTF-8" % content_type)
             self.end_headers()
-            self.wfile.write(self.urlhandler(
-                self.path, content_type).encode('utf-8'))
+            self.wfile.write(self.urlhandler(self.path, content_type).encode("utf-8"))
 
         def log_message(self, *args):
             # Don't log messages.
             pass
 
     class DocServer(http.server.HTTPServer):
-
         def __init__(self, host, port, callback):
             self.host = host
             self.address = (self.host, port)
@@ -161,7 +166,6 @@ def _start_server(urlhandler, hostname, port):
                 self.callback(self)
 
     class ServerThread(threading.Thread):
-
         def __init__(self, urlhandler, host, port):
             self.urlhandler = urlhandler
             self.host = host
@@ -187,7 +191,7 @@ def _start_server(urlhandler, hostname, port):
             self.serving = True
             self.host = server.host
             self.port = server.server_port
-            self.url = 'http://%s:%d/' % (self.host, self.port)
+            self.url = "http://%s:%d/" % (self.host, self.port)
 
         def stop(self):
             """Stop the server and this thread nicely"""
@@ -204,8 +208,9 @@ def _start_server(urlhandler, hostname, port):
     # Wait until thread.serving is True to make sure we are
     # really up before returning.
     while not thread.error and not thread.serving:
-        time.sleep(.01)
+        time.sleep(0.01)
     return thread
+
 
 def start_server():
     """
@@ -216,6 +221,7 @@ def start_server():
     print("请打开 " + thread.url + " 进行验证。")
     return thread
 
+
 def close_server():
     """
     关闭服务器
@@ -223,15 +229,28 @@ def close_server():
     global thread
     thread.stop()
 
+
 def get_result():
     """
     获取结果
     """
     global validate, seccode, challenge, gt, key
-    if validate is None or seccode is None or gt is None or challenge is None or key is None:
+    if (
+        validate is None
+        or seccode is None
+        or gt is None
+        or challenge is None
+        or key is None
+    ):
         return -1
     else:
-        dct = {"gt": copy.copy(gt), "challenge": copy.copy(challenge), "validate": copy.copy(validate), "seccode": copy.copy(seccode), "token": copy.copy(key)}
+        dct = {
+            "gt": copy.copy(gt),
+            "challenge": copy.copy(challenge),
+            "validate": copy.copy(validate),
+            "seccode": copy.copy(seccode),
+            "token": copy.copy(key),
+        }
         gt = None
         challenge = None
         validate = None
