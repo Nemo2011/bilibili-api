@@ -15,6 +15,7 @@ from bilibili_api.favorite_list import VideoFavoriteList
 from bilibili_api.user import User
 from bilibili_api.utils.Credential import Credential
 from bilibili_api.utils.sync import sync
+from bilibili_api.user import get_self_info
 from .short import get_real_url
 from ..video import Video
 import re
@@ -65,11 +66,13 @@ async def parse_link(url, credential: Credential=None):
     Returns:
         Union[tuple, int]: (对象，类型) 或 -1,-1 表示出错
     """
-    if True:#try:
+    try:
         url = await get_real_url(url)
         url = url.split("?")[0]
-        video = parse_video(url)
+        if url == "https://space.bilibili.com":
+            print(get_self_info(credential))
         obj = None
+        video = parse_video(url)
         if not video == -1:
             obj = (video, ResourceType.VIDEO)
         bangumi = parse_bangumi(url)
@@ -102,9 +105,9 @@ async def parse_link(url, credential: Credential=None):
         else:
             obj[0].credential = credential
             return obj
-    #except Exception as e:
-    #    print(e)
-    #    return -1
+    except Exception as e:
+        print(e)
+        return -1
 
 def parse_video(url):
     """

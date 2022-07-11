@@ -112,7 +112,7 @@ def login_with_qrcode(root=None):
             log.configure(text="成功！", fg="green", font=big_font)
             global start
             start = time.perf_counter()
-            root.after(2000, destroy)
+            root.after(1000, destroy)
         id_ = root.after(500, update_events)
         # 刷新
         if time.perf_counter() - start > 120:
