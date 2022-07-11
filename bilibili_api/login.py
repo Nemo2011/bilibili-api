@@ -463,13 +463,13 @@ class Check():
 
     def login(self, code: str):
         """
-        验证码登录
+        登录
 
         Args:
             code(string)       : 验证码
 
         Returns:
-            None
+            Credential: 凭据类
         """
         if self.phonenumber == None:
             raise LoginError("请使用 self.set_phone 函数设置手机号")
