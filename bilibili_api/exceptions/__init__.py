@@ -5,6 +5,8 @@ from .NetworkException import *
 from .ArgsException import *
 from .CredentialNoSessdataException import *
 from .CredentialNoBiliJctException import *
+from .CredentialNoBuvid3Exception import *
+from .CredentialNoDedeUserIDException import CredentialNoDedeUserIDException
 from .DanmakuClosedException import *
 from .VideoUploadException import *
 from .LoginError import *
