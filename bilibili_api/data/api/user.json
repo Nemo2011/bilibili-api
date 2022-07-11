@@ -217,6 +217,12 @@
         "mid": "int: uid"
       },
       "comment": "查看用户的课程"
+    }, 
+    "get_coins": {
+      "url": "https://account.bilibili.com/site/getCoin", 
+      "method": "GET", 
+      "verify": true, 
+      "comment": "获取硬币数量"
     }
   }, 
   "operate": {

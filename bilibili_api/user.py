@@ -779,3 +779,16 @@ async def get_self_history(
     params = {"pn": page_num, "ps": per_page_item}
 
     return await request("GET", url=api["url"], params=params, credential=credential)
+
+
+async def get_self_coins(credential: Credential=Credential()):
+    """
+    获取自己的硬币数量
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_dedeuserid()
+    api = API["info"]['get_coins']
+    return (await request("GET", url=api['url'], credential=credential))['money']

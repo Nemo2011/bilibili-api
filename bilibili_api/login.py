@@ -98,15 +98,18 @@ def login_with_qrcode(root=None):
             log.configure(text="点下确认啊！", fg="orange", font=big_font)
         elif isinstance(events["data"], dict):
             url = events["data"]["url"]
-            cookies_list = url.split("&")
+            cookies_list = url.split("?")[1].split("&")
             sessdata = ""
             bili_jct = ""
+            dede = ""
             for cookie in cookies_list:
                 if cookie[:8] == "SESSDATA":
                     sessdata = cookie[9:]
                 if cookie[:8] == "bili_jct":
                     bili_jct = cookie[9:]
-            c = Credential(sessdata, bili_jct)
+                if cookie[:11].upper() == "DEDEUSERID=":
+                    dede = cookie[11:]
+            c = Credential(sessdata, bili_jct, dedeuserid=dede)
             global credential
             credential = c
             log.configure(text="成功！", fg="green", font=big_font)
@@ -198,15 +201,18 @@ def login_with_password(username: str, password: str):
         if 'https://passport.bilibili.com/account/mobile/security/managephone/phone/verify' in url:
             return Check(url)
         else:
-            cookies_list = url.split("&")
+            cookies_list = url.split("?")[1].split("&")
             sessdata = ""
             bili_jct = ""
+            dede = ""
             for cookie in cookies_list:
                 if cookie[:8] == "SESSDATA":
                     sessdata = cookie[9:]
                 if cookie[:8] == "bili_jct":
                     bili_jct = cookie[9:]
-            c = Credential(sessdata, bili_jct)
+                if cookie[:11].upper() == "DEDEUSERID=":
+                    dede = cookie[11:]
+            c = Credential(sessdata, bili_jct, dedeuserid=dede)
             return c
     else:
         raise LoginError(login_data['message'])
@@ -415,15 +421,18 @@ def login_with_sms(phonenumber: PhoneNumber, code: str):
     if return_data['code'] == 0:
         captcha_id = None
         url = return_data['data']['url']
-        cookies_list = url.split("&")
+        cookies_list = url.split("?")[1].split("&")
         sessdata = ""
         bili_jct = ""
+        dede = ""
         for cookie in cookies_list:
             if cookie[:8] == "SESSDATA":
                 sessdata = cookie[9:]
             if cookie[:8] == "bili_jct":
                 bili_jct = cookie[9:]
-        c = Credential(sessdata, bili_jct)
+            if cookie[:11].upper() == "DEDEUSERID=":
+                dede = cookie[11:]
+        c = Credential(sessdata, bili_jct, dedeuserid=dede)
         return c
     else:
         raise LoginError(return_data['message'])
