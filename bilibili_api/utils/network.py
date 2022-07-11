@@ -176,7 +176,7 @@ def get_session():
     loop = asyncio.get_event_loop()
     session = __session_pool.get(loop, None)
     if session is None:
-        session = aiohttp.ClientSession(loop=loop)
+        session = aiohttp.ClientSession(loop=loop, connector=aiohttp.TCPConnector(verify_ssl=False))
         __session_pool[loop] = session
 
     return session
