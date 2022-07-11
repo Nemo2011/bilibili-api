@@ -90,9 +90,8 @@ def login_with_qrcode(root=None):
         events = json.loads(
             requests.post(events_api["url"], data=data).text
         )
-        print(events)
-        if events['code'] == -412:
-            raise LoginError("传说中的风控!")
+        if "code" in events.keys() and events['code'] == -412:
+            raise LoginError(events['message'])
         if events["data"] == -4:
             log.configure(text="请扫描二维码↑", fg="red", font=big_font)
         elif events["data"] == -5:
@@ -114,7 +113,7 @@ def login_with_qrcode(root=None):
             global start
             start = time.perf_counter()
             root.after(2000, destroy)
-        id_ = root.after(100, update_events)
+        id_ = root.after(500, update_events)
         # 刷新
         if time.perf_counter() - start > 120:
             update_qrcode()
@@ -124,7 +123,7 @@ def login_with_qrcode(root=None):
         global id_
         root.after_cancel(id_)
         root.destroy()
-    root.after(100, update_events)
+    root.after(500, update_events)
     root.mainloop()
     root.after_cancel(id_)
     return credential
