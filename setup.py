@@ -11,7 +11,7 @@ setuptools.setup(
     version='10.2.2',
     license='GPLv3+',
     author='MoyuScript, Nemo2011',
-    description='哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。',
+    description='原 bilibili-api。哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。',
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(exclude=["tests"]),
