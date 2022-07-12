@@ -1,11 +1,15 @@
-![](/design/logo.png)
+![](https://raw.githubusercontent.com/Nemo2011/bilibili_api/main/design/logo.png)
+
+<div align="center">
 
 # bilibili-api
 
 [![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
-<!--[![STARS](https://img.shields.io/github/stars/Nemo2011/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]-->
+[![STARS](https://img.shields.io/github/stars/Nemo2011/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]
 ![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
+
+</div>
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
 
@@ -108,12 +112,6 @@ if __name__ == '__main__':
 总的来说，异步比同步更有优势，所以不会的话可以去学一下，会发现新天地（误
 
 如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili_api/#/sync-executor)
-
-# 框架迁移
-
-在 `10.2.0` 时，本项目已经基本将 web 请求框架从 `aiohttp` 迁移到了 `httpx`，主要是 `aiohttp` 的代理……
-当然，还有一部分未迁移。如 `VideoOnlineMonitor`。
-注意：`httpx` 也支持异步，性能不会受到太大影响。
 
 # FA♂Q
 
