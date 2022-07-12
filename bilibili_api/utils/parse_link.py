@@ -6,16 +6,16 @@ bilibili_api.utils.parse_link
 
 from enum import Enum
 from importlib.resources import Resource
-from bilibili_api.article import Article
-from bilibili_api.audio import Audio, AudioList
+from ..article import Article
+from ..audio import Audio, AudioList
 
-from bilibili_api.bangumi import Bangumi, Episode
-from bilibili_api.cheese import CheeseList, CheeseVideo
-from bilibili_api.favorite_list import VideoFavoriteList
-from bilibili_api.user import User
-from bilibili_api.utils.Credential import Credential
-from bilibili_api.utils.sync import sync
-from bilibili_api.user import get_self_info
+from ..bangumi import Bangumi, Episode
+from ..cheese import CheeseList, CheeseVideo
+from ..favorite_list import VideoFavoriteList
+from ..user import User
+from .Credential import Credential
+from .sync import sync
+from ..user import get_self_info
 from .short import get_real_url
 from ..video import Video
 import re

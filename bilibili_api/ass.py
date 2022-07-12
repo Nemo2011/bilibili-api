@@ -4,9 +4,9 @@ bilibili_api.ass
 """
 import os
 import aiohttp
-from bilibili_api.exceptions.ArgsException import ArgsException
+from .exceptions.ArgsException import ArgsException
 
-from bilibili_api.utils.sync import sync
+from .utils.sync import sync
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku
 from .utils.network_httpx import get_session
