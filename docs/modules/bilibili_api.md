@@ -70,6 +70,12 @@ import bilibili_api
 
 **Returns:** bool
 
+#### def has_dedeuserid()
+
+是否提供 dedeuserid。
+
+**Returns:** bool
+
 #### def raise_for_no_sessdata()
 
 没有提供 sessdata 则抛出异常。
@@ -85,6 +91,12 @@ import bilibili_api
 #### def raise_for_no_buvid3()
 
 没有提供 buvid3 则抛出异常。
+
+**Returns:** None
+
+#### def raise_for_no_dedeuserid()
+
+没有提供 dedeuserid 则抛出异常。
 
 **Returns:** None
 
@@ -145,7 +157,7 @@ BV 号转 AV 号。
 | url | str | 链接 |
 | credential | Credential | 凭据类 |
 
-获取链接对应的对象。举个例子：如果有一个视频链接，想要获取对应的对象需要读取 `bvid` 或 `aid`，然后初始化 `Video` 类。
+获取链接对应的对象。举个例子：如果有一个视频链接，想要获取对应的 `Video` 类需要读取 `bvid` 或 `aid`，然后初始化 `Video` 类。
 但是 `parse_link` 可以自动读取 `bvid` 或 `aid` 并生成对应的对象。
 
 **注意：** `parse_link` 会读取可跳转链接的目标链接！
