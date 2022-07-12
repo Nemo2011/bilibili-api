@@ -781,7 +781,7 @@ async def get_self_history(
     return await request("GET", url=api["url"], params=params, credential=credential)
 
 
-async def get_self_coins(credential: Credential=Credential()):
+async def get_self_coins(credential: Credential=None):
     """
     获取自己的硬币数量。
     如果接口返回错误代码则为身份校验失败
@@ -789,6 +789,8 @@ async def get_self_coins(credential: Credential=Credential()):
     Returns:
         int: 硬币数量
     """
+    if credential is None:
+        credential = Credential()
     credential.raise_for_no_sessdata()
     credential.raise_for_no_dedeuserid()
     api = API["info"]['get_coins']
