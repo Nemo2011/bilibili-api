@@ -691,13 +691,14 @@ class LiveDanmaku(AsyncEvent):
         # logging
         self.logger = logging.getLogger(f"LiveDanmaku_{self.room_display_id}")
         self.logger.setLevel(logging.DEBUG if debug else logging.INFO)
-        handler = logging.StreamHandler()
-        handler.setFormatter(
-            logging.Formatter(
-                "[" + str(room_display_id) + "][%(asctime)s][%(levelname)s] %(message)s"
+        if not self.logger.handlers:
+            handler = logging.StreamHandler()
+            handler.setFormatter(
+                logging.Formatter(
+                    "[" + str(room_display_id) + "][%(asctime)s][%(levelname)s] %(message)s"
+                )
             )
-        )
-        self.logger.addHandler(handler)
+            self.logger.addHandler(handler)
 
     def get_status(self):
         """
