@@ -11,16 +11,12 @@ from enum import Enum
 import re
 import datetime
 import asyncio
-import httpx
 import logging
 import json
 import struct
-import io
-import base64
 import aiohttp
 from typing import List
 
-from .exceptions import VideoUploadException
 from .exceptions import ResponseException
 from .exceptions import NetworkException
 from .exceptions import ArgsException, DanmakuClosedException
@@ -539,7 +535,7 @@ class Video:
         return json_data
 
     async def get_danmakus(
-        self, page_index: int = None, date: datetime.date = None, cid: int = None
+        self, page_index: int = 0, date: datetime.date = None, cid: int = None
     ):
         """
         获取弹幕。
@@ -1152,7 +1148,7 @@ class Video:
         self.credential.raise_for_no_bili_jct()
 
         api = API["danmaku"]["recall"]
-        data = {"dmid": dmid, "cid": cid, "csrf": self.credential.bili_jct}
+        data = {"dmid": dmid, "cid": cid}
 
         return await request(
             "POST", url=api["url"], data=data, credential=self.credential
@@ -1189,6 +1185,36 @@ class Video:
             ).text
         )
 
+    async def add_to_toview(self):
+        """
+        添加视频至稍后再看列表
+
+        Returns:
+            调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+        api = get_api("toview")['operate']['add']
+        datas = {
+            "aid": self.get_aid(), 
+        }
+        return await request("POST", api['url'], data=datas, credential=self.credential)
+
+    async def delete_from_toview(self):
+        """
+        从稍后再看列表删除视频
+
+        Returns:
+            调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+        api = get_api("toview")['operate']['del']
+        datas = {
+            "viewed": "false", 
+            "aid": self.get_aid()
+        }
+        return await request("POST", api['url'], data=datas, credential=self.credential)
 
 class VideoOnlineMonitor(AsyncEvent):
     """
