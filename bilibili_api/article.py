@@ -525,7 +525,7 @@ class BoldNode(Node):
         t = "".join([node.markdown() for node in self.children])
         if len(t) == 0:
             return ""
-        return f" **{t}**"
+        return f" **{t.lstrip().rstrip()}**"
 
     def json(self):
         return {

@@ -783,10 +783,11 @@ async def get_self_history(
 
 async def get_self_coins(credential: Credential=Credential()):
     """
-    获取自己的硬币数量
+    获取自己的硬币数量。
+    如果接口返回错误代码则为身份校验失败
 
     Returns:
-        dict: 调用 API 返回的结果
+        int: 硬币数量
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_dedeuserid()

@@ -407,3 +407,13 @@ from bilibili_api import user
 **Returns:** 返回当前页的指定历史记录列表。
 
 ---
+
+## _async_ def get_self_coins()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据 |
+
+获取自己的硬币数量
+
+**Returns:** int: 硬币数量
