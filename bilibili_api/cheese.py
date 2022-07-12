@@ -16,14 +16,14 @@ ohhhh!!!!!!!!!!!(误
 
 import datetime
 import json
-from bilibili_api.exceptions import (
+from .exceptions import (
     DanmakuClosedException,
     NetworkException,
     ResponseException,
 )
-from bilibili_api.exceptions.ArgsException import ArgsException
-from bilibili_api.utils.BytesReader import BytesReader
-from bilibili_api.utils.Danmaku import Danmaku
+from .exceptions.ArgsException import ArgsException
+from .utils.BytesReader import BytesReader
+from .utils.Danmaku import Danmaku
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.sync import sync

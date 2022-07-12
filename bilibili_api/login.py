@@ -13,14 +13,14 @@ from typing import Union
 import webbrowser
 
 import requests
-from bilibili_api.exceptions.LoginError import LoginError
+from .exceptions.LoginError import LoginError
 
-from bilibili_api.utils.Credential import Credential
-from bilibili_api.utils.utils import get_api
-from bilibili_api.utils.sync import sync
-from bilibili_api.utils.network_httpx import get_session, request
-from bilibili_api.utils.captcha import start_server, close_server, get_result
-from bilibili_api import settings
+from .utils.Credential import Credential
+from .utils.utils import get_api
+from .utils.sync import sync
+from .utils.network_httpx import get_session, request
+from .utils.captcha import start_server, close_server, get_result
+from . import settings
 from PIL.ImageTk import PhotoImage
 import qrcode
 import os
