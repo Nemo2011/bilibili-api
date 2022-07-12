@@ -795,3 +795,50 @@ async def get_self_coins(credential: Credential=None):
     credential.raise_for_no_dedeuserid()
     api = API["info"]['get_coins']
     return (await request("GET", url=api['url'], credential=credential))['money']
+
+async def get_toview_list(credential: Credential=Credential()):
+    """
+    获取稍后再看列表
+
+    Args:
+        credential(Credential): 凭据类
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = get_api("toview")['info']['list']
+    credential.raise_for_no_sessdata()
+    return await request("GET", api['url'], credential=credential)
+
+async def clear_toview_list(credential: Credential=Credential()):
+    """
+    清空稍后再看列表
+
+    Args:
+        credential(Credential): 凭据类
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = get_api("toview")['operate']['clear']
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+    return await request("POST", api['url'], credential=credential)
+
+async def delete_viewed_videos(credential:None):
+    """
+    删除稍后再看列表已经看过的视频
+
+    Args:
+        credential(Credential): 凭据类
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = get_api("toview")['operate']['del']
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+    datas = {
+        "viewed": "true"
+    }
+    return await request("POST", api['url'], credential=credential, data=datas)

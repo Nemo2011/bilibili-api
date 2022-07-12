@@ -1,6 +1,6 @@
 {
     "info": {
-        "get_toview": {
+        "list": {
             "url": "https://api.bilibili.com/x/v2/history/toview",
             "method": "GET",
             "verify": true, 
@@ -18,7 +18,7 @@
             }, 
             "comment": "添加视频至稍后再看列表"
         }, 
-        "delete": {
+        "del": {
             "url": "https://api.bilibili.com/x/v2/history/toview/del",
             "method": "POST", 
             "verify": true, 
