@@ -13,7 +13,7 @@ from .utils.parse_link import parse_link
 
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://bilibili.com"}
 
-# 支持嵌套事件
+# 支持 asyncio 嵌套事件
 nest_asyncio.apply()
 
 # 如果系统为 Windows，则修改默认策略，以解决代理报错问题

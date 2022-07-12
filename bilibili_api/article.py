@@ -88,13 +88,13 @@ class Article:
         """
         转换为 Markdown
 
-        请先调用 get_content()
+        请先调用 fetch_content()
 
         Returns:
             str: Markdown 内容
         """
         if not self.__has_parsed:
-            raise ApiException("请先调用 get_content()")
+            raise ApiException("请先调用 fetch_content()")
 
         content = "".join([node.markdown() for node in self.__children])
 
@@ -106,13 +106,13 @@ class Article:
         """
         转换为 JSON 数据
 
-        请先调用 get_content()
+        请先调用 fetch_content()
 
         Returns:
             dict: JSON 数据
         """
         if not self.__has_parsed:
-            raise ApiException("请先调用 get_content()")
+            raise ApiException("请先调用 fetch_content()")
 
         return {
             "type": "Article",
