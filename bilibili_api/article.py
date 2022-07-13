@@ -209,8 +209,8 @@ class Article:
                             node.children = parse(e)
                         else:
                             if e.text != "":
-                                #print(e.text.replace("\n", ""))
-                                #print()
+                                # print(e.text.replace("\n", ""))
+                                # print()
                                 node = TextNode(e.text)
                                 # print("Add a text node: ", e.text)
                                 node_list.append(node)

@@ -46,7 +46,7 @@ login_key = ""
 qrcode_image = None
 credential = Credential()
 is_destroy = False
-id_ = 0 # 事件 id,用于取消 after 绑定
+id_ = 0  # 事件 id,用于取消 after 绑定
 
 
 def make_qrcode(url):
@@ -85,14 +85,18 @@ def login_with_qrcode(root=None):
     def update_events():
         global id_
         global start, credential, is_destroy
-        #log.configure(text="点下确认啊！", fg="orange", font=big_font)
+        # log.configure(text="点下确认啊！", fg="orange", font=big_font)
         events_api = API["qrcode"]["get_events"]
         data = {"oauthKey": login_key}
         events = json.loads(
-            requests.post(events_api["url"], data=data, cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"}).text
+            requests.post(
+                events_api["url"],
+                data=data,
+                cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
+            ).text
         )
-        if "code" in events.keys() and events['code'] == -412:
-            raise LoginError(events['message'])
+        if "code" in events.keys() and events["code"] == -412:
+            raise LoginError(events["message"])
         if events["data"] == -4:
             log.configure(text="请扫描二维码↑", fg="red", font=big_font)
         elif events["data"] == -5:
@@ -123,14 +127,17 @@ def login_with_qrcode(root=None):
             update_qrcode()
             start = time.perf_counter()
         root.update()
+
     def destroy():
         global id_
         root.after_cancel(id_)
         root.destroy()
+
     root.after(500, update_events)
     root.mainloop()
     root.after_cancel(id_)
     return credential
+
 
 def update_qrcode():
     global login_key, qrcode_image
@@ -141,13 +148,18 @@ def update_qrcode():
     qrcode_image = make_qrcode(qrcode)
     return qrcode_image
 
+
 # ----------------------------------------------------------------
 # 密码登录
 # ----------------------------------------------------------------
 
+
 def encrypt(_hash, key, password):
-    encryptor = PKCS1_v1_5.new(RSA.importKey(bytes(key,'utf-8')))
-    return str(base64.b64encode(encryptor.encrypt(bytes(_hash + password,'utf-8'))),'utf-8')
+    encryptor = PKCS1_v1_5.new(RSA.importKey(bytes(key, "utf-8")))
+    return str(
+        base64.b64encode(encryptor.encrypt(bytes(_hash + password, "utf-8"))), "utf-8"
+    )
+
 
 def get_geetest():
     thread = start_server()
@@ -163,6 +175,7 @@ def get_geetest():
         close_server()
         exit()
 
+
 def login_with_password(username: str, password: str):
     """
     密码登录。
@@ -175,31 +188,43 @@ def login_with_password(username: str, password: str):
         Union[Credential, Check]: 凭据或验证码认证类。
     """
     geetest_data = get_geetest()
-    api_token = API['password']['get_token']
+    api_token = API["password"]["get_token"]
     sess = get_session()
-    token_data = json.loads(sync(sess.get(api_token['url'])).text)
-    hash_ = token_data['data']['hash']
-    key = token_data['data']['key']
+    token_data = json.loads(sync(sess.get(api_token["url"])).text)
+    hash_ = token_data["data"]["hash"]
+    key = token_data["data"]["key"]
     final_password = encrypt(hash_, key, password)
-    login_api = API['password']['login']
+    login_api = API["password"]["login"]
     params = {
-        "source": 'main_h5',
-        "username": username, 
-        "password": final_password, 
-        "keep": "true", 
-        "token": geetest_data['token'],
-        "challenge": geetest_data['challenge'], 
-        "validate": geetest_data['validate'], 
-        "seccode": geetest_data['seccode']
+        "source": "main_h5",
+        "username": username,
+        "password": final_password,
+        "keep": "true",
+        "token": geetest_data["token"],
+        "challenge": geetest_data["challenge"],
+        "validate": geetest_data["validate"],
+        "seccode": geetest_data["seccode"],
     }
-    login_data = json.loads(sync(sess.request("POST", login_api['url'], params=params, headers={
-          'content-type': 'application/x-www-form-urlencoded', 
-          'user-agent': 'Mozilla/5.0',
-          "referer": "https://passport.bilibili.com/login"
-        })).text)
-    if login_data['code'] == 0:
-        url = login_data['data']['url']
-        if 'https://passport.bilibili.com/account/mobile/security/managephone/phone/verify' in url:
+    login_data = json.loads(
+        sync(
+            sess.request(
+                "POST",
+                login_api["url"],
+                params=params,
+                headers={
+                    "content-type": "application/x-www-form-urlencoded",
+                    "user-agent": "Mozilla/5.0",
+                    "referer": "https://passport.bilibili.com/login",
+                },
+            )
+        ).text
+    )
+    if login_data["code"] == 0:
+        url = login_data["data"]["url"]
+        if (
+            "https://passport.bilibili.com/account/mobile/security/managephone/phone/verify"
+            in url
+        ):
             return Check(url)
         else:
             cookies_list = url.split("?")[1].split("&")
@@ -216,13 +241,15 @@ def login_with_password(username: str, password: str):
             c = Credential(sessdata, bili_jct, dedeuserid=dede)
             return c
     else:
-        raise LoginError(login_data['message'])
+        raise LoginError(login_data["message"])
+
 
 # ----------------------------------------------------------------
 # 验证码登录
 # ----------------------------------------------------------------
 
 captcha_id = None
+
 
 def get_countries_list():
     """
@@ -232,16 +259,18 @@ def get_countries_list():
         List[dict]: 地区列表
     """
     with open(
-        os.path.join(os.path.dirname(__file__), "data/countries_codes.json"), encoding="utf8"
+        os.path.join(os.path.dirname(__file__), "data/countries_codes.json"),
+        encoding="utf8",
     ) as f:
         codes_list = json.loads(f.read())
     countries = []
     for country in codes_list:
-        name = country['cname']
-        id_ = country['country_id']
-        code = country['id']
+        name = country["cname"]
+        id_ = country["country_id"]
+        code = country["id"]
         countries.append({"name": name, "id": code, "code": int(id_)})
     return countries
+
 
 def search_countries(keyword: str):
     """
@@ -255,9 +284,10 @@ def search_countries(keyword: str):
     list_ = get_countries_list()
     countries = []
     for country in list_:
-        if keyword in country['name'] or keyword.lstrip("+") in country['code']:
+        if keyword in country["name"] or keyword.lstrip("+") in country["code"]:
             countries.append(country)
     return countries
+
 
 def have_country(keyword: str):
     """
@@ -271,9 +301,10 @@ def have_country(keyword: str):
     """
     list_ = get_countries_list()
     for country in list_:
-        if country['name'] == keyword:
+        if country["name"] == keyword:
             return True
     return False
+
 
 def have_code(code: Union[str, int]):
     """
@@ -297,9 +328,10 @@ def have_code(code: Union[str, int]):
     else:
         return False
     for country in list_:
-        if country['code'] == int_code:
+        if country["code"] == int_code:
             return True
     return False
+
 
 def get_code_by_country(country: str):
     """
@@ -313,9 +345,10 @@ def get_code_by_country(country: str):
     """
     list_ = get_countries_list()
     for country_ in list_:
-        if country_['name'] == country:
-            return country_['code']
+        if country_["name"] == country:
+            return country_["code"]
     return -1
+
 
 def get_id_by_code(code: int):
     """
@@ -329,12 +362,13 @@ def get_id_by_code(code: int):
     """
     list_ = get_countries_list()
     for country_ in list_:
-        if country_['code'] == code:
-            return country_['id']
+        if country_["code"] == code:
+            return country_["id"]
     return -1
 
+
 class PhoneNumber:
-    def __init__(self, number: str, country: Union[str, int]="+86"):
+    def __init__(self, number: str, country: Union[str, int] = "+86"):
         """
         number(string): 手机号
         country(string): 地区/地区码，如 +86
@@ -354,6 +388,7 @@ class PhoneNumber:
     def __str__(self):
         return f"+{self.code} {self.number} (bilibili 地区 id {self.id_})"
 
+
 def send_sms(phonenumber: PhoneNumber):
     """
     发送验证码
@@ -365,27 +400,32 @@ def send_sms(phonenumber: PhoneNumber):
         None
     """
     global captcha_id
-    api = API['sms']['send']
+    api = API["sms"]["send"]
     code = phonenumber.code
     tell = phonenumber.number
     geetest_data = get_geetest()
     sess = get_session()
-    return_data = json.loads(sync(sess.post(
-        url=api['url'], 
-        data={
-            "tel": tell, 
-            "cid": code, 
-            "source": "main_web", 
-            "token": geetest_data['token'], 
-            "challenge": geetest_data['challenge'], 
-            "validate": geetest_data['validate'], 
-            "seccode": geetest_data['seccode']
-        }
-    )).text)
-    if return_data['code'] == 0:
-        captcha_id = return_data['data']['captcha_key']
+    return_data = json.loads(
+        sync(
+            sess.post(
+                url=api["url"],
+                data={
+                    "tel": tell,
+                    "cid": code,
+                    "source": "main_web",
+                    "token": geetest_data["token"],
+                    "challenge": geetest_data["challenge"],
+                    "validate": geetest_data["validate"],
+                    "seccode": geetest_data["seccode"],
+                },
+            )
+        ).text
+    )
+    if return_data["code"] == 0:
+        captcha_id = return_data["data"]["captcha_key"]
     else:
-        raise LoginError(return_data['message'])
+        raise LoginError(return_data["message"])
+
 
 def login_with_sms(phonenumber: PhoneNumber, code: str):
     """
@@ -400,28 +440,28 @@ def login_with_sms(phonenumber: PhoneNumber, code: str):
     """
     global captcha_id
     sess = get_session()
-    api = API['sms']['login']
+    api = API["sms"]["login"]
     if captcha_id == None:
         raise LoginError("请申请或重新申请发送验证码")
     return_data = json.loads(
         sync(
             sess.request(
-                "POST", 
-                url=api['url'], 
+                "POST",
+                url=api["url"],
                 data={
-                    "tel": phonenumber.number, 
-                    "cid": phonenumber.code, 
-                    "code": code, 
-                    "source": "main_web", 
-                    "captcha_key": captcha_id, 
-                    "keep": "true"
-                }
+                    "tel": phonenumber.number,
+                    "cid": phonenumber.code,
+                    "code": code,
+                    "source": "main_web",
+                    "captcha_key": captcha_id,
+                    "keep": "true",
+                },
             )
         ).text
     )
-    if return_data['code'] == 0:
+    if return_data["code"] == 0:
         captcha_id = None
-        url = return_data['data']['url']
+        url = return_data["data"]["url"]
         cookies_list = url.split("?")[1].split("&")
         sessdata = ""
         bili_jct = ""
@@ -436,14 +476,17 @@ def login_with_sms(phonenumber: PhoneNumber, code: str):
         c = Credential(sessdata, bili_jct, dedeuserid=dede)
         return c
     else:
-        raise LoginError(return_data['message'])
+        raise LoginError(return_data["message"])
+
 
 # 验证类
 
-class Check():
+
+class Check:
     """
     验证类，如果密码登录需要验证会返回此类
     """
+
     def __init__(self, check_url):
         self.check_url = check_url
         self.now_time = time.perf_counter()

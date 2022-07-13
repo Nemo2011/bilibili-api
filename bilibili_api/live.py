@@ -695,7 +695,9 @@ class LiveDanmaku(AsyncEvent):
             handler = logging.StreamHandler()
             handler.setFormatter(
                 logging.Formatter(
-                    "[" + str(room_display_id) + "][%(asctime)s][%(levelname)s] %(message)s"
+                    "["
+                    + str(room_display_id)
+                    + "][%(asctime)s][%(levelname)s] %(message)s"
                 )
             )
             self.logger.addHandler(handler)

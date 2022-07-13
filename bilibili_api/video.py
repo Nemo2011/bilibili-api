@@ -653,7 +653,7 @@ class Video:
                     else:
                         break
                 danmakus.append(dm)
-        danmakus.pop() # 最后一个弹幕是乱码
+        danmakus.pop()  # 最后一个弹幕是乱码
         return danmakus
 
     async def get_history_danmaku_index(
@@ -768,7 +768,7 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def get_danmaku_xml(self, page_index: int=None, cid: int=None):
+    async def get_danmaku_xml(self, page_index: int = None, cid: int = None):
         """
         获取所有弹幕的 xml 源文件（非装填）
 
@@ -1194,11 +1194,11 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
-        api = get_api("toview")['operate']['add']
+        api = get_api("toview")["operate"]["add"]
         datas = {
-            "aid": self.get_aid(), 
+            "aid": self.get_aid(),
         }
-        return await request("POST", api['url'], data=datas, credential=self.credential)
+        return await request("POST", api["url"], data=datas, credential=self.credential)
 
     async def delete_from_toview(self):
         """
@@ -1209,12 +1209,10 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
-        api = get_api("toview")['operate']['del']
-        datas = {
-            "viewed": "false", 
-            "aid": self.get_aid()
-        }
-        return await request("POST", api['url'], data=datas, credential=self.credential)
+        api = get_api("toview")["operate"]["del"]
+        datas = {"viewed": "false", "aid": self.get_aid()}
+        return await request("POST", api["url"], data=datas, credential=self.credential)
+
 
 class VideoOnlineMonitor(AsyncEvent):
     """

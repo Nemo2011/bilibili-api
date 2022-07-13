@@ -109,9 +109,9 @@ async def make_ass_file_subtitle(bvid, out, name, credential=None):
 
 async def make_ass_file_danmakus_protobuf(
     bvid,
-    page: int=None,
+    page: int = None,
     out=None,
-    cid: int=None,
+    cid: int = None,
     credential=None,
     date=None,
     font_name="Simsun",
@@ -167,10 +167,11 @@ async def make_ass_file_danmakus_protobuf(
         static_time,
     )
 
+
 async def make_ass_file_from_danmaku_xml(
     bvid,
-    page: int=None,
-    cid: int=None,
+    page: int = None,
+    cid: int = None,
     out=None,
     credential=None,
     font_name="Simsun",
