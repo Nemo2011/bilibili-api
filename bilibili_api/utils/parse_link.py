@@ -20,6 +20,7 @@ from .short import get_real_url
 from ..video import Video
 import re
 
+
 class ResourceType(Enum):
     """
     链接类型类。
@@ -35,6 +36,7 @@ class ResourceType(Enum):
     + ARTICLE: 专栏
     + USER: 用户
     """
+
     VIDEO = "video"
     BANGUMI = "bangumi"
     EPISODE = "episode"
@@ -45,7 +47,8 @@ class ResourceType(Enum):
     ARTICLE = "article"
     USER = "user"
 
-async def parse_link(url, credential: Credential=None):
+
+async def parse_link(url, credential: Credential = None):
     """
     解析 bilibili url 的函数。
     可以解析：
@@ -99,7 +102,7 @@ async def parse_link(url, credential: Credential=None):
         user = parse_user(url)
         if not user == -1:
             obj = (user, ResourceType.USER)
-        
+
         if obj == None:
             return -1
         else:
@@ -108,6 +111,7 @@ async def parse_link(url, credential: Credential=None):
     except Exception as e:
         print(e)
         return -1
+
 
 def parse_video(url):
     """
@@ -126,27 +130,33 @@ def parse_video(url):
     else:
         return -1
 
+
 def parse_bangumi(url):
     """
     解析番剧,如果不是返回 -1，否则返回对应类
     """
-    if url[:41] == 'https://www.bilibili.com/bangumi/media/md':
+    if url[:41] == "https://www.bilibili.com/bangumi/media/md":
         last_part = url[41:].replace("/", "")
         media_id = int(last_part)
         return Bangumi(media_id=media_id)
     else:
         return -1
 
+
 def parse_episode(url):
     """
     解析番剧剧集,如果不是返回 -1，否则返回对应类
     """
-    if url[:38] == 'https://www.bilibili.com/bangumi/play/':
+    if url[:38] == "https://www.bilibili.com/bangumi/play/":
         last_part = url[38:]
         if last_part[:2].upper() == "SS":
             ssid = int(last_part[2:].replace("/", ""))
             b = Bangumi(ssid=ssid)
-            first_episode_id = int(sync(b.get_episode_list())['main_section']['episodes'][0]['share_url'][40:])
+            first_episode_id = int(
+                sync(b.get_episode_list())["main_section"]["episodes"][0]["share_url"][
+                    40:
+                ]
+            )
             return Episode(epid=first_episode_id)
         elif last_part[:2].upper() == "EP":
             epid = int(last_part[2:].replace("/", ""))
@@ -156,63 +166,69 @@ def parse_episode(url):
     else:
         return -1
 
+
 def parse_favorite_list(url):
     """
     解析收藏夹,如果不是返回 -1，否则返回对应类
     """
-    if url[:44] == 'https://www.bilibili.com/medialist/detail/ml':
+    if url[:44] == "https://www.bilibili.com/medialist/detail/ml":
         last_part = int(url[44:].replace("/", ""))
         return VideoFavoriteList(media_id=last_part)
     else:
         return -1
 
+
 def parse_cheese_video(url):
     """
     解析课程视频,如果不是返回 -1，否则返回对应类
     """
-    if url[:37] == 'https://www.bilibili.com/cheese/play/':
+    if url[:37] == "https://www.bilibili.com/cheese/play/":
         if url[37:39].upper() == "EP":
             last_part = int(url[39:].replace("/", ""))
             return CheeseVideo(epid=last_part)
         elif url[37:39].upper() == "SS":
             cheese = CheeseList(season_id=int(url[39:].replace("/", "")))
-            ep = sync(cheese.get_list())['items'][0]['id']
+            ep = sync(cheese.get_list())["items"][0]["id"]
             return CheeseVideo(epid=ep)
     else:
         return -1
+
 
 def parse_audio(url):
     """
     解析音频,如果不是返回 -1，否则返回对应类
     """
-    if url[:33] == 'https://www.bilibili.com/audio/au':
+    if url[:33] == "https://www.bilibili.com/audio/au":
         last_part = int(url[33:].replace("/", ""))
         return Audio(auid=last_part)
     else:
         return -1
 
+
 def parse_audio_list(url):
     """
     解析歌单,如果不是返回 -1，否则返回对应类
     """
-    if url[:33] == 'https://www.bilibili.com/audio/am':
+    if url[:33] == "https://www.bilibili.com/audio/am":
         last_part = int(url[33:].replace("/", ""))
         return AudioList(amid=last_part)
     else:
         return -1
 
+
 def parse_article(url):
     """
     解析专栏,如果不是返回 -1，否则返回对应类
     """
-    if url[:32] == 'https://www.bilibili.com/read/cv':
+    if url[:32] == "https://www.bilibili.com/read/cv":
         last_part = int(url[32:].replace("/", ""))
         return Article(cvid=last_part)
     else:
         return -1
 
+
 def parse_user(url):
-    if url[:27] == 'https://space.bilibili.com/':
+    if url[:27] == "https://space.bilibili.com/":
         num_re = re.compile(r"\d+")
         uid = num_re.findall(url)[0]
         return User(uid=uid)

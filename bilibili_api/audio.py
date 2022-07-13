@@ -5,7 +5,7 @@
 from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network_httpx import request
- 
+
 API = get_api("audio")
 
 

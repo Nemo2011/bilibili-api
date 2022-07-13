@@ -781,7 +781,7 @@ async def get_self_history(
     return await request("GET", url=api["url"], params=params, credential=credential)
 
 
-async def get_self_coins(credential: Credential=None):
+async def get_self_coins(credential: Credential = None):
     """
     获取自己的硬币数量。
     如果接口返回错误代码则为身份校验失败
@@ -793,10 +793,11 @@ async def get_self_coins(credential: Credential=None):
         credential = Credential()
     credential.raise_for_no_sessdata()
     credential.raise_for_no_dedeuserid()
-    api = API["info"]['get_coins']
-    return (await request("GET", url=api['url'], credential=credential))['money']
+    api = API["info"]["get_coins"]
+    return (await request("GET", url=api["url"], credential=credential))["money"]
 
-async def get_toview_list(credential: Credential=Credential()):
+
+async def get_toview_list(credential: Credential = Credential()):
     """
     获取稍后再看列表
 
@@ -806,11 +807,12 @@ async def get_toview_list(credential: Credential=Credential()):
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = get_api("toview")['info']['list']
+    api = get_api("toview")["info"]["list"]
     credential.raise_for_no_sessdata()
-    return await request("GET", api['url'], credential=credential)
+    return await request("GET", api["url"], credential=credential)
 
-async def clear_toview_list(credential: Credential=Credential()):
+
+async def clear_toview_list(credential: Credential = Credential()):
     """
     清空稍后再看列表
 
@@ -820,12 +822,13 @@ async def clear_toview_list(credential: Credential=Credential()):
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = get_api("toview")['operate']['clear']
+    api = get_api("toview")["operate"]["clear"]
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
-    return await request("POST", api['url'], credential=credential)
+    return await request("POST", api["url"], credential=credential)
 
-async def delete_viewed_videos_from_toview(credential:None):
+
+async def delete_viewed_videos_from_toview(credential: None):
     """
     删除稍后再看列表已经看过的视频
 
@@ -835,10 +838,8 @@ async def delete_viewed_videos_from_toview(credential:None):
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = get_api("toview")['operate']['del']
+    api = get_api("toview")["operate"]["del"]
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
-    datas = {
-        "viewed": "true"
-    }
-    return await request("POST", api['url'], credential=credential, data=datas)
+    datas = {"viewed": "true"}
+    return await request("POST", api["url"], credential=credential, data=datas)
