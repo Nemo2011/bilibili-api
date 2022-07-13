@@ -4,8 +4,8 @@
     "description": "",
     "private": "true",
     "scripts": {
-        "test": "node tests/main.js",
-        "build": "tsc -p ./utils/tsconfig.json"
+        "test": "npm run build; node build/tests/main.js",
+        "build": "tsc -p tests/tsconfig.json"
     },
     "repository": {
         "type": "git",
