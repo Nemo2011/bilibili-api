@@ -4,7 +4,7 @@
 **/__pycache__
 /bilibili_api_python.egg-info
 /.vscode
-build/
+**/dist
 *.ass
 *.srt
 danmaku*.*
