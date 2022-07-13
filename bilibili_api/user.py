@@ -825,7 +825,7 @@ async def clear_toview_list(credential: Credential=Credential()):
     credential.raise_for_no_bili_jct()
     return await request("POST", api['url'], credential=credential)
 
-async def delete_viewed_videos(credential:None):
+async def delete_viewed_videos_from_toview(credential:None):
     """
     删除稍后再看列表已经看过的视频
 
