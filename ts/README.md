@@ -1,6 +1,6 @@
 # bilibili-api **typescript** 分部
 
-python 版：
+python 版：<https://github.com/Nemo2011/bilibili_api/blob/main/README.md>
 
 # 简介
 
