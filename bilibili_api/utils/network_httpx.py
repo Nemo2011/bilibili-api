@@ -10,6 +10,7 @@ import json
 import re
 import asyncio
 import atexit
+import uuid
 
 import httpx
 
@@ -86,6 +87,9 @@ async def request(method: str,
 
     if params.get("jsonp", "") == "jsonp":
         params["callback"] = "callback"
+    
+    cookies = credential.get_cookies()
+    cookies['buvid3'] = str(uuid.uuid1())
 
     config = {
         "method": method,
@@ -93,7 +97,7 @@ async def request(method: str,
         "params": params,
         "data": data,
         "headers": headers,
-        "cookies": credential.get_cookies()
+        "cookies": cookies
     }
 
     config.update(kwargs)
@@ -109,10 +113,10 @@ async def request(method: str,
 
     session = get_session()
 
-    try:
+    if True:#try:
         resp = await session.request(**config)
-    except Exception:
-        raise httpx.ConnectError("连接出错。")
+    #except Exception :
+    #    raise httpx.ConnectError("连接出错。")
 
     # 检查响应头 Content-Length
     content_length = resp.headers.get("content-length")
