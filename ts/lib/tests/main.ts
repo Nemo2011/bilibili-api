@@ -1,23 +1,19 @@
-import { getConstantValue } from "typescript";
-import { getAxiosInstance } from "../utils/network"
+import { request } from "./axios";
+import { print_api } from "./get_api"
 
-const axios = getAxiosInstance();
-
-var func = {
-    async getInfo(): Promise<any> {
-        return (await (await axios).get(
-            "https://api.bilibili.com/x/web-interface/view", 
-            {
-                params: {
-                    bvid: "BV19U4y1V7MV"
-                }
-            }
-        )).data as any;
-    }
+var line = function () {
+    console.log("------------");
 }
 
-var print = async function() {
-    console.log((await func.getInfo())['data']);
+var done = function () {
+    console.log("Done. ");
 }
-        
-print();
+
+console.log("Test get_api");
+print_api();
+done()
+line();
+console.log("Test axios");
+request();
+done()
+console.log("End. ")
