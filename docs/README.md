@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/Nemo2011/bilibili_api/main/design/logo.png)
+![bilibili-api logo](./logo.png)
 
 <div align="center">
 
@@ -11,9 +11,11 @@
 
 </div>
 
-开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])
+开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])([Gitee][docs-gitee])
 
 原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
+
+Gitee 仓库：[https://gitee.com/nemo2011/bilibili_api](https://gitee.com/nemo2011/bilibili_api)
 
 # 简介
 
@@ -168,6 +170,7 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 
 [docs]: https://nemo2011.github.io/bilibili_api
 [docs-github]: https://github.com/Nemo2011/bilibili_api/tree/main/docs
+[docs-gitee]: https://gitee.com/Nemo2011/bilibili_api/tree/main/docs
 [api.json]: https://github.com/Nemo2011/bilibili_api/tree/main/bilibili_api/data/api/
 [license]: https://github.com/Nemo2011/bilibili_api/tree/main/LICENSE.md
 [stargazers]: https://github.com/Nemo2011/bilibili_api/stargazers
