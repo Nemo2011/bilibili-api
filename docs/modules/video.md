@@ -227,6 +227,33 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
+#### _async_ def get_danmaku_snapshot()
+
+获取弹幕快照
+
+**Returns:** API 调用返回结果。
+
+#### _async_ def recall_danmaku()
+
+| name | type | description |
+| page_index | int | 分 P 号 |
+| dmid | int | 弹幕 id |
+| cid | int | 分 P 编码 |
+
+撤回弹幕
+
+**Returns:** API 调用返回结果。
+
+#### _async_ def get_pbp()
+
+| name | type | description |
+| page_index | int | 分 P 号 |
+| cid | int | 分 P 编码 |
+
+获取高能进度条
+
+**Returns**: 调用 API 所得的结果。
+
 #### _async_ def like()
 
 | name   | type           | description                 |
@@ -332,32 +359,17 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_danmaku_snapshot()
+#### _async_ def add_to_toview()
 
-获取弹幕快照
-
-**Returns:** API 调用返回结果。
-
-#### _async_ def recall_danmaku()
-
-| name | type | description |
-| page_index | int | 分 P 号 |
-| dmid | int | 弹幕 id |
-| cid | int | 分 P 编码 |
-
-撤回弹幕
+添加视频至稍后再看
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_pbp()
+#### _async_ def delete_from_toview()
 
-| name | type | description |
-| page_index | int | 分 P 号 |
-| cid | int | 分 P 编码 |
+从稍后再看列表删除视频
 
-获取高能进度条
-
-**Returns**: 调用 API 所得的结果。
+**Returns:** API 调用返回结果。
 
 ---
 
