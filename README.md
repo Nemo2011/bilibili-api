@@ -15,6 +15,8 @@
 
 原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
+Github 仓库：[https://github.com/nemo2011/bilibili_api](https://github.com/nemo2011/bilibili_api)
+
 Gitee 仓库：[https://gitee.com/nemo2011/bilibili_api](https://gitee.com/nemo2011/bilibili_api)
 
 # 简介
