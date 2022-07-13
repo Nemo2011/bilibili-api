@@ -19,3 +19,37 @@ nest_asyncio.apply()
 # 如果系统为 Windows，则修改默认策略，以解决代理报错问题
 if "windows" in platform.system().lower():
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+__all__ = [
+    "Credential",
+    "Danmaku",
+    "DmFontSize",
+    "DmMode",
+    "HEADERS", 
+    "aid2bvid",
+    "app", 
+    "article",
+    "bangumi", 
+    "bvid2aid",
+    "channel", 
+    "cheese", 
+    "comment", 
+    "dynamic", 
+    "favorite_list", 
+    "get_real_url",
+    "get_session",
+    "homepage", 
+    "interactive_video", 
+    "live", 
+    "login",
+    "parse_link", 
+    "rank", 
+    "search",
+    "set_session",
+    "settings", 
+    "sync", 
+    "user", 
+    "video_uploader", 
+    "video", 
+    "vote"
+]
