@@ -1,8 +1,7 @@
 urllib3~=1.26.3
 aiohttp~=3.8.1
 beautifulsoup4~=4.9.3
-https://files.pythonhosted.org/packages/d3/07/904f07d5b4e149b70c7bc64d69d64b2cf344a2aed2f63e76168ee1b70e5b/bilibili_storytree-0.1.1.tar.gz
-# 照顾一下 conda 的小伙伴
+bilibili-storytree~=0.1.1
 colorama~=0.4.4
 lxml~=4.9.0
 pyyaml~=5.4.1
