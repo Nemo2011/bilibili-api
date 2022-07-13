@@ -20,7 +20,7 @@
   "homepage": "https://github.com/Nemo2011/bilibili_api#readme",
   "dependencies": {
     "dependencies": "^0.0.1",
-    "docsify": "^4.12.2",
+    "docsify": "^4.5.9",
     "docsify-cli": "^4.4.3",
     "greenlock-express": "^2.7.18",
     "koa": "^2.13.1",

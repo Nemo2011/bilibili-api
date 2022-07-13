@@ -37,7 +37,14 @@
     window.$docsify = {
       name: 'bilibili-api',
       repo: 'https://github.com/Nemo2011/bilibili_api',
-      loadSidebar: true
+      loadSidebar: true, 
+      search: {
+        maxAge: 86400000, // 过期时间，单位毫秒，默认一天
+        paths: 'auto', // or 'auto'
+        placeholder: '快速搜索',
+        noData: '数据消失了！',
+        depth: 6
+      }
     }
     
     window.addEventListener('load', function () {
@@ -62,5 +69,6 @@
   <script src="https://cdn.bootcdn.net/ajax/libs/docsify/4.12.1/docsify.min.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/prism/1.23.0/components/prism-python.min.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/prism/1.23.0/components/prism-json.min.js"></script>
+  <script src="//cdn.bootcss.com/docsify/4.5.9/plugins/search.min.js"></script>
 </body>
 </html>
