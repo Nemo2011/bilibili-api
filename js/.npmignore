@@ -1,0 +1,17 @@
+tests/
+/dist
+/.idea
+/test*.*
+**/__pycache__
+/bilibili_api_python.egg-info
+/.vscode
+build/
+*.ass
+*.srt
+danmaku*.*
+node_modules/
+*.proto
+*.bin
+package-lock.json
+site.bat
+.DS_Store
