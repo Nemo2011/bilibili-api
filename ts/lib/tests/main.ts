@@ -1,4 +1,4 @@
-import { request } from "./axios";
+import { test_request } from "./axios";
 import { print_api } from "./get_api"
 
 var line = function () {
@@ -14,6 +14,6 @@ print_api();
 done()
 line();
 console.log("Test axios");
-request();
+test_request().then(value => console.log(value));
 done()
 console.log("End. ")
