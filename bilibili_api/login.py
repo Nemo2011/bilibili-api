@@ -89,7 +89,7 @@ def login_with_qrcode(root=None):
         events_api = API["qrcode"]["get_events"]
         data = {"oauthKey": login_key}
         events = json.loads(
-            requests.post(events_api["url"], data=data, cookies={"buvid3": str(uuid.uuid1())}).text
+            requests.post(events_api["url"], data=data, cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"}).text
         )
         if "code" in events.keys() and events['code'] == -412:
             raise LoginError(events['message'])
