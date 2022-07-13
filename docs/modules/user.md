@@ -417,3 +417,39 @@ from bilibili_api import user
 获取自己的硬币数量
 
 **Returns:** int: 硬币数量
+
+---
+
+## _async_ def get_toview_list()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据 |
+
+获取自己稍后再看列表
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## _async_ def clear_toview_list()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据 |
+
+清空自己的稍后再看列表
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## _async_ def delete_viewed_videos_from_toview()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据 |
+
+删除稍后再看列表中已经看过（看完）的视频
+
+**Returns:** dict: 调用 API 返回的结果
