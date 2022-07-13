@@ -90,6 +90,7 @@ async def request(method: str,
     
     cookies = credential.get_cookies()
     cookies['buvid3'] = str(uuid.uuid1())
+    cookies['Domain'] = ".bilibili.com"
 
     config = {
         "method": method,
