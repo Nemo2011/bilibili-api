@@ -19,5 +19,12 @@ export class CookiesCredential {
     raise_for_no_dedeuserid(){
         if (this.dedeuserid === "") throw "Credential 类需要 dedeuserid";
     }
+    get_cookies(){
+        return {
+            "sessdata": this.sessdata,
+            "bili_jct": this.bili_jct,
+            "DedeUserID": this.dedeuserid
+        }
+    }
 
 }

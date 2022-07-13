@@ -56,3 +56,82 @@ export async function getAxiosInstance(credential: CookiesCredential=new Cookies
     })
   );
 };
+
+export async function request(
+  method: string,
+  url: string, 
+  params: any={},
+  data: any={},
+  credential: CookiesCredential=new CookiesCredential(), 
+  no_csrf: boolean=false
+) {
+  method = method.toUpperCase();
+
+  if (method !== "GET" && !no_csrf){
+    credential.raise_for_no_bili_jct()
+  }
+
+  const DEFAULT_HEADERS = {
+    "Referer": "https://www.bilibili.com",
+    "User-Agent": "Mozilla/5.0",
+  };
+  var headers = DEFAULT_HEADERS;
+
+  if (!no_csrf && method in ["POST", "DELETE", "PATCH"]){
+    if (data === null){
+      data = {};
+    }
+    data["csrf"] = credential.bili_jct;
+    data["csrf_token"] = credential.bili_jct;
+  }
+
+  var jsonp = params['jsonp'] ? true : false;
+  if (jsonp) {
+    params["callback"] = "callback"
+  }
+
+  var cookies = credential.get_cookies();
+
+  var config: Record<string, any> = {
+    "method": method, 
+    "url": url, 
+    "params": params, 
+    "data": data, 
+    "headers": headers, 
+    "cookies": cookies
+  }
+
+  var sess = getAxiosInstance();
+
+  var resp = await (await sess).request(config);
+
+  var has_content_length = resp.headers['content-length'] ? true : false;
+  if (!has_content_length) return;
+  if (parseInt(resp.headers['content-length']) === 0) return;
+
+  var has_content_type = resp.headers['content-type'] ? true : false;
+  if (!has_content_type) return;
+  if (resp.headers['content-type'].toLowerCase().indexOf("application/json") === -1){
+    throw "响应不是 application/json 类型";
+  }
+
+  var resp_data = resp.data;
+  // console.log(JSON.stringify(raw_data))
+  var code = resp_data['code'];
+  if (code === null) {
+    throw "API 返回数据未含 code 字段";
+  }
+  if (code !== 0) {
+    var msg = resp_data['msg'];
+    if (msg == undefined) {
+      msg = "接口未返回错误信息";
+    }
+    throw msg;
+  }
+
+  var real_data = resp_data['data'];
+  if (real_data === undefined) {
+    real_data = resp_data['result'];
+  }
+  return real_data;
+}
