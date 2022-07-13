@@ -2,6 +2,8 @@
 
 请在发起 PR 前仔细阅读本贡献指南，否则你的 PR 可能不会被合并。
 
+**请务必转到 github 上 PR，gitee 仓库只是一个官方的镜像，设置为强制同步 github 仓库。**
+
 # 开发流程
 
 1. 使用 `git clone git@github.com:Nemo2011/bilibili_api.git` 将本仓库拉取到本地。
