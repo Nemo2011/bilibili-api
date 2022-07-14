@@ -1,7 +1,7 @@
 # Module video.ts(video.js)
 
 ``` typescript
-import {} from "bilibili-api-js/video";
+import {} from "bilibili-api-ts/video";
 ```
 
 ## class Video

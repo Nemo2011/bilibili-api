@@ -3,7 +3,7 @@
 Credential 类实例化代码如下：
 
 ``` typescript
-import { Credential } from "bilibili-api-js/bilibili_api";
+import { Credential } from "bilibili-api-ts/bilibili_api";
 
 var credential = Credential("你的 sessdata", "你的 bili_jct", "你的 DedeUserID")
 ```
