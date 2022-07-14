@@ -19,7 +19,7 @@ Github 仓库：[https://github.com/nemo2011/bilibili_api](https://github.com/ne
 
 Gitee 仓库：[https://gitee.com/nemo2011/bilibili_api](https://gitee.com/nemo2011/bilibili_api)
 
-Typescript: [->](./ts/README.md)
+Typescript: [->](https://github.com/Nemo2011/bilibili_api/blob/javascript/ts/README.md)
 
 # 简介
 
