@@ -19,6 +19,8 @@ Github 仓库：[https://github.com/nemo2011/bilibili_api](https://github.com/ne
 
 Gitee 仓库：[https://gitee.com/nemo2011/bilibili_api](https://gitee.com/nemo2011/bilibili_api)
 
+Typescript: [->](./ts/README.md)
+
 # 简介
 
 这是一个用 Python 写的调用 [Bilibili](https://www.bilibili.com) 各种 API 的库，

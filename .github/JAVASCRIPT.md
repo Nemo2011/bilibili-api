@@ -64,18 +64,7 @@ fix!: 给 method() 增加了一个必需参数
 
 # 开发规范
 
-1. 如果你增加了一个新功能，请在对应位置补充文档（docs/），或是标识 `Javascript` 标签。像这样：
-
-```
-For python: 
-
-## async def get_info() ![](https://img.shields.io/badge/Python-OK-blue)
-
-For python and javascript/typescript
-
-## async def get_info() ![](https://img.shields.io/badge/Python-OK-blue) ![](https://img.shields.io/badge/Javascript%2FTypescript-OK-yellow)
-
-```
+1. 如果你增加了一个新功能，请在对应位置补充文档（docs/）。
 
 2. 尽量复用现有代码。
 
