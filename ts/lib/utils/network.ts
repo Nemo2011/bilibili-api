@@ -109,14 +109,12 @@ export async function request(
   }
 
   if (sess === null) {
-    getAxiosInstance();
+    await getAxiosInstance();
   }
 
   var resp = await (await sess).request(config);
 
-  var has_content_length = resp.headers['content-length'] ? true : false;
-  if (!has_content_length) return;
-  if (parseInt(resp.headers['content-length']) === 0) return;
+  // console.log(resp.headers)
 
   var has_content_type = resp.headers['content-type'] ? true : false;
   if (!has_content_type) return;
@@ -124,7 +122,8 @@ export async function request(
     throw "响应不是 application/json 类型";
   }
 
-  var resp_data = resp.data;
+  var resp_data = resp['data'];
+  // console.log(resp_data);
   // console.log(JSON.stringify(raw_data))
   var code = resp_data['code'];
   if (code === null) {

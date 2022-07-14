@@ -29,6 +29,6 @@
         "@types/node": "^18.0.3",
         "@types/tough-cookie": "^4.0.2",
         "javascript2typescript": "^0.2.0"
-    }, 
+    },
     "types": "./lib/*.d.ts"
 }
