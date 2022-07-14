@@ -5,7 +5,7 @@
 # bilibili-api
 
 ### Language
-## Python | [JS&TS](https://github.com/Nemo2011/bilibili_api/blob/main/ts/README.md)
+## Python | [JS&TS](https://github.com/Nemo2011/bilibili_api/blob/main/bilibili-api-js/README.md)
 
 [![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]

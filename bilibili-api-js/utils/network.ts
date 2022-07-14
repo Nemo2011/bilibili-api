@@ -109,13 +109,11 @@ export async function request(
     "cookies": cookies
   }
 
-  if (sess === null) {
-    if (user_proxy !== null) {
-      await getAxiosInstance(credential, user_proxy);
-    }
-    else {
-      await getAxiosInstance(credential);
-    }
+  if (user_proxy !== null) {
+    await getAxiosInstance(credential, user_proxy);
+  }
+  else {
+    await getAxiosInstance(credential);
   }
 
   var resp = await (await sess).request(config);

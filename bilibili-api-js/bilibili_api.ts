@@ -8,13 +8,4 @@ let HEADERS = {
     "Referer": "https://www.bilibili.com"
 }
 
-export = {
-    getAxiosInstance, 
-    setAxiosInstance, 
-    setProxy,
-    aid2bvid,
-    bvid2aid, 
-    HEADERS, 
-    Proxy, 
-    Credential
-}
+export {getAxiosInstance, setAxiosInstance, setProxy, aid2bvid, bvid2aid, Proxy, Credential};
