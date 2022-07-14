@@ -1,6 +1,6 @@
 # bilibili-api **typescript** 分部
 
-python 版：<README.md>
+python 版：[->](/README.md)
 
 # 简介
 
