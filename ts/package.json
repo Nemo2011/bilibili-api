@@ -18,16 +18,16 @@
     },
     "homepage": "https://github.com/Nemo2011/bilibili_api#readme",
     "dependencies": {
+        "@types/node": "^18.0.3",
+        "@types/tough-cookie": "^4.0.2",
         "axios": "^0.27.2",
         "axios-cookiejar-support": "^4.0.2",
+        "crypto": "^1.0.1",
         "dependencies": "^0.0.1",
+        "dns": "^0.2.2",
         "os-proxy-config": "^1.1.1",
         "tough-cookie": "^4.0.0",
-        "typescript": "^4.7.3", 
-        "crypto": "^1.0.1", 
-        "dns": "^0.2.2", 
-        "@types/node": "^18.0.3",
-        "@types/tough-cookie": "^4.0.2"
+        "typescript": "^4.7.3"
     },
     "devDependencies": {
         "@types/node": "^18.0.3",

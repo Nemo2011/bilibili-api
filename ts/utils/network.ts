@@ -136,8 +136,8 @@ export async function request(
     throw "API 返回数据未含 code 字段";
   }
   if (code !== 0) {
-    var msg = resp_data['msg'];
-    if (msg == undefined) {
+    var msg = resp_data['message'];
+    if (msg === undefined) {
       msg = "接口未返回错误信息";
     }
     throw msg;

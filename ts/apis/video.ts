@@ -59,6 +59,285 @@ export var VideoData = {
         "platform": "int: 平台"
       },
       "comment": "视频下载的信息，下载链接需要提供 headers 伪装浏览器请求（Referer 和 User-Agent）"
+    }, 
+    "related": {
+      "url": "https://api.bilibili.com/x/web-interface/archive/related",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "aid": "int: av 号"
+      },
+      "comment": "获取关联视频"
+    },
+    "has_liked": {
+      "url": "https://api.bilibili.com/x/web-interface/archive/has/like",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "aid": "int: av 号"
+      },
+      "comment": "是否已点赞"
+    },
+    "get_pay_coins": {
+      "url": "https://api.bilibili.com/x/web-interface/archive/coins",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "aid": "int: av 号"
+      },
+      "comment": "是否已投币 "
+    },
+    "has_favoured": {
+      "url": "https://api.bilibili.com/x/v2/fav/video/favoured",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "aid": "int: av 号"
+      },
+      "comment": "是否已收藏"
+    },
+    "media_list": {
+      "url": "https://api.bilibili.com/x/v3/fav/folder/created/list-all",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "rid": "int: av 号",
+        "up_mid": "int: up 主的 uid",
+        "type": "const int: 2"
+      },
+      "comment": "获取收藏夹列表信息，用于收藏操作"
+    }, 
+    "pbp": {
+      "url": "https://bvc.bilivideo.com/pbp/data", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "cid": "int: 分 P 编号", 
+        "bvid": "string: bvid", 
+        "aid": "int: av 号"
+      }
+    }
+  },
+  "operate": {
+    "like": {
+      "url": "https://api.bilibili.com/x/web-interface/archive/like",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号",
+        "like": "int: 1 是点赞，2 是取消点赞"
+      },
+      "comment": "给视频点赞/取消点赞 "
+    },
+    "coin": {
+      "url": "https://api.bilibili.com/x/web-interface/coin/add",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号",
+        "multiply": "int: 几个币",
+        "select_like": "int bool: 是否同时点赞"
+      },
+      "comment": "给视频投币"
+    },
+    "add_tag": {
+      "url": "https://api.bilibili.com/x/tag/archive/add",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号",
+        "tag_name": "str: 标签名"
+      },
+      "comment": "添加标签"
+    },
+    "del_tag": {
+      "url": "https://api.bilibili.com/x/tag/archive/del",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号",
+        "tag_id": "int: 标签 id"
+      },
+      "comment": "删除标签"
+    },
+    "subscribe_tag": {
+      "url": "https://api.bilibili.com/x/tag/subscribe/add",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "tag_id": "int: 标签 id"
+      },
+      "comment": "订阅标签"
+    },
+    "unsubscribe_tag": {
+      "url": "https://api.bilibili.com/x/tag/subscribe/cancel",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "tag_id": "int: 标签 id"
+      },
+      "comment": "取消订阅标签"
+    },
+    "favorite": {
+      "url": "https://api.bilibili.com/x/v3/fav/resource/deal",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "rid": "int: av 号。",
+        "type": "const int: 2",
+        "add_media_ids": "commaSeparatedList[int]: 要添加到的收藏夹 ID。",
+        "del_media_ids": "commaSeparatedList[int]: 要移出的收藏夹 ID。"
+      },
+      "comment": "设置视频收藏状态"
+    },
+
+    "submit_subtitle": {
+      "url": "https://api.bilibili.com/x/v2/dm/subtitle/draft/save",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "type": 1,
+        "oid": "int: 分 P id",
+        "lan": "str: 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm",
+        "data": {
+          "font_size": "float: 字体大小，默认 0.4",
+          "font_color": "str: 字体颜色，默认 \"#FFFFFF\"",
+          "background_alpha": "float: 背景不透明度，默认 0.5",
+          "background_color": "str: 背景颜色，默认 \"#9C27B0\"",
+          "Stroke": "str: 描边，目前作用未知，默认为 \"none\"",
+          "body": [
+            {
+              "from": "int: 字幕开始时间（秒）",
+              "to": "int: 字幕结束时间（秒）",
+              "location": "int: 字幕位置，默认为 2",
+              "content": "str: 字幕内容"
+            }
+          ]
+        },
+        "submit": "bool: 是否提交，不提交为草稿",
+        "sign": "bool: 是否署名",
+        "bvid": "str: 视频 BV 号"
+      },
+      "comment": "上传字幕"
+    }
+  },
+  "danmaku": {
+    "get_danmaku": {
+      "url": "https://api.bilibili.com/x/v2/dm/web/seg.so",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "oid": "int: video_info 中的 cid，即分 P 的编号",
+        "type": "const int: 1",
+        "segment_index": "int: 分片序号",
+        "pid": "int: av 号"
+      },
+      "comment": "获取弹幕列表"
+    },
+    "get_history_danmaku": {
+      "url": "https://api.bilibili.com/x/v2/dm/web/history/seg.so",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "oid": "int: video_info 中的 cid，即分 P 的编号",
+        "type": "const int: 1",
+        "date": "str: 历史弹幕日期，格式：YYYY-MM-DD"
+      },
+      "comment": "获取历史弹幕列表"
+    },
+    "view": {
+      "url": "https://api.bilibili.com/x/v2/dm/web/view",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "type": 1,
+        "oid": "int: 分 P 的编号",
+        "pid": "int: av 号"
+      },
+      "comment": "获取弹幕设置、特殊弹幕"
+    },
+    "get_history_danmaku_index": {
+      "url": "https://api.bilibili.com/x/v2/dm/history/index",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "oid": "int: 分 P 的编号",
+        "type": "const int: 1",
+        "month": "str: 年月 (yyyy-mm)"
+      },
+      "comment": "存在历史弹幕的日期"
+    },
+    "has_liked_danmaku": {
+      "url": "https://api.bilibili.com/x/v2/dm/thumbup/stats",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "oid": "int: video_info 中的 cid，即分 P 的编号",
+        "ids": "commaSeparatedList[int]: 弹幕 id，多个以逗号分隔"
+      },
+      "comment": "是否已点赞弹幕"
+    },
+    "send_danmaku": {
+      "url": "https://api.bilibili.com/x/v2/dm/post",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "type": "const int: 1",
+        "oid": "int: 分 P 编号",
+        "msg": "int: 弹幕内容",
+        "bvid": "int: bvid",
+        "progress": "int: 发送时间（毫秒）",
+        "color": "int: 颜色（十六进制转十进制）",
+        "fontsize": "int: 字体大小（小 18 普通 25 大 36）",
+        "pool": "int bool: 字幕弹幕（1 是 0 否）",
+        "mode": "int: 模式（滚动 1 顶部 5 底部 4）",
+        "plat": "const int: 1"
+      },
+      "comment": "发送弹幕"
+    },
+    "like_danmaku": {
+      "url": "https://api.bilibili.com/x/v2/dm/thumbup/add",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "dmid": "int: 弹幕 ID",
+        "oid": "int: 分 P 编号",
+        "op": "int: 1 点赞 2 取消点赞",
+        "platform": "const str: web_player"
+      },
+      "comment": "点赞弹幕"
+    },
+    "edit_danmaku": {
+      "url": "https://api.bilibili.com/x/v2/dm/edit/state",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "type": "const int: 1",
+        "dmids": "int: 弹幕 ID",
+        "oid": "int: 视频 cid",
+        "state": "int: 1 删除 2 保护 3 取消保护"
+      },
+      "comment": "编辑弹幕"
+    }, 
+    "snapshot": {
+      "url": "http://api.bilibili.com/x/v2/dm/ajax",
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "aid": "int: av 号"
+      }, 
+      "comment": "获取弹幕快照"
+    }, 
+    "recall": {
+      "url": "http://api.bilibili.com/x/dm/recall", 
+      "method": "GET", 
+      "verify": false, 
+      "data": {
+        "dmid": "int: 弹幕 ID", 
+        "cid":"int: 分 P 编号", 
+        "csrf": "cookies: bili_jct"
+      }, 
+      "comment": "撤回弹幕"
     }
   }
 }

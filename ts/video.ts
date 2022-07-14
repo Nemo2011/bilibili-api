@@ -2,11 +2,12 @@ import { Credential } from "./models/Credential";
 import { aid2bvid, bvid2aid } from "./utils/aid2bvid";
 import { get_api } from "./utils/utils";
 import { request } from "./utils/network"
+import { parseDate } from "tough-cookie";
 
 const API: Record<any, any> = get_api("video")
 
 export class Video {
-    __info: Record<any, any> = {};
+    __info: Record<any, any>|null = null;
     __bvid: string = "";
     __aid: number = 0;
     credential: Credential = new Credential();
@@ -66,5 +67,124 @@ export class Video {
         )
         this.__info = resp;
         return resp;
+    }
+
+    async __get_info_cached() {
+        if (this.__info === null) {
+            return await this.get_info()
+        }
+        return this.__info
+    }
+
+    async get_stat() {
+        var api = API['info']['stat'];
+        var params = {
+            "bvid": this.get_bvid(), 
+            "aid": this.get_aid()
+        };
+        return await request(
+            "GET", 
+            api['url'], 
+            params, 
+            null, 
+            this.credential
+        );
+    }
+
+    async get_tags() {
+        var api = API['info']['tags'];
+        var params = {
+            "bvid": this.get_bvid(), 
+            "aid": this.get_aid()
+        };
+        return await request(
+            "GET", 
+            api['url'], 
+            params, 
+            null, 
+            this.credential
+        )
+    }
+
+    async get_chargers() {
+        var info = await this.__get_info_cached();
+        var mid = info['owner']['mid'];
+        console.log(mid);
+        var api = API['info']['chargers'];
+        var params = {
+            "aid": this.get_aid(), 
+            "bvid": this.get_bvid(), 
+            "mid": mid
+        };
+        return await request(
+            "GET", 
+            api['url'], 
+            params, 
+            null, 
+            this.credential
+        )
+    }
+
+    async get_pages() {
+        var api = API["info"]["pages"];
+        var params = {
+            "aid": this.get_aid(), 
+            "bvid": this.get_bvid()
+        }
+        return await request(
+            "GET", 
+            api['url'], 
+            params, 
+            null, 
+            this.credential
+        )
+    }
+
+    async __get_page_id_by_index(page_index: number) {
+        if (page_index < 0) {
+            throw "分 p 号必须大于或等于 0。";
+        }
+        var info = await this.__get_info_cached();
+        var pages = info['pages'];
+
+        if (pages.length <= 0) {
+            throw "不存在该分 p。";
+        }
+
+        var page = pages[page_index];
+        var cid = page['cid'];
+        return cid
+    }
+
+    async get_download_url(
+        page_index: number|null = null, 
+        cid: number|null = null, 
+        html5: boolean=false
+    ) {
+        if (cid === null) {
+            if (page_index === null) {
+                throw "page_index 和 cid 至少提供一个。";
+            }
+            cid = await this.__get_page_id_by_index(page_index);
+        }
+        var api = API['info']['playurl'];
+        var params = {
+            "avid": this.get_aid(), 
+            "cid": cid, 
+            "qn": "127", 
+            "otype": "json", 
+            "fnval": 4048, 
+            "fourk": 1
+        };
+        if (html5 === true) {
+            params['platform'] = 'html5';
+        }
+        return await request(
+            "GET", 
+            api['url'], 
+            params, 
+            null, 
+            this.credential
+        );
     }
 }
