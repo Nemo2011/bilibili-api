@@ -68,7 +68,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ get_stat()
+#### _async_ def get_stat()
 
 获取视频统计数据（播放量，点赞数等）。
 
