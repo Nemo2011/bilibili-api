@@ -4,10 +4,14 @@
 
 # bilibili-api
 
+### Language
+## Python | [JS&TS](https://github.com/Nemo2011/bilibili_api/blob/main/ts/README.md)
+
 [![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
 [![STARS](https://img.shields.io/github/stars/Nemo2011/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]
 ![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
+![NodeJS](https://img.shields.io/badge/Node.js-In_progress-blue)
 
 </div>
 
@@ -19,7 +23,9 @@ Github 仓库：[https://github.com/nemo2011/bilibili_api](https://github.com/ne
 
 Gitee 仓库：[https://gitee.com/nemo2011/bilibili_api](https://gitee.com/nemo2011/bilibili_api)
 
-Typescript: [->](https://github.com/Nemo2011/bilibili_api/blob/main/ts/README.md)
+Pypi: <https://pypi.org/project/bilibili-api-python>
+
+NPM: <https://www.npmjs.com/package/bilibili-api-js>
 
 # 简介
 
