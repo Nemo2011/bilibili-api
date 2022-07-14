@@ -47,5 +47,6 @@
   + API 示例
     + [视频](/ts/examples/video.md)
   + API 文档
+    + [根模块](/ts/modules/bilibili-api.md)
     + [video.ts - 视频](/ts/modules/video.md)
 + [历史文档](/history.md)

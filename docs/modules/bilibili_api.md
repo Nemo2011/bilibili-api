@@ -43,8 +43,9 @@ import bilibili_api
 | sessdata | str, optional | 浏览器 Cookies 中的 SESSDATA 字段值 |
 | bili_jct | str, optional | 浏览器 Cookies 中的 bili_jct 字段值 |
 | buvid3   | str, optional | 浏览器 Cookies 中的 BUVID3 字段值   |
+| dedeuserid | str, optional | 浏览器 Cookies 中的 DedeUserID 字段值 |
 
-各字段获取方式查看：https://bili.moyu.moe/#/get-credential.md
+各字段获取方式查看：https://nemo2011.github.io/bilibili_api/#/get-credential.md
 
 #### def get_cookies()
 
@@ -108,7 +109,7 @@ import bilibili_api
 | --------- | --------- | ----------- |
 | coroutine | Coroutine | 异步函数    |
 
-同步执行异步函数，使用可参考 [同步执行异步代码](https://bili.moyu.moe/#/sync-executor)
+同步执行异步函数，使用可参考 [同步执行异步代码](https://nemo2011.github.io/bilibili_api/#/sync-executor)
 
 **Returns:** 该异步函数的返回值
 
