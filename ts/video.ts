@@ -1,5 +1,4 @@
-import { AnyARecord } from "dns";
-import { CookiesCredential } from "./models/Credential";
+import { Credential } from "./models/Credential";
 import { aid2bvid, bvid2aid } from "./utils/aid2bvid";
 import { get_api } from "./utils/utils";
 import { request } from "./utils/network"
@@ -10,9 +9,9 @@ export class Video {
     __info: Record<any, any> = {};
     __bvid: string = "";
     __aid: number = 0;
-    credential: CookiesCredential = new CookiesCredential();
+    credential: Credential = new Credential();
 
-    constructor (bvid: string|null=null, aid: number|null=null, credential: CookiesCredential=new CookiesCredential()) {
+    constructor (bvid: string|null=null, aid: number|null=null, credential: Credential=new Credential()) {
         if (bvid !== null) {
             this.set_bvid(bvid);
         }
