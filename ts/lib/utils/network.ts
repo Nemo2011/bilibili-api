@@ -1,12 +1,14 @@
 import { CookieJar } from 'tough-cookie';
 import { getSystemProxy } from 'os-proxy-config';
 import crypto from 'crypto';
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
 import { CookiesCredential } from '../models/Credential';
 import { Proxy } from '../models/Proxy';
 
 export const cookieJar = new CookieJar();
+
+var sess: any = null;
 
 export async function getAxiosInstance(credential: CookiesCredential=new CookiesCredential(), proxy: any|Proxy=null) {
   if (credential.sessdata !== null) {
@@ -32,7 +34,7 @@ export async function getAxiosInstance(credential: CookiesCredential=new Cookies
     'https://www.bilibili.com/'
   );
 
-  return wrapper(
+  sess = wrapper(
     axios.create({
       headers: {
         'user-agent': 'Mozilla/5.0',
@@ -53,9 +55,14 @@ export async function getAxiosInstance(credential: CookiesCredential=new Cookies
                 : undefined,
         }
         : false,
-    })
-  );
+    }));
+
+    return sess;
 };
+
+export async function setAxiosInstance(axios: AxiosInstance) {
+  sess = axios;
+}
 
 export async function request(
   method: string,
@@ -101,7 +108,9 @@ export async function request(
     "cookies": cookies
   }
 
-  var sess = getAxiosInstance();
+  if (sess === null) {
+    getAxiosInstance();
+  }
 
   var resp = await (await sess).request(config);
 
