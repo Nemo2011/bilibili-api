@@ -1,6 +1,15 @@
+<div align="center">
+
+![](./logo-small.png)
+
 # bilibili-api **typescript** 分部
 
-python 版：[->](/README.md)
+![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)
+![STARS](https://img.shields.io/github/stars/Nemo2011/bilibili_api?color=yellow&label=Github%20Stars)
+
+python 版：<https://github.com/Nemo2011/bilibili_api/blob/main/README.md>
+
+</div>
 
 # 简介
 
@@ -61,10 +70,9 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 
 这种情况下，你的 IP 会暂时被封禁而无法使用，你可以设置代理绕过。
 
-```python
-from bilibili_api import settings
-
-settings.proxy = "http://your-proxy.com" # 里头填写你的代理地址
+```typescript
+import { setProxy, Proxy } from "bilibili-api-js/bilibili-api"
+setProxy(new Proxy("代理网址", "代理端口", "用户名（可选）", "密码（可选)"))
 ```
 
 **Q: 怎么没有我想要的功能？**

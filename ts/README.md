@@ -1,6 +1,15 @@
+<div align="center">
+
+![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili_api/main/design/logo-small.png)
+
 # bilibili-api **typescript** 分部
 
+![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)
+![STARS](https://img.shields.io/github/stars/Nemo2011/bilibili_api?color=yellow&label=Github%20Stars)
+
 python 版：<https://github.com/Nemo2011/bilibili_api/blob/main/README.md>
+
+</div>
 
 # 简介
 
