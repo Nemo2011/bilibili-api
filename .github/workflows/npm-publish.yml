@@ -9,7 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - working-directory: ./ts
+      - name: "Build"
+        working-directory: ./ts
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -21,7 +22,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - working-directory: ./ts
+      - name: "Publish"
+        working-directory: ./ts
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
