@@ -41,6 +41,11 @@
     + [vote.py - 投票](/modules/vote.md)
     + [app.py - 手机 APP](/modules/app.md)
     + [video_uploader.py - 视频上传](/modules/video_uploader.md)
-  + [历史文档](/history.md)
-+ Javascript
++ Javascript/Typescript
   + [主页](/README-ts.md)
+  + [获取 Credential 类所需信息](/ts/get-credential.md)
+  + API 示例
+    + [视频](/ts/examples/video.md)
+  + API 文档
+    + [video.ts - 视频](/ts/modules/video.md)
++ [历史文档](/history.md)
