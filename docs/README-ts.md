@@ -1,6 +1,6 @@
 <div align="center">
 
-![](./logo-small.png)
+![bilibili-api logo](./logo-small.png)
 
 # bilibili-api **typescript** 分部
 
@@ -13,8 +13,7 @@ python 版：<https://github.com/Nemo2011/bilibili_api/blob/main/README.md>
 
 # 简介
 
-这是一个用 Javascript 写的调用 [Bilibili](https://www.bilibili.com) 各种 API 的库，
-这个库是基于 `python` 版的一个 `clone`, API 正在慢慢完善，欢迎贡献！。
+这里是 Python 模块 bilibili-api 的 Typescript 克隆，适用于 JS/TS
 
 **注意：本仓库全都是异步操作，而且是 `ajax`，就是那种代码跑完了结果你的结果才刚刚出来的那种，不 `await` 后果自负。**
 
@@ -71,7 +70,7 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 这种情况下，你的 IP 会暂时被封禁而无法使用，你可以设置代理绕过。
 
 ```typescript
-import { setProxy, Proxy } from "bilibili-api-ts/bilibili-api"
+import { setProxy, Proxy } from "bilibili-api-ts"
 setProxy(new Proxy("代理网址", "代理端口", "用户名（可选）", "密码（可选)"))
 ```
 
