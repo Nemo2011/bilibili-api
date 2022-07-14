@@ -13,7 +13,7 @@ assignees: ''
 
 **运行环境：** Windows / Linux / MacOS
 
-**模块路径：** `bilibili_api.xxxx` / `bilibili-api-js/xxx`
+**模块路径：** `bilibili_api.xxxx` / `bilibili-api-ts/xxx`
 
 **解释器(Python)：** cpython / pypi
 

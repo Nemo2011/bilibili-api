@@ -5,7 +5,7 @@
 # bilibili-api
 
 ### Language
-## Python | [JS&TS](https://github.com/Nemo2011/bilibili_api/blob/main/bilibili-api-js/README.md)
+## Python | [JS&TS](https://github.com/Nemo2011/bilibili_api/blob/main/bilibili-api-ts/README.md)
 
 [![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
@@ -25,7 +25,7 @@ Gitee 仓库：[https://gitee.com/nemo2011/bilibili_api](https://gitee.com/nemo2
 
 Pypi: <https://pypi.org/project/bilibili-api-python>
 
-NPM: <https://www.npmjs.com/package/bilibili-api-js>
+NPM: <https://www.npmjs.com/package/bilibili-api-ts>
 
 # 简介
 

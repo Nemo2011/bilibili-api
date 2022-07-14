@@ -23,7 +23,7 @@ python 版：<https://github.com/Nemo2011/bilibili_api/blob/main/README.md>
 首先，使用以下命令安装：
 
 ```
-$ npm install bilibili-api-js
+$ npm install bilibili-api-ts
 ```
 
 或者在 `package.json` 中添加依赖。
@@ -31,7 +31,7 @@ $ npm install bilibili-api-js
 接下来让我们获取视频播放量等信息：
 
 ``` typescript
-import { Video } from "bilibili-api-js/video";
+import { Video } from "bilibili-api-ts/video";
 
 // 实例化 Video 类
 var v = new Video("BV1uv411q7Mv");
@@ -71,7 +71,7 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 这种情况下，你的 IP 会暂时被封禁而无法使用，你可以设置代理绕过。
 
 ```typescript
-import { setProxy, Proxy } from "bilibili-api-js"
+import { setProxy, Proxy } from "bilibili-api-ts"
 setProxy(new Proxy("代理网址", "代理端口", "用户名（可选）", "密码（可选)"))
 ```
 

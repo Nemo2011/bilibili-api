@@ -14,5 +14,5 @@ node_modules/
 site.bat
 .DS_Store
 .VSCodeCounter/
-bilibili-api-js/*/*.js
-bilibili-api-js/*.js
+bilibili-api-ts/*/*.js
+bilibili-api-ts/*.js

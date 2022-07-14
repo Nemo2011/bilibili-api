@@ -1,7 +1,7 @@
 # Module bilibili_api
 
 ```typescript
-import {} from "bilibili-api-js";
+import {} from "bilibili-api-ts";
 ```
 
 根模块

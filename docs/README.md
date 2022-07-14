@@ -24,7 +24,7 @@ Gitee 仓库：[https://gitee.com/nemo2011/bilibili_api](https://gitee.com/nemo2
 
 Pypi: <https://pypi.org/project/bilibili-api-python>
 
-NPM: <https://www.npmjs.com/package/bilibili-api-js>
+NPM: <https://www.npmjs.com/package/bilibili-api-ts>
 
 # 简介
 
