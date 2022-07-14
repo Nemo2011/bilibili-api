@@ -3,8 +3,6 @@ bilibili_api.cheese
 
 注意：这里查看弹幕、发送弹幕、get_downlaod_url 无需 page_index 或 cid!
 
-ohhhh!!!!!!!!!!!(误
-
 有关 bilibili 课程的 api。
 
 注意，注意！课程中的视频和其他视频几乎没有任何相通的 API！
