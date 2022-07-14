@@ -14,5 +14,5 @@ node_modules/
 site.bat
 .DS_Store
 .VSCodeCounter/
-ts/lib/*/*.js
-ts/lib/*.js
+ts/*/*.js
+ts/*.js

@@ -7,9 +7,9 @@ assignees: ''
 
 ---
 
-**Python 版本：** 3.x
+**Python 版本：** 3.x 或 **Node.js 版本** 
 
-**模块版本：** x.x.x
+**模块版本：** x.x.x (PYTHON/JS&TS)
 
 **运行环境：** Windows / Linux / MacOS
 
