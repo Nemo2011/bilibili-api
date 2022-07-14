@@ -71,7 +71,7 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 这种情况下，你的 IP 会暂时被封禁而无法使用，你可以设置代理绕过。
 
 ```typescript
-import { setProxy, Proxy } from "bilibili-api-js/bilibili-api"
+import { setProxy, Proxy } from "bilibili-api-js"
 setProxy(new Proxy("代理网址", "代理端口", "用户名（可选）", "密码（可选)"))
 ```
 

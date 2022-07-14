@@ -5,22 +5,23 @@ import axios, { AxiosInstance } from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
 import { Credential } from '../models/Credential';
 import { Proxy } from '../models/Proxy';
+import { stringify } from 'querystring';
 
-export const cookieJar = new CookieJar();
+const cookieJar = new CookieJar();
 
 var sess: any = null;
 var user_proxy: Proxy|null = null;
 
-export async function getAxiosInstance(credential: Credential=new Credential(), proxy: any|Proxy=null) {
+async function getAxiosInstance(credential: Credential=new Credential(), proxy: any|Proxy=null) {
   if (credential.sessdata !== null) {
     cookieJar.setCookieSync(
-      `sessdata=${credential.sessdata}; Domain=.bilibili.com`, 
+      `SESSDATA=${credential.sessdata}; Domain=.bilibili.com`, 
       'https://www.bilibili.com'
     );
   }
   if (credential.bili_jct !== null) {
     cookieJar.setCookieSync(
-      `bili_jct=${credential.bili_jct}; Domain=.bilibili.com`, 
+      `bili_jct=${credential.bili_jct} Domain=.bilibili.com`, 
       'https://www.bilibili.com'
     );
   }
@@ -31,16 +32,17 @@ export async function getAxiosInstance(credential: Credential=new Credential(), 
     );
   }
   cookieJar.setCookieSync(
-    `buvid3=${crypto.randomUUID()}; Domain=.bilibili.com`,
-    'https://www.bilibili.com/'
+     `buvid3=${crypto.randomUUID()}; Domain=.bilibili.com`,
+     'https://www.bilibili.com'
   );
-
+  // console.log(cookieJar.getCookieString("https://api.bilibili.com"));
   sess = wrapper(
     axios.create({
       headers: {
         'user-agent': 'Mozilla/5.0',
         referer: 'https://www.bilibili.com/',
       },
+      // withCredentials: true, 
       jar: cookieJar,
       responseType: 'json',
       proxy: proxy
@@ -61,7 +63,7 @@ export async function getAxiosInstance(credential: Credential=new Credential(), 
     return sess;
 };
 
-export async function setAxiosInstance(axios: AxiosInstance) {
+async function setAxiosInstance(axios: AxiosInstance) {
   sess = axios;
 }
 
@@ -93,8 +95,11 @@ export async function request(
     data["csrf_token"] = credential.bili_jct;
   }
 
-  var jsonp = params['jsonp'] ? true : false;
-  if (jsonp) {
+  if (params === null) {
+    params = {};
+  }
+
+  if (params['jsonp'] !== undefined) {
     params["callback"] = "callback"
   }
 
@@ -109,6 +114,8 @@ export async function request(
     "cookies": cookies
   }
 
+  // console.log(credential.get_cookies());
+
   if (user_proxy !== null) {
     await getAxiosInstance(credential, user_proxy);
   }
@@ -117,6 +124,8 @@ export async function request(
   }
 
   var resp = await (await sess).request(config);
+
+  // console.log(resp)
 
   // console.log(resp.headers)
 

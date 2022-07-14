@@ -21,7 +21,7 @@ export class Credential {
     }
     get_cookies(){
         return {
-            "sessdata": this.sessdata,
+            "SESSDATA": this.sessdata,
             "bili_jct": this.bili_jct,
             "DedeUserID": this.dedeuserid
         }
