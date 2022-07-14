@@ -14,7 +14,7 @@ class Credential:
 
     def __init__(self, sessdata: str = None, bili_jct: str = None, buvid3: str = None, dedeuserid: str=None):
         """
-        各字段获取方式查看：https://bili.moyu.moe/#/get-credential.md
+        各字段获取方式查看：https://nemo2011.github.io/bilibili_api/#/get-credential.md
 
         Args:
             sessdata (str, optional):   浏览器 Cookies 中的 SESSDATA 字段值
