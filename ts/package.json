@@ -1,6 +1,6 @@
 {
     "name": "bilibili-api-js",
-    "version": "11.0.0",
+    "version": "11.0.1",
     "description": "",
     "scripts": {
         "test": "npm run build; node tests/main.js",
