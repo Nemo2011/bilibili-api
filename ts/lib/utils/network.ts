@@ -1,6 +1,6 @@
 import { CookieJar } from 'tough-cookie';
 import { getSystemProxy } from 'os-proxy-config';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import axios, { AxiosInstance } from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
 import { CookiesCredential } from '../models/Credential';

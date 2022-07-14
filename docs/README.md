@@ -1,4 +1,4 @@
-![bilibili-api logo](./logo.png)
+![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili_api/main/design/logo.png)
 
 <div align="center">
 
@@ -18,6 +18,8 @@
 Github 仓库：[https://github.com/nemo2011/bilibili_api](https://github.com/nemo2011/bilibili_api)
 
 Gitee 仓库：[https://gitee.com/nemo2011/bilibili_api](https://gitee.com/nemo2011/bilibili_api)
+
+TypeScript 文档：[->](./README-ts.md)
 
 # 简介
 
