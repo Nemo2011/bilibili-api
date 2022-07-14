@@ -3,7 +3,7 @@
     "version": "11.0.0",
     "description": "",
     "scripts": {
-        "test": "npm run build; node dist/tests/main.js",
+        "test": "npm run build; node tests/main.js",
         "build": "tsc -p tsconfig.json"
     },
     "repository": {

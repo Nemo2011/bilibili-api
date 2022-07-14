@@ -3,14 +3,15 @@ import { getSystemProxy } from 'os-proxy-config';
 import * as crypto from 'crypto';
 import axios, { AxiosInstance } from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
-import { CookiesCredential } from '../models/Credential';
+import { Credential } from '../models/Credential';
 import { Proxy } from '../models/Proxy';
 
 export const cookieJar = new CookieJar();
 
 var sess: any = null;
+var user_proxy: Proxy|null = null;
 
-export async function getAxiosInstance(credential: CookiesCredential=new CookiesCredential(), proxy: any|Proxy=null) {
+export async function getAxiosInstance(credential: Credential=new Credential(), proxy: any|Proxy=null) {
   if (credential.sessdata !== null) {
     cookieJar.setCookieSync(
       `sessdata=${credential.sessdata}; Domain=.bilibili.com`, 
@@ -69,7 +70,7 @@ export async function request(
   url: string, 
   params: any={},
   data: any={},
-  credential: CookiesCredential=new CookiesCredential(), 
+  credential: Credential=new Credential(), 
   no_csrf: boolean=false
 ) {
   method = method.toUpperCase();
@@ -109,7 +110,12 @@ export async function request(
   }
 
   if (sess === null) {
-    await getAxiosInstance();
+    if (user_proxy !== null) {
+      await getAxiosInstance(credential, user_proxy);
+    }
+    else {
+      await getAxiosInstance(credential);
+    }
   }
 
   var resp = await (await sess).request(config);
@@ -142,4 +148,8 @@ export async function request(
     real_data = resp_data['result'];
   }
   return real_data;
+}
+
+export function setProxy(proxy: Proxy){
+  user_proxy = proxy;
 }

@@ -1,4 +1,4 @@
-export class CookiesCredential {
+export class Credential {
 
     sessdata: string;
     bili_jct: string;
