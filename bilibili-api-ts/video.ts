@@ -67,11 +67,12 @@ export class Video {
             "aid": this.get_aid()
         }
         var resp = await request(
-            "GET", 
-            api["url"], 
-            params, 
-            null, 
-            this.credential
+           {
+            method: "GET", 
+            url: api['url'], 
+            params: params,
+            credential: this.credential
+           }
         )
         this.__info = resp;
         return resp;
@@ -91,11 +92,12 @@ export class Video {
             "aid": this.get_aid()
         };
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         );
     }
 
@@ -106,11 +108,12 @@ export class Video {
             "aid": this.get_aid()
         };
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         )
     }
 
@@ -124,11 +127,12 @@ export class Video {
             "mid": mid
         };
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         )
     }
 
@@ -139,11 +143,12 @@ export class Video {
             "bvid": this.get_bvid()
         }
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         )
     }
 
@@ -190,11 +195,12 @@ export class Video {
             params['platform'] = 'html5';
         }
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         );
     }
 }

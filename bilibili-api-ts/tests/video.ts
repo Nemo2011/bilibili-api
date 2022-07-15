@@ -1,9 +1,13 @@
 import { Video } from "../video";
+import { Credential } from "../index";
 
 export function test_video() {
     var v = new Video(
         {
-            aid: 2
+            aid: 2, 
+            credential: new Credential({
+                sessdata: "49fe124a%2C1673004720%2C86384%2A71"
+            })
         }
     );
     v.get_info().then(function (value) {
@@ -26,5 +30,6 @@ export function test_video() {
         page_index: 0
     }).then(function (value) {
         console.log("get_download_url()");
+        console.log(value);
     })
 }
