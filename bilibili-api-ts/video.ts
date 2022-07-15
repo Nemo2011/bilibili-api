@@ -1,10 +1,9 @@
 import { Credential } from "./models/Credential";
 import { aid2bvid, bvid2aid } from "./utils/aid2bvid";
-import { get_api } from "./utils/utils";
 import { request } from "./utils/network"
-import { parseDate } from "tough-cookie";
+import { VideoData } from "./apis/video";
 
-const API: Record<any, any> = get_api("video")
+const API: Record<any, any> = VideoData
 
 export class Video {
     __info: Record<any, any>|null = null;
@@ -12,12 +11,18 @@ export class Video {
     __aid: number = 0;
     credential: Credential = new Credential();
 
-    constructor (bvid: string|null=null, aid: number|null=null, credential: Credential=new Credential()) {
-        if (bvid !== null) {
-            this.set_bvid(bvid);
+    constructor (config: any) {
+        var bvid: string|null|undefined = config.bvid;
+        var aid: number|null|undefined  = config.aid;
+        var credential: Credential|null|undefined = config.credential;
+        if (credential === null && credential === undefined) {
+            credential = new Credential();
         }
-        else if (aid !== null) {
-            this.set_aid(aid);
+        if (bvid !== null && bvid !== undefined) {
+            this.set_bvid({bvid: bvid});
+        }
+        else if (aid !== null && aid !== undefined) {
+            this.set_aid({aid: aid});
         }
         else {
             throw "请至少提供 bvid 和 aid 中的其中一个参数。";
@@ -25,7 +30,8 @@ export class Video {
         this.credential = credential;
     }
 
-    set_bvid(bvid: string) {
+    set_bvid(config: any) {
+        var bvid: string = config.bvid;
         if (bvid.length !== 12) {
             throw "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）。";
         }
@@ -33,19 +39,21 @@ export class Video {
             throw "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）。";
         }
         this.__bvid = bvid;
-        this.__aid = bvid2aid(bvid);
+        this.__aid = bvid2aid({bvid: bvid});
     }
 
     get_bvid() {
         return this.__bvid;
     }
 
-    set_aid(aid: number) {
+    set_aid(config: any) {
+        var aid: number = config.aid;
+
         if (aid <= 0) {
             throw "aid 不能小于或等于 0。";
         }
         this.__aid = aid;
-        this.__bvid = aid2bvid(aid);
+        this.__bvid = aid2bvid({aid: aid});
     }
 
     get_aid() {
@@ -109,7 +117,6 @@ export class Video {
     async get_chargers() {
         var info = await this.__get_info_cached();
         var mid = info['owner']['mid'];
-        console.log(mid);
         var api = API['info']['chargers'];
         var params = {
             "aid": this.get_aid(), 
@@ -157,15 +164,18 @@ export class Video {
     }
 
     async get_download_url(
-        page_index: number|null = null, 
-        cid: number|null = null, 
-        html5: boolean=false
-    ) {
-        if (cid === null) {
-            if (page_index === null) {
+        config: any
+    ) { 
+        var page_index: number|null|undefined = config.page_index;
+        var cid: number|null|undefined = config.cid;
+        var html5: boolean|null|undefined = config.html5;
+        if (cid === null || cid === undefined) {
+            if (page_index === null || page_index === undefined) {
                 throw "page_index 和 cid 至少提供一个。";
             }
-            cid = await this.__get_page_id_by_index(page_index);
+            else {
+                cid = await this.__get_page_id_by_index(page_index);
+            }
         }
         var api = API['info']['playurl'];
         var params = {
