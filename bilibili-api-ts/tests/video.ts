@@ -1,7 +1,11 @@
 import { Video } from "../video";
 
 export function test_video() {
-    var v = new Video(null, 2);
+    var v = new Video(
+        {
+            aid: 2
+        }
+    );
     v.get_info().then(function (value) {
         console.log("get_info()");
     })
@@ -18,7 +22,9 @@ export function test_video() {
     v.get_pages().then(function (value) {
         console.log("get_pages()");
     })
-    v.get_download_url(0).then(function (value) {
+    v.get_download_url({
+        page_index: 0
+    }).then(function (value) {
         console.log("get_download_url()");
     })
 }

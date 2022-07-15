@@ -4,10 +4,15 @@ export class Credential {
     bili_jct: string|null=null;
     dedeuserid: string|null=null;
 
-    constructor(sessdata="", bili_jct="", dedeuserid="") {
-        this.sessdata = sessdata
-        this.bili_jct = bili_jct
-        this.dedeuserid = dedeuserid
+    constructor(config: any|null=null) {
+        if (config !== null) {
+            var sessdata: string = config.sessdata;
+            var bili_jct: string = config.bili_jct;
+            var dedeuserid: string = config.dedeuserid;
+            this.sessdata = sessdata;
+            this.bili_jct = bili_jct;
+            this.dedeuserid = dedeuserid;
+        }
     }
 
     raise_for_no_sessdata() {
