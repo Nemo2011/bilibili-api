@@ -4,8 +4,9 @@ bilibili_api.search
 搜索
 """
 from enum import Enum
+import json
 from .utils.utils import get_api
-from .utils.network_httpx import request
+from .utils.network_httpx import request, get_session
 
 API = get_api("search")
 
@@ -84,4 +85,6 @@ async def get_hot_search_keywords():
         调用 api 返回的结果
     """
     api = API['search']['hot_search_keywords']
-    return await request("GET", api['url'])
+    sess = get_session()
+    return json.loads((await sess.request("GET", api['url'])).text)['cost']
+    
