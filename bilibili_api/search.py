@@ -65,3 +65,23 @@ async def web_search_by_type(
     api = API["search"]["web_search_by_type"]
     params = {"keyword": keyword, "search_type": search_type.value, "page": page}
     return await request("GET", url=api["url"], params=params)
+
+async def get_default_search_keyword():
+    """
+    获取默认的搜索内容
+
+    Returns:
+        调用 api 返回的结果
+    """
+    api = API['search']['default_search_keyword']
+    return await request("GET", api['url'])
+
+async def get_hot_search_keywords():
+    """
+    获取热搜
+
+    Returns:
+        调用 api 返回的结果
+    """
+    api = API['search']['hot_search_keywords']
+    return await request("GET", api['url'])
