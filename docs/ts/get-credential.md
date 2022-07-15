@@ -3,12 +3,16 @@
 Credential 类实例化代码如下：
 
 ``` typescript
-import { Credential } from "bilibili-api-ts/bilibili_api";
+import { Credential } from "bilibili-api-ts";
 
-var credential = Credential("你的 sessdata", "你的 bili_jct", "你的 DedeUserID")
+var credential = Credential({
+    sessdata: "你的 sessdata", 
+    bili_jct: "你的 bili_jct", 
+    dedeuserid: "你的 DedeUserID"
+})
 ```
 
-`sessdata` `bili_jct` `buvid3` 和 `dedeuserid` 这三个参数的值均在浏览器的 Cookies 里头，下面说明获取方法。
+`sessdata` `bili_jct` 和 `dedeuserid` 这三个参数的值均在浏览器的 Cookies 里头，下面说明获取方法。
 
 ## 火狐浏览器（Firefox）
 
