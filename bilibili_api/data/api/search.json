@@ -20,6 +20,18 @@
         "page": "int: 页码"
       },
       "comment": "搜索关键字时限定类型"
+    }, 
+    "default_search_keyword": {
+      "url": "https://api.bilibili.com/x/web-interface/search/default", 
+      "method": "GET", 
+      "verify": false, 
+      "comment": "获取默认的搜索内容"
+    }, 
+    "hot_search_keywords": {
+      "url": "https://s.search.bilibili.com/main/hotword", 
+      "method": "GET", 
+      "verify": false, 
+      "comment": "获取热搜"
     }
   }
 }
