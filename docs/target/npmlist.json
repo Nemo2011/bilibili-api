@@ -1,0 +1,1 @@
+{"version":"1.0.0","name":"bilibili-api-docs","dependencies":{"dependencies":{"version":"0.0.1"},"docsify-cli":{"version":"4.4.4"},"docsify":{"version":"4.12.2"},"greenlock-express":{"version":"2.7.18"},"koa-bodyparser":{"version":"4.3.0"},"koa":{"version":"2.13.4"}}}

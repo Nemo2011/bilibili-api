@@ -33,7 +33,9 @@ $ npm install bilibili-api-ts
 import { Video } from "bilibili-api-ts/video";
 
 // 实例化 Video 类
-var v = new Video("BV1uv411q7Mv");
+var v = new Video({
+    bvid: "BV1uv411q7Mv"
+});
 // get_info 是 async 函数
 v.get_info().then(
     function (value) {
@@ -63,6 +65,20 @@ v.get_info().then(
 
 # FA♂Q
 
+**Q: 调用 API 的正确姿势是什么？**
+
+A: 这点很重要。请务必传入一个 `字典`。下面是一个例子：
+
+```typescript
+video.get_info({
+    bvid: "BV1xx411c7mD" // 满分
+})
+video.get_info("BV1xx411c7mD") // 大错特错
+video.get_info({
+    "bvid": "BV1xx411c7mD" // 不推荐
+})
+```
+
 **Q: 为什么会提示 412 Precondition Failed ？**
 
 A: 你的请求速度太快了。造成请求速度过快的原因可能是你写了高并发的代码。
@@ -71,7 +87,12 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 
 ```typescript
 import { setProxy, Proxy } from "bilibili-api-ts"
-setProxy(new Proxy("代理网址", "代理端口", "用户名（可选）", "密码（可选)"))
+setProxy(new Proxy({
+    host: "代理网址", 
+    port: "代理端口", 
+    username: "用户名（可选）", 
+    password: "密码（可选)"
+}))
 ```
 
 **Q: 怎么没有我想要的功能？**
