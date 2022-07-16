@@ -219,7 +219,7 @@ class Video:
         Returns:
             int: cid
         """
-        return self.__get_page_id_by_index(page_index)
+        return await self.__get_page_id_by_index(page_index)
 
     async def get_download_url(
         self, page_index: int = None, cid: int = None, html5: bool = False

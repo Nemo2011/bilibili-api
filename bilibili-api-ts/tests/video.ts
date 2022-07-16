@@ -23,6 +23,11 @@ export function test_video() {
     //     console.log("get_chargers()");
     //     console.log(value);
     // })
+    v.get_cid({page_index: 0}).then(
+        function (value) {
+            console.log("get_cid()");
+        }
+    )
     v.get_pages().then(function (value) {
         console.log("get_pages()");
     })
@@ -30,6 +35,5 @@ export function test_video() {
         page_index: 0
     }).then(function (value) {
         console.log("get_download_url()");
-        console.log(value);
     })
 }

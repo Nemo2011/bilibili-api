@@ -168,6 +168,11 @@ export class Video {
         return cid
     }
 
+    async get_cid(config: any) {
+        var page_index = config.page_index;
+        return await this.__get_page_id_by_index(page_index);
+    }
+
     async get_download_url(
         config: any
     ) { 
