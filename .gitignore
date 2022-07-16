@@ -7,12 +7,9 @@
 **/dist
 *.ass
 *.srt
-danmaku*.*
 node_modules/
 *.proto
 *.bin
 site.bat
 .DS_Store
 .VSCodeCounter/
-bilibili-api-ts/*/*.js
-bilibili-api-ts/*.js
