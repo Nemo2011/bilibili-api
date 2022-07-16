@@ -29,7 +29,10 @@ $ npm install bilibili-api-ts
 
 接下来让我们获取视频播放量等信息：
 
+<p align="center">
+
 ``` typescript
+// TS
 import { Video } from "bilibili-api-ts/video";
 
 // 实例化 Video 类
@@ -44,6 +47,22 @@ v.get_info().then(
     }
 )
 ```
+
+``` javascript
+// JS
+const video = require("./bilibili-api-ts/video.js");
+var v = new video.Video({
+    aid: 2
+});
+v.get_info().then(
+    function (value) {
+        console.log(value);
+    }
+)
+
+```
+
+</p>
 
 输出（已格式化，已省略部分）：
 

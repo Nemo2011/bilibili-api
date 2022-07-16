@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
-        "outDir": "."
+        "outDir": ".",
+        "declaration": true,
+        "declarationDir": "."
     }, 
     "include": [
         "."
