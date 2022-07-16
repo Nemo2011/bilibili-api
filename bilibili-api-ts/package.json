@@ -1,7 +1,8 @@
 {
     "name": "bilibili-api-ts",
-    "version": "11.2.0",
+    "version": "11.2.1",
     "description": "Python bilibili-api 的 Typescript 克隆，适用于 JS/TS",
+    "types": "index.d.ts",
     "scripts": {
         "test": "npm run build && node tests/main.js",
         "build": "tsc -p tsconfig.json"
