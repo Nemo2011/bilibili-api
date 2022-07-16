@@ -1,11 +1,9 @@
 import { CookieJar } from 'tough-cookie';
-import { getSystemProxy } from 'os-proxy-config';
 import * as crypto from 'crypto';
 import axios, { AxiosInstance } from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
 import { Credential } from '../models/Credential';
 import { Proxy } from '../models/Proxy';
-import { stringify } from 'querystring';
 
 const cookieJar = new CookieJar();
 
@@ -78,6 +76,10 @@ export async function request(
   var no_csrf: boolean|null|undefined = request_config.no_csrf;
   if (no_csrf === null || no_csrf === undefined) {
     no_csrf = false;
+  }
+
+  if (credential === null || credential === undefined) {
+    credential = new Credential();
   }
 
   method = method.toUpperCase();
