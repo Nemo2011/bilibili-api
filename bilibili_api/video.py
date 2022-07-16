@@ -209,6 +209,18 @@ class Video:
         cid = page["cid"]
         return cid
 
+    async def get_cid(self, page_index: int):
+        """
+        获取稿件 cid
+
+        Args:
+            page_index(int): 分 P
+
+        Returns:
+            int: cid
+        """
+        return self.__get_page_id_by_index(page_index)
+
     async def get_download_url(
         self, page_index: int = None, cid: int = None, html5: bool = False
     ):
