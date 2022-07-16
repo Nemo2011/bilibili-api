@@ -2,7 +2,7 @@
     "name": "bilibili-api-ts",
     "version": "11.2.0",
     "description": "Python bilibili-api 的 Typescript 克隆，适用于 JS/TS",
-    "tyoe": "module", 
+    "type": "module", 
     "scripts": {
         "test": "npm run build; node tests/main.js",
         "build": "tsc -p tsconfig.json"
@@ -17,7 +17,7 @@
     "bugs": {
         "url": "https://github.com/Nemo2011/bilibili_api/issues"
     },
-    "homepage": "https://github.com/Nemo2011/bilibili_api#readme",
+    "homepage": "https://github.com/Nemo2011/bilibili_api/blob/main/bilibili-api-ts/README.md",
     "dependencies": {
         "@types/node": "^18.0.3",
         "@types/tough-cookie": "^4.0.2",
