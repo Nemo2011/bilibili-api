@@ -8,7 +8,7 @@ from bilibili_api import vote
 
 | name | type | description |
 | - | - | - |
-| vote_id | int | vote_id, [获取](https://nemo2011.github.io/bilibili_api/#/vote_id) |
+| vote_id | int | vote_id, [获取](https://nemo2011.github.io/bilibili-api/#/vote_id) |
 
 获取投票详情
 

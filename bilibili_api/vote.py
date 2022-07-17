@@ -17,7 +17,7 @@ async def get_vote_info(vote_id: int):
     获取投票详情
 
     Args:
-        vote_id: vote_id,获取：nemo2011.github.io/bilibili_api/#/vote_id
+        vote_id: vote_id,获取：nemo2011.github.io/bilibili-api/#/vote_id
     Returns:
         调用 API 返回的结果
     """
