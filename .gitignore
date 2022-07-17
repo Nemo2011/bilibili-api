@@ -16,3 +16,5 @@ site.bat
 .VSCodeCounter/
 bilibili-api-ts/*/*.js
 bilibili-api-ts/*.js
+bilibili-api-ts/*/*.d.ts
+bilibili-api-ts/*.d.ts

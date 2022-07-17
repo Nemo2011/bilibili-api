@@ -4,8 +4,8 @@
   "description": "",
   "private": "true",
   "scripts": {
-    "start": "docsify start .",
-    "dev": "docsify serve ."
+    "start": "docsify start ./docs",
+    "dev": "docsify serve ./docs"
   },
   "repository": {
     "type": "git",

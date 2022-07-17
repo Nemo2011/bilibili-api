@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
 总的来说，异步比同步更有优势，所以不会的话可以去学一下，会发现新天地（误
 
-如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili_api/#/sync-executor)
+如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
 
 # FA♂Q
 
@@ -177,11 +177,11 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 + \[2\] 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784>
 
 
-[docs]: https://nemo2011.github.io/bilibili_api
+[docs]: https://nemo2011.github.io/bilibili-api
 [docs-github]: https://github.com/Nemo2011/bilibili_api/tree/main/docs
 [docs-gitee]: https://gitee.com/Nemo2011/bilibili_api/tree/main/docs
 [api.json]: https://github.com/Nemo2011/bilibili_api/tree/main/bilibili_api/data/api/
 [license]: https://github.com/Nemo2011/bilibili_api/tree/main/LICENSE.md
 [stargazers]: https://github.com/Nemo2011/bilibili_api/stargazers
 [issues-new]: https://github.com/Nemo2011/bilibili_api/issues/new
-[get-credential]: https://nemo2011.github.io/bilibili_api/#/get-credential
+[get-credential]: https://nemo2011.github.io/bilibili-api/#/get-credential
