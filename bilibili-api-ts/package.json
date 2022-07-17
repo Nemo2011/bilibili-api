@@ -9,13 +9,13 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Nemo2011/bilibili_api.git"
+        "url": "git+https://github.com/nemo2011/bilibili-api.git"
     },
     "keywords": [],
     "author": "Nemo2011",
     "license": "GPL-3.0-or-later",
     "bugs": {
-        "url": "https://github.com/Nemo2011/bilibili_api/issues"
+        "url": "https://github.com/nemo2011/bilibili-api/issues"
     },
     "homepage": "https://github.com/Nemo2011/bilibili_api/blob/main/bilibili-api-ts/README.md",
     "dependencies": {

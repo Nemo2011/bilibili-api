@@ -1,4 +1,4 @@
-![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili_api/main/design/logo.png)
+![bilibili-api logo](https://raw.githubusercontent.com/nemo2011/bilibili-api/main/design/logo.png)
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 
 [![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
-[![STARS](https://img.shields.io/github/stars/Nemo2011/bilibili_api?color=yellow&label=Github%20Stars)][stargazers]
+[![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 ![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
 ![NodeJS](https://img.shields.io/badge/Node.js-In_progress-blue)
 
@@ -18,9 +18,9 @@
 
 原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
-Github 仓库：[https://github.com/nemo2011/bilibili_api](https://github.com/nemo2011/bilibili_api)
+Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/nemo2011/bilibili-api)
 
-Gitee 仓库：[https://gitee.com/nemo2011/bilibili_api](https://gitee.com/nemo2011/bilibili_api)
+Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2011/bilibili-api)
 
 Pypi: <https://pypi.org/project/bilibili-api-python>
 
@@ -165,7 +165,7 @@ A: 你可以发 Issue 来提交你的需求，但是，最好的办法是自己�
 
 A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在该分支上工作。
 如果你觉得已经可以了，请向项目仓库的 develop 分支发起 Pull request。
-如果你不明白这些操作的话，可以百度。完整指南：[CONTRIBUTING.md](https://github.com/Nemo2011/bilibili_api/blob/main/.github/CONTRIBUTING.md)
+如果你不明白这些操作的话，可以百度。完整指南：[CONTRIBUTING.md](https://github.com/nemo2011/bilibili-api/blob/main/.github/CONTRIBUTING.md)
 
 **Q: 稳定性怎么样？**
 
@@ -178,10 +178,10 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 
 
 [docs]: https://nemo2011.github.io/bilibili-api
-[docs-github]: https://github.com/Nemo2011/bilibili_api/tree/main/docs
-[docs-gitee]: https://gitee.com/Nemo2011/bilibili_api/tree/main/docs
-[api.json]: https://github.com/Nemo2011/bilibili_api/tree/main/bilibili_api/data/api/
-[license]: https://github.com/Nemo2011/bilibili_api/tree/main/LICENSE.md
-[stargazers]: https://github.com/Nemo2011/bilibili_api/stargazers
-[issues-new]: https://github.com/Nemo2011/bilibili_api/issues/new
+[docs-github]: https://github.com/nemo2011/bilibili-api/tree/main/docs
+[docs-gitee]: https://gitee.com/nemo2011/bilibili-api/tree/main/docs
+[api.json]: https://github.com/nemo2011/bilibili-api/tree/main/bilibili_api/data/api/
+[license]: https://github.com/nemo2011/bilibili-api/tree/main/LICENSE.md
+[stargazers]: https://github.com/nemo2011/bilibili-api/stargazers
+[issues-new]: https://github.com/nemo2011/bilibili-api/issues/new
 [get-credential]: https://nemo2011.github.io/bilibili-api/#/get-credential

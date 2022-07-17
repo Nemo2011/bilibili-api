@@ -36,6 +36,6 @@ setuptools.setup(
         ]
     },
     install_requires=requires.splitlines(),
-    url="https://github.com/Nemo2011/bilibili_api",
+    url="https://github.com/nemo2011/bilibili-api",
     python_requires=">=3.8"
 )
