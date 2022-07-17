@@ -5,9 +5,9 @@
 # bilibili-api **typescript** 分部
 
 ![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)
-![STARS](https://img.shields.io/github/stars/Nemo2011/bilibili_api?color=yellow&label=Github%20Stars)
+![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)
 
-python 版：<https://github.com/Nemo2011/bilibili_api/blob/main/README.md>
+python 版：<https://github.com/nemo2011/bilibili-api/blob/main/README.md>
 
 </div>
 
@@ -103,7 +103,7 @@ A: 你可以发 Issue 来提交你的需求，但是，最好的办法是自己�
 
 A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在该分支上工作。
 如果你觉得已经可以了，请向项目仓库的 develop 分支发起 Pull request。
-如果你不明白这些操作的话，可以百度。完整指南：[CONTRIBUTING.md](https://github.com/Nemo2011/bilibili_api/blob/javascript/.github/JAVASCRIPT.md)
+如果你不明白这些操作的话，可以百度。完整指南：[CONTRIBUTING.md](https://github.com/nemo2011/bilibili-api/blob/javascript/.github/JAVASCRIPT.md)
 
 **Q: 稳定性怎么样？**
 
