@@ -1,11 +1,11 @@
-{
+{ 
   "name": "bilibili-api-docs",
   "version": "1.0.0",
-  "description": "",
+  "description": "文档，不是 ts 版源码！！！",
   "private": "true",
   "scripts": {
-    "start": "docsify start .",
-    "dev": "docsify serve ."
+    "start": "docsify start ./docs",
+    "dev": "docsify serve ./docs"
   },
   "repository": {
     "type": "git",

@@ -45,7 +45,7 @@ import bilibili_api
 | buvid3   | str, optional | 浏览器 Cookies 中的 BUVID3 字段值   |
 | dedeuserid | str, optional | 浏览器 Cookies 中的 DedeUserID 字段值 |
 
-各字段获取方式查看：https://nemo2011.github.io/bilibili_api/#/get-credential.md
+各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
 #### def get_cookies()
 
@@ -109,7 +109,7 @@ import bilibili_api
 | --------- | --------- | ----------- |
 | coroutine | Coroutine | 异步函数    |
 
-同步执行异步函数，使用可参考 [同步执行异步代码](https://nemo2011.github.io/bilibili_api/#/sync-executor)
+同步执行异步函数，使用可参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
 
 **Returns:** 该异步函数的返回值
 
@@ -175,7 +175,7 @@ BV 号转 AV 号。
 - 专栏
 - 用户
 
-[查看示例](https://nemo2011.github.io/bilibili_api/#/parse_link)
+[查看示例](https://nemo2011.github.io/bilibili-api/#/parse_link)
 
 **Returns:** `Union[tuple, int]`:如果成功返回元组，失败返回 `-1`。
 

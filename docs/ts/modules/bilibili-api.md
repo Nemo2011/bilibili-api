@@ -26,7 +26,7 @@ import {} from "bilibili-api-ts";
 | bili_jct | string, optional | 浏览器 Cookies 中的 bili_jct 字段值 |
 | dedeuserid   | string, optional | 浏览器 Cookies 中的 DedeUserID 字段值   |
 
-各字段获取方式查看：https://nemo2011.github.io/bilibili_api/#/get-credential.md
+各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
 #### function get_cookies()
 
