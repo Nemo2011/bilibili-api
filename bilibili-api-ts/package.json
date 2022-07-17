@@ -9,15 +9,15 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Nemo2011/bilibili_api.git"
+        "url": "git+https://github.com/nemo2011/bilibili-api.git"
     },
     "keywords": [],
     "author": "Nemo2011",
     "license": "GPL-3.0-or-later",
     "bugs": {
-        "url": "https://github.com/Nemo2011/bilibili_api/issues"
+        "url": "https://github.com/nemo2011/bilibili-api/issues"
     },
-    "homepage": "https://github.com/Nemo2011/bilibili_api#readme",
+    "homepage": "https://github.com/nemo2011/bilibili-api#readme",
     "dependencies": {
         "@types/node": "^18.0.3",
         "@types/tough-cookie": "^4.0.2",
