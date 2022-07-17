@@ -8,13 +8,13 @@
 
 # 开发流程
 
-1. 使用 `git clone git@github.com:Nemo2011/bilibili_api.git` 将本仓库拉取到本地。
+1. 使用 `git clone git@github.com:nemo2011/bilibili-api.git` 将本仓库拉取到本地。
 2. 使用 `cd bilibili-api` 切换到仓库位置。
 3. 使用 `pip3 install -r requirements.txt` 安装相关依赖。
 4. **使用 `python install.py` 进行初始化**，该项非常重要，将会初始化 Git Hooks。
 5. 使用 `git checkout dev && git checkout -b {分支名}` 从 dev 分支切换到一个新的分支再进行编码。
 6. 开发完毕后，使用 `git push -u origin {分支名}` 将分支推送到你 fork 的仓库。
-7. **向 `dev` 分支**发起 [Pull Requests](https://github.com/Nemo2011/bilibili_api/pulls)。
+7. **向 `dev` 分支**发起 [Pull Requests](https://github.com/nemo2011/bilibili-api/pulls)。
 
 # 代码风格、格式规范
 
