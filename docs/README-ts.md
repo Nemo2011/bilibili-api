@@ -15,7 +15,8 @@ python 版：<https://github.com/nemo2011/bilibili-api/blob/main/README.md>
 
 这里是 Python 模块 bilibili-api 的 Typescript 克隆，适用于 JS/TS
 
-**注意：本仓库全都是异步操作，而且是 `ajax`，就是那种代码跑完了结果你的结果才刚刚出来的那种，不 `await` 后果自负。**
+**注意：本模块全都是异步操作，而且是 `ajax`，就是那种代码跑完了结果你的结果才刚刚出来的那种，不 `await` 后果自负。**
+**注意：本模块所有的操作都是传入一个 `config` 字典进行传参，包括类的初始化、函数的调用**
 
 # 快速上手
 
@@ -77,6 +78,7 @@ video.get_info("BV1xx411c7mD") // 大错特错
 video.get_info({
     "bvid": "BV1xx411c7mD" // 不推荐
 })
+
 ```
 
 **Q: 为什么会提示 412 Precondition Failed ？**
@@ -87,12 +89,14 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 
 ```typescript
 import { setProxy, Proxy } from "bilibili-api-ts"
-setProxy(new Proxy({
-    host: "代理网址", 
-    port: "代理端口", 
-    username: "用户名（可选）", 
-    password: "密码（可选)"
-}))
+setProxy({
+    proxy: new Proxy({
+        host: "代理网址", 
+        port: "代理端口", 
+        username: "用户名（可选）", 
+        password: "密码（可选)"
+    })
+})
 ```
 
 **Q: 怎么没有我想要的功能？**

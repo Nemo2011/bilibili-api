@@ -72,6 +72,23 @@ import {} from "bilibili-api-ts";
 
 ---
 
+## class Proxy()
+
+代理类
+
+### Functions
+
+#### _constructor_()
+
+| name | type | description |
+| - | - | - |
+| host | string | 代理 |
+| port | string | 端口 |
+| username | string | 用户名 |
+| password | string | 密码 |
+
+---
+
 ## function aid2bvid()
 
 | name | type | description |
@@ -93,3 +110,15 @@ AV 号转 BV 号。
 BV 号转 AV 号。
 
 **Returns:** int: AV 号。
+
+---
+
+## function setProxy()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| proxy | Proxy | 代理 |
+
+设置代理
+
+**Returns:** None
