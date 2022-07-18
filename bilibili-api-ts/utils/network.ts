@@ -164,6 +164,6 @@ export async function request(
   return real_data;
 }
 
-export function setProxy(proxy: Proxy){
-  user_proxy = proxy;
+export function setProxy(config: any){
+  user_proxy = config.proxy;
 }

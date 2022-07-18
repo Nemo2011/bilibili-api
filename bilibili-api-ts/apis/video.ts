@@ -1,4 +1,4 @@
-export var VideoData = {
+export const VideoData = {
   "info": {
     "stat": {
       "url": "https://api.bilibili.com/x/web-interface/archive/stat",
