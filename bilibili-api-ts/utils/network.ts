@@ -10,7 +10,7 @@ const cookieJar = new CookieJar();
 var sess: any = null;
 var user_proxy: Proxy|null = null;
 
-async function getAxiosInstance(credential: Credential=new Credential(), proxy: any|Proxy=null) {
+export async function getAxiosInstance(credential: Credential=new Credential(), proxy: any|Proxy=null) {
   if (credential.sessdata !== null) {
     cookieJar.setCookieSync(
       `SESSDATA=${credential.sessdata}; Domain=.bilibili.com`, 
