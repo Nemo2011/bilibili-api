@@ -19,6 +19,7 @@ from .Credential import Credential
 from .. import settings
 
 __session_pool = {}
+last_proxy = ""
 
 
 @atexit.register
@@ -172,13 +173,16 @@ def get_session():
     Returns:
         httpx.AsyncClient
     """
+    global __session_pool, last_proxy
     loop = asyncio.get_event_loop()
     session = __session_pool.get(loop, None)
-    if session is None:
-        if settings.proxy:
+    if session is None or last_proxy != settings.proxy:
+        if settings.proxy != "":
+            last_proxy = settings.proxy
             proxies = {settings.proxy_use: settings.proxy}
             session = httpx.AsyncClient(proxies=proxies)
         else:
+            last_proxy = ""
             session = httpx.AsyncClient()
         __session_pool[loop] = session
 
