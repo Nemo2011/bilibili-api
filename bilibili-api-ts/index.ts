@@ -1,4 +1,4 @@
-import { setProxy } from "./utils/network";
+import { setProxy, getAxiosInstance } from "./utils/network";
 import { aid2bvid, bvid2aid } from "./utils/aid2bvid";
 import { Proxy } from "./models/Proxy";
 import { Credential } from "./models/Credential";
@@ -16,7 +16,7 @@ function help(...config: any[]) {
 }
 
 export {
-    setProxy, 
+    setProxy, getAxiosInstance,
     aid2bvid, bvid2aid, 
     Proxy, Credential, Danmaku, DmFontSize, DmMode,
     HEADERS, 
