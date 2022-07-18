@@ -30,6 +30,7 @@ $ npm install bilibili-api-ts
 接下来让我们获取视频播放量等信息：
 
 ``` typescript
+// TS
 import { Video } from "bilibili-api-ts/video";
 
 // 实例化 Video 类
@@ -38,12 +39,24 @@ var v = new Video({
 });
 // get_info 是 async 函数
 v.get_info().then(
-    function (value) {
-        // value 即为结果
-        console.log(value);
-    }
-)
+    value => {console.log(value);}
+);
 ```
+
+``` javascript
+// JS
+const video = require("bilibili-api-ts/video.js");
+
+var v = new video.Video({
+    aid: 2
+});
+
+v.get_info().then(
+    value => {console.log(value);}
+);
+```
+
+>鉴于 js 与 ts 没什么大区别，所以后面所有的代码示例会只保留 `typescript` 代码。
 
 输出（已格式化，已省略部分）：
 
