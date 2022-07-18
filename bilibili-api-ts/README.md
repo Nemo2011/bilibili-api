@@ -50,7 +50,7 @@ v.get_info().then(
 
 ``` javascript
 // JS
-const video = require("./bilibili-api-ts/video.js");
+const video = require("bilibili-api-ts/video.js");
 var v = new video.Video({
     aid: 2
 });
