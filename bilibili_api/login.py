@@ -11,6 +11,7 @@ bilibili_api.login
 import json
 from typing import Union
 import uuid
+import hashlib
 import webbrowser
 
 import requests
@@ -19,7 +20,7 @@ from .exceptions.LoginError import LoginError
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.sync import sync
-from .utils.network_httpx import get_session, request
+from .utils.network_httpx import get_session, request, to_form_urlencoded
 from .utils.captcha import start_server, close_server, get_result
 from . import settings
 from PIL.ImageTk import PhotoImage
@@ -185,9 +186,8 @@ def login_with_password(username: str, password: str):
         password(str): 密码
 
     Returns:
-        Union[Credential, Check]: 凭据或验证码认证类。
+        Credential: 凭据类。
     """
-    geetest_data = get_geetest()
     api_token = API["password"]["get_token"]
     sess = get_session()
     token_data = json.loads(sync(sess.get(api_token["url"])).text)
@@ -195,22 +195,34 @@ def login_with_password(username: str, password: str):
     key = token_data["data"]["key"]
     final_password = encrypt(hash_, key, password)
     login_api = API["password"]["login"]
-    params = {
-        "source": "main_h5",
-        "username": username,
+    datas = {
+        "actionKey": "appkey",
+        "appkey": "ae57252b0c09105d",
+        "build": 6270200,
+        "captcha": "",
+        "challenge": "",
+        "channel": "bili",
+        "device": "phone",
+        "mobi_app": "android",
         "password": final_password,
-        "keep": "true",
-        "token": geetest_data["token"],
-        "challenge": geetest_data["challenge"],
-        "validate": geetest_data["validate"],
-        "seccode": geetest_data["seccode"],
+        "permission": "ALL",
+        "platform": "android",
+        "seccode": "",
+        "subid": 1,
+        "ts": int(time.time()),
+        "username": username,
+        "validate": ""
     }
+    form_urlencoded = to_form_urlencoded(datas)
+    md5_string = form_urlencoded + "c75875c596a69eb55bd119e74b07cfe3"
+    hasher = hashlib.md5(md5_string.encode(encoding='utf-8'))
+    datas['sign'] = hasher.hexdigest()
     login_data = json.loads(
         sync(
             sess.request(
                 "POST",
                 login_api["url"],
-                params=params,
+                data=datas,
                 headers={
                     "content-type": "application/x-www-form-urlencoded",
                     "user-agent": "Mozilla/5.0",
@@ -220,26 +232,11 @@ def login_with_password(username: str, password: str):
         ).text
     )
     if login_data["code"] == 0:
-        url = login_data["data"]["url"]
-        if (
-            "https://passport.bilibili.com/account/mobile/security/managephone/phone/verify"
-            in url
-        ):
-            return Check(url)
-        else:
-            cookies_list = url.split("?")[1].split("&")
-            sessdata = ""
-            bili_jct = ""
-            dede = ""
-            for cookie in cookies_list:
-                if cookie[:8] == "SESSDATA":
-                    sessdata = cookie[9:]
-                if cookie[:8] == "bili_jct":
-                    bili_jct = cookie[9:]
-                if cookie[:11].upper() == "DEDEUSERID=":
-                    dede = cookie[11:]
-            c = Credential(sessdata, bili_jct, dedeuserid=dede)
-            return c
+        sessdata = login_data['data']['cookie_info']['cookies'][0]['value']
+        bili_jct = login_data['data']['cookie_info']['cookies'][1]['value']
+        dede = login_data['data']['cookie_info']['cookies'][2]['value']
+        c = Credential(sessdata, bili_jct, dedeuserid=dede)
+        return c
     else:
         raise LoginError(login_data["message"])
 
