@@ -9,22 +9,24 @@ export class Video {
     __info: Record<any, any>|null = null;
     __bvid: string = "";
     __aid: number = 0;
-    credential: Credential = new Credential();
+    credential: Credential = new Credential({});
 
     /**
-     * @param bvid Bvid(可选)
-     * @param aid  Aid(可选)
-     * @param credential 凭据类(可选)
+     * param bvid Bvid(可选)
+     * 
+     * param aid  Aid(可选)
+     * 
+     * param credential 凭据类(可选)
      */
-    constructor (bvid?: string, aid?:number, credential?: Credential) {
+    constructor ({bvid=null, aid=null, credential=null}: {bvid?: string|null, aid?: number|null, credential?: Credential}) {
         if (credential === null && credential === undefined) {
-            credential = new Credential();
+            credential = new Credential({});
         }
         if (bvid !== null && bvid !== undefined) {
-            this.set_bvid(bvid);
+            this.set_bvid({bvid: bvid});
         }
         else if (aid !== null && aid !== undefined) {
-            this.set_aid(aid);
+            this.set_aid({aid: aid});
         }
         else {
             throw "请至少提供 bvid 和 aid 中的其中一个参数。";
@@ -35,9 +37,9 @@ export class Video {
     /**
      * 设置 bvid
      * 
-     * @param bvid Bvid
+     * param bvid Bvid
      */
-    set_bvid(bvid: string) {
+    set_bvid({bvid}:{bvid: string}) {
         if (bvid.length !== 12) {
             throw "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）。";
         }
@@ -45,7 +47,7 @@ export class Video {
             throw "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）。";
         }
         this.__bvid = bvid;
-        this.__aid = bvid2aid(bvid);
+        this.__aid = bvid2aid({bvid: bvid});
     }
 
     /**
@@ -60,14 +62,14 @@ export class Video {
     /**
      * 设置 aid
      * 
-     * @param aid Aid
+     * param aid Aid
      */
-    set_aid(aid: number) {
+    set_aid({aid}:{aid: number}) {
         if (aid <= 0) {
             throw "aid 不能小于或等于 0。";
         }
         this.__aid = aid;
-        this.__bvid = aid2bvid(aid);
+        this.__bvid = aid2bvid({aid: aid});
     }
 
     /**
@@ -91,11 +93,12 @@ export class Video {
             "aid": this.get_aid()
         }
         var resp = await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         )
         this.__info = resp;
         return resp;
@@ -125,11 +128,12 @@ export class Video {
             "aid": this.get_aid()
         };
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         );
     }
 
@@ -145,11 +149,12 @@ export class Video {
             "aid": this.get_aid()
         };
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         )
     }
 
@@ -168,11 +173,12 @@ export class Video {
             "mid": mid
         };
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         )
     }
 
@@ -188,18 +194,19 @@ export class Video {
             "bvid": this.get_bvid()
         }
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         )
     }
 
     /**
      * 获取分 P 对应的 cid
      * 
-     * @param page_index 
+     * param page_index 
      * @returns number: cid
      */
     async __get_page_id_by_index(page_index: number) {
@@ -221,7 +228,7 @@ export class Video {
     /**
      * 获取分 P 对应的 cid
      * 
-     * @param page_index 
+     * param page_index 
      * @returns number: cid
      */
     async get_cid(page_index) {
@@ -231,15 +238,18 @@ export class Video {
     /**
      * 获取视频播放流（下载地址）
      * 
-     * @param page_index 分 P 序号
-     * @param cid 分 P 编号
-     * @param html5 是否以 html5 端获取（这样子可以直接在网页中显示，但是视频源单一）
+     * param page_index 分 P 序号
+     * param cid 分 P 编号
+     * param html5 是否以 html5 端获取（这样子可以直接在网页中显示，但是视频源单一）
      * @returns 调用 API 返回的结果
      */
     async get_download_url(
-        page_index?: number, 
-        cid?: number, 
-        html5: boolean=false
+        {page_index=null, cid=null, html5=false} :
+        {
+            page_index?: number|null, 
+            cid?: number|null, 
+            html5?: boolean
+        }
     ) { 
         if (cid === null || cid === undefined) {
             if (page_index === null || page_index === undefined) {
@@ -262,11 +272,12 @@ export class Video {
             params['platform'] = 'html5';
         }
         return await request(
-            "GET", 
-            api['url'], 
-            params, 
-            null, 
-            this.credential
+            {
+                method: "GET", 
+                url: api['url'], 
+                params: params, 
+                credential: this.credential
+            }
         );
     }
 }

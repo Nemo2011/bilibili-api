@@ -4,7 +4,7 @@ export class Credential {
     bili_jct: string|null=null;
     dedeuserid: string|null=null;
 
-    constructor(sessdata?: string, bili_jct?: string, dedeuserid?: string) {
+    constructor({sessdata="", bili_jct="", dedeuserid=""}: {sessdata?: string, bili_jct?: string, dedeuserid?: string}) {
         this.sessdata = sessdata;
         this.bili_jct = bili_jct;
         this.dedeuserid = dedeuserid;
