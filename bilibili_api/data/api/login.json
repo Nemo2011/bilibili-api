@@ -30,18 +30,25 @@
             "comment": "获取极验信息"
         },
         "login": {
-            "url": "https://passport.bilibili.com/x/passport-login/web/login", 
+            "url": "https://passport.bilibili.com/x/passport-login/oauth2/login", 
             "method": "POST",
             "verify": false, 
             "data": {
                 "username": "string: 账号",
                 "password": "string: 加密的密码",
-                "keep": "bool: true", 
-                "key": "string: 密钥",
-                "token": "string: 极验信息中的登陆密钥 token",
+                "actionKey": "string: 密钥类型？", 
+                "build": "int: 客户端版本号", 
+                "captcha": "string: None(这个接口不用验证码了)",
                 "challenge": "string: 极验 challenge", 
-                "validate": "string: 极验 validate", 
-                "seccode": "string: 极验 seccode"
+                "channel": "string: bili", 
+                "device": "string: 设备", 
+                "mobi_app": "string: 系统", 
+                "permission": "string: ALL", 
+                "platform": "string: 系统", 
+                "seccode": "string: 极验 seccode", 
+                "subid": "int: 1", 
+                "ts": "string: 时间戳", 
+                "validate": "string: 极验 validate"
             }, 
             "comment": "登录"
         }
