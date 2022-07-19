@@ -86,20 +86,6 @@ v.get_info().then(
 
 # FA♂Q
 
-**Q: 调用 API 的正确姿势是什么？**
-
-A: 这点很重要。请务必传入一个 `字典`。下面是一个例子：
-
-```typescript
-video.get_info({
-    bvid: "BV1xx411c7mD" // 满分
-})
-video.get_info("BV1xx411c7mD") // 大错特错
-video.get_info({
-    "bvid": "BV1xx411c7mD" // 不推荐
-})
-```
-
 **Q: 为什么会提示 412 Precondition Failed ？**
 
 A: 你的请求速度太快了。造成请求速度过快的原因可能是你写了高并发的代码。
