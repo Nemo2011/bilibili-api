@@ -4,11 +4,12 @@ export class Proxy {
     username: any
     password: any
 
-    constructor (config: any) {
-        var host = config.host;
-        var port = config.port;
-        var username = config.username;
-        var password = config.password;
+    constructor (
+        host: string, 
+        port: string, 
+        username?: string, 
+        password?: string
+    ) {
         this.hostname = host;
         this.port = port;
         this.username = username;

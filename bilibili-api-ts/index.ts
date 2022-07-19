@@ -3,8 +3,6 @@ import { aid2bvid, bvid2aid } from "./utils/aid2bvid";
 import { Proxy } from "./models/Proxy";
 import { Credential } from "./models/Credential";
 import { Danmaku, DmFontSize, DmMode } from "./models/Danmaku";
-const video = require("./video");
-const search = require("./search");
 
 let HEADERS = {
     "User-Agent": "Mozilla/5.0", 
@@ -20,6 +18,5 @@ export {
     aid2bvid, bvid2aid, 
     Proxy, Credential, Danmaku, DmFontSize, DmMode,
     HEADERS, 
-    video, search,
     help
 };

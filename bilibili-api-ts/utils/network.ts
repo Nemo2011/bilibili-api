@@ -66,14 +66,13 @@ async function setAxiosInstance(axios: AxiosInstance) {
 }
 
 export async function request(
-  request_config: any
+  method: string, 
+  url: string, 
+  params?: any, 
+  data?: any, 
+  credential?: Credential, 
+  no_csrf?: boolean
 ) {
-  var method: string = request_config.method;
-  var url: string = request_config.url;
-  var params: any = request_config.params;
-  var data: any = request_config.data;
-  var credential: Credential|null|undefined = request_config.credential;
-  var no_csrf: boolean|null|undefined = request_config.no_csrf;
   if (no_csrf === null || no_csrf === undefined) {
     no_csrf = false;
   }
