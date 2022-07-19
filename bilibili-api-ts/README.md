@@ -4,6 +4,8 @@
 
 # bilibili-api **typescript** 分部
 
+<img src="https://cdn.iconscout.com/icon/free/png-512/typescript-1174965.png" height=20 width=20><img src="https://logos-download.com/wp-content/uploads/2019/01/JavaScript_Logo.png" height=20 width=20><img src="https://tse4-mm.cn.bing.net/th/id/OIP-C.bodQFDX6bpdw0aj11XxjrAHaCi?pid=ImgDet&rs=1" height=20>
+
 ![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)
 ![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)
 
