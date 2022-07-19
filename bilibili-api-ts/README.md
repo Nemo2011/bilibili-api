@@ -46,7 +46,7 @@ $ npm install bilibili-api-ts
 import { Video } from "bilibili-api-ts/video";
 
 // 实例化 Video 类
-var v = new Video(null, 2);
+var v = new Video(null, 2); // Video(bvid, aid), 这里只提供 aid
 // get_info 是 async 函数
 v.get_info().then(
     value => {console.log(value);}
@@ -85,20 +85,6 @@ v.get_info().then(
 ```
 
 # FA♂Q
-
-**Q: 调用 API 的正确姿势是什么？**
-
-A: 这点很重要。请务必传入一个 `字典`。下面是一个例子：
-
-```typescript
-video.get_info({
-    bvid: "BV1xx411c7mD" // 满分
-})
-video.get_info("BV1xx411c7mD") // 大错特错
-video.get_info({
-    "bvid": "BV1xx411c7mD" // 不推荐
-})
-```
 
 **Q: 为什么会提示 412 Precondition Failed ？**
 
