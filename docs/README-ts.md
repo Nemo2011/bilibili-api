@@ -46,7 +46,7 @@ $ npm install bilibili-api-ts
 import { Video } from "bilibili-api-ts/video";
 
 // 实例化 Video 类
-var v = new Video(null, 2);
+var v = new Video(null, 2); // Video(bvid, aid), 这里只提供 aid
 // get_info 是 async 函数
 v.get_info().then(
     value => {console.log(value);}
