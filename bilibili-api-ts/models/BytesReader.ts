@@ -5,7 +5,7 @@ export class BytesReader {
     __stream: Buffer
     __offset: number
 
-    constructor(stream: Buffer) {
+    constructor({stream}: {stream: Buffer}) {
         this.__stream = stream;
         this.__offset = 0;
     }
@@ -39,7 +39,7 @@ export class BytesReader {
     }
 
     varint() {
-        var [d, l] = read_varint(this.__stream.subarray(this.__offset));
+        var [d, l] = read_varint({stream: this.__stream.subarray(this.__offset)});
         this.__offset += l;
         return d;
     }

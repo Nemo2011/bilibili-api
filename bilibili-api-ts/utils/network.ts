@@ -10,7 +10,7 @@ const cookieJar = new CookieJar();
 var sess: any = null;
 var user_proxy: Proxy|null = null;
 
-export async function getAxiosInstance(credential: Credential=new Credential(), proxy: any|Proxy=null) {
+export async function getAxiosInstance({credential=new Credential({}), proxy=null}: {credential?: Credential, proxy?: Proxy|null}) {
   if (credential.sessdata !== null) {
     cookieJar.setCookieSync(
       `SESSDATA=${credential.sessdata}; Domain=.bilibili.com`, 
@@ -66,19 +66,24 @@ async function setAxiosInstance(axios: AxiosInstance) {
 }
 
 export async function request(
-  method: string, 
-  url: string, 
-  params?: any, 
-  data?: any, 
-  credential?: Credential, 
-  no_csrf?: boolean
+  {
+    method, url, params={}, data={}, credential=new Credential({}), no_csrf=false
+  } : 
+  {
+    method: string, 
+    url: string,
+    params?: any, 
+    data?: any, 
+    credential?: Credential|null, 
+    no_csrf?: boolean
+  }
 ) {
   if (no_csrf === null || no_csrf === undefined) {
     no_csrf = false;
   }
 
   if (credential === null || credential === undefined) {
-    credential = new Credential();
+    credential = new Credential({});
   }
 
   method = method.toUpperCase();
@@ -123,12 +128,11 @@ export async function request(
   // console.log(credential.get_cookies());
 
   if (user_proxy !== null) {
-    await getAxiosInstance(credential, user_proxy);
+    await getAxiosInstance({credential: credential, proxy: user_proxy});
   }
   else {
-    await getAxiosInstance(credential);
+    await getAxiosInstance({credential: credential});
   }
-
   var resp = await (await sess).request(config);
 
   // console.log(resp)

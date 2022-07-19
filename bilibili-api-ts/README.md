@@ -17,9 +17,9 @@ python 版：<https://github.com/nemo2011/bilibili-api/blob/main/README.md>
 
 这里是 Python 模块 bilibili-api 的 Typescript 克隆，适用于 JS/TS
 
-**调用请一个一个参数传参**
-
 **注意：本仓库全都是异步操作，而且是 `ajax`，就是那种代码跑完了结果你的结果才刚刚出来的那种，不 `await` 后果自负。**
+
+如果您是新手，请务必看完这个 `readme`，里面有许多重要的信息。
 
 ## 特色
 
@@ -46,22 +46,33 @@ $ npm install bilibili-api-ts
 import { Video } from "bilibili-api-ts/video";
 
 // 实例化 Video 类
-var v = new Video(null, 2); // Video(bvid, aid), 这里只提供 aid
+var v = new Video({
+    bvid: "BV1uv411q7Mv"
+});
 // get_info 是 async 函数
 v.get_info().then(
-    value => {console.log(value);}
-);
+    function (value) {
+        // value 即为结果
+        console.log(value);
+    }
+)
 ```
 
 ``` javascript
 // JS
 const video = require("bilibili-api-ts/video.js");
 
-var v = new video.Video(null, 2);
-
+// 实例化 Video 类
+var v = new Video({
+    bvid: "BV1uv411q7Mv"
+});
+// get_info 是 async 函数
 v.get_info().then(
-    value => {console.log(value);}
-);
+    function (value) {
+        // value 即为结果
+        console.log(value);
+    }
+)
 ```
 
 >鉴于 js 与 ts 没什么大区别，所以后面所有的代码示例会只保留 `typescript` 代码。
@@ -85,6 +96,31 @@ v.get_info().then(
 ```
 
 # FA♂Q
+
+
+**Q: 关于 API 调用的正确姿势是什么？**
+
+A: 所有 API 调用，请使用 **指名方式** 传参，例子：
+
+```typescript
+// 参数：{bvid}: {bvid: string}
+/** 
+ * 所有的参数传入请传入一个字典，这样子可以换传参顺序、指名传参。
+ * 请不要直接传参数，参数需要放在字典里，而且需要表明好键，不能不标键。
+ */ 
+// ----------
+// 推荐
+video.get_info({bvid:"BV1uv411q7Mv"})
+
+// 当然也可以这样
+video.get_info({"bvid":"BV1uv411q7Mv"})
+
+// 不可以！
+video.get_info({"BV1uv411q7Mv"}) // 没有标明键(bvid)
+
+// 自己看 IntelliCode 的提示吧。
+video.get_info("BV1uv411q7Mv") // 传入字典啊！
+```
 
 **Q: 为什么会提示 412 Precondition Failed ？**
 

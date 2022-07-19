@@ -15,20 +15,37 @@ export class Danmaku {
     attr: number
 
     constructor (
-        text: string,
-        dm_time: number=0,
-        send_time: number=0,
-        crc32_id: string="",
-        color: string="ffffff",
-        weight: number=-1,
-        id: number=-1,
-        id_str: string="",
-        action: number=-1,
-        mode: DmMode|number=DmMode.FLY,
-        font_size: DmFontSize|number=DmFontSize.NORMAL,
-        is_sub: boolean=false,
-        pool: number=0,
-        attr: number=-1,
+        {
+            text, 
+            dm_time=0, 
+            send_time=0, 
+            crc32_id="", 
+            color="ffffff", 
+            weight=-1, 
+            id=-1, 
+            id_str="", 
+            action=-1, 
+            mode=DmMode.FLY, 
+            font_size=DmFontSize.NORMAL, 
+            is_sub=false, 
+            pool=0, 
+            attr=-1
+        }:{
+            text: string,
+            dm_time?: number,
+            send_time?: number,
+            crc32_id?: string,
+            color?: string,
+            weight?: number,
+            id?: number,
+            id_str?: string,
+            action?: number,
+            mode?: DmMode|number,
+            font_size?: DmFontSize|number,
+            is_sub?: boolean,
+            pool?: number,
+            attr?: number
+        }
     ) {
         this.text = text;
         this.dm_time = dm_time;

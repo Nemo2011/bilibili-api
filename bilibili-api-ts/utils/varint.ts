@@ -1,4 +1,4 @@
-export function read_varint(stream:Uint8Array) {
+export function read_varint({stream}: {stream:Uint8Array}) {
     var value = 0;
     var position = 0;
     var shift = 0;
