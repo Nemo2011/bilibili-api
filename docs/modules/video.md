@@ -92,6 +92,14 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
+#### _async_ def get_cid()
+
+| name | type | description |
+| - | - | - |
+| page_index | int | 分 P 序号 |
+
+获取稿件 cid。
+
 #### _async_ def get_download_url()
 
 | name       | type          | description                          |
