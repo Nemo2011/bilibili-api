@@ -21,11 +21,12 @@ export async function web_search(config: any) {
         "keyword": keyword, 
         "page": page
     };
-    return await request({
-        url: api['url'], 
-        method: "GET", 
-        params: params
-    });
+    return await request(
+        "GET", 
+        api['url'], 
+        params, 
+        null
+    );
 }
 
 export async function web_search_by_type(config: any) {
@@ -38,9 +39,10 @@ export async function web_search_by_type(config: any) {
         "search_type": search_type, 
         "page": page
     };
-    return await request({
-        url: api['url'], 
-        method: "GET", 
-        params: params
-    })   
+    return await request(
+        "GET", 
+        api['url'], 
+        params, 
+        null
+    )   
 }

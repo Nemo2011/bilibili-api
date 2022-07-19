@@ -9,8 +9,7 @@ var s = [11, 10, 3, 8, 4, 6],
   xor = 177451812,
   add = 8728348608;
 
-export function bvid2aid(config) {
-  var bvid: string = config.bvid;
+export function bvid2aid(bvid: string) {
   var r = 0;
   for (var i = 0; i < 6; i++) {
     r += tr[bvid[s[i]]] * 58 ** i;
@@ -18,8 +17,7 @@ export function bvid2aid(config) {
   return ((r - add) ^ xor);
 }
 
-export function aid2bvid(config: any) {
-  var aid: number = config.aid;
+export function aid2bvid(aid: number) {
   aid = (aid ^ xor) + add;
   var r = "BV1  4 1 7  ".split("");
   for (var i = 0; i < 6; i++) {
