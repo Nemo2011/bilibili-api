@@ -8,7 +8,6 @@ tests/
 build/
 *.ass
 *.srt
-danmaku*.*
 node_modules/
 *.proto
 *.bin
