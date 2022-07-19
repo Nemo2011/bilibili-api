@@ -99,7 +99,7 @@ $ sudo apt-get install python3-tk
 
 密码登录。
 
-**Returns:** Union[Credential, Check]: 如果需要验证，会返回 [`Check`](#check) 类，否则返回 `Credential` 类。
+**Returns:** Credential: 凭据类。
 
 ## def send_sms()
 
@@ -121,43 +121,3 @@ $ sudo apt-get install python3-tk
 验证码登录
 
 **Returns:** Credential 凭据类
-
----
-
-## <span id="check"> class Check </span>
-
-### Functions
-
-#### def \_\_init\_\_()
-
-| name | type | description |
-| - | - | - |
-| check_url | string | 验证网址 |
-
-#### def set_phone()
-
-设置手机号
-
-| name | type | description |
-| - | - | - |
-| phonenumber | PhoneNumber | 手机号类 |
-
-**Returns:** None
-
-#### def send_code()
-
-发送验证码
-
-**Returns:** None
-
-#### def login()
-
-| name | type | description |
-| - | - | - |
-| code | string | 验证码 |
-
-登录
-
-**Returns:** Credential 凭据类
-
----
