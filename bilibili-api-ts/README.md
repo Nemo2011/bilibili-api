@@ -18,6 +18,7 @@ python 版：<https://github.com/nemo2011/bilibili-api/blob/main/README.md>
 这里是 Python 模块 bilibili-api 的 Typescript 克隆，适用于 JS/TS
 
 **调用请一个一个参数传参**
+
 **注意：本仓库全都是异步操作，而且是 `ajax`，就是那种代码跑完了结果你的结果才刚刚出来的那种，不 `await` 后果自负。**
 
 ## 特色
