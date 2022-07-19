@@ -24,6 +24,10 @@ import {} from "bilibili-api-ts/video";
 
 #### function set_aid()
 
+| name | type | description |
+| ---- | ---- | ----------- |
+| aid  | number  | AV 号。     |
+
 设置视频 aid
 
 **Returns:** None
@@ -35,6 +39,10 @@ import {} from "bilibili-api-ts/video";
 **Returns:** bvid
 
 #### function set_bvid()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| bvid  | string  | BV 号。     |
 
 设置视频 bvid
 
