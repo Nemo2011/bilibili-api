@@ -3,6 +3,8 @@
 `bilibili_api 10.2.0` 新增了登录函数，封装了登录用的脚本，可以通过登录步骤获取 cookies 并生成 `Credential` 类。
 有了登录函数后，收集 `Credential` 类就无需打开浏览器翻 `cookies` 啦！
 
+>登录函数为测试版，如果有 bug，欢迎提 issues。
+
 ---
 **注意：**
 用 `linux` 的小伙伴先装一下 `python3-tk` 吧。
