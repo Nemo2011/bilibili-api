@@ -68,8 +68,17 @@ if mode == 1:
     password = input("请输入密码：")
     print("正在登录。")
     c = login_with_password(username, password)
-    credential = c
-    print("登陆成功！")
+    if isinstance(c, Check):
+        # 还需验证
+        phone = input("需要验证。请输入手机号：")
+        c.set_phone(PhoneNumber(phone, country="+86")) # 默认设置地区为中国大陆
+        c.send_code()
+        print("已发送验证码。")
+        code = input("请输入验证码：")
+        credential = c.login(code)
+        print("登录成功！")
+    else:
+        credential = c
 elif mode == 2:
     # 验证码登录
     phone = input("请输入手机号：")
@@ -78,7 +87,7 @@ elif mode == 2:
     code = input("请输入验证码：")
     c = login_with_sms(PhoneNumber(phone, country="+86"), code)
     credential = c
-    print("登录成功！")
+    print("登录成功")
 else:
     print("请输入 1/2 ！")
     exit()
