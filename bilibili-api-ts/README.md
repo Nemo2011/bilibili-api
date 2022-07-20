@@ -63,7 +63,7 @@ v.get_info().then(
 const video = require("bilibili-api-ts/video.js");
 
 // 实例化 Video 类
-var v = new Video({
+var v = new video.Video({
     bvid: "BV1uv411q7Mv"
 });
 // get_info 是 async 函数
