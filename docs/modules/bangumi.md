@@ -158,6 +158,34 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
+#### _async_ def get_download_url()
+
+获取番剧下载链接
+
+**Returns:** API 调用返回结果。
+
+
+#### _async_ def get_danmaku_view()
+
+获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
+
+
+**Returns:** API 调用返回结果。
+
+
+#### _async_ def get_danmakus()
+
+获取弹幕
+
+**Returns:** API 调用返回结果。
+
+
+#### _async_ def get_danmaku_xml()
+
+获取所有弹幕的 xml 源文件（非装填的弹幕）
+
+**Returns:** API 调用返回结果。
+
 #### def get_bangumi_from_episode()
 
 通过一个 epid 获取番剧信息
