@@ -247,3 +247,35 @@ class Episode(Video):
         info = sync(self.get_episode_info())
         ssid = info["mediaInfo"]["season_id"]
         return Bangumi(ssid=ssid)
+    
+    async def get_download_url(self, html5: bool = False):
+        """
+        获取番剧剧集下载信息。
+
+        Args:
+            html5      (bool, optional): 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        url = API["info"]["playurl"]["url"]
+        if html5:
+            params = {
+                "avid": self.get_aid(),
+                "cid": self.get_cid(),
+                "qn": "127",
+                "otype": "json",
+                "fnval": 4048,
+                "fourk": 1,
+                "platform": "html5",
+            }
+        else:
+            params = {
+                "avid": self.get_aid(),
+                "cid": self.get_cid(),
+                "qn": "127",
+                "otype": "json",
+                "fnval": 4048,
+                "fourk": 1,
+            }
+        return await request("GET", url, params=params, credential=self.credential)
