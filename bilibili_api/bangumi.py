@@ -272,10 +272,28 @@ class Episode(Video):
         return await request("GET", url, params=params, credential=self.credential)
 
     async def get_danmaku_xml(self):
+        """
+        获取所有弹幕的 xml 源文件（非装填）
+
+        Returns:
+            文件源
+        """
         return await self.video_class.get_danmaku_xml(0)
 
     async def get_danmaku_view(self):
+        """
+        获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
+
+        Returns:
+            dict: 二进制流解析结果
+        """
         return await self.video_class.get_danmaku_view(0)
 
     async def get_danmakus(self):
+        """
+        获取弹幕
+
+        Returns:
+            dict[Danmaku]: 弹幕列表
+        """
         return await self.video_class.get_danmakus(0)
