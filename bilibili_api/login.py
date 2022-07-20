@@ -9,6 +9,7 @@ bilibili_api.login
 """
 
 import json
+import re
 from typing import Union
 import uuid
 import hashlib
@@ -186,7 +187,7 @@ def login_with_password(username: str, password: str):
         password(str): 密码
 
     Returns:
-        Credential: 凭据类。
+        Union[Credential, Check]: 如果需要验证，会返回 [`Check`](#check) 类，否则返回 `Credential` 类。
     """
     api_token = API["password"]["get_token"]
     sess = get_session()
@@ -195,9 +196,11 @@ def login_with_password(username: str, password: str):
     key = token_data["data"]["key"]
     final_password = encrypt(hash_, key, password)
     login_api = API["password"]["login"]
+    appkey = "bca7e84c2d947ac6"
+    appsec = "60698ba2f68e01ce44738920a0ffe768"
     datas = {
         "actionKey": "appkey",
-        "appkey": "ae57252b0c09105d",
+        "appkey": appkey,
         "build": 6270200,
         "captcha": "",
         "challenge": "",
@@ -214,7 +217,7 @@ def login_with_password(username: str, password: str):
         "validate": ""
     }
     form_urlencoded = to_form_urlencoded(datas)
-    md5_string = form_urlencoded + "c75875c596a69eb55bd119e74b07cfe3"
+    md5_string = form_urlencoded + appsec
     hasher = hashlib.md5(md5_string.encode(encoding='utf-8'))
     datas['sign'] = hasher.hexdigest()
     login_data = json.loads(
@@ -224,14 +227,19 @@ def login_with_password(username: str, password: str):
                 login_api["url"],
                 data=datas,
                 headers={
-                    "content-type": "application/x-www-form-urlencoded",
-                    "user-agent": "Mozilla/5.0",
-                    "referer": "https://passport.bilibili.com/login",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "User-Agent": "Mozilla/5.0",
+                    "Referer": "https://passport.bilibili.com/login",
                 },
+                cookies={
+                    "buvid3": str(uuid.uuid1())
+                }
             )
         ).text
     )
     if login_data["code"] == 0:
+        if login_data['data']['status'] == 2:
+            return Check(login_data['data']['url'], username)
         sessdata = login_data['data']['cookie_info']['cookies'][0]['value']
         bili_jct = login_data['data']['cookie_info']['cookies'][1]['value']
         dede = login_data['data']['cookie_info']['cookies'][2]['value']
@@ -484,9 +492,10 @@ class Check:
     验证类，如果密码登录需要验证会返回此类
     """
 
-    def __init__(self, check_url):
+    def __init__(self, check_url, username):
         self.check_url = check_url
         self.now_time = time.perf_counter()
+        self.phonenumber = None
 
     def set_phone(self, phonenumber):
         """
