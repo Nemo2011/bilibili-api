@@ -8,6 +8,7 @@
 
 """
 
+import datetime
 from enum import Enum
 
 from .utils.sync import sync
@@ -289,11 +290,20 @@ class Episode(Video):
         """
         return await self.video_class.get_danmaku_view(0)
 
-    async def get_danmakus(self):
+    async def get_danmakus(self, date: datetime.date = None):
         """
         获取弹幕
 
         Returns:
             dict[Danmaku]: 弹幕列表
         """
-        return await self.video_class.get_danmakus(0)
+        return await self.video_class.get_danmakus(0, date)
+
+    async def get_history_danmaku_index(self, date: datetime.date = None):
+        """
+        获取特定月份存在历史弹幕的日期。
+
+        Returns:
+            None | List[str]: 调用 API 返回的结果。不存在时为 None。
+        """
+        return await self.video_class.get_history_danmaku_index(0, date)
