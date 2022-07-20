@@ -174,6 +174,7 @@ class Episode(Video):
         self.credential = credential
         self.epid = epid
         bvid = sync(self.get_episode_info())["epInfo"]["bvid"]
+        self.video_class = Video(bvid=bvid, credential=credential)
         super().__init__(bvid=bvid)
         self.bangumi = self.get_bangumi_from_episode()
         self.set_aid = self.set_aid_e
@@ -190,6 +191,9 @@ class Episode(Video):
 
     def set_bvid_e(self, bvid: str):
         print("Set bvid is not allowed in Episode")
+
+    async def get_cid(self):
+        return await super().get_cid(0)
 
     def get_bangumi(self):
         """
@@ -248,34 +252,30 @@ class Episode(Video):
         ssid = info["mediaInfo"]["season_id"]
         return Bangumi(ssid=ssid)
     
-    async def get_download_url(self, html5: bool = False):
+    async def get_download_url(self):
         """
         获取番剧剧集下载信息。
-
-        Args:
-            html5      (bool, optional): 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。
 
         Returns:
             dict: 调用 API 返回的结果。
         """
         url = API["info"]["playurl"]["url"]
-        if html5:
+        if True:
             params = {
                 "avid": self.get_aid(),
-                "cid": self.get_cid(),
-                "qn": "127",
-                "otype": "json",
-                "fnval": 4048,
-                "fourk": 1,
-                "platform": "html5",
-            }
-        else:
-            params = {
-                "avid": self.get_aid(),
-                "cid": self.get_cid(),
+                "cid": await self.get_cid(),
                 "qn": "127",
                 "otype": "json",
                 "fnval": 4048,
                 "fourk": 1,
             }
         return await request("GET", url, params=params, credential=self.credential)
+
+    async def get_danmaku_xml(self):
+        return await self.video_class.get_danmaku_xml(0)
+
+    async def get_danmaku_view(self):
+        return await self.video_class.get_danmaku_view(0)
+
+    async def get_danmakus(self):
+        return await self.video_class.get_danmakus(0)
