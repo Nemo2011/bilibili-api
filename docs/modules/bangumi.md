@@ -175,16 +175,29 @@ from bilibili_api import bangumi
 
 #### _async_ def get_danmakus()
 
+| name       | type                    | description                                               |
+| ---------- | ----------------------- | --------------------------------------------------------- |
+| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+
 获取弹幕
 
 **Returns:** API 调用返回结果。
-
 
 #### _async_ def get_danmaku_xml()
 
 获取所有弹幕的 xml 源文件（非装填的弹幕）
 
 **Returns:** API 调用返回结果。
+
+#### _async_ def get_history_danmaku_index()
+
+| name       | type                    | description                                               |
+| ---------- | ----------------------- | --------------------------------------------------------- |
+| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+
+获取特定月份存在历史弹幕的日期。
+
+**Returns**: None | List[str]: 调用 API 返回的结果。不存在时为 None。
 
 #### def get_bangumi_from_episode()
 
