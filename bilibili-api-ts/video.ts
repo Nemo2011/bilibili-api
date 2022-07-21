@@ -12,11 +12,11 @@ export class Video {
     credential: Credential = new Credential({});
 
     /**
-     * param bvid Bvid(可选)
+     * param bvid(int)              Bvid(可选)
      * 
-     * param aid  Aid(可选)
+     * param aid(int)               Aid(可选)
      * 
-     * param credential 凭据类(可选)
+     * param credential(Credential) 凭据类(可选)
      */
     constructor ({bvid=null, aid=null, credential=null}: {bvid?: string|null, aid?: number|null, credential?: Credential}) {
         if (credential === null && credential === undefined) {
@@ -37,7 +37,7 @@ export class Video {
     /**
      * 设置 bvid
      * 
-     * param bvid Bvid
+     * param bvid(string) Bvid
      */
     set_bvid({bvid}:{bvid: string}) {
         if (bvid.length !== 12) {
@@ -62,7 +62,7 @@ export class Video {
     /**
      * 设置 aid
      * 
-     * param aid Aid
+     * param aid(number) Aid
      */
     set_aid({aid}:{aid: number}) {
         if (aid <= 0) {
@@ -206,7 +206,8 @@ export class Video {
     /**
      * 获取分 P 对应的 cid
      * 
-     * param page_index 
+     * param page_index(int) 分 P 序号
+     * 
      * @returns number: cid
      */
     async __get_page_id_by_index(page_index: number) {
@@ -228,7 +229,7 @@ export class Video {
     /**
      * 获取分 P 对应的 cid
      * 
-     * param page_index 
+     * param page_index(number) 分 P 序号
      *
      * @returns number: cid
      */
@@ -239,11 +240,13 @@ export class Video {
     /**
      * 获取视频播放流（下载地址）
      * 
-     * param page_index 分 P 序号
+     * param page_index(number) 分 P 序号(可选)
      * 
-     * param cid 分 P 编号
+     * param cid(number)        分 P 编号(可选)
      * 
-     * param html5 是否以 html5 端获取（这样子可以直接在网页中显示，但是视频源单一）
+     * param html5(boolean)     是否以 html5 端获取（这样子可以直接在网页中显示，但是视频源单一）(可选)
+     * 
+     * page_index 和 cid 请务必提供一个。
      * 
      * @returns 调用 API 返回的结果
      */
