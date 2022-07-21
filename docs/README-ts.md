@@ -50,7 +50,7 @@ var v = new Video({
     bvid: "BV1uv411q7Mv"
 });
 // get_info 是 async 函数
-v.get_info().then(
+v.get_info({}).then(
     function (value) {
         // value 即为结果
         console.log(value);
@@ -67,7 +67,7 @@ var v = new video.Video({
     bvid: "BV1uv411q7Mv"
 });
 // get_info 是 async 函数
-v.get_info().then(
+v.get_info({}).then(
     function (value) {
         // value 即为结果
         console.log(value);
