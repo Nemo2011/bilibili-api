@@ -50,7 +50,7 @@ var v = new Video({
     bvid: "BV1uv411q7Mv"
 });
 // get_info 是 async 函数
-v.get_info().then(
+v.get_info({}).then(
     function (value) {
         // value 即为结果
         console.log(value);
@@ -67,7 +67,7 @@ var v = new video.Video({
     bvid: "BV1uv411q7Mv"
 });
 // get_info 是 async 函数
-v.get_info().then(
+v.get_info({}).then(
     function (value) {
         // value 即为结果
         console.log(value);
@@ -120,6 +120,17 @@ video.get_info({"BV1uv411q7Mv"}) // 没有标明键(bvid)
 
 // 自己看 IntelliCode 的提示吧。
 video.get_info("BV1uv411q7Mv") // 传入字典啊！
+```
+
+每一个函数请务必都传一下放着参数的字典。
+
+``` typescript
+this.get_aid({}) {
+    // 2333
+} // 这个函数传入参数的字典内不用提供任何信息
+
+this.get_aid() // 错误调用方法
+this.get_aid({}) // 正确
 ```
 
 **Q: 为什么会提示 412 Precondition Failed ？**
