@@ -8,6 +8,9 @@ from enum import Enum
 import json
 import time
 
+from sympy import E
+from bilibili_api.exceptions import ResponseCodeException
+
 from bilibili_api.utils.sync import sync
 
 from .utils.network_httpx import request
@@ -843,3 +846,25 @@ async def delete_viewed_videos_from_toview(credential: None):
     credential.raise_for_no_bili_jct()
     datas = {"viewed": "true"}
     return await request("POST", api["url"], credential=credential, data=datas)
+
+
+async def check_nickname(nick_name: str=None):
+    """
+    检验昵称是否可用
+    
+    Args:
+        nick_name(str): 昵称
+
+    Returns:
+        List[bool, str]: 昵称是否可用 + 不可用原因
+    """
+    api = get_api("common")['nickname']['check_nickname']
+    params = {
+        "nickName": nick_name
+    }
+    try:
+        resp = await request("GET", api['url'], params=params)
+    except ResponseCodeException as e:
+        return False, str(e)
+    else:
+        return True, ""
