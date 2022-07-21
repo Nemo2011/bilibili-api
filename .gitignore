@@ -18,3 +18,5 @@ bilibili-api-ts/*/*.js
 bilibili-api-ts/*.js
 bilibili-api-ts/*/*.d.ts
 bilibili-api-ts/*.d.ts
+/bilibili-api-ts/test.ts
+/bilibili-api-ts/test.js
