@@ -49,4 +49,5 @@
   + API 文档
     + [根模块](/ts/modules/bilibili-api.md)
     + [video.ts - 视频](/ts/modules/video.md)
+    + [search.ts - 搜索](/ts/modules/search.md)
 + [历史文档](/history.md)
