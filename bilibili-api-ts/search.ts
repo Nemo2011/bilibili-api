@@ -13,6 +13,15 @@ export enum SearchObjectType {
     USER = "bili_user"
 }
 
+/**
+ * 搜索
+ * 
+ * param keyword 搜索关键词看
+ * 
+ * param page 页数
+ * 
+ * @returns 
+ */
 export async function web_search({keyword, page=1}: {keyword: string, page?: number}) {
     var api = API.search.web_search;
     var params = {
@@ -28,6 +37,17 @@ export async function web_search({keyword, page=1}: {keyword: string, page?: num
     );
 }
 
+/**
+ * 搜索
+ * 
+ * param keyword 搜索关键词看
+ * 
+ * param search_type 搜索类型（SearchObjectType）
+ * 
+ * param page 页数
+ * 
+ * @returns 
+ */
 export async function web_search_by_type({keyword, search_type, page=1}: {keyword: string, search_type: SearchObjectType|string, page?: number}) {
     var api = API.search.web_search_by_type;
     var params = {
