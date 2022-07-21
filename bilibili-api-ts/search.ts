@@ -16,7 +16,7 @@ export enum SearchObjectType {
 /**
  * 搜索
  * 
- * param keyword 搜索关键词看
+ * param keyword 搜索关键词
  * 
  * param page 页数
  * 
