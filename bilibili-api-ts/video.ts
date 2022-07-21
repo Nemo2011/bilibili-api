@@ -229,6 +229,7 @@ export class Video {
      * 获取分 P 对应的 cid
      * 
      * param page_index 
+     *
      * @returns number: cid
      */
     async get_cid(page_index) {
@@ -239,8 +240,11 @@ export class Video {
      * 获取视频播放流（下载地址）
      * 
      * param page_index 分 P 序号
+     * 
      * param cid 分 P 编号
+     * 
      * param html5 是否以 html5 端获取（这样子可以直接在网页中显示，但是视频源单一）
+     * 
      * @returns 调用 API 返回的结果
      */
     async get_download_url(
