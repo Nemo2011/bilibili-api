@@ -10,6 +10,9 @@
 
 import datetime
 from enum import Enum
+import httpx
+
+import requests
 
 from .utils.sync import sync
 from .utils.utils import get_api
@@ -39,16 +42,27 @@ class BangumiCommentOrder(Enum):
 
 class Bangumi:
     def __init__(
-        self, media_id: int = -1, ssid: int = -1, credential: Credential = None
+        self, media_id: int = -1, ssid: int = -1, credential: Credential = Credential()
     ):
         """番剧类"""
         if media_id == -1 and ssid == -1:
             raise ValueError("需要 Media_id 或 Season_id 中的一个 !")
         self.media_id = media_id
         self.credential = credential
-        self.ssid = ssid if ssid != -1 else sync(self.get_meta())["media"]["season_id"]
+        if ssid != -1:
+            self.ssid = ssid
+        else:
+            api = API["info"]["meta"]
+            params = {"media_id": self.media_id}
+            meta = requests.get(url=api['url'], params=params, cookies=self.credential.get_cookies())
+            meta.raise_for_status()
+            self.ssid = meta.json()['result']['media']['season_id']
         if self.media_id == -1:
-            self.media_id = sync(self.get_overview())["media_id"]
+            api = API["info"]["collective_info"]
+            params = {"season_id": self.ssid}
+            overview = requests.get(url=api['url'], params=params, cookies=self.credential.get_cookies())
+            overview.raise_for_status()
+            self.media_id = overview.json()['result']['media_id']
 
     async def get_media_id(self):
         return self.media_id
@@ -174,10 +188,31 @@ class Episode(Video):
         """
         self.credential = credential
         self.epid = epid
-        bvid = sync(self.get_episode_info())["epInfo"]["bvid"]
+        credential = self.credential if self.credential else Credential()
+        try:
+            resp = httpx.get(
+                f"https://www.bilibili.com/bangumi/play/ep{self.epid}",
+                cookies=credential.get_cookies(),
+                headers={"User-Agent": "Mozilla/5.0"},
+            )
+        except Exception as e:
+            raise ResponseException(str(e))
+        else:
+            content = resp.text
+
+            pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
+            match = re.search(pattern, content)
+            if match is None:
+                raise ApiException("未找到番剧信息")
+            try:
+                content = json.loads(match.group(1))
+            except json.JSONDecodeError:
+                raise ApiException("信息解析错误")
+            else:
+                bvid = content["epInfo"]["bvid"]
+                self.bangumi = Bangumi(ssid=content["mediaInfo"]["season_id"])
         self.video_class = Video(bvid=bvid, credential=credential)
         super().__init__(bvid=bvid)
-        self.bangumi = self.get_bangumi_from_episode()
         self.set_aid = self.set_aid_e
         self.set_bvid = self.set_bvid_e
 
@@ -202,7 +237,7 @@ class Episode(Video):
         """
         return self.bangumi
 
-    async def set_epid(self, epid: int):
+    def set_epid(self, epid: int):
         """
         设置 epid
         Args:
@@ -243,13 +278,13 @@ class Episode(Video):
 
             return content
 
-    def get_bangumi_from_episode(self):
+    async def get_bangumi_from_episode(self):
         """
-        获取番剧信息
+        获取剧集对应的番剧
         Returns:
             输入的集对应的番剧类
         """
-        info = sync(self.get_episode_info())
+        info = await self.get_episode_info()
         ssid = info["mediaInfo"]["season_id"]
         return Bangumi(ssid=ssid)
     
