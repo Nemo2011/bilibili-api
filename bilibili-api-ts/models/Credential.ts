@@ -10,13 +10,13 @@ export class Credential {
         this.dedeuserid = dedeuserid;
     }
 
-    raise_for_no_sessdata() {
+    raise_for_no_sessdata({}) {
         if (this.sessdata === "") throw "Credential 类需要 sessdata";
     }
-    raise_for_no_bili_jct():void{
+    raise_for_no_bili_jct({}) {
         if (this.bili_jct === "") throw "Credential 类需要 bili_jct";
     }
-    raise_for_no_dedeuserid(){
+    raise_for_no_dedeuserid({}){
         if (this.dedeuserid === "") throw "Credential 类需要 dedeuserid";
     }
     get_cookies(){

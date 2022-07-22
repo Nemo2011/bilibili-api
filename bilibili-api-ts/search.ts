@@ -1,5 +1,5 @@
 import { SearchData } from "./apis/search";
-import { request, getAxiosInstance } from "./utils/network";
+import { request } from "./utils/network";
 
 const API = SearchData;
 

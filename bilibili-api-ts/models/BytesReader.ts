@@ -39,7 +39,9 @@ export class BytesReader {
     }
 
     varint() {
-        var [d, l] = read_varint({stream: this.__stream.subarray(this.__offset)});
+        var stream = this.__stream.subarray(this.__offset);
+        var [d, l] = read_varint({stream: stream});
+        console.log(this.__stream.subarray(this.__offset, this.__offset + l));
         this.__offset += l;
         return d;
     }

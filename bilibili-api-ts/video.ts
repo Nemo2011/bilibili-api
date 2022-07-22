@@ -1,7 +1,11 @@
 import { Credential } from "./models/Credential";
 import { aid2bvid, bvid2aid } from "./utils/aid2bvid";
-import { request } from "./utils/network"
+import { get_session, request } from "./utils/network"
 import { VideoData } from "./apis/video";
+import { BytesReader } from "./models/BytesReader";
+import { fstat, fsync } from "fs";
+import { stringify } from "querystring";
+import { writeFileSync } from "fs";
 
 const API: Record<any, any> = VideoData
 
@@ -18,7 +22,7 @@ export class Video {
      * 
      * param credential 凭据类(可选)
      */
-    constructor ({bvid=null, aid=null, credential=null}: {bvid?: string|null, aid?: number|null, credential?: Credential}) {
+    constructor ({bvid=null, aid=null, credential=new Credential({})}: {bvid?: string|null, aid?: number|null, credential?: Credential}) {
         if (credential === null && credential === undefined) {
             credential = new Credential({});
         }
@@ -55,7 +59,7 @@ export class Video {
      * 
      * @returns Bvid
      */
-    get_bvid() {
+    get_bvid({}) {
         return this.__bvid;
     }
 
@@ -77,7 +81,7 @@ export class Video {
      * 
      * @returns aid
      */
-    get_aid() {
+    get_aid({}) {
         return this.__aid;
     }
 
@@ -86,11 +90,11 @@ export class Video {
      * 
      * @returns 调用 API 返回的结果
      */
-    async get_info() {
+    async get_info({}) {
         var api = API["info"]["detail"];
         var params = {
-            "bvid": this.get_bvid(), 
-            "aid": this.get_aid()
+            "bvid": this.get_bvid({}), 
+            "aid": this.get_aid({})
         }
         var resp = await request(
             {
@@ -109,9 +113,9 @@ export class Video {
      * 
      * @returns 调用 API 返回的结果
      */
-    async __get_info_cached() {
+    async __get_info_cached({}) {
         if (this.__info === null) {
-            return await this.get_info()
+            return await this.get_info({})
         }
         return this.__info
     }
@@ -121,11 +125,11 @@ export class Video {
      * 
      * @returns 调用 API 返回的结果
      */
-    async get_stat() {
+    async get_stat({}) {
         var api = API['info']['stat'];
         var params = {
-            "bvid": this.get_bvid(), 
-            "aid": this.get_aid()
+            "bvid": this.get_bvid({}), 
+            "aid": this.get_aid({})
         };
         return await request(
             {
@@ -145,8 +149,8 @@ export class Video {
     async get_tags() {
         var api = API['info']['tags'];
         var params = {
-            "bvid": this.get_bvid(), 
-            "aid": this.get_aid()
+            "bvid": this.get_bvid({}), 
+            "aid": this.get_aid({})
         };
         return await request(
             {
@@ -164,12 +168,12 @@ export class Video {
      * @returns 调用 API 返回的结果
      */
     async get_chargers() {
-        var info = await this.__get_info_cached();
+        var info = await this.__get_info_cached({});
         var mid = info['owner']['mid'];
         var api = API['info']['chargers'];
         var params = {
-            "aid": this.get_aid(), 
-            "bvid": this.get_bvid(), 
+            "aid": this.get_aid({}), 
+            "bvid": this.get_bvid({}), 
             "mid": mid
         };
         return await request(
@@ -187,11 +191,11 @@ export class Video {
      * 
      * @returns 调用 API 返回的结果
      */
-    async get_pages() {
+    async get_pages({}) {
         var api = API["info"]["pages"];
         var params = {
-            "aid": this.get_aid(), 
-            "bvid": this.get_bvid()
+            "aid": this.get_aid({}), 
+            "bvid": this.get_bvid({})
         }
         return await request(
             {
@@ -213,7 +217,7 @@ export class Video {
         if (page_index < 0) {
             throw "分 p 号必须大于或等于 0。";
         }
-        var info = await this.__get_info_cached();
+        var info = await this.__get_info_cached({});
         var pages = info['pages'];
 
         if (pages.length <= 0) {
@@ -231,7 +235,10 @@ export class Video {
      * param page_index 
      * @returns number: cid
      */
-    async get_cid(page_index) {
+    async get_cid({page_index}: {page_index?: number}) {
+        if (page_index === null || page_index === undefined) {
+            page_index = 0;
+        }
         return await this.__get_page_id_by_index(page_index);
     }
 
@@ -261,7 +268,7 @@ export class Video {
         }
         var api = API['info']['playurl'];
         var params = {
-            "avid": this.get_aid(), 
+            "avid": this.get_aid({}), 
             "cid": cid, 
             "qn": "127", 
             "otype": "json", 

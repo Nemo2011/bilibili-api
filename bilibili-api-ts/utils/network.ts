@@ -10,7 +10,7 @@ const cookieJar = new CookieJar();
 var sess: any = null;
 var user_proxy: Proxy|null = null;
 
-export async function getAxiosInstance({credential=new Credential({}), proxy=null}: {credential?: Credential, proxy?: Proxy|null}) {
+async function getAxiosInstance({credential=new Credential({}), proxy=null}: {credential?: Credential, proxy?: Proxy|null}) {
   if (credential.sessdata !== null) {
     cookieJar.setCookieSync(
       `SESSDATA=${credential.sessdata}; Domain=.bilibili.com`, 
@@ -65,6 +65,19 @@ async function setAxiosInstance(axios: AxiosInstance) {
   sess = axios;
 }
 
+export async function get_session({credential=new Credential({})}: {credential: Credential}) {
+  if (credential === null || credential === undefined) {
+    credential = new Credential({});
+  }
+  if (user_proxy !== null) {
+    return await getAxiosInstance({credential: credential, proxy: user_proxy});
+  }
+  else {
+    return await getAxiosInstance({credential: credential});
+  }
+}
+
+
 export async function request(
   {
     method, url, params={}, data={}, credential=new Credential({}), no_csrf=false
@@ -89,7 +102,7 @@ export async function request(
   method = method.toUpperCase();
 
   if (method !== "GET" && !no_csrf){
-    credential.raise_for_no_bili_jct()
+    credential.raise_for_no_bili_jct({})
   }
 
   const DEFAULT_HEADERS = {
@@ -149,7 +162,7 @@ export async function request(
   // console.log(resp_data);
   // console.log(JSON.stringify(raw_data))
   var code = resp_data['code'];
-  if (code === null) {
+  if (code === null || code === undefined) {
     throw "API 返回数据未含 code 字段";
   }
   if (code !== 0) {
@@ -157,7 +170,7 @@ export async function request(
     if (msg === undefined) {
       msg = "接口未返回错误信息";
     }
-    throw msg;
+    throw code + msg;
   }
 
   var real_data = resp_data['data'];
@@ -167,6 +180,6 @@ export async function request(
   return real_data;
 }
 
-export function setProxy(config: any){
+export function set_proxy(config: any){
   user_proxy = config.proxy;
 }
