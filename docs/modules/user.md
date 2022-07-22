@@ -453,3 +453,15 @@ from bilibili_api import user
 删除稍后再看列表中已经看过（看完）的视频
 
 **Returns:** dict: 调用 API 返回的结果
+
+---
+
+## _async_ def get_self_level()
+
+|| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据 |
+
+获取自己的电磁力等级
+
+**Returns:** tuple[bool, str]: 第一项为昵称是否可用，第二项为不可用的原因。
