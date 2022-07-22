@@ -14,6 +14,8 @@ bilibili_api.cheese
 
 import datetime
 import json
+
+import requests
 from .exceptions import (
     DanmakuClosedException,
     NetworkException,
@@ -24,7 +26,6 @@ from .utils.BytesReader import BytesReader
 from .utils.Danmaku import Danmaku
 from .utils.Credential import Credential
 from .utils.utils import get_api
-from .utils.sync import sync
 from .utils.network_httpx import get_session, request
 
 API = get_api("cheese")
@@ -33,7 +34,7 @@ API_video = get_api("video")
 
 class CheeseList:
     def __init__(
-        self, season_id: int = -1, ep_id: int = -1, credential: Credential = None
+        self, season_id: int = -1, ep_id: int = -1, credential: Credential = Credential()
     ):
         """
         教程类
@@ -49,7 +50,12 @@ class CheeseList:
         self.ep_id = ep_id
         self.credential = credential
         if self.season_id == -1:
-            self.season_id = str(sync(self.get_meta())["season_id"])
+            #self.season_id = str(sync(self.get_meta())["season_id"])
+            api = API["info"]["meta"]
+            params = {"season_id": self.season_id, "ep_id": self.ep_id}
+            meta = requests.get(url=api['url'], params=params, cookies=self.credential.get_cookies())
+            meta.raise_for_status()
+            self.season_id = int(meta.json()['data']['season_id'])
 
     def set_season_id(self, season_id: int):
         self.__init__(season_id=season_id)
@@ -72,14 +78,14 @@ class CheeseList:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_list(self, pn: int = 1, ps: int = 50):
+    async def get_list(self):
         """
         获取教程所有视频
         Returns:
             调用 API 所得的结果。
         """
         api = API["info"]["list"]
-        params = {"season_id": self.season_id, "pn": pn, "ps": ps}
+        params = {"season_id": self.season_id, "pn": 1, "ps": 1000}
         return await request(
             "GET", api["url"], params=params, credential=self.credential
         )
@@ -96,16 +102,15 @@ class CheeseVideo:
         self.epid = epid
         self.cheese = CheeseList(ep_id=self.epid)
         self.credential = credential
-        for v in sync(self.cheese.get_meta())["episodes"]:
+        api = API["info"]["meta"]
+        params = {"season_id": self.cheese.season_id, "ep_id": self.cheese.ep_id}
+        meta = requests.get(url=api['url'], params=params, cookies=self.credential.get_cookies())
+        meta.raise_for_status()
+        metadata = meta.json()
+        for v in metadata["data"]["episodes"]:
             if v["id"] == epid:
                 self.aid = v["aid"]
                 self.cid = v["cid"]
-        if meta != None:
-            self.meta = None
-        else:
-            for v in sync(self.cheese.get_list())["items"]:
-                if v["id"] == self.epid:
-                    self.meta = v
 
     def get_aid(self):
         return self.aid

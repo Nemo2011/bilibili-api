@@ -134,13 +134,13 @@ from bilibili_api import bangumi
 | epid | int | epid | 
 | credential | Credential | 凭据 |
 
-#### _async_ def get_bangumi()
+#### def get_bangumi()
 
 获取对应的番剧
 
 **Returns:** 番剧类
 
-#### _async_ def set_epid()
+#### def set_epid()
 
 设置 epid
 
@@ -199,8 +199,8 @@ from bilibili_api import bangumi
 
 **Returns**: None | List[str]: 调用 API 返回的结果。不存在时为 None。
 
-#### def get_bangumi_from_episode()
+#### _async_ def get_bangumi_from_episode()
 
-通过一个 epid 获取番剧信息
+获取剧集对应的番剧
 
 **Returns**:输入的集对应的番剧类
