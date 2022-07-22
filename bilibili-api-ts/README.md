@@ -146,6 +146,7 @@ video.get_aid()
 ```
 
 >如果有看不懂的地方，可以自己打一下示例代码(最好加上 IntelliCode 或在带实时提示的 Node REPL 下)，这样子自然而然就懂了。
+每一个函数请务必都传一下放着参数的字典。
 
 **Q: 为什么会提示 412 Precondition Failed ？**
 
