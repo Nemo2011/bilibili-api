@@ -34,7 +34,10 @@ API_video = get_api("video")
 
 class CheeseList:
     def __init__(
-        self, season_id: int = -1, ep_id: int = -1, credential: Credential = Credential()
+        self,
+        season_id: int = -1,
+        ep_id: int = -1,
+        credential: Credential = Credential(),
     ):
         """
         教程类
@@ -50,12 +53,14 @@ class CheeseList:
         self.ep_id = ep_id
         self.credential = credential
         if self.season_id == -1:
-            #self.season_id = str(sync(self.get_meta())["season_id"])
+            # self.season_id = str(sync(self.get_meta())["season_id"])
             api = API["info"]["meta"]
             params = {"season_id": self.season_id, "ep_id": self.ep_id}
-            meta = requests.get(url=api['url'], params=params, cookies=self.credential.get_cookies())
+            meta = requests.get(
+                url=api["url"], params=params, cookies=self.credential.get_cookies()
+            )
             meta.raise_for_status()
-            self.season_id = int(meta.json()['data']['season_id'])
+            self.season_id = int(meta.json()["data"]["season_id"])
 
     def set_season_id(self, season_id: int):
         self.__init__(season_id=season_id)
@@ -104,7 +109,9 @@ class CheeseVideo:
         self.credential = credential
         api = API["info"]["meta"]
         params = {"season_id": self.cheese.season_id, "ep_id": self.cheese.ep_id}
-        meta = requests.get(url=api['url'], params=params, cookies=self.credential.get_cookies())
+        meta = requests.get(
+            url=api["url"], params=params, cookies=self.credential.get_cookies()
+        )
         meta.raise_for_status()
         metadata = meta.json()
         for v in metadata["data"]["episodes"]:

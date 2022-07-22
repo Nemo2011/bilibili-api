@@ -54,15 +54,19 @@ class Bangumi:
         else:
             api = API["info"]["meta"]
             params = {"media_id": self.media_id}
-            meta = requests.get(url=api['url'], params=params, cookies=self.credential.get_cookies())
+            meta = requests.get(
+                url=api["url"], params=params, cookies=self.credential.get_cookies()
+            )
             meta.raise_for_status()
-            self.ssid = meta.json()['result']['media']['season_id']
+            self.ssid = meta.json()["result"]["media"]["season_id"]
         if self.media_id == -1:
             api = API["info"]["collective_info"]
             params = {"season_id": self.ssid}
-            overview = requests.get(url=api['url'], params=params, cookies=self.credential.get_cookies())
+            overview = requests.get(
+                url=api["url"], params=params, cookies=self.credential.get_cookies()
+            )
             overview.raise_for_status()
-            self.media_id = overview.json()['result']['media_id']
+            self.media_id = overview.json()["result"]["media_id"]
 
     async def get_media_id(self):
         return self.media_id
@@ -287,7 +291,7 @@ class Episode(Video):
         info = await self.get_episode_info()
         ssid = info["mediaInfo"]["season_id"]
         return Bangumi(ssid=ssid)
-    
+
     async def get_download_url(self):
         """
         获取番剧剧集下载信息。
