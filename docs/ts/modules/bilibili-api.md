@@ -113,7 +113,7 @@ BV 号转 AV 号。
 
 ---
 
-## function setProxy()
+## function set_proxy()
 
 | name | type | description |
 | ---- | ---- | ----------- |

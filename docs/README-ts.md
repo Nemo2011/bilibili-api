@@ -100,15 +100,18 @@ v.get_info({}).then(
 
 **Q: 关于 API 调用的正确姿势是什么？**
 
-A: 所有 API 调用，请使用 **指名方式** 传参，例子：
+A: API 调用方式请看下面的举例：
 
 ```typescript
-// 参数：{bvid}: {bvid: string}
+// 新手错误 1: 传参
+// 设 video.get_info 函数的参数是一个字典，字典的 bvid 项为稿件 BVID。
+// 函数定义：get_info({bvid}: {bvid: string})
 /** 
  * 所有的参数传入请传入一个字典，这样子可以换传参顺序、指名传参。
+ * 传参像这样：get_info({参数名1: 参数1, 参数名2: 参数2}) -> get_info({bvid: 稿件 BVID})
  * 请不要直接传参数，参数需要放在字典里，而且需要表明好键，不能不标键。
  */ 
-// ----------
+
 // 推荐
 video.get_info({bvid:"BV1uv411q7Mv"})
 
@@ -120,7 +123,27 @@ video.get_info({"BV1uv411q7Mv"}) // 没有标明键(bvid)
 
 // 自己看 IntelliCode 的提示吧。
 video.get_info("BV1uv411q7Mv") // 传入字典啊！
+// ----------------------------------------------------------
+// 新手错误 2: 每个函数都得传参
+// 设 video.Video.prototype.get_aid 函数不用传任何参数：
+// 函数定义：get_aid({}){...}
+/*
+    因为作者有强迫症（bushi ... 因为 JS/TS 的迷惑设计，所以传参不能指名传参，干不了（有的参数不用传）。
+    因此这里的设计是每一个函数都传入一个字典，像这样：{参数名1: 参数1, 参数名2: 参数2}，不用传参的函数暂时也还没有加上一个字典当参数。
+    后来实在因为强迫症，把不用参数的函数都加了一个空字典当参数，原来 get_aid() 变成 get_aid({})，这样的确有个好处：随便传参不报错。
+*/
+
+// 可以
+video.get_aid({})
+
+// 不会错
+video.get_aid({bvid: "我是个 SB"})
+
+// 报错
+video.get_aid()
 ```
+
+>如果有看不懂的地方，可以自己打一下示例代码(最好加上 IntelliCode 或在带实时提示的 Node REPL 下)，这样子自然而然就懂了。
 
 **Q: 为什么会提示 412 Precondition Failed ？**
 
@@ -129,8 +152,8 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 这种情况下，你的 IP 会暂时被封禁而无法使用，你可以设置代理绕过。
 
 ```typescript
-import { setProxy, Proxy } from "bilibili-api-ts"
-setProxy(new Proxy({
+import { set_proxy, Proxy } from "bilibili-api-ts"
+set_proxy(new Proxy({
     host: "代理网址", 
     port: "代理端口", 
     username: "用户名（可选）", 
