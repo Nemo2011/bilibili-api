@@ -139,7 +139,7 @@ video.get_aid({})
 // 不会错
 video.get_aid({bvid: "我是个 SB"})
 
-// 报错
+// 貌似只有 TS 报错
 video.get_aid()
 ```
 
