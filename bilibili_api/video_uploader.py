@@ -5,7 +5,7 @@ import os
 from . import settings
 from .utils.Credential import Credential
 from copy import copy, deepcopy
-from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
+from .exceptions.ResponseCodeException import ResponseCodeException
 import json
 from enum import Enum
 

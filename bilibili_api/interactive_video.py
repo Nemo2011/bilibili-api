@@ -10,7 +10,7 @@ from .utils.network_httpx import request, get_session
 from .video import Video
 from urllib import parse
 from .exceptions import ArgsException
-from bilibili_api import video
+from . import video
 
 API = get_api("interactive_video")
 
