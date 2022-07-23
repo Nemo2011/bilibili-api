@@ -38,7 +38,6 @@ var BytesReader = /** @class */ (function () {
     };
     BytesReader.prototype.varint = function () {
         var _a = (0, varint_1.read_varint)({ stream: this.__stream.subarray(this.__offset, this.__stream.length) }), d = _a[0], l = _a[1];
-        console.log(d, l);
         this.__offset += l;
         return d;
     };
