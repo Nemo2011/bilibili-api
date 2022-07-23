@@ -23,6 +23,7 @@ python 版：<https://github.com/nemo2011/bilibili-api/blob/main/README.md>
 
 ## 特色
 
+- 全面支持 javascript 和 typescript
 - 可使用代理，绕过 b 站风控策略。
 - 全面支持 BV 号（bvid），同时也兼容 AV 号（aid）。
 - 调用简便，函数命名易懂，代码注释详细。
