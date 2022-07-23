@@ -146,4 +146,13 @@ export declare class Video {
      * @returns {Object} 调用 API 返回的结果
      */
     get_media_list({}: {}): Promise<any>;
+    /**
+     * 获取高能进度条
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    get_pbp({ page_index, cid }: {
+        page_index?: number | null;
+        cid?: number | null;
+    }): Promise<any>;
 }
