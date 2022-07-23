@@ -395,6 +395,10 @@ export class Video {
     /**
      * 获取高能进度条
      * 
+     * param page_index(number) 分 P 序号(可选)
+     * 
+     * param cid(number)        分 P 编号(可选)
+     * 
      * @returns {Object} 调用 API 返回的结果
      */
     async get_pbp({page_index=null, cid=null}: {page_index?: number|null, cid?: number|null}) {
