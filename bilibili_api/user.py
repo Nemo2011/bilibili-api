@@ -8,10 +8,9 @@ from enum import Enum
 import json
 import time
 
-from sympy import E
-from bilibili_api.exceptions import ResponseCodeException
+from.exceptions import ResponseCodeException
 
-from bilibili_api.utils.sync import sync
+from .utils.sync import sync
 
 from .utils.network_httpx import request
 from .utils.utils import get_api, join
