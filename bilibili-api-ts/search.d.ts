@@ -53,3 +53,15 @@ export declare function web_search_by_type({ keyword, search_type, page }: {
     search_type: SearchObjectType | string;
     page?: number;
 }): Promise<any>;
+/**
+ * 获取默认搜索内容
+ *
+ * @returns {Object} 调用 API 返回的结果
+ */
+export declare function get_default_search_keyword({}: {}): Promise<any>;
+/**
+ * 获取热搜
+ *
+ * @returns {Object} 调用 API 返回的结果
+ */
+export declare function get_hot_search_keywords({}: {}): Promise<any>;
