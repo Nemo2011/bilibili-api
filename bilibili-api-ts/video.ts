@@ -391,4 +391,31 @@ export class Video {
             credential: this.credential
         })
     }
+
+    /**
+     * 获取高能进度条
+     * 
+     * @returns {Object} 调用 API 返回的结果
+     */
+    async get_pbp({page_index=null, cid=null}: {page_index?: number|null, cid?: number|null}) {
+        if (cid === null || cid === undefined) {
+            if (page_index === null || page_index === undefined) {
+                throw "page_index 和 cid 至少提供一个。";
+            }
+            else {
+                cid = await this.__get_page_id_by_index(page_index);
+            }
+        }
+
+        var api = API.info.pbp;
+        var params = {
+            cid: cid
+        };
+        var sess = await get_session({credential: this.credential});
+        return (await (await sess).request({
+            url: api.url, 
+            method: "GET", 
+            params: params
+        })).data
+    }
 }

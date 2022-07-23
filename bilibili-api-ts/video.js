@@ -521,6 +521,44 @@ var Video = /** @class */ (function () {
             });
         });
     };
+    /**
+     * 获取高能进度条
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    Video.prototype.get_pbp = function (_a) {
+        var _b = _a.page_index, page_index = _b === void 0 ? null : _b, _c = _a.cid, cid = _c === void 0 ? null : _c;
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params, sess;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        if (!(cid === null || cid === undefined)) return [3 /*break*/, 3];
+                        if (!(page_index === null || page_index === undefined)) return [3 /*break*/, 1];
+                        throw "page_index 和 cid 至少提供一个。";
+                    case 1: return [4 /*yield*/, this.__get_page_id_by_index(page_index)];
+                    case 2:
+                        cid = _d.sent();
+                        _d.label = 3;
+                    case 3:
+                        api = API.info.pbp;
+                        params = {
+                            cid: cid
+                        };
+                        return [4 /*yield*/, (0, network_1.get_session)({ credential: this.credential })];
+                    case 4:
+                        sess = _d.sent();
+                        return [4 /*yield*/, sess];
+                    case 5: return [4 /*yield*/, (_d.sent()).request({
+                            url: api.url,
+                            method: "GET",
+                            params: params
+                        })];
+                    case 6: return [2 /*return*/, (_d.sent()).data];
+                }
+            });
+        });
+    };
     return Video;
 }());
 exports.Video = Video;
