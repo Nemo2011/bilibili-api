@@ -6,9 +6,9 @@ export function read_varint({stream}: {stream:Uint8Array}) {
         if (position >= stream.length) {
             break;
         }
-        var byte = stream[position];
-        value += (byte & 0b01111111) << shift;
-        if ((byte & 0b10000000) === 0) {
+        var byte = stream.at(position);
+        value += (byte & 127) << shift;
+        if ((byte & 128) === 0) {
             break;
         }
         position += 1;
