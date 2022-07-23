@@ -13,10 +13,6 @@ node_modules/
 site.bat
 .DS_Store
 .VSCodeCounter/
-bilibili-api-ts/*.js
-bilibili-api-ts/*/*.js
-bilibili-api-ts/*.js
-bilibili-api-ts/*/*.d.ts
-bilibili-api-ts/*.d.ts
 /bilibili-api-ts/test.ts
 /bilibili-api-ts/test.js
+/bilibili-api-ts/test.d.ts
