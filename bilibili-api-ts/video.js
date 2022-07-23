@@ -378,6 +378,149 @@ var Video = /** @class */ (function () {
             });
         });
     };
+    /**
+     * 获取相关视频信息
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    Video.prototype.get_related = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        api = API.info.related;
+                        params = {
+                            aid: this.get_aid({}),
+                            bvid: this.get_bvid({})
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api["url"],
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * 视频是否点赞过
+     *
+     * @returns {bool} 视频是否点赞过
+     */
+    Video.prototype.has_liked = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.credential.raise_for_no_sessdata({});
+                        api = API.info.has_liked;
+                        params = {
+                            bvid: this.get_bvid({}),
+                            aid: this.get_aid({})
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, (_b.sent()) === 1];
+                }
+            });
+        });
+    };
+    /**
+     * 获取视频已投币数量
+     *
+     * @returns {number} 视频已投币数量
+     */
+    Video.prototype.get_pay_coins = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.credential.raise_for_no_sessdata({});
+                        api = API.info.get_pay_coins;
+                        params = {
+                            bvid: this.get_bvid({}),
+                            aid: this.get_aid({})
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, (_b.sent())['multiply']];
+                }
+            });
+        });
+    };
+    /**
+     * 是否已收藏
+     *
+     * @returns {bool} 视频是否已收藏
+     */
+    Video.prototype.has_favoured = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.credential.raise_for_no_sessdata({});
+                        api = API.info.has_favoured;
+                        params = {
+                            bvid: this.get_bvid({}),
+                            aid: this.get_aid({})
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, (_b.sent())['favoured']];
+                }
+            });
+        });
+    };
+    /**
+     * 获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    Video.prototype.get_media_list = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var info, api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.credential.raise_for_no_sessdata({});
+                        return [4 /*yield*/, this.__get_info_cached({})];
+                    case 1:
+                        info = _b.sent();
+                        api = API.info.media_list;
+                        params = {
+                            type: 2,
+                            rid: this.get_aid({}),
+                            up_mid: info.owner.mid
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 2: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
     return Video;
 }());
 exports.Video = Video;
