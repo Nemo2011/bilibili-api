@@ -1,5 +1,28 @@
 {
   "info": {
+    "start": {
+      "url": "https://api.live.bilibili.com/room/v1/Room/startLive",
+      "method": "POST",
+      "verify": false,
+      "params": {
+        "room_id": "int: 房间号",
+        "platform": "pc/web/...",
+        "area_v2": "int: 直播间新版分区id, 可参考https://github.com/withsalt/BilibiliLiveTools#%E7%9B%B4%E6%92%AD%E5%88%86%E5%8C%BA",
+        "csrf,csrf_token": "要给两个"
+      },
+      "comment": "开始直播"
+    },
+    "stop": {
+      "url": "https://api.live.bilibili.com/room/v1/Room/stopLive",
+      "method": "POST",
+      "verify": false,
+      "params": {
+        "room_id": "int: 房间号",
+        "platform": "pc/web/...",
+        "csrf,csrf_token": "要给两个"
+      },
+      "comment": "关闭直播"
+    },
     "room_play_info": {
       "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getRoomPlayInfo",
       "method": "GET",
