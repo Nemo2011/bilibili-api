@@ -25,6 +25,6 @@ function help() {
     for (var _i = 0; _i < arguments.length; _i++) {
         config[_i] = arguments[_i];
     }
-    console.log("欢迎来到 bilibili-api-ts，这个模块是 Python bilibili-api 的 Typescript 克隆，适用于 JS/TS。\n文档请前往 https://nemo2011.github.io/bilibili_api/#/README-ts 查看。");
+    console.log("欢迎来到 bilibili-api-ts，这个模块是 Python bilibili-api 的 Typescript 克隆，适用于 JS/TS。\n文档请前往 https://nemo2011.github.io/bilibili-api/#/README-ts 查看。");
 }
 exports.help = help;
