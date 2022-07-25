@@ -1,5 +1,6 @@
 import { SearchData } from "./apis/search";
-import { request } from "./utils/network";
+import { Credential } from "./models/Credential";
+import { get_session, request } from "./utils/network";
 
 const API = SearchData;
 
@@ -77,5 +78,36 @@ export async function web_search_by_type({ keyword, search_type, page = 1 }: { k
             url: api['url'],
             params: params
         }
+    )
+}
+
+/**
+ * 获取默认搜索内容
+ * 
+ * @returns {Object} 调用 API 返回的结果
+ */
+export async function get_default_search_keyword({}) {
+    var api = API.search.default_search_keyword;
+    return await request({
+        method: "GET", 
+        url: api.url
+    })
+}
+
+/**
+ * 获取热搜
+ * 
+ * @returns {Object} 调用 API 返回的结果
+ */
+export async function get_hot_search_keywords({}) {
+    var api = API.search.hot_search_keywords;
+    var sess = await get_session({
+        credential: new Credential({})
+    });
+    return ((
+        await (await sess).request({
+            method: "GET", 
+            url: api.url
+        }))['data']
     )
 }

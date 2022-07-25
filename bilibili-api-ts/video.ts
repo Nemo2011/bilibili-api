@@ -290,4 +290,136 @@ export class Video {
             }
         );
     }
+
+    /**
+     * 获取相关视频信息
+     * 
+     * @returns {Object} 调用 API 返回的结果
+     */
+    async get_related({}) {
+        var api = API.info.related;
+        var params = {
+            aid: this.get_aid({}), 
+            bvid: this.get_bvid({})
+        };
+        return await request({
+            method: "GET", 
+            url: api["url"], 
+            params: params, 
+            credential: this.credential
+        })
+    }
+
+    /**
+     * 视频是否点赞过
+     * 
+     * @returns {bool} 视频是否点赞过
+     */
+    async has_liked({}) {
+        this.credential.raise_for_no_sessdata({});
+        var api = API.info.has_liked;
+        var params = {
+            bvid: this.get_bvid({}), 
+            aid: this.get_aid({})
+        }
+        return (await request({
+            method: "GET", 
+            url: api.url, 
+            params: params, 
+            credential: this.credential
+        })) === 1;
+    }
+
+    /**
+     * 获取视频已投币数量
+     * 
+     * @returns {number} 视频已投币数量
+     */
+    async get_pay_coins({}) {
+        this.credential.raise_for_no_sessdata({});
+        var api = API.info.get_pay_coins;
+        var params = {
+            bvid: this.get_bvid({}), 
+            aid: this.get_aid({})
+        }
+        return (await request({
+            method: "GET", 
+            url: api.url, 
+            params: params, 
+            credential: this.credential
+        }))['multiply']
+    }
+
+    /**
+     * 是否已收藏
+     * 
+     * @returns {bool} 视频是否已收藏
+     */
+    async has_favoured({}) {
+        this.credential.raise_for_no_sessdata({});
+        var api = API.info.has_favoured;
+        var params = {
+            bvid: this.get_bvid({}), 
+            aid: this.get_aid({})
+        }
+        return (await request({
+            method: "GET", 
+            url: api.url, 
+            params: params, 
+            credential: this.credential
+        }))['favoured'];
+    }
+
+    /**
+     * 获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
+     * 
+     * @returns {Object} 调用 API 返回的结果
+     */
+    async get_media_list({}) {
+        this.credential.raise_for_no_sessdata({});
+        var info = await this.__get_info_cached({});
+        var api = API.info.media_list;
+        var params = {
+            type: 2, 
+            rid: this.get_aid({}),
+            up_mid: info.owner.mid
+        }
+        return await request({
+            method: "GET", 
+            url: api.url, 
+            params: params, 
+            credential: this.credential
+        })
+    }
+
+    /**
+     * 获取高能进度条
+     * 
+     * param page_index(number) 分 P 序号(可选)
+     * 
+     * param cid(number)        分 P 编号(可选)
+     * 
+     * @returns {Object} 调用 API 返回的结果
+     */
+    async get_pbp({page_index=null, cid=null}: {page_index?: number|null, cid?: number|null}) {
+        if (cid === null || cid === undefined) {
+            if (page_index === null || page_index === undefined) {
+                throw "page_index 和 cid 至少提供一个。";
+            }
+            else {
+                cid = await this.__get_page_id_by_index(page_index);
+            }
+        }
+
+        var api = API.info.pbp;
+        var params = {
+            cid: cid
+        };
+        var sess = await get_session({credential: this.credential});
+        return (await (await sess).request({
+            url: api.url, 
+            method: "GET", 
+            params: params
+        })).data
+    }
 }
