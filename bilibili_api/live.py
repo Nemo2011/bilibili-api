@@ -8,7 +8,6 @@ from enum import Enum
 import logging
 import json
 import struct
-import base64
 import asyncio
 from typing import List
 import aiohttp
@@ -115,6 +114,40 @@ class LiveRoom:
             self.credential = credential
 
         self.__ruid = None
+
+    async def start(self, area_id):
+        """
+        开始直播
+
+        Returns:
+            API 调用返回结果
+        """
+        api = API["info"]["start"]
+        params = {
+            "area_v2": area_id,
+            "room_id": self.room_display_id,
+            "platform": "pc",
+        }
+        resp = await request(
+            api["method"], api["url"], params=params, credential=self.credential
+        )
+        return resp
+
+    async def stop(self):
+        """
+        关闭直播
+
+        Returns:
+            API 调用返回结果
+        """
+        api = API["info"]["stop"]
+        params = {
+            "room_id": self.room_display_id,
+        }
+        resp = await request(
+            api["method"], api["url"], params=params, credential=self.credential
+        )
+        return resp
 
     async def get_room_play_info(self):
         """
@@ -803,7 +836,7 @@ class LiveDanmaku(AsyncEvent):
                         self.__tasks.append(asyncio.create_task(self.__heartbeat(ws)))
 
                     self.__ws = ws
-                    self.logger.debug(f"连接主机成功, 准备发送认证信息")
+                    self.logger.debug("连接主机成功, 准备发送认证信息")
                     await self.__send_verify_data(ws, conf["token"])
 
                     async for msg in ws:
@@ -990,14 +1023,14 @@ class LiveDanmaku(AsyncEvent):
             return ret
 
         while offset < len(realData):
-            header = struct.unpack(">IHHII", realData[offset : offset + 16])
+            header = struct.unpack(">IHHII", realData[offset: offset + 16])
             length = header[0]
             recvData = {
                 "protocol_version": header[2],
                 "datapack_type": header[3],
                 "data": None,
             }
-            chunkData = realData[(offset + 16) : (offset + length)]
+            chunkData = realData[(offset + 16): (offset + length)]
             if header[2] == 0:
                 recvData["data"] = json.loads(chunkData.decode())
             elif header[2] == 2:

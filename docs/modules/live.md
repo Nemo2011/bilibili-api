@@ -72,6 +72,18 @@ from bilibili_api import live
 | room_display_id | int                  | 房间展示 ID（即 URL 中的 ID） |
 | credential      | Credential, optional | 凭据. Defaults to None.       |
 
+#### _async_ def start()
+
+开始直播
+
+**Returns:** API 调用返回结果
+
+#### _async_ def stop()
+
+停止直播
+
+**Returns:** API 调用返回结果
+
 #### _async_ def get_room_play_info()
 
 获取房间信息（真实房间号，直播状态，封禁情况等）

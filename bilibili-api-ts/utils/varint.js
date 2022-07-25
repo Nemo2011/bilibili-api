@@ -10,7 +10,7 @@ function read_varint(_a) {
         if (position >= stream.length) {
             break;
         }
-        var byte = stream[position];
+        var byte = stream.at(position);
         value += (byte & 127) << shift;
         if ((byte & 128) === 0) {
             break;

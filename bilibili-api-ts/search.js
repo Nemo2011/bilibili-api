@@ -36,8 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.web_search_by_type = exports.web_search = exports.SearchObjectType = void 0;
+exports.get_hot_search_keywords = exports.get_default_search_keyword = exports.web_search_by_type = exports.web_search = exports.SearchObjectType = void 0;
 var search_1 = require("./apis/search");
+var Credential_1 = require("./models/Credential");
 var network_1 = require("./utils/network");
 var API = search_1.SearchData;
 /**
@@ -134,3 +135,53 @@ function web_search_by_type(_a) {
     });
 }
 exports.web_search_by_type = web_search_by_type;
+/**
+ * 获取默认搜索内容
+ *
+ * @returns {Object} 调用 API 返回的结果
+ */
+function get_default_search_keyword(_a) {
+    return __awaiter(this, void 0, void 0, function () {
+        var api;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    api = API.search.default_search_keyword;
+                    return [4 /*yield*/, (0, network_1.request)({
+                            method: "GET",
+                            url: api.url
+                        })];
+                case 1: return [2 /*return*/, _b.sent()];
+            }
+        });
+    });
+}
+exports.get_default_search_keyword = get_default_search_keyword;
+/**
+ * 获取热搜
+ *
+ * @returns {Object} 调用 API 返回的结果
+ */
+function get_hot_search_keywords(_a) {
+    return __awaiter(this, void 0, void 0, function () {
+        var api, sess;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    api = API.search.hot_search_keywords;
+                    return [4 /*yield*/, (0, network_1.get_session)({
+                            credential: new Credential_1.Credential({})
+                        })];
+                case 1:
+                    sess = _b.sent();
+                    return [4 /*yield*/, sess];
+                case 2: return [4 /*yield*/, (_b.sent()).request({
+                        method: "GET",
+                        url: api.url
+                    })];
+                case 3: return [2 /*return*/, ((_b.sent())['data'])];
+            }
+        });
+    });
+}
+exports.get_hot_search_keywords = get_hot_search_keywords;

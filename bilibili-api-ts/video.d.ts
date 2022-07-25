@@ -116,4 +116,43 @@ export declare class Video {
         cid?: number | null;
         html5?: boolean;
     }): Promise<any>;
+    /**
+     * 获取相关视频信息
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    get_related({}: {}): Promise<any>;
+    /**
+     * 视频是否点赞过
+     *
+     * @returns {bool} 视频是否点赞过
+     */
+    has_liked({}: {}): Promise<boolean>;
+    /**
+     * 获取视频已投币数量
+     *
+     * @returns {number} 视频已投币数量
+     */
+    get_pay_coins({}: {}): Promise<any>;
+    /**
+     * 是否已收藏
+     *
+     * @returns {bool} 视频是否已收藏
+     */
+    has_favoured({}: {}): Promise<any>;
+    /**
+     * 获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    get_media_list({}: {}): Promise<any>;
+    /**
+     * 获取高能进度条
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    get_pbp({ page_index, cid }: {
+        page_index?: number | null;
+        cid?: number | null;
+    }): Promise<any>;
 }

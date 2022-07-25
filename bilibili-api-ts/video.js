@@ -378,6 +378,187 @@ var Video = /** @class */ (function () {
             });
         });
     };
+    /**
+     * 获取相关视频信息
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    Video.prototype.get_related = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        api = API.info.related;
+                        params = {
+                            aid: this.get_aid({}),
+                            bvid: this.get_bvid({})
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api["url"],
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * 视频是否点赞过
+     *
+     * @returns {bool} 视频是否点赞过
+     */
+    Video.prototype.has_liked = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.credential.raise_for_no_sessdata({});
+                        api = API.info.has_liked;
+                        params = {
+                            bvid: this.get_bvid({}),
+                            aid: this.get_aid({})
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, (_b.sent()) === 1];
+                }
+            });
+        });
+    };
+    /**
+     * 获取视频已投币数量
+     *
+     * @returns {number} 视频已投币数量
+     */
+    Video.prototype.get_pay_coins = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.credential.raise_for_no_sessdata({});
+                        api = API.info.get_pay_coins;
+                        params = {
+                            bvid: this.get_bvid({}),
+                            aid: this.get_aid({})
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, (_b.sent())['multiply']];
+                }
+            });
+        });
+    };
+    /**
+     * 是否已收藏
+     *
+     * @returns {bool} 视频是否已收藏
+     */
+    Video.prototype.has_favoured = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.credential.raise_for_no_sessdata({});
+                        api = API.info.has_favoured;
+                        params = {
+                            bvid: this.get_bvid({}),
+                            aid: this.get_aid({})
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, (_b.sent())['favoured']];
+                }
+            });
+        });
+    };
+    /**
+     * 获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    Video.prototype.get_media_list = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var info, api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.credential.raise_for_no_sessdata({});
+                        return [4 /*yield*/, this.__get_info_cached({})];
+                    case 1:
+                        info = _b.sent();
+                        api = API.info.media_list;
+                        params = {
+                            type: 2,
+                            rid: this.get_aid({}),
+                            up_mid: info.owner.mid
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 2: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * 获取高能进度条
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    Video.prototype.get_pbp = function (_a) {
+        var _b = _a.page_index, page_index = _b === void 0 ? null : _b, _c = _a.cid, cid = _c === void 0 ? null : _c;
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params, sess;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        if (!(cid === null || cid === undefined)) return [3 /*break*/, 3];
+                        if (!(page_index === null || page_index === undefined)) return [3 /*break*/, 1];
+                        throw "page_index 和 cid 至少提供一个。";
+                    case 1: return [4 /*yield*/, this.__get_page_id_by_index(page_index)];
+                    case 2:
+                        cid = _d.sent();
+                        _d.label = 3;
+                    case 3:
+                        api = API.info.pbp;
+                        params = {
+                            cid: cid
+                        };
+                        return [4 /*yield*/, (0, network_1.get_session)({ credential: this.credential })];
+                    case 4:
+                        sess = _d.sent();
+                        return [4 /*yield*/, sess];
+                    case 5: return [4 /*yield*/, (_d.sent()).request({
+                            url: api.url,
+                            method: "GET",
+                            params: params
+                        })];
+                    case 6: return [2 /*return*/, (_d.sent()).data];
+                }
+            });
+        });
+    };
     return Video;
 }());
 exports.Video = Video;
