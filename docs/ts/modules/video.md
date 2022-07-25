@@ -89,3 +89,41 @@ import {} from "bilibili-api-ts/video";
 获取视频下载信息。
 
 **Returns:** API 调用返回结果。
+
+#### _async_ function get_related()
+
+获取相关视频信息。
+
+**Returns:** API 调用返回结果。
+
+#### _async_ function has_liked()
+
+视频是否点赞过。
+
+**Returns:** bool: 视频是否点赞过。
+
+#### _async_ function get_pay_coins()
+
+获取视频已投币数量。
+
+**Returns:** int: 视频已投币数量。
+
+#### _async_ function has_favoured()
+
+是否已收藏。
+
+**Returns:** bool: 视频是否已收藏。
+
+#### _async_ function get_media_list()
+
+获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
+
+**Returns:** API 调用返回结果。
+
+#### _async_ function get_pbp()
+
+| name | type | description |
+| page_index | int | 分 P 号 |
+| cid | int | 分 P 编码 |
+
+获取高能进度条
