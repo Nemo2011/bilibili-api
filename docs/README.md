@@ -155,6 +155,8 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 from bilibili_api import settings
 
 settings.proxy = "http://your-proxy.com" # 里头填写你的代理地址
+
+settings.proxy = "http://username:password@your-proxy.com" # 如果需要用户名、密码
 ```
 
 **Q: 怎么没有我想要的功能？**
