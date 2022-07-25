@@ -5,6 +5,9 @@ import { VideoData } from "./apis/video";
 
 const API: Record<any, any> = VideoData
 
+/**
+ * 视频相关
+ */
 export class Video {
     __info: Record<any, any> | null = null;
     __bvid: string = "";

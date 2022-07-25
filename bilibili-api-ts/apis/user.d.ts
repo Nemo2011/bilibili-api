@@ -1,4 +1,4 @@
-declare const UserAPIData: {
+export declare const UserAPIData: {
     info: {
         my_info: {
             url: string;

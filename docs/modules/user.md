@@ -13,7 +13,7 @@ from bilibili_api import user
 视频排序顺序。
 
 + PUBDATE : 上传日期倒序。
-+ FAVORATE: 收藏量倒序。
++ FAVORITE: 收藏量倒序。
 + VIEW  : 播放量倒序。
 
 ---
@@ -36,7 +36,7 @@ from bilibili_api import user
 音频排序顺序。
 
 + PUBDATE : 上传日期倒序。
-+ FAVORATE: 收藏量倒序。
++ FAVORITE: 收藏量倒序。
 + VIEW    : 播放量倒序。
 
 ---
@@ -48,7 +48,7 @@ from bilibili_api import user
 专栏排序顺序。
 
 + PUBDATE : 发布日期倒序。
-+ FAVORATE: 收藏量倒序。
++ FAVORITE: 收藏量倒序。
 + VIEW    : 阅读量倒序。
 
 ---

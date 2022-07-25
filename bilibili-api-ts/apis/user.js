@@ -1,4 +1,7 @@
-var UserAPIData = {
+"use strict";
+exports.__esModule = true;
+exports.UserAPIData = void 0;
+exports.UserAPIData = {
     "info": {
         "my_info": {
             "url": "https://api.bilibili.com/x/space/myinfo",
