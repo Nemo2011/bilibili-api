@@ -46,8 +46,10 @@
   + [获取 Credential 类所需信息](/ts/get-credential.md)
   + API 示例
     + [视频](/ts/examples/video.md)
+    + [用户](/ts/examples/user.md)
   + API 文档
     + [根模块](/ts/modules/bilibili-api.md)
     + [video.ts - 视频](/ts/modules/video.md)
     + [search.ts - 搜索](/ts/modules/search.md)
+    + [user.ts - 用户](/ts/modules/user.md)
 + [历史文档](/history.md)
