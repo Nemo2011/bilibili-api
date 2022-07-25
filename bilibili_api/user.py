@@ -26,12 +26,12 @@ class VideoOrder(Enum):
     视频排序顺序。
 
     + PUBDATE : 上传日期倒序。
-    + FAVORATE: 收藏量倒序。
+    + FAVORITE: 收藏量倒序。
     + VIEW    : 播放量倒序。
     """
 
     PUBDATE = "pubdate"
-    FAVORATE = "stow"
+    FAVORITE= "stow"
     VIEW = "click"
 
 
@@ -51,13 +51,13 @@ class AudioOrder(Enum):
     音频排序顺序。
 
     + PUBDATE : 上传日期倒序。
-    + FAVORATE: 收藏量倒序。
+    + FAVORITE: 收藏量倒序。
     + VIEW    : 播放量倒序。
     """
 
     PUBDATE = 1
     VIEW = 2
-    FAVORATE = 3
+    FAVORITE = 3
 
 
 class ArticleOrder(Enum):
@@ -65,12 +65,12 @@ class ArticleOrder(Enum):
     专栏排序顺序。
 
     + PUBDATE : 发布日期倒序。
-    + FAVORATE: 收藏量倒序。
+    + FAVORITE: 收藏量倒序。
     + VIEW    : 阅读量倒序。
     """
 
     PUBDATE = "publish_time"
-    FAVORATE = "fav"
+    FAVORITE = "fav"
     VIEW = "view"
 
 

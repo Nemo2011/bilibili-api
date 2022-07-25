@@ -1,4 +1,4 @@
-const UserAPIData = {
+export const UserAPIData = {
 "info": {
     "my_info": {
     "url": "https://api.bilibili.com/x/space/myinfo",

@@ -1,4 +1,7 @@
 import { Credential } from "./models/Credential";
+/**
+ * 视频相关
+ */
 export declare class Video {
     __info: Record<any, any> | null;
     __bvid: string;

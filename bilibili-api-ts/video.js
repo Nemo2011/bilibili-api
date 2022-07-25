@@ -42,6 +42,9 @@ var aid2bvid_1 = require("./utils/aid2bvid");
 var network_1 = require("./utils/network");
 var video_1 = require("./apis/video");
 var API = video_1.VideoData;
+/**
+ * 视频相关
+ */
 var Video = /** @class */ (function () {
     /**
      * param bvid(int)              Bvid(可选)
