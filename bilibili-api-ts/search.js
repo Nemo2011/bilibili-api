@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.get_hot_search_keywords = exports.get_default_search_keyword = exports.web_search_by_type = exports.web_search = exports.SearchObjectType = void 0;
+exports.get_suggest_keywords = exports.get_hot_search_keywords = exports.get_default_search_keyword = exports.search_by_type = exports.search = exports.SearchObjectType = void 0;
 var search_1 = require("./apis/search");
 var Credential_1 = require("./models/Credential");
 var network_1 = require("./utils/network");
@@ -77,7 +77,7 @@ var SearchObjectType;
  *
  * @returns {Object} 调用 API 返回的结果
  */
-function web_search(_a) {
+function search(_a) {
     var keyword = _a.keyword, _b = _a.page, page = _b === void 0 ? 1 : _b;
     return __awaiter(this, void 0, void 0, function () {
         var api, params;
@@ -99,7 +99,7 @@ function web_search(_a) {
         });
     });
 }
-exports.web_search = web_search;
+exports.search = search;
 /**
  * 根据指定类型搜索
  *
@@ -111,7 +111,7 @@ exports.web_search = web_search;
  *
  * @returns {Object} 调用 API 返回的结果
  */
-function web_search_by_type(_a) {
+function search_by_type(_a) {
     var keyword = _a.keyword, search_type = _a.search_type, _b = _a.page, page = _b === void 0 ? 1 : _b;
     return __awaiter(this, void 0, void 0, function () {
         var api, params;
@@ -134,7 +134,7 @@ function web_search_by_type(_a) {
         });
     });
 }
-exports.web_search_by_type = web_search_by_type;
+exports.search_by_type = search_by_type;
 /**
  * 获取默认搜索内容
  *
@@ -185,3 +185,39 @@ function get_hot_search_keywords(_a) {
     });
 }
 exports.get_hot_search_keywords = get_hot_search_keywords;
+/**
+ * 通过一些文字输入获取搜索建议。类似搜索词的联想。
+ */
+function get_suggest_keywords(_a) {
+    var keyword = _a.keyword;
+    return __awaiter(this, void 0, void 0, function () {
+        var api, sess, params, data, keywords, key;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    api = API.search.suggest;
+                    return [4 /*yield*/, (0, network_1.get_session)({
+                            credential: new Credential_1.Credential({})
+                        })];
+                case 1:
+                    sess = _b.sent();
+                    params = {
+                        "term": keyword
+                    };
+                    return [4 /*yield*/, sess.request({
+                            method: "GET",
+                            url: api.url,
+                            params: params
+                        })];
+                case 2:
+                    data = ((_b.sent())['data']);
+                    keywords = [];
+                    for (key in data) {
+                        keywords.push(data[key]['term']);
+                    }
+                    return [2 /*return*/, keywords];
+            }
+        });
+    });
+}
+exports.get_suggest_keywords = get_suggest_keywords;
