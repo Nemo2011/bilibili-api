@@ -46,3 +46,13 @@
 获取热搜
 
 **Returns:** 调用 API 返回的结果
+
+## _async_ function get_suggest_keywords()
+
+| name | type | description |
+| - | - | - |
+| keyword | string | 搜索关键词 |
+
+通过一些文字输入获取搜索建议。类似搜索词的联想。
+
+**Returns:** list[str]: 关键词列表
