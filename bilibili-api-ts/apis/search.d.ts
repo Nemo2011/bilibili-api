@@ -33,5 +33,11 @@ export declare const SearchData: {
             verify: boolean;
             comment: string;
         };
+        suggest: {
+            url: string;
+            method: string;
+            verify: boolean;
+            comment: string;
+        };
     };
 };

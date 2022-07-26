@@ -39,7 +39,7 @@ export enum SearchObjectType {
  * 
  * @returns {Object} 调用 API 返回的结果
  */
-export async function web_search({ keyword, page = 1 }: { keyword: string, page?: number }) {
+export async function search({ keyword, page = 1 }: { keyword: string, page?: number }) {
     var api = API.search.web_search;
     var params = {
         "keyword": keyword,
@@ -65,7 +65,7 @@ export async function web_search({ keyword, page = 1 }: { keyword: string, page?
  * 
  * @returns {Object} 调用 API 返回的结果
  */
-export async function web_search_by_type({ keyword, search_type, page = 1 }: { keyword: string, search_type: SearchObjectType | string, page?: number }) {
+export async function search_by_type({ keyword, search_type, page = 1 }: { keyword: string, search_type: SearchObjectType | string, page?: number }) {
     var api = API.search.web_search_by_type;
     var params = {
         "keyword": keyword,
@@ -110,4 +110,29 @@ export async function get_hot_search_keywords({}) {
             url: api.url
         }))['data']
     )
+}
+
+/**
+ * 通过一些文字输入获取搜索建议。类似搜索词的联想。
+ */
+export async function get_suggest_keywords({keyword}: {keyword: string}) {
+    var api = API.search.suggest;
+    var sess = await get_session({
+        credential: new Credential({})
+    });
+    var params = {
+        "term": keyword
+    }
+    var data = ((
+        await sess.request({
+            method: "GET", 
+            url: api.url, 
+            params: params
+        })
+    )['data'])
+    var keywords = []
+    for(let key in data){
+        keywords.push(data[key]['term'])
+    }
+    return keywords;
 }

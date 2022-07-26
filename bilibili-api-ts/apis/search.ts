@@ -32,6 +32,12 @@ export const SearchData = {
       "method": "GET", 
       "verify": false, 
       "comment": "获取热搜"
+    }, 
+    "suggest": {
+      "url": "https://s.search.bilibili.com/main/suggest", 
+      "method": "GET", 
+      "verify": false, 
+      "comment": "获取搜索建议"
     }
   }
 }

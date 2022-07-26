@@ -33,7 +33,7 @@ class SearchObjectType(Enum):
     USER = "bili_user"
 
 
-async def web_search(keyword: str, page: int = 1):
+async def search(keyword: str, page: int = 1):
     """
     只指定关键字在 web 进行搜索，返回未经处理的字典
 
@@ -49,7 +49,7 @@ async def web_search(keyword: str, page: int = 1):
     return await request("GET", url=api["url"], params=params)
 
 
-async def web_search_by_type(
+async def search_by_type(
     keyword: str, search_type: SearchObjectType, page: int = 1
 ):
     """
@@ -87,4 +87,25 @@ async def get_hot_search_keywords():
     api = API['search']['hot_search_keywords']
     sess = get_session()
     return json.loads((await sess.request("GET", api['url'])).text)['cost']
-    
+
+async def get_suggest_keywords(keyword: str):
+    """
+    通过一些文字输入获取搜索建议。类似搜索词的联想。
+
+    Args:
+        keyword(string): 搜索关键词
+
+    Returns:
+        List[string]: 关键词列表
+    """
+    keywords = []
+    sess = get_session()
+    api = API['search']['suggest']
+    params = {
+        "term": keyword
+    }
+    data = json.loads((await sess.request("GET", api['url'], params=params)).text)
+    keys = data.keys()
+    for key in keys:
+        keywords.append(data[key]['value'])
+    return keywords

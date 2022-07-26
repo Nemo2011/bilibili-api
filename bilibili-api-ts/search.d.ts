@@ -33,7 +33,7 @@ export declare enum SearchObjectType {
  *
  * @returns {Object} 调用 API 返回的结果
  */
-export declare function web_search({ keyword, page }: {
+export declare function search({ keyword, page }: {
     keyword: string;
     page?: number;
 }): Promise<any>;
@@ -48,7 +48,7 @@ export declare function web_search({ keyword, page }: {
  *
  * @returns {Object} 调用 API 返回的结果
  */
-export declare function web_search_by_type({ keyword, search_type, page }: {
+export declare function search_by_type({ keyword, search_type, page }: {
     keyword: string;
     search_type: SearchObjectType | string;
     page?: number;
@@ -65,3 +65,9 @@ export declare function get_default_search_keyword({}: {}): Promise<any>;
  * @returns {Object} 调用 API 返回的结果
  */
 export declare function get_hot_search_keywords({}: {}): Promise<any>;
+/**
+ * 通过一些文字输入获取搜索建议。类似搜索词的联想。
+ */
+export declare function get_suggest_keywords({ keyword }: {
+    keyword: string;
+}): Promise<any[]>;
