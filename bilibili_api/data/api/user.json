@@ -125,6 +125,15 @@
       },
       "comment": "获取用户关注列表（不是自己只能访问前 5 页）"
     },
+    "all_followings": {
+      "url": "https://account.bilibili.com/api/member/getCardByMid", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "mid": "int: uid"
+      },
+      "comment": "获取用户所有关注（需要用户公开信息）"
+    },
     "followers": {
       "url": "https://api.bilibili.com/x/relation/followers",
       "method": "GET",
