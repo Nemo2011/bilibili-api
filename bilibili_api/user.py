@@ -12,7 +12,7 @@ from.exceptions import ResponseCodeException
 
 from .utils.sync import sync
 
-from .utils.network_httpx import request
+from .utils.network_httpx import get_session, request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
 from typing import List
@@ -374,6 +374,27 @@ class User:
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
+
+    async def get_all_followings(self):
+        """
+        获取所有的关注列表。（如果用户设置保密会没有任何数据）
+
+        Returns:
+            list: 关注列表
+        """
+        api = API['info']['all_followings']
+        params = {
+            "mid": self.uid
+        }
+        sess = get_session()
+        data = json.loads(
+            (await sess.get(
+                url=api['url'], 
+                params=params, 
+                cookies=self.credential.get_cookies()
+            )).text
+        )
+        return data['card']['attentions']
 
     async def get_followers(self, pn: int = 1, desc: bool = True):
         """
