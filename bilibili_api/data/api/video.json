@@ -5,7 +5,8 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "aid": "int: av 号"
+        "aid": "int: av 号",
+        "bvid": "string: BV 号"
       },
       "comment": "视频数据"
     },
@@ -14,7 +15,8 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "aid": "int: av 号"
+        "aid": "int: av 号",
+        "bvid": "string: BV 号"
       },
       "comment": "视频详细信息"
     },
@@ -23,16 +25,18 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "aid": "int: av 号"
+        "aid": "int: av 号",
+        "bvid": "string: BV 号"
       },
       "comment": "视频标签信息"
     },
     "chargers": {
-      "url": "https://api.bilibili.com/x/web-interface/elec/show", 
+      "url": "https://api.bilibili.com/x/web-interface/elec/show",
       "method": "GET",
       "verify": false,
       "params": {
         "aid": "int: av 号",
+        "bvid": "string: BV 号",
         "mid": "int: 用户 UID"
       },
       "comment": "视频充电信息"
@@ -42,7 +46,8 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "aid": "int: av 号"
+        "aid": "int: av 号",
+        "bvid": "string: BV 号"
       },
       "comment": "分 P 列表"
     },
@@ -55,7 +60,7 @@
         "cid": "int: 分 P 编号",
         "qn": "int: 视频质量编号，最高 127",
         "otype": "const str: json",
-        "fnval": "const int: 4048", 
+        "fnval": "const int: 4048",
         "platform": "int: 平台"
       },
       "comment": "视频下载的信息，下载链接需要提供 headers 伪装浏览器请求（Referer 和 User-Agent）"
@@ -65,7 +70,8 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "aid": "int: av 号"
+        "aid": "int: av 号",
+        "bvid": "string: BV 号"
       },
       "comment": "获取关联视频"
     },
@@ -74,7 +80,8 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "aid": "int: av 号"
+        "aid": "int: av 号",
+        "bvid": "string: BV 号"
       },
       "comment": "是否已点赞"
     },
@@ -83,9 +90,10 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "aid": "int: av 号"
+        "aid": "int: av 号",
+        "bvid": "string: BV 号"
       },
-      "comment": "是否已投币 "
+      "comment": "是否已投币"
     },
     "has_favoured": {
       "url": "https://api.bilibili.com/x/v2/fav/video/favoured",
@@ -106,14 +114,14 @@
         "type": "const int: 2"
       },
       "comment": "获取收藏夹列表信息，用于收藏操作"
-    }, 
+    },
     "pbp": {
-      "url": "https://bvc.bilivideo.com/pbp/data", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://bvc.bilivideo.com/pbp/data",
+      "method": "GET",
+      "verify": false,
       "params": {
-        "cid": "int: 分 P 编号", 
-        "bvid": "string: bvid", 
+        "cid": "int: 分 P 编号",
+        "bvid": "string: BV 号",
         "aid": "int: av 号"
       }
     }
@@ -125,6 +133,7 @@
       "verify": true,
       "data": {
         "aid": "int: av 号",
+        "bvid": "string: BV 号",
         "like": "int: 1 是点赞，2 是取消点赞"
       },
       "comment": "给视频点赞/取消点赞 "
@@ -135,6 +144,7 @@
       "verify": true,
       "data": {
         "aid": "int: av 号",
+        "bvid": "string: BV 号",
         "multiply": "int: 几个币",
         "select_like": "int bool: 是否同时点赞"
       },
@@ -318,25 +328,25 @@
         "state": "int: 1 删除 2 保护 3 取消保护"
       },
       "comment": "编辑弹幕"
-    }, 
+    },
     "snapshot": {
       "url": "http://api.bilibili.com/x/v2/dm/ajax",
-      "method": "GET", 
-      "verify": false, 
+      "method": "GET",
+      "verify": false,
       "params": {
-        "aid": "int: av 号"
-      }, 
+        "aid": "int or string: av 号或 BV 号"
+      },
       "comment": "获取弹幕快照"
-    }, 
+    },
     "recall": {
-      "url": "http://api.bilibili.com/x/dm/recall", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "http://api.bilibili.com/x/dm/recall",
+      "method": "GET",
+      "verify": false,
       "data": {
-        "dmid": "int: 弹幕 ID", 
-        "cid":"int: 分 P 编号", 
+        "dmid": "int: 弹幕 ID",
+        "cid":"int: 分 P 编号",
         "csrf": "cookies: bili_jct"
-      }, 
+      },
       "comment": "撤回弹幕"
     }
   }
