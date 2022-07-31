@@ -137,6 +137,16 @@
       },
       "comment": "获取用户粉丝列表（不是自己只能访问前 5 页，是自己也不能获取全部的样子）"
     },
+    "top_followers": {
+        "url": "https://member.bilibili.com/x/web/data/fan",
+        "method": "GET",
+        "verify": false,
+        "params": {
+            "t": "int: since when in timestamp(msec)",
+            "csrf,csrf_token": "要给两个"
+        },
+        "comment": "粉丝排行"
+    },
     "overview": {
       "url": "https://api.bilibili.com/x/space/navnum",
       "method": "GET",
