@@ -271,6 +271,18 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+
+#### _async_ def top_followers()
+
+| name | type           | description                     |
+| ---- | -------------- | ------------------------------- |
+| since   | int, optional  | 开始查找的时间戳， 毫秒为单位|
+
+粉丝排行
+
+**Returns:** 调用接口返回的内容。
+
+
 #### _async_ def get_overview_stat()
 
 获取用户的简易订阅和投稿信息。

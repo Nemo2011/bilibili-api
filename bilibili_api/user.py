@@ -419,6 +419,23 @@ class User:
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
+    async def top_followers(self, since=None):
+        """
+        获取用户粉丝排行
+        Args:
+            since   (int, optional) : 开始时间(msec)
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["top_followers"]
+        params = {}
+        if since:
+            params['t'] = int(since)
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
+
     async def get_overview_stat(self):
         """
         获取用户的简易订阅和投稿信息。
@@ -643,13 +660,13 @@ class ChannelSeries:
             look_type = "seasons"
         else:
             look_type = "series"
-        if meta == None:
+        if meta is None:
             channel_list = sync(self.owner.get_channel_list())
             for channel in channel_list["items_lists"][look_type + "_list"]:
                 type_id = channel["meta"]["season_id" if self.is_new else "series_id"]
                 if type_id == self.id_:
                     self.meta = channel["meta"]
-            if self.meta == None:
+            if self.meta is None:
                 raise ValueError("未找到频道信息。")
         else:
             self.meta = meta
@@ -868,10 +885,10 @@ async def delete_viewed_videos_from_toview(credential: None):
     return await request("POST", api["url"], credential=credential, data=datas)
 
 
-async def check_nickname(nick_name: str=None):
+async def check_nickname(nick_name: str = None):
     """
     检验昵称是否可用
-    
+
     Args:
         nick_name(str): 昵称
 
