@@ -14,9 +14,7 @@ from bilibili_api import login
 $ sudo apt-get install python3-tk
 ```
 
----
->如果您的系统是 `MacOS`，请务必保证您的 `python` 是官网下载的 `python`，千万别用 `xcode-select` 中的 `python`! 作者测过，可能 `tcl/tk` 版本会不支持，然后就黑屏了！
->当然如果您没出现错误，也不用硬着头皮重装。这里仅供参考。
+如果想将登录功能嵌入你自己的应用，可以参考[这里](/modules/login_func.md)。
 ---
 
 ## def get_contries_list()
