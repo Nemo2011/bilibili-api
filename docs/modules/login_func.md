@@ -10,6 +10,20 @@ from bilibili_api import login_func
 
 ---
 
+## const list countries_list
+
+国际地区代码列表
+
+下面是 `津巴布韦` 对应的字典
+
+``` python
+{
+    'name': '津巴布韦', # 就像 `中国大陆`
+    'id': 98, # 貌似是 B 站自己的 id
+    'code': 263 # 对应的国际地区代码，就像中国大陆的 +86
+}
+```
+
 ## 1. 二维码登录
 
 二维码登录要展示二维码，并实时监视登录状态。
