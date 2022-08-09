@@ -32,7 +32,7 @@ from bilibili_api import login_func
 
 ### def check_qrcode_events()
 
-｜ name | type | description |
+| name | type | description |
 | - | - | - |
 | login_key | string | 登录密钥（get_qrcode 的返回值第二项) |
 
