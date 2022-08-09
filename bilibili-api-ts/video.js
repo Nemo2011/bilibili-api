@@ -571,7 +571,7 @@ var Video = /** @class */ (function () {
      *
      * param status (bool, optional): 点赞状态。Defaults to True.
      *
-     * @returns {Object} 调用 API 返回的结果。
+     * @returns {null} 调用 API 返回的结果。
      */
     Video.prototype.like = function (_a) {
         var status = _a.status;
@@ -603,6 +603,15 @@ var Video = /** @class */ (function () {
             });
         });
     };
+    /**
+     * 投币
+     *
+     * param num(number)  : 投币数量，1 ~ 2, default to 1
+     *
+     * param like(boolean): 是否同时点赞，default to false
+     *
+     * @returns {null} 调用 API 返回的结果。
+     */
     Video.prototype.pay_coin = function (_a) {
         var _b = _a.num, num = _b === void 0 ? 1 : _b, _c = _a.like, like = _c === void 0 ? false : _c;
         return __awaiter(this, void 0, void 0, function () {
@@ -617,7 +626,6 @@ var Video = /** @class */ (function () {
                         if (num !== 1 && num !== 2) {
                             throw "投币数量只能是 1 ~ 2 个。";
                         }
-                        console.log(num);
                         api = API.operate.coin;
                         datas = {
                             "aid": this.get_aid({}),
