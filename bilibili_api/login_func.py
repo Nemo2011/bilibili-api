@@ -102,3 +102,5 @@ def done_geetest():
         return True
     else:
         return False
+
+countries_list = login.get_countries_list()
