@@ -12,7 +12,8 @@ from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
 from ..cheese import CheeseList, CheeseVideo
 from ..favorite_list import VideoFavoriteList
-from ..user import User
+from ..live import LiveRoom
+from ..user import User, ChannelSeriesType, ChannelSeries
 from .Credential import Credential
 from .sync import sync
 from ..user import get_self_info
@@ -35,6 +36,8 @@ class ResourceType(Enum):
     + AUDIO_LIST: 歌单
     + ARTICLE: 专栏
     + USER: 用户
+    + LIVE: 直播间
+    + CHANNEL_SERIES: 合集与列表
     """
 
     VIDEO = "video"
@@ -46,6 +49,8 @@ class ResourceType(Enum):
     AUDIO_LIST = "audio_list"
     ARTICLE = "article"
     USER = "user"
+    LIVE = "live"
+    CHANNEL_SERIES = "channel_series"
 
 
 async def parse_link(url, credential: Credential = None):
@@ -71,6 +76,11 @@ async def parse_link(url, credential: Credential = None):
     """
     try:
         url = await get_real_url(url)
+
+        channel = parse_season_series(url)
+        if channel != -1:
+            return (channel, ResourceType.CHANNEL_SERIES)
+
         url = url.split("?")[0]
         if url == "https://space.bilibili.com":
             print(get_self_info(credential))
@@ -102,6 +112,9 @@ async def parse_link(url, credential: Credential = None):
         user = parse_user(url)
         if not user == -1:
             obj = (user, ResourceType.USER)
+        live = parse_live(url)
+        if not live == -1:
+            obj = (live, ResourceType.LIVE)
 
         if obj == None:
             return -1
@@ -234,3 +247,37 @@ def parse_user(url):
         return User(uid=uid)
     else:
         return -1
+
+
+def parse_live(url):
+    if url[:26] == "https://live.bilibili.com/":
+        last_part = int(url[26:].replace("/", ""))
+        return LiveRoom(room_display_id=last_part)
+    else:
+        return -1
+
+
+def parse_season_series(url):
+    if url[:27] == "https://space.bilibili.com/":
+        uid = 0
+        for i in url.split("/"):
+            try:
+                uid = int(i)
+            except:
+                pass
+            if "collectiondetail" in i:
+                sid = int(i[21:])
+                return ChannelSeries(uid, ChannelSeriesType.SEASON, id_=sid)
+            if "seriesdetail" in i:
+                sid = int(i[17:])
+                return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+    elif url[:40] == 'https://www.bilibili.com/medialist/play/':
+        for i in url.split("/"):
+            if "?" in i:
+                uid = int(i.split("?")[0])
+                params = i.split("?")[1].split("&")
+                for param in params:
+                    if "business_id" in param:
+                        sid = int(param[12:])
+                        return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+    return -1
