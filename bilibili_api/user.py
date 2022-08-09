@@ -16,6 +16,7 @@ from .utils.network_httpx import get_session, request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
 from typing import List
+import httpx
 
 
 API = get_api("user")
@@ -661,7 +662,20 @@ class ChannelSeries:
         else:
             look_type = "series"
         if meta is None:
-            channel_list = sync(self.owner.get_channel_list())
+            credential = self.credential if self.credential else Credential()
+            api = API["info"]["channel_list"]
+            param = {"mid": self.uid, "page_num": 1, "page_size": 1}
+            res = httpx.request(
+                "GET", url=api["url"], params=param, cookies=credential.get_cookies()
+            )
+            items = json.loads(res.text)['data']["items_lists"]["page"]["total"]
+            time.sleep(0.5)
+            if items == 0:
+                items = 1
+            param["page_size"] = items
+            channel_list = json.loads(httpx.request(
+                "GET", url=api["url"], params=param, cookies=credential.get_cookies()
+            ).text)['data']
             for channel in channel_list["items_lists"][look_type + "_list"]:
                 type_id = channel["meta"]["season_id" if self.is_new else "series_id"]
                 if type_id == self.id_:

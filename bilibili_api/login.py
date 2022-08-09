@@ -164,6 +164,8 @@ def encrypt(_hash, key, password):
 
 
 def get_geetest():
+    if get_result() != -1:
+        return get_result()
     thread = start_server()
     if settings.geetest_auto_open:
         webbrowser.open(thread.url)

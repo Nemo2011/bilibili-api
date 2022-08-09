@@ -252,9 +252,4 @@ def get_result():
             "seccode": copy.copy(seccode),
             "token": copy.copy(key),
         }
-        gt = None
-        challenge = None
-        validate = None
-        seccode = None
-        key = None
         return dct

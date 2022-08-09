@@ -151,6 +151,27 @@ BV 号转 AV 号。
 
 **Returns:** 目标链接（如果不是有效的链接会报错）
 
+---
+
+## class ResourceType()
+
+### Extends: enum.Enum
+
+链接类型类。
+
++ VIDEO: 视频
++ BANGUMI: 番剧
++ EPISODE: 番剧剧集
++ FAVORITE_LIST: 视频收藏夹
++ CHEESE: 课程
++ CHEESE_VIDEO: 课程视频
++ AUDIO: 音频
++ AUDIO_LIST: 歌单
++ ARTICLE: 专栏
++ USER: 用户
++ LIVE: 直播间
++ CHANNEL_SERIES: 合集与列表
+
 ## <span id="parse">_async_ def parse_link()</span>
 
 | name | type | description |
@@ -174,12 +195,14 @@ BV 号转 AV 号。
 - 歌单
 - 专栏
 - 用户
+- 直播间
+- 合集与列表
 
 [查看示例](https://nemo2011.github.io/bilibili-api/#/parse_link)
 
-**Returns:** `Union[tuple, int]`:如果成功返回元组，失败返回 `-1`。
+**Returns:** `Union[tuple[Any, ResourceType], int]`:如果成功返回元组，失败返回 `-1`。
 
-**元组第一项是对象，第二项是类型**
+**元组第一项是资源对象，第二项是资源类型**
 
 ---
 
