@@ -120,6 +120,8 @@ $ sudo apt-get install python3-tk
 
 **Returns:** Credential 凭据类
 
+**如果返回错误：验证码错误，请尝试再次完成极验验证码（极验验证码结果一个只能用一次）**
+
 ---
 
 ## <span id="check"> class Check </span>
