@@ -42,41 +42,18 @@ $ npm install bilibili-api-ts
 
 接下来让我们获取视频播放量等信息：
 
-``` typescript
-// TS
-import { Video } from "bilibili-api-ts/video";
-
-// 实例化 Video 类
-var v = new Video({
-    bvid: "BV1uv411q7Mv"
-});
-// get_info 是 async 函数
-v.get_info({}).then(
-    function (value) {
-        // value 即为结果
-        console.log(value);
-    }
-)
-```
-
 ``` javascript
-// JS
 const video = require("bilibili-api-ts/video.js");
 
 // 实例化 Video 类
 var v = new video.Video({
     bvid: "BV1uv411q7Mv"
 });
-// get_info 是 async 函数
-v.get_info({}).then(
-    function (value) {
-        // value 即为结果
-        console.log(value);
-    }
-)
-```
 
->鉴于 js 与 ts 没什么大区别，所以后面所有的代码示例会只保留 `typescript` 代码。
+(async function(){
+    console.log(await v.get_info());
+})();
+```
 
 输出（已格式化，已省略部分）：
 
@@ -96,15 +73,43 @@ v.get_info({}).then(
 }
 ```
 
-# FA♂Q
+---
 
+如何给这个视频点赞？我们需要登录自己的账号。
+
+这里设计是传入一个 Credential 类，获取所需的信息参照：[获取 Credential 类所需信息][get-credential]
+
+下面的代码将会给视频点赞
+
+```javascript
+const bilibili = require("./bilibili-api-ts");
+const video = require("./bilibili-api-ts/video.js");
+
+// 实例化 Video 类
+var v = new video.Video({
+    bvid: "BVxxxxxxxxxx", 
+    credential: new  bilibili.Credential({
+        sessdata: "xxx", 
+        bili_jct: "xxx", 
+        dedeuserid: "xxx"
+    })
+});
+
+(async function(){
+    await v.like({
+        status: true
+    });
+})();
+```
+
+# FA♂Q
 
 **Q: 关于 API 调用的正确姿势是什么？**
 
-A: API 调用方式请看下面的举例：
+A: API 调用传参方式请看下面的举例：
 
 ```typescript
-// 新手错误 1: 传参
+// 错误 1: 传参
 // 设 video.get_info 函数的参数是一个字典，字典的 bvid 项为稿件 BVID。
 // 函数定义：get_info({bvid}: {bvid: string})
 /** 
@@ -125,7 +130,7 @@ video.get_info({"BV1uv411q7Mv"}) // 没有标明键(bvid)
 // 自己看 IntelliCode 的提示吧。
 video.get_info("BV1uv411q7Mv") // 传入字典啊！
 // ----------------------------------------------------------
-// 新手错误 2: 每个函数都得传参
+// 错误 2: 每个函数都得传参
 // 设 video.Video.prototype.get_aid 函数操作不用传任何参数：
 // 函数定义：get_aid({}){...}，仍然加一个空字典当参数
 /*
@@ -140,11 +145,12 @@ video.get_aid({})
 // 不会错
 video.get_aid({bvid: "我是个 SB"})
 
-// 貌似只有 TS 报错
+// 建议不要这么做
 video.get_aid()
 ```
 
 >如果有看不懂的地方，可以自己打一下示例代码(最好加上 IntelliCode 或在带实时提示的 Node REPL 下)，这样子自然而然就懂了。
+每一个函数请务必都传一下放着参数的字典。
 
 **Q: 为什么会提示 412 Precondition Failed ？**
 
@@ -175,3 +181,7 @@ A: 请先 clone 本仓库一份，然后从 main 分支新建一个分支，在�
 **Q: 稳定性怎么样？**
 
 A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更，可能会马上失效。因此请始终保证是最新版本。如果发现问题可以提 [Issues][issues-new]。
+
+---
+
+[get-credential](https://nemo2011.github.io/bilibili-api/#/ts/get-credential)
