@@ -4,9 +4,6 @@
 
 # bilibili-api
 
-### Language
-## Python | [JS&TS](https://github.com/nemo2011/bilibili-api/blob/main/bilibili-api-ts/README.md)
-
 [![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
@@ -16,6 +13,8 @@
 </div>
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])([Gitee][docs-gitee])
+
+Javascript & Typescript: [Readme](https://github.com/nemo2011/bilibili-api/blob/main/bilibili-api-ts/README.md)
 
 原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
