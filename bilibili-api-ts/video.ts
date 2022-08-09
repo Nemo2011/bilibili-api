@@ -431,7 +431,7 @@ export class Video {
      * 
      * param status (bool, optional): 点赞状态。Defaults to True.
      * 
-     * @returns {Object} 调用 API 返回的结果。
+     * @returns {null} 调用 API 返回的结果。
      */
     async like({status}: {status: boolean}) {
         if (status === undefined || status == null) {
@@ -454,6 +454,15 @@ export class Video {
         })
     }
 
+    /**
+     * 投币
+     * 
+     * param num(number)  : 投币数量，1 ~ 2, default to 1
+     * 
+     * param like(boolean): 是否同时点赞，default to false
+     * 
+     * @returns {null} 调用 API 返回的结果。
+     */
     async pay_coin({num=1, like=false}: {num: number, like: boolean}) {
         if (like === undefined || like === null) like = false;
 

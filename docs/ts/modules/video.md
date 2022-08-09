@@ -127,3 +127,26 @@ import {} from "bilibili-api-ts/video";
 | cid | int | 分 P 编码 |
 
 获取高能进度条
+
+**Returns:** Object: 调用 API 返回的结果
+
+#### _async_ function like()
+
+| name | type | description |
+| - | - | - |
+| status | boolean | 点赞状态。Defaults to True. |
+
+点赞视频。
+
+**Returns:** null: 调用 API 返回的结果。
+
+#### _async_ function pay_coin()
+
+| name | type | description |
+| - | - | - |
+| num | number | 投币数量（1 ~ 2), defaults to 1 |
+| like | boolean | 是否同时点赞, defaults to false |
+
+投币
+
+**Returns:** null: 调用 API 返回的结果。
