@@ -53,7 +53,7 @@ function getAxiosInstance(_a) {
                 cookieJar.setCookieSync("SESSDATA=".concat(credential.sessdata, "; Domain=.bilibili.com"), 'https://www.bilibili.com');
             }
             if (credential.bili_jct !== null) {
-                cookieJar.setCookieSync("bili_jct=".concat(credential.bili_jct, " Domain=.bilibili.com"), 'https://www.bilibili.com');
+                cookieJar.setCookieSync("bili_jct=".concat(credential.bili_jct, "; Domain=.bilibili.com"), 'https://www.bilibili.com');
             }
             if (credential.dedeuserid !== null) {
                 cookieJar.setCookieSync("DedeUserID=".concat(credential.dedeuserid, "; Domain=.bilibili.com"), 'https://www.bilibili.com');
@@ -186,7 +186,7 @@ function request(_a) {
                         if (msg === undefined) {
                             msg = "接口未返回错误信息";
                         }
-                        throw code + msg;
+                        throw code + ": " + msg;
                     }
                     real_data = resp_data['data'];
                     if (real_data === undefined) {

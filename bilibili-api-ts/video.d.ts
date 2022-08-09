@@ -162,4 +162,18 @@ export declare class Video {
         page_index?: number | null;
         cid?: number | null;
     }): Promise<any>;
+    /**
+     * 点赞视频。
+     *
+     * param status (bool, optional): 点赞状态。Defaults to True.
+     *
+     * @returns {Object} 调用 API 返回的结果。
+     */
+    like({ status }: {
+        status: boolean;
+    }): Promise<any>;
+    pay_coin({ num, like }: {
+        num: number;
+        like: boolean;
+    }): Promise<any>;
 }

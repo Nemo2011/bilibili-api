@@ -566,6 +566,78 @@ var Video = /** @class */ (function () {
             });
         });
     };
+    /**
+     * 点赞视频。
+     *
+     * param status (bool, optional): 点赞状态。Defaults to True.
+     *
+     * @returns {Object} 调用 API 返回的结果。
+     */
+    Video.prototype.like = function (_a) {
+        var status = _a.status;
+        return __awaiter(this, void 0, void 0, function () {
+            var api, datas;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (status === undefined || status == null) {
+                            status = true;
+                        }
+                        this.credential.raise_for_no_sessdata({});
+                        this.credential.raise_for_no_bili_jct({});
+                        api = API.operate.like;
+                        datas = {
+                            aid: this.get_aid({}),
+                            like: status ? 1 : 2,
+                            csrf: this.credential.bili_jct,
+                            csrf_token: this.credential.bili_jct
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "POST",
+                                url: api.url,
+                                params: datas,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
+    Video.prototype.pay_coin = function (_a) {
+        var _b = _a.num, num = _b === void 0 ? 1 : _b, _c = _a.like, like = _c === void 0 ? false : _c;
+        return __awaiter(this, void 0, void 0, function () {
+            var api, datas;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        if (like === undefined || like === null)
+                            like = false;
+                        this.credential.raise_for_no_sessdata({});
+                        this.credential.raise_for_no_bili_jct({});
+                        if (num !== 1 && num !== 2) {
+                            throw "投币数量只能是 1 ~ 2 个。";
+                        }
+                        console.log(num);
+                        api = API.operate.coin;
+                        datas = {
+                            "aid": this.get_aid({}),
+                            "bvid": this.get_bvid({}),
+                            "multiply": num,
+                            "like": like ? 1 : 0,
+                            "csrf": this.credential.bili_jct,
+                            "csrf_token": this.credential.bili_jct
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "POST",
+                                url: api.url,
+                                params: datas,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, _d.sent()];
+                }
+            });
+        });
+    };
     return Video;
 }());
 exports.Video = Video;
