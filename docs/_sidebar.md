@@ -29,6 +29,7 @@
     + [homepage.py - 主页](/modules/homepage.md)
     + [rank.py - 排行榜](/modules/rank.md)
     + [login.py - 登录](/modules/login.md)
+    + [login_func.py - 登录函数](/modules/login_func.md)
     + [live.py - 直播](/modules/live.md)
     + [dynamic.py - 动态](/modules/dynamic.md)
     + [comment.py - 评论](/modules/comment.md)
