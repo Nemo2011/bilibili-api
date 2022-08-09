@@ -24,12 +24,9 @@ from .utils.sync import sync
 from .utils.network_httpx import get_session, request, to_form_urlencoded
 from .utils.captcha import start_server, close_server, get_result
 from . import settings
-from PIL.ImageTk import PhotoImage
 import qrcode
 import os
 import tempfile
-import tkinter
-import tkinter.font
 import time
 import base64
 from Crypto.PublicKey import RSA
@@ -73,6 +70,9 @@ def login_with_qrcode(root=None):
     global login_key, qrcode_image
     global credential
     global id_
+    import tkinter
+    import tkinter.font
+    from PIL.ImageTk import PhotoImage
     if root == None:
         root = tkinter.Tk()
     root.title("扫码登录")
