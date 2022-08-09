@@ -4,6 +4,7 @@ import axios, { AxiosInstance } from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
 import { Credential } from '../models/Credential';
 import { Proxy } from '../models/Proxy';
+import { stringify } from 'querystring';
 
 const cookieJar = new CookieJar();
 
@@ -19,7 +20,7 @@ async function getAxiosInstance({credential=new Credential({}), proxy=null}: {cr
   }
   if (credential.bili_jct !== null) {
     cookieJar.setCookieSync(
-      `bili_jct=${credential.bili_jct} Domain=.bilibili.com`, 
+      `bili_jct=${credential.bili_jct}; Domain=.bilibili.com`, 
       'https://www.bilibili.com'
     );
   }
@@ -170,7 +171,7 @@ export async function request(
     if (msg === undefined) {
       msg = "接口未返回错误信息";
     }
-    throw code + msg;
+    throw code + ": " + msg;
   }
 
   var real_data = resp_data['data'];

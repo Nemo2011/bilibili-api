@@ -425,4 +425,58 @@ export class Video {
             params: params
         })).data
     }
+
+    /**
+     * 点赞视频。
+     * 
+     * param status (bool, optional): 点赞状态。Defaults to True.
+     * 
+     * @returns {Object} 调用 API 返回的结果。
+     */
+    async like({status}: {status: boolean}) {
+        if (status === undefined || status == null) {
+            status = true;
+        }
+        this.credential.raise_for_no_sessdata({});
+        this.credential.raise_for_no_bili_jct({});
+        var api = API.operate.like;
+        var datas = {
+            aid: this.get_aid({}), 
+            like: status ? 1 : 2, 
+            csrf: this.credential.bili_jct, 
+            csrf_token: this.credential.bili_jct
+        }
+        return await request({
+            method: "POST", 
+            url: api.url, 
+            params: datas,
+            credential: this.credential
+        })
+    }
+
+    async pay_coin({num=1, like=false}: {num: number, like: boolean}) {
+        if (like === undefined || like === null) like = false;
+
+        this.credential.raise_for_no_sessdata({});
+        this.credential.raise_for_no_bili_jct({});
+
+        if (num !== 1 && num !== 2) {
+            throw "投币数量只能是 1 ~ 2 个。";
+        }
+        var api = API.operate.coin;
+        var datas = {
+            "aid": this.get_aid({}),
+            "bvid": this.get_bvid({}),
+            "multiply": num,
+            "like": like ? 1 : 0,
+            "csrf": this.credential.bili_jct, 
+            "csrf_token": this.credential.bili_jct
+        }
+        return await request({
+            method: "POST", 
+            url: api.url,
+            params: datas, 
+            credential: this.credential
+        })
+    }
 }
