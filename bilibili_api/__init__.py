@@ -9,6 +9,7 @@ from .utils.sync import sync
 from .utils.network_httpx import get_session, set_session
 from .utils.parse_link import parse_link, ResourceType
 
+# UA 头 + Referer
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://bilibili.com"}
 
 # 如果系统为 Windows，则修改默认策略，以解决代理报错问题
