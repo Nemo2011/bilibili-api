@@ -16,32 +16,32 @@ if "windows" in platform.system().lower():
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 __all__ = [
-    "Credential",
-    "Danmaku",
-    "DmFontSize",
-    "DmMode",
+    # Constants
     "HEADERS",
-    "ResourceType",
-    "aid2bvid",
+    # Classes
+    "Credential",
+    "Danmaku", "DmFontSize", "DmMode",
+    # Utils
+    "aid2bvid", "bvid2aid",
+    "parse_link", "ResourceType",
+    "get_real_url",
+    # Requests
+    "get_session", "set_session",
+    # Modules
     "app",
     "article",
     "bangumi",
-    "bvid2aid",
     "channel",
     "cheese",
     "comment",
     "dynamic",
     "favorite_list",
-    "get_real_url",
-    "get_session",
     "homepage",
     "interactive_video",
     "live",
-    "login",
-    "parse_link",
+    "login",    
     "rank",
     "search",
-    "set_session",
     "settings",
     "sync",
     "user",

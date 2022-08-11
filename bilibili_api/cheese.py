@@ -133,6 +133,7 @@ class CheeseVideo:
         Returns:
             视频元数据
         """
+        return self.meta
 
     def get_cheese(self):
         """

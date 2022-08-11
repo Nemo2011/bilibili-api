@@ -17,6 +17,7 @@
       + [专栏](/examples/article.md)
       + [音频](/examples/audio.md)
       + [番剧](/examples/bangumi.md)
+      + [课程](/examples/cheese.md)
       + [弹幕文件](/examples/ass.md)
       + [收藏夹](/examples/favorite_list.md)
       + [手机 APP](/examples/app.md)
