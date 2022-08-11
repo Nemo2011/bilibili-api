@@ -118,12 +118,21 @@ class CheeseVideo:
             if v["id"] == epid:
                 self.aid = v["aid"]
                 self.cid = v["cid"]
+                self.meta = v
 
     def get_aid(self):
         return self.aid
 
     def get_cid(self):
         return self.cid
+
+    def get_meta(self):
+        """
+        获取课程元数据
+
+        Returns:
+            视频元数据
+        """
 
     def get_cheese(self):
         """
