@@ -98,6 +98,12 @@ ep_id(int): 单集 ep_id
 
 **Returns:** cid
 
+#### def get_meta()
+
+获取课程元数据
+
+**Returns:** 课程元数据
+
 #### def set_epid()
 
 | name | type | description |
