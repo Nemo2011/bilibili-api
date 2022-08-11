@@ -17,9 +17,10 @@
       + [专栏](/examples/article.md)
       + [音频](/examples/audio.md)
       + [番剧](/examples/bangumi.md)
-      + [收藏夹](/examples/favorite_list.md)
-      + [视频上传](/examples/video_uploader.md)
       + [弹幕文件](/examples/ass.md)
+      + [收藏夹](/examples/favorite_list.md)
+      + [手机 APP](/examples/app.md)
+      + [视频上传](/examples/video_uploader.md)
   + API 文档
     + [根模块](/modules/bilibili_api.md)
     + [video.py - 视频](/modules/video.md)
