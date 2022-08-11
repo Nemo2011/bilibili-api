@@ -1,12 +1,10 @@
 """
 bilibili_api.cheese
 
-注意：这里查看弹幕、发送弹幕、get_downlaod_url 无需 page_index 或 cid!
-
 有关 bilibili 课程的 api。
 
 注意，注意！课程中的视频和其他视频几乎没有任何相通的 API！
-不能将 CheeseVideo 换成 Video 类。
+不能将 CheeseVideo 换成 Video 类。(CheeseVideo 类保留了所有的通用的 API)
 
 获取下载链接需要使用 bilibili_api.cheese.get_download_url，video.get_download_url 不适用。
 还有，课程的 season_id 和 ep_id 不与番剧相通，井水不犯河水，请不要错用!
