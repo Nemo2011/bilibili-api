@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.User = exports.VideoOrder = void 0;
+exports.get_self_history = exports.get_self_info = exports.User = exports.VideoOrder = void 0;
 var Credential_1 = require("./models/Credential");
 var network_1 = require("./utils/network");
 var user_1 = require("./apis/user");
@@ -103,6 +103,30 @@ var User = /** @class */ (function () {
         });
     };
     /**
+     * 获取自己的信息。如果存在缓存则使用缓存。
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    User.prototype.__get_self_info = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        if (this.__self_info !== null)
+                            return [2 /*return*/, this.__self_info];
+                        _b = this;
+                        return [4 /*yield*/, get_self_info({
+                                credential: this.credential
+                            })];
+                    case 1:
+                        _b.__self_info = _c.sent();
+                        return [2 /*return*/, this.__self_info];
+                }
+            });
+        });
+    };
+    /**
      * 获取用户 uid
      *
      * @returns {number} 用户 uid
@@ -114,6 +138,149 @@ var User = /** @class */ (function () {
             });
         });
     };
+    /**
+     * 获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
+     *
+     * @returns {Object} 调用接口返回的内容。
+     */
+    User.prototype.get_relation_info = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        api = API.info.relation;
+                        params = {
+                            vmid: this.uid
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * 获取 UP 主数据信息（视频总播放量，文章总阅读量，总点赞数）
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    User.prototype.get_up_stat = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        this.credential.raise_for_no_bili_jct({});
+                        api = API.info.upstat;
+                        params = {
+                            mid: this.uid
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
+    User.prototype.get_live_info = function (_a) {
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        api = API.info.live;
+                        params = {
+                            mid: this.uid
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
     return User;
 }());
 exports.User = User;
+/**
+ * 获取自己的信息
+ *
+ * param credential(Credential): 凭据类
+ *
+ * @returns {Object} 调用 API 返回的结果
+ */
+function get_self_info(_a) {
+    var credential = _a.credential;
+    return __awaiter(this, void 0, void 0, function () {
+        var api;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    api = API.info.my_info;
+                    credential.raise_for_no_sessdata({});
+                    return [4 /*yield*/, (0, network_1.request)({
+                            method: "GET",
+                            url: api.url,
+                            credential: credential
+                        })];
+                case 1: return [2 /*return*/, _b.sent()];
+            }
+        });
+    });
+}
+exports.get_self_info = get_self_info;
+/**
+ * 获取用户浏览历史记录
+ *
+ * param page_num(number)      : 页码数
+ *
+ * param per_page_item(number) : 每页多少条历史记录
+ *
+ * param credential(Credential): Credential
+ *
+ * @returns {Object} 返回当前页的指定历史记录列表
+ */
+function get_self_history(_a) {
+    var page_num = _a.page_num, per_page_item = _a.per_page_item, credential = _a.credential;
+    return __awaiter(this, void 0, void 0, function () {
+        var api, params;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    if (page_num === null || page_num === undefined) {
+                        page_num = 1;
+                    }
+                    if (per_page_item === null || per_page_item === undefined) {
+                        per_page_item = 100;
+                    }
+                    credential.raise_for_no_sessdata({});
+                    api = API.info.history;
+                    params = {
+                        pn: page_num,
+                        ps: per_page_item
+                    };
+                    return [4 /*yield*/, (0, network_1.request)({
+                            method: "GET",
+                            url: api.url,
+                            params: params,
+                            credential: credential
+                        })];
+                case 1: return [2 /*return*/, _b.sent()];
+            }
+        });
+    });
+}
+exports.get_self_history = get_self_history;
