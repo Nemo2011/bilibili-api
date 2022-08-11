@@ -59,6 +59,11 @@ export declare class User {
      * @returns {Object} 调用 API 返回的结果
      */
     get_up_stat({}: {}): Promise<any>;
+    /**
+     * 获取用户直播间信息。
+     *
+     * @returns
+     */
     get_live_info({}: {}): Promise<any>;
 }
 /**

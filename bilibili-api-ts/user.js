@@ -191,6 +191,11 @@ var User = /** @class */ (function () {
             });
         });
     };
+    /**
+     * 获取用户直播间信息。
+     *
+     * @returns
+     */
     User.prototype.get_live_info = function (_a) {
         return __awaiter(this, void 0, void 0, function () {
             var api, params;
