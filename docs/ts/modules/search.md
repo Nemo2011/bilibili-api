@@ -1,5 +1,9 @@
 # Module search.ts(search.js)
 
+``` typescript
+import {} from "bilibili-api-ts/search"
+```
+
 ## enum SearchObjectType
 
 搜索对象枚举。

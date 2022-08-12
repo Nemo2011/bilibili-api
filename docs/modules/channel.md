@@ -6,7 +6,7 @@ from bilibili_api import channel
 
 频道相关操作
 
-## def get_channel_info_by_id()
+## def get_channel_info_by_tid()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -40,7 +40,22 @@ from bilibili_api import channel
 
 获取分区前十排行榜。
 
-**Returns:** `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+**Returns:** `dict`: 调用 API 返回的结果
 
 ---
 
+## async get_channel_list()
+
+获取所有分区的数据
+
+**Returns:** dict: 所有分区的数据
+
+---
+
+## async get_channel_list_sub()
+
+获取所有分区的数据
+
+含父子关系（即一层次只有主分区）
+
+**Returns:** dict: 所有分区的数据
