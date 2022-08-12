@@ -1,4 +1,7 @@
 import {ChannelData} from "./data/channel";
+import {ChannelData as ChannelAPIData} from "./apis/channel";
+import {Credential} from "./models/Credential";
+import {request} from "./utils/network";
 
 export function get_channel_info_by_tid({tid}: {tid: number}) {
     for (let channel of ChannelData) {
@@ -36,4 +39,28 @@ export function get_channel_info_by_name({name}:{name: string}) {
             }
         }
     }
+}
+
+export async function get_top10({tid, day, credential}: {tid: number, day?: number, credential?: Credential}) {
+    if (credential === null || credential === undefined) {
+        credential = new Credential({});
+    }
+    if (day === null || day === undefined) {
+        day = 7;
+    }
+    if (day !== 3 && day !== 7) {
+        throw "参数 day 只能是 3，7。";
+    }
+
+    var api = ChannelAPIData.ranking.get_top10;
+    var params = {
+        rid: tid, 
+        day: day
+    };
+    return await request({
+        method: "GET", 
+        url: api.url,
+        params: params, 
+        credential: credential
+    });
 }
