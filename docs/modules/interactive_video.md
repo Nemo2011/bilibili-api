@@ -4,7 +4,7 @@
 from bilibili_api import interactive_video
 ```
 
-## _async_ def up_submit_story_tree()
+## async def up_submit_story_tree()
 | name       | type                 | description                                       |
 | ---------- | -------------------- | ------------------------------------------------- |
 | story_tree | str                  | 情节树的描述。参考 bilibili_storytree.StoryGraph  |
@@ -16,7 +16,7 @@ from bilibili_api import interactive_video
 
 ---
 
-## _async_ def up_get_ivideo_pages()
+## async def up_get_ivideo_pages()
 | name       | type                 | description                           |
 | ---------- | -------------------- | ------------------------------------- |
 | bvid       | str                  | BV 号。                               |
@@ -28,7 +28,7 @@ from bilibili_api import interactive_video
 
 ---
 
-## _async_ def get_graph_version()
+## async def get_graph_version()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | ----------------------- |
@@ -41,7 +41,7 @@ from bilibili_api import interactive_video
 
 ---
 
-## _async_ def get_edge_info()
+## async def get_edge_info()
 
 | name       | type                 | description                                          |
 | ---------- | -------------------- | ---------------------------------------------------- |

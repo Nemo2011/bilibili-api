@@ -62,37 +62,37 @@ from bilibili_api import video
 
 **Returns:** int: aid
 
-#### _async_ def get_info()
+#### async def get_info()
 
 获取视频信息。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_stat()
+#### async def get_stat()
 
 获取视频统计数据（播放量，点赞数等）。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_tags()
+#### async def get_tags()
 
 获取视频标签。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_chargers()
+#### async def get_chargers()
 
 获取视频充电用户。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_pages()
+#### async def get_pages()
 
 获取分 P 信息。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_cid()
+#### async def get_cid()
 
 | name | type | description |
 | - | - | - |
@@ -100,7 +100,7 @@ from bilibili_api import video
 
 获取稿件 cid。
 
-#### _async_ def get_download_url()
+#### async def get_download_url()
 
 | name       | type          | description                          |
 | ---------- | ------------- | ------------------------------------ |
@@ -112,37 +112,37 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_related()
+#### async def get_related()
 
 获取相关视频信息。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def has_liked()
+#### async def has_liked()
 
 视频是否点赞过。
 
 **Returns:** bool: 视频是否点赞过。
 
-#### _async_ def get_pay_coins()
+#### async def get_pay_coins()
 
 获取视频已投币数量。
 
 **Returns:** int: 视频已投币数量。
 
-#### _async_ def has_favoured()
+#### async def has_favoured()
 
 是否已收藏。
 
 **Returns:** bool: 视频是否已收藏。
 
-#### _async_ def get_media_list()
+#### async def get_media_list()
 
 获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_danmaku_view():
+#### async def get_danmaku_view():
 
 | name       | type          | description                          |
 | ---------- | ------------- | ------------------------------------ |
@@ -153,7 +153,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_danmakus()
+#### async def get_danmakus()
 
 | name       | type                    | description                                               |
 | ---------- | ----------------------- | --------------------------------------------------------- |
@@ -165,7 +165,7 @@ from bilibili_api import video
 
 **Returns:** List[Danmaku]: Danmaku 类的列表。
 
-#### _async_ def get_danmaku_xml()
+#### async def get_danmaku_xml()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -175,7 +175,7 @@ from bilibili_api import video
 
 **Returns** String: XML 源
 
-#### _async_ def get_history_danmaku_index()
+#### async def get_history_danmaku_index()
 
 | name       | type                    | description                                               |
 | ---------- | ----------------------- | --------------------------------------------------------- |
@@ -187,7 +187,7 @@ from bilibili_api import video
 
 **Returns:** None | List[str]: 调用 API 返回的结果。不存在时为 None。
 
-#### _async_ def has_liked_danmakus()
+#### async def has_liked_danmakus()
 
 | name       | type          | description                          |
 | ---------- | ------------- | ------------------------------------ |
@@ -199,7 +199,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def send_danmaku()
+#### async def send_danmaku()
 
 | name       | type          | description                          |
 | ---------- | ------------- | ------------------------------------ |
@@ -211,7 +211,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def like_danmaku()
+#### async def like_danmaku()
 
 | name       | type           | description                          |
 | ---------- | -------------- | ------------------------------------ |
@@ -222,7 +222,7 @@ from bilibili_api import video
 
 点赞弹幕。
 
-#### _async_ operate_danmaku()
+#### async operate_danmaku()
 
 | name       | type                | description                          |
 | ---------- | ------------------- | ------------------------------------ |
@@ -235,13 +235,13 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_danmaku_snapshot()
+#### async def get_danmaku_snapshot()
 
 获取弹幕快照
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def recall_danmaku()
+#### async def recall_danmaku()
 
 | name | type | description |
 | page_index | int | 分 P 号 |
@@ -252,7 +252,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_pbp()
+#### async def get_pbp()
 
 | name | type | description |
 | page_index | int | 分 P 号 |
@@ -262,7 +262,7 @@ from bilibili_api import video
 
 **Returns**: 调用 API 所得的结果。
 
-#### _async_ def like()
+#### async def like()
 
 | name   | type           | description                 |
 | ------ | -------------- | --------------------------- |
@@ -272,7 +272,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def pay_coin()
+#### async def pay_coin()
 
 | name | type           | description                          |
 | ---- | -------------- | ------------------------------------ |
@@ -283,7 +283,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def add_tag()
+#### async def add_tag()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -291,7 +291,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def delete_tag()
+#### async def delete_tag()
 
 | name   | type | description |
 | ------ | ---- | ----------- |
@@ -301,7 +301,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def subscribe_tag()
+#### async def subscribe_tag()
 
 | name   | type | description |
 | ------ | ---- | ----------- |
@@ -311,7 +311,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def unsubscribe_tag()
+#### async def unsubscribe_tag()
 
 | name   | type | description |
 | ------ | ---- | ----------- |
@@ -321,7 +321,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def set_favorite()
+#### async def set_favorite()
 
 | name          | type                | description                         |
 | ------------- | ------------------- | ----------------------------------- |
@@ -332,7 +332,7 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def submit_subtitle()
+#### async def submit_subtitle()
 
 | name       | type | description                                                  |
 | ---------- | ---- | ------------------------------------------------------------ |
@@ -367,13 +367,13 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def add_to_toview()
+#### async def add_to_toview()
 
 添加视频至稍后再看
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def delete_from_toview()
+#### async def delete_from_toview()
 
 从稍后再看列表删除视频
 
@@ -443,13 +443,13 @@ asyncio.get_event_loop().run_until_complete(r.connect())
 | credential | Credential, optional | Credential 类. Defaults to None.               |
 | debug      | bool, optional       | 调试模式，将输出更详细信息. Defaults to False. |
 
-#### _async_ def connect()
+#### async def connect()
 
 连接服务器。
 
 **Returns:** None
 
-#### _async_ def disconnect()
+#### async def disconnect()
 
 断开服务器。
 

@@ -45,25 +45,25 @@ from bilibili_api import bangumi
 
 **Returns:** season_id
 
-#### _async_ def set_ssid()
+#### async def set_ssid()
 
 设置 season_id
 
 **Returns:** None
 
-#### _async_ def set_media_id()
+#### async def set_media_id()
 
 设置 media_id
 
 **Returns:** None
 
-#### _async_ def get_meta()
+#### async def get_meta()
 
 获取番剧元数据信息（评分，封面URL，标题等）
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_short_comment_list()
+#### async def get_short_comment_list()
 
 | name       | type                          | description                                                  |
 | ---------- | ----------------------------- | ------------------------------------------------------------ |
@@ -74,7 +74,7 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_long_comment_list()
+#### async def get_long_comment_list()
 
 | name       | type                          | description                                                  |
 | ---------- | ----------------------------- | ------------------------------------------------------------ |
@@ -85,19 +85,19 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_episode_list()
+#### async def get_episode_list()
 
 获取季度分集列表
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_stat()
+#### async def get_stat()
 
 获取番剧播放量，追番等信息
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_overview()
+#### async def get_overview()
 
 获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
 
@@ -105,7 +105,7 @@ from bilibili_api import bangumi
 
 ***
 
-## _async_ def set_follow()
+## async def set_follow()
 
 | name       | type                 | description                |
 | ---------- | -------------------- | -------------------------- |
@@ -146,26 +146,26 @@ from bilibili_api import bangumi
 
 **Returns:** None
 
-#### _async_ def get_epid()
+#### async def get_epid()
 
 获取 epid
 
 **Returns:** epid
 
-#### _async_ def get_episode_info()
+#### async def get_episode_info()
 
 获取番剧单集信息
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_download_url()
+#### async def get_download_url()
 
 获取番剧下载链接
 
 **Returns:** API 调用返回结果。
 
 
-#### _async_ def get_danmaku_view()
+#### async def get_danmaku_view()
 
 获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
@@ -173,7 +173,7 @@ from bilibili_api import bangumi
 **Returns:** API 调用返回结果。
 
 
-#### _async_ def get_danmakus()
+#### async def get_danmakus()
 
 | name       | type                    | description                                               |
 | ---------- | ----------------------- | --------------------------------------------------------- |
@@ -183,13 +183,13 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_danmaku_xml()
+#### async def get_danmaku_xml()
 
 获取所有弹幕的 xml 源文件（非装填的弹幕）
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_history_danmaku_index()
+#### async def get_history_danmaku_index()
 
 | name       | type                    | description                                               |
 | ---------- | ----------------------- | --------------------------------------------------------- |
@@ -199,7 +199,7 @@ from bilibili_api import bangumi
 
 **Returns**: None | List[str]: 调用 API 返回的结果。不存在时为 None。
 
-#### _async_ def get_bangumi_from_episode()
+#### async def get_bangumi_from_episode()
 
 获取剧集对应的番剧
 

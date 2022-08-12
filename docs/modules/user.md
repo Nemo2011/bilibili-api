@@ -116,31 +116,31 @@ from bilibili_api import user
 | uid        | int                  | 用户 UID    |
 | credential | Credential. optional | 凭据        |
 
-#### _async_ def get_user_info()
+#### async def get_user_info()
 
 获取用户信息（昵称，性别，生日，签名，头像URL，空间横幅URL等）
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_relation_info()
+#### async def get_relation_info()
 
 获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_up_stat()
+#### async def get_up_stat()
 
 获取 UP 主数据信息（视频总播放量，文章总阅读量，总点赞数）
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_live_info()
+#### async def get_live_info()
 
 获取用户直播间信息。
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_videos()
+#### async def get_videos()
 
 | name    | type                 | description                              |
 | ------- | -------------------- | ---------------------------------------- |
@@ -154,7 +154,7 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_audios()
+#### async def get_audios()
 
 | name  | type                 | description                               |
 | ----- | -------------------- | ----------------------------------------- |
@@ -166,7 +166,7 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_articles()
+#### async def get_articles()
 
 | name  | type                   | description                                 |
 | ----- | ---------------------- | ------------------------------------------- |
@@ -177,7 +177,7 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_article_list()
+#### async def get_article_list()
 
 | name  | type                       | description                                   |
 | ----- | -------------------------- | --------------------------------------------- |
@@ -189,14 +189,14 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_channel_list()
+#### async def get_channel_list()
 
 查看用户所有的频道（包括新版）和部分视频。
 适用于获取列表。
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_channel_videos_series()
+#### async def get_channel_videos_series()
 
 查看频道内所有视频。仅供 series_list。
 
@@ -208,7 +208,7 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_channel_videos_season()
+#### async def get_channel_videos_season()
 
 查看频道内所有视频。仅供 season_list。
 
@@ -221,7 +221,7 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_dynamics()
+#### async def get_dynamics()
 
 | name     | type           | description                                                  |
 | -------- | -------------- | ------------------------------------------------------------ |
@@ -232,13 +232,13 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_cheese()
+#### async def get_cheese()
 
 查看用户的所有课程
 
 **Returns**:调用接口返回的结果
 
-#### _async_ def get_subscribed_bangumi()
+#### async def get_subscribed_bangumi()
 
 | name  | type                  | description                               |
 | ----- | --------------------- | ----------------------------------------- |
@@ -249,7 +249,7 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_followings()
+#### async def get_followings()
 
 | name | type           | description                     |
 | ---- | -------------- | ------------------------------- |
@@ -260,7 +260,7 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_followers()
+#### async def get_followers()
 
 | name | type           | description                     |
 | ---- | -------------- | ------------------------------- |
@@ -272,7 +272,7 @@ from bilibili_api import user
 **Returns:** 调用接口返回的内容。
 
 
-#### _async_ def top_followers()
+#### async def top_followers()
 
 | name | type           | description                     |
 | ---- | -------------- | ------------------------------- |
@@ -283,13 +283,13 @@ from bilibili_api import user
 **Returns:** 调用接口返回的内容。
 
 
-#### _async_ def get_overview_stat()
+#### async def get_overview_stat()
 
 获取用户的简易订阅和投稿信息。
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def modify_relation()
+#### async def modify_relation()
 
 | name     | type         | description |
 | -------- | ------------ | ----------- |
@@ -299,7 +299,7 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def send_msg()
+#### async def send_msg()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -311,7 +311,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def get_self_info()
+## async def get_self_info()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -344,7 +344,7 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### _async_ def get_videos()
+#### async def get_videos()
 
 获取合集视频
 
@@ -352,7 +352,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def create_subscribe_group()
+## async def create_subscribe_group()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -365,7 +365,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def delete_subscribe_group()
+## async def delete_subscribe_group()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -378,7 +378,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def rename_subscribe_group()
+## async def rename_subscribe_group()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -392,7 +392,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def set_subscribe_group()
+## async def set_subscribe_group()
 
 | name       | type       | description                         |
 | ---------- | ---------- | ----------------------------------- |
@@ -406,7 +406,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def get_self_history()
+## async def get_self_history()
 
 | name          | type          | description                         |
 | ------------- | ------------- | ----------------------------------- |
@@ -420,7 +420,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def get_self_coins()
+## async def get_self_coins()
 
 | name | type | description |
 | - | - | - |
@@ -432,7 +432,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def get_toview_list()
+## async def get_toview_list()
 
 | name | type | description |
 | - | - | - |
@@ -444,7 +444,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def clear_toview_list()
+## async def clear_toview_list()
 
 | name | type | description |
 | - | - | - |
@@ -456,7 +456,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def delete_viewed_videos_from_toview()
+## async def delete_viewed_videos_from_toview()
 
 | name | type | description |
 | - | - | - |
@@ -468,7 +468,7 @@ from bilibili_api import user
 
 ---
 
-## _async_ def get_self_level()
+## async def get_self_level()
 
 || name | type | description |
 | - | - | - |

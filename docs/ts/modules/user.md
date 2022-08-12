@@ -27,7 +27,7 @@ import {} from "bilibili-api-ts/user"
 | uid        | int                  | 用户 UID    |
 | credential | Credential | 凭据        |
 
-#### _async_ function get_user_info()
+#### async function get_user_info()
 
 获取用户信息（昵称，性别，生日，签名，头像URL，空间横幅URL等）
 

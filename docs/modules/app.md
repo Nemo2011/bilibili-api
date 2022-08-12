@@ -6,7 +6,7 @@ from bilibili_api import app
 
 手机 APP 相关
 
-## _async_ def get_loading_images()
+## async def get_loading_images()
 
 | name       | type                 | description               |
 | ---------- | -------------------- | ------------------------- |
@@ -24,7 +24,7 @@ from bilibili_api import app
 
 ---
 
-## _async_ def get_loading_images_special()
+## async def get_loading_images_special()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | ----------------------- |

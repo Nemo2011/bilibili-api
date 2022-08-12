@@ -4,8 +4,8 @@
     "description": "文档，不是 ts 版源码！！！",
     "private": "true",
     "scripts": {
-        "start": "docsify start ./docs",
-        "dev": "docsify serve ./docs", 
+        "start": "docsify serve ./docs",
+        "dev": "docsify start ./docs", 
         "localhost": "docsify start .",
         "localdev": "docsify serve ."
     },

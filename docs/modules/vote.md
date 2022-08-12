@@ -4,7 +4,7 @@
 from bilibili_api import vote
 ```
 
-## _async_ def get_vote_info()
+## async def get_vote_info()
 
 | name | type | description |
 | - | - | - |

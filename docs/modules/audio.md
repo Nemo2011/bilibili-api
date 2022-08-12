@@ -19,31 +19,31 @@ from bilibili_api import audio
 | auid       | int                  | 音频 AU 号             |
 | credential | Credential, optional | 凭据. Defaults to None |
 
-#### _async_ def get_auid()
+#### async def get_auid()
 
 获取 auid
 
 **Returns:** auid
 
-#### _async_ def get_info()
+#### async def get_info()
 
 获取音频信息
 
 **Returns:** API 调用返回结果
 
-#### _async_ def get_tags()
+#### async def get_tags()
 
 获取音频 tags
 
 **Returns:** API 调用返回结果
 
-#### _async_ def get_download_url()
+#### async def get_download_url()
 
 获取音频下载链接
 
 **Returns:** API 调用返回结果
 
-#### _async_ def add_coins()
+#### async def add_coins()
 
 | name | type          | description              |
 | ---- | ------------- | ------------------------ |
@@ -68,19 +68,19 @@ from bilibili_api import audio
 | amid       | int                  | 歌单 ID                |
 | credential | Credential, optional | 凭据. Defaults to None |
 
-#### _async_ def get_info()
+#### async def get_info()
 
 获取歌单信息
 
 **Returns:** API 调用返回结果
 
-#### _async_ def get_tags()
+#### async def get_tags()
 
 获取歌单 tags
 
 **Returns:** API 调用返回结果
 
-#### _async_ def get_song_list()
+#### async def get_song_list()
 
 | name | type          | description         |
 | ---- | ------------- | ------------------- |
@@ -92,7 +92,7 @@ from bilibili_api import audio
 
 ---
 
-## _async_ def get_user_stat()
+## async def get_user_stat()
 
 | name       | type                 | description            |
 | ---------- | -------------------- | ---------------------- |

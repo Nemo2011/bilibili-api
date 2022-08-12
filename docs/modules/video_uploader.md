@@ -20,7 +20,7 @@ Web 端视频上传。
 | title        | str            | 视频标题                         |
 | description  | str, optional  | 视频简介. Defaults to "".        |
 
-#### _async_ def get_size()
+#### async def get_size()
 
 获取文件大小
 
@@ -70,7 +70,7 @@ Web 端视频上传。
 
 + FAILED 上传失败
 
-## class VideoUploader(_async_Event)
+## class VideoUploader(asyncEvent)
 
 上传视频
 
@@ -124,17 +124,17 @@ Web 端视频上传。
 
 meta 保留字段：`videos`, `cover`
 
-#### _async_ def start()
+#### async def start()
 
 开始上传
 
 **Returns:** dict: 返回带有 bvid 和 aid 的字典。
 
-#### _async_ def abort()
+#### async def abort()
 
 中断上传
 
-## _async_ def get_missions()
+## async def get_missions()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | ----------------------- |
