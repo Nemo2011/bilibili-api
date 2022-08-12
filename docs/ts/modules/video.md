@@ -48,37 +48,37 @@ import {} from "bilibili-api-ts/video";
 
 **Returns:** None
 
-#### _async_ function get_info()
+#### async function get_info()
 
 获取视频详细信息
 
 **Returns:** 调用 API 返回的结果
 
-#### _async_ function get_stat()
+#### async function get_stat()
 
 获取视频统计数据（播放量，点赞数等）。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ function get_tags()
+#### async function get_tags()
 
 获取视频标签。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ function get_chargers()
+#### async function get_chargers()
 
 获取视频充电用户。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ function get_pages()
+#### async function get_pages()
 
 获取分 P 信息。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ function get_download_url()
+#### async function get_download_url()
 
 | name       | type          | description                          |
 | ---------- | ------------- | ------------------------------------ |
@@ -90,37 +90,37 @@ import {} from "bilibili-api-ts/video";
 
 **Returns:** API 调用返回结果。
 
-#### _async_ function get_related()
+#### async function get_related()
 
 获取相关视频信息。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ function has_liked()
+#### async function has_liked()
 
 视频是否点赞过。
 
 **Returns:** bool: 视频是否点赞过。
 
-#### _async_ function get_pay_coins()
+#### async function get_pay_coins()
 
 获取视频已投币数量。
 
 **Returns:** int: 视频已投币数量。
 
-#### _async_ function has_favoured()
+#### async function has_favoured()
 
 是否已收藏。
 
 **Returns:** bool: 视频是否已收藏。
 
-#### _async_ function get_media_list()
+#### async function get_media_list()
 
 获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ function get_pbp()
+#### async function get_pbp()
 
 | name | type | description |
 | page_index | int | 分 P 号 |
@@ -130,7 +130,7 @@ import {} from "bilibili-api-ts/video";
 
 **Returns:** Object: 调用 API 返回的结果
 
-#### _async_ function like()
+#### async function like()
 
 | name | type | description |
 | - | - | - |
@@ -140,7 +140,7 @@ import {} from "bilibili-api-ts/video";
 
 **Returns:** null: 调用 API 返回的结果。
 
-#### _async_ function pay_coin()
+#### async function pay_coin()
 
 | name | type | description |
 | - | - | - |

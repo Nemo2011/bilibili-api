@@ -139,7 +139,7 @@ BV 号转 AV 号。
 
 ---
 
-## _async_ def get_real_url()
+## async def get_real_url()
 
 | name | type | description |
 | - | - | - |
@@ -172,7 +172,7 @@ BV 号转 AV 号。
 + LIVE: 直播间
 + CHANNEL_SERIES: 合集与列表
 
-## <span id="parse">_async_ def parse_link()</span>
+## <span id="parse">async def parse_link()</span>
 
 | name | type | description |
 | - | - | - |

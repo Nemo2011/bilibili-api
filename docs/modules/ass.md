@@ -4,7 +4,7 @@
 from bilibili_api import ass
 ```
 
-## _async_ def make_ass_file_danmakus_protobuf()
+## async def make_ass_file_danmakus_protobuf()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -27,7 +27,7 @@ from bilibili_api import ass
 
 **Returns**: None
 
-## _async_ def make_ass_file_danmakus_xml()
+## async def make_ass_file_danmakus_xml()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -49,7 +49,7 @@ from bilibili_api import ass
 
 **Returns**: None
 
-## _async_ def make_ass_file_subtitle()
+## async def make_ass_file_subtitle()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -62,4 +62,4 @@ from bilibili_api import ass
 
 **Returns**: None
 
-## _async_ def 
+## async def 

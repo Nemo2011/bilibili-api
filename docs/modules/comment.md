@@ -55,7 +55,7 @@ from bilibili_api import comment
 | rpid       | int          | 评论 ID。              |
 | credential | Credential   | 凭据                   |
 
-#### _async_ def like()
+#### async def like()
 
 | name   | type           | description             |
 | ------ | -------------- | ----------------------- |
@@ -65,7 +65,7 @@ from bilibili_api import comment
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def hate()
+#### async def hate()
 
 | name   | type           | description             |
 | ------ | -------------- | ----------------------- |
@@ -75,7 +75,7 @@ from bilibili_api import comment
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def pin()
+#### async def pin()
 
 | name   | type           | description             |
 | ------ | -------------- | ----------------------- |
@@ -85,13 +85,13 @@ from bilibili_api import comment
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def delete()
+#### async def delete()
 
 删除评论
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_sub_comments()
+#### async def get_sub_comments()
 
 | name       | type          | description                         |
 | ---------- | ------------- | ----------------------------------- |
@@ -103,7 +103,7 @@ from bilibili_api import comment
 
 ---
 
-## _async_ def send_comment()
+## async def send_comment()
 
 | name       | type          | description                  |
 | ---------- | ------------- | ---------------------------- |
@@ -128,7 +128,7 @@ from bilibili_api import comment
 
 ---
 
-## _async_ def get_comments()
+## async def get_comments()
 
 | name       | type                 | description                               |
 | ---------- | -------------------- | ----------------------------------------- |

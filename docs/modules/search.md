@@ -20,7 +20,7 @@ from bilibili_api import search
 + TOPIC : 话题
 + USER : 用户
 
-## _async_ def search()
+## async def search()
 
 只指定关键字在 web 进行搜索，返回未经处理的字典
 
@@ -31,7 +31,7 @@ from bilibili_api import search
 
 **Returns:** 调用 API 返回的结果
 
-## _async_ def search_by_type()
+## async def search_by_type()
 
 指定关键字和类型进行搜索，返回未经处理的字典
 
@@ -43,19 +43,19 @@ from bilibili_api import search
 
 **Returns:** 调用 API 返回的结果
 
-## _async_ def get_default_search_keyword()
+## async def get_default_search_keyword()
 
 获取默认的搜索内容
 
 **Returns:** 调用 API 返回的结果
 
-## _async_ def get_hot_search_keywords()
+## async def get_hot_search_keywords()
 
 获取热搜
 
 **Returns:** 调用 API 返回的结果
 
-## _async_ def get_suggest_keywords()
+## async def get_suggest_keywords()
 
 | name | type | description |
 | - | - | - |

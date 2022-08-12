@@ -6,7 +6,7 @@ from bilibili_api import article
 
 专栏相关
 
-## _async_ def get_article_list()
+## async def get_article_list()
 
 | name       | type                 | description                                                  |
 | ---------- | -------------------- | ------------------------------------------------------------ |
@@ -44,7 +44,7 @@ from bilibili_api import article
 
 **Returns:** dict: JSON 数据
 
-#### _async_ def fetch_content()
+#### async def fetch_content()
 
 获取并解析专栏内容
 
@@ -52,19 +52,19 @@ from bilibili_api import article
 
 **Returns:** None
 
-#### _async_ def get_info()
+#### async def get_info()
 
 获取专栏信息。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def get_all()
+#### async def get_all()
 
 一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等		。
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def set_like()
+#### async def set_like()
 
 | name   | type           | description                |
 | ------ | -------------- | -------------------------- |
@@ -74,7 +74,7 @@ from bilibili_api import article
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def set_favorite()
+#### async def set_favorite()
 
 | name   | type           | description                |
 | ------ | -------------- | -------------------------- |
@@ -84,7 +84,7 @@ from bilibili_api import article
 
 **Returns:** API 调用返回结果。
 
-#### _async_ def add_coins()
+#### async def add_coins()
 
 给专栏投币，目前只能投一个
 

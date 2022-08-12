@@ -57,13 +57,13 @@ ep_id(int): 单集 ep_id
 
 **Returns:** season_id
 
-#### _async_ def get_meta()
+#### async def get_meta()
 
 获取教程元数据。
 
 **Returns**: 调用 API 所得的结果。
 
-#### _async_ def get_list()
+#### async def get_list()
 
 获取教程所有视频。
 
@@ -114,31 +114,31 @@ ep_id(int): 单集 ep_id
 
 **Returns**: None
 
-#### _async_ def get_download_url()
+#### async def get_download_url()
 
 获取下载链接
 
 **Returns**: 调用 API 所得的结果。
 
-#### _async_ def get_stat()
+#### async def get_stat()
 
 获取视频统计数据（播放量，点赞数等）。
 
 **Returns**: 调用 API 所得的结果。
 
-#### _async_ def get_pages()
+#### async def get_pages()
 
 获取分 P 信息。
 
 **Returns**: 调用 API 所得的结果。
 
-#### _async_ def get_danmaku_view()
+#### async def get_danmaku_view()
 
 获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
 **Returns**: 调用 API 所得的结果。
 
-#### _async_ def get_danmakus()
+#### async def get_danmakus()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -148,7 +148,7 @@ ep_id(int): 单集 ep_id
 
 **Returns**: 调用 API 所得的结果。
 
-#### _async_ def get_pbp()
+#### async def get_pbp()
 
 获取高能进度条
 

@@ -6,7 +6,7 @@ from bilibili_api import dynamic
 
 动态相关
 
-## _async_ def upload_image()
+## async def upload_image()
 
 | name         | type              | description |
 | ------------ | ----------------- | ----------- |
@@ -19,7 +19,7 @@ from bilibili_api import dynamic
 
 ---
 
-## _async_ def send_dynamic()
+## async def send_dynamic()
 
 | name         | type                              | description                         |
 | ------------ | --------------------------------- | ----------------------------------- |
@@ -36,7 +36,7 @@ from bilibili_api import dynamic
 
 ---
 
-## _async_ def get_schedules_list()
+## async def get_schedules_list()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -48,7 +48,7 @@ from bilibili_api import dynamic
 
 ---
 
-## _async_ def send_schedule_now()
+## async def send_schedule_now()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -61,7 +61,7 @@ from bilibili_api import dynamic
 
 ---
 
-## _async_ def delete_schedule()
+## async def delete_schedule()
 
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
@@ -87,13 +87,13 @@ from bilibili_api import dynamic
 | dynamic_id | int        | 动态 ID     |
 | credential | Credential | 凭据        |
 
-#### _async_ def get_info()
+#### async def get_info()
 
 获取动态信息
 
 **Returns:** API 调用返回结果
 
-#### _async_ def get_reposts()
+#### async def get_reposts()
 
 | name   | type          | description                                                  |
 | ------ | ------------- | ------------------------------------------------------------ |
@@ -103,7 +103,7 @@ from bilibili_api import dynamic
 
 **Returns:** API 调用返回结果
 
-#### _async_ def set_like()
+#### async def set_like()
 
 | name   | type           | description                 |
 | ------ | -------------- | --------------------------- |
@@ -113,13 +113,13 @@ from bilibili_api import dynamic
 
 **Returns:** API 调用返回结果
 
-#### _async_ def delete()
+#### async def delete()
 
 删除动态
 
 **Returns:** API 调用返回结果
 
-#### _async_ def repost()
+#### async def repost()
 
 | name | type          | description                                  |
 | ---- | ------------- | -------------------------------------------- |

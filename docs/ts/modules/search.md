@@ -12,7 +12,7 @@
 + TOPIC : 话题
 + USER : 用户
 
-## _async_ function web_search()
+## async function web_search()
 
 | name | type | description |
 | - | - | - |
@@ -23,7 +23,7 @@
 
 **Returns:** Object: 调用 API 返回的结果
 
-## _async_ function web_search_by_type()
+## async function web_search_by_type()
 
 | name | type | description |
 | - | - | - |
@@ -35,19 +35,19 @@
 
 **Returns:** Object: 调用 API 返回的结果
 
-## _async_ function get_default_search_keyword()
+## async function get_default_search_keyword()
 
 获取默认的搜索内容
 
 **Returns:** 调用 API 返回的结果
 
-## _async_ function get_hot_search_keywords()
+## async function get_hot_search_keywords()
 
 获取热搜
 
 **Returns:** 调用 API 返回的结果
 
-## _async_ function get_suggest_keywords()
+## async function get_suggest_keywords()
 
 | name | type | description |
 | - | - | - |
