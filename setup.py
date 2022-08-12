@@ -37,5 +37,10 @@ setuptools.setup(
     },
     install_requires=requires.splitlines(),
     url="https://github.com/nemo2011/bilibili-api",
-    python_requires=">=3.8"
+    python_requires=">=3.8", 
+    entry_points={
+        'pyinstaller40': [
+            'hook-dirs = bilibili_api._pyinstaller.entry_points:get_hook_dirs'
+        ]
+    }
 )
