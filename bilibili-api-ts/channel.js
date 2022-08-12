@@ -41,6 +41,13 @@ var channel_1 = require("./data/channel");
 var channel_2 = require("./apis/channel");
 var Credential_1 = require("./models/Credential");
 var network_1 = require("./utils/network");
+/**
+ * 根据 tid 获取频道信息。
+ *
+ * param tid(number): 频道 tid
+ *
+ * @returns {Object[Object, Object]} 第一项是主分区，第二项是子分区，没有时返回 None。
+ */
 function get_channel_info_by_tid(_a) {
     var tid = _a.tid;
     for (var _i = 0, ChannelData_1 = channel_1.ChannelData; _i < ChannelData_1.length; _i++) {
@@ -64,6 +71,13 @@ function get_channel_info_by_tid(_a) {
     return [null, null];
 }
 exports.get_channel_info_by_tid = get_channel_info_by_tid;
+/**
+ * 根据频道名称获取频道信息。
+ *
+ * param name(string): 频道的名称
+ *
+ * @returns {Object[Object, Object]} 第一项是主分区，第二项是子分区，没有时返回 None。
+ */
 function get_channel_info_by_name(_a) {
     var name = _a.name;
     for (var _i = 0, ChannelData_2 = channel_1.ChannelData; _i < ChannelData_2.length; _i++) {
@@ -80,6 +94,16 @@ function get_channel_info_by_name(_a) {
     }
 }
 exports.get_channel_info_by_name = get_channel_info_by_name;
+/**
+ * 获取分区前十排行榜。
+ *
+ * param tid(number)                     : 频道的 tid
+ *
+ * param day(number, optional)           : 3 天排行还是 7 天排行，defaults to 7
+ *
+ * param credential(Credential, optional): 凭据类
+ * @returns
+ */
 function get_top10(_a) {
     var tid = _a.tid, day = _a.day, credential = _a.credential;
     return __awaiter(this, void 0, void 0, function () {
