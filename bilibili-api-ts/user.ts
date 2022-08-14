@@ -20,6 +20,33 @@ export enum VideoOrder {
 }
 
 /**
+ * 合集视频排序顺序。
+ * 
+ * + DEFAULT: 默认排序
+ * 
+ * + CHANGE : 升序排序
+ */
+export enum ChannelOrder {
+    DEFAULT = "false", 
+    CHANGE = "true"
+}
+
+/**
+ * 音频排序顺序。
+ *
+ * + PUBDATE : 上传日期倒序。
+ *
+ * + FAVORITE: 收藏量倒序。
+ *
+ * + VIEW    : 播放量倒序。
+ */
+export enum AudioOrder {
+    PUBDATE = 1, 
+    VIEW = 2, 
+    FAVORITE = 3
+}
+
+/**
  * 用户相关
  */
 export class User {
@@ -77,7 +104,7 @@ export class User {
      * 
      * @returns {number} 用户 uid
      */
-    async get_uid({}) {
+    get_uid({}) {
         return this.uid;
     }
 
@@ -137,6 +164,21 @@ export class User {
         });
     }
 
+    /**
+     * 获取用户投稿视频信息。
+     * 
+     * param tid(number, optional)      : 分区 ID. Defaults to 0(全部).
+     * 
+     * param pn(number, optional)       : 页码，从 1 开始. Defaults to 1. 
+     * 
+     * param ps(number, optional)       : 每一页的视频数. Defaults to 30. 
+     * 
+     * param keyword(string, optional)  : 搜索关键词. Defaults to "". 
+     * 
+     * param order(VideoOrder, optional): 排序方式. Defaults to VideoOrder.PUBDATE
+     * 
+     * @returns {Object} 调用 API 返回的结果
+     */
     async get_videos({tid, pn, ps, keyword, order}: {
         tid?: number, 
         pn?: number, 
@@ -157,6 +199,41 @@ export class User {
             tid: tid, 
             pn: pn, 
             keyword: keyword, 
+            order: order
+        }
+        return await request({
+            method: "GET", 
+            url: api.url, 
+            params: params, 
+            credential: this.credential
+        });
+    }
+
+    /**
+     * 获取用户投稿音频。
+     * 
+     * param pn(number, optional)       : 页码，从 1 开始. Defaults to 1. 
+     * 
+     * param ps(number, optional)       : 每一页的音频数. Defaults to 30. 
+     * 
+     * param order(AudioOrder, optional): 排序方式. Defaults to AudioOrder.PUBDATE
+     * 
+     * @returns {Object} 调用 API 返回的结果
+     */
+    async get_audios({order, pn, ps}: {
+        order?: AudioOrder, 
+        pn?: number, 
+        ps?: number
+    }) {
+        if (pn === null || pn === undefined) pn = 1;
+        if (ps === null || ps === undefined) ps = 30;
+        if (order === null || order === undefined) order = AudioOrder.PUBDATE
+        
+        var api = API.info.audio;
+        var params = {
+            uid: this.uid, 
+            ps: ps, 
+            pn: pn, 
             order: order
         }
         return await request({
