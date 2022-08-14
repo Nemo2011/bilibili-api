@@ -50,3 +50,29 @@ import {} from "bilibili-api-ts/user"
 获取用户直播间信息。
 
 **Returns:** 调用接口返回的内容。
+
+#### async function get_videos()
+
+| name    | type                 | description                              |
+| ------- | -------------------- | ---------------------------------------- |
+| tid     | int, optional        | 分区 ID. Defaults to 0（全部）           |
+| pn      | int, optional        | 页码，从 1 开始. Defaults to 1.          |
+| ps      |(int, optional)       | 每一页的视频数. Defaults to 30. |
+| keyword | str, optional        | 搜索关键词. Defaults to "".              |
+| order   | VideoOrder, optional | 排序方式. Defaults to VideoOrder.PUBDATE |
+
+获取用户投稿视频信息。
+
+**Returns:** 调用接口返回的内容。
+
+#### async function get_audios()
+
+| name  | type                 | description                               |
+| ----- | -------------------- | ----------------------------------------- |
+| order | AudioOrder, optional | 排序方式. Defaults to AudioOrder.PUBDATE. |
+| pn    | int, optional        | 页码，从 1 开始. Defaults to 1.           |
+| ps     | (int, optional)       | 每一页的视频数. Defaults to 30. |
+
+获取用户投稿音频。
+
+**Returns:** 调用接口返回的内容。

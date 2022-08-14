@@ -58,10 +58,12 @@
     + [用户](/ts/examples/user.md)
     + [搜索](/ts/examples/search.md)
     + [分区](/ts/examples/channel.md)
+    + [音频](/ts/examples/audio.md)
   + API 文档
     + [根模块](/ts/modules/bilibili-api.md)
     + [video.ts - 视频](/ts/modules/video.md)
     + [user.ts - 用户](/ts/modules/user.md)
     + [search.ts - 搜索](/ts/modules/search.md)
     + [channel.ts - 分区](/ts/modules/channel.md)
+    + [audio.ts - 音频](/ts/modules/audio.md)
 + [历史文档](/history.md)
