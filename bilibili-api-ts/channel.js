@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.get_top10 = exports.get_channel_info_by_name = exports.get_channel_info_by_tid = void 0;
+exports.get_channel_list_sub = exports.get_channel_list = exports.get_top10 = exports.get_channel_info_by_name = exports.get_channel_info_by_tid = void 0;
 var channel_1 = require("./data/channel");
 var channel_2 = require("./apis/channel");
 var Credential_1 = require("./models/Credential");
@@ -137,3 +137,24 @@ function get_top10(_a) {
     });
 }
 exports.get_top10 = get_top10;
+function get_channel_list(_a) {
+    var channel_list = [];
+    for (var _i = 0, ChannelData_3 = channel_1.ChannelData; _i < ChannelData_3.length; _i++) {
+        var channel_big = ChannelData_3[_i];
+        var channel_big_copy = JSON.parse(JSON.stringify(channel_big));
+        delete channel_big_copy['sub'];
+        channel_list.push(channel_big_copy);
+        for (var _b = 0, _c = channel_big.sub; _b < _c.length; _b++) {
+            var channel_sub = _c[_b];
+            var channel_sub_copy = JSON.parse(JSON.stringify(channel_sub));
+            channel_sub_copy['father'] = channel_big_copy;
+            channel_list.push(channel_sub_copy);
+        }
+    }
+    return channel_list;
+}
+exports.get_channel_list = get_channel_list;
+function get_channel_list_sub(_a) {
+    return channel_1.ChannelData;
+}
+exports.get_channel_list_sub = get_channel_list_sub;
