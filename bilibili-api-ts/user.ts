@@ -136,6 +136,36 @@ export class User {
             credential: this.credential
         });
     }
+
+    async get_videos({tid, pn, ps, keyword, order}: {
+        tid?: number, 
+        pn?: number, 
+        ps?: number, 
+        keyword?: string, 
+        order?: VideoOrder
+    }) {
+        if (tid === null || tid === undefined) tid = 0;
+        if (pn === null || pn === undefined) pn = 1;
+        if (ps === null || ps === undefined) ps = 30;
+        if (keyword === null || keyword === undefined) keyword = "";
+        if (order === null || order === undefined) order = VideoOrder.PUBDATE;
+        
+        var api = API.info.video;
+        var params = {
+            mid: this.uid, 
+            ps: ps, 
+            tid: tid, 
+            pn: pn, 
+            keyword: keyword, 
+            order: order
+        }
+        return await request({
+            method: "GET", 
+            url: api.url, 
+            params: params, 
+            credential: this.credential
+        });
+    }
 }
 
 /**

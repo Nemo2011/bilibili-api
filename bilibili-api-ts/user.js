@@ -217,6 +217,43 @@ var User = /** @class */ (function () {
             });
         });
     };
+    User.prototype.get_videos = function (_a) {
+        var tid = _a.tid, pn = _a.pn, ps = _a.ps, keyword = _a.keyword, order = _a.order;
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (tid === null || tid === undefined)
+                            tid = 0;
+                        if (pn === null || pn === undefined)
+                            pn = 1;
+                        if (ps === null || ps === undefined)
+                            ps = 30;
+                        if (keyword === null || keyword === undefined)
+                            keyword = "";
+                        if (order === null || order === undefined)
+                            order = VideoOrder.PUBDATE;
+                        api = API.info.video;
+                        params = {
+                            mid: this.uid,
+                            ps: ps,
+                            tid: tid,
+                            pn: pn,
+                            keyword: keyword,
+                            order: order
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
     return User;
 }());
 exports.User = User;
