@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.get_self_history = exports.get_self_info = exports.User = exports.VideoOrder = void 0;
+exports.get_self_history = exports.get_self_info = exports.User = exports.AudioOrder = exports.ChannelOrder = exports.VideoOrder = void 0;
 var Credential_1 = require("./models/Credential");
 var network_1 = require("./utils/network");
 var user_1 = require("./apis/user");
@@ -56,6 +56,33 @@ var VideoOrder;
     VideoOrder["FAVORITE"] = "stow";
     VideoOrder["VIEW"] = "click";
 })(VideoOrder = exports.VideoOrder || (exports.VideoOrder = {}));
+/**
+ * 合集视频排序顺序。
+ *
+ * + DEFAULT: 默认排序
+ *
+ * + CHANGE : 升序排序
+ */
+var ChannelOrder;
+(function (ChannelOrder) {
+    ChannelOrder["DEFAULT"] = "false";
+    ChannelOrder["CHANGE"] = "true";
+})(ChannelOrder = exports.ChannelOrder || (exports.ChannelOrder = {}));
+/**
+ * 音频排序顺序。
+ *
+ * + PUBDATE : 上传日期倒序。
+ *
+ * + FAVORITE: 收藏量倒序。
+ *
+ * + VIEW    : 播放量倒序。
+ */
+var AudioOrder;
+(function (AudioOrder) {
+    AudioOrder[AudioOrder["PUBDATE"] = 1] = "PUBDATE";
+    AudioOrder[AudioOrder["VIEW"] = 2] = "VIEW";
+    AudioOrder[AudioOrder["FAVORITE"] = 3] = "FAVORITE";
+})(AudioOrder = exports.AudioOrder || (exports.AudioOrder = {}));
 /**
  * 用户相关
  */
@@ -132,11 +159,7 @@ var User = /** @class */ (function () {
      * @returns {number} 用户 uid
      */
     User.prototype.get_uid = function (_a) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_b) {
-                return [2 /*return*/, this.uid];
-            });
-        });
+        return this.uid;
     };
     /**
      * 获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
@@ -217,6 +240,21 @@ var User = /** @class */ (function () {
             });
         });
     };
+    /**
+     * 获取用户投稿视频信息。
+     *
+     * param tid(number, optional)      : 分区 ID. Defaults to 0(全部).
+     *
+     * param pn(number, optional)       : 页码，从 1 开始. Defaults to 1.
+     *
+     * param ps(number, optional)       : 每一页的视频数. Defaults to 30.
+     *
+     * param keyword(string, optional)  : 搜索关键词. Defaults to "".
+     *
+     * param order(VideoOrder, optional): 排序方式. Defaults to VideoOrder.PUBDATE
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
     User.prototype.get_videos = function (_a) {
         var tid = _a.tid, pn = _a.pn, ps = _a.ps, keyword = _a.keyword, order = _a.order;
         return __awaiter(this, void 0, void 0, function () {
@@ -241,6 +279,48 @@ var User = /** @class */ (function () {
                             tid: tid,
                             pn: pn,
                             keyword: keyword,
+                            order: order
+                        };
+                        return [4 /*yield*/, (0, network_1.request)({
+                                method: "GET",
+                                url: api.url,
+                                params: params,
+                                credential: this.credential
+                            })];
+                    case 1: return [2 /*return*/, _b.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * 获取用户投稿音频。
+     *
+     * param pn(number, optional)       : 页码，从 1 开始. Defaults to 1.
+     *
+     * param ps(number, optional)       : 每一页的音频数. Defaults to 30.
+     *
+     * param order(AudioOrder, optional): 排序方式. Defaults to AudioOrder.PUBDATE
+     *
+     * @returns {Object} 调用 API 返回的结果
+     */
+    User.prototype.get_audios = function (_a) {
+        var order = _a.order, pn = _a.pn, ps = _a.ps;
+        return __awaiter(this, void 0, void 0, function () {
+            var api, params;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (pn === null || pn === undefined)
+                            pn = 1;
+                        if (ps === null || ps === undefined)
+                            ps = 30;
+                        if (order === null || order === undefined)
+                            order = AudioOrder.PUBDATE;
+                        api = API.info.audio;
+                        params = {
+                            uid: this.uid,
+                            ps: ps,
+                            pn: pn,
                             order: order
                         };
                         return [4 /*yield*/, (0, network_1.request)({
