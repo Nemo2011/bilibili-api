@@ -137,6 +137,11 @@ function get_top10(_a) {
     });
 }
 exports.get_top10 = get_top10;
+/**
+ * 获取所有分区的数据
+ *
+ * @returns {any[]} 所有分区的数据
+ */
 function get_channel_list(_a) {
     var channel_list = [];
     for (var _i = 0, ChannelData_3 = channel_1.ChannelData; _i < ChannelData_3.length; _i++) {
@@ -154,6 +159,12 @@ function get_channel_list(_a) {
     return channel_list;
 }
 exports.get_channel_list = get_channel_list;
+/**
+ * 获取所有分区的数据
+ * 含父子关系（即一层次只有主分区）
+ *
+ * @returns {Object} 所有主分区的数据
+ */
 function get_channel_list_sub(_a) {
     return channel_1.ChannelData;
 }

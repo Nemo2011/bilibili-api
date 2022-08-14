@@ -34,7 +34,18 @@ export declare function get_top10({ tid, day, credential }: {
     day?: number;
     credential?: Credential;
 }): Promise<any>;
+/**
+ * 获取所有分区的数据
+ *
+ * @returns {any[]} 所有分区的数据
+ */
 export declare function get_channel_list({}: {}): any[];
+/**
+ * 获取所有分区的数据
+ * 含父子关系（即一层次只有主分区）
+ *
+ * @returns {Object} 所有主分区的数据
+ */
 export declare function get_channel_list_sub({}: {}): ({
     name: string;
     route: string;
