@@ -116,6 +116,12 @@ from bilibili_api import user
 | uid        | int                  | 用户 UID    |
 | credential | Credential. optional | 凭据        |
 
+#### def get_uid()
+
+获取 uid
+
+**Returns:** uid
+
 #### async def get_user_info()
 
 获取用户信息（昵称，性别，生日，签名，头像URL，空间横幅URL等）

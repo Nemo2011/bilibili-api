@@ -19,7 +19,7 @@ class Audio:
         self.credential = credential if credential is not None else Credential()
         self.auid = auid
 
-    async def get_auid(self):
+    def get_auid(self):
         return self.auid
 
     async def get_info(self):
