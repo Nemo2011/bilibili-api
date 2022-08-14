@@ -44,3 +44,18 @@ import {} from "bilibili-api-ts/channel";
 
 ---
 
+## async function get_channel_list()
+
+获取所有分区的数据
+
+**Returns:** dict: 所有分区的数据
+
+---
+
+## async function get_channel_list_sub()
+
+获取所有分区的数据
+
+含父子关系（即一层次只有主分区）
+
+**Returns:** dict: 所有分区的数据
