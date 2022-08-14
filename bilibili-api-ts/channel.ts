@@ -89,6 +89,11 @@ export async function get_top10({tid, day, credential}: {tid: number, day?: numb
     });
 }
 
+/**
+ * 获取所有分区的数据
+ * 
+ * @returns {any[]} 所有分区的数据
+ */
 export function get_channel_list({}) {
     var channel_list = [];
     for (let channel_big of ChannelData) {
@@ -104,6 +109,12 @@ export function get_channel_list({}) {
     return channel_list;
 }
 
+/**
+ * 获取所有分区的数据
+ * 含父子关系（即一层次只有主分区）
+ * 
+ * @returns {Object} 所有主分区的数据
+ */
 export function get_channel_list_sub({}) {
     return ChannelData;
 }
