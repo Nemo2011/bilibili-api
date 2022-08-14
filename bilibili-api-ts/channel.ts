@@ -88,3 +88,22 @@ export async function get_top10({tid, day, credential}: {tid: number, day?: numb
         credential: credential
     });
 }
+
+export function get_channel_list({}) {
+    var channel_list = [];
+    for (let channel_big of ChannelData) {
+        var channel_big_copy = JSON.parse(JSON.stringify(channel_big));
+        delete channel_big_copy['sub'];
+        channel_list.push(channel_big_copy);
+        for (let channel_sub of channel_big.sub) {
+            var channel_sub_copy = JSON.parse(JSON.stringify(channel_sub));
+            channel_sub_copy['father'] = channel_big_copy;
+            channel_list.push(channel_sub_copy);
+        }
+    }
+    return channel_list;
+}
+
+export function get_channel_list_sub({}) {
+    return ChannelData;
+}
