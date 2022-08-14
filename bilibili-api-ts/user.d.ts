@@ -65,6 +65,13 @@ export declare class User {
      * @returns
      */
     get_live_info({}: {}): Promise<any>;
+    get_videos({ tid, pn, ps, keyword, order }: {
+        tid?: number;
+        pn?: number;
+        ps?: number;
+        keyword?: string;
+        order?: VideoOrder;
+    }): Promise<any>;
 }
 /**
  * 获取自己的信息
