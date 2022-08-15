@@ -45,7 +45,7 @@ from bilibili_api import ass
 
 生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
 强烈推荐 PotPlayer, 电影与电视加载后全部都是静态弹幕，不能滚动。
-**采用 protobuf 源**
+**采用 xml 源**
 
 **Returns**: None
 
@@ -61,5 +61,3 @@ from bilibili_api import ass
 生成视频字幕文件
 
 **Returns**: None
-
-## async def 

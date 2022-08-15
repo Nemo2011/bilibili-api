@@ -50,13 +50,28 @@
       - EXTREME_BIG: 最大
     - [class Danmaku](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=class-danmaku) **弹幕类**
       - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=def-__init__-1)
-      - [def crack_uid()](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=def-crack_uid)
-  - [app.py](/modules/app.md)
-    - 手机 APP 相关
-  - [article.py](/modules/article.md)
-    - 专栏相关
-  - [ass.py](/modules/ass.md)
-    - 有关 ASS 文件的操作
+      - [def get_information()](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=def-get_information) **获取弹幕信息**
+      - [def crack_uid()](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=def-crack_uid) **暴力破解 UID**
+      - [def to_xml()](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=def-to_xml) **将弹幕转换为 xml 格式弹幕**
+  - [app.py](/modules/app.md) **手机 APP 相关**
+    - [_async_ def get_loading_images()](https://nemo2011.github.io/bilibili-api/#/modules/app?id=async-def-get_loading_images) **获取开屏启动画面**
+    - [_async_ def get_loading_images_special()](https://nemo2011.github.io/bilibili-api/#/modules/app?id=async-def-get_loading_images_special) **获取特殊开屏启动画面**
+  - [article.py](/modules/article.md) **专栏相关**
+    - [_async_ def get_article_list()](https://nemo2011.github.io/bilibili-api/#/modules/article?id=async-def-get_article_list) **获取专栏文集文章列表**
+    - [class Article](https://nemo2011.github.io/bilibili-api/#/modules/article?id=class-article) **专栏类**
+      - [def \_\_init\_\_](https://nemo2011.github.io/bilibili-api/#/modules/article?id=def-__init__)
+      - [_async_ def fetch_content()](https://nemo2011.github.io/bilibili-api/#/modules/article?id=async-def-fetch_content) **获取并解析专栏内容**
+      - [def markdown()](https://nemo2011.github.io/bilibili-api/#/modules/article?id=def-markdown) **转换为 Markdown**
+      - [def json()](https://nemo2011.github.io/bilibili-api/#/modules/article?id=def-json) **转换为 JSON 数据**
+      - [_async_ def get_info()](https://nemo2011.github.io/bilibili-api/#/modules/article?id=async-def-get_info) **获取专栏信息。**
+      - [_async_ def get_all()](https://nemo2011.github.io/bilibili-api/#/modules/article?id=async-def-get_all) **一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等 。**
+      - [_async_ def set_like()](https://nemo2011.github.io/bilibili-api/#/modules/article?id=async-def-set_like) **设置专栏点赞状态**
+      - [_async_ def set_favorite()](https://nemo2011.github.io/bilibili-api/#/modules/article?id=async-def-set_favorite) **设置专栏收藏状态**
+      - [_async_ def add_coins()](https://nemo2011.github.io/bilibili-api/#/modules/article?id=async-def-add_coins) **给专栏投币，目前只能投一个**
+  - [ass.py](/modules/ass.md) **有关 ASS 文件的操作**
+    - [_async_ def make_ass_file_danmakus_protobuf()](https://nemo2011.github.io/bilibili-api/#/modules/ass?id=async-def-make_ass_file_danmakus_protobuf) **生成视频弹幕文件。(protobuf 源)**
+    - [_async_ def make_ass_file_danmakus_xml()](https://nemo2011.github.io/bilibili-api/#/modules/ass?id=async-def-make_ass_file_danmakus_xml) **生成视频弹幕文件。(xml 源)**
+    - [_async_ def make_ass_file_subtitle()](https://nemo2011.github.io/bilibili-api/#/modules/ass?id=async-def-make_ass_file_subtitle) **生成视频字幕文件**
   - [audio.py](/modules/audio.md)
     - 音频相关
   - [bangumi.py](/modules/bangumi.md)
