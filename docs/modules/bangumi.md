@@ -146,7 +146,7 @@ from bilibili_api import bangumi
 
 **Returns:** None
 
-#### async def get_epid()
+#### def get_epid()
 
 获取 epid
 

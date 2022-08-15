@@ -220,7 +220,7 @@ class Episode(Video):
         self.set_aid = self.set_aid_e
         self.set_bvid = self.set_bvid_e
 
-    async def get_epid(self):
+    def get_epid(self):
         """
         获取 epid
         """
