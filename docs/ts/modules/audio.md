@@ -42,3 +42,22 @@ import {} from "bilibili-api-ts/audio"
 获取音频下载链接
 
 **Returns:** API 调用返回结果
+
+## class AudioList
+
+歌单
+
+### Functions
+
+#### constructor()
+
+| name       | type                 | description            |
+| ---------- | -------------------- | ---------------------- |
+| amid       | int                  | 歌单 ID                |
+| credential | Credential, optional | 凭据. Defaults to None |
+
+#### async function get_info()
+
+获取歌单信息
+
+**Returns:** API 调用返回结果
