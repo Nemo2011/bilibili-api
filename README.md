@@ -4,7 +4,7 @@
 
 # bilibili-api
 
-[![API 数量](https://img.shields.io/badge/API%20数量-100+-blue)][api.json]
+[![API 数量](https://img.shields.io/badge/API%20数量-200+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 ![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
