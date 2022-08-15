@@ -1,3 +1,4 @@
+# 模块总目录
 - bilibili-api-python
   - [\_\_init\_\_.py](/modules/bilibili_api.md) **根模块**
     - [_const_ dict HEADERS](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=const-dict-headers) **访问 bilibili 视频下载链接等内部网址用的 HEADERS**
@@ -202,27 +203,109 @@
     - [_async_ def move_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-move_video_favorite_list_content) **移动视频收藏夹内容**
     - [_async_ def delete_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-delete_video_favorite_list_content) **删除视频收藏夹内容**
     - [_async_ def clean_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-clean_video_favorite_list_content) **清除视频收藏夹失效内容**
-  - [homepage.py](/modules/homepage.md)
-    - 主页相关操作
-  - [interactive_video.py](/modules/interactive_video.md)
-    - 互动视频相关操作
-  - [live.py](/modules/live.md)
-    - 直播相关
-  - [login_func.py](/modules/login_func.md)
-    - 登录相关函数
-  - [login.py](/modules/login.md)
-    - 登录
-  - [rank.py](/modules/rank.md)
-    - 和哔哩哔哩视频排行榜相关的 API
-  - [search.py](/modules/search.md)
-    - 搜索
-  - [settings.py](/configuration.md)
-    - 这里是配置模块的地方
-  - [user.py](/modules/user.md)
-    - 用户相关
-  - [video_uploader.py](/modules/video_uploader.md)
-    - 上传视频
-  - [video.py](/modules/video.md)
-    - 视频相关操作
-  - [vote.py](/modules/vote.md)
-    - 投票相关操作
+  - [homepage.py](/modules/homepage.md) **主页相关操作**
+    - [_async_ def get_top_photo()](https://nemo2011.github.io/bilibili-api/#/modules/homepage?id=async-def-get_top_photo) **获取主页最上方的图像。**
+    - [_async_ def get_links()](https://nemo2011.github.io/bilibili-api/#/modules/homepage?id=async-def-get_links) **获取主页左面的链接。可能和个人喜好有关。**
+    - [_async_ def get_popularize()](https://nemo2011.github.io/bilibili-api/#/modules/homepage?id=async-def-get_popularize) **获取推广的项目。 有视频有广告**
+    - [_async_ def get_videos()](https://nemo2011.github.io/bilibili-api/#/modules/homepage?id=async-def-get_videos) **获取首页推荐的视频。**
+  - [interactive_video.py](/modules/interactive_video.md) **互动视频相关操作**
+    - [_async_ def up_submit_story_tree()](https://nemo2011.github.io/bilibili-api/#/modules/interactive_video?id=async-def-up_submit_story_tree) **提交情节树。up 主需要拥有交互视频。**
+    - [_async_ def up_get_ivideo_pages()](https://nemo2011.github.io/bilibili-api/#/modules/interactive_video?id=async-def-up_get_ivideo_pages) **获取交互视频分 P。up 主需要拥有交互视频。**
+    - [_async_ def get_graph_version()](https://nemo2011.github.io/bilibili-api/#/modules/interactive_video?id=async-def-get_graph_version) **获取剧情图版本号，仅供 get_edge_info() 使用。**
+    - [_async_ def get_edge_info()](https://nemo2011.github.io/bilibili-api/#/modules/interactive_video?id=async-def-get_edge_info) **获取剧情树节点信息。**
+  - [live.py](/modules/live.md) **直播相关**
+    - [class ScreenResolution](https://nemo2011.github.io/bilibili-api/#/modules/live?id=class-screenresolution) **直播源清晰度。**
+      - **Extends: enum.Enum**
+      - FOUR_K : 4K。
+      - ORIGINAL : 原画。
+      - BLU_RAY_DOLBY : 蓝光（杜比）。
+      - BLU_RAY : 蓝光。
+      - ULTRA_HD : 超清。
+      - HD : 高清。
+      - FLUENCY : 流畅。
+    - [class LiveProtocol](https://nemo2011.github.io/bilibili-api/#/modules/live?id=class-liveprotocol) **直播源流协议。**
+      - **Extends: enum.Enum**
+      - FLV
+      - HLS
+      - DEFAULT
+    - [class LiveFormat](https://nemo2011.github.io/bilibili-api/#/modules/live?id=class-liveformat) **直播源容器格式。**
+      - **Extends: enum.Enum**
+      - FLV
+      - TS
+      - FMP4
+      - DEFAULT
+    - [class LiveCodec](https://nemo2011.github.io/bilibili-api/#/modules/live?id=class-livecodec) **直播源视频编码**
+      - **Extends: enum.Enum**
+      - AVC
+      - HEVC
+      - DEFAULT
+    - [class LiveRoom](https://nemo2011.github.io/bilibili-api/#/modules/live?id=class-liveroom) **直播类，获取各种直播间的操作均在里边。**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=def-__init__)
+      - [_async_ def start()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-start) **开始直播**
+      - [_async_ def stop()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-stop) **停止直播**
+      - [_async_ def get_room_play_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_room_play_info) **获取房间信息（真实房间号，直播状态，封禁情况等）**
+      - [_async_ def get_chat_conf()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_chat_conf) **获取聊天弹幕服务器配置信息(websocket)**
+      - [_async_ def get_room_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_room_info) **获取直播间信息（标题，简介，直播状态，直播开始时间，分区信息等）**
+      - [_async_ def get_user_info_in_room()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_user_info_in_room) **获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）**
+      - [_async_ def get_dahanghai()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_dahanghai) **获取大航海列表**
+      - [_async_ def get_seven_rank()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_seven_rank) **获取七日榜**
+      - [_async_ def get_fans_medal_rank()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_fans_medal_rank) **获取粉丝勋章排行**
+      - [_async_ def get_black_list()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_black_list) **获取房间黑名单**
+      - [_async_ def get_room_play_url()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_room_play_url) **获取房间直播流列表**
+      - [_async_ def get_room_play_info_v2()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_room_play_info_v2) **获取房间信息及可用清晰度列表**
+      - [_async_ def get_general_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_general_info) **获取自己在该房间的大航海信息, 比如是否开通, 等级等**
+      - [_async_ def get_gift_common()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_gift_common) **获取当前直播间内的普通礼物列表**
+      - [_async_ def get_gift_special()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_gift_special) **获取当前直播间内的特殊礼物列表**
+      - [_async_ def get_live_followers_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_live_followers_info) **获取关注列表中正在直播的直播间信息，包括房间直播热度，房间名称及标题，清晰度，是否官方认证等信息。**
+      - [_async_ def get_unlive_followers_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_unlive_followers_info) **获取关注列表中未在直播的直播间信息，包括上次开播时间，上次开播的类别，直播间公告，是否有录播等。**
+      - [_async_ def ban_user()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-ban_user) **封禁用户**
+      - [_async_ def unban_user()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-unban_user) **解封用户**
+      - [_async_ def receive_reward()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-receive_reward) **领取自己在直播间内所有可领取的航海日志奖励**
+      - [_async_ def sign_up_dahanghai()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-sign_up_dahanghai) **航海日志每日签到**
+      - [_async_ def send_danmaku()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-send_danmaku) **直播间发送弹幕**
+      - [_async_ def send_gift_from_bag()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=asyc-def-send_gift_from_bag) **直播间赠送背包中的礼物**
+      - [_async_ def send_gift_gold()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=asyc-def-send_gift_gold) **在直播间赠送金瓜子礼物。**
+      - [_async_ def send_gift_silver()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=asyc-def-send_gift_silver) **在直播间赠送银瓜子礼物。**
+    - [class LiveDanmaku](https://nemo2011.github.io/bilibili-api/#/modules/live?id=class-livedanmaku) **Websocket 实时获取直播弹幕**
+      - **Extends: bilibili_api.utils.asyncEvent.asyncEvent**
+      - **Events:**
+        - DANMU_MSG: 用户发送弹幕
+        - SEND_GIFT: 礼物
+        - COMBO_SEND：礼物连击
+        - GUARD_BUY：续费大航海
+        - SUPER_CHAT_MESSAGE：醒目留言（SC）
+        - SUPER_CHAT_MESSAGE_JPN：醒目留言（带日语翻译？）
+        - WELCOME: 老爷进入房间
+        - WELCOME_GUARD: 房管进入房间
+        - NOTICE_MSG: 系统通知（全频道广播之类的）
+        - PREPARING: 直播准备中
+        - LIVE: 直播开始
+        - ROOM_REAL_TIME_MESSAGE_UPDATE: 粉丝数等更新
+        - ENTRY_EFFECT: 进场特效
+        - ROOM_RANK: 房间排名更新
+        - INTERACT_WORD: 用户进入直播间
+        - ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个xx小时榜
+        - VIEW: 直播间人气更新
+        - ALL: 所有事件
+        - DISCONNECT: 断开连接（传入连接状态码参数）
+        - TIMEOUT: 心跳响应超时
+        - VERIFICATION_SUCCESSFUL: 认证成功
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=def-__init__-1)
+      - [def get_status()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=def-get_status) **获取连接状态**
+      - [_async_ def connect()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-connect) **连接直播间**
+      - [_async_ def disconnect()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-disconnect) **断开连接**
+    - [_async_ def get_self_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_self_info) **获取自己直播等级、排行、硬币数、金银瓜子数等信息**
+    - [_async_ def get_self_live_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_self_live_info) **获取自己直播间的等级、粉丝牌、自己开通的大航海数量等信息**
+    - [_async_ def get_self_bag()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_self_bag) **获取自己的直播礼物包裹信息**
+    - [_async_ def get_area_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_area_info) **获取所有分区信息**
+    - [_async_ def get_gift_config()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_gift_config) **获取所有礼物的信息，包括礼物 ID、名称、价格、等级等。**
+    - [_async_ def get_self_dahanghai_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_self_dahanghai_info) **获取自己开通的大航海列表**
+  - [login_func.py](/modules/login_func.md) **登录相关函数**
+  - [login.py](/modules/login.md) **登录**
+  - [rank.py](/modules/rank.md) **和哔哩哔哩视频排行榜相关的 API**
+  - [search.py](/modules/search.md) **搜索**
+  - [settings.py](/configuration.md) **这里是配置模块的地方**
+  - [user.py](/modules/user.md) **用户相关**
+  - [video_uploader.py](/modules/video_uploader.md) **上传视频**
+  - [video.py](/modules/video.md) **视频相关操作**
+  - [vote.py](/modules/vote.md) **投票相关操作**
