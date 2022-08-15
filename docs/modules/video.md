@@ -222,7 +222,7 @@ from bilibili_api import video
 
 点赞弹幕。
 
-#### async operate_danmaku()
+#### async def operate_danmaku()
 
 | name       | type                | description                          |
 | ---------- | ------------------- | ------------------------------------ |
@@ -244,6 +244,7 @@ from bilibili_api import video
 #### async def recall_danmaku()
 
 | name | type | description |
+| - | - | - |
 | page_index | int | 分 P 号 |
 | dmid | int | 弹幕 id |
 | cid | int | 分 P 编码 |
@@ -255,6 +256,7 @@ from bilibili_api import video
 #### async def get_pbp()
 
 | name | type | description |
+| - | - | - |
 | page_index | int | 分 P 号 |
 | cid | int | 分 P 编码 |
 
@@ -288,6 +290,8 @@ from bilibili_api import video
 | name | type | description |
 | ---- | ---- | ----------- |
 | name | str  | 标签名字。  |
+
+添加标签。
 
 **Returns:** API 调用返回结果。
 
@@ -411,7 +415,7 @@ asyncio.get_event_loop().run_until_complete(r.connect())
 
 | name         | description    | callback                        |
 | ------------ | -------------- | ------------------------------- |
-| ONLINE       | 在线人数更新。 | dict                            |
+| ONLINE       | 在线人数更新 | dict                            |
 | DANMAKU      | 收到实时弹幕   | Danmaku                         |
 | DISCONNECTED | 正常断开连接   | None                            |
 | ERROR        | 发生错误       | aiohttp.ClientWebSocketResponse |

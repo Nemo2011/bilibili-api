@@ -946,7 +946,7 @@ class Video:
 
     async def add_tag(self, name: str):
         """
-        加标签。
+        添加标签。
 
         Args:
             name (str): 标签名字。
