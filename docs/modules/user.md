@@ -266,6 +266,12 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_all_followings()
+
+获取所有的关注列表。（如果用户设置保密会没有任何数据）
+
+**Returns:** list: 关注列表
+
 #### async def get_followers()
 
 | name | type           | description                     |
@@ -444,7 +450,7 @@ from bilibili_api import user
 | - | - | - |
 | credential | Credential | 凭据 |
 
-获取自己稍后再看列表
+获取自己的稍后再看列表
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -476,7 +482,7 @@ from bilibili_api import user
 
 ## async def get_self_level()
 
-|| name | type | description |
+| name | type | description |
 | - | - | - |
 | credential | Credential | 凭据 |
 
