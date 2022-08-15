@@ -13,6 +13,8 @@ from bilibili_api import article
 | rlid       | int                  | 文集 ID，如 https://www.bilibili.com/read/readlist/rl000010 省略前导 0 |
 | credential | Credential, optional | 凭据. Defaults to None.                                      |
 
+获取专栏文集文章列表
+
 ---
 
 ## class Article
