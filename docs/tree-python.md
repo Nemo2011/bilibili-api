@@ -72,10 +72,52 @@
     - [_async_ def make_ass_file_danmakus_protobuf()](https://nemo2011.github.io/bilibili-api/#/modules/ass?id=async-def-make_ass_file_danmakus_protobuf) **生成视频弹幕文件。(protobuf 源)**
     - [_async_ def make_ass_file_danmakus_xml()](https://nemo2011.github.io/bilibili-api/#/modules/ass?id=async-def-make_ass_file_danmakus_xml) **生成视频弹幕文件。(xml 源)**
     - [_async_ def make_ass_file_subtitle()](https://nemo2011.github.io/bilibili-api/#/modules/ass?id=async-def-make_ass_file_subtitle) **生成视频字幕文件**
-  - [audio.py](/modules/audio.md)
-    - 音频相关
-  - [bangumi.py](/modules/bangumi.md)
-    - 番剧相关
+  - [audio.py](/modules/audio.md) **音频相关**
+    - [class Audio](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=class-audio) **音频类。**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=def-__init__)
+      - [def get_auid()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=def-get_auid) **获取 auid**
+      - [_async_ def get_info()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_info) **获取音频信息**
+      - [_async_ def get_tags()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_tags) **获取音频 tags**
+      - [_async_ def get_download_url()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_download_url) **获取音频下载链接**
+      - [_async_ def add_coins()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-add_coins) **投币**
+    - [class AudioList](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=class-audiolist) 歌单
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=def-__init__-1)
+      - [_async_ def get_info()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_info-1) **获取歌单信息**
+      - [_async_ def get_tags()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_tags-1) **获取歌单 tags**
+      - [_async_ def get_song_list()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_song_list) **获取歌单歌词列表**
+    - [_async_ def get_user_stat()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_user_stat) **获取用户数据（收听数，粉丝数等）**
+  - [bangumi.py](/modules/bangumi.md) **番剧相关**
+    - [class BangumiCommentOrder](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=class-bangumicommentorder) **短评 / 长评 排序方式**
+      - **Extends:** enum.Enum
+      - DEFAULT: 默认
+      - CTIME: 发布时间倒序
+    - [class Bangumi](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=class-bangumi) **番剧类**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=def-__init__)
+      - [def get_media_id()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=def-get_media_id) **获取 media_id**
+      - [def get_season_id()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=def-get_season_id) **获取 season_id**
+      - [_async_ def set_ssid()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-set_ssid) **设置 season_id**
+      - [_async_ def set_media_id()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-set_media_id) **设置 media_id**
+      - [_async_ def get_meta()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_meta) **获取番剧元数据信息（评分，封面URL，标题等）**
+      - [_async_ def get_short_comment_list()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_short_comment_list) **获取短评列表**
+      - [_async_ def get_long_comment_list()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_long_comment_list) **获取长评列表**
+      - [_async_ def get_episode_list()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_episode_list) **获取季度分集列表**
+      - [_async_ def get_stat()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_stat) **获取番剧播放量，追番等信息**
+      - [_async_ def get_overview()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_overview) **获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况**
+    - [_async_ def set_follow()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-set_follow) **追番状态设置**
+    - [class Episode](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=class-episode) **番剧剧集类**
+      - **Extends: bilibili_api.video.Video**
+      - **这里仅列出新增的或重写过的函数，Video 类的其他函数都可使用**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=def-__init__-1)
+      - [def get_bangumi()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=def-get_bangumi) **获取对应的番剧**
+      - [def set_epid()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=def-set_epid) **设置 epid**
+      - [def get_epid()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=def-get_epid) **获取 epid**
+      - [_async_ def get_episode_info()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_episode_info) **获取番剧单集信息**
+      - [_async_ def get_download_url()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_download_url) **获取番剧下载链接**
+      - [_async_ def get_danmaku_view()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_danmaku_view) **获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。**
+      - [_async_ def get_danmakus()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_danmakus) **获取弹幕**
+      - [_async_ def get_danmaku_xml()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_danmaku_xml) **获取所有弹幕的 xml 源文件（非装填的弹幕）**
+      - [_async_ def get_history_danmaku_index()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_history_danmaku_index) **获取特定月份存在历史弹幕的日期**
+      - [_async_ def get_bangumi_from_episode()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_bangumi_from_episode) **获取剧集对应的番剧**
   - [channel.py](/modules/channel.md)
     - 频道相关操作
   - [cheese.py](/modules/cheese.md)
