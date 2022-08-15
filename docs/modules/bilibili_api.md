@@ -261,3 +261,15 @@ BV 号转 AV 号。
 破解 uid, 依赖 zlib
 
 **Returns:** int: 真实 UID。
+
+#### def get_information()
+
+获取弹幕信息
+
+**Returns:** dict: 弹幕信息
+
+#### def to_xml()
+
+将弹幕转换为 xml 格式弹幕
+
+**Returns:** string: xml 格式弹幕

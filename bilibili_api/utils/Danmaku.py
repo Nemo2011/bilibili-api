@@ -90,7 +90,7 @@ class Danmaku:
         self.pool = pool
         self.attr = attr
 
-        self.uid = None
+        self.uid = self.crack_uid()
 
     def __str__(self):
         ret = "%s, %s, %s" % (self.send_time, self.dm_time, self.text)
@@ -111,7 +111,32 @@ class Danmaku:
         self.uid = zlib.crc32(self.crc32_id.encode("utf8"))
         return self.uid
 
+    def get_information(self):
+        """
+        获取弹幕信息
+        """
+        return {
+            "text": self.text, 
+            "dm_time": self.dm_time, 
+            "send_time": self.send_time, 
+            "crc32_id": self.crc32_id, 
+            "color": self.color, 
+            "weight": self.weight, 
+            "id": self.id, 
+            "id_str": self.id_str, 
+            "action": self.action, 
+            "mode": self.mode, 
+            "font_size": self.font_size, 
+            "is_sub": self.is_sub, 
+            "pool": self.pool, 
+            "attr": self.attr, 
+            "uid": self.uid
+        }
+
     def to_xml(self):
+        """
+        将弹幕转换为 xml 格式弹幕
+        """
         txt = self.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         string = f'<d p="{self.dm_time},{self.mode},{self.font_size},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id},11">{txt}</d>'
         return string
