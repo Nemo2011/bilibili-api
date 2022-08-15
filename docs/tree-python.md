@@ -145,12 +145,63 @@
       - [_async_ def get_danmaku_view()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_danmaku_view) **获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。**
       - [_async_ def get_danmakus()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_danmakus) **获取弹幕。**
       - [_async_ def get_pbp()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_pbp) **获取高能进度条**
-  - [comment.py](/modules/comment.md)
-    - 评论相关
-  - [dynamic.py](/modules/dynamic.md)
-    - 动态相关
-  - [favorite_list.py](/modules/favorite_list.md)
-    - 收藏夹操作
+  - [comment.py](/modules/comment.md) **评论相关**
+    - [class ResourceType](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=class-resourcetype) **资源类型枚举。**
+      - **Extends: enum.Enum**
+      - VIDEO: 视频。
+      - ARTICLE: 专栏。
+      - DYNAMIC_DRAW: 画册。
+      - DYNAMIC: 动态（画册也属于动态的一种，只不过画册还有一个专门的 ID）。
+      - AUDIO：音频。
+      - AUDIO_LIST：歌单。
+    - [class OrderType](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=class-ordertype) **评论排序方式枚举。**
+      - **Extends: enum.Enum**
+      - LIKE：按点赞数倒序。
+      - TIME：按发布时间倒序。
+    - [class Comment](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=class-comment) **对单条评论的相关操作**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=def-__init__)
+      - [_async_ def like()](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=async-def-like) **点赞评论**
+      - [_async_ def hate()](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=async-def-hate) **点踩评论**
+      - [_async_ def pin()](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=async-def-pin) **置顶评论**
+      - [_async_ def delete()](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=async-def-delete) **删除评论**
+      - [_async_ def get_sub_comments()](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=async-def-get_sub_comments) **获取子评论。即评论下的评论。**
+    - [_async_ def send_comment()](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=async-def-send_comment) **通用发送评论 API。**
+    - [_async_ def get_comments()](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=async-def-get_comments) **获取资源评论列表。**
+  - [dynamic.py](/modules/dynamic.md) **动态相关**
+    - [_async_ def upload_image()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-upload_image) **上传动态图片**
+    - [_async_ def send_dynamic()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-send_dynamic) **自动判断动态类型选择合适的 API 并发送动态。**
+    - [_async_ def get_schedules_list()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-get_schedules_list) **获取待发送定时动态列表**
+    - [_async_ def send_schedule_now()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-send_schedule_now) **立即发送定时动态**
+    - [_async_ def delete_schedule()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-delete_schedule) **删除定时动态**
+    - [class Dynamic](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=class-dynamic) **动态类**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=def-__init__)
+      - [_async_ def get_info()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-get_info) **获取动态信息**
+      - [_async_ def get_reposts()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-get_reposts) **获取动态转发列表**
+      - [_async_ def set_like()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-set_like) **设置动态点赞状态**
+      - [_async_ def delete()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-delete) **删除动态**
+      - [_async_ def repost()](https://nemo2011.github.io/bilibili-api/#/modules/dynamic?id=async-def-repost) **转发动态**
+  - [favorite_list.py](/modules/favorite_list.md) **收藏夹操作**
+    - [class FavoriteListContentOrder](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=class-favoritelistcontentorder) **收藏夹列表内容排序方式枚举。**
+      - **Extends: enum.Enum**
+      - MTIME : 最近收藏
+      - VIEW : 最多播放
+      - PUBTIME: 最新投稿
+    - [class VideoFavoriteList](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=class-videofavoritelist) **一个简单的视频收藏夹类。**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=def-__init__)
+      - [_async_ def get_meta()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_meta) **获取视频收藏夹列表元数据。**
+    - [_async_ def get_video_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_video_favorite_list) **获取视频收藏夹列表。**
+    - [_async_ def get_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_video_favorite_list_content) **获取视频收藏夹列表内容。**
+    - [_async_ def get_topic_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_topic_favorite_list) **获取自己的话题收藏夹内容。**
+    - [_async_ def get_article_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_article_favorite_list) **获取自己的专栏收藏夹内容。**
+    - [_async_ def get_album_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_album_favorite_list) **获取自己的相簿收藏夹内容。**
+    - [_async_ def get_course_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_course_favorite_list) **获取自己的课程收藏夹内容。**
+    - [_async_ def create_video_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-create_video_favorite_list) **新建视频收藏夹列表。**
+    - [_async_ def modify_video_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-modify_video_favorite_list) **修改视频收藏夹信息。**
+    - [_async_ def delete_video_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-delete_video_favorite_list) **删除视频收藏夹，可批量删除。**
+    - [_async_ def copy_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-copy_video_favorite_list_content) **复制视频收藏夹内容**
+    - [_async_ def move_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-move_video_favorite_list_content) **移动视频收藏夹内容**
+    - [_async_ def delete_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-delete_video_favorite_list_content) **删除视频收藏夹内容**
+    - [_async_ def clean_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-clean_video_favorite_list_content) **清除视频收藏夹失效内容**
   - [homepage.py](/modules/homepage.md)
     - 主页相关操作
   - [interactive_video.py](/modules/interactive_video.md)
