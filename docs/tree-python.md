@@ -118,10 +118,33 @@
       - [_async_ def get_danmaku_xml()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_danmaku_xml) **获取所有弹幕的 xml 源文件（非装填的弹幕）**
       - [_async_ def get_history_danmaku_index()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_history_danmaku_index) **获取特定月份存在历史弹幕的日期**
       - [_async_ def get_bangumi_from_episode()](https://nemo2011.github.io/bilibili-api/#/modules/bangumi?id=async-def-get_bangumi_from_episode) **获取剧集对应的番剧**
-  - [channel.py](/modules/channel.md)
-    - 频道相关操作
-  - [cheese.py](/modules/cheese.md)
-    - 有关 bilibili 课程的 api
+  - [channel.py](/modules/channel.md) **频道相关操作**
+    - [def get_channel_info_by_tid()](https://nemo2011.github.io/bilibili-api/#/modules/channel?id=def-get_channel_info_by_tid) **根据 tid 获取频道信息。**
+    - [def get_channel_info_by_name()](https://nemo2011.github.io/bilibili-api/#/modules/channel?id=def-get_channel_info_by_name) **根据频道名称获取频道信息。**
+    - [_async_ def get_top10()](https://nemo2011.github.io/bilibili-api/#/modules/channel?id=async-def-get_top10) **获取分区前十排行榜。**
+    - [def get_channel_list()](https://nemo2011.github.io/bilibili-api/#/modules/channel?id=def-get_channel_list) **获取所有分区的数据**
+    - [def get_channel_list_sub()](https://nemo2011.github.io/bilibili-api/#/modules/channel?id=async-get_channel_list_sub) **获取所有分区的数据，含父子关系（即一层次只有主分区）**
+  - [cheese.py](/modules/cheese.md) **有关 bilibili 课程的 api**
+    - [class CheeseList](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=class-cheeselist) **教程类**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-__init__)
+      - [def set_season_id()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-set_season_id) **设置 season_id**
+      - [def set_ep_id()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-set_ep_idself-ep_id-int) **设置 ep_id**
+      - [def get_season_id()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-get_season_idself)
+      - [_async_ def get_meta()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_meta) **获取教程元数据。**
+      - [_async_ def get_list()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_list) **获取教程所有视频。**
+    - [class CheeseVideo](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=class-cheesevideo) **教程视频类**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-__init__-1)
+      - [def get_cheese()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-get_cheese) **获取所属课程**
+      - [def get_aid()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-get_aid) **获取 aid**
+      - [def get_cid()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-get_cid) **获取 cid**
+      - [def get_meta()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-get_meta) **获取课程元数据**
+      - [def set_epid()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-set_epid) **设置 epid**
+      - [_async_ def get_download_url()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_download_url) **获取下载链接**
+      - [_async_ def get_stat()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_stat) **获取视频统计数据（播放量，点赞数等）。**
+      - [_async_ def get_pages()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_pages) **获取分 P 信息。**
+      - [_async_ def get_danmaku_view()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_danmaku_view) **获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。**
+      - [_async_ def get_danmakus()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_danmakus) **获取弹幕。**
+      - [_async_ def get_pbp()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_pbp) **获取高能进度条**
   - [comment.py](/modules/comment.md)
     - 评论相关
   - [dynamic.py](/modules/dynamic.md)
