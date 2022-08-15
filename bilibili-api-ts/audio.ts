@@ -89,3 +89,37 @@ export class Audio {
         });
     }
 }
+
+export class AudioList {
+    amid: number
+    credential: Credential
+
+    /**
+     * param amid(number)                    : 歌单 ID
+     * 
+     * param credential(Credential, optional): 凭据。
+     */
+    constructor({amid, credential}: {amid: number, credential: Credential}) {
+        if (credential === null || credential === undefined) credential = new Credential({});
+        this.credential = credential;
+        this.amid = amid;
+    }
+
+    /**
+     * 获取歌单信息
+     * 
+     * @returns {Object} 调用 API 返回的结果
+     */
+    async get_info({}) {
+        var api = API.list_info.info;
+        var params = {
+            sid: this.amid
+        };
+        return await request({
+            method: "GET", 
+            url: api.url, 
+            params: params, 
+            credential: this.credential
+        });
+    }
+}
