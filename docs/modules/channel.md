@@ -44,7 +44,7 @@ from bilibili_api import channel
 
 ---
 
-## async get_channel_list()
+## def get_channel_list()
 
 获取所有分区的数据
 
@@ -52,7 +52,7 @@ from bilibili_api import channel
 
 ---
 
-## async get_channel_list_sub()
+## def get_channel_list_sub()
 
 获取所有分区的数据
 
