@@ -436,5 +436,98 @@
     - [_async_ def delete_viewed_videos_from_toview()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-delete_viewed_videos_from_toview) **删除稍后再看列表中已经看过（看完）的视频**
     - [_async_ def get_self_level()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_self_level) **获取自己的电磁力等级**
   - [video_uploader.py](/modules/video_uploader.md) **上传视频**
+    - [class VideoUploaderPage](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=videouploaderpage) **分 P 对象**
+      - [def \_\_init\_\_](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=def-__init__)
+      - [_async_ def get_size()](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=async-def-get_size) **获取文件大小**
+    - [class VideoUploaderEvents](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=class-videouploadereventsenum)
+      - **Extends: enum.Enum**
+      - PRE_PAGE 上传分 P 前
+      - PREUPLOAD 获取上传信息
+      - PREUPLOAD_FAILED 获取上传信息失败
+      - PRE_CHUNK 上传分块前
+      - AFTER_CHUNK 上传分块后
+      - CHUNK_FAILED 区块上传失败
+      - PRE_PAGE_SUBMIT 提交分 P 前
+      - PAGE_SUBMIT_FAILED 提交分 P 失败
+      - AFTER_PAGE_SUBMIT 提交分 P 后
+      - AFTER_PAGE 上传分 P 后
+      - PRE_COVER 上传封面前
+      - AFTER_COVER 上传封面后
+      - COVER_FAILED 上传封面失败
+      - PRE_SUBMIT 提交视频前
+      - SUBMIT_FAILED 提交视频失败
+      - AFTER_SUBMIT 提交视频后
+      - COMPLETED 完成上传
+      - ABORTED 用户中止
+      - FAILED 上传失败
+    - [class VideoUploader](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=class-videouploaderasyncevent)
+      - **Extends: bilibili_api.utils.AsyncEvent.AsyncEvent**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=def-__init__-1)
+      - [_async_ def start()](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=async-def-start) **开始上传**
+      - [_async_ def abort()](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=async-def-abort) **中断上传**
+    - [_async_ def get_missions()](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=async-def-get_missions) **获取活动信息**
   - [video.py](/modules/video.md) **视频相关操作**
+    - [class DanmakuOperatorType](https://nemo2011.github.io/bilibili-api/#/modules/video?id=class-danmakuoperatortypeenum) **弹幕操作枚举**
+      - **Extends: enum.Enum**
+      - DELETE - 删除弹幕
+      - PROTECT - 保护弹幕
+      - UNPROTECT - 取消保护弹幕
+    - [class Video](https://nemo2011.github.io/bilibili-api/#/modules/video?id=class-video) **视频类**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=def-__init__)
+      - [def set_bvid()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=def-set_bvid) **设置 bvid。**
+      - [def get_bvid()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=def-get_bvid) **获取 bvid。**
+      - [def set_aid()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=def-set_aid) **设置 aid。**
+      - [def get_aid()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=def-get_aid) **获取 aid。**
+      - [_async_ def get_info()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_info) **获取视频信息。**
+      - [_async_ def get_stat()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_stat) **获取视频统计数据（播放量，点赞数等）。**
+      - [_async_ def get_tags()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_tags) **获取视频标签。**
+      - [_async_ def get_chargers()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_chargers) **获取视频充电用户。**
+      - [_async_ def get_pages()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_pages) **获取分 P 信息。**
+      - [_async_ def get_cid()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_cid) **获取稿件 cid。**
+      - [_async_ def get_download_url()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_download_url) **获取视频下载信息。**
+      - [_async_ def get_related()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_related) **获取相关视频信息。**
+      - [_async_ def has_liked()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-has_liked) **视频是否点赞过。**
+      - [_async_ def get_pay_coins()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_pay_coins) **获取视频已投币数量。**
+      - [_async_ def has_favoured()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-has_favoured) **是否已收藏**
+      - [_async_ def get_media_list()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_media_list) **获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。**
+      - [_async_ def get_danmaku_view()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_danmaku_view) **获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。**
+      - [_async_ def get_danmakus()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_danmakus) **获取弹幕。**
+      - [_async_ def get_danmaku_xml()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_danmaku_xml) **获取所有弹幕的 XML 源**
+      - [_async_ def get_history_danmaku_index()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_history_danmaku_index) **获取特定月份存在历史弹幕的日期。**
+      - [_async_ def has_liked_danmakus()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-has_liked_danmakus) **是否已点赞弹幕。**
+      - [_async_ def send_danmaku()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-send_danmaku) **发送弹幕。**
+      - [_async_ def like_danmaku()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-like_danmaku) **点赞弹幕。**
+      - [_async_ def operate_danmaku()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-operate_danmaku) **操作弹幕**
+      - [_async_ def get_danmaku_snapshot()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_danmaku_snapshot) **获取弹幕快照**
+      - [_async_ def recall_danmaku()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-recall_danmaku) **撤回弹幕**
+      - [_async_ def get_pbp()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-get_pbp) **获取高能进度条**
+      - [_async_ def like()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-like) **点赞视频。**
+      - [_async_ def pay_coin()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-pay_coin) **投币。**
+      - [_async_ def add_tag()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-add_tag) **添加标签。**
+      - [_async_ def delete_tag()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-delete_tag) **删除标签。**
+      - [_async_ def subscribe_tag()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-subscribe_tag) **关注标签。**
+      - [_async_ def unsubscribe_tag()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-unsubscribe_tag) **取关标签。**
+      - [_async_ def set_favorite()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-set_favorite) **设置视频收藏状况。**
+      - [_async_ def submit_subtitle()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-submit_subtitle) **上传字幕**
+      - [_async_ def add_to_toview()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-add_to_toview) **添加视频至稍后再看**
+      - [_async_ def delete_from_toview()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-delete_from_toview) **从稍后再看列表删除视频**
+    - [class VideoOnlineMonitor](https://nemo2011.github.io/bilibili-api/#/modules/video?id=class-videoonlinemonitor) **视频在线人数实时监测。**
+      - **Extends: bilibili_api.utils.AsyncEvent.AsyncEvent**
+      - **Events:**
+        - ONLINE: 在线人数更新
+        - DANMAKU: 收到实时弹幕
+        - DISCONNECTED: 正常断开连接
+        - ERROR: 发生错误
+        - CONNECTED: 成功连接
+      - [class Datapack](https://nemo2011.github.io/bilibili-api/#/modules/video?id=class-datapack) **数据包类型枚举**
+        - **Extends: enum.Enum**
+        - CLIENT_VERIFY : 客户端发送验证信息。
+        - SERVER_VERIFY : 服务端响应验证信息。
+        - CLIENT_HEARTBEAT: 客户端发送心跳包。
+        - SERVER_HEARTBEAT: 服务端响应心跳包。
+        - DANMAKU: 实时弹幕更新。
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=def-__init__-1)
+      - [_async_ def connect()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-connect) **连接服务器。**
+      - [_async_ def disconnect()](https://nemo2011.github.io/bilibili-api/#/modules/video?id=async-def-disconnect) **断开服务器**
   - [vote.py](/modules/vote.md) **投票相关操作**
+    - [_async_ def get_vote_info()](https://nemo2011.github.io/bilibili-api/#/modules/vote?id=async-def-get_vote_info) **获取投票详情**
