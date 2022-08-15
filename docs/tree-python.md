@@ -357,6 +357,84 @@
     - [str proxy](https://nemo2011.github.io/bilibili-api/#/configuration?id=%e4%bb%a3%e7%90%86) **代理**
     - [bool geetest_auto_open](https://nemo2011.github.io/bilibili-api/#/configuration?id=%e6%9e%81%e9%aa%8c%e9%aa%8c%e8%af%81%e9%a1%b5%e9%9d%a2%e8%87%aa%e5%8a%a8%e5%bc%b9%e5%87%ba) **自动弹出极验验证页面**
   - [user.py](/modules/user.md) **用户相关**
+    - [class VideoOrder](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-videoorder) **视频排序顺序。**
+      - **Extends: enum.Enum**
+      - PUBDATE : 上传日期倒序。
+      - FAVORITE: 收藏量倒序。
+      - VIEW : 播放量倒序。
+    - [class ChannelOrder](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-channelorder)
+      - **Extends: enum.Enum**
+      - DEFAULT: 默认排序
+      - CHANGE: 升序排序
+    - [class AudioOrder](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-audioorder) **音频排序顺序。**
+      - **Extends: enum.Enum**
+      - PUBDATE : 上传日期倒序。
+      - FAVORITE: 收藏量倒序。
+      - VIEW : 播放量倒序。
+    - [class ArticleOrder](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-articleorder) **专栏排序顺序。**
+      - **Extends: enum.Enum**
+      - PUBDATE : 发布日期倒序。
+      - FAVORITE: 收藏量倒序。
+      - VIEW : 播放量倒序。
+    - [class ArticleListOrder](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-articlelistorder) **文集排序顺序。**
+      - **Extends: enum.Enum**
+      - LATEST: 最近更新倒序。
+      - VIEW: 总阅读量倒序。
+    - [class BangumiType](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-bangumitype) **番剧类型。**
+      - **Extends: enum.Enum**
+      - BANGUMI: 番剧。
+      - DRAMA : 电视剧/纪录片等。
+    - [class RelationType](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-relationtype) **用户关系操作类型。**
+      - **Extends: enum.Enum**
+      - SUBSCRIBE: 关注。
+      - UNSUBSCRIBE: 取关。
+      - SUBSCRIBE_SECRETLY: 悄悄关注。
+      - BLOCK: 拉黑。
+      - UNBLOCK: 取消拉黑。
+      - REMOVE_FANS: 移除粉丝。
+    - [class ChannelSeriesType](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-channelseriestype) **合集与列表类型**
+      - **Extends: enum.Enum**
+      - SERIES: 旧版
+      - SEASON: 新版
+    - [class User](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-user) **用户相关**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=def-__init__)
+      - [def get_uid()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=def-get_uid) **获取 uid**
+      - [_async_ def get_user_info()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_user_info) **获取用户信息（昵称，性别，生日，签名，头像URL，空间横幅URL等）**
+      - [_async_ def get_relation_info()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_relation_info) **获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）**
+      - [_async_ def get_up_stat()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_up_stat) **获取 UP 主数据信息（视频总播放量，文章总阅读量，总点赞数）**
+      - [_async_ def get_live_info()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_live_info) **获取用户直播间信息。**
+      - [_async_ def get_videos()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_videos) **获取用户投稿视频信息。**
+      - [_async_ def get_audios()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_audios) **获取用户投稿音频。**
+      - [_async_ def get_articles()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_articles) **获取用户投稿专栏。**
+      - [_async_ def get_article_list()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_article_list) **获取用户专栏文集。**
+      - [_async_ def get_channel_list()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_channel_list) **查看用户所有的频道（包括新版）和部分视频。 适用于获取列表。**
+      - [_async_ def get_channel_videos_series()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_channel_videos_series) **查看频道内所有视频。仅供 series_list。**
+      - [_async_ def get_channel_videos_season()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_channel_videos_season) **查看频道内所有视频。仅供 season_list。**
+      - [_async_ def get_dynamics()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_dynamics) **获取用户动态。**
+      - [_async_ def get_cheese()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_cheese) **查看用户的所有课程**
+      - [_async_ def get_subscribed_bangumi()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_subscribed_bangumi) **获取用户追番/追剧列表。**
+      - [_async_ def get_followings()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_followings) **获取用户关注列表（不是自己只能访问前5页）**
+      - [_async_ def get_all_followings()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_all_followings) **获取所有的关注列表。（如果用户设置保密会没有任何数据）**
+      - [_async_ def get_followers()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_followers) **获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）**
+      - [_async_ def top_followers()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-top_followers) **粉丝排行**
+      - [_async_ def get_overview_stat()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_overview_stat) **获取用户的简易订阅和投稿信息。**
+      - [_async_ def modify_relation()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-modify_relation) **修改和用户的关系，比如拉黑、关注、取关等。**
+      - [_async_ def send_msg()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-send_msg) **给用户发送私聊信息。目前仅支持纯文本。**
+    - [_async_ def get_self_info()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_self_info) **获取自己的信息。**
+    - [class ChannelSeries](https://nemo2011.github.io/bilibili-api/#/modules/user?id=class-channelseries) **合集与列表类**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=def-__init__-1)
+      - [def get_meta()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=def-get_meta) **获取元数据**
+      - [_async_ def get_videos()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_videos-1) **获取合集视频**
+    - [_async_ def create_subscribe_group()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-create_subscribe_group) **创建用户关注分组**
+    - [_async_ def delete_subscribe_group()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-delete_subscribe_group) **重命名关注分组**
+    - [_async_ def rename_subscribe_group()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-rename_subscribe_group) **重命名关注分组**
+    - [_async_ def set_subscribe_group()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-set_subscribe_group) **设置用户分组**
+    - [_async_ def get_self_history()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_self_history) **获取用户浏览历史记录**
+    - [_async_ def get_self_coins()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_self_coins) **获取自己的硬币数量**
+    - [_async_ def get_toview_list()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_toview_list) **获取自己的稍后再看列表**
+    - [_async_ def clear_toview_list()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-clear_toview_list) **清空自己的稍后再看列表**
+    - [_async_ def delete_viewed_videos_from_toview()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-delete_viewed_videos_from_toview) **删除稍后再看列表中已经看过（看完）的视频**
+    - [_async_ def get_self_level()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_self_level) **获取自己的电磁力等级**
   - [video_uploader.py](/modules/video_uploader.md) **上传视频**
   - [video.py](/modules/video.md) **视频相关操作**
   - [vote.py](/modules/vote.md) **投票相关操作**
