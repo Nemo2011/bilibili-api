@@ -301,10 +301,61 @@
     - [_async_ def get_gift_config()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_gift_config) **获取所有礼物的信息，包括礼物 ID、名称、价格、等级等。**
     - [_async_ def get_self_dahanghai_info()](https://nemo2011.github.io/bilibili-api/#/modules/live?id=async-def-get_self_dahanghai_info) **获取自己开通的大航海列表**
   - [login_func.py](/modules/login_func.md) **登录相关函数**
+    - [_const_ list countries_list](https://nemo2011.github.io/bilibili-api/#/modules/login_func?id=const-list-countries_list) **国际地区代码列表**
+    - ***
+    - [class QrCodeLoginEvents](https://nemo2011.github.io/bilibili-api/#/modules/login_func?id=class-qrcodeloginevents) **二维码登录状态枚举**
+      - **Extends: enum.Enum**
+      - SCAN: 未扫描二维码
+      - CONF: 未确认登录
+      - DONE: 成功
+    - [def get_qrcode()](https://nemo2011.github.io/bilibili-api/#/modules/login_func?id=def-get_qrcode) **获取二维码及登录密钥**
+    - [def check_qrcode_events()](https://nemo2011.github.io/bilibili-api/#/modules/login_func?id=def-check_qrcode_events) **检查登录状态。（建议频率 1s，这个 API 也有风控！）**
+    - ***
+    - [def start_geetest_server()](https://nemo2011.github.io/bilibili-api/#/modules/login_func?id=def-start_geetest_server) **开启极验验证服务**
+    - [def close_geetest_server()](https://nemo2011.github.io/bilibili-api/#/modules/login_func?id=def-close_geetest_server) **关闭极验验证服务**
+    - [def done_geetest()](https://nemo2011.github.io/bilibili-api/#/modules/login_func?id=def-done_geetest) **检查是否完成了极验验证。**
   - [login.py](/modules/login.md) **登录**
+    - [def get_countries_list()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-get_contries_list) **获取国家（地区）列表**
+    - [def search_countries()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-search_countries) **搜索一个地区及其国际地区代码**
+    - [def have_country()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-have_country) **是否有地区**
+    - [def have_code()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-have_code) **是否存在地区代码**
+    - [class PhoneNumber()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=class-phonenumber) **手机号类**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-__init__)
+    - ***
+    - [def login_with_qrcode()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-login_with_qrcode) **扫描二维码登录。**
+    - [def login_with_password()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-login_with_password) **密码登录。**
+    - [def send_sms()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-send_sms) **发送验证码。**
+    - [def login_with_sms()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-login_with_sms) **验证码登录。**
+    - ***
+    - [class Check](https://nemo2011.github.io/bilibili-api/#/modules/login?id=-class-check-) **密码登录验证类**
+      - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-__init__-1)
+      - [def set_phone()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-set_phone) **设置手机号**
+      - [def send_code()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-send_code) **发送验证码**
+      - [def login()](https://nemo2011.github.io/bilibili-api/#/modules/login?id=def-login) **登录**
   - [rank.py](/modules/rank.md) **和哔哩哔哩视频排行榜相关的 API**
+    - [_async_ def get_hot_videos()](https://nemo2011.github.io/bilibili-api/#/modules/rank?id=async-def-get_hot_videos) **获取热门视频**
+    - [_async_ def get_weakly_hot_videos_list()](https://nemo2011.github.io/bilibili-api/#/modules/rank?id=async-def-get_weakly_hot_videos_list) **获取每周必看列表(仅概述)**
+    - [_async_ def get_weakly_hot_videos()](https://nemo2011.github.io/bilibili-api/#/modules/rank?id=async-def-get_weakly_hot_videos) **获取一周的每周必看视频列表**
+    - [_async_ def get_history_popular_videos()](https://nemo2011.github.io/bilibili-api/#/modules/rank?id=async-def-get_history_popular_videos) **获取入站必刷 85 个视频**
+    - [_async_ def get_rank()](https://nemo2011.github.io/bilibili-api/#/modules/rank?id=async-def-get_rank) **获取视频排行榜**
   - [search.py](/modules/search.md) **搜索**
+    - [class SearchObjectType](https://nemo2011.github.io/bilibili-api/#/modules/search?id=class-searchobjecttype)
+      - **Extends: enum.Enum**
+      - VIDEO : 视频
+      - BANGUMI : 番剧
+      - FT : 影视
+      - LIVE : 直播
+      - ARTICLE : 专栏
+      - TOPIC : 话题
+      - USER : 用户
+    - [_async_ def search()](https://nemo2011.github.io/bilibili-api/#/modules/search?id=async-def-search) **只指定关键字在 web 进行搜索**
+    - [_async_ def search_by_type()](https://nemo2011.github.io/bilibili-api/#/modules/search?id=async-def-search_by_type) **指定关键字和类型进行搜索**
+    - [_async_ def get_default_search_keyword()](https://nemo2011.github.io/bilibili-api/#/modules/search?id=async-def-get_default_search_keyword) **获取默认的搜索内容**
+    - [_async_ def get_hot_search_keywords()](https://nemo2011.github.io/bilibili-api/#/modules/search?id=async-def-get_hot_search_keywords) **获取热搜**
+    - [_async_ def get_suggest_keywords()](https://nemo2011.github.io/bilibili-api/#/modules/search?id=async-def-get_suggest_keywords) **通过一些文字输入获取搜索建议。类似搜索词的联想。**
   - [settings.py](/configuration.md) **这里是配置模块的地方**
+    - [str proxy](https://nemo2011.github.io/bilibili-api/#/configuration?id=%e4%bb%a3%e7%90%86) **代理**
+    - [bool geetest_auto_open](https://nemo2011.github.io/bilibili-api/#/configuration?id=%e6%9e%81%e9%aa%8c%e9%aa%8c%e8%af%81%e9%a1%b5%e9%9d%a2%e8%87%aa%e5%8a%a8%e5%bc%b9%e5%87%ba) **自动弹出极验验证页面**
   - [user.py](/modules/user.md) **用户相关**
   - [video_uploader.py](/modules/video_uploader.md) **上传视频**
   - [video.py](/modules/video.md) **视频相关操作**
