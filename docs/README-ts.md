@@ -9,7 +9,7 @@
 ![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)
 ![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)
 
-python 版：<https://github.com/nemo2011/bilibili-api/blob/main/README.md>
+python 版：[->](/README.md)
 
 </div>
 
@@ -82,8 +82,8 @@ var v = new video.Video({
 下面的代码将会给视频点赞
 
 ```javascript
-const bilibili = require("./bilibili-api-ts");
-const video = require("./bilibili-api-ts/video.js");
+const bilibili = require("bilibili-api-ts");
+const video = require("bilibili-api-ts/video.js");
 
 // 实例化 Video 类
 var v = new video.Video({

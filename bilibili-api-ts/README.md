@@ -82,8 +82,8 @@ var v = new video.Video({
 下面的代码将会给视频点赞
 
 ```javascript
-const bilibili = require("./bilibili-api-ts");
-const video = require("./bilibili-api-ts/video.js");
+const bilibili = require("bilibili-api-ts");
+const video = require("bilibili-api-ts/video.js");
 
 // 实例化 Video 类
 var v = new video.Video({
