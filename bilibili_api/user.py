@@ -919,3 +919,22 @@ async def check_nickname(nick_name: str = None):
         return False, str(e)
     else:
         return True, ""
+
+
+async def get_self_event(ts: int = 0, credential: Credential = None):
+    """
+    获取自己入站后每一刻的事件
+
+    Args:
+        ts(int)               : 时间戳
+        credential(Credential): 凭据. Defaults to None. 
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential = credential if credential else Credential()
+    api = API["info"]["events"]
+    params = {
+        "ts": ts
+    }
+    return await request("GET", api['url'], params=params, credential=credential)
