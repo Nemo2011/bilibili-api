@@ -122,4 +122,38 @@ export class AudioList {
             credential: this.credential
         });
     }
+
+    async get_tags({}) {
+        var api = API.list_info.tag;
+        var params = {
+            sid: this.amid
+        };
+        return await request({
+            method: "GET", 
+            url: api.url, 
+            params: params, 
+            credential: this.credential
+        });
+    }
+
+    async get_song_list({
+        pn
+    }: {
+        pn: number
+    }) {
+        if (pn === null || pn === undefined) pn = 1;
+
+        var api = API.list_info.song_list;
+        var params = {
+            sid: this.amid, 
+            pn: pn, 
+            ps: 100
+        }
+        return await request({
+            method: "GET", 
+            url: api.url, 
+            params: params, 
+            credential: this.credential
+        });
+    }
 }

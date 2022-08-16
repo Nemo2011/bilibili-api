@@ -242,6 +242,15 @@
       "method": "GET", 
       "verify": true, 
       "comment": "获取硬币数量"
+    }, 
+    "events": {
+      "url": "https://member.bilibili.com/x2/creative/h5/calendar/event", 
+      "method": "GET", 
+      "params": {
+        "ts": "int: 时间戳"
+      },
+      "verify": true, 
+      "comment": "获取事件"
     }
   }, 
   "operate": {
