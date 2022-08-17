@@ -25,6 +25,7 @@ from .utils.Danmaku import Danmaku
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import get_session, request
+from typing import List
 
 API = get_api("cheese")
 API_video = get_api("video")
@@ -564,6 +565,126 @@ class CheeseVideo:
             "pool": pool,
             "mode": danmaku.mode.value,
             "plat": 1,
+        }
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
+
+    
+    async def has_liked(self):
+        """
+        视频是否点赞过。
+
+        Returns:
+            bool: 视频是否点赞过。
+        """
+        self.credential.raise_for_no_sessdata()
+
+        url = get_api("video")["info"]["has_liked"]["url"]
+        params = {"aid": self.get_aid()}
+        return await request("GET", url, params=params, credential=self.credential) == 1
+
+    async def get_pay_coins(self):
+        """
+        获取视频已投币数量。
+
+        Returns:
+            int: 视频已投币数量。
+        """
+        self.credential.raise_for_no_sessdata()
+
+        url = get_api("video")["info"]["get_pay_coins"]["url"]
+        params = {"aid": self.get_aid()}
+        return (await request("GET", url, params=params, credential=self.credential))[
+            "multiply"
+        ]
+
+    async def has_favoured(self):
+        """
+        是否已收藏。
+
+        Returns:
+            bool: 视频是否已收藏。
+        """
+        self.credential.raise_for_no_sessdata()
+
+        url = get_api("video")["info"]["has_favoured"]["url"]
+        params = {"aid": self.get_aid()}
+        return (await request("GET", url, params=params, credential=self.credential))[
+            "favoured"
+        ]
+
+    async def like(self, status: bool = True):
+        """
+        点赞视频。
+
+        Args:
+            status (bool, optional): 点赞状态。Defaults to True.
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = get_api("video")["operate"]["like"]
+        data = {"aid": self.get_aid(), "like": 1 if status else 2}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
+
+    async def pay_coin(self, num: int = 1, like: bool = False):
+        """
+        投币。
+
+        Args:
+            num  (int, optional) : 硬币数量，为 1 ~ 2 个。Defaults to 1.
+            like (bool, optional): 是否同时点赞。Defaults to False.
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        if num not in (1, 2):
+            raise ArgsException("投币数量只能是 1 ~ 2 个。")
+
+        api = get_api("video")["operate"]["coin"]
+        data = {
+            "aid": self.get_aid(),
+            "multiply": num,
+            "like": 1 if like else 0,
+        }
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
+
+    async def set_favorite(
+        self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
+    ):
+        """
+        设置视频收藏状况。
+
+        Args:
+            add_media_ids (List[int], optional): 要添加到的收藏夹 ID. Defaults to [].
+            del_media_ids (List[int], optional): 要移出的收藏夹 ID. Defaults to [].
+
+        Returns:
+            dict: 调用 API 返回结果。
+        """
+        if len(add_media_ids) + len(del_media_ids) == 0:
+            raise ArgsException("对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。")
+
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = get_api("video")["operate"]["favorite"]
+        data = {
+            "rid": self.get_aid(),
+            "type": 2,
+            "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
+            "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
         }
         return await request(
             "POST", url=api["url"], data=data, credential=self.credential
