@@ -489,3 +489,16 @@ from bilibili_api import user
 获取自己的电磁力等级
 
 **Returns:** tuple[bool, str]: 第一项为昵称是否可用，第二项为不可用的原因。
+
+---
+
+## async def get_self_events()
+
+| name | type | description |
+| - | - | - |
+| ts | int, optional | 时间戳. Defaults to 0 |
+| credential | Credential, optional | 凭据类. Defaults to None |
+
+获取自己入站后每一刻的事件(可以不带 credential)
+
+**Returns:** dict: 调用 API 返回的结果

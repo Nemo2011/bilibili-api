@@ -34,7 +34,7 @@ from bilibili_api import article
 
 转换为 Markdown
 
-请先调用 get_content()
+请先调用 fetch_content()
 
 **Returns:** str: Markdown 内容
 
@@ -42,7 +42,7 @@ from bilibili_api import article
 
 转换为 JSON 数据
 
-请先调用 get_content()
+请先调用 fetch_content()
 
 **Returns:** dict: JSON 数据
 
