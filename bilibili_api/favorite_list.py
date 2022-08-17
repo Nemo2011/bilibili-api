@@ -40,7 +40,7 @@ class VideoFavoriteList:
         self.media_id = media_id
         self.credential = credential
 
-    async def get_meta(
+    async def get_content(
         self,
         page=1,
         keyword=None,

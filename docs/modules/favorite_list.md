@@ -31,7 +31,7 @@ from bilibili_api import favorite_list
 | media_id   | int                                | 收藏夹 ID                                             |
 | credential | Credential, optional               | 凭据. Defaults to None.                               |
 
-#### async def get_meta()
+#### async def get_content()
 
 | name       | type                               | description                                           |
 | ---------- | ---------------------------------- | :---------------------------------------------------- |

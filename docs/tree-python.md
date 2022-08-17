@@ -189,7 +189,7 @@
       - PUBTIME: 最新投稿
     - [class VideoFavoriteList](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=class-videofavoritelist) **一个简单的视频收藏夹类。**
       - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=def-__init__)
-      - [_async_ def get_meta()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_meta) **获取视频收藏夹列表元数据。**
+      - [_async_ def get_content()](/modules/favorite_list?id=async-def-get_content) **获取视频收藏夹列表元数据。**
     - [_async_ def get_video_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_video_favorite_list) **获取视频收藏夹列表。**
     - [_async_ def get_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_video_favorite_list_content) **获取视频收藏夹列表内容。**
     - [_async_ def get_topic_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_topic_favorite_list) **获取自己的话题收藏夹内容。**
@@ -435,6 +435,7 @@
     - [_async_ def clear_toview_list()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-clear_toview_list) **清空自己的稍后再看列表**
     - [_async_ def delete_viewed_videos_from_toview()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-delete_viewed_videos_from_toview) **删除稍后再看列表中已经看过（看完）的视频**
     - [_async_ def get_self_level()](https://nemo2011.github.io/bilibili-api/#/modules/user?id=async-def-get_self_level) **获取自己的电磁力等级**
+    - [_async_ def get_self_events()](/modules/user?id=async-def-get_self_events) **获取自己入站后每一刻的事件**
   - [video_uploader.py](/modules/video_uploader.md) **上传视频**
     - [class VideoUploaderPage](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=videouploaderpage) **分 P 对象**
       - [def \_\_init\_\_](https://nemo2011.github.io/bilibili-api/#/modules/video_uploader?id=def-__init__)

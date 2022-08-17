@@ -921,13 +921,13 @@ async def check_nickname(nick_name: str = None):
         return True, ""
 
 
-async def get_self_event(ts: int = 0, credential: Credential = None):
+async def get_self_events(ts: int = 0, credential: Credential = None):
     """
     获取自己入站后每一刻的事件
 
     Args:
-        ts(int)               : 时间戳
-        credential(Credential): 凭据. Defaults to None. 
+        ts(int, optional)               : 时间戳. Defaults to 0. 
+        credential(Credential, optional): 凭据. Defaults to None. 
 
     Returns:
         dict: 调用 API 返回的结果
