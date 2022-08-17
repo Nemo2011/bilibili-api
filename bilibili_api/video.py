@@ -1087,6 +1087,7 @@ class Video:
 
         Args:
             lan        (str)          : 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm
+            
             data       (dict)         : 字幕数据
             submit     (bool)         : 是否提交，不提交为草稿
             sign       (bool)         : 是否署名

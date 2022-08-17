@@ -488,4 +488,36 @@ export class Video {
             credential: this.credential
         })
     }
+
+    async set_favorite({add_media_ids, del_media_ids}: {
+        add_media_ids?: Object[], 
+        del_media_ids?: Object[]
+    }) {
+        add_media_ids = add_media_ids ? add_media_ids : [];
+        del_media_ids = del_media_ids ? del_media_ids : [];
+        if (add_media_ids.length + del_media_ids.length === 0) {
+            throw "对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。";
+        }
+        add_media_ids = add_media_ids.map(value => value.toString());
+        del_media_ids = del_media_ids.map(value => value.toString())
+        
+        this.credential.raise_for_no_sessdata({});
+        this.credential.raise_for_no_bili_jct({});
+
+        var api = API.operate.favorite;
+        var data = {
+            rid: this.get_aid({}), 
+            type: 2, 
+            "add_media_ids": add_media_ids.join(","), 
+            "del_media_ids": del_media_ids.join(","), 
+            csrf: this.credential.bili_jct, 
+            csrf_token: this.credential.bili_jct
+        };
+        return await request({
+            method: "POST", 
+            url: api.url, 
+            params: data, 
+            credential: this.credential
+        });
+    }
 }

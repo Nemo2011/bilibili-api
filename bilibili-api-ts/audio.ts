@@ -123,6 +123,11 @@ export class AudioList {
         });
     }
 
+    /**
+     * 获取歌单 tags
+     * 
+     * @returns {Object} 调用 API 返回的结果
+     */
     async get_tags({}) {
         var api = API.list_info.tag;
         var params = {
@@ -136,6 +141,13 @@ export class AudioList {
         });
     }
 
+    /**
+     * 获取歌单歌曲列表
+     * 
+     * param pn(number, optional): 页码,defaults to 1
+     * 
+     * @returns {Object} 调用 API 返回的结果
+     */
     async get_song_list({
         pn
     }: {
