@@ -153,3 +153,53 @@ ep_id(int): 单集 ep_id
 获取高能进度条
 
 **Returns**: 调用 API 所得的结果。
+
+#### async def has_liked()
+
+视频是否点赞过。
+
+**Returns:** bool: 视频是否点赞过。
+
+#### async def get_pay_coins()
+
+获取视频已投币数量。
+
+**Returns:** int: 视频已投币数量。
+
+#### async def has_favoured()
+
+是否已收藏。
+
+**Returns:** bool: 视频是否已收藏。
+
+#### async def like()
+
+| name   | type           | description                 |
+| ------ | -------------- | --------------------------- |
+| status | bool, optional | 点赞状态。Defaults to True. |
+
+点赞视频。
+
+**Returns:** API 调用返回结果。
+
+#### async def pay_coin()
+
+| name | type           | description                          |
+| ---- | -------------- | ------------------------------------ |
+| num  | int, optional  | 硬币数量，为 1 ~ 2 个。Defaults to 1 |
+| like | bool, optional | 是否同时点赞。Defaults to False      |
+
+投币。
+
+**Returns:** API 调用返回结果。
+
+#### async def set_favorite()
+
+| name          | type                | description                         |
+| ------------- | ------------------- | ----------------------------------- |
+| add_media_ids | List[int], optional | 要添加到的收藏夹 ID. Defaults to [] |
+| del_media_ids | List[int], optional | 要移出的收藏夹 ID. Defaults to []   |
+
+设置视频收藏状况。
+
+**Returns:** API 调用返回结果。
