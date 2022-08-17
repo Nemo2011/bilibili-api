@@ -146,12 +146,12 @@
       - [_async_ def get_danmaku_view()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_danmaku_view) **获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。**
       - [_async_ def get_danmakus()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_danmakus) **获取弹幕。**
       - [_async_ def get_pbp()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_pbp) **获取高能进度条**
-      - [_async_ def has_liked()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-has_liked) **视频是否点赞过。**
-      - [_async_ def get_pay_coins()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_pay_coins) **获取视频已投币数量。**
-      - [_async_ def has_favoured()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-has_favoured) **是否已收藏**
-      - [_async_ def like()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-like) **点赞视频。**
-      - [_async_ def pay_coin()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-pay_coin) **投币。**
-      - [_async_ def set_favorite()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-set_favorite) **设置视频收藏状况。**
+      - [_async_ def has_liked()](/modules/cheese?id=async-def-has_liked) **视频是否点赞过。**
+      - [_async_ def get_pay_coins()](/modules/cheese?id=async-def-get_pay_coins) **获取视频已投币数量。**
+      - [_async_ def has_favoured()](/modules/cheese?id=async-def-has_favoured) **是否已收藏**
+      - [_async_ def like()](/modules/cheese?id=async-def-like) **点赞视频。**
+      - [_async_ def pay_coin()](/modules/cheese?id=async-def-pay_coin) **投币。**
+      - [_async_ def set_favorite()](/modules/cheese?id=async-def-set_favorite) **设置视频收藏状况。**
   - [comment.py](/modules/comment.md) **评论相关**
     - [class ResourceType](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=class-resourcetype) **资源类型枚举。**
       - **Extends: enum.Enum**
