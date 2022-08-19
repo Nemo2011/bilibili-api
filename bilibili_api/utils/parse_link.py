@@ -5,7 +5,10 @@ bilibili_api.utils.parse_link
 """
 
 from enum import Enum
-from importlib.resources import Resource
+import json
+import httpx
+
+from .utils import get_api
 from ..article import Article
 from ..audio import Audio, AudioList
 
@@ -19,6 +22,8 @@ from .sync import sync
 from ..user import get_self_info
 from .short import get_real_url
 from ..video import Video
+from ..favorite_list import FavoriteList, FavoriteListType, get_video_favorite_list
+
 import re
 
 
@@ -53,7 +58,7 @@ class ResourceType(Enum):
     CHANNEL_SERIES = "channel_series"
 
 
-async def parse_link(url, credential: Credential = None):
+async def parse_link(url, credential: Credential = Credential()):
     """
     解析 bilibili url 的函数。
     可以解析：
@@ -77,13 +82,23 @@ async def parse_link(url, credential: Credential = None):
     try:
         url = await get_real_url(url)
 
+        # 特殊处理，因为后面会过滤参数，这两项需要参数完成
         channel = parse_season_series(url)
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES)
+        fl_space = parse_space_favorite_list(url, credential)
+        if fl_space != -1:
+            return fl_space
 
+        # 过滤参数
         url = url.split("?")[0]
         if url == "https://space.bilibili.com":
-            print(get_self_info(credential))
+            try:
+                info = sync(get_self_info(credential))
+            except:
+                return -1
+            else:
+                return (User(info['mid'], credential=credential), ResourceType.USER)
         obj = None
         video = parse_video(url)
         if not video == -1:
@@ -186,7 +201,7 @@ def parse_favorite_list(url):
     """
     if url[:44] == "https://www.bilibili.com/medialist/detail/ml":
         last_part = int(url[44:].replace("/", ""))
-        return VideoFavoriteList(media_id=last_part)
+        return FavoriteList(media_id=last_part)
     else:
         return -1
 
@@ -280,4 +295,65 @@ def parse_season_series(url):
                     if "business_id" in param:
                         sid = int(param[12:])
                         return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+    return -1
+
+
+def parse_space_favorite_list(url, credential):
+    if url[:27] == "https://space.bilibili.com/":
+        uid = 0
+        for i in url.split("/"):
+            try:
+                uid = int(i)
+            except:
+                pass
+            if "favlist" in i:
+                if len(i) == len("favlist"):
+                    api = get_api("favorite-list")["info"]["list_list"]
+                    params = {"up_mid": uid, "type": 2}
+
+                    favorite_lists = json.loads(httpx.get(api['url'], params=params, cookies=credential.get_cookies()).text)['data']
+
+                    if favorite_lists == None:
+                        return -1
+                    else:
+                        default_favorite_list = favorite_lists['list'][0]
+                        return (FavoriteList(media_id=default_favorite_list["id"]), ResourceType.FAVORITE_LIST)
+                oid = ""
+                type_ = ""
+                for arg in i.split("&"):
+                    if "?" in arg:
+                        arg = arg.split("?")[1]
+                    if "fid" in arg:
+                        oid = arg[4:]
+                    if "ctype" in arg:
+                        type_ = int(arg[6:])
+                oid_is_number = True
+                try:
+                    oid_int = int(oid)
+                except:
+                    oid_is_number = False
+                if type_ == "" and oid_is_number:
+                    # 我的视频收藏夹
+                    oid_int = int(oid)
+                    return (FavoriteList(media_id=oid_int), ResourceType.FAVORITE_LIST)
+                elif type_ != "":
+                    # 我的订阅
+                    if type_ == 11:
+                        # 收藏的收藏夹
+                        oid_int = int(oid)
+                        return (FavoriteList(media_id=oid_int), ResourceType.FAVORITE_LIST)
+                    else:
+                        return -1
+                elif not oid_is_number:
+                    # 其他类型的收藏夹
+                    if oid == FavoriteListType.ARTICLE.value:
+                        return (FavoriteList(FavoriteListType.ARTICLE, credential=credential), ResourceType.FAVORITE_LIST)
+                    elif oid == FavoriteListType.CHEESE.value:
+                        return (FavoriteList(FavoriteListType.CHEESE, credential=credential), ResourceType.FAVORITE_LIST)
+                else:
+                    return -1
+            else:
+                pass
+    else:
+        return -1
     return -1
