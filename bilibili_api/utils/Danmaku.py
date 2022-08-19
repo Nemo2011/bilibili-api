@@ -60,20 +60,20 @@ class Danmaku:
     ):
         """
         Args:
-            text      (str)               : 弹幕文本。
-            dm_time   (float, optional)   : 弹幕在视频中的位置，单位为秒。Defaults to 0.0.
-            send_time (float, optional)   : 弹幕发送的时间。Defaults to time.time().
-            crc32_id  (str, optional)     : 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None.
-            color     (str, optional)     : 弹幕十六进制颜色。Defaults to "ffffff".
-            weight    (int, optional)     : 弹幕在弹幕列表显示的权重。Defaults to -1.
-            id_       (int, optional)     : 弹幕 ID。Defaults to -1.
-            id_str    (str, optional)     : 弹幕字符串 ID。Defaults to "".
-            action    (str, optional)     : 暂不清楚。Defaults to "".
-            mode      (Mode, optional)    : 弹幕模式。Defaults to Mode.FLY.
-            font_size (FontSize, optional): 弹幕字体大小。Defaults to FontSize.NORMAL.
-            is_sub    (bool, optional)    : 是否为字幕弹幕。Defaults to False.
-            pool      (int, optional)     : 池。Defaults to 0.
-            attr      (int, optional)     : 暂不清楚。 Defaults to -1.
+            text      (str)                             : 弹幕文本。
+            dm_time   (float, optional)                 : 弹幕在视频中的位置，单位为秒。Defaults to 0.0.
+            send_time (float, optional)                 : 弹幕发送的时间。Defaults to time.time().
+            crc32_id  (str, optional)                   : 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None.
+            color     (str, optional)                   : 弹幕十六进制颜色。Defaults to "ffffff".
+            weight    (int, optional)                   : 弹幕在弹幕列表显示的权重。Defaults to -1.
+            id_       (int, optional)                   : 弹幕 ID。Defaults to -1.
+            id_str    (str, optional)                   : 弹幕字符串 ID。Defaults to "".
+            action    (str, optional)                   : 暂不清楚。Defaults to "".
+            mode      (Union[DmMode, int], optional)    : 弹幕模式。Defaults to Mode.FLY.
+            font_size (Union[DmFontSize, int], optional): 弹幕字体大小。Defaults to FontSize.NORMAL.
+            is_sub    (bool, optional)                  : 是否为字幕弹幕。Defaults to False.
+            pool      (int, optional)                   : 池。Defaults to 0.
+            attr      (int, optional)                   : 暂不清楚。 Defaults to -1.
         """
         self.text = text
         self.dm_time = dm_time
@@ -84,13 +84,16 @@ class Danmaku:
         self.id = id_
         self.id_str = id_str
         self.action = action
-        self.mode = mode
-        self.font_size = font_size
+        self.mode = mode.value if isinstance(mode, DmMode) else mode
+        self.font_size = font_size.value if isinstance(font_size, DmFontSize) else font_size
         self.is_sub = is_sub
         self.pool = pool
         self.attr = attr
 
-        self.uid = self.crack_uid()
+        if crc32_id != None:
+            self.uid = zlib.crc32(crc32_id.encode("utf8"))
+        else:
+            self.uid = 0
 
     def __str__(self):
         ret = "%s, %s, %s" % (self.send_time, self.dm_time, self.text)
@@ -99,17 +102,12 @@ class Danmaku:
     def __len__(self):
         return len(self.text)
 
-    def crack_uid(self):
+    def set_crc32_id(self, crc32_id):
         """
-        暴力破解 UID。
-        10.0.1: 已改为 zlib。
-        几个测试和原来暴力破解结果一样。
-
-        Returns:
-            int: 真实 UID。
+        设置 crc32_id
         """
-        self.uid = zlib.crc32(self.crc32_id.encode("utf8"))
-        return self.uid
+        self.crc32_id = crc32_id
+        self.uid = zlib.crc32(crc32_id.encode("utf8"))
 
     def get_information(self):
         """
@@ -138,5 +136,5 @@ class Danmaku:
         将弹幕转换为 xml 格式弹幕
         """
         txt = self.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        string = f'<d p="{self.dm_time},{self.mode},{self.font_size},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id},11">{txt}</d>'
+        string = f'<d p="{self.dm_time},{self.mode.value},{self.font_size.value},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id},11">{txt}</d>'
         return string

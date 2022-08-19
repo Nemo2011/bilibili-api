@@ -31,6 +31,12 @@ class FavoriteListContentOrder(Enum):
     PUBTIME = "pubtime"
 
 
+class FavoriteListType(Enum):
+    VIDEO = "video"
+    ARTICLE = "articles"
+    CHEESE = "pugvfav"
+
+
 class VideoFavoriteList:
     """
     一个简单的视频收藏夹类
@@ -62,6 +68,78 @@ class VideoFavoriteList:
         return await get_video_favorite_list_content(
             self.media_id, page, keyword, order, tid, self.credential
         )
+
+
+class FavoriteList:
+    """
+    收藏夹类
+    """
+
+    def __init__(
+        self,
+        type_: FavoriteListType = FavoriteListType.VIDEO,
+        media_id: int = None,
+        credential: Credential = Credential(),
+    ) -> None:
+        self.type = type_
+        self.media_id = media_id
+        self.credential = credential
+
+    def is_video_favorite_list(self):
+        """
+        收藏夹是否为视频收藏夹
+
+        Returns:
+            bool: 是否为视频收藏夹
+        """
+        return self.type == FavoriteListType.VIDEO
+
+    def get_favorite_list_type(self):
+        """
+        获取收藏家类型
+
+        Returns:
+            FavoriteListType: 收藏夹类型
+        """
+        return self.type
+
+    async def get_content_video(
+        self,
+        page=1,
+        keyword=None,
+        order: FavoriteListContentOrder = FavoriteListContentOrder.MTIME,
+        tid=0,
+    ):
+        """
+        获取视频收藏夹内容。
+
+        Args:
+            page       (int, optional)                     : 页码. Defaults to 1.
+            keyword    (str, optional)                     : 搜索关键词. Defaults to None.
+            order      (FavoriteListContentOrder, optional): 排序方式. Defaults to FavoriteListContentOrder.MTIME.
+            tid        (int, optional)                     : 分区 ID. Defaults to 0.
+
+        Returns:
+            dict: 调用 API 返回结果。
+        """
+        assert self.type != FavoriteListType.VIDEO, "此函数仅在收藏夹为视频收藏家时可用"
+
+        return await get_video_favorite_list_content(
+            self.media_id, page, keyword, order, tid, self.credential
+        )
+
+    async def get_content(self, page: int = 1):
+        """
+        获取收藏夹内容。
+        """
+        if self.type == FavoriteListType.ARTICLE:
+            return await get_article_favorite_list(page, self.credential)
+        elif self.type == FavoriteListType.CHEESE:
+            return await get_course_favorite_list(page, self.credential)
+        elif self.type == FavoriteListType.VIDEO:
+            return await get_video_favorite_list_content(
+                self.media_id, page, credential=self.credential
+            )
 
 
 async def get_video_favorite_list(

@@ -548,7 +548,7 @@ class Video:
 
     async def get_danmakus(
         self, page_index: int = 0, date: datetime.date = None, cid: int = None
-    ):
+    ) -> List[Danmaku]:
         """
         获取弹幕。
 
@@ -647,7 +647,7 @@ class Video:
                     elif data_type == 5:
                         dm.color = hex(dm_reader.varint())[2:]
                     elif data_type == 6:
-                        dm.crc32_id = dm_reader.string()
+                        dm.set_crc32_id(dm_reader.string())
                     elif data_type == 7:
                         dm.text = dm_reader.string()
                     elif data_type == 8:
