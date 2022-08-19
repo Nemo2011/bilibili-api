@@ -37,39 +37,6 @@ class FavoriteListType(Enum):
     CHEESE = "pugvfav"
 
 
-class VideoFavoriteList:
-    """
-    一个简单的视频收藏夹类
-    """
-
-    def __init__(self, media_id, credential: Credential = None):
-        self.media_id = media_id
-        self.credential = credential
-
-    async def get_content(
-        self,
-        page=1,
-        keyword=None,
-        order: FavoriteListContentOrder = FavoriteListContentOrder.MTIME,
-        tid=0,
-    ):
-        """
-        获取视频收藏夹列表元数据。
-
-        Args:
-            page       (int, optional)                     : 页码. Defaults to 1.
-            keyword    (str, optional)                     : 搜索关键词. Defaults to None.
-            order      (FavoriteListContentOrder, optional): 排序方式. Defaults to FavoriteListContentOrder.MTIME.
-            tid        (int, optional)                     : 分区 ID. Defaults to 0.
-
-        Returns:
-            dict: 调用 API 返回结果。
-        """
-        return await get_video_favorite_list_content(
-            self.media_id, page, keyword, order, tid, self.credential
-        )
-
-
 class FavoriteList:
     def __init__(
         self,
