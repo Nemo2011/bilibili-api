@@ -14,7 +14,6 @@ from ..audio import Audio, AudioList
 
 from ..bangumi import Bangumi, Episode
 from ..cheese import CheeseList, CheeseVideo
-from ..favorite_list import VideoFavoriteList
 from ..live import LiveRoom
 from ..user import User, ChannelSeriesType, ChannelSeries
 from .Credential import Credential
