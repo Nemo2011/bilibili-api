@@ -195,7 +195,7 @@
       - PUBTIME: 最新投稿
     - [class VideoFavoriteList](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=class-videofavoritelist) **一个简单的视频收藏夹类。**
       - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=def-__init__)
-      - [_async_ def get_content()](/modules/favorite_list?id=async-def-get_content) **获取视频收藏夹列表元数据。**
+      - [_async_ def get_content()](/modules/favorite_list?id=async-def-get_content) **获取视频收藏夹内容。**
     - [_async_ def get_video_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_video_favorite_list) **获取视频收藏夹列表。**
     - [_async_ def get_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_video_favorite_list_content) **获取视频收藏夹列表内容。**
     - [_async_ def get_topic_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_topic_favorite_list) **获取自己的话题收藏夹内容。**
