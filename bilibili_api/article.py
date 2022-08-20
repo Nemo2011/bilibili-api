@@ -20,6 +20,7 @@ API = get_api("article")
 
 
 ARTICLE_COLOR_MAP = {
+    "default": "000000",
     "blue-01": "56c1fe",
     "lblue-01": "73fdea",
     "green-01": "89fa4e",
