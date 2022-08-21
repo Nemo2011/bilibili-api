@@ -771,9 +771,9 @@ class Video:
             "bvid": self.get_bvid(),
             "progress": int(danmaku.dm_time * 1000),
             "color": int(danmaku.color, 16),
-            "fontsize": danmaku.font_size.value,
+            "fontsize": danmaku.font_size,
             "pool": pool,
-            "mode": danmaku.mode.value,
+            "mode": danmaku.mode,
             "plat": 1,
         }
         return await request(
