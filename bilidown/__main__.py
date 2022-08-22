@@ -1,4 +1,3 @@
-from calendar import c
 from bilibili_api import *
 import sys
 import httpx
