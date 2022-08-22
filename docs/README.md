@@ -12,8 +12,6 @@
 
 </div>
 
-[**Typescript 点击跳转**](./README-ts.md)
-
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])([Gitee][docs-gitee])
 
 原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
