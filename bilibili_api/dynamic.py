@@ -101,7 +101,7 @@ async def upload_image(image_stream: io.BufferedIOBase, credential: Credential):
     credential.raise_for_no_bili_jct()
 
     api = API["send"]["upload_img"]
-    data = FormData({"biz": "draw", "category": "daily"})
+    data = {"biz": "draw", "category": "daily"}
     return await request(
         "POST", url=api["url"], data=data, files={"file_up": image_stream},
         credential=credential)
