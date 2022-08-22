@@ -20,8 +20,8 @@ async def get_real_url(short_url: str):
             url = headers['location']
             headers = await get_headers(url)
         return url # 已经是最终路径
-    except:
-        raise ValueError("无法查看目标链接！")
+    except Exception as e:
+        raise e
 
 async def get_headers(short_url):
     """

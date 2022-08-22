@@ -136,7 +136,7 @@ async def parse_link(url, credential: Credential = Credential()):
             obj[0].credential = credential
             return obj
     except Exception as e:
-        print(e)
+        raise e
         return -1
 
 
