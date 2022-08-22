@@ -4,8 +4,6 @@
 
 **请务必转到 github 上 PR，gitee 仓库只是一个官方的镜像，设置为强制同步 github 仓库。**
 
-[为仓库 Javascript/Typescript 模块做贡献请跳转](./JAVASCRIPT.md)
-
 # 开发流程
 
 1. 使用 `git clone git@github.com:nemo2011/bilibili-api.git` 将本仓库拉取到本地。
@@ -33,7 +31,7 @@ Python是世界上最好的语言。
 
 # OK
 
-Python 是世界上最好的语言
+Python 是世界上最好的语言。
 ```
 
 # 提交规范

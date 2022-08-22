@@ -14,8 +14,6 @@
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])([Gitee][docs-gitee])
 
-Javascript & Typescript: [Readme](https://github.com/nemo2011/bilibili-api/blob/main/bilibili-api-ts/README.md)
-
 原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
 Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/nemo2011/bilibili-api)
