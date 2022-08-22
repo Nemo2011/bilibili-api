@@ -5,12 +5,12 @@
 import re
 import json
 import datetime
+import asyncio
 from aiohttp import FormData
 from typing import List
 import io
 
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
-from .utils.network import get_session as get_session_aiohttp
 from .utils.network_httpx import request
 from .utils.Credential import Credential
 from . import user, exceptions
@@ -101,16 +101,10 @@ async def upload_image(image_stream: io.BufferedIOBase, credential: Credential):
     credential.raise_for_no_bili_jct()
 
     api = API["send"]["upload_img"]
-    form = FormData({"biz": "draw", "category": "daily", "file_up": image_stream})
-    session = get_session_aiohttp()
-    resp = await session.post(
-        url=api["url"], data=form, cookies=credential.get_cookies()
-    )
-    data = await resp.read()
-    j = json.loads(data.decode("utf8"))
-    if j["code"] != 0:
-        raise exceptions.ResponseCodeException(j["code"], j["message"])
-    return j["data"]
+    data = FormData({"biz": "draw", "category": "daily"})
+    return await request(
+        "POST", url=api["url"], data=data, files={"file_up": image_stream},
+        credential=credential)
 
 
 async def _get_draw_data(
@@ -125,10 +119,8 @@ async def _get_draw_data(
 
     """
     new_text, at_uids, ctrl = await _parse_at(text)
-    images_info = []
-    for stream in image_streams:
-        i = await upload_image(stream, credential)
-        images_info.append(i)
+    images_info = await asyncio.gather(
+        *[upload_image(stream, credential) for stream in image_streams])
 
     def transformPicInfo(image):
         """
