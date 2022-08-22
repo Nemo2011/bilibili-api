@@ -60,20 +60,20 @@ class Danmaku:
     ):
         """
         Args:
-            text      (str)                             : 弹幕文本。
-            dm_time   (float, optional)                 : 弹幕在视频中的位置，单位为秒。Defaults to 0.0.
-            send_time (float, optional)                 : 弹幕发送的时间。Defaults to time.time().
-            crc32_id  (str, optional)                   : 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None.
-            color     (str, optional)                   : 弹幕十六进制颜色。Defaults to "ffffff".
-            weight    (int, optional)                   : 弹幕在弹幕列表显示的权重。Defaults to -1.
-            id_       (int, optional)                   : 弹幕 ID。Defaults to -1.
-            id_str    (str, optional)                   : 弹幕字符串 ID。Defaults to "".
-            action    (str, optional)                   : 暂不清楚。Defaults to "".
-            mode      (Union[DmMode, int], optional)    : 弹幕模式。Defaults to Mode.FLY.
-            font_size (Union[DmFontSize, int], optional): 弹幕字体大小。Defaults to FontSize.NORMAL.
-            is_sub    (bool, optional)                  : 是否为字幕弹幕。Defaults to False.
-            pool      (int, optional)                   : 池。Defaults to 0.
-            attr      (int, optional)                   : 暂不清楚。 Defaults to -1.
+            (self.)text      (str)                             : 弹幕文本。
+            (self.)dm_time   (float, optional)                 : 弹幕在视频中的位置，单位为秒。Defaults to 0.0.
+            (self.)send_time (float, optional)                 : 弹幕发送的时间。Defaults to time.time().
+            (self.)crc32_id  (str, optional)                   : 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None.
+            (self.)color     (str, optional)                   : 弹幕十六进制颜色。Defaults to "ffffff".
+            (self.)weight    (int, optional)                   : 弹幕在弹幕列表显示的权重。Defaults to -1.
+            (self.)id_       (int, optional)                   : 弹幕 ID。Defaults to -1.
+            (self.)id_str    (str, optional)                   : 弹幕字符串 ID。Defaults to "".
+            (self.)action    (str, optional)                   : 暂不清楚。Defaults to "".
+            (self.)mode      (Union[DmMode, int], optional)    : 弹幕模式。Defaults to Mode.FLY.
+            (self.)font_size (Union[DmFontSize, int], optional): 弹幕字体大小。Defaults to FontSize.NORMAL.
+            (self.)is_sub    (bool, optional)                  : 是否为字幕弹幕。Defaults to False.
+            (self.)pool      (int, optional)                   : 池。Defaults to 0.
+            (self.)attr      (int, optional)                   : 暂不清楚。 Defaults to -1.
         """
         self.text = text
         self.dm_time = dm_time
@@ -81,7 +81,7 @@ class Danmaku:
         self.crc32_id = crc32_id
         self.color = color
         self.weight = weight
-        self.id = id_
+        self.id_ = id_
         self.id_str = id_str
         self.action = action
         self.mode = mode.value if isinstance(mode, DmMode) else mode
@@ -104,7 +104,10 @@ class Danmaku:
 
     def set_crc32_id(self, crc32_id):
         """
-        设置 crc32_id
+        设置 crc32_id 同时破解 uid
+
+        Args:
+            crc32_id(str): crc32_id
         """
         self.crc32_id = crc32_id
         self.uid = zlib.crc32(crc32_id.encode("utf8"))
@@ -120,7 +123,7 @@ class Danmaku:
             "crc32_id": self.crc32_id, 
             "color": self.color, 
             "weight": self.weight, 
-            "id": self.id, 
+            "id": self.id_, 
             "id_str": self.id_str, 
             "action": self.action, 
             "mode": self.mode, 

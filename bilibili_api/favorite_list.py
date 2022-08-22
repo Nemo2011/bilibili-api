@@ -32,12 +32,22 @@ class FavoriteListContentOrder(Enum):
 
 
 class FavoriteListType(Enum):
+    """
+    收藏夹类型枚举
+
+    + VIDEO  : 视频收藏夹
+    + ARTICLE: 专栏收藏夹
+    + CHEESE : 课程收藏夹
+    """
     VIDEO = "video"
     ARTICLE = "articles"
     CHEESE = "pugvfav"
 
 
 class FavoriteList:
+    """
+    收藏夹类
+    """
     def __init__(
         self,
         type_: FavoriteListType = FavoriteListType.VIDEO,
@@ -65,7 +75,7 @@ class FavoriteList:
 
     def get_favorite_list_type(self):
         """
-        获取收藏家类型
+        获取收藏夹类型
 
         Returns:
             FavoriteListType: 收藏夹类型

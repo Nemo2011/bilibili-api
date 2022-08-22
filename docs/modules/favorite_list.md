@@ -16,11 +16,21 @@ from bilibili_api import favorite_list
 + VIEW   : 最多播放
 + PUBTIME: 最新投稿
 
+
+## class FavoriteListType
+
+**Extends:** enum.Enum
+
+收藏夹类型枚举
+
++ VIDEO  : 视频收藏夹
++ ARTICLE: 专栏收藏夹
++ CHEESE : 课程收藏夹
 ---
 
-## class VideoFavoriteList
+## class FavoriteList
 
-一个简单的视频收藏夹类。
+收藏夹类
 
 ### Functions
 
@@ -31,7 +41,19 @@ from bilibili_api import favorite_list
 | media_id   | int                                | 收藏夹 ID                                             |
 | credential | Credential, optional               | 凭据. Defaults to None.                               |
 
-#### async def get_content()
+#### def is_video_favorite_list()
+
+收藏夹是否为视频收藏夹
+
+**Returns:** bool: 是否为视频收藏夹
+
+#### def get_favorite_list_type()
+
+获取收藏夹类型
+
+**Returns:** FavoriteListType: 收藏夹类型
+
+#### async def get_content_video()
 
 | name       | type                               | description                                           |
 | ---------- | ---------------------------------- | :---------------------------------------------------- |
@@ -40,7 +62,17 @@ from bilibili_api import favorite_list
 | order      | FavoriteListContentOrder, optional | 排序方式. Defaults to FavoriteListContentOrder.MTIME. |
 | tid        | int, optional                      | 分区 ID. Defaults to 0.                               |
 
-获取视频收藏夹列表元数据。
+获取视频收藏夹内容。
+
+**Returns:** API 调用返回结果
+
+#### async def get_content()
+
+| name       | type                               | description                                           |
+| ---------- | ---------------------------------- | :---------------------------------------------------- |
+| page       | int, optional                      | 页码. Defaults to 1.                                  |
+
+获取收藏夹内容。
 
 **Returns:** API 调用返回结果
 

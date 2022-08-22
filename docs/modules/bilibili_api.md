@@ -241,26 +241,28 @@ BV 号转 AV 号。
 
 | name      | type               | description                                                 |
 | --------- | ------------------ | ----------------------------------------------------------- |
-| text      | str                  | 弹幕文本。                                                  |
-| dm_time   | float, optional      | 弹幕在视频中的位置，单位为秒。Defaults to 0.0.              |
-| send_time | float, optional      | 弹幕发送的时间。Defaults to time.time().                    |
-| crc32_id  | str, optional        | 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None. |
-| color     | str, optional        | 弹幕十六进制颜色。Defaults to "ffffff".                     |
-| weight    | int, optional        | 弹幕在弹幕列表显示的权重。Defaults to -1.                   |
-| id_       | int, optional        | 弹幕 ID。Defaults to -1.                                    |
-| id_str    | str, optional        | 弹幕字符串 ID。Defaults to "".                              |
-| action    | str, optional        | 暂不清楚。Defaults to "".                                   |
-| mode      | DmMode, optional     | 弹幕模式。Defaults to DmMode.FLY.                             |
-| font_size | DmFontSize, optional | 弹幕字体大小。Defaults to DmFontSize.NORMAL.                  |
-| is_sub    | bool, optional       | 是否为字幕弹幕。Defaults to False.                          |
-| pool      | int, optional        | 暂不清楚。Defaults to -1.                                   |
-| attr      | int, optional        | 暂不清楚。 Defaults to -1.                                  |
+| (self.)text      | str                  | 弹幕文本。                                                  |
+| (self.)dm_time   | float, optional      | 弹幕在视频中的位置，单位为秒。Defaults to 0.0.              |
+| (self.)send_time | float, optional      | 弹幕发送的时间。Defaults to time.time().                    |
+| (self.)crc32_id  | str, optional        | 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None. |
+| (self.)color     | str, optional        | 弹幕十六进制颜色。Defaults to "ffffff".                     |
+| (self.)weight    | int, optional        | 弹幕在弹幕列表显示的权重。Defaults to -1.                   |
+| (self.)id_       | int, optional        | 弹幕 ID。Defaults to -1.                                    |
+| (self.)id_str    | str, optional        | 弹幕字符串 ID。Defaults to "".                              |
+| (self.)action    | str, optional        | 暂不清楚。Defaults to "".                                   |
+| (self.)mode      | DmMode, optional     | 弹幕模式。Defaults to DmMode.FLY.                             |
+| (self.)font_size | DmFontSize, optional | 弹幕字体大小。Defaults to DmFontSize.NORMAL.                  |
+| (self.)is_sub    | bool, optional       | 是否为字幕弹幕。Defaults to False.                          |
+| (self.)pool      | int, optional        | 暂不清楚。Defaults to -1.                                   |
+| (self.)attr      | int, optional        | 暂不清楚。 Defaults to -1.                                  |
 
-#### def crack_uid()
+#### def set_crc32_id()
 
-破解 uid, 依赖 zlib
+| name      | type               | description                                                 |
+| - | - | - |
+| crc32_id | str | crc32_id |
 
-**Returns:** int: 真实 UID。
+设置 crc32_id 同时破解 uid
 
 #### def get_information()
 

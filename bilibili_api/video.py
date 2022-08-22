@@ -637,7 +637,7 @@ class Video:
                     data_type = dm_reader.varint() >> 3
 
                     if data_type == 1:
-                        dm.id = dm_reader.varint()
+                        dm.id_ = dm_reader.varint()
                     elif data_type == 2:
                         dm.dm_time = dm_reader.varint() / 1000
                     elif data_type == 3:

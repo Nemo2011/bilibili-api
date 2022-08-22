@@ -52,7 +52,7 @@
     - [class Danmaku](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=class-danmaku) **弹幕类**
       - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=def-__init__-1)
       - [def get_information()](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=def-get_information) **获取弹幕信息**
-      - [def crack_uid()](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=def-crack_uid) **暴力破解 UID**
+      - [def set_crc32_id()](/modules/bilibili_api?id=def-set_crc32_id) **设置 crc32_id 同时破解 uid**
       - [def to_xml()](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=def-to_xml) **将弹幕转换为 xml 格式弹幕**
   - [app.py](/modules/app.md) **手机 APP 相关**
     - [_async_ def get_loading_images()](https://nemo2011.github.io/bilibili-api/#/modules/app?id=async-def-get_loading_images) **获取开屏启动画面**
@@ -193,9 +193,17 @@
       - MTIME : 最近收藏
       - VIEW : 最多播放
       - PUBTIME: 最新投稿
-    - [class VideoFavoriteList](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=class-videofavoritelist) **一个简单的视频收藏夹类。**
+    - [class FavoriteListType](/modules/favorite_list?id=class-favoritelisttype) **收藏夹类型枚举**
+      - **Extends: enum.Enum**
+      + VIDEO  : 视频收藏夹
+      + ARTICLE: 专栏收藏夹
+      + CHEESE : 课程收藏夹
+    - [class FavoriteList](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=class-videofavoritelist) **一个简单的视频收藏夹类。**
       - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=def-__init__)
-      - [_async_ def get_content()](/modules/favorite_list?id=async-def-get_content) **获取视频收藏夹内容。**
+      - [def get_favorite_list_type()](/modules/favorite_list?id=def-get_content_video) **获取收藏夹类型**
+      - [def is_video_favorite_list()](/modules/favorite_list?id=def-get_content_video) **收藏夹是否为视频收藏夹**
+      - [_async_ def get_content_video()](/modules/favorite_list?id=async-def-get_content_video) **获取视频收藏夹内容。**
+      - [_async_ def get_content()](/modules/favorite_list?id=async-def-get_content) **获取收藏夹内容。**
     - [_async_ def get_video_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_video_favorite_list) **获取视频收藏夹列表。**
     - [_async_ def get_video_favorite_list_content()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_video_favorite_list_content) **获取视频收藏夹列表内容。**
     - [_async_ def get_topic_favorite_list()](https://nemo2011.github.io/bilibili-api/#/modules/favorite_list?id=async-def-get_topic_favorite_list) **获取自己的话题收藏夹内容。**
