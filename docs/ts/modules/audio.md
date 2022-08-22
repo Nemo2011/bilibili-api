@@ -61,3 +61,20 @@ import {} from "bilibili-api-ts/audio"
 获取歌单信息
 
 **Returns:** API 调用返回结果
+
+
+#### async function get_tags()
+
+获取歌单 tags
+
+**Returns:** API 调用返回结果
+
+#### async function get_song_list()
+
+| name | type          | description         |
+| ---- | ------------- | ------------------- |
+| pn   | int, optional | 页码。Defaults to 1 |
+
+获取歌单歌曲列表
+
+**Returns:** API 调用返回结果
