@@ -1,10 +1,10 @@
 import os
 from bilibili_api import *
+from bilibili_api.exceptions import *
 import sys
 import httpx
 import requests
 import signal
-import tempfile
 from colorama import Fore, Style, init
 
 PROXY = None
@@ -79,10 +79,10 @@ def _main():
     if "-h" in sys.argv:
         print('使用方法: python -m bilidown "https://bilibili.com/.../"')
         print(
-            '参数:   --proxy    代理                            "https://user:password@your-proxy.com"'
+            '参数:   --proxy    代理                                          "https://user:password@your-proxy.com"'
         )
-        print('参数:   --out      下载地址(默认为 "#default")     "~/Desktop/a.mp4"')
-        print('参数:   --ffmpeg   ffmpeg 地址(可以使用 #none 忽略)"ffmpeg"')
+        print('参数:   --out      下载地址(默认为 "#default")                   "~/Desktop/a.mp4"')
+        print('参数:   --ffmpeg   ffmpeg 地址(如果没有 ffmpeg 可以使用 "none")   "ffmpeg"')
         print("参数:   -h         帮助")
         exit()
 
@@ -106,7 +106,7 @@ def _main():
             FFMPEG = sys.argv[i + 1]
             print(Fore.GREEN + "INF: 识别到 FFmpeg 地址为 ", FFMPEG)
             if FFMPEG == "#none":
-                print(Fore.YELLOW + "WRN: 用户选择不使用 FFmpeg, 可能导致无法自动转换格式。")
+                print(Fore.YELLOW + "WRN: 用户选择不使用 FFmpeg, 会导致混流、转换格式无法自动执行")
 
     # TODO: PROXY
     for i in range(len(sys.argv)):
@@ -242,7 +242,7 @@ def _main():
                     raise e
 
                 print()
-                download_url = sync(obj.get_download_url(0))
+                download_url = sync(obj.get_download_url(download_p))
                 video_url = None
                 audio_url = None
                 for video_data in download_url["dash"]["video"]:
@@ -264,29 +264,125 @@ def _main():
                 print(Fore.GREEN + "INF: 下载视频完成 开始混流")
                 print(Fore.RESET)
                 if PATH == "#default":
-                    PATH = vinfo["title"] + f" - P{obj.get_bvid()}({download_p + 1}).mp4"
+                    PATH = vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
                 os.system(f'{FFMPEG} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy "{PATH}"')
                 os.remove("video_temp.m4s")
                 os.remove("audio_temp.m4s")
-                print(Fore.GREEN + f"INF: 混流完成")
+                print(Fore.GREEN + f"INF: 混流完成(或用户手动取)")
             elif "durl" in download_url.keys():
-                new_download_url = sync(obj.get_download_url(0))
+                new_download_url = sync(obj.get_download_url(download_p))
                 video_audio_url = new_download_url["durl"][0]["url"]
                 if PATH == "#default":
-                    PATH = vinfo["title"] + f" - P{obj.get_bvid()}({download_p + 1}).mp4"
+                    PATH = vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
                 PATH_FLV = PATH.rstrip(".mp4")
                 print(Fore.GREEN + "INF: 开始下载视频")
                 video_path = _download(video_audio_url, PATH_FLV, vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1})")
-                print(Fore.GREEN + "INF: 下载视频完成 正在转换格式")
-                os.system(f'{FFMPEG} -i "{PATH_FLV}" "{PATH}"')
-                print(Fore.GREEN + "INF: 格式转换完成")
-                delete_flv = input(Fore.BLUE + "Y/N: 是否删除 FLV 文件(默认删除): ")
-                if delete_flv.upper() == "n":
+                turn_format = input(Fore.BLUE + "Y/N: 是否转换成 MP4 视频(默认转换): ")
+                if turn_format.upper() == "N":
                     pass
                 else:
-                    os.remove(PATH_FLV)
+                    print(Fore.GREEN + "INF: 下载视频完成 正在转换格式")
+                    os.system(f'{FFMPEG} -i "{PATH_FLV}" "{PATH}"')
+                    print(Fore.GREEN + "INF: 格式转换完成(或用户手动取)")
+                    delete_flv = input(Fore.BLUE + "Y/N: 是否删除 FLV 文件(默认删除): ")
+                    if delete_flv.upper() == "N":
+                        pass
+                    else:
+                        os.remove(PATH_FLV)
         else:
-            pass
+            if "dash" in download_url.keys():
+                data = download_url["dash"]
+
+                videos_data = data["video"]
+                video_qualities = []
+                video_codecs = []
+                for video_data in videos_data:
+                    if not video_data["id"] in video_qualities:
+                        video_qualities.append(video_data["id"])
+                    if not video_data["codecs"] in video_codecs:
+                        video_codecs.append(video_data["codecs"])
+                print(Fore.GREEN + "INF: 视频清晰度：", end="|")
+                for q in video_qualities:
+                    print(f"  {q}: {VIDEO_QUALITY[q]}", "  |", end="")
+                print()
+                qnum = input(Fore.BLUE + "NUM: 请选择清晰度对应数字(默认为最大清晰度): ")
+                VIDEO_QUALITY_NUMBER = int(qnum) if qnum != "" else max(video_qualities)
+                print(Fore.GREEN + "INF: 视频编码：", end="|")
+                for c in video_codecs:
+                    for codename, description in VIDEO_CODECS.items():
+                        if codename in c:
+                            print(f"  {codename}: {description}", "  |", end="")
+                print()
+                CODECS = input(Fore.BLUE + 'STR: 请选择视频编码对应的号码(默认为 "hev"): ')
+                if CODECS == "":
+                    CODECS = "hev"
+
+                audios_data = data["audio"]
+                audio_qualities = []
+                for audio_data in audios_data:
+                    if not audio_data["id"] in audio_qualities:
+                        audio_qualities.append(audio_data["id"])
+                print(Fore.GREEN + "INF: 音频音质：", end="|")
+                for q in audio_qualities:
+                    print(f"  {q}: {AUDIO_QUALITY[q]}", "  |", end="")
+                print()
+                qnuma = input(Fore.BLUE + "NUM: 请选择音质对应数字(默认为最好音质): ")
+                AUDIO_QUALITY_NUMBER = int(qnuma) if qnuma != "" else max(audio_qualities)
+
+                print()
+                try:
+                    print(
+                        Fore.GREEN
+                        + f"INF: 选择的视频清晰度 {VIDEO_QUALITY[VIDEO_QUALITY_NUMBER]} | ({VIDEO_QUALITY_NUMBER})"
+                    )
+                    print(Fore.GREEN + f"INF: 选择的视频编码 {VIDEO_CODECS[CODECS]} | ({CODECS})")
+                    print(
+                        Fore.GREEN
+                        + f"INF: 选择的音频音质 {AUDIO_QUALITY[AUDIO_QUALITY_NUMBER]} | ({AUDIO_QUALITY_NUMBER})"
+                    )
+                except KeyError:
+                    print(Fore.RED, "ERR: 没有目标清晰度/编码/音质")
+                    exit()
+                except Exception as e:
+                    raise e
+
+                print()
+                download_url = sync(obj.get_download_url(download_p))
+                video_url = None
+                audio_url = None
+                for video_data in download_url["dash"]["video"]:
+                    if video_data["id"] == VIDEO_QUALITY_NUMBER and CODECS in video_data["codecs"]:
+                        video_url = video_data["baseUrl"]
+                for audio_data in download_url["dash"]["audio"]:
+                    if audio_data["id"] == AUDIO_QUALITY_NUMBER:
+                        audio_url = audio_data["baseUrl"]
+                if video_url == None:
+                    print(Fore.RED + "ERR: 没有目标视频下载链接")
+                    exit()
+                if audio_url == None:
+                    print(Fore.RED + "ERR: 没有目标音频下载链接")
+                    exit()
+                if PATH == "#default":
+                    PATH = vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
+                print(Fore.GREEN + "INF: 开始下载视频")
+                video_path = _download(video_url, "视频 - " + PATH, vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}) - 视频")
+                print(Fore.GREEN + "INF: 开始下载音频")
+                audio_path = _download(audio_url, "音频 - " + PATH, vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}) - 音频")
+                print(Fore.GREEN + "INF: BiliDown 下载完成")
+                print(Fore.GREEN + "视频地址：(" + "视频 - " + PATH + ")")
+                print(Fore.GREEN + "音频地址：(" + "音频 - " + PATH + ")")
+                exit()
+            elif "durl" in download_url.keys():
+                new_download_url = sync(obj.get_download_url(download_p))
+                video_audio_url = new_download_url["durl"][0]["url"]
+                if PATH == "#default":
+                    PATH = vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
+                PATH_FLV = PATH.rstrip(".mp4") + ".flv"
+                print(Fore.GREEN + "INF: 开始下载视频")
+                video_path = _download(video_audio_url, PATH_FLV, vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1})")
+                print(Fore.GREEN + "INF: BiliDown 下载完成")
+                print(Fore.GREEN + f"({PATH_FLV})")
+                exit()
     else:
         pass
     print(Fore.GREEN + "INF: BiliDown 下载完成")
