@@ -149,6 +149,12 @@ class CheeseVideo:
         """
         self.__init__(epid, self.credential)
 
+    def get_epid(self):
+        """
+        获取 epid
+        """
+        return self.epid
+
     async def get_download_url(self):
         """
         获取下载链接
