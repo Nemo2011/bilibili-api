@@ -78,12 +78,13 @@ def _main():
 
     if "-h" in sys.argv:
         print('使用方法: python -m bilidown "https://bilibili.com/.../"')
+        print('参数:   --out/-o     下载地址(默认为 "#default")                          "~/Desktop/a.mp4"')
         print(
-            '参数:   --proxy    代理                                          "https://user:password@your-proxy.com"'
+            '参数:   --proxy      代理                                                 "https://user:password@your-proxy.com"'
         )
-        print('参数:   --out      下载地址(默认为 "#default")                   "~/Desktop/a.mp4"')
-        print('参数:   --ffmpeg   ffmpeg 地址(如果没有 ffmpeg 可以使用 "none")   "ffmpeg"')
-        print("参数:   -h         帮助")
+        print('参数:   --ffmpeg     ffmpeg 地址(如果没有 ffmpeg 可以使用 "none")         "ffmpeg"')
+        print('参数:   --sessdata   Cookies 中 SESSDATA 的值, 用于下载会员专享、高清晰度 "SECRET绝密SECRET绝密"')
+        print("参数:   -h           帮助")
         exit()
 
     print("使用 -h 获取帮助。")
@@ -95,9 +96,17 @@ def _main():
     # TODO: OUT
     for i in range(len(sys.argv)):
         arg = sys.argv[i]
-        if arg == "--out":
+        if arg == "--out" or arg == "-o":
             OUT = sys.argv[i + 1]
             print(Fore.GREEN + "INF: 识别到文件输出地址为 ", OUT)
+
+    # TODO: CREDENTIAL & SESSDATA
+    CREDENTIAL = Credential()
+    for i in range(len(sys.argv)):
+        arg = sys.argv[i]
+        if arg == "--sessdata":
+            CREDENTIAL.sessdata = sys.argv[i + 1]
+            print(Fore.GREEN + "INF: 识别到 SESSDATA = ", CREDENTIAL.sessdata)
 
     # TODO: FFMPEG
     for i in range(len(sys.argv)):
@@ -123,12 +132,13 @@ def _main():
                 PROXY = p
                 print(Fore.GREEN + "INF: 使用代理：", PROXY)
                 settings.proxy = PROXY
-                print()
+    
+    print()
 
     # TODO: PARSE
     print(Fore.GREEN + "INF: 正在获取链接信息")
     try:
-        download_object = sync(parse_link(sys.argv[1]))
+        download_object = sync(parse_link(sys.argv[1], credential=CREDENTIAL))
     except Exception as e:
         print(Fore.RED + "ERR", e, Style.RESET_ALL)
         exit()
