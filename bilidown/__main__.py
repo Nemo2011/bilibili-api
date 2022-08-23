@@ -257,9 +257,9 @@ def _main():
                 if audio_url == None:
                     print(Fore.RED + "ERR: 没有目标音频下载链接")
                     exit()
-                print(Fore.GREEN + "INF: 准备下载视频")
+                print(Fore.GREEN + "INF: 开始下载视频")
                 video_path = _download(video_url, "video_temp.m4s", vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}) - 视频")
-                print(Fore.GREEN + "INF: 准备下载音频")
+                print(Fore.GREEN + "INF: 开始下载音频")
                 audio_path = _download(audio_url, "audio_temp.m4s", vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}) - 音频")
                 print(Fore.GREEN + "INF: 下载视频完成 开始混流")
                 print(Fore.RESET)
@@ -268,7 +268,29 @@ def _main():
                 os.system(f'{FFMPEG} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy "{PATH}"')
                 os.remove("video_temp.m4s")
                 os.remove("audio_temp.m4s")
-                print(Fore.GREEN + f"INF: 下载完成({PATH})")
+                print(Fore.GREEN + f"INF: 混流完成")
+            elif "durl" in download_url.keys():
+                new_download_url = sync(obj.get_download_url(0))
+                video_audio_url = new_download_url["durl"][0]["url"]
+                if PATH == "#default":
+                    PATH = vinfo["title"] + f" - P{obj.get_bvid()}({download_p + 1}).mp4"
+                PATH_FLV = PATH.rstrip(".mp4")
+                print(Fore.GREEN + "INF: 开始下载视频")
+                video_path = _download(video_audio_url, PATH_FLV, vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1})")
+                print(Fore.GREEN + "INF: 下载视频完成 正在转换格式")
+                os.system(f'{FFMPEG} -i "{PATH_FLV}" "{PATH}"')
+                print(Fore.GREEN + "INF: 格式转换完成")
+                delete_flv = input(Fore.BLUE + "Y/N: 是否删除 FLV 文件(默认删除): ")
+                if delete_flv.upper() == "n":
+                    pass
+                else:
+                    os.remove(PATH_FLV)
+        else:
+            pass
+    else:
+        pass
+    print(Fore.GREEN + "INF: BiliDown 下载完成")
+    print(Fore.GREEN + f"({PATH})")
 
 if __name__ == "__main__":
     _main()
