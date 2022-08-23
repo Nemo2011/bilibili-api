@@ -81,6 +81,7 @@ async def parse_link(url, credential: Credential = Credential()):
     try:
         obj = check_short_name(url)
         if obj != -1:
+            obj[0].credential = credential
             return obj
 
         url = await get_real_url(url)
