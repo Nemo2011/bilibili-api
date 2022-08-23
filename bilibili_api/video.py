@@ -34,6 +34,23 @@ from . import settings
 API = get_api("video")
 
 
+VIDEO_QUALITY = {
+    126: "杜比视界",
+    125: "真彩 HDR",
+    120: "超清 4K",
+    116: "高清 1080P60",
+    112: "高清 1080P+",
+    80: "高清 1080P",
+    64: "高清 720P60",
+    32: "清晰 480P",
+    16: "流畅 360P",
+}
+
+VIDEO_CODECS = {"hev": "HEVC(H.265)", "avc": "AVC(H.264)", "av01": "AV1"}
+
+AUDIO_QUALITY = {30280: "高品质", 30232: "中等品质", 30216: "低品质"}
+
+
 class DanmakuOperatorType(Enum):
     DELETE = 1
     PROTECT = 2
@@ -1087,7 +1104,7 @@ class Video:
 
         Args:
             lan        (str)          : 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm
-            
+
             data       (dict)         : 字幕数据
             submit     (bool)         : 是否提交，不提交为草稿
             sign       (bool)         : 是否署名
