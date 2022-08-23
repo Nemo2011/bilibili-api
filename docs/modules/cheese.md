@@ -114,6 +114,10 @@ ep_id(int): 单集 ep_id
 
 **Returns**: None
 
+#### def get_epid()
+
+获取 epid
+
 #### async def get_download_url()
 
 获取下载链接
