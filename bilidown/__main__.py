@@ -600,6 +600,180 @@ def _main():
                 print(Fore.GREEN + "INF: BiliDown 下载完成")
                 print(Fore.GREEN + f"({PATH_FLV})")
                 exit()
+    elif resource_type == ResourceType.CHEESE_VIDEO:
+        obj: cheese.CheeseVideo
+        print(Fore.GREEN + "INF: 视频 AID: ", obj.get_aid())
+        print(Fore.GREEN + "INF: 视频 EPID: ", obj.epid)
+        pages_data = sync(obj.get_pages())
+        print(Fore.GREEN + "INF: 正在获取下载地址")
+        download_url = sync(obj.get_download_url())
+        vinfo = obj.get_meta()
+        if FFMPEG != "#none":
+            data = download_url["dash"]
+
+            videos_data = data["video"]
+            video_qualities = []
+            video_codecs = []
+            for video_data in videos_data:
+                if not video_data["id"] in video_qualities:
+                    video_qualities.append(video_data["id"])
+                if not video_data["codecs"] in video_codecs:
+                    video_codecs.append(video_data["codecs"])
+            print(Fore.GREEN + "INF: 视频清晰度：", end="|")
+            for q in video_qualities:
+                print(f"  {q}: {VIDEO_QUALITY[q]}", "  |", end="")
+            print()
+            qnum = input(Fore.BLUE + "NUM: 请选择清晰度对应数字(默认为最大清晰度): ")
+            VIDEO_QUALITY_NUMBER = int(qnum) if qnum != "" else max(video_qualities)
+            print(Fore.GREEN + "INF: 视频编码：", end="|")
+            for c in video_codecs:
+                for codename, description in VIDEO_CODECS.items():
+                    if codename in c:
+                        print(f"  {codename}: {description}", "  |", end="")
+            print()
+            CODECS = input(Fore.BLUE + 'STR: 请选择视频编码对应的号码(默认为 "hev"): ')
+            if CODECS == "":
+                CODECS = "hev"
+
+            audios_data = data["audio"]
+            audio_qualities = []
+            for audio_data in audios_data:
+                if not audio_data["id"] in audio_qualities:
+                    audio_qualities.append(audio_data["id"])
+            print(Fore.GREEN + "INF: 音频音质：", end="|")
+            for q in audio_qualities:
+                print(f"  {q}: {AUDIO_QUALITY[q]}", "  |", end="")
+            print()
+            qnuma = input(Fore.BLUE + "NUM: 请选择音质对应数字(默认为最好音质): ")
+            AUDIO_QUALITY_NUMBER = int(qnuma) if qnuma != "" else max(audio_qualities)
+
+            print()
+            try:
+                print(
+                    Fore.GREEN
+                    + f"INF: 选择的视频清晰度 {VIDEO_QUALITY[VIDEO_QUALITY_NUMBER]} | ({VIDEO_QUALITY_NUMBER})"
+                )
+                print(Fore.GREEN + f"INF: 选择的视频编码 {VIDEO_CODECS[CODECS]} | ({CODECS})")
+                print(
+                    Fore.GREEN
+                    + f"INF: 选择的音频音质 {AUDIO_QUALITY[AUDIO_QUALITY_NUMBER]} | ({AUDIO_QUALITY_NUMBER})"
+                )
+            except KeyError:
+                print(Fore.RED, "ERR: 没有目标清晰度/编码/音质")
+                exit()
+            except Exception as e:
+                raise e
+
+            print()
+            download_url = sync(obj.get_download_url())
+            video_url = None
+            audio_url = None
+            for video_data in download_url["dash"]["video"]:
+                if video_data["id"] == VIDEO_QUALITY_NUMBER and CODECS in video_data["codecs"]:
+                    video_url = video_data["base_url"]
+            for audio_data in download_url["dash"]["audio"]:
+                if audio_data["id"] == AUDIO_QUALITY_NUMBER:
+                    audio_url = audio_data["base_url"]
+            if video_url == None:
+                print(Fore.RED + "ERR: 没有目标视频下载链接")
+                exit()
+            if audio_url == None:
+                print(Fore.RED + "ERR: 没有目标音频下载链接")
+                exit()
+            print(Fore.GREEN + "INF: 开始下载视频")
+            video_path = _download(video_url, "video_temp.m4s", vinfo["title"] + f" - AV{obj.get_aid()}(课程 EP{obj.get_epid()}) - 视频")
+            print(Fore.GREEN + "INF: 开始下载音频")
+            audio_path = _download(audio_url, "audio_temp.m4s", vinfo["title"] + f" - AV{obj.get_aid()}(课程 EP{obj.get_epid()}) - 音频")
+            print(Fore.GREEN + "INF: 下载视频完成 开始混流")
+            print(Fore.RESET)
+            if PATH == "#default":
+                PATH = vinfo["title"] + f" - AV{obj.get_aid()}(课程 EP{obj.get_epid()}).mp4"
+            os.system(f'{FFMPEG} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy "{PATH}"')
+            os.remove("video_temp.m4s")
+            os.remove("audio_temp.m4s")
+            print(Fore.GREEN + f"INF: 混流完成(或用户手动取)")
+        else:
+            data = download_url["dash"]
+
+            videos_data = data["video"]
+            video_qualities = []
+            video_codecs = []
+            for video_data in videos_data:
+                if not video_data["id"] in video_qualities:
+                    video_qualities.append(video_data["id"])
+                if not video_data["codecs"] in video_codecs:
+                    video_codecs.append(video_data["codecs"])
+            print(Fore.GREEN + "INF: 视频清晰度：", end="|")
+            for q in video_qualities:
+                print(f"  {q}: {VIDEO_QUALITY[q]}", "  |", end="")
+            print()
+            qnum = input(Fore.BLUE + "NUM: 请选择清晰度对应数字(默认为最大清晰度): ")
+            VIDEO_QUALITY_NUMBER = int(qnum) if qnum != "" else max(video_qualities)
+            print(Fore.GREEN + "INF: 视频编码：", end="|")
+            for c in video_codecs:
+                for codename, description in VIDEO_CODECS.items():
+                    if codename in c:
+                        print(f"  {codename}: {description}", "  |", end="")
+            print()
+            CODECS = input(Fore.BLUE + 'STR: 请选择视频编码对应的号码(默认为 "hev"): ')
+            if CODECS == "":
+                CODECS = "hev"
+
+            audios_data = data["audio"]
+            audio_qualities = []
+            for audio_data in audios_data:
+                if not audio_data["id"] in audio_qualities:
+                    audio_qualities.append(audio_data["id"])
+            print(Fore.GREEN + "INF: 音频音质：", end="|")
+            for q in audio_qualities:
+                print(f"  {q}: {AUDIO_QUALITY[q]}", "  |", end="")
+            print()
+            qnuma = input(Fore.BLUE + "NUM: 请选择音质对应数字(默认为最好音质): ")
+            AUDIO_QUALITY_NUMBER = int(qnuma) if qnuma != "" else max(audio_qualities)
+
+            print()
+            try:
+                print(
+                    Fore.GREEN
+                    + f"INF: 选择的视频清晰度 {VIDEO_QUALITY[VIDEO_QUALITY_NUMBER]} | ({VIDEO_QUALITY_NUMBER})"
+                )
+                print(Fore.GREEN + f"INF: 选择的视频编码 {VIDEO_CODECS[CODECS]} | ({CODECS})")
+                print(
+                    Fore.GREEN
+                    + f"INF: 选择的音频音质 {AUDIO_QUALITY[AUDIO_QUALITY_NUMBER]} | ({AUDIO_QUALITY_NUMBER})"
+                )
+            except KeyError:
+                print(Fore.RED, "ERR: 没有目标清晰度/编码/音质")
+                exit()
+            except Exception as e:
+                raise e
+
+            print()
+            download_url = sync(obj.get_download_url())
+            video_url = None
+            audio_url = None
+            for video_data in download_url["dash"]["video"]:
+                if video_data["id"] == VIDEO_QUALITY_NUMBER and CODECS in video_data["codecs"]:
+                    video_url = video_data["base_url"]
+            for audio_data in download_url["dash"]["audio"]:
+                if audio_data["id"] == AUDIO_QUALITY_NUMBER:
+                    audio_url = audio_data["base_url"]
+            if video_url == None:
+                print(Fore.RED + "ERR: 没有目标视频下载链接")
+                exit()
+            if audio_url == None:
+                print(Fore.RED + "ERR: 没有目标音频下载链接")
+                exit()
+            if PATH == "#default":
+                PATH = vinfo["title"] + f" - AV{obj.get_aid()}(课程 EP{obj.get_epid()}).mp4"
+            print(Fore.GREEN + "INF: 开始下载视频")
+            video_path = _download(video_url, "视频 - " + PATH, vinfo["title"] + f" - AV{obj.get_aid()}(课程 EP{obj.get_epid()}) - 视频")
+            print(Fore.GREEN + "INF: 开始下载音频")
+            audio_path = _download(audio_url, "音频 - " + PATH, vinfo["title"] + f" - AV{obj.get_aid()}(课程 EP{obj.get_epid()}) - 音频")
+            print(Fore.GREEN + "INF: BiliDown 下载完成")
+            print(Fore.GREEN + "视频地址：(" + "视频 - " + PATH + ")")
+            print(Fore.GREEN + "音频地址：(" + "音频 - " + PATH + ")")
+            exit()
     else:
         pass
     print(Fore.GREEN + "INF: BiliDown 下载完成")
