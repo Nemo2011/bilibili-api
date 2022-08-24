@@ -96,27 +96,44 @@ def _help():
     """
     print()
     print('使用方法: python -m bilidown "https://bilibili.com/.../"', end=" ")
-    print(Fore.RED + "链接为第一个参数, 允许多个链接, 请使用 \"|\" 隔开每一个链接" + Fore.RESET)
-    print('参数:   --out/-o                  文件名(默认为 "#default")                            "a.mp4"', end=" ")
-    print(Fore.RED + "允许多个输出文件名, 请使用 \"|\" 隔开每一个输出文件名" + Fore.RESET)
-    print('参数:   --dic/-d                  下载至文件夹(默认为 "default")                       "~/Desktop"')
+    print(Fore.RED + '链接为第一个参数, 允许多个链接, 请使用 "|" 隔开每一个链接' + Fore.RESET)
+    print(
+        '参数:   --out/-o                  文件名(默认为 "#default")                            "a.mp4"',
+        end=" ",
+    )
+    print(Fore.RED + '允许多个输出文件名, 请使用 "|" 隔开每一个输出文件名' + Fore.RESET)
+    print(
+        '参数:   --dic/-d                  下载至文件夹(默认为 "default")                       "~/Desktop"'
+    )
     print(
         '参数:   --proxy                   代理                                                 "https://user:password@your-proxy.com"'
     )
-    print('参数:   --ffmpeg                  ffmpeg 地址(如果没有 ffmpeg 可以使用 "#none")        "ffmpeg"')
-    print('参数:   --sessdata                Cookies 中 SESSDATA 的值, 用于下载会员专享、高清晰度 "SECRET绝密SECRET绝密"')
-    print('参数:   --disable-filetype-check  忽略自动检查文件后缀')
+    print(
+        '参数:   --ffmpeg                  ffmpeg 地址(如果没有 ffmpeg 可以使用 "#none")        "ffmpeg"'
+    )
+    print(
+        '参数:   --sessdata                Cookies 中 SESSDATA 的值, 用于下载会员专享、高清晰度 "SECRET绝密SECRET绝密"'
+    )
+    print("参数:   --disable-filetype-check  忽略自动检查文件后缀")
     print("参数:   -h           帮助")
     print()
     print(
         Fore.LIGHTRED_EX
-        + '参数 --out/-o 允许使用自定义格式, 如 ' + Fore.GREEN + '"{title} - {bvid} - P{p} - {owner} - {uid}"'
+        + "参数 --out/-o 允许使用自定义格式, 如 "
+        + Fore.GREEN
+        + '"{title} - {bvid} - P{p} - {owner} - {uid}"'
     )
-    print("| {bvid}         -> BVID        | {aid}          -> AID       | {title}        -> 标题      | {p}            -> 分 P         |")
-    print("| {owner}        -> UP          | {uid}          -> UP uid    | {bangumi_epid} -> 番剧 epid | {bangumi_name} -> 番剧名      |")
-    print("| {bangumi_id}   -> 番剧第几集  | {cheese_epid}  -> 课程 epid | {cheese_name}  -> 课程名    | {cheese_id}    -> 课程第几集  |")
+    print(
+        "| {bvid}         -> BVID        | {aid}          -> AID       | {title}        -> 标题      | {p}            -> 分 P         |"
+    )
+    print(
+        "| {owner}        -> UP          | {uid}          -> UP uid    | {bangumi_epid} -> 番剧 epid | {bangumi_name} -> 番剧名      |"
+    )
+    print(
+        "| {bangumi_id}   -> 番剧第几集  | {cheese_epid}  -> 课程 epid | {cheese_name}  -> 课程名    | {cheese_id}    -> 课程第几集  |"
+    )
     print("| {cvid}         -> 专栏 cvid   | {live_id}      -> 直播间 id")
-    print(Fore.LIGHTRED_EX + "在参数最后加上 \"#\" 表示所有视频均使用此格式, 如 " + Fore.GREEN + "\"{bvid}#\"")
+    print(Fore.LIGHTRED_EX + '在参数最后加上 "#" 表示所有视频均使用此格式, 如 ' + Fore.GREEN + '"{bvid}#"')
 
     exit()
 
@@ -500,7 +517,7 @@ def _main():
         arg = sys.argv[i]
         if arg == "--disable-filetype-check":
             print(Fore.GREEN + "INF: 识别到 disable-filetype-check, 已禁用文件后缀自动检查")
-            _require_file_type = lambda x, y : x
+            _require_file_type = lambda x, y: x
 
     # TODO: START
     print(Fore.CYAN + "----------开始下载----------")
