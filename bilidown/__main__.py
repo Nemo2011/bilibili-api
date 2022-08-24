@@ -1,5 +1,4 @@
 import os
-import pprint
 from bilibili_api import *
 from bilibili_api.exceptions import *
 import sys
@@ -532,7 +531,10 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     if codename in c:
                         print(f"  {codename}: {description}", "  |", end="")
             print()
-            CODECS = input(Fore.BLUE + f'STR: 请选择视频编码对应的号码(avc|av01|hev)(默认为 "{video_codecs[0]}"): ')
+            CODECS = input(
+                Fore.BLUE
+                + f'STR: 请选择视频编码对应的号码(avc|av01|hev)(默认为 "{video_codecs[0]}"): '
+            )
             CODECS = CODECS.lower()
             if CODECS == "":
                 CODECS = video_codecs[0]
@@ -588,23 +590,18 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
             video_path = _download(
                 video_url,
                 "video_temp.m4s",
-                vinfo["title"]
-                + f" - {title}(第{epcnt}集) - 视频",
+                vinfo["title"] + f" - {title}(第{epcnt}集) - 视频",
             )
             print(Fore.GREEN + f"INF: 开始下载音频({title} 第{epcnt}集)")
             audio_path = _download(
                 audio_url,
                 "audio_temp.m4s",
-                vinfo["title"]
-                + f" - {title}(第{epcnt}集) - 音频",
+                vinfo["title"] + f" - {title}(第{epcnt}集) - 音频",
             )
             print(Fore.GREEN + "INF: 下载视频完成 开始混流")
             print(Fore.RESET)
             if now_file_name == "#default":
-                RNAME = (
-                    vinfo["title"]
-                    + f" - 番剧 EP{obj.get_epid()}({title}).mp4"
-                )
+                RNAME = vinfo["title"] + f" - 番剧 EP{obj.get_epid()}({title}).mp4"
             else:
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
@@ -614,7 +611,8 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     .replace("{title}", vinfo["title"])
                     .replace("{bangumi_id}", str(obj.get_bangumi().get_season_id()))
                     .replace(
-                        "{bangumi_name}", sync(obj.get_bangumi().get_meta())["media"]["title"]
+                        "{bangumi_name}",
+                        sync(obj.get_bangumi().get_meta())["media"]["title"],
                     )
                     .replace("{bangumi_ep}", str(epcnt))
                     .replace("{bangumi_epid}", str(obj.get_epid()))
@@ -637,10 +635,7 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
             new_download_url = sync(obj.get_download_url())
             video_audio_url = new_download_url["durl"][0]["url"]
             if now_file_name == "#default":
-                RNAME = (
-                    vinfo["title"]
-                    + f" - 番剧 EP{obj.get_epid()}({title}).mp4"
-                )
+                RNAME = vinfo["title"] + f" - 番剧 EP{obj.get_epid()}({title}).mp4"
             else:
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
@@ -650,7 +645,8 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     .replace("{title}", vinfo["title"])
                     .replace("{bangumi_id}", str(obj.get_bangumi().get_season_id()))
                     .replace(
-                        "{bangumi_name}", sync(obj.get_bangumi().get_meta())["media"]["title"]
+                        "{bangumi_name}",
+                        sync(obj.get_bangumi().get_meta())["media"]["title"],
                     )
                     .replace("{bangumi_ep}", str(epcnt))
                     .replace("{bangumi_epid}", str(obj.get_epid()))
@@ -663,8 +659,7 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
             video_path = _download(
                 video_audio_url,
                 PATH_FLV,
-                vinfo["title"]
-                + f" - {title}(第{epcnt}集)",
+                vinfo["title"] + f" - {title}(第{epcnt}集)",
             )
             turn_format = input(Fore.BLUE + "Y/N: 是否转换成 MP4 视频(默认转换): ")
             if turn_format.upper() == "N":
@@ -709,7 +704,10 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     if codename in c:
                         print(f"  {codename}: {description}", "  |", end="")
             print()
-            CODECS = input(Fore.BLUE + f'STR: 请选择视频编码对应的号码(avc|av01|hev)(默认为 "{video_codecs[0]}"): ')
+            CODECS = input(
+                Fore.BLUE
+                + f'STR: 请选择视频编码对应的号码(avc|av01|hev)(默认为 "{video_codecs[0]}"): '
+            )
             CODECS = CODECS.lower()
             if CODECS == "":
                 CODECS = video_codecs[0]
@@ -763,10 +761,7 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                 print(Fore.RED + "ERR: 没有目标音频下载链接")
                 exit()
             if now_file_name == "#default":
-                RNAME = (
-                    vinfo["title"]
-                    + f" - 番剧 EP{obj.get_epid()}({title}).mp4"
-                )
+                RNAME = vinfo["title"] + f" - 番剧 EP{obj.get_epid()}({title}).mp4"
             else:
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
@@ -776,7 +771,8 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     .replace("{title}", vinfo["title"])
                     .replace("{bangumi_id}", str(obj.get_bangumi().get_season_id()))
                     .replace(
-                        "{bangumi_name}", sync(obj.get_bangumi().get_meta())["media"]["title"]
+                        "{bangumi_name}",
+                        sync(obj.get_bangumi().get_meta())["media"]["title"],
                     )
                     .replace("{bangumi_ep}", str(epcnt))
                     .replace("{bangumi_epid}", str(obj.get_epid()))
@@ -803,10 +799,7 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
             new_download_url = sync(obj.get_download_url())
             video_audio_url = new_download_url["durl"][0]["url"]
             if now_file_name == "#default":
-                RNAME = (
-                    vinfo["title"]
-                    + f" - 番剧 EP{obj.get_epid()}({title}).flv"
-                )
+                RNAME = vinfo["title"] + f" - 番剧 EP{obj.get_epid()}({title}).flv"
             else:
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
@@ -816,7 +809,8 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     .replace("{title}", vinfo["title"])
                     .replace("{bangumi_id}", str(obj.get_bangumi().get_season_id()))
                     .replace(
-                        "{bangumi_name}", sync(obj.get_bangumi().get_meta())["media"]["title"]
+                        "{bangumi_name}",
+                        sync(obj.get_bangumi().get_meta())["media"]["title"],
                     )
                     .replace("{bangumi_ep}", str(epcnt))
                     .replace("{bangumi_epid}", str(obj.get_epid()))
