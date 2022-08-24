@@ -25,6 +25,7 @@ VIDEO_QUALITY = {
 }
 VIDEO_CODECS = {"hev": "HEVC(H.265)", "avc": "AVC(H.264)", "av01": "AV1"}
 AUDIO_QUALITY = {30280: "高品质", 30232: "中等品质", 30216: "低品质"}
+CREDENTIAL = Credential()
 
 
 def _exit(*args, **kwargs):
@@ -122,7 +123,7 @@ def _help():
         Fore.LIGHTRED_EX
         + "参数 --out/-o 允许使用自定义格式, 如 "
         + Fore.GREEN
-        + '"{title} - {bvid} - P{p} - {owner} - {uid}"'
+        + '"{title} - {bvid} - P{p} - {owner} - {uid}"' + Fore.RED + " 请务必使用小写"
     )
     print(
         "| {bvid}         -> BVID            | {aid}          -> AID            | {title}        -> 标题      | {p}            -> 分 P        |"
@@ -137,6 +138,7 @@ def _help():
         "| {bangumi_id}   -> 番剧 season_id  | {cheese_id}    -> 课程 season_id | {cvid}         -> 专栏 cvid | {live_id}      -> 直播间 id   |"
     )
     print(Fore.LIGHTRED_EX + '在参数最后加上 "#" 表示所有视频均使用此格式, 如 ' + Fore.GREEN + '"{bvid}#"')
+    print(Fore.LIGHTRED_EX + '使用 "\{" 和 "/{" 表示当作纯文本')
 
     exit()
 
@@ -1140,25 +1142,8 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
     print(Fore.CYAN + "----------完成下载----------")
 
 
-def _main():
-    global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type
-    # TODO: INFO
-    print(Fore.LIGHTMAGENTA_EX + "BiliDown: 哔哩哔哩命令行下载器")
-    print(Fore.LIGHTMAGENTA_EX + "Powered by Bilibili API")
-    print(Fore.LIGHTMAGENTA_EX + "By Nemo2011<yimoxia@outlook.com>")
-
-    if "-h" in sys.argv:
-        _help()
-
-    print("使用 -h 获取帮助。")
-
-    if len(sys.argv) == 1:
-        print(Fore.YELLOW + "WRN: 请提供参数")
-        exit()
-
-    print()
-
-    # TODO: ARGS
+def _parse_args():
+    global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY
     for i in range(len(sys.argv)):
         arg = sys.argv[i]
         if arg == "--out" or arg == "-o":
@@ -1207,6 +1192,27 @@ def _main():
         if arg == "--disable-filetype-check":
             print(Fore.GREEN + "INF: 识别到 disable-filetype-check, 已禁用文件后缀自动检查")
             _require_file_type = lambda x, y: x
+
+def _main():
+    global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type
+    # TODO: INFO
+    print(Fore.LIGHTMAGENTA_EX + "BiliDown: 哔哩哔哩命令行下载器")
+    print(Fore.LIGHTMAGENTA_EX + "Powered by Bilibili API")
+    print(Fore.LIGHTMAGENTA_EX + "By Nemo2011<yimoxia@outlook.com>")
+
+    if "-h" in sys.argv:
+        _help()
+
+    print("使用 -h 获取帮助。")
+
+    if len(sys.argv) == 1:
+        print(Fore.YELLOW + "WRN: 请提供参数")
+        exit()
+
+    print()
+
+    # TODO: ARGS
+    _parse_args()
 
     # TODO: START
     print(Fore.CYAN + "----------开始下载----------")

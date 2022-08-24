@@ -814,7 +814,6 @@ class Video:
 
             cid = await self.__get_page_id_by_index(page_index)
         url = f"https://comment.bilibili.com/{cid}.xml"
-        print(url)
         sess = get_session()
         config = {"url": url}
         # 代理

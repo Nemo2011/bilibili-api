@@ -3,7 +3,11 @@ bilibili_api.ass
 有关 ASS 文件的操作
 """
 import os
+from typing import Union
 import aiohttp
+
+from bilibili_api.bangumi import Episode
+from bilibili_api.cheese import CheeseVideo
 from .exceptions.ArgsException import ArgsException
 
 from .utils.sync import sync
@@ -81,19 +85,18 @@ def export_ass_from_json(file_local, output_local):
     os.remove(output_local.replace(".ass", ".srt"))
 
 
-async def make_ass_file_subtitle(bvid, out, name, credential=None):
+async def make_ass_file_subtitle(obj: Union[Video, Episode], out, name, credential=None):
     """
     生成视频字幕文件
     Args:
-        bvid(str)             : 视频 BVID
+        obj(Video|Episode)    : 视频 BVID
         out(str)              : 输出位置
         name(str)             : 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。
         credential(Credential): 凭据
     Returns:
         None
     """
-    v = Video(bvid, credential=credential)
-    info = await v.get_info()
+    info = await obj.get_info()
     json_files = info["subtitle"]["list"]
     for subtitle in json_files:
         if subtitle["lan_doc"] == name:
@@ -108,7 +111,7 @@ async def make_ass_file_subtitle(bvid, out, name, credential=None):
 
 
 async def make_ass_file_danmakus_protobuf(
-    bvid,
+    obj: Union[Video, Episode, CheeseVideo],
     page: int = None,
     out=None,
     cid: int = None,
@@ -125,32 +128,42 @@ async def make_ass_file_danmakus_protobuf(
     强烈推荐 PotPlayer, 电影与电视全部都是静态的，不能滚动。
     来源：protobuf
     Args:
-        bvid(str)             : BVID
-        page(int)             : 分 P 号
-        out(str)              : 输出文件
-        cid(int)              : cid
-        credential(Credential): 凭据
-        date(datetime.date)   : 获取时间
-        font_name(str)        : 字体
-        font_size(float)      : 字体大小
-        alpha(float)          : 透明度(0-1)
-        fly_time(float)       : 滚动弹幕持续时间
-        static_time(float)    : 静态弹幕持续时间
+        obj(Video|Episode|CheeseVideo): BVID
+        page(int)                     : 分 P 号
+        out(str)                      : 输出文件
+        cid(int)                      : cid
+        credential(Credential)        : 凭据
+        date(datetime.date)           : 获取时间
+        font_name(str)                : 字体
+        font_size(float)              : 字体大小
+        alpha(float)                  : 透明度(0-1)
+        fly_time(float)               : 滚动弹幕持续时间
+        static_time(float)            : 静态弹幕持续时间
     Returns:
         None
     """
     if date:
         credential.raise_for_no_sessdata()
-    v = Video(bvid, credential=credential)
-    if cid is None:
-        if page is None:
-            raise ArgsException("page_index 和 cid 至少提供一个。")
-        cid = await v._Video__get_page_id_by_index(page)
-    info = await v.get_info()
-    width = info["dimension"]["width"]
-    height = info["dimension"]["height"]
-    stage_size = (width, height)
-    danmakus = await v.get_danmakus(cid=cid, date=date)
+    if isinstance(obj, Video):
+        v = obj
+        if isinstance(obj, Episode):
+            cid = 0
+        else:
+            if cid is None:
+                if page is None:
+                    raise ArgsException("page_index 和 cid 至少提供一个。")
+                cid = await v._Video__get_page_id_by_index(page)
+        info = await v.get_info()
+        width = info["dimension"]["width"]
+        height = info["dimension"]["height"]
+        stage_size = (width, height)
+        if isinstance(obj, Episode):
+            danmakus = await v.get_danmakus()
+        else:
+            danmakus = await v.get_danmakus(cid=cid, date=date)
+    elif isinstance(obj, CheeseVideo):
+        stage_size = (1440, 1080)
+        danmakus = await obj.get_danmakus()
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write("<i>")
         for d in danmakus:
@@ -168,8 +181,8 @@ async def make_ass_file_danmakus_protobuf(
     )
 
 
-async def make_ass_file_from_danmaku_xml(
-    bvid,
+async def make_ass_file_danmakus_xml(
+    obj: Union[Video, Episode, CheeseVideo],
     page: int = None,
     cid: int = None,
     out=None,
@@ -185,29 +198,39 @@ async def make_ass_file_from_danmaku_xml(
     强烈推荐 PotPlayer, 电影与电视全部都是静态的，不能滚动。
     来源：xml
     Args:
-        bvid(str)             : BVID
-        page(int)             : 分 P 号
-        out(str)              : 输出文件
-        cid(int)              : cid
-        credential(Credential): 凭据
-        font_name(str)        : 字体
-        font_size(float)      : 字体大小
-        alpha(float)          : 透明度(0-1)
-        fly_time(float)       : 滚动弹幕持续时间
-        static_time(float)    : 静态弹幕持续时间
+        obj(Video|Episode|Cheese): BVID
+        page(int)                : 分 P 号
+        out(str)                 : 输出文件
+        cid(int)                 : cid
+        credential(Credential)   : 凭据
+        font_name(str)           : 字体
+        font_size(float)         : 字体大小
+        alpha(float)             : 透明度(0-1)
+        fly_time(float)          : 滚动弹幕持续时间
+        static_time(float)       : 静态弹幕持续时间
     Returns:
         None
     """
-    v = Video(bvid, credential=credential)
-    if cid is None:
-        if page is None:
-            raise ArgsException("page_index 和 cid 至少提供一个。")
-        cid = await v._Video__get_page_id_by_index(page)
-    info = await v.get_info()
-    width = info["dimension"]["width"]
-    height = info["dimension"]["height"]
-    stage_size = (width, height)
-    xml_content = await v.get_danmaku_xml(cid=cid)
+    if isinstance(obj, Video):
+        v = obj
+        if isinstance(obj, Episode):
+            cid = 0
+        else:
+            if cid is None:
+                if page is None:
+                    raise ArgsException("page_index 和 cid 至少提供一个。")
+                cid = await v._Video__get_page_id_by_index(page)
+        info = await v.get_info()
+        width = info["dimension"]["width"]
+        height = info["dimension"]["height"]
+        stage_size = (width, height)
+        if isinstance(obj, Episode):
+            xml_content = await v.get_danmaku_xml()
+        else:
+            xml_content = await v.get_danmaku_xml(cid=cid)
+    elif isinstance(obj, CheeseVideo):
+        stage_size = (1440, 1080)
+        xml_content = await obj.get_danmaku_xml()
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write(xml_content)
     export_ass_from_xml(

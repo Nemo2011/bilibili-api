@@ -12,6 +12,7 @@ bilibili_api.cheese
 
 import datetime
 import json
+from . import settings
 
 import requests
 from .exceptions import (
@@ -695,3 +696,16 @@ class CheeseVideo:
         return await request(
             "POST", url=api["url"], data=data, credential=self.credential
         )
+
+    async def get_danmaku_xml(self):
+        """
+        获取弹幕(xml 源)
+        """
+        url = f"https://comment.bilibili.com/{self.get_cid()}.xml"
+        sess = get_session()
+        config = {"url": url}
+        # 代理
+        if settings.proxy:
+            config["proxies"] = {"all://", settings.proxy}
+        resp = await sess.get(**config)
+        return resp.content.decode("utf-8")
