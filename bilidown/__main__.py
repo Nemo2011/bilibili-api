@@ -1270,6 +1270,7 @@ def _main():
 
 def main():
     if "--debug" in sys.argv:
+        print(Fore.CYAN + Back.BLACK + "DEBUG MODE" + Style.RESET_ALL)
         return _main()
     try:
         _main()
