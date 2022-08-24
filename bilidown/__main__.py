@@ -152,7 +152,10 @@ def _download_video(obj: video.Video, now_file_name: str):
     if len(pages_data) > 1:
         download_p1 = None
         while download_p1 == None:
-            p = input(Fore.BLUE + "NUM: 请输入想要下载的分 P 【默认全部下载(输入 all), 或者在数字两边扩上括号，获取此分 P 的信息，如 P(2)】: P")
+            p = input(
+                Fore.BLUE
+                + "NUM: 请输入想要下载的分 P 【默认全部下载(输入 all), 或者在数字两边扩上括号，获取此分 P 的信息，如 P(2)】: P"
+            )
             if p == "":
                 continue
             if p.upper() == "ALL":
@@ -178,7 +181,7 @@ def _download_video(obj: video.Video, now_file_name: str):
             print(Fore.GREEN + f"INF: 已选择 {p}, 分 p 编号 {sync(obj.get_cid(int(p) - 1))}")
     else:
         download_p1 = 0
-    if download_p1 > -1: 
+    if download_p1 > -1:
         r = [download_p1]
     else:
         r = range(len(pages_data))
@@ -226,14 +229,18 @@ def _download_video(obj: video.Video, now_file_name: str):
                     print(f"  {q}: {AUDIO_QUALITY[q]}", "  |", end="")
                 print()
                 qnuma = input(Fore.BLUE + "NUM: 请选择音质对应数字(默认为最好音质): ")
-                AUDIO_QUALITY_NUMBER = int(qnuma) if qnuma != "" else max(audio_qualities)
+                AUDIO_QUALITY_NUMBER = (
+                    int(qnuma) if qnuma != "" else max(audio_qualities)
+                )
 
                 try:
                     print(
                         Fore.GREEN
                         + f"INF: 选择的视频清晰度 {VIDEO_QUALITY[VIDEO_QUALITY_NUMBER]} | ({VIDEO_QUALITY_NUMBER})"
                     )
-                    print(Fore.GREEN + f"INF: 选择的视频编码 {VIDEO_CODECS[CODECS]} | ({CODECS})")
+                    print(
+                        Fore.GREEN + f"INF: 选择的视频编码 {VIDEO_CODECS[CODECS]} | ({CODECS})"
+                    )
                     print(
                         Fore.GREEN
                         + f"INF: 选择的音频音质 {AUDIO_QUALITY[AUDIO_QUALITY_NUMBER]} | ({AUDIO_QUALITY_NUMBER})"
@@ -278,7 +285,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                 print(Fore.GREEN + "INF: 下载视频完成 开始混流")
                 print(Fore.RESET)
                 if now_file_name == "#default":
-                    RNAME = vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
+                    RNAME = (
+                        vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
+                    )
                 else:
                     RNAME = (
                         now_file_name.replace("{bvid}", obj.get_bvid())
@@ -305,7 +314,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                 new_download_url = sync(obj.get_download_url(download_p))
                 video_audio_url = new_download_url["durl"][0]["url"]
                 if now_file_name == "#default":
-                    RNAME = vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
+                    RNAME = (
+                        vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
+                    )
                 else:
                     RNAME = (
                         now_file_name.replace("{bvid}", obj.get_bvid())
@@ -379,7 +390,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                     print(f"  {q}: {AUDIO_QUALITY[q]}", "  |", end="")
                 print()
                 qnuma = input(Fore.BLUE + "NUM: 请选择音质对应数字(默认为最好音质): ")
-                AUDIO_QUALITY_NUMBER = int(qnuma) if qnuma != "" else max(audio_qualities)
+                AUDIO_QUALITY_NUMBER = (
+                    int(qnuma) if qnuma != "" else max(audio_qualities)
+                )
 
                 print()
                 try:
@@ -387,7 +400,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                         Fore.GREEN
                         + f"INF: 选择的视频清晰度 {VIDEO_QUALITY[VIDEO_QUALITY_NUMBER]} | ({VIDEO_QUALITY_NUMBER})"
                     )
-                    print(Fore.GREEN + f"INF: 选择的视频编码 {VIDEO_CODECS[CODECS]} | ({CODECS})")
+                    print(
+                        Fore.GREEN + f"INF: 选择的视频编码 {VIDEO_CODECS[CODECS]} | ({CODECS})"
+                    )
                     print(
                         Fore.GREEN
                         + f"INF: 选择的音频音质 {AUDIO_QUALITY[AUDIO_QUALITY_NUMBER]} | ({AUDIO_QUALITY_NUMBER})"
@@ -418,7 +433,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                     print(Fore.RED + "ERR: 没有目标音频下载链接")
                     exit()
                 if now_file_name == "#default":
-                    RNAME = vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
+                    RNAME = (
+                        vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).mp4"
+                    )
                 else:
                     RNAME = (
                         now_file_name.replace("{bvid}", obj.get_bvid())
@@ -449,7 +466,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                 new_download_url = sync(obj.get_download_url(download_p))
                 video_audio_url = new_download_url["durl"][0]["url"]
                 if now_file_name == "#default":
-                    RNAME = vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).flv"
+                    RNAME = (
+                        vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}).flv"
+                    )
                 else:
                     RNAME = (
                         now_file_name.replace("{bvid}", obj.get_bvid())
@@ -469,6 +488,7 @@ def _download_video(obj: video.Video, now_file_name: str):
                 )
         print(Fore.GREEN + "INF: ---完成分 P---")
     print(Fore.CYAN + "----------完成下载----------")
+
 
 def _main():
     global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type
@@ -604,7 +624,12 @@ def main():
 
 if __name__ == "__main__":
     if "--debug" in sys.argv:
-        print(Fore.LIGHTGREEN_EX + Back.BLACK + "-------------------- DEBUG --------------------" + Style.RESET_ALL)
+        print(
+            Fore.LIGHTGREEN_EX
+            + Back.BLACK
+            + "-------------------- DEBUG --------------------"
+            + Style.RESET_ALL
+        )
         _main()
     else:
         main()
