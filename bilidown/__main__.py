@@ -5,9 +5,7 @@ import sys
 import httpx
 import requests
 import signal
-from colorama import Fore, Back, Style, Cursor, init
-
-from bilibili_api.utils.parse_link import parse_season_series
+from colorama import Fore, Back, Style, init
 
 PROXY = None
 PATH = "#default"
