@@ -98,13 +98,13 @@ def _main():
         print()
         print('使用方法: python -m bilidown "https://bilibili.com/.../"')
         print(Fore.LIGHTRED_EX + "允许多个 URL, 请使用 | 隔开")
-        print('参数:   --out/-o     文件名(默认为 "#default")                          "a.mp4"')
+        print('参数:   --out/-o     文件名(默认为 "#default")                            "a.mp4"')
         print(Fore.LIGHTRED_EX + "允许多个文件名, 请使用 | 隔开")
-        print('参数:   --dic/-d     下载至文件夹(默认为 "default")                      "~/Desktop"')
+        print('参数:   --dic/-d     下载至文件夹(默认为 "default")                       "~/Desktop"')
         print(
             '参数:   --proxy      代理                                                 "https://user:password@your-proxy.com"'
         )
-        print('参数:   --ffmpeg     ffmpeg 地址(如果没有 ffmpeg 可以使用 "#none")         "ffmpeg"')
+        print('参数:   --ffmpeg     ffmpeg 地址(如果没有 ffmpeg 可以使用 "#none")        "ffmpeg"')
         print('参数:   --sessdata   Cookies 中 SESSDATA 的值, 用于下载会员专享、高清晰度 "SECRET绝密SECRET绝密"')
         print("参数:   -h           帮助")
         print()
