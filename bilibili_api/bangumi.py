@@ -68,16 +68,16 @@ class Bangumi:
             overview.raise_for_status()
             self.media_id = overview.json()["result"]["media_id"]
 
-    async def get_media_id(self):
+    def get_media_id(self):
         return self.media_id
 
-    async def get_season_id(self):
+    def get_season_id(self):
         return self.ssid
 
-    async def set_media_id(self, media_id: int):
+    def set_media_id(self, media_id: int):
         self.__init__(media_id=media_id, credential=self.credential)
 
-    async def set_ssid(self, ssid: int):
+    def set_ssid(self, ssid: int):
         self.__init__(ssid=ssid, credential=self.credential)
 
     async def get_meta(self):
