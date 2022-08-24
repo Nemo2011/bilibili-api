@@ -95,7 +95,7 @@ def _help():
     显示帮助
     """
     print()
-    print('使用方法: python -m bilidown "https://bilibili.com/.../"', end=" ")
+    print('使用方法: bilidown "https://bilibili.com/.../"', end=" ")
     print(Fore.RED + '链接为第一个参数, 允许多个链接, 请使用 "|" 隔开每一个链接' + Fore.RESET)
     print(
         '参数:   --out/-o                  文件名(默认为 "#default")                            "a.mp4"',
@@ -954,6 +954,8 @@ def _main():
 
 
 def main():
+    if "--debug" in sys.argv:
+        return _main()
     try:
         _main()
     except Exception as e:
@@ -962,13 +964,4 @@ def main():
 
 
 if __name__ == "__main__":
-    if "--debug" in sys.argv:
-        print(
-            Fore.LIGHTGREEN_EX
-            + Back.BLACK
-            + "-------------------- DEBUG --------------------"
-            + Style.RESET_ALL
-        )
-        _main()
-    else:
-        main()
+    main()
