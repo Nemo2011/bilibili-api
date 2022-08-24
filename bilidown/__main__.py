@@ -116,7 +116,7 @@ def _help():
     )
     print("参数:   --disable-filetype-check  忽略自动检查文件后缀")
     print("参数:   -h                        帮助")
-    print("参数:   --debug                  显示错误详细信息")
+    print("参数:   --debug                   显示错误详细信息")
     print()
     print(
         Fore.LIGHTRED_EX
@@ -131,7 +131,7 @@ def _help():
         "| {owner}        -> UP              | {uid}          -> UP uid         | {bangumi_epid} -> 番剧 epid | {bangumi_name} -> 番剧名      |"
     )
     print(
-        "| {bangumi_ep}   -> 番剧第几集     | {cheese_epid}  -> 课程 epid      | {cheese_name}  -> 课程名    | {cheese_ep}    -> 课程第几集  |"
+        "| {bangumi_ep}   -> 番剧第几集      | {cheese_epid}  -> 课程 epid      | {cheese_name}  -> 课程名    | {cheese_ep}    -> 课程第几集  |"
     )
     print(
         "| {bangumi_id}   -> 番剧 season_id  | {cheese_id}    -> 课程 season_id | {cvid}         -> 专栏 cvid | {live_id}      -> 直播间 id   |"
