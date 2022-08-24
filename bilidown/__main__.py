@@ -827,6 +827,319 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
     print(Fore.CYAN + "----------完成下载----------")
 
 
+def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
+    global VIDEO_CODECS, VIDEO_QUALITY, AUDIO_QUALITY, DIC
+    print(Fore.GREEN + "INF: 视频 AID: ", obj.get_aid())
+    pages_data = sync(obj.get_pages())
+    vinfo = sync(obj.get_cheese().get_meta())
+    vmeta = obj.get_meta()
+    title = vinfo["title"]
+    epcnt = (
+        f"第{str(obj.get_meta()['index'] - 1)}课"
+        if obj.get_meta()["index"] != 1
+        else "宣导片"
+    )
+    print(Fore.GREEN + f"INF: {title} 第{epcnt}集")
+    print(Fore.GREEN + f"INF: 正在获取下载地址")
+    download_url = sync(obj.get_download_url())
+
+    if FFMPEG != "#none":
+        if "dash" in download_url.keys():
+            now_file_name = _require_file_type(now_file_name, ".mp4")
+
+            data = download_url["dash"]
+
+            videos_data = data["video"]
+            video_qualities = []
+            video_codecs = []
+            for video_data in videos_data:
+                if not video_data["id"] in video_qualities:
+                    video_qualities.append(video_data["id"])
+                for codename, description in VIDEO_CODECS.items():
+                    if codename in video_data["codecs"]:
+                        if not codename in video_codecs:
+                            video_codecs.append(codename)
+            for q in video_qualities:
+                print(f"  {q}: {VIDEO_QUALITY[q]}", "  |", end="")
+            print()
+            qnum = input(Fore.BLUE + "NUM: 请选择清晰度对应数字(默认为最大清晰度): ")
+            VIDEO_QUALITY_NUMBER = int(qnum) if qnum != "" else max(video_qualities)
+            print(Fore.GREEN + "INF: 视频编码：", end="|")
+            for c in video_codecs:
+                for codename, description in VIDEO_CODECS.items():
+                    if codename in c:
+                        print(f"  {codename}: {description}", "  |", end="")
+            print()
+            CODECS = input(
+                Fore.BLUE
+                + f'STR: 请选择视频编码对应的号码(avc|av01|hev)(默认为 "{video_codecs[0]}"): '
+            )
+            CODECS = CODECS.lower()
+            if CODECS == "":
+                CODECS = video_codecs[0]
+
+            audios_data = data["audio"]
+            audio_qualities = []
+            for audio_data in audios_data:
+                if not audio_data["id"] in audio_qualities:
+                    audio_qualities.append(audio_data["id"])
+            print(Fore.GREEN + "INF: 音频音质：", end="|")
+            for q in audio_qualities:
+                print(f"  {q}: {AUDIO_QUALITY[q]}", "  |", end="")
+            print()
+            qnuma = input(Fore.BLUE + "NUM: 请选择音质对应数字(默认为最好音质): ")
+            AUDIO_QUALITY_NUMBER = int(qnuma) if qnuma != "" else max(audio_qualities)
+
+            try:
+                print(
+                    Fore.GREEN
+                    + f"INF: 选择的视频清晰度 {VIDEO_QUALITY[VIDEO_QUALITY_NUMBER]} | ({VIDEO_QUALITY_NUMBER})"
+                )
+                print(Fore.GREEN + f"INF: 选择的视频编码 {VIDEO_CODECS[CODECS]} | ({CODECS})")
+                print(
+                    Fore.GREEN
+                    + f"INF: 选择的音频音质 {AUDIO_QUALITY[AUDIO_QUALITY_NUMBER]} | ({AUDIO_QUALITY_NUMBER})"
+                )
+            except KeyError:
+                print(Fore.RED, "ERR: 没有目标清晰度/编码/音质")
+                exit()
+            except Exception as e:
+                raise e
+
+            print()
+            download_url = sync(obj.get_download_url())
+            video_url = None
+            audio_url = None
+            for video_data in download_url["dash"]["video"]:
+                if (
+                    video_data["id"] == VIDEO_QUALITY_NUMBER
+                    and CODECS in video_data["codecs"]
+                ):
+                    video_url = video_data["base_url"]
+            for audio_data in download_url["dash"]["audio"]:
+                if audio_data["id"] == AUDIO_QUALITY_NUMBER:
+                    audio_url = audio_data["base_url"]
+            if video_url == None:
+                print(Fore.RED + "ERR: 没有目标视频下载链接")
+                exit()
+            if audio_url == None:
+                print(Fore.RED + "ERR: 没有目标音频下载链接")
+                exit()
+            print(Fore.GREEN + f"INF: 开始下载视频({title} {epcnt})")
+            video_path = _download(
+                video_url,
+                "video_temp.m4s",
+                vmeta["title"] + f" - {title}({epcnt}) - 视频",
+            )
+            print(Fore.GREEN + f"INF: 开始下载音频({title} {epcnt})")
+            audio_path = _download(
+                audio_url,
+                "audio_temp.m4s",
+                vmeta["title"] + f" - {title}({epcnt}) - 音频",
+            )
+            print(Fore.GREEN + "INF: 下载视频完成 开始混流")
+            print(Fore.RESET)
+            if now_file_name == "#default":
+                RNAME = vmeta["title"] + f" - 课程 EP{obj.get_epid()}({title}).mp4"
+            else:
+                RNAME = (
+                    now_file_name.replace("{bvid}", obj.get_bvid())
+                    .replace("{aid}", str(obj.get_aid()))
+                    .replace("{owner}", vinfo["up_info"]["uname"])
+                    .replace("{uid}", str(vinfo["up_info"]["mid"]))
+                    .replace("{title}", vmeta["title"])
+                    .replace("{cheese_id}", str(obj.get_bangumi().get_season_id()))
+                    .replace("{cheese_name}", vinfo["title"])
+                    .replace("{cheese_ep}", str(epcnt))
+                    .replace("{cheese_epid}", str(obj.get_epid()))
+                )
+            RPATH = os.path.join(DIC, RNAME)
+            if not os.path.exists(DIC):
+                os.mkdir(DIC)
+            if os.path.exists(RPATH):
+                os.remove(RPATH)
+            os.system(
+                f'{FFMPEG} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy "{RPATH}"'
+            )
+            os.remove("video_temp.m4s")
+            os.remove("audio_temp.m4s")
+            print(Fore.GREEN + f"INF: 混流完成(或用户手动取消)")
+            PATHS.append(RPATH)
+        elif "durl" in download_url.keys():
+            now_file_name = _require_file_type(now_file_name, ".mp4")
+
+            new_download_url = sync(obj.get_download_url())
+            video_audio_url = new_download_url["durl"][0]["url"]
+            if now_file_name == "#default":
+                RNAME = vmeta["title"] + f" - 课程 EP{obj.get_epid()}({title}).mp4"
+            else:
+                RNAME = (
+                    now_file_name.replace("{bvid}", obj.get_bvid())
+                    .replace("{aid}", str(obj.get_aid()))
+                    .replace("{owner}", vinfo["up_info"]["uname"])
+                    .replace("{uid}", str(vinfo["up_info"]["mid"]))
+                    .replace("{title}", vmeta["title"])
+                    .replace("{cheese_id}", str(obj.get_bangumi().get_season_id()))
+                    .replace("{cheese_name}", vinfo["title"])
+                    .replace("{cheese_ep}", str(epcnt))
+                    .replace("{cheese_epid}", str(obj.get_epid()))
+                )
+            RPATH = os.path.join(DIC, RNAME)
+            if not os.path.exists(DIC):
+                os.mkdir(DIC)
+            print(Fore.GREEN + f"INF: 开始下载视频({title} {epcnt})")
+            video_path = _download(
+                video_audio_url,
+                RPATH,
+                vmeta["title"] + f" - {title}({epcnt})",
+            )
+            PATHS.append(RPATH)
+    else:
+        if "dash" in download_url.keys():
+            now_file_name = _require_file_type(now_file_name, ".mp4")
+
+            data = download_url["dash"]
+
+            videos_data = data["video"]
+            video_qualities = []
+            video_codecs = []
+            for video_data in videos_data:
+                if not video_data["id"] in video_qualities:
+                    video_qualities.append(video_data["id"])
+                for codename, description in VIDEO_CODECS.items():
+                    if codename in video_data["codecs"]:
+                        if not codename in video_codecs:
+                            video_codecs.append(codename)
+            print(Fore.GREEN + "INF: 视频清晰度：", end="|")
+            for q in video_qualities:
+                print(f"  {q}: {VIDEO_QUALITY[q]}", "  |", end="")
+            print()
+            qnum = input(Fore.BLUE + "NUM: 请选择清晰度对应数字(默认为最大清晰度): ")
+            VIDEO_QUALITY_NUMBER = int(qnum) if qnum != "" else max(video_qualities)
+            print(Fore.GREEN + "INF: 视频编码：", end="|")
+            for c in video_codecs:
+                for codename, description in VIDEO_CODECS.items():
+                    if codename in c:
+                        print(f"  {codename}: {description}", "  |", end="")
+            print()
+            CODECS = input(
+                Fore.BLUE
+                + f'STR: 请选择视频编码对应的号码(avc|av01|hev)(默认为 "{video_codecs[0]}"): '
+            )
+            CODECS = CODECS.lower()
+            if CODECS == "":
+                CODECS = video_codecs[0]
+
+            audios_data = data["audio"]
+            audio_qualities = []
+            for audio_data in audios_data:
+                if not audio_data["id"] in audio_qualities:
+                    audio_qualities.append(audio_data["id"])
+            print(Fore.GREEN + "INF: 音频音质：", end="|")
+            for q in audio_qualities:
+                print(f"  {q}: {AUDIO_QUALITY[q]}", "  |", end="")
+            print()
+            qnuma = input(Fore.BLUE + "NUM: 请选择音质对应数字(默认为最好音质): ")
+            AUDIO_QUALITY_NUMBER = int(qnuma) if qnuma != "" else max(audio_qualities)
+
+            print()
+            try:
+                print(
+                    Fore.GREEN
+                    + f"INF: 选择的视频清晰度 {VIDEO_QUALITY[VIDEO_QUALITY_NUMBER]} | ({VIDEO_QUALITY_NUMBER})"
+                )
+                print(Fore.GREEN + f"INF: 选择的视频编码 {VIDEO_CODECS[CODECS]} | ({CODECS})")
+                print(
+                    Fore.GREEN
+                    + f"INF: 选择的音频音质 {AUDIO_QUALITY[AUDIO_QUALITY_NUMBER]} | ({AUDIO_QUALITY_NUMBER})"
+                )
+            except KeyError:
+                print(Fore.RED, "ERR: 没有目标清晰度/编码/音质")
+                exit()
+            except Exception as e:
+                raise e
+
+            print()
+            download_url = sync(obj.get_download_url())
+            video_url = None
+            audio_url = None
+            for video_data in download_url["dash"]["video"]:
+                if (
+                    video_data["id"] == VIDEO_QUALITY_NUMBER
+                    and CODECS in video_data["codecs"]
+                ):
+                    video_url = video_data["base_url"]
+            for audio_data in download_url["dash"]["audio"]:
+                if audio_data["id"] == AUDIO_QUALITY_NUMBER:
+                    audio_url = audio_data["base_url"]
+            if video_url == None:
+                print(Fore.RED + "ERR: 没有目标视频下载链接")
+                exit()
+            if audio_url == None:
+                print(Fore.RED + "ERR: 没有目标音频下载链接")
+                exit()
+            if now_file_name == "#default":
+                RNAME = vmeta["title"] + f" - 课程 EP{obj.get_epid()}({title}).mp4"
+            else:
+                RNAME = (
+                    now_file_name.replace("{bvid}", obj.get_bvid())
+                    .replace("{aid}", str(obj.get_aid()))
+                    .replace("{owner}", vinfo["up_info"]["uname"])
+                    .replace("{uid}", str(vinfo["up_info"]["mid"]))
+                    .replace("{title}", vmeta["title"])
+                    .replace("{cheese_id}", str(obj.get_bangumi().get_season_id()))
+                    .replace("{cheese_name}", vinfo["title"])
+                    .replace("{cheese_ep}", str(epcnt))
+                    .replace("{cheese_epid}", str(obj.get_epid()))
+                )
+            if not os.path.exists(DIC):
+                os.mkdir(DIC)
+            print(Fore.GREEN + f"INF: 开始下载视频({title} {epcnt})")
+            video_path = _download(
+                video_url,
+                os.path.join(DIC, "视频 - " + RNAME),
+                vinfo["title"] + f" - {obj.get_bvid()}({title} {epcnt}) - 视频",
+            )
+            print(Fore.GREEN + f"INF: 开始下载音频({title} {epcnt})")
+            audio_path = _download(
+                audio_url,
+                os.path.join(DIC, "音频 - " + RNAME),
+                vinfo["title"] + f" - {obj.get_bvid()}({title} {epcnt}) - 音频",
+            )
+            PATHS.append(os.path.join(DIC, "视频 - " + RNAME))
+            PATHS.append(os.path.join(DIC, "音频 - " + RNAME))
+        elif "durl" in download_url.keys():
+            now_file_name = _require_file_type(now_file_name, ".mp4")
+
+            new_download_url = sync(obj.get_download_url())
+            video_audio_url = new_download_url["durl"][0]["url"]
+            if now_file_name == "#default":
+                RNAME = vmeta["title"] + f" - 课程 EP{obj.get_epid()}({title}).mp4"
+            else:
+                RNAME = (
+                    now_file_name.replace("{bvid}", obj.get_bvid())
+                    .replace("{aid}", str(obj.get_aid()))
+                    .replace("{owner}", vinfo["up_info"]["uname"])
+                    .replace("{uid}", str(vinfo["up_info"]["mid"]))
+                    .replace("{title}", vmeta["title"])
+                    .replace("{cheese_id}", str(obj.get_bangumi().get_season_id()))
+                    .replace("{cheese_name}", vinfo["title"])
+                    .replace("{cheese_ep}", str(epcnt))
+                    .replace("{cheese_epid}", str(obj.get_epid()))
+                )
+            RPATH = os.path.join(DIC, RNAME)
+            if not os.path.exists(DIC):
+                os.mkdir(DIC)
+            print(Fore.GREEN + f"INF: 开始下载视频({title} {epcnt})")
+            video_path = _download(
+                video_audio_url,
+                RPATH,
+                vmeta["title"] + f" - {title}({epcnt})",
+            )
+            PATHS.append(RPATH)
+    print(Fore.CYAN + "----------完成下载----------")
+
+
 def _main():
     global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type
     # TODO: INFO
@@ -944,6 +1257,8 @@ def _main():
             _download_video(obj, now_file_name)
         elif resource_type == ResourceType.EPISODE:
             _download_episode(obj, now_file_name)
+        elif resource_type == ResourceType.CHEESE_VIDEO:
+            _download_cheese_video(obj, now_file_name)
         else:
             pass
         print()
