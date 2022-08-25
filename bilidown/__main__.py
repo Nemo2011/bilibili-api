@@ -159,6 +159,7 @@ def _download_video(obj: video.Video, now_file_name: str):
                 + "NUM: 请输入想要下载的分 P 【默认全部下载(输入 all), 或者在数字两边扩上括号，获取此分 P 的信息，如 P(2)】: P"
             )
             if p == "":
+                download_p1 = -1
                 continue
             if p.upper() == "ALL":
                 download_p1 = -1
@@ -203,8 +204,10 @@ def _download_video(obj: video.Video, now_file_name: str):
                 for video_data in videos_data:
                     if not video_data["id"] in video_qualities:
                         video_qualities.append(video_data["id"])
-                    if not video_data["codecs"] in video_codecs:
-                        video_codecs.append(video_data["codecs"])
+                    for codename, description in VIDEO_CODECS.items():
+                        if codename in video_data["codecs"]:
+                            if not codename in video_codecs:
+                                video_codecs.append(codename)
                 print(Fore.GREEN + "INF: 视频清晰度：", end="|")
                 for q in video_qualities:
                     print(f"  {q}: {VIDEO_QUALITY[q]}", "  |", end="")
@@ -217,9 +220,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                         if codename in c:
                             print(f"  {codename}: {description}", "  |", end="")
                 print()
-                CODECS = input(Fore.BLUE + 'STR: 请选择视频编码对应的号码(默认为 "hev"): ')
+                CODECS = input(Fore.BLUE + f'STR: 请选择视频编码对应的号码(默认为 "{video_codecs[0]}"): ')
                 if CODECS == "":
-                    CODECS = "hev"
+                    CODECS = video_codecs[0]
 
                 audios_data = data["audio"]
                 audio_qualities = []
@@ -248,8 +251,8 @@ def _download_video(obj: video.Video, now_file_name: str):
                         + f"INF: 选择的音频音质 {AUDIO_QUALITY[AUDIO_QUALITY_NUMBER]} | ({AUDIO_QUALITY_NUMBER})"
                     )
                 except KeyError:
-                    print(Fore.RED, "ERR: 没有目标清晰度/编码/音质")
-                    exit()
+                    print(Fore.RED + "ERR: 没有目标清晰度/编码/音质")
+                    continue
                 except Exception as e:
                     raise e
 
@@ -841,7 +844,7 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
         if obj.get_meta()["index"] != 1
         else "宣导片"
     )
-    print(Fore.GREEN + f"INF: {title} 第{epcnt}集")
+    print(Fore.GREEN + f"INF: {title} {epcnt}")
     print(Fore.GREEN + f"INF: 正在获取下载地址")
     download_url = sync(obj.get_download_url())
 
@@ -1194,7 +1197,7 @@ def _parse_args():
             _require_file_type = lambda x, y: x
 
 def _main():
-    global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type
+    global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type, CREDENTIAL
     # TODO: INFO
     print(Fore.LIGHTMAGENTA_EX + "BiliDown: 哔哩哔哩命令行下载器")
     print(Fore.LIGHTMAGENTA_EX + "Powered by Bilibili API")
@@ -1216,6 +1219,7 @@ def _main():
 
     # TODO: START
     print(Fore.CYAN + "----------开始下载----------")
+    print()
 
     links = sys.argv[1].split("|")
     cnt = 0
@@ -1226,11 +1230,11 @@ def _main():
         try:
             download_object = sync(parse_link(link, credential=CREDENTIAL))
         except Exception as e:
-            print(Fore.RED + "ERR", e, Style.RESET_ALL)
-            exit()
+            raise e
         if download_object == -1:
             print(Fore.RED + "ERR: 无法获取链接信息。请检查是否有拼写错误。", Style.RESET_ALL)
-            exit()
+            print(Fore.CYAN + "----------完成下载----------")
+            continue
         obj = download_object[0]
         resource_type = download_object[1]
         if resource_type == ResourceType.VIDEO:
@@ -1259,16 +1263,33 @@ def _main():
             now_file_name = PATH[:-1]
         if now_file_name == "":
             now_file_name = "#default"
-        if resource_type == ResourceType.VIDEO:
-            _download_video(obj, now_file_name)
-        elif resource_type == ResourceType.EPISODE:
-            _download_episode(obj, now_file_name)
-        elif resource_type == ResourceType.CHEESE_VIDEO:
-            _download_cheese_video(obj, now_file_name)
-        else:
-            pass
+        try:
+            if resource_type == ResourceType.VIDEO:
+                _download_video(obj, now_file_name)
+            elif resource_type == ResourceType.EPISODE:
+                _download_episode(obj, now_file_name)
+            elif resource_type == ResourceType.CHEESE_VIDEO:
+                _download_cheese_video(obj, now_file_name)
+            else:
+                pass
+        except ResponseCodeException as e:
+            if e.code == -404:
+                print(Fore.RED + "ERR: " + "未找到视频")
+                print(Fore.CYAN + "----------完成下载----------")
+                continue
+            elif e.code == -403:
+                print(Fore.RED + "ERR: " + "没有权限下载视频(可能是 VIP 视频)")
+                print(Fore.CYAN + "----------完成下载----------")
+                continue
+            else:
+                print(Fore.RED + "ERR: " + e.msg)
+                print(Fore.CYAN + "----------完成下载----------")
+        except Exception as e:
+            raise e
+
         print()
         cnt += 1
+    print()
     print(Fore.GREEN + "BiliDown 下载完成")
     for p in PATHS:
         print(Fore.RESET + p)
@@ -1281,7 +1302,7 @@ def main():
     try:
         _main()
     except Exception as e:
-        print(Fore.RED + "ERR: ", e)
+        print(Fore.RED + "ERR: " + str(e))
         print(Fore.RED + "详细信息可以使用 --debug 查询")
 
 
