@@ -118,7 +118,7 @@ class CheeseVideo:
                 url=api["url"], params=params, cookies=self.credential.get_cookies()
             )
             metar.raise_for_status()
-            metadata = meta.json()
+            metadata = metar.json()
             for v in metadata["data"]["episodes"]:
                 if v["id"] == epid:
                     self.aid = v["aid"]
