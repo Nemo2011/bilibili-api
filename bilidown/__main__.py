@@ -588,6 +588,7 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     if codename in video_data["codecs"]:
                         if not codename in video_codecs:
                             video_codecs.append(codename)
+            print(Fore.GREEN + "INF: 视频清晰度：", end="|")
             for q in video_qualities:
                 print(f"  {q}: {VIDEO_QUALITY[q]}", "  |", end="")
             print()
