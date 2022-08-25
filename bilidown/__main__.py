@@ -2,6 +2,7 @@ r"""
 BiliDown: 哔哩哔哩命令行下载器
 """
 
+from importlib.resources import Resource
 import os
 from typing import Union
 from bilibili_api import *
@@ -553,15 +554,16 @@ def _download_video(obj: video.Video, now_file_name: str):
                     vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1})",
                 )
         print(Fore.GREEN + "INF: ---完成分 P---")
-    print(Fore.CYAN + "----------完成下载----------")
     return download_p1
 
 
 def _download_episode(obj: bangumi.Episode, now_file_name: str):
     global VIDEO_CODECS, VIDEO_QUALITY, AUDIO_QUALITY, DIC, RPATH
     print(Fore.GREEN + "INF: 视频 AID: ", obj.get_aid())
-    pages_data = sync(obj.get_pages())
     title = sync(obj.get_bangumi().get_meta())["media"]["title"]
+    vinfo = {
+        "title": sync(obj.get_episode_info())['h1Title']
+    }
     epcnt = 0
     for ep in sync(obj.get_episode_info())["mediaInfo"]["episodes"]:
         if ep["id"] == obj.get_epid():
@@ -569,7 +571,6 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
     print(Fore.GREEN + f"INF: {title} 第{epcnt}集")
     print(Fore.GREEN + f"INF: 正在获取下载地址")
     download_url = sync(obj.get_download_url())
-    vinfo = sync(obj.get_info())
 
     if FFMPEG != "#none":
         if "dash" in download_url.keys():
@@ -673,8 +674,6 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
                     .replace("{aid}", str(obj.get_aid()))
-                    .replace("{owner}", vinfo["owner"]["name"])
-                    .replace("{uid}", str(vinfo["owner"]["mid"]))
                     .replace("{title}", vinfo["title"])
                     .replace("{bangumi_id}", str(obj.get_bangumi().get_season_id()))
                     .replace(
@@ -708,8 +707,6 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
                     .replace("{aid}", str(obj.get_aid()))
-                    .replace("{owner}", vinfo["owner"]["name"])
-                    .replace("{uid}", str(vinfo["owner"]["mid"]))
                     .replace("{title}", vinfo["title"])
                     .replace("{bangumi_id}", str(obj.get_bangumi().get_season_id()))
                     .replace(
@@ -835,8 +832,6 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
                     .replace("{aid}", str(obj.get_aid()))
-                    .replace("{owner}", vinfo["owner"]["name"])
-                    .replace("{uid}", str(vinfo["owner"]["mid"]))
                     .replace("{title}", vinfo["title"])
                     .replace("{bangumi_id}", str(obj.get_bangumi().get_season_id()))
                     .replace(
@@ -873,8 +868,6 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
                     .replace("{aid}", str(obj.get_aid()))
-                    .replace("{owner}", vinfo["owner"]["name"])
-                    .replace("{uid}", str(vinfo["owner"]["mid"]))
                     .replace("{title}", vinfo["title"])
                     .replace("{bangumi_id}", str(obj.get_bangumi().get_season_id()))
                     .replace(
@@ -893,13 +886,11 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                 RPATH,
                 vinfo["title"] + f" - {obj.get_bvid()}({title} 第{epcnt}集)",
             )
-    print(Fore.CYAN + "----------完成下载----------")
 
 
 def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
     global VIDEO_CODECS, VIDEO_QUALITY, AUDIO_QUALITY, DIC, RPATH
     print(Fore.GREEN + "INF: 视频 AID: ", obj.get_aid())
-    pages_data = sync(obj.get_pages())
     vinfo = sync(obj.get_cheese().get_meta())
     vmeta = obj.get_meta()
     title = vinfo["title"]
@@ -1207,7 +1198,6 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
                 vmeta["title"] + f" - {title}({epcnt})",
             )
             PATHS.append(RPATH)
-    print(Fore.CYAN + "----------完成下载----------")
 
 
 def _download_danmakus(
@@ -1229,7 +1219,9 @@ def _download_danmakus(
         if isinstance(obj, bangumi.Episode):
             title = sync(obj.get_bangumi().get_meta())["media"]["title"]
             epcnt = 0
-            vinfo = sync(obj.get_info())
+            vinfo = {
+                "title": sync(obj.get_episode_info())['h1Title']
+            }
             for ep in sync(obj.get_episode_info())["mediaInfo"]["episodes"]:
                 if ep["id"] == obj.get_epid():
                     epcnt = int(ep["title"])
@@ -1239,8 +1231,6 @@ def _download_danmakus(
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
                     .replace("{aid}", str(obj.get_aid()))
-                    .replace("{owner}", vinfo["owner"]["name"])
-                    .replace("{uid}", str(vinfo["owner"]["mid"]))
                     .replace("{title}", vinfo["title"])
                     .replace("{bangumi_id}", str(obj.get_bangumi().get_season_id()))
                     .replace(
@@ -1318,7 +1308,21 @@ def _download_danmakus(
             sync(ass.make_ass_file_danmakus_xml(obj, out=RPATH))
             print(Fore.GREEN + f"INF: 下载弹幕完成")
             PATHS.append(RPATH)
-        print(Fore.CYAN + "----------完成下载----------")
+
+
+def _download_bangumi(obj: bangumi.Bangumi, now_file_name: str):
+    def __download_one_episode(obj: bangumi.Episode, now_file_name: str):
+        if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
+            _download_episode(obj, now_file_name)
+        _download_danmakus(obj, now_file_name)
+    ep_list = sync(obj.get_episode_list())["main_section"]["episodes"]
+    print(Fore.GREEN + f"INF: 番剧 media_id {obj.get_media_id()}")
+    print(Fore.GREEN + f"INF: 番剧共 {len(ep_list)} 集")
+    print()
+    for ep in ep_list:
+        epid = ep["id"]
+        __download_one_episode(bangumi.Episode(epid, obj.credential), now_file_name)
+        print()
 
 
 def _parse_args():
@@ -1438,6 +1442,10 @@ def _main():
             print(Fore.GREEN + "INF: 解析结果：专栏")
         elif resource_type == ResourceType.LIVE:
             print(Fore.GREEN + "INF: 解析结果：直播间")
+        elif resource_type == ResourceType.BANGUMI:
+            print(Fore.GREEN + "INF: 解析结果: 番剧")
+        elif resource_type == ResourceType.AUDIO_LIST:
+            print(Fore.GREEN + "INF: 解析结果: 歌单")
         else:
             print(Fore.YELLOW, "WRN: 资源不支持下载。", Style.RESET_ALL)
             continue
@@ -1467,23 +1475,15 @@ def _main():
                 if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
                     _download_cheese_video(obj, now_file_name)
                 _download_danmakus(obj, now_file_name)
+            elif resource_type == ResourceType.BANGUMI:
+                _download_bangumi(obj, now_file_name)
             else:
                 print(Fore.YELLOW, "WRN: 资源不支持下载。", Style.RESET_ALL)
                 continue
-        except ResponseCodeException as e:
-            if e.code == -404:
-                print(Fore.RED + "ERR: " + "未找到视频")
-                print(Fore.CYAN + "----------完成下载----------")
-                continue
-            elif e.code == -403:
-                print(Fore.RED + "ERR: " + "没有权限下载视频(可能是 VIP 视频)")
-                print(Fore.CYAN + "----------完成下载----------")
-                continue
-            else:
-                raise e
         except Exception as e:
             raise e
 
+        print(Fore.CYAN + "----------完成下载----------")
         print()
         cnt += 1
     print()
