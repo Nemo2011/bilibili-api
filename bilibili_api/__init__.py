@@ -4,6 +4,7 @@ bilibili_api
 import asyncio
 import platform
 
+from .exceptions import *
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku, DmFontSize, DmMode
@@ -43,12 +44,24 @@ if "windows" in platform.system().lower():
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 __all__ = [
+    "ApiException",
+    "ArgsException",
     "Credential",
+    "CredentialNoBiliJctException",
+    "CredentialNoBuvid3Exception",
+    "CredentialNoDedeUserIDException",
+    "CredentialNoSessdataException",
     "Danmaku",
+    "DanmakuClosedException",
     "DmFontSize",
     "DmMode",
     "HEADERS",
+    "LoginError",
+    "NetworkException",
     "ResourceType",
+    "ResponseCodeException",
+    "ResponseException",
+    "VideoUploadException",
     "aid2bvid",
     "app",
     "article",
@@ -61,7 +74,6 @@ __all__ = [
     "cheese",
     "comment",
     "dynamic",
-    "exceptions",
     "favorite_list",
     "get_real_url",
     "get_session",
@@ -78,7 +90,6 @@ __all__ = [
     "settings",
     "sync",
     "user",
-    "utils",
     "video",
     "video_uploader",
 ]
