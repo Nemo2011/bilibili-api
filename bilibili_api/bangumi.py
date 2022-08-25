@@ -14,6 +14,8 @@ import httpx
 
 import requests
 
+from . import settings
+
 from .utils.sync import sync
 from .utils.utils import get_api
 from .utils.Credential import Credential
@@ -233,7 +235,7 @@ class Episode(Video):
         print("Set bvid is not allowed in Episode")
 
     async def get_cid(self):
-        return await super().get_cid(0)
+        return (await self.get_episode_info())["epInfo"]["cid"]
 
     def get_bangumi(self):
         """
@@ -303,7 +305,7 @@ class Episode(Video):
         if True:
             params = {
                 "avid": self.get_aid(),
-                "cid": await self.get_cid(),
+                "ep_id": self.get_epid(),
                 "qn": "127",
                 "otype": "json",
                 "fnval": 4048,
@@ -318,7 +320,15 @@ class Episode(Video):
         Returns:
             文件源
         """
-        return await self.video_class.get_danmaku_xml(0)
+        cid = await self.get_cid()
+        url = f"https://comment.bilibili.com/{cid}.xml"
+        sess = get_session()
+        config = {"url": url}
+        # 代理
+        if settings.proxy:
+            config["proxies"] = {"all://", settings.proxy}
+        resp = await sess.get(**config)
+        return resp.content.decode("utf-8")
 
     async def get_danmaku_view(self):
         """

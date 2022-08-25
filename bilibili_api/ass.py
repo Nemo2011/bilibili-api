@@ -153,7 +153,10 @@ async def make_ass_file_danmakus_protobuf(
                 if page is None:
                     raise ArgsException("page_index 和 cid 至少提供一个。")
                 cid = await v._Video__get_page_id_by_index(page)
-        info = await v.get_info()
+        try:
+            info = await v.get_info()
+        except:
+            info = {"dimension": {"width": 1440, "height": 1080}}
         width = info["dimension"]["width"]
         height = info["dimension"]["height"]
         stage_size = (width, height)
@@ -220,7 +223,10 @@ async def make_ass_file_danmakus_xml(
                 if page is None:
                     raise ArgsException("page_index 和 cid 至少提供一个。")
                 cid = await v._Video__get_page_id_by_index(page)
-        info = await v.get_info()
+        try:
+            info = await v.get_info()
+        except:
+            info = {"dimension": {"width": 1440, "height": 1080}}
         width = info["dimension"]["width"]
         height = info["dimension"]["height"]
         stage_size = (width, height)
