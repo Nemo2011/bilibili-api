@@ -22,6 +22,7 @@ from ..user import get_self_info
 from .short import get_real_url
 from ..video import Video
 from ..favorite_list import FavoriteList, FavoriteListType, get_video_favorite_list
+from ..exceptions import *
 
 import re
 
@@ -112,7 +113,7 @@ async def parse_link(url, credential: Credential = Credential()):
         bangumi = parse_bangumi(url)
         if not bangumi == -1:
             obj = (bangumi, ResourceType.BANGUMI)
-        episode = parse_episode(url)
+        episode = parse_episode(url, credential)
         if not episode == -1:
             obj = (episode, ResourceType.EPISODE)
         favorite_list = parse_favorite_list(url)
@@ -200,7 +201,7 @@ def parse_bangumi(url):
         return -1
 
 
-def parse_episode(url):
+def parse_episode(url, credential):
     """
     解析番剧剧集,如果不是返回 -1，否则返回对应类
     """
@@ -209,6 +210,29 @@ def parse_episode(url):
         if last_part[:2].upper() == "EP":
             epid = int(last_part[2:].replace("/", ""))
             return Episode(epid=epid)
+        elif last_part[:2].upper() == "SS":
+            try:
+                resp = httpx.get(
+                    url,
+                    cookies=credential.get_cookies(),
+                    headers={"User-Agent": "Mozilla/5.0"},
+                )
+            except Exception as e:
+                raise ResponseException(str(e))
+            else:
+                content = resp.text
+
+                pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
+                match = re.search(pattern, content)
+                if match is None:
+                    raise ApiException("未找到番剧信息")
+                try:
+                    content = json.loads(match.group(1))
+                except json.JSONDecodeError:
+                    raise ApiException("信息解析错误")
+                else:
+                    epid = content["epInfo"]["id"]
+                    return Episode(epid=epid)
         else:
             return -1
     else:

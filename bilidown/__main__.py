@@ -3,7 +3,8 @@ BiliDown: 哔哩哔哩命令行下载器
 """
 
 import os
-from typing import Union
+import time
+from typing import List, Union
 from bilibili_api import *
 from bilibili_api.exceptions import *
 import sys
@@ -76,6 +77,7 @@ def _download(url: str, out: str, description: str):
         url,
         headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"},
         proxies={"all://": PROXY},
+        stream=True
     )
     resp.raise_for_status()
 
@@ -84,17 +86,21 @@ def _download(url: str, out: str, description: str):
 
     print(Fore.MAGENTA + f"DWN: 开始下载 {description} 至 {out}")
 
+    all_length = int(resp.headers["Content-Length"])
+    parts = all_length // 1024 + (1 if all_length % 1024 != 0 else 0)
     cnt = 0
+    start_time = time.perf_counter()
     print(Fore.MAGENTA + "DWN: " + str(cnt) + "\r", end="")
 
     with open(out, "wb") as f:
         for chunk in resp.iter_content(1024):
             cnt += 1
-            print(Fore.MAGENTA + "DWN: ", cnt, "\r", end="")
+            print(Fore.MAGENTA + "DWN: " + str(int(time.perf_counter() - start_time)) + "s. Done " + str(cnt) + " parts. All " + str(parts) + " parts. (1 part = 1024 bytes)" + "\r", end="")
             f.write(chunk)
     print()
     print(Fore.MAGENTA + "DWN: 完成下载")
     return out
+
 
 
 def _require_file_type(filename: str, filetype: str):
@@ -167,6 +173,7 @@ def _help():
         + " (分 P, 清晰度, 音质, 视频编码, 专栏下载格式)"
     )
     print("参数:   --disable-filetype-check  忽略自动检查文件后缀")
+    print("参数:   --download-list           下载视频、音频对应的列表(番剧所有剧集、视频所有分 P、歌单所有音频)")
     print("参数:   --debug                   显示错误详细信息")
     print("参数:   -h                        帮助")
     print()
@@ -723,29 +730,13 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
             RPATH = os.path.join(DIC, RNAME)
             if not os.path.exists(DIC):
                 os.mkdir(DIC)
-            PATH_FLV = RPATH.rstrip(".mp4") + ".flv"
             print(Fore.GREEN + f"INF: 开始下载视频({title} 第{epcnt}集)")
             video_path = _download(
                 video_audio_url,
-                PATH_FLV,
+                PATH,
                 vinfo["title"] + f" - {title}(第{epcnt}集)",
             )
-            turn_format = input(Fore.BLUE + "Y/N: 是否转换成 MP4 视频(默认转换): ")
-            if turn_format.upper() == "N":
-                PATHS.append(PATH_FLV)
-            else:
-                print(Fore.GREEN + "INF: 下载视频完成 正在转换格式")
-                if os.path.exists(RPATH):
-                    os.remove(RPATH)
-                print(Fore.MAGENTA)
-                os.system(f'{FFMPEG} -i "{PATH_FLV}" "{RPATH}"')
-                print(Fore.GREEN + "INF: 格式转换完成(或用户手动取消)")
-                delete_flv = input(Fore.BLUE + "Y/N: 是否删除 FLV 文件(默认删除): ")
-                if delete_flv.upper() == "N":
-                    PATHS.append(PATH_FLV)
-                else:
-                    os.remove(PATH_FLV)
-                PATHS.append(RPATH)
+            PATHS.append(RPATH)
     else:
         if "dash" in download_url.keys():
             now_file_name = _require_file_type(now_file_name, ".mp4")
@@ -862,12 +853,12 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
             PATHS.append(os.path.join(DIC, "视频 - " + RNAME))
             PATHS.append(os.path.join(DIC, "音频 - " + RNAME))
         elif "durl" in download_url.keys():
-            now_file_name = _require_file_type(now_file_name, ".flv")
+            now_file_name = _require_file_type(now_file_name, ".mp4")
 
             new_download_url = sync(obj.get_download_url())
             video_audio_url = new_download_url["durl"][0]["url"]
             if now_file_name == "#default":
-                RNAME = vinfo["title"] + f" - 番剧 EP{obj.get_epid()}({title}).flv"
+                RNAME = vinfo["title"] + f" - 番剧 EP{obj.get_epid()}({title}).mp4"
             else:
                 RNAME = (
                     now_file_name.replace("{bvid}", obj.get_bvid())
@@ -1330,6 +1321,24 @@ def _download_bangumi(obj: bangumi.Bangumi, now_file_name: str):
         print()
 
 
+def _download_cheese(obj: cheese.CheeseList, now_file_name: str):
+    def __download_one_cheese(obj: cheese.CheeseVideo, now_file_name: str):
+        if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
+            _download_cheese_video(obj, now_file_name)
+        _download_danmakus(obj, now_file_name)
+    print(Fore.GREEN + f"INF: 课程 season_id {obj.get_season_id()}")
+    course_cnt = sync(obj.get_meta())["ep_count"]
+    print(Fore.GREEN + f"INF: 课程共 {course_cnt} 课时")
+    cheeses: List[cheese.CheeseVideo]
+    cheeses = sync(obj.get_list())
+    for c in cheeses:
+        try:
+            __download_one_cheese(c, now_file_name)
+        except Exception as e:
+            print(Fore.RED + "ERR: " + str(e))
+        print()
+
+
 def _parse_args():
     global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY, DEFAULT_SETTINGS, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
 
@@ -1495,16 +1504,24 @@ def _main():
                         _download_episode(obj, now_file_name)
                     _download_danmakus(obj, now_file_name)
             elif resource_type == ResourceType.CHEESE_VIDEO:
-                if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
-                    _download_cheese_video(obj, now_file_name)
-                _download_danmakus(obj, now_file_name)
+                obj: cheese.CheeseVideo
+                if not DOWNLOAD_LIST:
+                    if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
+                        _download_cheese_video(obj, now_file_name)
+                    _download_danmakus(obj, now_file_name)
+                else:
+                    _download_cheese(obj.get_cheese(), now_file_name)
             elif resource_type == ResourceType.BANGUMI:
+                obj: bangumi.Bangumi
                 _download_bangumi(obj, now_file_name)
             else:
                 print(Fore.YELLOW, "WRN: 资源不支持下载。", Style.RESET_ALL)
                 continue
         except Exception as e:
-            raise e
+            print(Fore.RED + "ERR: " + str(e))
+            print(Fore.CYAN + "----------完成下载----------")
+            cnt += 1
+            continue
 
         print(Fore.CYAN + "----------完成下载----------")
         print()
