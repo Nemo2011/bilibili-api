@@ -1,3 +1,7 @@
+r"""
+BiliDown: 哔哩哔哩命令行下载器
+"""
+
 import os
 from typing import Union
 from bilibili_api import *
@@ -30,6 +34,17 @@ VIDEO_CODECS = {"hev": "HEVC(H.265)", "avc": "AVC(H.264)", "av01": "AV1"}
 AUDIO_QUALITY = {30280: "高品质", 30232: "中等品质", 30216: "低品质"}
 CREDENTIAL = Credential()
 DOWNLOAD_DANMAKUS = "ask"  # (true|false|only)
+BANNER = r"""
+                                         _____
+________   ___   ___        ___          |   |
+|\   __  \ |\  \ |\  \      |\  \        |   |
+\ \  \|\ /_\ \  \\ \  \     \ \  \       |   |
+ \ \   __  \\ \  \\ \  \     \ \  \    --     --
+  \ \  \|\  \\ \  \\ \  \____ \ \  \   \       /
+   \ \_______\\ \__\\ \_______\\ \__\   \     /
+    \|_______| \|__| \|_______| \|__|    \   /
+                                          \_/
+"""
 
 
 def _exit(*args, **kwargs):
@@ -176,6 +191,11 @@ def _help():
     print(Fore.LIGHTRED_EX + '使用 "\{" 和 "/{" 表示当作纯文本')
 
     exit()
+
+
+def _print_banner():
+    global BANNER
+    print(BANNER)
 
 
 def _download_video(obj: video.Video, now_file_name: str):
@@ -1367,6 +1387,7 @@ def _parse_args():
 def _main():
     global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type, CREDENTIAL, DOWNLOAD_DANMAKUS
     # TODO: INFO
+    _print_banner()
     print(Fore.LIGHTMAGENTA_EX + "BiliDown: 哔哩哔哩命令行下载器")
     print(Fore.LIGHTMAGENTA_EX + "Powered by Bilibili API")
     print(Fore.LIGHTMAGENTA_EX + "By Nemo2011<yimoxia@outlook.com>")
@@ -1472,6 +1493,9 @@ def _main():
 
 
 def main():
+    if sys.version_info < (3, 8, 0):
+        print(Fore.RED + "不支持的版本 BiliDown 需要 Python 版本大于 3.8.0")
+        exit()
     if "--debug" in sys.argv:
         print(Fore.CYAN + Back.BLACK + "DEBUG MODE" + Style.RESET_ALL)
         return _main()
