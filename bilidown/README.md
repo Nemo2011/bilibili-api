@@ -1,6 +1,20 @@
-```cmd
-python -c "$(curl -fsSL https://raw.githubusercontent.com/Nemo2011/bilibili-api/dev/bilidown/__main__.py)"
+<div align="center">
+
 ```
-```bash
-python3 -c "$(curl -fsSL https://raw.githubusercontent.com/Nemo2011/bilibili-api/dev/bilidown/__main__.py)"
+                                         _____
+________   ___   ___        ___          |   |
+|\   __  \ |\  \ |\  \      |\  \        |   |
+\ \  \|\ /_\ \  \\ \  \     \ \  \       |   |
+ \ \   __  \\ \  \\ \  \     \ \  \    --     --
+  \ \  \|\  \\ \  \\ \  \____ \ \  \   \       /
+   \ \_______\\ \__\\ \_______\\ \__\   \     /
+    \|_______| \|__| \|_______| \|__|    \   /
+                                          \_/
 ```
+
+# **BiliDown**
+
+## Powered by [Bilibili API](https://github.com/Nemo2011/bilibili-api)
+
+</div>
+
