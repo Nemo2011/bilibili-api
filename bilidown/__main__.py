@@ -2,7 +2,6 @@ r"""
 BiliDown: 哔哩哔哩命令行下载器
 """
 
-from importlib.resources import Resource
 import os
 from typing import Union
 from bilibili_api import *
@@ -35,6 +34,7 @@ VIDEO_CODECS = {"hev": "HEVC(H.265)", "avc": "AVC(H.264)", "av01": "AV1"}
 AUDIO_QUALITY = {30280: "高品质", 30232: "中等品质", 30216: "低品质"}
 CREDENTIAL = Credential()
 DOWNLOAD_DANMAKUS = "ask"  # (true|false|only)
+DOWNLOAD_LIST = False
 BANNER = r"""
                                          _____
 ________   ___   ___        ___          |   |
@@ -58,7 +58,9 @@ init(autoreset=True)
 
 
 def _ask_settings_download(question: str):
-    global DEFAULT_SETTINGS
+    global DEFAULT_SETTINGS, DOWNLOAD_LIST
+    if "下载的分 P" in question and DOWNLOAD_LIST:
+        return "all"
     if DEFAULT_SETTINGS:
         return ""
     else:
@@ -568,7 +570,8 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
     for ep in sync(obj.get_episode_info())["mediaInfo"]["episodes"]:
         if ep["id"] == obj.get_epid():
             epcnt = int(ep["title"])
-    print(Fore.GREEN + f"INF: {title} 第{epcnt}集")
+    vtitle = vinfo["title"]
+    print(Fore.GREEN + f"INF: {title} 第{epcnt}集 {vtitle}")
     print(Fore.GREEN + f"INF: 正在获取下载地址")
     download_url = sync(obj.get_download_url())
 
@@ -894,13 +897,14 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
     print(Fore.GREEN + "INF: 视频 AID: ", obj.get_aid())
     vinfo = sync(obj.get_cheese().get_meta())
     vmeta = obj.get_meta()
+    vtitle = vmeta["title"]
     title = vinfo["title"]
     epcnt = (
         f"第{str(obj.get_meta()['index'] - 1)}课"
         if obj.get_meta()["index"] != 1
         else "宣导片"
     )
-    print(Fore.GREEN + f"INF: {title} {epcnt}")
+    print(Fore.GREEN + f"INF: {title} {epcnt} {vtitle}")
     print(Fore.GREEN + f"INF: 正在获取下载地址")
     download_url = sync(obj.get_download_url())
 
@@ -1327,11 +1331,15 @@ def _download_bangumi(obj: bangumi.Bangumi, now_file_name: str):
 
 
 def _parse_args():
-    global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY, DEFAULT_SETTINGS, DOWNLOAD_DANMAKUS
+    global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY, DEFAULT_SETTINGS, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
 
     if "--default-settings" in sys.argv:
         DEFAULT_SETTINGS = True
         print(Fore.GREEN + "INF: 识别到下载时全部使用默认设置(适用于视频、专栏)")
+
+    if "--download-list" in sys.argv:
+        DOWNLOAD_LIST = True
+        print(Fore.GREEN + "INF: 已开启下载全部列表的模式")
 
     for i in range(len(sys.argv)):
         arg = sys.argv[i]
@@ -1390,7 +1398,7 @@ def _parse_args():
 
 
 def _main():
-    global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type, CREDENTIAL, DOWNLOAD_DANMAKUS
+    global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type, CREDENTIAL, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
     # TODO: INFO
     _print_banner()
     print(Fore.LIGHTMAGENTA_EX + "BiliDown: 哔哩哔哩命令行下载器")
@@ -1463,15 +1471,29 @@ def _main():
             now_file_name = "#default"
         try:
             if resource_type == ResourceType.VIDEO:
+                obj: video.Video
                 if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
                     video_download_p = _download_video(obj, now_file_name)
                 else:
                     video_download_p = -1
                 _download_danmakus(obj, now_file_name, video_download_p)
             elif resource_type == ResourceType.EPISODE:
-                if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
-                    _download_episode(obj, now_file_name)
-                _download_danmakus(obj, now_file_name)
+                obj: bangumi.Episode
+                if DOWNLOAD_LIST:
+                    epcnt = 0
+                    for ep in sync(obj.get_episode_info())["mediaInfo"]["episodes"]:
+                        if ep["id"] == obj.get_epid():
+                            epcnt = int(ep["title"])
+                    if epcnt == 0:
+                        if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
+                            _download_episode(obj, now_file_name)
+                        _download_danmakus(obj, now_file_name)
+                    print(Fore.CYAN + "----------完成下载----------")
+                    _download_bangumi(obj.get_bangumi(), now_file_name)
+                else:
+                    if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
+                        _download_episode(obj, now_file_name)
+                    _download_danmakus(obj, now_file_name)
             elif resource_type == ResourceType.CHEESE_VIDEO:
                 if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
                     _download_cheese_video(obj, now_file_name)
