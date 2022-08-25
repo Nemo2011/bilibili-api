@@ -29,7 +29,7 @@ VIDEO_QUALITY = {
 VIDEO_CODECS = {"hev": "HEVC(H.265)", "avc": "AVC(H.264)", "av01": "AV1"}
 AUDIO_QUALITY = {30280: "高品质", 30232: "中等品质", 30216: "低品质"}
 CREDENTIAL = Credential()
-DOWNLOAD_DANMAKUS = "ask" # (true|false|only)
+DOWNLOAD_DANMAKUS = "ask"  # (true|false|only)
 
 
 def _exit(*args, **kwargs):
@@ -121,31 +121,44 @@ def _help():
     print('使用方法: bilidown "https://bilibili.com/.../"', end=" ")
     print(Fore.RED + '链接为第一个参数, 允许多个链接, 请使用 "|" 隔开每一个链接' + Fore.RESET)
     print(
-        '参数:   --out/-o                  文件名(默认为 "#default")                            "a.mp4"',
+        '参数:   --out/-o                  文件名(默认为 "#default")                                   "a.mp4"',
         end=" ",
     )
     print(Fore.RED + '允许多个输出文件名, 请使用 "|" 隔开每一个输出文件名' + Fore.RESET)
     print(
-        '参数:   --dic/-d                  下载至文件夹(默认为 "default")                       "~/Desktop"'
+        '参数:   --dic/-d                  下载至文件夹(默认为 "default")                              "~/Desktop"'
     )
     print(
-        '参数:   --proxy                   代理                                                 "https://user:password@your-proxy.com"'
+        '参数:   --proxy                   代理                                                        "https://user:password@your-proxy.com"'
     )
     print(
-        '参数:   --ffmpeg                  ffmpeg 地址(如果没有 ffmpeg 可以使用 "#none")        "ffmpeg"'
+        '参数:   --ffmpeg                  ffmpeg 地址(如果没有 ffmpeg 可以使用 "#none")               "ffmpeg"'
     )
     print(
-        '参数:   --sessdata                Cookies 中 SESSDATA 的值, 用于下载会员专享、高清晰度 "SECRET绝密SECRET绝密"'
+        '参数:   --sessdata                Cookies 中 SESSDATA 的值, 用于下载会员专享、高清晰度        "SECRET绝密SECRET绝密"'
+    )
+    print(
+        "参数:   --danmakus-settings       是否下载弹幕"
+        + '                                                "true"'
+        + Fore.RED
+        + " ( true 下载 | false 不下载 | only 只下载弹幕 ) "
+    )
+    print(
+        "参数:   --default-settings        下载时使用默认设置(视频和专栏)                             "
+        + Fore.RED
+        + " (分 P, 清晰度, 音质, 视频编码, 专栏下载格式)"
     )
     print("参数:   --disable-filetype-check  忽略自动检查文件后缀")
-    print("参数:   -h                        帮助")
     print("参数:   --debug                   显示错误详细信息")
+    print("参数:   -h                        帮助")
     print()
     print(
         Fore.LIGHTRED_EX
         + "参数 --out/-o 允许使用自定义格式, 如 "
         + Fore.GREEN
-        + '"{title} - {bvid} - P{p} - {owner} - {uid}"' + Fore.RED + " 请务必使用小写"
+        + '"{title} - {bvid} - P{p} - {owner} - {uid}"'
+        + Fore.RED
+        + " 请务必使用小写"
     )
     print(
         "| {bvid}         -> BVID            | {aid}          -> AID            | {title}        -> 标题      | {p}            -> 分 P        |"
@@ -242,7 +255,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                         if codename in c:
                             print(f"  {codename}: {description}", "  |", end="")
                 print()
-                CODECS = _ask_settings_download(Fore.BLUE + f'STR: 请选择视频编码对应的号码(默认为 "{video_codecs[0]}"): ')
+                CODECS = _ask_settings_download(
+                    Fore.BLUE + f'STR: 请选择视频编码对应的号码(默认为 "{video_codecs[0]}"): '
+                )
                 if CODECS == "":
                     CODECS = video_codecs[0]
 
@@ -405,7 +420,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                         if codename in c:
                             print(f"  {codename}: {description}", "  |", end="")
                 print()
-                CODECS = _ask_settings_download(Fore.BLUE + 'STR: 请选择视频编码对应的号码(默认为 "hev"): ')
+                CODECS = _ask_settings_download(
+                    Fore.BLUE + 'STR: 请选择视频编码对应的号码(默认为 "hev"): '
+                )
                 if CODECS == "":
                     CODECS = "hev"
 
@@ -1173,7 +1190,11 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
     print(Fore.CYAN + "----------完成下载----------")
 
 
-def _download_danmakus(obj: Union[video.Video, bangumi.Episode, cheese.CheeseVideo], now_file_name: str, download_p1: int=-1):
+def _download_danmakus(
+    obj: Union[video.Video, bangumi.Episode, cheese.CheeseVideo],
+    now_file_name: str,
+    download_p1: int = -1,
+):
     global PATHS, DOWNLOAD_DANMAKUS
     if DOWNLOAD_DANMAKUS == "ask":
         download_danmakus = input(Fore.BLUE + "Y/N: 此资源支持下载弹幕, 是否下载: ")

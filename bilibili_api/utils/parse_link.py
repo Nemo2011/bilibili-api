@@ -206,16 +206,7 @@ def parse_episode(url):
     """
     if url[:38] == "https://www.bilibili.com/bangumi/play/":
         last_part = url[38:]
-        if last_part[:2].upper() == "SS":
-            ssid = int(last_part[2:].replace("/", ""))
-            b = Bangumi(ssid=ssid)
-            first_episode_id = int(
-                sync(b.get_episode_list())["main_section"]["episodes"][0]["share_url"][
-                    40:
-                ]
-            )
-            return Episode(epid=first_episode_id)
-        elif last_part[:2].upper() == "EP":
+        if last_part[:2].upper() == "EP":
             epid = int(last_part[2:].replace("/", ""))
             return Episode(epid=epid)
         else:
@@ -243,10 +234,6 @@ def parse_cheese_video(url):
         if url[37:39].upper() == "EP":
             last_part = int(url[39:].replace("/", ""))
             return CheeseVideo(epid=last_part)
-        elif url[37:39].upper() == "SS":
-            cheese = CheeseList(season_id=int(url[39:].replace("/", "")))
-            ep = sync(cheese.get_list())["items"][0]["id"]
-            return CheeseVideo(epid=ep)
     else:
         return -1
 
