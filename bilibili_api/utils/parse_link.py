@@ -79,10 +79,12 @@ async def parse_link(url, credential: Credential = Credential()):
         Union[tuple, int]: (对象，类型) 或 -1,-1 表示出错
     """
     try:
-        obj = check_short_name(url)
-        if obj != -1:
-            obj[0].credential = credential
-            return obj
+        obj = None
+
+        sobj = check_short_name(url)
+        if sobj != -1:
+            sobj[0].credential = credential
+            return sobj
 
         url = await get_real_url(url)
 
@@ -135,7 +137,7 @@ async def parse_link(url, credential: Credential = Credential()):
         if not live == -1:
             obj = (live, ResourceType.LIVE)
 
-        if obj == None:
+        if obj == None or obj[0] == None:
             return -1
         else:
             obj[0].credential = credential
