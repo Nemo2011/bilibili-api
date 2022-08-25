@@ -1445,6 +1445,7 @@ def _main():
         if download_object == -1:
             print(Fore.RED + "ERR: 无法获取链接信息。请检查是否有拼写错误。", Style.RESET_ALL)
             print(Fore.CYAN + "----------完成下载----------")
+            cnt += 1
             continue
         obj = download_object[0]
         resource_type = download_object[1]
