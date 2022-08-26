@@ -156,6 +156,8 @@ def check_short_name(name: str):
       - mlxxxxxxxxxx
       - uidxxxxxxxxx
       - cvxxxxxxxxxx
+      - auxxxxxxxxxx
+      - amxxxxxxxxxx
     """
     if name[:2].upper() == "AV":
         return (Video(aid=int(name[2:])), ResourceType.VIDEO)
@@ -167,6 +169,10 @@ def check_short_name(name: str):
         return (User(int(name[3:])), ResourceType.USER)
     elif name[:2].upper() == "CV":
         return (Article(int(name[2:])), ResourceType.ARTICLE)
+    elif name[:2].upper() == "AU":
+        return (Audio(int(name[2:])), ResourceType.AUDIO)
+    elif name[:2].upper() == "AM":
+        return (AudioList(int(name[2:])), ResourceType.AUDIO_LIST)
     else:
         return -1
 
