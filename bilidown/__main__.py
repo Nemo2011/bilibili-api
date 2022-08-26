@@ -1375,6 +1375,24 @@ def _parse_args():
         if arg == "--sessdata":
             CREDENTIAL.sessdata = sys.argv[i + 1]
             print(Fore.GREEN + "INF: 识别到 SESSDATA = ", CREDENTIAL.sessdata)
+            try:
+                user_data = sync(user.get_self_info(CREDENTIAL))
+            except ResponseCodeException as e:
+                print(Fore.YELLOW + "WRN: SESSDATA 无效 (不影响下载)")
+            else:
+                print(Fore.GREEN + "INF: 欢迎 " + user_data["name"])
+    if "--qrcode-login" in sys.argv:
+        if CREDENTIAL.sessdata == None:
+            print(Fore.GREEN + "INF: 开始扫描二维码登录")
+            CREDENTIAL = login.login_with_qrcode()
+        try:
+            user_data = sync(user.get_self_info(CREDENTIAL))
+        except CredentialNoSessdataException:
+            print(Fore.YELLOW + "WRN: 登录失败")
+        except ResponseCodeException as e:
+            print(Fore.YELLOW + "WRN: 登录失败")
+        else:
+            print(Fore.GREEN + "INF: 欢迎 " + user_data["name"])
 
     for i in range(len(sys.argv)):
         arg = sys.argv[i]

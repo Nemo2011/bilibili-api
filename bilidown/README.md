@@ -14,7 +14,31 @@ ________   ___   ___        ___          |   |
 
 # **BiliDown**
 
-## Powered by [Bilibili API](https://github.com/Nemo2011/bilibili-api)
+**专业级 Bilibili 命令行下载器**
+
+**Powered by [Bilibili API](https://github.com/Nemo2011/bilibili-api)**
 
 </div>
+
+***
+
+- **支持几乎所有视频下载**
+- **支持弹幕(ass)下载**
+- **支持 FLV 视频**
+- **支持 cookies(`sessdata`) 登录**
+- **支持扫码登录**
+- **支持番剧全集下载**
+- **支持课程全课时下载**
+- **支持 FFmpeg**
+- **支持选择分辨率、音质、编码**
+- **支持 av1 编码**
+- **支持 4K, 8K, 杜比视界**
+- **支持音频下载**
+- **支持歌单所有音频下载**
+- **支持专栏下载(`markdown`, `json`)**
+- **支持直播间录播**
+- **支持自定义输出文件名**
+- **支持自定义输出文件夹**
+
+## Usage
 
