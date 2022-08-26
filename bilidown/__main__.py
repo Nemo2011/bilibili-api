@@ -762,9 +762,8 @@ def _download(url: str, out: str, description: str):
         os.remove(out)
     
     parent = os.path.dirname(out)
-    if parent != "":
-        if not os.path.exists(parent):
-            os.mkdir(parent)
+    if not os.path.exists(parent):
+        os.mkdir(parent)
 
     print(Fore.MAGENTA + f"DWN: 开始下载 {description} 至 {out}")
 
