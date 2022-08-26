@@ -759,6 +759,10 @@ def _download(url: str, out: str, description: str):
 
     if os.path.exists(out):
         os.remove(out)
+    
+    parent = os.path.dirname(out)
+    if not os.path.exists(parent):
+        os.mkdir(parent)
 
     print(Fore.MAGENTA + f"DWN: 开始下载 {description} 至 {out}")
 
@@ -872,18 +876,18 @@ def _help():
         + " 请务必使用小写"
     )
     print(
-        "| {bvid}         -> BVID            | {aid}          -> AID            | {title}        -> 标题      | {p}            -> 分 P        |"
+        "| {bvid}         -> BVID            | {aid}             -> AID            | {title}          -> 标题             | {p}             -> 分 P        |"
     )
     print(
-        "| {owner}        -> UP              | {uid}          -> UP uid         | {bangumi_epid} -> 番剧 epid | {bangumi_name} -> 番剧名      |"
+        "| {owner}        -> UP              | {uid}             -> UP uid         | {bangumi_epid}   -> 番剧 epid        | {bangumi_name}  -> 番剧名      |"
     )
     print(
-        "| {bangumi_ep}   -> 番剧第几集      | {cheese_epid}  -> 课程 epid      | {cheese_name}  -> 课程名    | {cheese_ep}    -> 课程第几集  |"
+        "| {bangumi_ep}   -> 番剧第几集      | {cheese_epid}     -> 课程 epid      | {cheese_name}    -> 课程名           | {cheese_ep}     -> 课程第几集  |"
     )
     print(
-        "| {bangumi_id}   -> 番剧 season_id  | {cheese_id}    -> 课程 season_id | {cvid}         -> 专栏 cvid | {live_id}      -> 直播间 id   |"
+        "| {bangumi_id}   -> 番剧 season_id  | {cheese_id}       -> 课程 season_id | {cvid}           -> 专栏 cvid        | {live_id}       -> 直播间 id   |"
     )
-    print("| {auid}         -> 音频 auid       |")
+    print("| {auid}         -> 音频 auid       | {audio_list_name} -> 歌单名         | {audio_list_cnt} -> 歌单的第几个音频 | {audio_list_id} -> 歌单 auid   |")
     print(Fore.LIGHTRED_EX + '在参数最后加上 "#" 表示所有视频均使用此格式, 如 ' + Fore.GREEN + '"{bvid}#"')
     print(Fore.LIGHTRED_EX + '使用 "\{" 和 "/{" 表示当作纯文本')
 
@@ -2051,6 +2055,25 @@ def _download_audio(obj: audio.Audio, now_file_name: str):
     PATHS.append(RPATH)
 
 
+def _download_audio_list(obj: audio.AudioList, now_file_name: str):
+    cnt = 0
+    print(Fore.GREEN + "INF: 歌单 amid: " + str(obj.amid))
+    song_list = sync(obj.get_song_list())
+    name = sync(obj.get_info())["title"]
+    pageCount = song_list["pageCount"]
+    for page in range(1, pageCount + 1):
+        songs = sync(obj.get_song_list(page))
+        for song in songs['data']:
+            cnt += 1
+            new_now_file_name = (
+                now_file_name
+                .replace("{audio_list_name}", name)
+                .replace("{audio_list_cnt}", str(cnt))
+                .replace("{audio_list_id}", str(obj.amid))
+            )
+            _download_audio(audio.Audio(song["id"], obj.credential), new_now_file_name)
+
+
 def _parse_args():
     global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY, DEFAULT_SETTINGS, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
 
@@ -2248,6 +2271,9 @@ def _main():
             elif resource_type == ResourceType.AUDIO:
                 obj: audio.Audio
                 _download_audio(obj, now_file_name)
+            elif resource_type == ResourceType.AUDIO_LIST:
+                obj: audio.AudioList
+                _download_audio_list(obj, now_file_name)
             else:
                 print(Fore.YELLOW, "WRN: 资源不支持下载。", Style.RESET_ALL)
                 continue
