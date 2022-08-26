@@ -686,8 +686,10 @@ from bilibili_api import *
 import sys
 import httpx
 import requests
+import aiohttp
 import signal
 from colorama import Fore, Back, Style, init
+import keyboard
 
 PROXY = None
 PATH = "#default"
@@ -725,12 +727,6 @@ ________   ___   ___        ___          |   |
 """
 DEBUG = False
 
-
-def _exit(*args, **kwargs):
-    exit()
-
-
-signal.signal(signal.SIGINT, _exit)
 
 init(autoreset=True)
 
@@ -1100,7 +1096,7 @@ def _download_video(obj: video.Video, now_file_name: str):
                     PATH_FLV,
                     vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1})",
                 )
-                turn_format = input(Fore.BLUE + "Y/N: 是否转换成 MP4 视频(默认转换): ")
+                turn_format = _ask_settings_download(Fore.BLUE + "Y/N: 是否转换成 MP4 视频(默认转换): ")
                 if turn_format.upper() == "N":
                     PATHS.append(PATH_FLV)
                 else:
@@ -1110,7 +1106,7 @@ def _download_video(obj: video.Video, now_file_name: str):
                     print(Fore.MAGENTA)
                     os.system(f'{FFMPEG} -i "{PATH_FLV}" "{RPATH}"')
                     print(Fore.GREEN + "INF: 格式转换完成(或用户手动取消)")
-                    delete_flv = input(Fore.BLUE + "Y/N: 是否删除 FLV 文件(默认删除): ")
+                    delete_flv = _ask_settings_download(Fore.BLUE + "Y/N: 是否删除 FLV 文件(默认删除): ")
                     if delete_flv.upper() == "N":
                         PATHS.append(PATH_FLV)
                     else:
@@ -2075,6 +2071,62 @@ def _download_audio_list(obj: audio.AudioList, now_file_name: str):
             _download_audio(audio.Audio(song["id"], obj.credential), new_now_file_name)
 
 
+
+async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
+    global FFMPEG, DIC, PATHS
+    if FFMPEG == "#none":
+        _require_file_type(now_file_name, ".flv")
+    else:
+        _require_file_type(now_file_name, ".mp4")
+    room = obj
+    stream_info = await room.get_room_play_url()
+    rinfo = (await room.get_room_info())["room_info"]
+    url = stream_info['durl'][0]['url']
+
+    if now_file_name == "#default":
+        RNAME = rinfo["title"] + " " + str(room.room_display_id) + ".flv"
+    else:
+        RNAME = now_file_name.replace(
+            "{uid}", str(rinfo["uid"]), 
+        ).replace(
+            "{owner}", (await user.User(rinfo["uid"]).get_user_info())["name"]
+        ).replace(
+            "{live_id}", str(room.room_display_id)
+        ).replace(
+            "{title}", rinfo["title"]
+        )
+
+    print(Fore.GREEN + f"直播间房号: {room.room_display_id}")
+    print(Fore.GREEN + f"如果想要停止下载请长按 ESC 键")
+    RPATH = os.path.join(DIC, RNAME)
+
+    byte_cnt = 0
+    start_time = time.perf_counter()
+
+    async with aiohttp.ClientSession() as sess:
+        async with sess.get(url, headers=HEADERS) as resp:
+            with open(RPATH, 'ab') as f:
+                while True:
+                    chunk = await resp.content.read(1024)
+                    byte_cnt += len(chunk)
+                    if not chunk:
+                        print(Fore.YELLOW + 'WRN: 无更多数据')
+                        break
+                    print(Fore.MAGENTA + f"DWN: " + str(int(time.perf_counter() - start_time)) + f's. 接收到数据 {byte_cnt}B\r', end="")
+                    f.write(chunk)
+                    if keyboard.is_pressed("esc"):
+                        print()
+                        print(Fore.YELLOW + "WRN: 用户手动停止")
+                        break
+
+    if FFMPEG == "#none":
+        PATHS.append(RPATH)
+    else:
+        MP4_PATH = RPATH.rstrip(".flv") + ".mp4"
+        os.system(f"{FFMPEG} -i {RPATH} {MP4_PATH}") 
+        os.remove(RPATH)
+        PATHS.append(MP4_PATH)
+
 def _parse_args():
     global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY, DEFAULT_SETTINGS, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
 
@@ -2275,8 +2327,11 @@ def _main():
             elif resource_type == ResourceType.AUDIO_LIST:
                 obj: audio.AudioList
                 _download_audio_list(obj, now_file_name)
+            elif resource_type == ResourceType.LIVE:
+                obj: live.LiveRoom
+                sync(_download_liveroom_stream(obj, now_file_name))
             else:
-                print(Fore.YELLOW, "WRN: 资源不支持下载。", Style.RESET_ALL)
+                print(Fore.YELLOW + "WRN: 资源不支持下载。" + Style.RESET_ALL)
                 continue
         except Exception as e:
             if DEBUG:
