@@ -679,6 +679,7 @@ Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
 """
 
+import json
 import os
 import time
 from typing import List, Union
@@ -756,7 +757,7 @@ def _download(url: str, out: str, description: str):
 
     if os.path.exists(out):
         os.remove(out)
-    
+
     parent = os.path.dirname(out)
     if not os.path.exists(parent):
         os.mkdir(parent)
@@ -884,9 +885,11 @@ def _help():
     print(
         "| {bangumi_id}   -> 番剧 season_id  | {cheese_id}       -> 课程 season_id | {cvid}           -> 专栏 cvid        | {live_id}       -> 直播间 id   |"
     )
-    print("| {auid}         -> 音频 auid       | {audio_list_name} -> 歌单名         | {audio_list_cnt} -> 歌单的第几个音频 | {audio_list_id} -> 歌单 auid   |")
+    print(
+        "| {auid}         -> 音频 auid       | {audio_list_name} -> 歌单名         | {audio_list_cnt} -> 歌单的第几个音频 | {audio_list_id} -> 歌单 auid   |"
+    )
     print(Fore.LIGHTRED_EX + '在参数最后加上 "#" 表示所有视频均使用此格式, 如 ' + Fore.GREEN + '"{bvid}#"')
-    print(Fore.LIGHTRED_EX + '使用 "\{" 和 "/{" 表示当作纯文本')
+    print(Fore.LIGHTRED_EX + '使用 "{#" 和 "}#" 表示 "{" 和 "}"')
 
     exit()
 
@@ -923,6 +926,8 @@ def _download_video(obj: video.Video, now_file_name: str):
                     .replace(")", "")
                     .replace("）", "")
                     .replace("（", "")
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
                 data = pages_data[int(p) - 1]
                 print(f"INF: P{int(p)}", ": ", data["part"])
@@ -1033,13 +1038,13 @@ def _download_video(obj: video.Video, now_file_name: str):
                 print(Fore.GREEN + f"INF: 开始下载视频(P{download_p + 1})")
                 video_path = _download(
                     video_url,
-                    "video_temp.m4s",
+                    "./video_temp.m4s",
                     vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}) - 视频",
                 )
                 print(Fore.GREEN + f"INF: 开始下载音频(P{download_p + 1})")
                 audio_path = _download(
                     audio_url,
-                    "audio_temp.m4s",
+                    "./audio_temp.m4s",
                     vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1}) - 音频",
                 )
                 print(Fore.GREEN + "INF: 下载视频完成 开始混流")
@@ -1055,6 +1060,8 @@ def _download_video(obj: video.Video, now_file_name: str):
                         .replace("{owner}", vinfo["owner"]["name"])
                         .replace("{uid}", str(vinfo["owner"]["mid"]))
                         .replace("{title}", vinfo["title"])
+                        .replace("{#", "{")
+                        .replace("#}", "}")
                     )
                 RPATH = os.path.join(DIC, RNAME)
                 if not os.path.exists(DIC):
@@ -1063,10 +1070,10 @@ def _download_video(obj: video.Video, now_file_name: str):
                     os.remove(RPATH)
                 print(Fore.MAGENTA)
                 os.system(
-                    f'{FFMPEG} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy "{RPATH}"'
+                    f'{FFMPEG} -i ./video_temp.m4s -i ./audio_temp.m4s -vcodec copy -acodec copy "{RPATH}"'
                 )
-                os.remove("video_temp.m4s")
-                os.remove("audio_temp.m4s")
+                os.remove("./video_temp.m4s")
+                os.remove("./audio_temp.m4s")
                 print(Fore.GREEN + f"INF: 混流完成(或用户手动取消)")
                 PATHS.append(RPATH)
             elif "durl" in download_url.keys():
@@ -1085,6 +1092,8 @@ def _download_video(obj: video.Video, now_file_name: str):
                         .replace("{owner}", vinfo["owner"]["name"])
                         .replace("{uid}", str(vinfo["owner"]["mid"]))
                         .replace("{title}", vinfo["title"])
+                        .replace("{#", "{")
+                        .replace("#}", "}")
                     )
                 RPATH = os.path.join(DIC, RNAME)
                 if not os.path.exists(DIC):
@@ -1096,7 +1105,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                     PATH_FLV,
                     vinfo["title"] + f" - {obj.get_bvid()}(P{download_p + 1})",
                 )
-                turn_format = _ask_settings_download(Fore.BLUE + "Y/N: 是否转换成 MP4 视频(默认转换): ")
+                turn_format = _ask_settings_download(
+                    Fore.BLUE + "Y/N: 是否转换成 MP4 视频(默认转换): "
+                )
                 if turn_format.upper() == "N":
                     PATHS.append(PATH_FLV)
                 else:
@@ -1106,7 +1117,9 @@ def _download_video(obj: video.Video, now_file_name: str):
                     print(Fore.MAGENTA)
                     os.system(f'{FFMPEG} -i "{PATH_FLV}" "{RPATH}"')
                     print(Fore.GREEN + "INF: 格式转换完成(或用户手动取消)")
-                    delete_flv = _ask_settings_download(Fore.BLUE + "Y/N: 是否删除 FLV 文件(默认删除): ")
+                    delete_flv = _ask_settings_download(
+                        Fore.BLUE + "Y/N: 是否删除 FLV 文件(默认删除): "
+                    )
                     if delete_flv.upper() == "N":
                         PATHS.append(PATH_FLV)
                     else:
@@ -1207,6 +1220,8 @@ def _download_video(obj: video.Video, now_file_name: str):
                         .replace("{owner}", vinfo["owner"]["name"])
                         .replace("{uid}", str(vinfo["owner"]["mid"]))
                         .replace("{title}", vinfo["title"])
+                        .replace("{#", "{")
+                        .replace("#}", "}")
                     )
                 if not os.path.exists(DIC):
                     os.mkdir(DIC)
@@ -1240,6 +1255,8 @@ def _download_video(obj: video.Video, now_file_name: str):
                         .replace("{owner}", vinfo["owner"]["name"])
                         .replace("{uid}", str(vinfo["owner"]["mid"]))
                         .replace("{title}", vinfo["title"])
+                        .replace("{#", "{")
+                        .replace("#}", "}")
                     )
                 RPATH = os.path.join(DIC, RNAME)
                 if not os.path.exists(DIC):
@@ -1354,13 +1371,13 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
             print(Fore.GREEN + f"INF: 开始下载视频({title} 第{epcnt}集)")
             video_path = _download(
                 video_url,
-                "video_temp.m4s",
+                "./video_temp.m4s",
                 vinfo["title"] + f" - {title}(第{epcnt}集) - 视频",
             )
             print(Fore.GREEN + f"INF: 开始下载音频({title} 第{epcnt}集)")
             audio_path = _download(
                 audio_url,
-                "audio_temp.m4s",
+                "./audio_temp.m4s",
                 vinfo["title"] + f" - {title}(第{epcnt}集) - 音频",
             )
             print(Fore.GREEN + "INF: 下载视频完成 开始混流")
@@ -1379,6 +1396,8 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     )
                     .replace("{bangumi_ep}", str(epcnt))
                     .replace("{bangumi_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             RPATH = os.path.join(DIC, RNAME)
             if not os.path.exists(DIC):
@@ -1387,10 +1406,10 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                 os.remove(RPATH)
             print(Fore.MAGENTA)
             os.system(
-                f'{FFMPEG} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy "{RPATH}"'
+                f'{FFMPEG} -i ./video_temp.m4s -i ./audio_temp.m4s -vcodec copy -acodec copy "{RPATH}"'
             )
-            os.remove("video_temp.m4s")
-            os.remove("audio_temp.m4s")
+            os.remove("./video_temp.m4s")
+            os.remove("./audio_temp.m4s")
             print(Fore.GREEN + f"INF: 混流完成(或用户手动取消)")
             PATHS.append(RPATH)
         elif "durl" in download_url.keys():
@@ -1412,6 +1431,8 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     )
                     .replace("{bangumi_ep}", str(epcnt))
                     .replace("{bangumi_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             RPATH = os.path.join(DIC, RNAME)
             if not os.path.exists(DIC):
@@ -1521,6 +1542,8 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     )
                     .replace("{bangumi_ep}", str(epcnt))
                     .replace("{bangumi_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             if not os.path.exists(DIC):
                 os.mkdir(DIC)
@@ -1557,6 +1580,8 @@ def _download_episode(obj: bangumi.Episode, now_file_name: str):
                     )
                     .replace("{bangumi_ep}", str(epcnt))
                     .replace("{bangumi_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             RPATH = os.path.join(DIC, RNAME)
             if not os.path.exists(DIC):
@@ -1670,13 +1695,13 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
             print(Fore.GREEN + f"INF: 开始下载视频({title} {epcnt})")
             video_path = _download(
                 video_url,
-                "video_temp.m4s",
+                "./video_temp.m4s",
                 vmeta["title"] + f" - {title}({epcnt}) - 视频",
             )
             print(Fore.GREEN + f"INF: 开始下载音频({title} {epcnt})")
             audio_path = _download(
                 audio_url,
-                "audio_temp.m4s",
+                "./audio_temp.m4s",
                 vmeta["title"] + f" - {title}({epcnt}) - 音频",
             )
             print(Fore.GREEN + "INF: 下载视频完成 开始混流")
@@ -1694,6 +1719,8 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
                     .replace("{cheese_name}", vinfo["title"])
                     .replace("{cheese_ep}", str(epcnt))
                     .replace("{cheese_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             RPATH = os.path.join(DIC, RNAME)
             if not os.path.exists(DIC):
@@ -1702,10 +1729,10 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
                 os.remove(RPATH)
             print(Fore.MAGENTA)
             os.system(
-                f'{FFMPEG} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy "{RPATH}"'
+                f'{FFMPEG} -i ./video_temp.m4s -i ./audio_temp.m4s -vcodec copy -acodec copy "{RPATH}"'
             )
-            os.remove("video_temp.m4s")
-            os.remove("audio_temp.m4s")
+            os.remove("./video_temp.m4s")
+            os.remove("./audio_temp.m4s")
             print(Fore.GREEN + f"INF: 混流完成(或用户手动取消)")
             PATHS.append(RPATH)
         elif "durl" in download_url.keys():
@@ -1726,6 +1753,8 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
                     .replace("{cheese_name}", vinfo["title"])
                     .replace("{cheese_ep}", str(epcnt))
                     .replace("{cheese_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             RPATH = os.path.join(DIC, RNAME)
             if not os.path.exists(DIC):
@@ -1834,6 +1863,8 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
                     .replace("{cheese_name}", vinfo["title"])
                     .replace("{cheese_ep}", str(epcnt))
                     .replace("{cheese_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             if not os.path.exists(DIC):
                 os.mkdir(DIC)
@@ -1869,6 +1900,8 @@ def _download_cheese_video(obj: cheese.CheeseVideo, now_file_name: str):
                     .replace("{cheese_name}", vinfo["title"])
                     .replace("{cheese_ep}", str(epcnt))
                     .replace("{cheese_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             RPATH = os.path.join(DIC, RNAME)
             if not os.path.exists(DIC):
@@ -1919,6 +1952,8 @@ def _download_danmakus(
                     )
                     .replace("{bangumi_ep}", str(epcnt))
                     .replace("{bangumi_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             now_name = _require_ass_for_danmakus(RNAME)
             RPATH = os.path.join(DIC, now_name)
@@ -1949,6 +1984,8 @@ def _download_danmakus(
                         .replace("{owner}", vinfo["owner"]["name"])
                         .replace("{uid}", str(vinfo["owner"]["mid"]))
                         .replace("{title}", vinfo["title"])
+                        .replace("{#", "{")
+                        .replace("#}", "}")
                     )
                 now_name = _require_ass_for_danmakus(RNAME)
                 RPATH = os.path.join(DIC, now_name)
@@ -1977,6 +2014,8 @@ def _download_danmakus(
                     .replace("{cheese_name}", vinfo["title"])
                     .replace("{cheese_ep}", str(epcnt))
                     .replace("{cheese_epid}", str(obj.get_epid()))
+                    .replace("{#", "{")
+                    .replace("#}", "}")
                 )
             now_name = _require_ass_for_danmakus(RNAME)
             RPATH = os.path.join(DIC, now_name)
@@ -2029,6 +2068,7 @@ def _download_audio(obj: audio.Audio, now_file_name: str):
     global PATHS, DIC
     now_file_name = _require_file_type(now_file_name, ".mp3")
     print(Fore.GREEN + f"INF: 音频 auid {obj.get_auid()}")
+    print()
     print(Fore.GREEN + "INF: 正在获取下载地址")
     download_url = sync(obj.get_download_url())["cdns"][0]
     ainfo = sync(obj.get_info())
@@ -2042,6 +2082,8 @@ def _download_audio(obj: audio.Audio, now_file_name: str):
             .replace("{title}", ainfo["title"])
             .replace("{owner}", ainfo["uname"])
             .replace("{uid}", str(ainfo["uid"]))
+            .replace("{#", "{")
+            .replace("#}", "}")
         )
         if "bvid" in ainfo.keys():
             RNAME = RNAME.replace("{aid}", str(ainfo["aid"])).replace(
@@ -2055,21 +2097,23 @@ def _download_audio(obj: audio.Audio, now_file_name: str):
 def _download_audio_list(obj: audio.AudioList, now_file_name: str):
     cnt = 0
     print(Fore.GREEN + "INF: 歌单 amid: " + str(obj.amid))
+    print()
     song_list = sync(obj.get_song_list())
     name = sync(obj.get_info())["title"]
     pageCount = song_list["pageCount"]
     for page in range(1, pageCount + 1):
         songs = sync(obj.get_song_list(page))
-        for song in songs['data']:
+        for song in songs["data"]:
             cnt += 1
             new_now_file_name = (
-                now_file_name
-                .replace("{audio_list_name}", name)
+                now_file_name.replace("{audio_list_name}", name)
                 .replace("{audio_list_cnt}", str(cnt))
                 .replace("{audio_list_id}", str(obj.amid))
+                .replace("{#", "{")
+                .replace("#}", "}")
             )
             _download_audio(audio.Audio(song["id"], obj.credential), new_now_file_name)
-
+            print()
 
 
 async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
@@ -2081,19 +2125,21 @@ async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
     room = obj
     stream_info = await room.get_room_play_url()
     rinfo = (await room.get_room_info())["room_info"]
-    url = stream_info['durl'][0]['url']
+    url = stream_info["durl"][0]["url"]
 
     if now_file_name == "#default":
         RNAME = rinfo["title"] + " " + str(room.room_display_id) + ".flv"
     else:
-        RNAME = now_file_name.replace(
-            "{uid}", str(rinfo["uid"]), 
-        ).replace(
-            "{owner}", (await user.User(rinfo["uid"]).get_user_info())["name"]
-        ).replace(
-            "{live_id}", str(room.room_display_id)
-        ).replace(
-            "{title}", rinfo["title"]
+        RNAME = (
+            now_file_name.replace(
+                "{uid}",
+                str(rinfo["uid"]),
+            )
+            .replace("{owner}", (await user.User(rinfo["uid"]).get_user_info())["name"])
+            .replace("{live_id}", str(room.room_display_id))
+            .replace("{title}", rinfo["title"])
+            .replace("{#", "{")
+            .replace("#}", "}")
         )
 
     print(Fore.GREEN + f"直播间房号: {room.room_display_id}")
@@ -2105,14 +2151,20 @@ async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
 
     async with aiohttp.ClientSession() as sess:
         async with sess.get(url, headers=HEADERS) as resp:
-            with open(RPATH, 'ab') as f:
+            with open(RPATH, "ab") as f:
                 while True:
                     chunk = await resp.content.read(1024)
                     byte_cnt += len(chunk)
                     if not chunk:
-                        print(Fore.YELLOW + 'WRN: 无更多数据')
+                        print(Fore.YELLOW + "WRN: 无更多数据")
                         break
-                    print(Fore.MAGENTA + f"DWN: " + str(int(time.perf_counter() - start_time)) + f's. 接收到数据 {byte_cnt}B\r', end="")
+                    print(
+                        Fore.MAGENTA
+                        + f"DWN: "
+                        + str(int(time.perf_counter() - start_time))
+                        + f"s. 接收到数据 {byte_cnt}B\r",
+                        end="",
+                    )
                     f.write(chunk)
                     if keyboard.is_pressed("esc"):
                         print()
@@ -2123,9 +2175,49 @@ async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
         PATHS.append(RPATH)
     else:
         MP4_PATH = RPATH.rstrip(".flv") + ".mp4"
-        os.system(f"{FFMPEG} -i {RPATH} {MP4_PATH}") 
+        os.system(f"{FFMPEG} -i {RPATH} {MP4_PATH}")
         os.remove(RPATH)
         PATHS.append(MP4_PATH)
+
+
+def _download_article(obj: article.Article, now_file_name: str):
+    global DIC
+    arinfo = sync(obj.get_info())
+    artitle = arinfo["title"]
+    arowner = arinfo["author_name"]
+    armid = arinfo["mid"]
+    arcvid = obj.cvid
+    print(Fore.GREEN + "INF: 专栏 cv 号 " + str(arcvid))
+    print()
+    print(Fore.GREEN + "INF: 专栏支持下载为 MarkDown 文件或 JSON 文件")
+    filetype = _ask_settings_download(Fore.BLUE + "STR: 请输入想要下载的格式(markdown|json)【默认 markdown】: ")
+    MARKDOWN = True
+    if filetype.upper() == "JSON":
+        MARKDOWN = False
+    print()
+    print("INF: 准备下载专栏(%s 格式)".format("Markdown" if MARKDOWN else "JSON"))
+    if now_file_name == "#default":
+        RNAME = artitle + (".md" if MARKDOWN else ".json")
+    else:
+        now_file_name = _require_file_type(now_file_name, (".md" if MARKDOWN else ".json"))
+        RNAME = (
+            now_file_name
+            .replace("{cvid}", str(arcvid))
+            .replace("{mid}", str(armid))
+            .replace("{owner}", str(arowner))
+            .replace("{title}", str(artitle))
+            .replace("{#", "{")
+            .replace("#}", "}")
+        )
+    RPATH = os.path.join(DIC, RNAME)
+    if MARKDOWN:
+        with open(RPATH, "w", encoding="utf-8") as f:
+            sync(obj.fetch_content())
+            f.write(obj.markdown())
+    else:
+        sync(obj.fetch_content())
+        json.dump(obj.json(), open(RPATH, "w", encoding="utf-8"))
+    PATHS.append(RPATH)
 
 def _parse_args():
     global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY, DEFAULT_SETTINGS, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
@@ -2330,6 +2422,9 @@ def _main():
             elif resource_type == ResourceType.LIVE:
                 obj: live.LiveRoom
                 sync(_download_liveroom_stream(obj, now_file_name))
+            elif resource_type == ResourceType.ARTICLE:
+                obj: article.Article
+                _download_article(obj, now_file_name)
             else:
                 print(Fore.YELLOW + "WRN: 资源不支持下载。" + Style.RESET_ALL)
                 continue
