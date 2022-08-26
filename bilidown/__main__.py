@@ -723,6 +723,7 @@ ________   ___   ___        ___          |   |
     \|_______| \|__| \|_______| \|__|    \   /
                                           \_/
 """
+DEBUG = False
 
 
 def _exit(*args, **kwargs):
@@ -761,8 +762,9 @@ def _download(url: str, out: str, description: str):
         os.remove(out)
     
     parent = os.path.dirname(out)
-    if not os.path.exists(parent):
-        os.mkdir(parent)
+    if parent != "":
+        if not os.path.exists(parent):
+            os.mkdir(parent)
 
     print(Fore.MAGENTA + f"DWN: 开始下载 {description} 至 {out}")
 
@@ -2160,7 +2162,7 @@ def _parse_args():
 
 
 def _main():
-    global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type, CREDENTIAL, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
+    global PROXY, FFMPEG, PATH, PATHS, DIC, _require_file_type, CREDENTIAL, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST, DEBUG
     # TODO: INFO
     _print_banner()
     print(Fore.LIGHTMAGENTA_EX + "BiliDown: 哔哩哔哩命令行下载器")
@@ -2278,10 +2280,13 @@ def _main():
                 print(Fore.YELLOW, "WRN: 资源不支持下载。", Style.RESET_ALL)
                 continue
         except Exception as e:
-            print(Fore.RED + "ERR: " + str(e))
-            print(Fore.CYAN + "----------完成下载----------")
-            cnt += 1
-            continue
+            if DEBUG:
+                raise e
+            else:
+                print(Fore.RED + "ERR: " + str(e))
+                print(Fore.CYAN + "----------完成下载----------")
+                cnt += 1
+                continue
 
         print(Fore.CYAN + "----------完成下载----------")
         print()
@@ -2293,10 +2298,12 @@ def _main():
 
 
 def main():
+    global DEBUG
     if sys.version_info < (3, 8, 0):
         print(Fore.RED + "不支持的版本 BiliDown 需要 Python 版本大于 3.8.0")
         exit()
     if "--debug" in sys.argv:
+        DEBUG = True
         print(Fore.CYAN + Back.BLACK + "DEBUG MODE" + Style.RESET_ALL)
         return _main()
     try:

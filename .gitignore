@@ -20,3 +20,5 @@ site.bat
 /bilibili-api-ts/*/*.js
 /bilibili-api-ts/*.d.ts
 /bilibili-api-ts/*/*.d.ts
+*.mp4
+*.mp3
