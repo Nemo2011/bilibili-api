@@ -679,18 +679,20 @@ Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
 """
 
+import copy
 import json
 import os
+import sys
 import time
 from typing import List, Union
-from bilibili_api import *
-import sys
-import httpx
-import requests
+
 import aiohttp
-import signal
-from colorama import Fore, Back, Style, init
+import httpx
 import keyboard
+import requests
+from colorama import Back, Fore, Style, init
+
+from bilibili_api import *
 
 PROXY = None
 PATH = "#default"
@@ -727,6 +729,14 @@ ________   ___   ___        ___          |   |
                                           \_/
 """
 DEBUG = False
+DEFAULT_SETTINGS = {
+    "on": False,
+    "p": "",
+    "vq": "",
+    "vc": "", 
+    "aq": "", 
+    "at": "" 
+}
 
 
 init(autoreset=True)
@@ -736,7 +746,17 @@ def _ask_settings_download(question: str):
     global DEFAULT_SETTINGS, DOWNLOAD_LIST
     if "下载的分 P" in question and DOWNLOAD_LIST:
         return "all"
-    if DEFAULT_SETTINGS:
+    if DEFAULT_SETTINGS["on"]:
+        if "下载的分 P" in question:
+            return DEFAULT_SETTINGS["p"]
+        if "请选择清晰度对应数字" in question:
+            return DEFAULT_SETTINGS["vq"]
+        if "请选择视频编码" in question:
+            return DEFAULT_SETTINGS["vc"]
+        if "请选择音质" in question:
+            return DEFAULT_SETTINGS["aq"]
+        if "请输入想要下载的格式" in question:
+            return DEFAULT_SETTINGS["at"]
         return ""
     else:
         return input(question)
@@ -856,12 +876,11 @@ def _help():
         + " ( true 下载 | false 不下载 | only 只下载弹幕 ) "
     )
     print(
-        "参数:   --default-settings        下载时使用默认设置(视频和专栏)                             "
-        + Fore.RED
-        + " (分 P, 清晰度, 音质, 视频编码, 专栏下载格式)"
+        "参数:   --default-settings        下载时的默认设置(视频清晰度|视频编码|音频清晰度|专栏格式)   \"128|hev|30216|markdown\""
     )
     print("参数:   --disable-filetype-check  忽略自动检查文件后缀")
     print("参数:   --download-list           下载视频、音频对应的列表(番剧所有剧集、视频所有分 P、歌单所有音频)")
+    print("参数:   --dump-file-list          将下载成功的文件的信息输出到文件 bilidown.out")
     print("参数:   --debug                   显示错误详细信息")
     print("参数:   -h                        帮助")
     print()
@@ -2117,18 +2136,21 @@ def _download_audio_list(obj: audio.AudioList, now_file_name: str):
 
 
 async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
-    global FFMPEG, DIC, PATHS
+    global FFMPEG, DIC, PATHS, PROXY
     if FFMPEG == "#none":
-        _require_file_type(now_file_name, ".flv")
+        now_file_name = _require_file_type(now_file_name, ".flv")
     else:
-        _require_file_type(now_file_name, ".mp4")
+        now_file_name = _require_file_type(now_file_name, ".mp4")
     room = obj
     stream_info = await room.get_room_play_url()
     rinfo = (await room.get_room_info())["room_info"]
     url = stream_info["durl"][0]["url"]
 
     if now_file_name == "#default":
-        RNAME = rinfo["title"] + " " + str(room.room_display_id) + ".flv"
+        if FFMPEG == "#none":
+            RNAME = rinfo["title"] + " " + str(room.room_display_id) + ".flv"
+        else:
+            RNAME = rinfo["title"] + " " + str(room.room_display_id) + ".mp4"
     else:
         RNAME = (
             now_file_name.replace(
@@ -2146,38 +2168,49 @@ async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
     print(Fore.GREEN + f"如果想要停止下载请长按 ESC 键")
     RPATH = os.path.join(DIC, RNAME)
 
+    out = RPATH
+    if os.path.exists(out):
+        os.remove(out)
+
+    parent = os.path.dirname(out)
+    if not os.path.exists(parent):
+        os.mkdir(parent)
+
     byte_cnt = 0
     start_time = time.perf_counter()
 
-    async with aiohttp.ClientSession() as sess:
-        async with sess.get(url, headers=HEADERS) as resp:
-            with open(RPATH, "ab") as f:
-                while True:
-                    chunk = await resp.content.read(1024)
-                    byte_cnt += len(chunk)
-                    if not chunk:
-                        print(Fore.YELLOW + "WRN: 无更多数据")
-                        break
-                    print(
-                        Fore.MAGENTA
-                        + f"DWN: "
-                        + str(int(time.perf_counter() - start_time))
-                        + f"s. 接收到数据 {byte_cnt}B\r",
-                        end="",
-                    )
-                    f.write(chunk)
-                    if keyboard.is_pressed("esc"):
-                        print()
-                        print(Fore.YELLOW + "WRN: 用户手动停止")
-                        break
+    if FFMPEG != "#none":
+        RPATH_MP4 = copy.copy(RPATH)
+        RPATH = RPATH.rstrip(".mp4") + ".flv"
+
+    resp = requests.get(url, proxies={"all://": PROXY}, headers=HEADERS, stream=True)
+    
+    with open(RPATH, "ab") as f:
+        for chunk in resp.iter_content(1024):
+            byte_cnt += len(chunk)
+            if not chunk:
+                print(Fore.YELLOW + "WRN: 无更多数据")
+                break
+            print(
+                Fore.MAGENTA
+                + f"DWN: "
+                + str(int(time.perf_counter() - start_time))
+                + f"s. 接收到数据 {byte_cnt}B\r",
+                end="",
+            )
+            f.write(chunk)
+            if keyboard.is_pressed("esc"):
+                print()
+                print(Fore.YELLOW + "WRN: 用户手动停止")
+                break
 
     if FFMPEG == "#none":
         PATHS.append(RPATH)
     else:
-        MP4_PATH = RPATH.rstrip(".flv") + ".mp4"
-        os.system(f"{FFMPEG} -i {RPATH} {MP4_PATH}")
+        print(Fore.GREEN + "INF: 正在转换格式")
+        os.system(f"{FFMPEG} -i \"{RPATH}\" \"{RPATH_MP4}\"")
         os.remove(RPATH)
-        PATHS.append(MP4_PATH)
+        PATHS.append(RPATH_MP4)
 
 
 def _download_article(obj: article.Article, now_file_name: str):
@@ -2222,9 +2255,29 @@ def _download_article(obj: article.Article, now_file_name: str):
 def _parse_args():
     global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY, DEFAULT_SETTINGS, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
 
-    if "--default-settings" in sys.argv:
-        DEFAULT_SETTINGS = True
-        print(Fore.GREEN + "INF: 识别到下载时全部使用默认设置(适用于视频、专栏)")
+    for i in range(len(sys.argv)):
+        arg = sys.argv[i]
+        if arg == "--default-settings":
+            DEFAULT_SETTINGS["on"] = True
+            settings_string = sys.argv[i + 1]
+            print(Fore.GREEN + f"INF: 识别到下载时的默认设置 {settings_string}")
+            setting_s = settings_string.split("|")
+            try:
+                DEFAULT_SETTINGS["vq"] = setting_s[0]
+            except IndexError:
+                DEFAULT_SETTINGS["vq"] = ""
+            try:
+                DEFAULT_SETTINGS["vc"] = setting_s[1]
+            except IndexError:
+                DEFAULT_SETTINGS["vc"] = ""
+            try:
+                DEFAULT_SETTINGS["aq"] = setting_s[2]
+            except IndexError:
+                DEFAULT_SETTINGS["aq"] = ""
+            try:
+                DEFAULT_SETTINGS["at"] = setting_s[3]
+            except IndexError:
+                DEFAULT_SETTINGS["at"] = ""
 
     if "--download-list" in sys.argv:
         DOWNLOAD_LIST = True
@@ -2363,6 +2416,10 @@ def _main():
             print(Fore.GREEN + "INF: 解析结果: 番剧")
         elif resource_type == ResourceType.AUDIO_LIST:
             print(Fore.GREEN + "INF: 解析结果: 歌单")
+        elif resource_type == ResourceType.FAVORITE_LIST:
+            print(Fore.GREEN + "INF: 解析结果: 收藏夹")
+        elif resource_type == ResourceType.USER:
+            print(Fore.GREEN + "INF: 解析结果: 用户")
         else:
             print(Fore.YELLOW, "WRN: 资源不支持下载。", Style.RESET_ALL)
             continue
@@ -2432,7 +2489,9 @@ def _main():
             if DEBUG:
                 raise e
             else:
+                print()
                 print(Fore.RED + "ERR: " + str(e))
+                print(Fore.RED + "详情请使用 --debug 查看")
                 print(Fore.CYAN + "----------完成下载----------")
                 cnt += 1
                 continue
@@ -2444,12 +2503,14 @@ def _main():
     print(Fore.GREEN + "BiliDown 下载完成")
     for p in PATHS:
         print(Fore.RESET + p)
+    if "--dump-file-list" in sys.argv:
+        json.dump(PATHS, open("./bilidown.out", "w+", encoding="utf-8"))
 
 
 def main():
     global DEBUG
     if sys.version_info < (3, 8, 0):
-        print(Fore.RED + "不支持的版本 BiliDown 需要 Python 版本大于 3.8.0")
+        print(Fore.RED + "不支持的版本  BiliDown 需要 Python 版本大于 3.8.0")
         exit()
     if "--debug" in sys.argv:
         DEBUG = True
