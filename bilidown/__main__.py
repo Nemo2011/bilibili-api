@@ -737,7 +737,8 @@ DEFAULT_SETTINGS = {
     "vq": "",
     "vc": "", 
     "aq": "", 
-    "at": "" 
+    "at": "", 
+    "rt": ""
 }
 
 
@@ -759,6 +760,8 @@ def _ask_settings_download(question: str):
             return DEFAULT_SETTINGS["aq"]
         if "请输入想要下载的格式" in question:
             return DEFAULT_SETTINGS["at"]
+        if "下载的资源" in question:
+            return DEFAULT_SETTINGS["rt"]
         return ""
     else:
         return input(question)
@@ -2053,9 +2056,12 @@ def _download_danmakus(
 
 def _download_bangumi(obj: bangumi.Bangumi, now_file_name: str):
     def __download_one_episode(obj: bangumi.Episode, now_file_name: str):
-        if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
-            _download_episode(obj, now_file_name)
-        _download_danmakus(obj, now_file_name)
+        try:
+            if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
+                _download_episode(obj, now_file_name)
+            _download_danmakus(obj, now_file_name)
+        except Exception as e:
+            print(Fore.RED + f"ERR: {str(e)}")
 
     ep_list = sync(obj.get_episode_list())["main_section"]["episodes"]
     print(Fore.GREEN + f"INF: 番剧 media_id {obj.get_media_id()}")
@@ -2140,12 +2146,15 @@ def _download_audio_list(obj: audio.AudioList, now_file_name: str):
 
 def _download_favorite_list(obj: favorite_list.FavoriteList, now_file_name: str):
     def __download_one_video(obj: video.Video, now_file_name: str):
-        global DOWNLOAD_DANMAKUS
-        if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
-            video_download_p = _download_video(obj, now_file_name)
-        else:
-            video_download_p = -1
-        _download_danmakus(obj, now_file_name, video_download_p)
+        try:
+            global DOWNLOAD_DANMAKUS
+            if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
+                video_download_p = _download_video(obj, now_file_name)
+            else:
+                video_download_p = -1
+            _download_danmakus(obj, now_file_name, video_download_p)
+        except Exception as e:
+            print(Fore.RED + f"ERR: {str(e)}")
     if obj.is_video_favorite_list():
         video_list: List[video.Video] = []
         cnt = 1
@@ -2308,6 +2317,84 @@ def _download_article(obj: article.Article, now_file_name: str):
         json.dump(obj.json(), open(RPATH, "w", encoding="utf-8"))
     PATHS.append(RPATH)
 
+
+def _download_user_space(obj: user.User, now_file_name: str):
+    def __download_one_video(obj: video.Video, now_file_name: str):
+        try:
+            global DOWNLOAD_DANMAKUS
+            if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
+                video_download_p = _download_video(obj, now_file_name)
+            else:
+                video_download_p = -1
+            _download_danmakus(obj, now_file_name, video_download_p)
+        except Exception as e:
+            print(Fore.RED + f"ERR: {str(e)}")
+    uinfo = sync(obj.get_user_info())
+    uname = uinfo["name"]
+    ulevel = uinfo["level"]
+    print(Fore.RESET + f"{uname} [LV{ulevel}]")
+    print()
+    download_type = _ask_settings_download(Fore.BLUE + "NUM: 请选择想要下载的资源(1 视频 | 2 音频 ｜ 3 专栏 | 默认下载视频): ")
+    def get_pages(total, size):
+        return total // size + (0 if (total % size == 0) else 1)
+    if download_type == "":
+        all_videos: List[video.Video] = []
+        user_videos = sync(obj.get_videos(ps = 30))
+        pages = get_pages(user_videos["page"]["count"], user_videos["page"]["ps"])
+        for p in range(1, pages + 1):
+            user_videos = sync(obj.get_videos(pn = p, ps = 30))
+            for v in user_videos["list"]["vlist"]:
+                all_videos.append(video.Video(bvid = v["bvid"], credential=obj.credential))
+        print(Fore.GREEN + f"INF: 用户共有 {len(all_videos)} 个视频")
+        print(Fore.GREEN + f"INF: 开始下载")
+        print()
+        for v in all_videos:
+            __download_one_video(v, now_file_name)
+            print()
+    elif download_type == "1":
+        all_videos: List[video.Video] = []
+        user_videos = sync(obj.get_videos(ps = 30))
+        pages = get_pages(user_videos["page"]["count"], user_videos["page"]["ps"])
+        for p in range(1, pages + 1):
+            user_videos = sync(obj.get_videos(pn = p, ps = 30))
+            for v in user_videos["list"]["vlist"]:
+                all_videos.append(video.Video(bvid = v["bvid"], credential=obj.credential))
+        print(Fore.GREEN + f"INF: 用户共有 {len(all_videos)} 个视频")
+        print(Fore.GREEN + f"INF: 开始下载")
+        print()
+        for v in all_videos:
+            __download_one_video(v, now_file_name)
+            print()
+    elif download_type == "2":
+        all_audios: List[audio.Audio] = []
+        user_audios = sync(obj.get_audios(ps = 30))
+        pages = user_audios["pageCount"]
+        for p in range(1, pages + 1):
+            user_audios = sync(obj.get_audios(pn = p, ps = 30))
+            for a in user_audios["data"]:
+                all_audios.append(audio.Audio(a["id"], credential=obj.credential))
+        print(Fore.GREEN + f"INF: 用户共有 {len(all_audios)} 个音频")
+        print(Fore.GREEN + f"INF: 开始下载")
+        print()
+        for a in all_audios:
+            _download_audio(a, now_file_name)
+            print()
+    elif download_type == "3":
+        all_articles: List[article.Article] = []
+        user_articles = sync(obj.get_articles(pn = 1, ps = 30))
+        pages = get_pages(user_articles['count'], 30)
+        for p in range(1, pages + 1):
+            user_articles = sync(obj.get_articles(pn = p, ps = 30))
+            for ar in user_articles["articles"]:
+                all_articles.append(article.Article(ar["id"], credential=obj.credential))
+        print(Fore.GREEN + f"INF: 用户共有 {len(all_articles)} 个专栏")
+        print(Fore.GREEN + f"INF: 开始下载")
+        print()
+        for ar in all_articles:
+            _download_article(ar, now_file_name)
+            print()
+
+
 def _parse_args():
     global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY, DEFAULT_SETTINGS, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
 
@@ -2323,27 +2410,32 @@ def _parse_args():
                 settings_string = sys.argv[i + 1]
             except:
                 print(Fore.GREEN + f"INF: 识别到下载时的用户默认设置 全部使用自动设置")
-            if settings_string[0] == "-":
-                print(Fore.GREEN + f"INF: 识别到下载时的用户默认设置 全部使用自动设置")
             else:
-                print(Fore.GREEN + f"INF: 识别到下载时的用户默认设置 {settings_string}")
-                setting_s = settings_string.split("|")
-                try:
-                    DEFAULT_SETTINGS["vq"] = setting_s[0]
-                except IndexError:
-                    DEFAULT_SETTINGS["vq"] = ""
-                try:
-                    DEFAULT_SETTINGS["vc"] = setting_s[1]
-                except IndexError:
-                    DEFAULT_SETTINGS["vc"] = ""
-                try:
-                    DEFAULT_SETTINGS["aq"] = setting_s[2]
-                except IndexError:
-                    DEFAULT_SETTINGS["aq"] = ""
-                try:
-                    DEFAULT_SETTINGS["at"] = setting_s[3]
-                except IndexError:
-                    DEFAULT_SETTINGS["at"] = ""
+                if settings_string[0] == "-":
+                    print(Fore.GREEN + f"INF: 识别到下载时的用户默认设置 全部使用自动设置")
+                else:
+                    print(Fore.GREEN + f"INF: 识别到下载时的用户默认设置 {settings_string}")
+                    setting_s = settings_string.split("|")
+                    try:
+                        DEFAULT_SETTINGS["vq"] = setting_s[0]
+                    except IndexError:
+                        DEFAULT_SETTINGS["vq"] = ""
+                    try:
+                        DEFAULT_SETTINGS["vc"] = setting_s[1]
+                    except IndexError:
+                        DEFAULT_SETTINGS["vc"] = ""
+                    try:
+                        DEFAULT_SETTINGS["aq"] = setting_s[2]
+                    except IndexError:
+                        DEFAULT_SETTINGS["aq"] = ""
+                    try:
+                        DEFAULT_SETTINGS["at"] = setting_s[3]
+                    except IndexError:
+                        DEFAULT_SETTINGS["at"] = ""
+                    try:
+                        DEFAULT_SETTINGS["rt"] = setting_s[4]
+                    except IndexError:
+                        DEFAULT_SETTINGS["rt"] = ""
 
     if "--download-list" in sys.argv:
         DOWNLOAD_LIST = True
@@ -2557,6 +2649,9 @@ def _main():
             elif resource_type == ResourceType.FAVORITE_LIST:
                 obj: favorite_list.FavoriteList
                 _download_favorite_list(obj, now_file_name)
+            elif resource_type == ResourceType.USER:
+                obj: user.User
+                _download_user_space(obj, now_file_name)
             else:
                 print(Fore.YELLOW + "WRN: 资源不支持下载。" + Style.RESET_ALL)
                 cnt += 1
