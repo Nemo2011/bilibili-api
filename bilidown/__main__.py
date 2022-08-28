@@ -855,13 +855,12 @@ def _help():
     显示帮助
     """
     print()
-    print('使用方法: bilidown "https://bilibili.com/.../"', end=" ")
-    print(Fore.RED + '链接为第一个参数, 允许多个链接, 请使用 "|" 隔开每一个链接' + Fore.RESET)
+    print('使用方法: bilidown "https://bilibili.com/.../"')
+    print(Fore.RED + '注意: 链接为第一个参数, 允许多个链接, 请使用 "|" 隔开每一个链接' + Fore.RESET)
     print(
-        '参数:   --out/-o                  文件名(默认为 "#default")                                   "a.mp4"',
-        end=" ",
+        '参数:   --out/-o                  文件名(默认为 "#default")                                   "a.mp4"'
     )
-    print(Fore.RED + '允许多个输出文件名, 请使用 "|" 隔开每一个输出文件名' + Fore.RESET)
+    print(Fore.RED + '注意: 允许多个输出文件名, 请使用 "|" 隔开每一个输出文件名' + Fore.RESET)
     print(
         '参数:   --dic/-d                  下载至文件夹(默认为 "default")                              "~/Desktop"'
     )
@@ -877,15 +876,19 @@ def _help():
     print(
         "参数:   --danmakus-settings       是否下载弹幕"
         + '                                                "true"'
-        + Fore.RED
-        + " ( true 下载 | false 不下载 | only 只下载弹幕 ) "
     )
     print(
-        "参数:   --default-settings        下载时的默认设置(视频清晰度|视频编码|音频清晰度|专栏格式)   \"128|hev|30216|markdown\""
+        Fore.RED
+        + "注意: ( true 下载 | false 不下载 | only 只下载弹幕 ) "
     )
+    print(
+        f"参数:   --default-settings        下载时的默认设置                                            \"128|hev|30216|markdown|1\""
+    )
+    print(Fore.RED + f"注意: 格式为(视频清晰度 | 视频编码 | 音频清晰度 | 专栏格式 | 用户空间下载资源)")
+    print(Fore.RED + f"注意: 空间资源编码(1 视频 | 2 音频 ｜ 3 专栏 | 默认下载视频)) 所有设置可以为空{Fore.RESET}")
     print("参数:   --disable-filetype-check  忽略自动检查文件后缀")
     print("参数:   --download-list           下载视频、音频对应的列表(番剧所有剧集、视频所有分 P、歌单所有音频)")
-    print("参数:   --dump-file-list          将下载成功的文件的信息输出到文件 bilidown.out")
+    print("参数:   --dump-message            将下载的信息输出到文件 bilidown.json")
     print("参数:   --debug                   显示错误详细信息")
     print("参数:   --license                 显示 LICENSE")
     print("参数:   -h                        帮助")
@@ -2686,8 +2689,8 @@ def _main():
     print(Style.RESET_ALL + f"共 {cnt} 项, 成功 {Fore.GREEN + str(cnt - nsupport - nsuccess) + Fore.RESET} 项, 失败 {Fore.RED + str(nsuccess) + Fore.RESET} 项, 不支持 {Fore.YELLOW + str(nsupport) + Fore.RESET} 项")
     for p in PATHS:
         print(Fore.RESET + p)
-    if "--dump-file-list" in sys.argv:
-        json.dump(report_data, open("bilidown.out", "w"))
+    if "--dump-message" in sys.argv:
+        json.dump(report_data, open("bilidown.json", "w"))
 
 
 def main():
