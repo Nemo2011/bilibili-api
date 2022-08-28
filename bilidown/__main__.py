@@ -885,9 +885,17 @@ def _help():
         f'参数:   --default-settings        下载时的默认设置                                            "128|hev|30216|markdown|1"'
     )
     print(Fore.RED + f"注意: 格式为      (视频清晰度 | 视频编码 | 音频清晰度 | 专栏格式 | 用户空间下载资源)")
-    print(Fore.RED + f"注意: 视频分辨率  (16 (360P) | 32 (480P) | 64 (720P60) | 80 (1080P) | 112 (1080P+) | 116 (1080P60) | 120 (4K) | 125 (HDR) | 126 (杜比视界))) 可以为空{Fore.RESET}")
-    print(Fore.RED + f"注意: 视频编码    (hev HEVC(H.265) | avc AVC(H.264) ｜ av01 AV1)) 可以为空{Fore.RESET}")
-    print(Fore.RED + f"注意: 音频音质编码(30216 低品质 | 30232 中等品质 ｜ 30280 高品质)) 可以为空{Fore.RESET}")
+    print(
+        Fore.RED
+        + f"注意: 视频分辨率  (16 (360P) | 32 (480P) | 64 (720P60) | 80 (1080P) | 112 (1080P+) | 116 (1080P60) | 120 (4K) | 125 (HDR) | 126 (杜比视界))) 可以为空{Fore.RESET}"
+    )
+    print(
+        Fore.RED
+        + f"注意: 视频编码    (hev HEVC(H.265) | avc AVC(H.264) ｜ av01 AV1)) 可以为空{Fore.RESET}"
+    )
+    print(
+        Fore.RED + f"注意: 音频音质编码(30216 低品质 | 30232 中等品质 ｜ 30280 高品质)) 可以为空{Fore.RESET}"
+    )
     print(Fore.RED + f"注意: 专栏格式    (Markdown | JSON)) 可以为空{Fore.RESET}")
     print(Fore.RED + f"注意: 空间资源编码(1 视频 | 2 音频 ｜ 3 专栏)) 可以为空{Fore.RESET}")
     print("参数:   --disable-filetype-check  忽略自动检查文件后缀")
