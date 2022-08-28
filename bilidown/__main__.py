@@ -2563,6 +2563,8 @@ def _main():
                 nsupport += 1
                 print(Fore.CYAN + "----------完成下载----------")
                 continue
+        except CredentialNoSessdataException:
+            print(Fore.RED + "ERR: 未提供 cookies(--sessdata)")
         except Exception as e:
             nsuccess += 1
             if DEBUG:
