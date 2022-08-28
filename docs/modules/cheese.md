@@ -67,7 +67,7 @@ ep_id(int): 单集 ep_id
 
 获取教程所有视频。
 
-**Returns**: 调用 API 所得的结果。
+**Returns**: List[CheeseVideo]: 课程视频列表
 
 ***
 
