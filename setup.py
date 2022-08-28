@@ -38,7 +38,6 @@ setuptools.setup(
             "hook-dirs = bilibili_api._pyinstaller.entry_points:get_hook_dirs"
         ], 
         'console_scripts': [
-            'bilidown = bilidown.__main__:main',
             'bilibili-api = bilibili_api.__main__:main'
         ],
     },
