@@ -685,6 +685,7 @@ import copy
 import json
 import os
 import sys
+from telnetlib import X3PAD
 import time
 from typing import List, Union
 
@@ -2157,12 +2158,35 @@ def _download_favorite_list(obj: favorite_list.FavoriteList, now_file_name: str)
             cnt += 1
             videos = sync(obj.get_content(cnt))
             for v in videos['medias']:
-                video_list.append(video.Video(bvid=v["bvid"]))
+                video_list.append(video.Video(bvid=v["bvid"], credential=obj.credential))
             next_page = videos["has_more"]
         print()
         for v in video_list:
             __download_one_video(v, now_file_name)
             print()
+    elif obj.get_favorite_list_type() == favorite_list.FavoriteListType.CHEESE:
+        cheese_list: List[cheese.CheeseList] = []
+        cheeses = sync(obj.get_content())
+        pages = cheeses["page"]["total"]
+        for page in range(1, pages + 1):
+            cheeses = sync(obj.get_content(page))
+            for item in cheeses["items"]:
+                cheese_list.append(cheese.CheeseList(season_id=item["season_id"], credential=obj.credential))
+        print(Fore.GREEN + f"INF: 此收藏夹有 {len(cheese_list)} 个课程")
+        for c in cheese_list:
+            _download_cheese(c, now_file_name)
+            print()
+    elif obj.get_favorite_list_type() == favorite_list.FavoriteListType.ARTICLE:
+        article_list: List[article.Article] = []
+        articles = sync(obj.get_content())
+        pages = articles["page"]["total"]
+        for page in range(1, pages + 1):
+            articles = sync(obj.get_content(page))
+            for item in articles["favorites"]:
+                article_list.append(article.Article(item["id"], credential=obj.credential))
+        print(Fore.GREEN + f"INF: 此收藏夹有 {len(article_list)} 个专栏")
+        for a in article_list:
+            _download_article(a, now_file_name)
 
 
 async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
@@ -2258,7 +2282,7 @@ def _download_article(obj: article.Article, now_file_name: str):
     if filetype.upper() == "JSON":
         MARKDOWN = False
     print()
-    print("INF: 准备下载专栏(%s 格式)".format("Markdown" if MARKDOWN else "JSON"))
+    print(Fore.GREEN + "INF: 准备下载专栏({} 格式)".format("Markdown" if MARKDOWN else "JSON"))
     if now_file_name == "#default":
         RNAME = artitle + (".md" if MARKDOWN else ".json")
     else:
@@ -2273,6 +2297,8 @@ def _download_article(obj: article.Article, now_file_name: str):
             .replace("#}", "}")
         )
     RPATH = os.path.join(DIC, RNAME)
+    if not os.path.exists(DIC):
+        os.mkdir(DIC)
     if MARKDOWN:
         with open(RPATH, "w", encoding="utf-8") as f:
             sync(obj.fetch_content())
