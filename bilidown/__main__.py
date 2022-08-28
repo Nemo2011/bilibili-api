@@ -2,7 +2,9 @@ r"""
 BiliDown: 哔哩哔哩命令行下载器
 
 By Nemo2011<yimoxia@outlook.com>
+"""
 
+__license__ = """
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
@@ -882,6 +884,7 @@ def _help():
     print("参数:   --download-list           下载视频、音频对应的列表(番剧所有剧集、视频所有分 P、歌单所有音频)")
     print("参数:   --dump-file-list          将下载成功的文件的信息输出到文件 bilidown.out")
     print("参数:   --debug                   显示错误详细信息")
+    print("参数:   --license                 显示 LICENSE")
     print("参数:   -h                        帮助")
     print()
     print(
@@ -2255,6 +2258,10 @@ def _download_article(obj: article.Article, now_file_name: str):
 def _parse_args():
     global _require_file_type, DIC, PATH, CREDENTIAL, FFMPEG, PROXY, DEFAULT_SETTINGS, DOWNLOAD_DANMAKUS, DOWNLOAD_LIST
 
+    if "--license" in sys.argv:
+        print(__license__)
+        exit()
+
     for i in range(len(sys.argv)):
         arg = sys.argv[i]
         if arg == "--default-settings":
@@ -2385,6 +2392,8 @@ def _main():
 
     links = sys.argv[1].split("|")
     cnt = 0
+    nsupport = 0
+    nsuccess = 0
     for link in links:
         # TODO: PARSE
         print(Fore.GREEN + "INF: 链接 -> " + Fore.RED + f"{link}")
@@ -2395,6 +2404,7 @@ def _main():
             raise e
         if download_object == -1:
             print(Fore.RED + "ERR: 无法获取链接信息。请检查是否有拼写错误。", Style.RESET_ALL)
+            nsupport += 1
             print(Fore.CYAN + "----------完成下载----------")
             cnt += 1
             continue
@@ -2422,6 +2432,9 @@ def _main():
             print(Fore.GREEN + "INF: 解析结果: 用户")
         else:
             print(Fore.YELLOW, "WRN: 资源不支持下载。", Style.RESET_ALL)
+            cnt += 1
+            nsupport += 1
+            print(Fore.CYAN + "----------完成下载----------")
             continue
         print()
 
@@ -2484,8 +2497,12 @@ def _main():
                 _download_article(obj, now_file_name)
             else:
                 print(Fore.YELLOW + "WRN: 资源不支持下载。" + Style.RESET_ALL)
+                cnt += 1
+                nsupport += 1
+                print(Fore.CYAN + "----------完成下载----------")
                 continue
         except Exception as e:
+            nsuccess += 1
             if DEBUG:
                 raise e
             else:
@@ -2495,16 +2512,21 @@ def _main():
                 print(Fore.CYAN + "----------完成下载----------")
                 cnt += 1
                 continue
-
         print(Fore.CYAN + "----------完成下载----------")
         print()
         cnt += 1
     print()
-    print(Fore.GREEN + "BiliDown 下载完成")
+    print(Fore.BLUE + "BiliDown 下载完成")
+    report_data = {
+        "all": cnt, 
+        "done": cnt - nsupport - nsuccess, 
+        "nsupport": nsupport, 
+        "error": nsuccess, 
+        "out": PATHS
+    }
+    print(Style.RESET_ALL + f"共 {cnt} 项, 成功 {Fore.GREEN + str(cnt - nsupport - nsuccess) + Fore.RESET} 项, 失败 {Fore.RED + str(nsuccess) + Fore.RESET} 项, 不支持 {Fore.YELLOW + str(nsupport) + Fore.RESET} 项")
     for p in PATHS:
         print(Fore.RESET + p)
-    if "--dump-file-list" in sys.argv:
-        json.dump(PATHS, open("./bilidown.out", "w+", encoding="utf-8"))
 
 
 def main():
