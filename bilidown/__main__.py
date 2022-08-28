@@ -680,12 +680,13 @@ the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.
 """
+__version__ = "2022.08.28"
+__author__ = "Nemo2011"
 
 import copy
 import json
 import os
 import sys
-from telnetlib import X3PAD
 import time
 from typing import List, Union
 
@@ -735,10 +736,10 @@ DEFAULT_SETTINGS = {
     "on": False,
     "p": "",
     "vq": "",
-    "vc": "", 
-    "aq": "", 
-    "at": "", 
-    "rt": ""
+    "vc": "",
+    "aq": "",
+    "at": "",
+    "rt": "",
 }
 
 
@@ -844,6 +845,8 @@ def _require_ass_for_danmakus(filename: str):
     if DOWNLOAD_DANMAKUS.upper() == "ONLY":
         return _require_file_type(filename, ".ass")
     else:
+        if len(filename.split(".")) == 1:
+            return filename + ".ass"
         if filename == filename.rstrip(".ass"):
             now_name = "".join(filename.split(".")[:-1]) + ".ass"
             return now_name
@@ -877,15 +880,16 @@ def _help():
         "参数:   --danmakus-settings       是否下载弹幕"
         + '                                                "true"'
     )
+    print(Fore.RED + "注意: ( true 下载 | false 不下载 | only 只下载弹幕 ) ")
     print(
-        Fore.RED
-        + "注意: ( true 下载 | false 不下载 | only 只下载弹幕 ) "
+        f'参数:   --default-settings        下载时的默认设置                                            "128|hev|30216|markdown|1"'
     )
-    print(
-        f"参数:   --default-settings        下载时的默认设置                                            \"128|hev|30216|markdown|1\""
-    )
-    print(Fore.RED + f"注意: 格式为(视频清晰度 | 视频编码 | 音频清晰度 | 专栏格式 | 用户空间下载资源)")
-    print(Fore.RED + f"注意: 空间资源编码(1 视频 | 2 音频 ｜ 3 专栏 | 默认下载视频)) 所有设置可以为空{Fore.RESET}")
+    print(Fore.RED + f"注意: 格式为      (视频清晰度 | 视频编码 | 音频清晰度 | 专栏格式 | 用户空间下载资源)")
+    print(Fore.RED + f"注意: 视频分辨率  (16 (360P) | 32 (480P) | 64 (720P60) | 80 (1080P) | 112 (1080P+) | 116 (1080P60) | 120 (4K) | 125 (HDR) | 126 (杜比视界))) 可以为空{Fore.RESET}")
+    print(Fore.RED + f"注意: 视频编码    (hev HEVC(H.265) | avc AVC(H.264) ｜ av01 AV1)) 可以为空{Fore.RESET}")
+    print(Fore.RED + f"注意: 音频音质编码(30216 低品质 | 30232 中等品质 ｜ 30280 高品质)) 可以为空{Fore.RESET}")
+    print(Fore.RED + f"注意: 专栏格式    (Markdown | JSON)) 可以为空{Fore.RESET}")
+    print(Fore.RED + f"注意: 空间资源编码(1 视频 | 2 音频 ｜ 3 专栏)) 可以为空{Fore.RESET}")
     print("参数:   --disable-filetype-check  忽略自动检查文件后缀")
     print("参数:   --download-list           下载视频、音频对应的列表(番剧所有剧集、视频所有分 P、歌单所有音频)")
     print("参数:   --dump-message            将下载的信息输出到文件 bilidown.json")
@@ -1989,7 +1993,7 @@ def _download_danmakus(
                 os.mkdir(DIC)
             if os.path.exists(RPATH):
                 os.remove(RPATH)
-            print(Fore.GREEN + f"INF: 开始下载弹幕")
+            print(Fore.GREEN + f"INF: 开始下载弹幕 " + vinfo["title"])
             sync(ass.make_ass_file_danmakus_xml(obj, out=RPATH))
             print(Fore.GREEN + f"INF: 下载弹幕完成")
             PATHS.append(RPATH)
@@ -2021,7 +2025,7 @@ def _download_danmakus(
                     os.mkdir(DIC)
                 if os.path.exists(RPATH):
                     os.remove(RPATH)
-                print(Fore.GREEN + f"INF: 开始下载弹幕(P{download_p + 1})")
+                print(Fore.GREEN + f"INF: 开始下载弹幕(P{download_p + 1}) " + vinfo["title"])
                 sync(ass.make_ass_file_danmakus_xml(obj, download_p, out=RPATH))
                 print(Fore.GREEN + f"INF: 下载弹幕完成")
                 PATHS.append(RPATH)
@@ -2051,7 +2055,7 @@ def _download_danmakus(
                 os.mkdir(DIC)
             if os.path.exists(RPATH):
                 os.remove(RPATH)
-            print(Fore.GREEN + f"INF: 开始下载弹幕")
+            print(Fore.GREEN + f"INF: 开始下载弹幕 " + vmeta["title"])
             sync(ass.make_ass_file_danmakus_xml(obj, out=RPATH))
             print(Fore.GREEN + f"INF: 下载弹幕完成")
             PATHS.append(RPATH)
@@ -2158,19 +2162,22 @@ def _download_favorite_list(obj: favorite_list.FavoriteList, now_file_name: str)
             _download_danmakus(obj, now_file_name, video_download_p)
         except Exception as e:
             print(Fore.RED + f"ERR: {str(e)}")
+
     if obj.is_video_favorite_list():
         video_list: List[video.Video] = []
         cnt = 1
         videos = sync(obj.get_content(cnt))
-        print(Fore.GREEN + "INF: 此收藏夹有 " + str(videos['info']['media_count']) + " 个视频")
-        for v in videos['medias']:
+        print(Fore.GREEN + "INF: 此收藏夹有 " + str(videos["info"]["media_count"]) + " 个视频")
+        for v in videos["medias"]:
             video_list.append(video.Video(bvid=v["bvid"]))
         next_page = videos["has_more"]
         while next_page:
             cnt += 1
             videos = sync(obj.get_content(cnt))
-            for v in videos['medias']:
-                video_list.append(video.Video(bvid=v["bvid"], credential=obj.credential))
+            for v in videos["medias"]:
+                video_list.append(
+                    video.Video(bvid=v["bvid"], credential=obj.credential)
+                )
             next_page = videos["has_more"]
         print()
         for v in video_list:
@@ -2183,7 +2190,11 @@ def _download_favorite_list(obj: favorite_list.FavoriteList, now_file_name: str)
         for page in range(1, pages + 1):
             cheeses = sync(obj.get_content(page))
             for item in cheeses["items"]:
-                cheese_list.append(cheese.CheeseList(season_id=item["season_id"], credential=obj.credential))
+                cheese_list.append(
+                    cheese.CheeseList(
+                        season_id=item["season_id"], credential=obj.credential
+                    )
+                )
         print(Fore.GREEN + f"INF: 此收藏夹有 {len(cheese_list)} 个课程")
         for c in cheese_list:
             _download_cheese(c, now_file_name)
@@ -2195,7 +2206,9 @@ def _download_favorite_list(obj: favorite_list.FavoriteList, now_file_name: str)
         for page in range(1, pages + 1):
             articles = sync(obj.get_content(page))
             for item in articles["favorites"]:
-                article_list.append(article.Article(item["id"], credential=obj.credential))
+                article_list.append(
+                    article.Article(item["id"], credential=obj.credential)
+                )
         print(Fore.GREEN + f"INF: 此收藏夹有 {len(article_list)} 个专栏")
         for a in article_list:
             _download_article(a, now_file_name)
@@ -2250,7 +2263,7 @@ async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
         RPATH = RPATH.rstrip(".mp4") + ".flv"
 
     resp = requests.get(url, proxies={"all://": PROXY}, headers=HEADERS, stream=True)
-    
+
     with open(RPATH, "ab") as f:
         for chunk in resp.iter_content(1024):
             byte_cnt += len(chunk)
@@ -2274,7 +2287,7 @@ async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
         PATHS.append(RPATH)
     else:
         print(Fore.GREEN + "INF: 正在转换格式")
-        os.system(f"{FFMPEG} -i \"{RPATH}\" \"{RPATH_MP4}\"")
+        os.system(f'{FFMPEG} -i "{RPATH}" "{RPATH_MP4}"')
         os.remove(RPATH)
         PATHS.append(RPATH_MP4)
 
@@ -2289,7 +2302,9 @@ def _download_article(obj: article.Article, now_file_name: str):
     print(Fore.GREEN + "INF: 专栏 cv 号 " + str(arcvid))
     print()
     print(Fore.GREEN + "INF: 专栏支持下载为 MarkDown 文件或 JSON 文件")
-    filetype = _ask_settings_download(Fore.BLUE + "STR: 请输入想要下载的格式(markdown|json)【默认 markdown】: ")
+    filetype = _ask_settings_download(
+        Fore.BLUE + "STR: 请输入想要下载的格式(markdown|json)【默认 markdown】: "
+    )
     MARKDOWN = True
     if filetype.upper() == "JSON":
         MARKDOWN = False
@@ -2298,10 +2313,11 @@ def _download_article(obj: article.Article, now_file_name: str):
     if now_file_name == "#default":
         RNAME = artitle + (".md" if MARKDOWN else ".json")
     else:
-        now_file_name = _require_file_type(now_file_name, (".md" if MARKDOWN else ".json"))
+        now_file_name = _require_file_type(
+            now_file_name, (".md" if MARKDOWN else ".json")
+        )
         RNAME = (
-            now_file_name
-            .replace("{cvid}", str(arcvid))
+            now_file_name.replace("{cvid}", str(arcvid))
             .replace("{mid}", str(armid))
             .replace("{owner}", str(arowner))
             .replace("{title}", str(artitle))
@@ -2332,22 +2348,29 @@ def _download_user_space(obj: user.User, now_file_name: str):
             _download_danmakus(obj, now_file_name, video_download_p)
         except Exception as e:
             print(Fore.RED + f"ERR: {str(e)}")
+
     uinfo = sync(obj.get_user_info())
     uname = uinfo["name"]
     ulevel = uinfo["level"]
     print(Fore.RESET + f"{uname} [LV{ulevel}]")
     print()
-    download_type = _ask_settings_download(Fore.BLUE + "NUM: 请选择想要下载的资源(1 视频 | 2 音频 ｜ 3 专栏 | 默认下载视频): ")
+    download_type = _ask_settings_download(
+        Fore.BLUE + "NUM: 请选择想要下载的资源(1 视频 | 2 音频 ｜ 3 专栏 | 默认下载视频): "
+    )
+
     def get_pages(total, size):
         return total // size + (0 if (total % size == 0) else 1)
+
     if download_type == "":
         all_videos: List[video.Video] = []
-        user_videos = sync(obj.get_videos(ps = 30))
+        user_videos = sync(obj.get_videos(ps=30))
         pages = get_pages(user_videos["page"]["count"], user_videos["page"]["ps"])
         for p in range(1, pages + 1):
-            user_videos = sync(obj.get_videos(pn = p, ps = 30))
+            user_videos = sync(obj.get_videos(pn=p, ps=30))
             for v in user_videos["list"]["vlist"]:
-                all_videos.append(video.Video(bvid = v["bvid"], credential=obj.credential))
+                all_videos.append(
+                    video.Video(bvid=v["bvid"], credential=obj.credential)
+                )
         print(Fore.GREEN + f"INF: 用户共有 {len(all_videos)} 个视频")
         print(Fore.GREEN + f"INF: 开始下载")
         print()
@@ -2356,12 +2379,14 @@ def _download_user_space(obj: user.User, now_file_name: str):
             print()
     elif download_type == "1":
         all_videos: List[video.Video] = []
-        user_videos = sync(obj.get_videos(ps = 30))
+        user_videos = sync(obj.get_videos(ps=30))
         pages = get_pages(user_videos["page"]["count"], user_videos["page"]["ps"])
         for p in range(1, pages + 1):
-            user_videos = sync(obj.get_videos(pn = p, ps = 30))
+            user_videos = sync(obj.get_videos(pn=p, ps=30))
             for v in user_videos["list"]["vlist"]:
-                all_videos.append(video.Video(bvid = v["bvid"], credential=obj.credential))
+                all_videos.append(
+                    video.Video(bvid=v["bvid"], credential=obj.credential)
+                )
         print(Fore.GREEN + f"INF: 用户共有 {len(all_videos)} 个视频")
         print(Fore.GREEN + f"INF: 开始下载")
         print()
@@ -2370,10 +2395,10 @@ def _download_user_space(obj: user.User, now_file_name: str):
             print()
     elif download_type == "2":
         all_audios: List[audio.Audio] = []
-        user_audios = sync(obj.get_audios(ps = 30))
+        user_audios = sync(obj.get_audios(ps=30))
         pages = user_audios["pageCount"]
         for p in range(1, pages + 1):
-            user_audios = sync(obj.get_audios(pn = p, ps = 30))
+            user_audios = sync(obj.get_audios(pn=p, ps=30))
             for a in user_audios["data"]:
                 all_audios.append(audio.Audio(a["id"], credential=obj.credential))
         print(Fore.GREEN + f"INF: 用户共有 {len(all_audios)} 个音频")
@@ -2384,12 +2409,14 @@ def _download_user_space(obj: user.User, now_file_name: str):
             print()
     elif download_type == "3":
         all_articles: List[article.Article] = []
-        user_articles = sync(obj.get_articles(pn = 1, ps = 30))
-        pages = get_pages(user_articles['count'], 30)
+        user_articles = sync(obj.get_articles(pn=1, ps=30))
+        pages = get_pages(user_articles["count"], 30)
         for p in range(1, pages + 1):
-            user_articles = sync(obj.get_articles(pn = p, ps = 30))
+            user_articles = sync(obj.get_articles(pn=p, ps=30))
             for ar in user_articles["articles"]:
-                all_articles.append(article.Article(ar["id"], credential=obj.credential))
+                all_articles.append(
+                    article.Article(ar["id"], credential=obj.credential)
+                )
         print(Fore.GREEN + f"INF: 用户共有 {len(all_articles)} 个专栏")
         print(Fore.GREEN + f"INF: 开始下载")
         print()
@@ -2680,13 +2707,16 @@ def _main():
     print()
     print(Fore.BLUE + "BiliDown 下载完成")
     report_data = {
-        "all": cnt, 
-        "done": cnt - nsupport - nsuccess, 
-        "nsupport": nsupport, 
-        "error": nsuccess, 
-        "out": PATHS
+        "all": cnt,
+        "done": cnt - nsupport - nsuccess,
+        "nsupport": nsupport,
+        "error": nsuccess,
+        "out": PATHS,
     }
-    print(Style.RESET_ALL + f"共 {cnt} 项, 成功 {Fore.GREEN + str(cnt - nsupport - nsuccess) + Fore.RESET} 项, 失败 {Fore.RED + str(nsuccess) + Fore.RESET} 项, 不支持 {Fore.YELLOW + str(nsupport) + Fore.RESET} 项")
+    print(
+        Style.RESET_ALL
+        + f"共 {cnt} 项, 成功 {Fore.GREEN + str(cnt - nsupport - nsuccess) + Fore.RESET} 项, 失败 {Fore.RED + str(nsuccess) + Fore.RESET} 项, 不支持 {Fore.YELLOW + str(nsupport) + Fore.RESET} 项"
+    )
     for p in PATHS:
         print(Fore.RESET + p)
     if "--dump-message" in sys.argv:
