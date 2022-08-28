@@ -688,7 +688,6 @@ import sys
 import time
 from typing import List, Union
 
-import aiohttp
 import httpx
 import keyboard
 import requests
@@ -2138,6 +2137,34 @@ def _download_audio_list(obj: audio.AudioList, now_file_name: str):
             print()
 
 
+def _download_favorite_list(obj: favorite_list.FavoriteList, now_file_name: str):
+    def __download_one_video(obj: video.Video, now_file_name: str):
+        global DOWNLOAD_DANMAKUS
+        if not DOWNLOAD_DANMAKUS.upper() == "ONLY":
+            video_download_p = _download_video(obj, now_file_name)
+        else:
+            video_download_p = -1
+        _download_danmakus(obj, now_file_name, video_download_p)
+    if obj.is_video_favorite_list():
+        video_list: List[video.Video] = []
+        cnt = 1
+        videos = sync(obj.get_content(cnt))
+        print(Fore.GREEN + "INF: 此收藏夹有 " + str(videos['info']['media_count']) + " 个视频")
+        for v in videos['medias']:
+            video_list.append(video.Video(bvid=v["bvid"]))
+        next_page = videos["has_more"]
+        while next_page:
+            cnt += 1
+            videos = sync(obj.get_content(cnt))
+            for v in videos['medias']:
+                video_list.append(video.Video(bvid=v["bvid"]))
+            next_page = videos["has_more"]
+        print()
+        for v in video_list:
+            __download_one_video(v, now_file_name)
+            print()
+
+
 async def _download_liveroom_stream(obj: live.LiveRoom, now_file_name: str):
     global FFMPEG, DIC, PATHS, PROXY
     if FFMPEG == "#none":
@@ -2266,25 +2293,31 @@ def _parse_args():
         arg = sys.argv[i]
         if arg == "--default-settings":
             DEFAULT_SETTINGS["on"] = True
-            settings_string = sys.argv[i + 1]
-            print(Fore.GREEN + f"INF: 识别到下载时的默认设置 {settings_string}")
-            setting_s = settings_string.split("|")
             try:
-                DEFAULT_SETTINGS["vq"] = setting_s[0]
-            except IndexError:
-                DEFAULT_SETTINGS["vq"] = ""
-            try:
-                DEFAULT_SETTINGS["vc"] = setting_s[1]
-            except IndexError:
-                DEFAULT_SETTINGS["vc"] = ""
-            try:
-                DEFAULT_SETTINGS["aq"] = setting_s[2]
-            except IndexError:
-                DEFAULT_SETTINGS["aq"] = ""
-            try:
-                DEFAULT_SETTINGS["at"] = setting_s[3]
-            except IndexError:
-                DEFAULT_SETTINGS["at"] = ""
+                settings_string = sys.argv[i + 1]
+            except:
+                print(Fore.GREEN + f"INF: 识别到下载时的用户默认设置 全部使用自动设置")
+            if settings_string[0] == "-":
+                print(Fore.GREEN + f"INF: 识别到下载时的用户默认设置 全部使用自动设置")
+            else:
+                print(Fore.GREEN + f"INF: 识别到下载时的用户默认设置 {settings_string}")
+                setting_s = settings_string.split("|")
+                try:
+                    DEFAULT_SETTINGS["vq"] = setting_s[0]
+                except IndexError:
+                    DEFAULT_SETTINGS["vq"] = ""
+                try:
+                    DEFAULT_SETTINGS["vc"] = setting_s[1]
+                except IndexError:
+                    DEFAULT_SETTINGS["vc"] = ""
+                try:
+                    DEFAULT_SETTINGS["aq"] = setting_s[2]
+                except IndexError:
+                    DEFAULT_SETTINGS["aq"] = ""
+                try:
+                    DEFAULT_SETTINGS["at"] = setting_s[3]
+                except IndexError:
+                    DEFAULT_SETTINGS["at"] = ""
 
     if "--download-list" in sys.argv:
         DOWNLOAD_LIST = True
@@ -2495,6 +2528,9 @@ def _main():
             elif resource_type == ResourceType.ARTICLE:
                 obj: article.Article
                 _download_article(obj, now_file_name)
+            elif resource_type == ResourceType.FAVORITE_LIST:
+                obj: favorite_list.FavoriteList
+                _download_favorite_list(obj, now_file_name)
             else:
                 print(Fore.YELLOW + "WRN: 资源不支持下载。" + Style.RESET_ALL)
                 cnt += 1
