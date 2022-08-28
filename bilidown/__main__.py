@@ -2591,6 +2591,8 @@ def _main():
     print(Style.RESET_ALL + f"共 {cnt} 项, 成功 {Fore.GREEN + str(cnt - nsupport - nsuccess) + Fore.RESET} 项, 失败 {Fore.RED + str(nsuccess) + Fore.RESET} 项, 不支持 {Fore.YELLOW + str(nsupport) + Fore.RESET} 项")
     for p in PATHS:
         print(Fore.RESET + p)
+    if "--dump-file-list" in sys.argv:
+        json.dump(report_data, open("bilidown.out", "w"))
 
 
 def main():
