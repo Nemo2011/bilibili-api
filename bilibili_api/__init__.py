@@ -4,7 +4,7 @@ bilibili_api
 import asyncio
 import platform
 
-from .exceptions import *
+from .errors import *
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku, DmFontSize, DmMode

@@ -6,7 +6,7 @@ from .ArgsException import *
 from .CredentialNoSessdataException import *
 from .CredentialNoBiliJctException import *
 from .CredentialNoBuvid3Exception import *
-from .CredentialNoDedeUserIDException import CredentialNoDedeUserIDException
+from .CredentialNoDedeUserIDException import *
 from .DanmakuClosedException import *
 from .VideoUploadException import *
 from .LoginError import *
