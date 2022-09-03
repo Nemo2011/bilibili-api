@@ -37,9 +37,7 @@ async def main():
         async with sess.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com/"}) as resp:
             # 以二进制追加方式打开文件以存储直播流
             with open('live.flv', 'ab') as f:
-                while True:
-                    # 循环读取最高不超过 1024B 的数据
-                    chunk = await resp.content.read(1024)
+                for chunk in resp.iter_bytes(1024):
                     if not chunk:
                         # 无更多数据，退出循环
                         print('无更多数据')

@@ -38,9 +38,7 @@ async def main():
             "Referer": "https://www.bilibili.com/"
         })
         with open(file, 'wb') as f:
-            while True:
-                chunk = await resp.content.read(1024)
-
+            for chunk in resp.iter_bytes(1024):
                 if not chunk:
                     break
 

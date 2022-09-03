@@ -99,8 +99,7 @@ async def main():
             length = resp.headers.get('content-length')
             with open('video_temp.m4s', 'wb') as f:
                 process = 0
-                while True:
-                    chunk = await resp.content.read(1024)
+                for chunk in resp.iter_bytes(1024):
                     if not chunk:
                         break
 
@@ -113,8 +112,7 @@ async def main():
             length = resp.headers.get('content-length')
             with open('audio_temp.m4s', 'wb') as f:
                 process = 0
-                while True:
-                    chunk = await resp.content.read(1024)
+                for chunk in resp.iter_bytes(1024):
                     if not chunk:
                         break
 
