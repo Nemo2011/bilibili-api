@@ -68,6 +68,12 @@ from bilibili_api import audio
 | amid       | int                  | 歌单 ID                |
 | credential | Credential, optional | 凭据. Defaults to None |
 
+#### def get_amid()
+
+获取歌单 amid
+
+**Returns:** amid
+
 #### async def get_info()
 
 获取歌单信息

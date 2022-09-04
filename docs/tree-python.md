@@ -83,6 +83,7 @@
       - [_async_ def add_coins()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-add_coins) **投币**
     - [class AudioList](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=class-audiolist) 歌单
       - [def \_\_init\_\_()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=def-__init__-1)
+      - [def get_amid()](/modules/audio?id=def-get_amid) **获取 amid**
       - [_async_ def get_info()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_info-1) **获取歌单信息**
       - [_async_ def get_tags()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_tags-1) **获取歌单 tags**
       - [_async_ def get_song_list()](https://nemo2011.github.io/bilibili-api/#/modules/audio?id=async-def-get_song_list) **获取歌单歌词列表**
@@ -154,7 +155,7 @@
       - [_async_ def pay_coin()](/modules/cheese?id=async-def-pay_coin) **投币。**
       - [_async_ def set_favorite()](/modules/cheese?id=async-def-set_favorite) **设置视频收藏状况。**
   - [comment.py](/modules/comment.md) **评论相关**
-    - [class ResourceType](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=class-resourcetype) **资源类型枚举。**
+    - [class CommentResourceType](https://nemo2011.github.io/bilibili-api/#/modules/comment?id=class-commentresourcetype) **资源类型枚举。**
       - **Extends: enum.Enum**
       - VIDEO: 视频。
       - ARTICLE: 专栏。
