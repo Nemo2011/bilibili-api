@@ -13,7 +13,7 @@ from bilibili_api import comment
 + 动态（画册类型）：{116859542}。
 + 动态（纯文本）：{497080393649439253}。
 
-## class ResourceType
+## class CommentResourceType
 
 **Extends:** enum.Enum
 
@@ -51,7 +51,7 @@ from bilibili_api import comment
 | name       | type         | description            |
 | ---------- | ------------ | ---------------------- |
 | oid        | int          | 评论所在资源 ID。      |
-| type\_      | ResourceType | 评论所在资源类型枚举。 |
+| type\_      | CommentResourceType | 评论所在资源类型枚举。 |
 | rpid       | int          | 评论 ID。              |
 | credential | Credential   | 凭据                   |
 
@@ -109,7 +109,7 @@ from bilibili_api import comment
 | ---------- | ------------- | ---------------------------- |
 | text       | str           | 评论内容                     |
 | oid        | int           | 资源 ID                      |
-| type\_      | ResourceType  | 资源类型枚举                 |
+| type\_      | CommentResourceType  | 资源类型枚举                 |
 | root       | int, optional | 根评论 ID, Defaults to None. |
 | parent     | int, optional | 父评论 ID, Defaults to None. |
 | credential | Credential    | 凭据                         |
@@ -133,7 +133,7 @@ from bilibili_api import comment
 | name       | type                 | description                               |
 | ---------- | -------------------- | ----------------------------------------- |
 | oid        | int                  | 资源 ID                                   |
-| type\_     | ResourceType         | 资源类型枚举                              |
+| type\_     | CommentResourceType         | 资源类型枚举                              |
 | page_index | int, optional        | 页码. Defaults to 1.                      |
 | order      | OrderType, optional  | 排序方式枚举. Defaults to OrderType.TIME. |
 | credential | Credential, optional | 凭据. Defaults to None.                   |

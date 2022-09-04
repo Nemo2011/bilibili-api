@@ -22,7 +22,7 @@ from .exceptions.ArgsException import ArgsException
 API = get_api("common")
 
 
-class CommentsResourceType(Enum):
+class CommentResourceType(Enum):
     """
     资源类型枚举。
 
@@ -62,7 +62,7 @@ class Comment:
     """
 
     def __init__(
-        self, oid: int, type_: CommentsResourceType, rpid: int, credential: Credential
+        self, oid: int, type_: CommentResourceType, rpid: int, credential: Credential
     ):
         """
         Args:
@@ -194,7 +194,7 @@ class Comment:
 async def send_comment(
     text: str,
     oid: int,
-    type_: CommentsResourceType,
+    type_: CommentResourceType,
     root: int = None,
     parent: int = None,
     credential: Credential = None,
@@ -213,7 +213,7 @@ async def send_comment(
     Args:
         text       (str)          : 评论内容。
         oid        (str)          : 资源 ID。
-        type_      (ResourceType) : 资源类型枚举。
+        type_      (CommentsResourceType) : 资源类型枚举。
         root       (int, optional): 根评论 ID, Defaults to None.
         parent     (int, optional): 父评论 ID, Defaults to None.
         credential (Credential)   : 凭据
@@ -254,7 +254,7 @@ async def send_comment(
 
 async def get_comments(
     oid: int,
-    type_: CommentsResourceType,
+    type_: CommentResourceType,
     page_index: int = 1,
     order: OrderType = OrderType.TIME,
     credential: Credential = None,
@@ -264,7 +264,7 @@ async def get_comments(
 
     Args:
         oid        (int)                 : 资源 ID。
-        type_      (ResourceType)        : 资源类枚举。
+        type_      (CommentsResourceType)        : 资源类枚举。
         page_index (int, optional)       : 页码. Defaults to 1.
         order      (OrderType, optional) : 排序方式枚举. Defaults to OrderType.TIME.
         credential (Credential, optional): 凭据。Defaults to None.
