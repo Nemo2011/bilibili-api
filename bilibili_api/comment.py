@@ -9,6 +9,7 @@ bilibili_api.comment
 + 专栏：cv{9762979}。
 + 动态（画册类型）：{116859542}。
 + 动态（纯文本）：{497080393649439253}。
++ 课程：ep{5556}
 """
 from enum import Enum
 
@@ -21,7 +22,7 @@ from .exceptions.ArgsException import ArgsException
 API = get_api("common")
 
 
-class ResourceType(Enum):
+class CommentsResourceType(Enum):
     """
     资源类型枚举。
 
@@ -31,6 +32,7 @@ class ResourceType(Enum):
     + DYNAMIC: 动态（画册也属于动态的一种，只不过画册还有一个专门的 ID）。
     + AUDIO：音频。
     + AUDIO_LIST：歌单。
+    + CHEESE: 课程
     """
 
     VIDEO = 1
@@ -39,6 +41,7 @@ class ResourceType(Enum):
     DYNAMIC = 17
     AUDIO = 14
     AUDIO_LIST = 19
+    CHEESE = 33
 
 
 class OrderType(Enum):
@@ -59,7 +62,7 @@ class Comment:
     """
 
     def __init__(
-        self, oid: int, type_: ResourceType, rpid: int, credential: Credential
+        self, oid: int, type_: CommentsResourceType, rpid: int, credential: Credential
     ):
         """
         Args:
@@ -191,7 +194,7 @@ class Comment:
 async def send_comment(
     text: str,
     oid: int,
-    type_: ResourceType,
+    type_: CommentsResourceType,
     root: int = None,
     parent: int = None,
     credential: Credential = None,
@@ -251,7 +254,7 @@ async def send_comment(
 
 async def get_comments(
     oid: int,
-    type_: ResourceType,
+    type_: CommentsResourceType,
     page_index: int = 1,
     order: OrderType = OrderType.TIME,
     credential: Credential = None,
