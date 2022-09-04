@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf8") as f:
 
 setuptools.setup(
     name="bilibili-api-python",
-    version="12.0.0",
+    version="12.1.0",
     license="GPLv3+",
     author="MoyuScript, Nemo2011",
     description="原 bilibili-api。哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。",
@@ -18,7 +18,7 @@ setuptools.setup(
         "bilibili_api",
         "bilibili_api.utils",
         "bilibili_api.exceptions",
-        "bilibili_api._pyinstaller",
+        "bilibili_api._pyinstaller"
     ],
     keywords=["bilibili", "api", "spider"],
     classifiers=[
@@ -35,6 +35,9 @@ setuptools.setup(
     entry_points={
         "pyinstaller40": [
             "hook-dirs = bilibili_api._pyinstaller.entry_points:get_hook_dirs"
-        ]
+        ], 
+        'console_scripts': [
+            'bilibili-api = bilibili_api.__main__:main'
+        ],
     },
 )

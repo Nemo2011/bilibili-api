@@ -140,6 +140,7 @@
       - [def get_cid()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-get_cid) **获取 cid**
       - [def get_meta()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-get_meta) **获取课程元数据**
       - [def set_epid()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=def-set_epid) **设置 epid**
+      - [def get_epid()](/modules/cheese?id=def-get_epid) **获取 epid**
       - [_async_ def get_download_url()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_download_url) **获取下载链接**
       - [_async_ def get_stat()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_stat) **获取视频统计数据（播放量，点赞数等）。**
       - [_async_ def get_pages()](https://nemo2011.github.io/bilibili-api/#/modules/cheese?id=async-def-get_pages) **获取分 P 信息。**

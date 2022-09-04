@@ -97,7 +97,15 @@ class Article:
         if not self.__has_parsed:
             raise ApiException("请先调用 fetch_content()")
 
-        content = "".join([node.markdown() for node in self.__children])
+        content = ""
+
+        for node in self.__children:
+            try:
+                markdown_text = node.markdown()
+            except:
+                continue
+            else:
+                content += markdown_text
 
         meta_yaml = yaml.safe_dump(self.__meta, allow_unicode=True)
         content = f"---\n{meta_yaml}\n---\n\n{content}"

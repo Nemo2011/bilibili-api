@@ -12,6 +12,7 @@ bilibili_api.cheese
 
 import datetime
 import json
+from . import settings
 
 import requests
 from .exceptions import (
@@ -86,13 +87,17 @@ class CheeseList:
         """
         获取教程所有视频
         Returns:
-            调用 API 所得的结果。
+            List[CheeseVideo]: 课程视频列表
         """
         api = API["info"]["list"]
         params = {"season_id": self.season_id, "pn": 1, "ps": 1000}
-        return await request(
+        lists = await request(
             "GET", api["url"], params=params, credential=self.credential
         )
+        cheese_videos = []
+        for c in lists['items']:
+            cheese_videos.append(CheeseVideo(c["id"], self.credential, c))
+        return cheese_videos
 
 
 class CheeseVideo:
@@ -106,18 +111,23 @@ class CheeseVideo:
         self.epid = epid
         self.cheese = CheeseList(ep_id=self.epid)
         self.credential = credential
-        api = API["info"]["meta"]
-        params = {"season_id": self.cheese.season_id, "ep_id": self.cheese.ep_id}
-        meta = requests.get(
-            url=api["url"], params=params, cookies=self.credential.get_cookies()
-        )
-        meta.raise_for_status()
-        metadata = meta.json()
-        for v in metadata["data"]["episodes"]:
-            if v["id"] == epid:
-                self.aid = v["aid"]
-                self.cid = v["cid"]
-                self.meta = v
+        if meta == None:
+            api = API["info"]["meta"]
+            params = {"season_id": self.cheese.season_id, "ep_id": self.cheese.ep_id}
+            metar = requests.get(
+                url=api["url"], params=params, cookies=self.credential.get_cookies()
+            )
+            metar.raise_for_status()
+            metadata = metar.json()
+            for v in metadata["data"]["episodes"]:
+                if v["id"] == epid:
+                    self.aid = v["aid"]
+                    self.cid = v["cid"]
+                    self.meta = v
+        else:
+            self.meta = meta
+            self.aid = meta["aid"]
+            self.cid = meta["cid"]
 
     def get_aid(self):
         return self.aid
@@ -148,6 +158,12 @@ class CheeseVideo:
             None
         """
         self.__init__(epid, self.credential)
+
+    def get_epid(self):
+        """
+        获取 epid
+        """
+        return self.epid
 
     async def get_download_url(self):
         """
@@ -689,3 +705,16 @@ class CheeseVideo:
         return await request(
             "POST", url=api["url"], data=data, credential=self.credential
         )
+
+    async def get_danmaku_xml(self):
+        """
+        获取弹幕(xml 源)
+        """
+        url = f"https://comment.bilibili.com/{self.get_cid()}.xml"
+        sess = get_session()
+        config = {"url": url}
+        # 代理
+        if settings.proxy:
+            config["proxies"] = {"all://", settings.proxy}
+        resp = await sess.get(**config)
+        return resp.content.decode("utf-8")

@@ -8,7 +8,7 @@ from bilibili_api import ass
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| bvid | (str)             | BVID |
+| obj | Union[Video, Episode, CheeseVideo] | 对象 |
 | page | (int)                | 分 P 号 |
 | out | (str)              | 输出文件 |
 | cid | (int) | cid |
@@ -31,7 +31,7 @@ from bilibili_api import ass
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| bvid | (str)             | BVID |
+| obj | Union[Video, Episode, CheeseVideo] | 对象 |
 | page | (int)                | 分 P 号 |
 | out | (str)              | 输出文件 |
 | cid | (int) | cid |
@@ -53,7 +53,7 @@ from bilibili_api import ass
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| bvid | str | 视频 BVID |
+| obj | Union[Video, Episode] | 对象 |
 | out | str | 输出位置 |
 | name | str | 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。|
 | credential | Credential | 凭据 |
