@@ -200,7 +200,6 @@
       },
       "comment": "设置视频收藏状态"
     },
-
     "submit_subtitle": {
       "url": "https://api.bilibili.com/x/v2/dm/subtitle/draft/save",
       "method": "POST",
@@ -344,7 +343,7 @@
       "verify": false,
       "data": {
         "dmid": "int: 弹幕 ID",
-        "cid":"int: 分 P 编号",
+        "cid": "int: 分 P 编号",
         "csrf": "cookies: bili_jct"
       },
       "comment": "撤回弹幕"

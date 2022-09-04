@@ -10,6 +10,7 @@ except:
 else:
     PYQT5 = True
 
+
 def main():
     if not PYQT5:
         webbrowser.open("https://nemo2011.github.io/bilibili-api")
@@ -31,6 +32,7 @@ def main():
         mainwindow.startTimer(1)
         mainwindow.show()
         sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     main()

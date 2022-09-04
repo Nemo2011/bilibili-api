@@ -8,7 +8,7 @@ from enum import Enum
 import json
 import time
 
-from.exceptions import ResponseCodeException
+from .exceptions import ResponseCodeException
 
 from .utils.sync import sync
 
@@ -32,7 +32,7 @@ class VideoOrder(Enum):
     """
 
     PUBDATE = "pubdate"
-    FAVORITE= "stow"
+    FAVORITE = "stow"
     VIEW = "click"
 
 
@@ -383,19 +383,17 @@ class User:
         Returns:
             list: 关注列表
         """
-        api = API['info']['all_followings']
-        params = {
-            "mid": self.uid
-        }
+        api = API["info"]["all_followings"]
+        params = {"mid": self.uid}
         sess = get_session()
         data = json.loads(
-            (await sess.get(
-                url=api['url'], 
-                params=params, 
-                cookies=self.credential.get_cookies()
-            )).text
+            (
+                await sess.get(
+                    url=api["url"], params=params, cookies=self.credential.get_cookies()
+                )
+            ).text
         )
-        return data['card']['attentions']
+        return data["card"]["attentions"]
 
     async def get_followers(self, pn: int = 1, desc: bool = True):
         """
@@ -432,7 +430,7 @@ class User:
         api = API["info"]["top_followers"]
         params = {}
         if since:
-            params['t'] = int(since)
+            params["t"] = int(since)
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -668,14 +666,19 @@ class ChannelSeries:
             res = httpx.request(
                 "GET", url=api["url"], params=param, cookies=credential.get_cookies()
             )
-            items = json.loads(res.text)['data']["items_lists"]["page"]["total"]
+            items = json.loads(res.text)["data"]["items_lists"]["page"]["total"]
             time.sleep(0.5)
             if items == 0:
                 items = 1
             param["page_size"] = items
-            channel_list = json.loads(httpx.request(
-                "GET", url=api["url"], params=param, cookies=credential.get_cookies()
-            ).text)['data']
+            channel_list = json.loads(
+                httpx.request(
+                    "GET",
+                    url=api["url"],
+                    params=param,
+                    cookies=credential.get_cookies(),
+                ).text
+            )["data"]
             for channel in channel_list["items_lists"][look_type + "_list"]:
                 type_id = channel["meta"]["season_id" if self.is_new else "series_id"]
                 if type_id == self.id_:
@@ -909,12 +912,10 @@ async def check_nickname(nick_name: str = None):
     Returns:
         List[bool, str]: 昵称是否可用 + 不可用原因
     """
-    api = get_api("common")['nickname']['check_nickname']
-    params = {
-        "nickName": nick_name
-    }
+    api = get_api("common")["nickname"]["check_nickname"]
+    params = {"nickName": nick_name}
     try:
-        resp = await request("GET", api['url'], params=params)
+        resp = await request("GET", api["url"], params=params)
     except ResponseCodeException as e:
         return False, str(e)
     else:
@@ -926,15 +927,13 @@ async def get_self_events(ts: int = 0, credential: Credential = None):
     获取自己入站后每一刻的事件
 
     Args:
-        ts(int, optional)               : 时间戳. Defaults to 0. 
-        credential(Credential, optional): 凭据. Defaults to None. 
+        ts(int, optional)               : 时间戳. Defaults to 0.
+        credential(Credential, optional): 凭据. Defaults to None.
 
     Returns:
         dict: 调用 API 返回的结果
     """
     credential = credential if credential else Credential()
     api = API["info"]["events"]
-    params = {
-        "ts": ts
-    }
-    return await request("GET", api['url'], params=params, credential=credential)
+    params = {"ts": ts}
+    return await request("GET", api["url"], params=params, credential=credential)

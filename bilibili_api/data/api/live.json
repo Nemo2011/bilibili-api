@@ -199,8 +199,8 @@
         "room_id": "int: 显示房间号",
         "platform": "const str: pc",
         "source": "const str: live",
-        "area_id":"int: 子分区 ID 可以不用填",
-        "area_parent_id":"int: 父分区 ID 可以不用填, 获取分区 ID 可使用 get_area_info 方法"
+        "area_id": "int: 子分区 ID 可以不用填",
+        "area_parent_id": "int: 父分区 ID 可以不用填, 获取分区 ID 可使用 get_area_info 方法"
       },
       "comment": "获取该直播间通用礼物的信息，此 API 只返回 gift_id ，不包含礼物 price 参数"
     },
@@ -214,12 +214,12 @@
         "source": "const str: live",
         "tab_id": "int: 礼物tab编号，2 为特权礼物，3 为定制礼物",
         "build": "int: 未知作用， 默认 1",
-        "area_id":"int: 子分区 ID 可以不用填",
-        "area_parent_id":"int: 父分区 ID 可以不用填, 获取分区id可使用 get_area_info 方法"
+        "area_id": "int: 子分区 ID 可以不用填",
+        "area_parent_id": "int: 父分区 ID 可以不用填, 获取分区id可使用 get_area_info 方法"
       },
       "comment": "获取该直播间特殊礼物的信息"
     },
-    "gift_config":{
+    "gift_config": {
       "url": "https://api.live.bilibili.com/xlive/web-room/v1/giftPanel/giftConfig",
       "method": "GET",
       "verify": false,
@@ -230,9 +230,9 @@
         "area_id": "int: 子分区 ID 可以不用填",
         "area_parent_id": "int: 父分区 ID 可以不用填, 获取分区id可使用 get_area_info 方法"
       },
-      "comment":"获取所有礼物信息，三个字段可以不用填，但填了有助于减小返回内容的大小，置空返回约 2.7w 行，填了三个对应值返回约 1.4w 行"
+      "comment": "获取所有礼物信息，三个字段可以不用填，但填了有助于减小返回内容的大小，置空返回约 2.7w 行，填了三个对应值返回约 1.4w 行"
     },
-    "followers_live_info":{
+    "followers_live_info": {
       "url": "https://api.live.bilibili.com/xlive/app-interface/v1/relation/liveAnchor",
       "method": "GET",
       "verify": false,
@@ -242,7 +242,7 @@
       },
       "comment": "获取关注列表中正在直播的直播间信息, 包括房间直播热度, 房间名称及标题, 清晰度, 是否官方认证等信息."
     },
-    "followers_unlive_info":{
+    "followers_unlive_info": {
       "url": "https://api.live.bilibili.com/xlive/app-interface/v1/relation/unliveAnchor",
       "method": "GET",
       "verify": false,
@@ -331,8 +331,8 @@
       "params": {
         "uid": "int: 赠送用户的 UID",
         "gift_id": "int: 礼物 ID",
-        "ruid":"int: 全称 room_uid，从 room_play_info 里头的uid可以找到",
-        "send_ruid":"int: 未知作用，默认：0",
+        "ruid": "int: 全称 room_uid，从 room_play_info 里头的uid可以找到",
+        "send_ruid": "int: 未知作用，默认：0",
         "gift_num": "int: 赠送数量",
         "coin_type": "const str: gold",
         "bag_id": "int: 0",
@@ -347,15 +347,15 @@
       },
       "comment": "在直播间中赠送金瓜子礼物"
     },
-    "send_gift_silver" :{
+    "send_gift_silver": {
       "url": "https://api.live.bilibili.com/xlive/revenue/v1/gift/sendSilver",
       "method": "POST",
       "verify": true,
       "params": {
         "uid": "int: 赠送用户的 UID",
         "gift_id": "int: 礼物 ID 辣条的 ID 为 1",
-        "ruid":"int: 全称 room_uid，从 room_play_info 里头的 UID 可以找到",
-        "send_ruid":"int: 未知作用，默认：0",
+        "ruid": "int: 全称 room_uid，从 room_play_info 里头的 UID 可以找到",
+        "send_ruid": "int: 未知作用，默认：0",
         "gift_num": "int: 赠送数量",
         "coin_type": "const str: silver",
         "bag_id": "int: 0",

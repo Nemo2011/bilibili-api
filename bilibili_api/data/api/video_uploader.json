@@ -16,7 +16,6 @@
     },
     "comment": "获取上传配置"
   },
-
   "cover_up": {
     "url": "https://member.bilibili.com/x/vu/web/cover/up",
     "method": "POST",
@@ -26,7 +25,6 @@
     },
     "comment": "上传封面"
   },
-
   "submit": {
     "url": "https://member.bilibili.com/x/vu/web/add",
     "method": "POST",
@@ -44,8 +42,8 @@
       "open_elec": "int: 是否展示充电信息。1 为是，0 为否。",
       "origin_state": "const int: 0",
       "subtitles # 字幕设置": {
-          "lan": "str: 字幕投稿语言，不清楚作用请将该项设置为空",
-          "open": "int: 是否启用字幕投稿，1 or 0"
+        "lan": "str: 字幕投稿语言，不清楚作用请将该项设置为空",
+        "open": "int: 是否启用字幕投稿，1 or 0"
       },
       "tag": "str: 视频标签。使用英文半角逗号分隔的标签组。示例：标签 1,标签 1,标签 1",
       "tid": "int: 分区 ID。可以使用 channel 模块进行查询。",
@@ -63,7 +61,6 @@
       "dtime": "int?: 可选，定时发布时间戳（秒）"
     }
   },
-
   "missions": {
     "url": "https://member.bilibili.com/x/vupre/app/h5/mission/type/all",
     "method": "GET",
@@ -73,4 +70,4 @@
     },
     "comment": "获取活动列表"
   }
-}
+} 

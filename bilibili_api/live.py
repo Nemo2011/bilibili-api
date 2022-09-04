@@ -1024,14 +1024,14 @@ class LiveDanmaku(AsyncEvent):
             return ret
 
         while offset < len(realData):
-            header = struct.unpack(">IHHII", realData[offset: offset + 16])
+            header = struct.unpack(">IHHII", realData[offset : offset + 16])
             length = header[0]
             recvData = {
                 "protocol_version": header[2],
                 "datapack_type": header[3],
                 "data": None,
             }
-            chunkData = realData[(offset + 16): (offset + length)]
+            chunkData = realData[(offset + 16) : (offset + length)]
             if header[2] == 0:
                 recvData["data"] = json.loads(chunkData.decode())
             elif header[2] == 2:

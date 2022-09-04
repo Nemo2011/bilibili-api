@@ -103,8 +103,12 @@ async def upload_image(image_stream: io.BufferedIOBase, credential: Credential):
     api = API["send"]["upload_img"]
     data = {"biz": "draw", "category": "daily"}
     return await request(
-        "POST", url=api["url"], data=data, files={"file_up": image_stream},
-        credential=credential)
+        "POST",
+        url=api["url"],
+        data=data,
+        files={"file_up": image_stream},
+        credential=credential,
+    )
 
 
 async def _get_draw_data(
@@ -120,7 +124,8 @@ async def _get_draw_data(
     """
     new_text, at_uids, ctrl = await _parse_at(text)
     images_info = await asyncio.gather(
-        *[upload_image(stream, credential) for stream in image_streams])
+        *[upload_image(stream, credential) for stream in image_streams]
+    )
 
     def transformPicInfo(image):
         """
