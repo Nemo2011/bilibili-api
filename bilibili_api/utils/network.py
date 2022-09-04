@@ -24,7 +24,10 @@ def __clean():
     """
     程序退出清理操作。
     """
-    loop = asyncio.get_event_loop()
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        return
 
     async def __clean_task():
         await __session_pool[loop].close()

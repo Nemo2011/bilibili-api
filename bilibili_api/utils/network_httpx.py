@@ -21,13 +21,15 @@ from .. import settings
 __session_pool = {}
 last_proxy = ""
 
-
 @atexit.register
 def __clean():
     """
     程序退出清理操作。
     """
-    loop = asyncio.get_event_loop()
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        return
 
     async def __clean_task():
         await __session_pool[loop].close()
@@ -36,7 +38,6 @@ def __clean():
         loop.run_until_complete(__clean_task())
     else:
         loop.create_task(__clean_task())
-
 
 async def request(
     method: str,
