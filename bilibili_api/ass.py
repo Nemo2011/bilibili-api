@@ -85,7 +85,9 @@ def export_ass_from_json(file_local, output_local):
     os.remove(output_local.replace(".ass", ".srt"))
 
 
-async def make_ass_file_subtitle(obj: Union[Video, Episode], out, name, credential=None):
+async def make_ass_file_subtitle(
+    obj: Union[Video, Episode], out, name, credential=None
+):
     """
     生成视频字幕文件
     Args:

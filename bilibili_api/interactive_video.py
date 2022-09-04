@@ -154,8 +154,8 @@ class InteractiveNode:
         cid: int,
         button: InteractiveButton = None,
         command: InteractiveJumpingCondition = InteractiveJumpingCondition(),
-        is_default: bool = False
-    ):  
+        is_default: bool = False,
+    ):
         self.__parent = video
         self.__id = node_id
         self.__cid = cid
@@ -172,12 +172,7 @@ class InteractiveNode:
             var_name = var["name"]
             var_show = var["is_show"]
             var_id = var["id_v2"]
-            var_list.append(InteractiveVariable(
-                var_name, 
-                var_id, 
-                var_value, 
-                var_show
-            ))
+            var_list.append(InteractiveVariable(var_name, var_id, var_value, var_show))
 
     async def get_children(self) -> List[InteractiveNode]:
         edge_info = await self.__parent.get_edge_info(self.__id)
@@ -191,29 +186,27 @@ class InteractiveNode:
                 text_align = 0
             if "option" in node.keys():
                 node_button = InteractiveButton(
-                    node["option"], 
-                    node.get("x"), 
-                    node.get("y"), 
-                    text_align
+                    node["option"], node.get("x"), node.get("y"), text_align
                 )
             else:
                 node_button = None
             node_condition = InteractiveJumpingCondition(
-                await self.get_vars(), 
-                node["condition"]
+                await self.get_vars(), node["condition"]
             )
             if "is_default" in node.keys():
                 node_is_default = node["is_default"]
             else:
                 node_is_default = False
-            nodes.append(InteractiveNode(
-                self.__parent, 
-                node_id, 
-                node_cid, 
-                node_button, 
-                node_condition, 
-                node_is_default
-            ))
+            nodes.append(
+                InteractiveNode(
+                    self.__parent,
+                    node_id,
+                    node_cid,
+                    node_button,
+                    node_condition,
+                    node_is_default,
+                )
+            )
         return nodes
 
     def is_default(self):
@@ -236,7 +229,7 @@ class InteractiveNode:
 
     def get_jumping_command(self):
         return self.__jumping_command
-    
+
     def get_video(self):
         return self.__parent
 
@@ -244,7 +237,9 @@ class InteractiveNode:
         return await self.__parent.get_edge_info(self.__id)
 
     def __str__(self):
-        return f"{self.get_node_id()} {self.get_cid()} {self.get_self_button().get_text()}"
+        return (
+            f"{self.get_node_id()} {self.get_cid()} {self.get_self_button().get_text()}"
+        )
 
 
 class InteractiveGraph:
@@ -252,7 +247,7 @@ class InteractiveGraph:
         self.__parent = video
         self.__skin = skin
         self.__node = InteractiveNode(self.__parent, 1, root_cid)
-    
+
     def get_video(self):
         return self.__parent
 
@@ -368,19 +363,19 @@ class InteractiveVideo(Video):
         return await super().get_cid(0)
 
     async def get_pbp(self, cid: int):
-        return await super().get_pbp(cid = cid)
+        return await super().get_pbp(cid=cid)
 
     async def get_danmaku_snapshot(self):
         return await super().get_danmaku_snapshot()
 
     async def get_danmaku_view(self, cid: int = None):
-        return await super().get_danmaku_view(cid = cid)
+        return await super().get_danmaku_view(cid=cid)
 
     async def get_danmaku_xml(self, cid: int = None):
-        return await super().get_danmaku_xml(cid = cid)
+        return await super().get_danmaku_xml(cid=cid)
 
     async def get_danmakus(self, cid: int = None):
-        return await super().get_danmakus(cid = cid)
+        return await super().get_danmakus(cid=cid)
 
     async def get_graph(self):
         edge_info = await self.get_edge_info(1)

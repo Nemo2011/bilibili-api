@@ -49,9 +49,7 @@ async def search(keyword: str, page: int = 1):
     return await request("GET", url=api["url"], params=params)
 
 
-async def search_by_type(
-    keyword: str, search_type: SearchObjectType, page: int = 1
-):
+async def search_by_type(keyword: str, search_type: SearchObjectType, page: int = 1):
     """
     指定关键字和类型进行搜索，返回未经处理的字典
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、专栏(article)、话题(topic)、用户(bili_user)
@@ -67,6 +65,7 @@ async def search_by_type(
     params = {"keyword": keyword, "search_type": search_type.value, "page": page}
     return await request("GET", url=api["url"], params=params)
 
+
 async def get_default_search_keyword():
     """
     获取默认的搜索内容
@@ -74,8 +73,9 @@ async def get_default_search_keyword():
     Returns:
         调用 api 返回的结果
     """
-    api = API['search']['default_search_keyword']
-    return await request("GET", api['url'])
+    api = API["search"]["default_search_keyword"]
+    return await request("GET", api["url"])
+
 
 async def get_hot_search_keywords():
     """
@@ -84,9 +84,10 @@ async def get_hot_search_keywords():
     Returns:
         调用 api 返回的结果
     """
-    api = API['search']['hot_search_keywords']
+    api = API["search"]["hot_search_keywords"]
     sess = get_session()
-    return json.loads((await sess.request("GET", api['url'])).text)['cost']
+    return json.loads((await sess.request("GET", api["url"])).text)["cost"]
+
 
 async def get_suggest_keywords(keyword: str):
     """
@@ -100,12 +101,10 @@ async def get_suggest_keywords(keyword: str):
     """
     keywords = []
     sess = get_session()
-    api = API['search']['suggest']
-    params = {
-        "term": keyword
-    }
-    data = json.loads((await sess.request("GET", api['url'], params=params)).text)
+    api = API["search"]["suggest"]
+    params = {"term": keyword}
+    data = json.loads((await sess.request("GET", api["url"], params=params)).text)
     keys = data.keys()
     for key in keys:
-        keywords.append(data[key]['value'])
+        keywords.append(data[key]["value"])
     return keywords

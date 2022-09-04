@@ -14,11 +14,11 @@
   },
   "nickname": {
     "check_nickname": {
-      "url": "https://passport.bilibili.com/web/generic/check/nickname", 
-      "method": "GET", 
+      "url": "https://passport.bilibili.com/web/generic/check/nickname",
+      "method": "GET",
       "params": {
         "nickName": "string: 昵称"
-      }, 
+      },
       "comment": "检验昵称是否可用"
     }
   },

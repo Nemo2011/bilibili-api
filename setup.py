@@ -18,7 +18,7 @@ setuptools.setup(
         "bilibili_api",
         "bilibili_api.utils",
         "bilibili_api.exceptions",
-        "bilibili_api._pyinstaller"
+        "bilibili_api._pyinstaller",
     ],
     keywords=["bilibili", "api", "spider"],
     classifiers=[
@@ -35,9 +35,7 @@ setuptools.setup(
     entry_points={
         "pyinstaller40": [
             "hook-dirs = bilibili_api._pyinstaller.entry_points:get_hook_dirs"
-        ], 
-        'console_scripts': [
-            'bilibili-api = bilibili_api.__main__:main'
         ],
+        "console_scripts": ["bilibili-api = bilibili_api.__main__:main"],
     },
 )

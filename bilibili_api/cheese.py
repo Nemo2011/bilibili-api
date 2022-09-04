@@ -95,7 +95,7 @@ class CheeseList:
             "GET", api["url"], params=params, credential=self.credential
         )
         cheese_videos = []
-        for c in lists['items']:
+        for c in lists["items"]:
             cheese_videos.append(CheeseVideo(c["id"], self.credential, c))
         return cheese_videos
 
@@ -586,7 +586,6 @@ class CheeseVideo:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    
     async def has_liked(self):
         """
         视频是否点赞过。

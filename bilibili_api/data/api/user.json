@@ -126,9 +126,9 @@
       "comment": "获取用户关注列表（不是自己只能访问前 5 页）"
     },
     "all_followings": {
-      "url": "https://account.bilibili.com/api/member/getCardByMid", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://account.bilibili.com/api/member/getCardByMid",
+      "method": "GET",
+      "verify": false,
       "params": {
         "mid": "int: uid"
       },
@@ -147,14 +147,14 @@
       "comment": "获取用户粉丝列表（不是自己只能访问前 5 页，是自己也不能获取全部的样子）"
     },
     "top_followers": {
-        "url": "https://member.bilibili.com/x/web/data/fan",
-        "method": "GET",
-        "verify": false,
-        "params": {
-            "t": "int: since when in timestamp(msec)",
-            "csrf,csrf_token": "要给两个"
-        },
-        "comment": "粉丝排行"
+      "url": "https://member.bilibili.com/x/web/data/fan",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "t": "int: since when in timestamp(msec)",
+        "csrf,csrf_token": "要给两个"
+      },
+      "comment": "粉丝排行"
     },
     "overview": {
       "url": "https://api.bilibili.com/x/space/navnum",
@@ -193,16 +193,16 @@
       "comment": "用户浏览历史记录"
     },
     "channel_list": {
-      "url": "https://api.bilibili.com/x/polymer/space/seasons_series_list", 
-      "method": "GET", 
-      "verity": false, 
+      "url": "https://api.bilibili.com/x/polymer/space/seasons_series_list",
+      "method": "GET",
+      "verity": false,
       "params": {
-        "mid": "int: uid", 
+        "mid": "int: uid",
         "page_num": "int: 开始项",
         "page_size": "int: 开始项后面的项数"
-      }, 
+      },
       "comment": "查看用户合集的列表（新版）"
-    }, 
+    },
     "channel_video_series": {
       "url": "https://api.bilibili.com/x/series/archives",
       "method": "GET",
@@ -216,16 +216,16 @@
       "comment": "查看列表内视频（旧版）"
     },
     "channel_video_season": {
-      "url": "https://api.bilibili.com/x/polymer/space/seasons_archives_list", 
-      "method": "GET", 
-      "verity": false, 
+      "url": "https://api.bilibili.com/x/polymer/space/seasons_archives_list",
+      "method": "GET",
+      "verity": false,
       "params": {
-        "mid": "int: uid", 
+        "mid": "int: uid",
         "season_id": "int: season_id",
         "sort_reverse": "bool: 是否升序排序，否则默认排序",
         "page_num": "int: 页码",
         "page_size": "int: 每一页的项数"
-      }, 
+      },
       "comment": "查看用户合集中的视频（新版）"
     },
     "pugv": {
@@ -236,23 +236,23 @@
         "mid": "int: uid"
       },
       "comment": "查看用户的课程"
-    }, 
+    },
     "get_coins": {
-      "url": "https://account.bilibili.com/site/getCoin", 
-      "method": "GET", 
-      "verify": true, 
+      "url": "https://account.bilibili.com/site/getCoin",
+      "method": "GET",
+      "verify": true,
       "comment": "获取硬币数量"
-    }, 
+    },
     "events": {
-      "url": "https://member.bilibili.com/x2/creative/h5/calendar/event", 
-      "method": "GET", 
+      "url": "https://member.bilibili.com/x2/creative/h5/calendar/event",
+      "method": "GET",
       "params": {
         "ts": "int: 时间戳"
       },
-      "verify": true, 
+      "verify": true,
       "comment": "获取事件"
     }
-  }, 
+  },
   "operate": {
     "modify": {
       "url": "https://api.bilibili.com/x/relation/modify",
@@ -283,8 +283,8 @@
     },
     "del_channel_aids_series": {
       "url": "https://api.bilibili.com/x/series/series/delArchives",
-      "method": "POST", 
-      "verity": true, 
+      "method": "POST",
+      "verity": true,
       "params": {
         "mid": "int: uid",
         "series_id": "int: series_id",
@@ -292,9 +292,9 @@
       }
     },
     "del_channel_series": {
-      "url": "https://api.bilibili.com/x/series/series/delete", 
+      "url": "https://api.bilibili.com/x/series/series/delete",
       "method": "POST",
-      "verity": true, 
+      "verity": true,
       "query": {
         "mid": "int: uid",
         "series_id": "int: series_id",

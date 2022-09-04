@@ -9,7 +9,10 @@ current_file_dir = os.path.dirname(__file__)
 print("初始化 GitHooks 中...")
 git_hooks_dir = os.path.join(current_file_dir, ".git/hooks")
 
-hooks_path = map(lambda x: os.path.join(current_file_dir, ".githooks", x), os.listdir(os.path.join(current_file_dir, ".githooks")))
+hooks_path = map(
+    lambda x: os.path.join(current_file_dir, ".githooks", x),
+    os.listdir(os.path.join(current_file_dir, ".githooks")),
+)
 
 for hook in hooks_path:
     print(f"复制 {hook} 到 {git_hooks_dir}")

@@ -39,6 +39,7 @@ class FavoriteListType(Enum):
     + ARTICLE: 专栏收藏夹
     + CHEESE : 课程收藏夹
     """
+
     VIDEO = "video"
     ARTICLE = "articles"
     CHEESE = "pugvfav"
@@ -48,6 +49,7 @@ class FavoriteList:
     """
     收藏夹类
     """
+
     def __init__(
         self,
         type_: FavoriteListType = FavoriteListType.VIDEO,
@@ -56,9 +58,9 @@ class FavoriteList:
     ) -> None:
         """
         Args:
-            type_(FavoriteListType, optional): 收藏家类型. Defaults to FavoriteListType.VIDEO. 
-            media_id(int, optional)          : 收藏家号（仅为视频收藏夹时提供）. Defaults to None. 
-            credential(Credential, optional) : 凭据类. Defaults to Credential(). 
+            type_(FavoriteListType, optional): 收藏家类型. Defaults to FavoriteListType.VIDEO.
+            media_id(int, optional)          : 收藏家号（仅为视频收藏夹时提供）. Defaults to None.
+            credential(Credential, optional) : 凭据类. Defaults to Credential().
         """
         self.type = type_
         self.media_id = media_id

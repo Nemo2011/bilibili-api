@@ -73,6 +73,7 @@ def login_with_qrcode(root=None):
     import tkinter
     import tkinter.font
     from PIL.ImageTk import PhotoImage
+
     if root == None:
         root = tkinter.Tk()
     root.title("扫码登录")
@@ -216,12 +217,12 @@ def login_with_password(username: str, password: str):
         "subid": 1,
         "ts": int(time.time()),
         "username": username,
-        "validate": ""
+        "validate": "",
     }
     form_urlencoded = to_form_urlencoded(datas)
     md5_string = form_urlencoded + appsec
-    hasher = hashlib.md5(md5_string.encode(encoding='utf-8'))
-    datas['sign'] = hasher.hexdigest()
+    hasher = hashlib.md5(md5_string.encode(encoding="utf-8"))
+    datas["sign"] = hasher.hexdigest()
     login_data = json.loads(
         sync(
             sess.request(
@@ -233,18 +234,16 @@ def login_with_password(username: str, password: str):
                     "User-Agent": "Mozilla/5.0",
                     "Referer": "https://passport.bilibili.com/login",
                 },
-                cookies={
-                    "buvid3": str(uuid.uuid1())
-                }
+                cookies={"buvid3": str(uuid.uuid1())},
             )
         ).text
     )
     if login_data["code"] == 0:
-        if login_data['data']['status'] == 2:
-            return Check(login_data['data']['url'], username)
-        sessdata = login_data['data']['cookie_info']['cookies'][0]['value']
-        bili_jct = login_data['data']['cookie_info']['cookies'][1]['value']
-        dede = login_data['data']['cookie_info']['cookies'][2]['value']
+        if login_data["data"]["status"] == 2:
+            return Check(login_data["data"]["url"], username)
+        sessdata = login_data["data"]["cookie_info"]["cookies"][0]["value"]
+        bili_jct = login_data["data"]["cookie_info"]["cookies"][1]["value"]
+        dede = login_data["data"]["cookie_info"]["cookies"][2]["value"]
         c = Credential(sessdata, bili_jct, dedeuserid=dede)
         return c
     else:
