@@ -7,13 +7,13 @@ assignees: ''
 
 ---
 
-**Python 版本：** 3.x / **NodeJS 版本：**
+**Python 版本：** 3.x
 
-**模块版本：** x.x.x (python/JS&TS)
+**模块版本：** x.x.x
 
 **运行环境：** Windows / Linux / MacOS
 
-**模块路径：** `bilibili_api.xxxx` / `bilibili-api-ts/xxx`
+**模块路径：** `bilibili_api.xxxx`
 
 **解释器(Python)：** cpython / pypi
 
