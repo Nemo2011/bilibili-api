@@ -77,6 +77,9 @@ class AudioList:
         self.amid = amid
         self.credential = credential if credential is not None else Credential()
 
+    def get_amid(self):
+        return self.amid
+
     async def get_info(self):
         """
         获取歌单信息
