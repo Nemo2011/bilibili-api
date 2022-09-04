@@ -151,7 +151,6 @@ async def request(
 
     if code is None:
         raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
-
     if code != 0:
         msg = resp_data.get("msg", None)
         if msg is None:

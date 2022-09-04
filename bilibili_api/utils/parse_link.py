@@ -22,6 +22,7 @@ from ..user import get_self_info
 from .short import get_real_url
 from ..video import Video
 from ..favorite_list import FavoriteList, FavoriteListType, get_video_favorite_list
+from ..exceptions import *
 
 import re
 
@@ -79,6 +80,13 @@ async def parse_link(url, credential: Credential = Credential()):
         Union[tuple, int]: (对象，类型) 或 -1,-1 表示出错
     """
     try:
+        obj = None
+
+        sobj = check_short_name(url)
+        if sobj != -1:
+            sobj[0].credential = credential
+            return sobj
+
         url = await get_real_url(url)
 
         # 特殊处理，因为后面会过滤参数，这两项需要参数完成
@@ -97,7 +105,7 @@ async def parse_link(url, credential: Credential = Credential()):
             except:
                 return -1
             else:
-                return (User(info['mid'], credential=credential), ResourceType.USER)
+                return (User(info["mid"], credential=credential), ResourceType.USER)
         obj = None
         video = parse_video(url)
         if not video == -1:
@@ -105,7 +113,7 @@ async def parse_link(url, credential: Credential = Credential()):
         bangumi = parse_bangumi(url)
         if not bangumi == -1:
             obj = (bangumi, ResourceType.BANGUMI)
-        episode = parse_episode(url)
+        episode = parse_episode(url, credential)
         if not episode == -1:
             obj = (episode, ResourceType.EPISODE)
         favorite_list = parse_favorite_list(url)
@@ -130,13 +138,42 @@ async def parse_link(url, credential: Credential = Credential()):
         if not live == -1:
             obj = (live, ResourceType.LIVE)
 
-        if obj == None:
+        if obj == None or obj[0] == None:
             return -1
         else:
             obj[0].credential = credential
             return obj
     except Exception as e:
-        print(e)
+        raise e
+        return -1
+
+
+def check_short_name(name: str):
+    """
+    解析:
+      - avxxxxxxxxxx
+      - bvxxxxxxxxxx
+      - mlxxxxxxxxxx
+      - uidxxxxxxxxx
+      - cvxxxxxxxxxx
+      - auxxxxxxxxxx
+      - amxxxxxxxxxx
+    """
+    if name[:2].upper() == "AV":
+        return (Video(aid=int(name[2:])), ResourceType.VIDEO)
+    elif name[:2].upper() == "BV":
+        return (Video(bvid=name), ResourceType.VIDEO)
+    elif name[:2].upper() == "ML":
+        return (FavoriteList(FavoriteListType.VIDEO, int(name[2:])), ResourceType.FAVORITE_LIST)
+    elif name[:3].upper() == "UID":
+        return (User(int(name[3:])), ResourceType.USER)
+    elif name[:2].upper() == "CV":
+        return (Article(int(name[2:])), ResourceType.ARTICLE)
+    elif name[:2].upper() == "AU":
+        return (Audio(int(name[2:])), ResourceType.AUDIO)
+    elif name[:2].upper() == "AM":
+        return (AudioList(int(name[2:])), ResourceType.AUDIO_LIST)
+    else:
         return -1
 
 
@@ -170,24 +207,38 @@ def parse_bangumi(url):
         return -1
 
 
-def parse_episode(url):
+def parse_episode(url, credential):
     """
     解析番剧剧集,如果不是返回 -1，否则返回对应类
     """
     if url[:38] == "https://www.bilibili.com/bangumi/play/":
         last_part = url[38:]
-        if last_part[:2].upper() == "SS":
-            ssid = int(last_part[2:].replace("/", ""))
-            b = Bangumi(ssid=ssid)
-            first_episode_id = int(
-                sync(b.get_episode_list())["main_section"]["episodes"][0]["share_url"][
-                    40:
-                ]
-            )
-            return Episode(epid=first_episode_id)
-        elif last_part[:2].upper() == "EP":
+        if last_part[:2].upper() == "EP":
             epid = int(last_part[2:].replace("/", ""))
             return Episode(epid=epid)
+        elif last_part[:2].upper() == "SS":
+            try:
+                resp = httpx.get(
+                    url,
+                    cookies=credential.get_cookies(),
+                    headers={"User-Agent": "Mozilla/5.0"},
+                )
+            except Exception as e:
+                raise ResponseException(str(e))
+            else:
+                content = resp.text
+
+                pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
+                match = re.search(pattern, content)
+                if match is None:
+                    raise ApiException("未找到番剧信息")
+                try:
+                    content = json.loads(match.group(1))
+                except json.JSONDecodeError:
+                    raise ApiException("信息解析错误")
+                else:
+                    epid = content["epInfo"]["id"]
+                    return Episode(epid=epid)
         else:
             return -1
     else:
@@ -213,10 +264,6 @@ def parse_cheese_video(url):
         if url[37:39].upper() == "EP":
             last_part = int(url[39:].replace("/", ""))
             return CheeseVideo(epid=last_part)
-        elif url[37:39].upper() == "SS":
-            cheese = CheeseList(season_id=int(url[39:].replace("/", "")))
-            ep = sync(cheese.get_list())["items"][0]["id"]
-            return CheeseVideo(epid=ep)
     else:
         return -1
 
@@ -285,7 +332,7 @@ def parse_season_series(url):
             if "seriesdetail" in i:
                 sid = int(i[17:])
                 return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
-    elif url[:40] == 'https://www.bilibili.com/medialist/play/':
+    elif url[:40] == "https://www.bilibili.com/medialist/play/":
         for i in url.split("/"):
             if "?" in i:
                 uid = int(i.split("?")[0])
@@ -310,13 +357,20 @@ def parse_space_favorite_list(url, credential):
                     api = get_api("favorite-list")["info"]["list_list"]
                     params = {"up_mid": uid, "type": 2}
 
-                    favorite_lists = json.loads(httpx.get(api['url'], params=params, cookies=credential.get_cookies()).text)['data']
+                    favorite_lists = json.loads(
+                        httpx.get(
+                            api["url"], params=params, cookies=credential.get_cookies()
+                        ).text
+                    )["data"]
 
                     if favorite_lists == None:
                         return -1
                     else:
-                        default_favorite_list = favorite_lists['list'][0]
-                        return (FavoriteList(media_id=default_favorite_list["id"]), ResourceType.FAVORITE_LIST)
+                        default_favorite_list = favorite_lists["list"][0]
+                        return (
+                            FavoriteList(media_id=default_favorite_list["id"]),
+                            ResourceType.FAVORITE_LIST,
+                        )
                 oid = ""
                 type_ = ""
                 for arg in i.split("&"):
@@ -340,15 +394,28 @@ def parse_space_favorite_list(url, credential):
                     if type_ == 11:
                         # 收藏的收藏夹
                         oid_int = int(oid)
-                        return (FavoriteList(media_id=oid_int), ResourceType.FAVORITE_LIST)
+                        return (
+                            FavoriteList(media_id=oid_int),
+                            ResourceType.FAVORITE_LIST,
+                        )
                     else:
                         return -1
                 elif not oid_is_number:
                     # 其他类型的收藏夹
                     if oid == FavoriteListType.ARTICLE.value:
-                        return (FavoriteList(FavoriteListType.ARTICLE, credential=credential), ResourceType.FAVORITE_LIST)
+                        return (
+                            FavoriteList(
+                                FavoriteListType.ARTICLE, credential=credential
+                            ),
+                            ResourceType.FAVORITE_LIST,
+                        )
                     elif oid == FavoriteListType.CHEESE.value:
-                        return (FavoriteList(FavoriteListType.CHEESE, credential=credential), ResourceType.FAVORITE_LIST)
+                        return (
+                            FavoriteList(
+                                FavoriteListType.CHEESE, credential=credential
+                            ),
+                            ResourceType.FAVORITE_LIST,
+                        )
                 else:
                     return -1
             else:

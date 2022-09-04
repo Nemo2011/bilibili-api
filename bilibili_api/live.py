@@ -16,7 +16,8 @@ import brotli
 from aiohttp.client_ws import ClientWebSocketResponse
 
 from .utils.Credential import Credential
-from .utils.network import get_session, request
+from .utils.network_httpx import request
+from .utils.network import get_session
 from .utils.utils import get_api
 from .utils.Danmaku import Danmaku
 from .utils.AsyncEvent import AsyncEvent

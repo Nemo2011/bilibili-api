@@ -139,5 +139,5 @@ class Danmaku:
         将弹幕转换为 xml 格式弹幕
         """
         txt = self.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        string = f'<d p="{self.dm_time},{self.mode.value},{self.font_size.value},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id},11">{txt}</d>'
+        string = f'<d p="{self.dm_time},{self.mode},{self.font_size},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id_},11">{txt}</d>'
         return string
