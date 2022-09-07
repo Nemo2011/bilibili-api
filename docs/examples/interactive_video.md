@@ -5,20 +5,21 @@
 需要一定水平才能看懂。
 
 ```python
+from typing import List
 from bilibili_api import interactive_video, sync
 import json
 
 BVID = 'BV1Dt411N7LY'
 
 async def main():
-    # 获取剧情图版本号
-    graph_version = await interactive_video.get_graph_version(BVID)
+    # 初始化
+    v = interactive_video.InteractiveVideo(bvid=BVID)
 
     # 存储顶点信息
     edges_info = {}
 
     # 使用队列来遍历剧情图，初始为 None 是为了从初始顶点开始
-    queue = [None]
+    queue: List[interactive_video.InteractiveNode] = [(await v.get_graph()).get_root_node()]
 
     def createEdge(edge_id: int):
         """
@@ -32,9 +33,9 @@ async def main():
 
     while queue:
         # 出队
-        edge_id = queue.pop()
+        now_node = queue.pop()
 
-        if edge_id in edges_info and edges_info[edge_id]['title'] is not None and edges_info[edge_id]['cid'] is not None:
+        if now_node.get_node_id() in edges_info and edges_info[now_node.get_node_id()]['title'] is not None and edges_info[now_node.get_node_id()]['cid'] is not None:
             # 该情况为已获取到所有信息，说明是跳转到之前已处理的顶点，不作处理
             continue
 
@@ -42,8 +43,8 @@ async def main():
         retry = 3
         while True:
             try:
-                node = await interactive_video.get_edge_info(BVID, graph_version, edge_id)
-
+                node = await now_node.get_info()
+                title = node["title"]
                 # 打印当前顶点信息
                 print(node['edge_id'], node['title'])
                 break
@@ -60,30 +61,23 @@ async def main():
         # 设置 title
         edges_info[node['edge_id']]['title'] = node['title']
 
-        # 起始顶点，需要用额外技巧获得 cid
-        if edge_id is None:
-            for s in node['story_list']:
-                if s['edge_id'] == 1:
-                    edges_info[node['edge_id']]['cid'] = s['cid']
-
         # 无可达顶点，即不能再往下走了，类似树的叶子节点
         if 'questions' not in node['edges']:
             continue
 
         # 遍历所有可达顶点
-        for q in node['edges']['questions']:
-            for c in q['choices']:
-                # 该步骤获取顶点的 cid（视频分 P 的 ID）
-                if c['id'] not in edges_info:
-                    createEdge(c['id'])
+        for n in (await now_node.get_children()):
+            # 该步骤获取顶点的 cid（视频分 P 的 ID）
+            if n.get_node_id() not in edges_info:
+                createEdge(n.get_node_id())
 
-                edges_info[c['id']]['cid'] = c['cid']
-                edges_info[c['id']]['option'] = c['option']
+            edges_info[n.get_node_id()]['cid'] = n.get_cid()
+            edges_info[n.get_node_id()]['option'] = n.get_self_button().get_text()
 
-                # 所有可达顶点 ID 入队
-                queue.insert(0, c['id'])
+            # 所有可达顶点 ID 入队
+            queue.insert(0, n)
 
-    print(json.dumps(edges_info, indent=2, ensure_ascii=False))
+    json.dump(edges_info, open("interactive_video.json", "w"), indent=2)
 
 sync(main())
 ```
