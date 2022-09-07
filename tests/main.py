@@ -2,7 +2,7 @@
 代码自动化测试工具
 
 Usage:
-    python -m main.py [options]
+    python -m tests.main [options]
 
 Options:
     -m <模块名>:    运行指定测试脚本
