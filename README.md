@@ -8,7 +8,6 @@
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 ![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
-![NodeJS](https://img.shields.io/badge/Node.js-In_progress-blue)
 
 </div>
 
