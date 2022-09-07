@@ -4,7 +4,12 @@ bilibili_api.utils.Credential
 凭据类，用于各种请求操作的验证。
 """
 
-from ..exceptions import CredentialNoBiliJctException, CredentialNoSessdataException, CredentialNoBuvid3Exception,  CredentialNoDedeUserIDException
+from ..exceptions import (
+    CredentialNoBiliJctException,
+    CredentialNoSessdataException,
+    CredentialNoBuvid3Exception,
+    CredentialNoDedeUserIDException,
+)
 
 
 class Credential:
@@ -12,7 +17,13 @@ class Credential:
     凭据类，用于各种请求操作的验证。
     """
 
-    def __init__(self, sessdata: str = None, bili_jct: str = None, buvid3: str = None, dedeuserid: str=None):
+    def __init__(
+        self,
+        sessdata: str = None,
+        bili_jct: str = None,
+        buvid3: str = None,
+        dedeuserid: str = None,
+    ):
         """
         各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
@@ -38,7 +49,7 @@ class Credential:
             "SESSDATA": self.sessdata,
             "buvid3": self.buvid3,
             "bili_jct": self.bili_jct,
-            "DedeUserID": self.dedeuserid
+            "DedeUserID": self.dedeuserid,
         }
 
     def has_dedeuserid(self):

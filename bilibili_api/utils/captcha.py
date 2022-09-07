@@ -38,7 +38,9 @@ def _geetest_urlhandler(url, content_type):
             elif data[:7] == "seccode":
                 seccode = data[8:].replace("%7C", "|")
         with open(
-            os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "html", "done.html")),
+            os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "..", "html", "done.html")
+            ),
             encoding="utf8",
         ) as f:
             html_source_bytes = f.read()
@@ -51,7 +53,9 @@ def _geetest_urlhandler(url, content_type):
         challenge = json_data["data"]["geetest"]["challenge"]
         key = json_data["data"]["token"]
         with open(
-            os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "html", "captcha.html")),
+            os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "..", "html", "captcha.html")
+            ),
             encoding="utf8",
         ) as f:
             html_source_bytes = (

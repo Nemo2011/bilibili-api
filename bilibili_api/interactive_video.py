@@ -82,7 +82,10 @@ class InteractiveVariable:
     """
     互动节点的变量
     """
-    def __init__(self, name, var_id, var_value, show: bool = False, random: bool = False):
+
+    def __init__(
+        self, name, var_id, var_value, show: bool = False, random: bool = False
+    ):
         """
         Args:
             name(str)     : 变量名
@@ -137,6 +140,7 @@ class InteractiveButton:
     """
     互动视频节点按钮类
     """
+
     def __init__(
         self, text, x, y, align: InteractiveButtonAlign = InteractiveButtonAlign.DEFAULT
     ):
@@ -177,6 +181,7 @@ class InteractiveJumpingCondition:
     """
     节点跳转的公式，只有公式成立才会跳转
     """
+
     def __init__(self, var: List[InteractiveVariable] = [], condition: str = "True"):
         """
         Args:
@@ -214,6 +219,7 @@ class InteractiveNode:
     """
     互动视频节点类
     """
+
     def __init__(
         self,
         video: InteractiveVideo,
@@ -255,7 +261,9 @@ class InteractiveNode:
                 random = True
             else:
                 random = False
-            var_list.append(InteractiveVariable(var_name, var_id, var_value, var_show, random))
+            var_list.append(
+                InteractiveVariable(var_name, var_id, var_value, var_show, random)
+            )
         return var_list
 
     async def get_children(self) -> List[InteractiveNode]:
@@ -348,15 +356,14 @@ class InteractiveNode:
         return await self.__parent.get_edge_info(self.__id)
 
     def __str__(self):
-        return (
-            f"{self.get_node_id()}"
-        )
+        return f"{self.get_node_id()}"
 
 
 class InteractiveGraph:
     """
     情节树类
     """
+
     def __init__(self, video: InteractiveVideo, skin: dict, root_cid: int):
         """
         Args:
@@ -397,6 +404,7 @@ class InteractiveVideo(Video):
     """
     互动视频类
     """
+
     def __init__(self, bvid=None, aid=None, credential=None):
         super().__init__(bvid, aid, credential)
 
@@ -551,7 +559,9 @@ class InteractiveVideo(Video):
         """
         return await super().get_download_url(cid, html5)
 
-    async def get_history_danmaku_index(self, date: datetime.date = None, cid: int = None):
+    async def get_history_danmaku_index(
+        self, date: datetime.date = None, cid: int = None
+    ):
         """
         获取视频下载信息。
 

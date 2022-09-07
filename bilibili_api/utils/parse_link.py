@@ -164,7 +164,10 @@ def check_short_name(name: str):
     elif name[:2].upper() == "BV":
         return (Video(bvid=name), ResourceType.VIDEO)
     elif name[:2].upper() == "ML":
-        return (FavoriteList(FavoriteListType.VIDEO, int(name[2:])), ResourceType.FAVORITE_LIST)
+        return (
+            FavoriteList(FavoriteListType.VIDEO, int(name[2:])),
+            ResourceType.FAVORITE_LIST,
+        )
     elif name[:3].upper() == "UID":
         return (User(int(name[3:])), ResourceType.USER)
     elif name[:2].upper() == "CV":
