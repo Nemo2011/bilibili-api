@@ -5,6 +5,7 @@ bilibili_api.interactive_video
 """
 
 import copy
+import datetime
 import enum
 from lib2to3.pytree import Node
 from typing import List
@@ -13,6 +14,7 @@ from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
 from .video import Video
 from urllib import parse
+from random import random as rand
 
 API = get_api("interactive_video")
 
@@ -31,7 +33,7 @@ class InteractiveNode:
 
 class InteractiveButtonAlign(enum.Enum):
     """
-    按钮的文字的位置
+    按钮的文字在按钮中的位置
 
 
     ``` text
@@ -77,22 +79,54 @@ class InteractiveNodeJumpingType(enum.Enum):
 
 
 class InteractiveVariable:
-    def __init__(self, name, var_id, var_value, show: bool = False):
+    """
+    互动节点的变量
+    """
+    def __init__(self, name, var_id, var_value, show: bool = False, random: bool = False):
+        """
+        Args:
+            name(str)     : 变量名
+            var_id(str)   : 变量 id
+            var_value(int): 变量的值
+            show(bool)    : 是否显示
+            random(bool)  : 是否为随机值
+        """
         self.__var_id = var_id
         self.__var_value = var_value
         self.__name = name
         self.__is_show = show
+        self.__random = random
 
     def get_id(self):
+        """
+        获取变量 id
+        """
         return self.__var_id
 
     def get_value(self):
+        """
+        获取变量数值
+        """
+        if self.is_random():
+            return rand(0, 100)
         return self.__var_value
 
     def is_show(self):
+        """
+        变量是否显示
+        """
         return self.__is_show
 
+    def is_random(self):
+        """
+        是否随机数值
+        """
+        return self.__random
+
     def get_name(self):
+        """
+        获取变量名
+        """
         return self.__name
 
     def __str__(self):
@@ -100,20 +134,39 @@ class InteractiveVariable:
 
 
 class InteractiveButton:
+    """
+    互动视频节点按钮类
+    """
     def __init__(
         self, text, x, y, align: InteractiveButtonAlign = InteractiveButtonAlign.DEFAULT
     ):
+        """
+        Args:
+            text(str): 文字
+            x(int)   : x 轴
+            y(int)   : y 轴
+            align(InteractiveButtonAlign): 按钮的文字在按钮中的位置
+        """
         self.__text = text
         self.__pos = (x, y)
         self.__align = align
 
     def get_text(self):
+        """
+        获取文字
+        """
         return self.__text
 
     def get_align(self):
+        """
+        获取按钮的文字在按钮中的位置
+        """
         return self.__align
 
     def get_pos(self):
+        """
+        获取按钮的位置
+        """
         return self.__pos
 
     def __str__(self):
@@ -121,11 +174,22 @@ class InteractiveButton:
 
 
 class InteractiveJumpingCondition:
-    def __init__(self, var: List[InteractiveVariable] = [], command: str = "True"):
+    """
+    节点跳转的公式，只有公式成立才会跳转
+    """
+    def __init__(self, var: List[InteractiveVariable] = [], condition: str = "True"):
+        """
+        Args:
+            var(List[InteractiveVariable]): 所有变量
+            condition(str)                : 公式
+        """
         self.__vars = var
-        self.__command = command
+        self.__command = condition
 
     def get_result(self):
+        """
+        计算公式获得结果
+        """
         if self.__command == "":
             return True
         command = copy.copy(self.__command)
@@ -147,23 +211,38 @@ class InteractiveJumpingCondition:
 
 
 class InteractiveNode:
+    """
+    互动视频节点类
+    """
     def __init__(
         self,
         video: InteractiveVideo,
         node_id: int,
         cid: int,
         button: InteractiveButton = None,
-        command: InteractiveJumpingCondition = InteractiveJumpingCondition(),
+        condition: InteractiveJumpingCondition = InteractiveJumpingCondition(),
         is_default: bool = False,
     ):
+        """
+        Args:
+            video(InteractiveVideo)               : 视频类
+            node_id(int)                          : 节点 id
+            cid(int)                              : CID
+            button(InteractiveButton)             : 对应的按钮
+            condition(InteractiveJumpingCondition): 跳转公式
+            is_default(bool)                      : 是不是默认的跳转的节点
+        """
         self.__parent = video
         self.__id = node_id
         self.__cid = cid
         self.__button = button
-        self.__jumping_command = command
+        self.__jumping_command = condition
         self.__is_default = is_default
 
     async def get_vars(self) -> List[InteractiveVariable]:
+        """
+        获取节点的所有变量
+        """
         edge_info = await self.__parent.get_edge_info(self.__id)
         node_vars = edge_info["hidden_vars"]
         var_list = []
@@ -172,9 +251,17 @@ class InteractiveNode:
             var_name = var["name"]
             var_show = var["is_show"]
             var_id = var["id_v2"]
-            var_list.append(InteractiveVariable(var_name, var_id, var_value, var_show))
+            if var["type"] == 2:
+                random = True
+            else:
+                random = False
+            var_list.append(InteractiveVariable(var_name, var_id, var_value, var_show, random))
+        return var_list
 
     async def get_children(self) -> List[InteractiveNode]:
+        """
+        获取节点的所有子节点
+        """
         edge_info = await self.__parent.get_edge_info(self.__id)
         nodes = []
         for node in edge_info["edges"]["questions"][0]["choices"]:
@@ -210,61 +297,106 @@ class InteractiveNode:
         return nodes
 
     def is_default(self):
+        """
+        是不是默认节点
+        """
         return self.__is_default
 
-    async def get_jumping_type(self) -> List[InteractiveNodeJumpingType]:
+    async def get_jumping_type(self) -> int:
+        """
+        获取子节点跳转方式
+        """
         edge_info = await self.__parent.get_edge_info(self.__id)
         return edge_info["edges"]["questions"][0]["type"]
 
     def get_node_id(self):
+        """
+        获取节点 id
+        """
         return self.__id
 
     def get_cid(self):
+        """
+        获取节点 cid
+        """
         return self.__cid
 
     def get_self_button(self):
+        """
+        获取节点对应的按钮
+        """
         if self.__button == None:
             return InteractiveButton("", -1, -1)
         return self.__button
 
-    def get_jumping_command(self):
+    def get_jumping_condition(self):
+        """
+        获取节点跳转的公式
+        """
         return self.__jumping_command
 
     def get_video(self):
+        """
+        获取节点对应的视频
+        """
         return self.__parent
 
     async def get_info(self):
+        """
+        获取节点的简介
+        """
         return await self.__parent.get_edge_info(self.__id)
 
     def __str__(self):
         return (
-            f"{self.get_node_id()} {self.get_cid()} {self.get_self_button().get_text()}"
+            f"{self.get_node_id()}"
         )
 
 
 class InteractiveGraph:
+    """
+    情节树类
+    """
     def __init__(self, video: InteractiveVideo, skin: dict, root_cid: int):
+        """
+        Args:
+            video(InteractiveVideo): 互动视频类
+            skin(dict)             : 样式
+            root_cid(int)          : 根节点 CID
+        """
         self.__parent = video
         self.__skin = skin
-        self.__node = InteractiveNode(self.__parent, 1, root_cid)
+        self.__node = InteractiveNode(self.__parent, None, root_cid)
 
     def get_video(self):
+        """
+        获取情节树对应视频
+        """
         return self.__parent
 
     def get_skin(self):
+        """
+        获取样式
+        """
         return self.__skin
 
     def get_root_node(self):
+        """
+        获取根节点
+        """
         return self.__node
 
     async def get_children(self):
+        """
+        获取子节点
+        """
         return await self.__node.get_children()
-
-    async def get_all_nodes(self):
-        pass
 
 
 class InteractiveVideo(Video):
+    """
+    互动视频类
+    """
     def __init__(self, bvid=None, aid=None, credential=None):
         super().__init__(bvid, aid, credential)
 
@@ -360,24 +492,71 @@ class InteractiveVideo(Video):
         return await request("GET", url, params, credential=credential)
 
     async def get_cid(self):
+        """
+        获取稿件 cid
+        """
         return await super().get_cid(0)
 
     async def get_pbp(self, cid: int):
+        """
+        获取高能进度条
+        Args:
+            cid(int) : 分 P 编码
+        """
         return await super().get_pbp(cid=cid)
 
-    async def get_danmaku_snapshot(self):
-        return await super().get_danmaku_snapshot()
-
     async def get_danmaku_view(self, cid: int = None):
+        """
+        获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
+
+        Args:
+            cid        (int, optional): 分 P 的 ID。Defaults to None
+        """
         return await super().get_danmaku_view(cid=cid)
 
     async def get_danmaku_xml(self, cid: int = None):
+        """
+        获取所有弹幕的 xml 源文件（非装填）
+
+        Args:
+            cid: cid
+        """
         return await super().get_danmaku_xml(cid=cid)
 
-    async def get_danmakus(self, cid: int = None):
-        return await super().get_danmakus(cid=cid)
+    async def get_danmakus(self, cid: int = None, date: datetime.date = None):
+        """
+        获取弹幕。
+
+        Args:
+            date (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+            cid (int, optional): 分 P 的 ID。Defaults to None
+        """
+        return await super().get_danmakus(cid=cid, date=date)
 
     async def get_graph(self):
+        """
+        获取稿件情节树
+        """
         edge_info = await self.get_edge_info(1)
         cid = await self.get_cid()
         return InteractiveGraph(self, edge_info["edges"]["skin"], cid)
+
+    async def get_download_url(self, cid: int = None, html5: bool = False):
+        """
+        获取视频下载信息。
+
+        Args:
+            cid (int, optional) : 分 P 的 ID。Defaults to None
+            html5 (bool, optional): 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。
+        """
+        return await super().get_download_url(cid, html5)
+
+    async def get_history_danmaku_index(self, date: datetime.date = None, cid: int = None):
+        """
+        获取视频下载信息。
+
+        Args:
+            cid (int, optional) : 分 P 的 ID。Defaults to None
+            date (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+        """
+        return await super().get_history_danmaku_index(date, cid)

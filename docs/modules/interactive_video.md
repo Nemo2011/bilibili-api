@@ -4,7 +4,232 @@
 from bilibili_api import interactive_video
 ```
 
-## async def up_submit_story_tree()
+## class InteractiveButtonAlign
+
+**Extends: enum.Enum**
+
+按钮的文字在按钮中的位置
+
+``` text
+-----
+|xxx|----o (TEXT_LEFT)
+-----
+
+     -----
+o----|xxx| (TEXT_RIGHT)
+     -----
+
+----------
+|XXXXXXXX| (DEFAULT)
+----------
+```
+
+- DEFAULT
+- TEXT_UP
+- TEXT_RIGHT
+- TEXT_DOWN
+- TEXT_LEFT
+
+---
+
+## class InteractiveNodeJumpingType
+
+**Extends: enum.Enum**
+
+对下一节点的跳转的方式
+
+- ASK    : 选择
+- DEFAULT: 跳转到默认节点
+- READY  : 选择(只有一个选择)
+
+---
+
+## class InteractiveVariable
+
+互动节点的变量
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| name | str | 变量名 |
+| var_id | str | 变量 id |
+| var_value | int | 变量的值 |
+| show | bool | 是否显示 |
+| random | bool | 是否随机值 |
+
+#### def get_id()
+
+获取变量 id
+
+#### def get_value()
+
+获取变量数值
+
+#### def is_show()
+
+变量是否显示
+
+#### def is_random()
+
+是否随机数值
+
+#### def get_name()
+
+获取变量名
+
+---
+
+## class InteractiveButton
+
+互动视频节点按钮类
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| text | str | 文字 |
+| x | int | X 轴 |
+| y | int | Y 轴 |
+| align | InteractiveButtonAlign | 按钮的文字在按钮中的位置 |
+
+#### def get_text()
+
+获取文字
+
+#### def get_align()
+
+获取按钮的文字在按钮中的位置
+
+#### def get_pos()
+
+获取按钮的位置
+
+---
+
+## class InteractiveJumpingCondition
+
+节点跳转的公式，只有公式成立才会跳转
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| var | List[InteractiveVariable] | 所有变量 |
+| condition | str | 公式 |
+
+#### def get_result()
+
+计算公式获得结果
+
+---
+
+## class InteractiveNode
+
+互动视频节点类
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| video | InteractiveVideo | 视频类 |
+| node_id | int | 节点 id |
+| cid | int | CID |
+| button | InteractiveButton | 对应的按钮 |
+| condition | InteractiveJumpingCondition | 跳转公式 |
+| is_default | bool | 是不是默认的跳转的节点 |
+
+#### async def get_vars()
+
+获取节点的所有变量
+
+#### async def get_children()
+
+获取节点的所有子节点
+
+#### def is_default()
+
+是不是默认节点
+
+#### async def get_jumping_type()
+
+获取子节点跳转方式
+
+#### def get_node_id()
+
+获取节点 id
+
+#### def get_cid()
+
+获取节点 cid
+
+#### def get_self_button()
+
+获取节点对应的按钮
+
+#### def get_jumping_condition()
+
+获取节点跳转的公式
+
+#### def get_video()
+
+获取节点对应的视频
+
+#### async def get_info()
+
+获取节点的简介
+
+---
+
+## class InteractiveGraph
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| video | InteractiveVideo | 互动视频类 |
+| skin | dict | 样式 |
+| root_cid | int | 根节点 CID |
+
+#### def get_video()
+
+获取情节树对应视频
+
+#### def get_skin()
+
+获取样式
+
+#### def get_root_node()
+
+获取根节点
+
+#### async def get_children()
+
+获取子节点
+
+--- 
+
+## class InteractiveVideo
+
+**Extends: bilibili_api.video.Video**
+
+番剧剧集类
+
+### Functions
+
+**这里仅列出新增的或重写过的函数，Video 类的其他函数都可使用**
+
+#### async def up_submit_story_tree()
 | name       | type                 | description                                       |
 | ---------- | -------------------- | ------------------------------------------------- |
 | story_tree | str                  | 情节树的描述。参考 bilibili_storytree.StoryGraph  |
@@ -14,9 +239,7 @@ from bilibili_api import interactive_video
 
 **Returns:** API 调用返回结果。
 
----
-
-## async def up_get_ivideo_pages()
+#### async def up_get_ivideo_pages()
 | name       | type                 | description                           |
 | ---------- | -------------------- | ------------------------------------- |
 | bvid       | str                  | BV 号。                               |
@@ -26,9 +249,7 @@ from bilibili_api import interactive_video
 
 **Returns:** API 调用返回结果。
 
----
-
-## async def get_graph_version()
+#### async def get_graph_version()
 
 | name       | type                 | description             |
 | ---------- | -------------------- | ----------------------- |
@@ -39,9 +260,7 @@ from bilibili_api import interactive_video
 
 **Returns:** API 调用返回结果
 
----
-
-## async def get_edge_info()
+#### async def get_edge_info()
 
 | name       | type                 | description                                          |
 | ---------- | -------------------- | ---------------------------------------------------- |
@@ -53,4 +272,64 @@ from bilibili_api import interactive_video
 
 **Returns:** API 调用返回结果
 
----
+#### async def get_graph()
+
+获取视频对应情节树。
+
+**Returns:** InteractiveGraph: 情节树
+
+
+#### async def get_download_url()
+
+| name | type | description |
+| - | - | - |
+| cid | int | 分 P 的 ID |
+
+获取番剧下载链接
+
+**Returns:** API 调用返回结果。
+
+
+#### async def get_danmaku_view()
+
+| name | type | description |
+| - | - | - |
+| cid | int | 分 P 的 ID |
+
+获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
+
+
+**Returns:** API 调用返回结果。
+
+
+#### async def get_danmakus()
+
+| name       | type                    | description                                               |
+| ---------- | ----------------------- | --------------------------------------------------------- |
+| cid | int | 分 P 的 ID |
+| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+
+获取弹幕
+
+**Returns:** API 调用返回结果。
+
+#### async def get_danmaku_xml()
+
+| name | type | description |
+| - | - | - |
+| cid | int | 分 P 的 ID |
+
+获取所有弹幕的 xml 源文件（非装填的弹幕）
+
+**Returns:** API 调用返回结果。
+
+#### async def get_history_danmaku_index()
+
+| name       | type                    | description                                               |
+| ---------- | ----------------------- | --------------------------------------------------------- |
+| cid | int | 分 P 的 ID |
+| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+
+获取特定月份存在历史弹幕的日期。
+
+**Returns**: None | List[str]: 调用 API 返回的结果。不存在时为 None。
