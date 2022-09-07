@@ -103,10 +103,10 @@ async def make_ass_file_subtitle(
     for subtitle in json_files:
         if subtitle["lan_doc"] == name:
             url = subtitle["subtitle_url"]
-            async with get_session().request("GET", url) as req:
-                file_dir = gettempdir() + "/" + "subtitle.json"
-                with open(file_dir, "wb") as f:
-                    f.write(await req.content.read())
+            req = await get_session().request("GET", url)
+            file_dir = gettempdir() + "/" + "subtitle.json"
+            with open(file_dir, "wb") as f:
+                f.write(req.content)
             export_ass_from_json(file_dir, out)
             return
     raise ValueError("没有找到指定字幕")
