@@ -1,0 +1,42 @@
+{
+    "session": {
+      "fetch": {
+        "url": "https://api.vc.bilibili.com/svr_sync/v1/svr_sync/fetch_session_msgs",
+        "method": "GET",
+        "verify": true,
+        "params": {
+          "talker_id": "int: 私聊用户 UID",
+          "session_type": "int: 未知作用，默认：1",
+          "begin_seqno": "int: 起始 Seqno 可由具体消息获得"
+        },
+        "comment": "获取指定用户的近三十条消息"
+      },
+      "new": {
+        "url": "https://api.vc.bilibili.com/session_svr/v1/session_svr/new_sessions",
+        "method": "GET",
+        "verify": true,
+        "params": {
+          "begin_ts": "int: 起始时间戳"
+        },
+        "comment": "获取新消息"
+      }
+    },
+    "operate": {
+      "send_msg": {
+        "url": "https://api.vc.bilibili.com/web_im/v1/web_im/send_msg",
+        "method": "POST",
+        "verify": true,
+        "data": {
+          "msg[sender_uid]": "int: 自己的 UID",
+          "msg[receiver_id]": "int: 对方 UID",
+          "msg[receiver_type]": "const int: 1",
+          "msg[msg_type]": "const int: 1",
+          "msg[msg_status]": "const int: 0",
+          "msg[content]": {
+            "content": "str: 文本内容"
+          }
+        },
+        "comment": "给用户发信息"
+      }
+    }
+  }
