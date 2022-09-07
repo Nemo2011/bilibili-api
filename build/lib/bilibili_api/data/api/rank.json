@@ -1,0 +1,40 @@
+{
+    "info": {
+        "hot": {
+            "url": "https://api.bilibili.com/x/web-interface/popular",
+            "verify": false,
+            "comment": "小破站的热门视频排行"
+        },
+        "weakly_series": {
+            "url": "https://api.bilibili.com/x/web-interface/popular/series/list",
+            "verify": false,
+            "comment": "小破站每周必看全部信息（简介）"
+        },
+        "weakly_details": {
+            "url": "https://api.bilibili.com/x/web-interface/popular/series/one",
+            "verify": false,
+            "params": {
+                "number": "int: 第几周"
+            },
+            "comment": "小破站每周必看一期的详细信息"
+        },
+        "history_popular": {
+            "url": "https://api.bilibili.com/x/web-interface/popular/precious",
+            "verify": false,
+            "params": {
+                "page_size": "int: 就设置 85 好了（每页的大小）",
+                "page": "int: 页码"
+            },
+            "comment": "获取入站必刷 85 个视频"
+        },
+        "ranking": {
+            "url": "https://api.bilibili.com/x/web-interface/ranking/v2",
+            "verify": false,
+            "params": {
+                "rid": "int: 频道的 tid",
+                "type": "string: all"
+            },
+            "comment": "获取各个分区的排行榜"
+        }
+    }
+}
