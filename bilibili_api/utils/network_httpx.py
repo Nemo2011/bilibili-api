@@ -21,6 +21,7 @@ from .. import settings
 __session_pool = {}
 last_proxy = ""
 
+
 @atexit.register
 def __clean():
     """
@@ -38,6 +39,7 @@ def __clean():
         loop.run_until_complete(__clean_task())
     else:
         loop.create_task(__clean_task())
+
 
 async def request(
     method: str,

@@ -85,7 +85,9 @@ class Danmaku:
         self.id_str = id_str
         self.action = action
         self.mode = mode.value if isinstance(mode, DmMode) else mode
-        self.font_size = font_size.value if isinstance(font_size, DmFontSize) else font_size
+        self.font_size = (
+            font_size.value if isinstance(font_size, DmFontSize) else font_size
+        )
         self.is_sub = is_sub
         self.pool = pool
         self.attr = attr
@@ -117,21 +119,21 @@ class Danmaku:
         获取弹幕信息
         """
         return {
-            "text": self.text, 
-            "dm_time": self.dm_time, 
-            "send_time": self.send_time, 
-            "crc32_id": self.crc32_id, 
-            "color": self.color, 
-            "weight": self.weight, 
-            "id": self.id_, 
-            "id_str": self.id_str, 
-            "action": self.action, 
-            "mode": self.mode, 
-            "font_size": self.font_size, 
-            "is_sub": self.is_sub, 
-            "pool": self.pool, 
-            "attr": self.attr, 
-            "uid": self.uid
+            "text": self.text,
+            "dm_time": self.dm_time,
+            "send_time": self.send_time,
+            "crc32_id": self.crc32_id,
+            "color": self.color,
+            "weight": self.weight,
+            "id": self.id_,
+            "id_str": self.id_str,
+            "action": self.action,
+            "mode": self.mode,
+            "font_size": self.font_size,
+            "is_sub": self.is_sub,
+            "pool": self.pool,
+            "attr": self.attr,
+            "uid": self.uid,
         }
 
     def to_xml(self):
