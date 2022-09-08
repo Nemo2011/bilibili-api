@@ -311,16 +311,6 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-#### async def send_msg()
-
-| name | type | description |
-| ---- | ---- | ----------- |
-| text | str  | 信息内容。  |
-
-给用户发送私聊信息。目前仅支持纯文本。
-
-**Returns:** 调用接口返回的内容。
-
 ---
 
 ## async def get_self_info()
