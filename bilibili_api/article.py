@@ -51,19 +51,20 @@ ARTICLE_COLOR_MAP = {
 }
 
 
-async def get_article_list(rlid: int, credential: Credential = None):
-    """
-    获取专栏文集文章列表
+class ArticleList:
+    def __init__(self, rlid: int, credential: Credential = None):
+        self.__rlid = rlid
+        self.credential = credential
 
-    Args:
-        rlid       (int)                 : 文集 ID，如 https: //www.bilibili.com/read/readlist/rl000010 省略前导 0
-        credential (Credential, optional): 凭据. Defaults to None.
-    """
-    credential = credential if credential is not None else Credential()
+    async def get_content(self):
+        """
+        获取专栏文集文章列表
+        """
+        credential = self.credential if self.credential is not None else Credential()
 
-    api = API["info"]["list"]
-    params = {"id": rlid}
-    return await request("GET", api["url"], params, credential=credential)
+        api = API["info"]["list"]
+        params = {"id": self.__rlid}
+        return await request("GET", api["url"], params, credential=credential)
 
 
 class Article:
