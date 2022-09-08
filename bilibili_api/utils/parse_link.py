@@ -4,27 +4,27 @@ bilibili_api.utils.parse_link
 链接资源解析。
 """
 
-from enum import Enum
 import json
+import re
+from enum import Enum
+
 import httpx
 
-from .utils import get_api
-from ..article import Article
+from ..article import Article, ArticleList
 from ..audio import Audio, AudioList
-
 from ..bangumi import Bangumi, Episode
 from ..cheese import CheeseList, CheeseVideo
-from ..live import LiveRoom
-from ..user import User, ChannelSeriesType, ChannelSeries
-from .Credential import Credential
-from .sync import sync
-from ..user import get_self_info
-from .short import get_real_url
-from ..video import Video
-from ..favorite_list import FavoriteList, FavoriteListType, get_video_favorite_list
 from ..exceptions import *
-
-import re
+from ..favorite_list import (FavoriteList, FavoriteListType,
+                             get_video_favorite_list)
+from ..interactive_video import InteractiveVideo
+from ..live import LiveRoom
+from ..user import ChannelSeries, ChannelSeriesType, User, get_self_info
+from ..video import Video
+from .Credential import Credential
+from .short import get_real_url
+from .sync import sync
+from .utils import get_api
 
 
 class ResourceType(Enum):
@@ -46,6 +46,7 @@ class ResourceType(Enum):
     """
 
     VIDEO = "video"
+    INTERACTIVE_VIDEO = "interactive_video"
     BANGUMI = "bangumi"
     EPISODE = "episode"
     FAVORITE_LIST = "favorite_list"
@@ -56,6 +57,7 @@ class ResourceType(Enum):
     USER = "user"
     LIVE = "live"
     CHANNEL_SERIES = "channel_series"
+    ARTICLE_LIST = "article_list"
 
 
 async def parse_link(url, credential: Credential = Credential()):
@@ -82,7 +84,7 @@ async def parse_link(url, credential: Credential = Credential()):
     try:
         obj = None
 
-        sobj = check_short_name(url)
+        sobj = check_short_name(url, credential)
         if sobj != -1:
             sobj[0].credential = credential
             return sobj
@@ -107,9 +109,12 @@ async def parse_link(url, credential: Credential = Credential()):
             else:
                 return (User(info["mid"], credential=credential), ResourceType.USER)
         obj = None
-        video = parse_video(url)
+        video = parse_video(url, credential)
         if not video == -1:
-            obj = (video, ResourceType.VIDEO)
+            if isinstance(video, InteractiveVideo):
+                obj = (video, ResourceType.INTERACTIVE_VIDEO)
+            else:
+                obj = (video, ResourceType.VIDEO)
         bangumi = parse_bangumi(url)
         if not bangumi == -1:
             obj = (bangumi, ResourceType.BANGUMI)
@@ -131,6 +136,9 @@ async def parse_link(url, credential: Credential = Credential()):
         article = parse_article(url)
         if not article == -1:
             obj = (article, ResourceType.ARTICLE)
+        article_list = parse_article_list(url)
+        if not article_list == -1:
+            obj = (article_list, ResourceType.ARTICLE_LIST)
         user = parse_user(url)
         if not user == -1:
             obj = (user, ResourceType.USER)
@@ -148,7 +156,7 @@ async def parse_link(url, credential: Credential = Credential()):
         return -1
 
 
-def check_short_name(name: str):
+def check_short_name(name: str, credential: Credential):
     """
     解析:
       - avxxxxxxxxxx
@@ -158,11 +166,40 @@ def check_short_name(name: str):
       - cvxxxxxxxxxx
       - auxxxxxxxxxx
       - amxxxxxxxxxx
+      - rlxxxxxxxxxx
     """
     if name[:2].upper() == "AV":
-        return (Video(aid=int(name[2:])), ResourceType.VIDEO)
+        v = (Video(aid=int(name[2:])))
+        info = json.loads(
+            httpx.get(
+                "https://api.bilibili.com/x/web-interface/view", 
+                params={
+                    "bvid": v.get_bvid()
+                }, 
+                cookies=credential.get_cookies()
+            ).text
+        )
+        is_interactive = info["data"]["rights"]["is_stein_gate"]
+        if is_interactive == 1:
+            return (InteractiveVideo(v.get_bvid()), ResourceType.INTERACTIVE_VIDEO)
+        else:
+            return (v, ResourceType.VIDEO)
     elif name[:2].upper() == "BV":
-        return (Video(bvid=name), ResourceType.VIDEO)
+        v = (Video(bvid=name))
+        info = json.loads(
+            httpx.get(
+                "https://api.bilibili.com/x/web-interface/view", 
+                params={
+                    "bvid": v.get_bvid()
+                }, 
+                cookies=credential.get_cookies()
+            ).text
+        )
+        is_interactive = info["data"]["rights"]["is_stein_gate"]
+        if is_interactive == 1:
+            return (InteractiveVideo(v.get_bvid()), ResourceType.INTERACTIVE_VIDEO)
+        else:
+            return (v, ResourceType.VIDEO)
     elif name[:2].upper() == "ML":
         return (
             FavoriteList(FavoriteListType.VIDEO, int(name[2:])),
@@ -176,11 +213,13 @@ def check_short_name(name: str):
         return (Audio(int(name[2:])), ResourceType.AUDIO)
     elif name[:2].upper() == "AM":
         return (AudioList(int(name[2:])), ResourceType.AUDIO_LIST)
+    elif name[:2].upper() == "RL":
+        return (ArticleList(int(name[2:])), ResourceType.ARTICLE_LIST)
     else:
         return -1
 
 
-def parse_video(url):
+def parse_video(url, credential: Credential):
     """
     解析视频,如果不是返回 -1，否则返回对应类
     """
@@ -188,12 +227,26 @@ def parse_video(url):
         last_part = url[31:]
         if last_part[:2].upper() == "AV":
             aid = int(last_part[2:].replace("/", ""))
-            return Video(aid=aid)
+            v = Video(aid=aid)
         elif last_part[:2].upper() == "BV":
             bvid = "BV" + last_part[2:].replace("/", "")
-            return Video(bvid=bvid)
+            v = Video(bvid=bvid)
         else:
             return -1
+        info = json.loads(
+            httpx.get(
+                "https://api.bilibili.com/x/web-interface/view", 
+                params={
+                    "bvid": v.get_bvid()
+                }, 
+                cookies=credential.get_cookies()
+            ).text
+        )
+        is_interactive = info["data"]["rights"]["is_stein_gate"]
+        if is_interactive == 1:
+            return InteractiveVideo(v.get_bvid())
+        else:
+            return v
     else:
         return -1
 
@@ -426,3 +479,10 @@ def parse_space_favorite_list(url, credential):
     else:
         return -1
     return -1
+
+def parse_article_list(url):
+    if url[:41] == "https://www.bilibili.com/read/readlist/rl":
+        last_part = int(url[41:].replace("/", ""))
+        return ArticleList(last_part)
+    else:
+        return -1
