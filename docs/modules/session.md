@@ -42,9 +42,11 @@ from bilibili_api import session
 
 #### async def send_msg()
 
-| name | type | description |
-| ---- | ---- | ----------- |
-| text | str  | 信息内容。  |
+| name        | type       | description |
+| ----------- | ---------- | ----------- |
+| credential  | Credential | 凭证        |
+| receiver_id | int        | 接收者 UID  |
+| text        | str        | 信息内容。  |
 
 给用户发送私聊信息。目前仅支持纯文本。
 
