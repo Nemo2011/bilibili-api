@@ -4,6 +4,7 @@ from bilibili_api import article
 from .common import get_credential
 
 ar = article.Article(1, get_credential())
+al = article.ArticleList(10, get_credential())
 
 async def test_a_markdown_get_content():
     await ar.fetch_content()
@@ -38,7 +39,7 @@ async def test_f_get_info():
     return await ar.get_info()
 
 async def test_g_get_article_list():
-    return await article.get_article_list(10)
+    return await al.get_content()
 
 async def after_all():
     await ar.set_like(False)
