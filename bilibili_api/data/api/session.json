@@ -19,6 +19,20 @@
           "begin_ts": "int: 起始时间戳"
         },
         "comment": "获取新消息"
+      },
+      "get": {
+        "url": "https://api.vc.bilibili.com/session_svr/v1/session_svr/get_sessions",
+        "method": "GET",
+        "verify": true,
+        "params": {
+          "session_type": "int: 1: 私聊, 2: 通知, 3: 应援团, 4: 全部",
+          "group_fold": "int: 默认为 1",
+          "unfollow_fold": "int: 默认为 0",
+          "sort_rule": "int: 默认为 2",
+          "build": "int: 默认为 0",
+          "mobi_app": "web"
+        },
+        "comment": "获取已有消息"
       }
     },
     "operate": {
