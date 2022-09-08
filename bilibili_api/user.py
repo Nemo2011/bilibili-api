@@ -470,41 +470,6 @@ class User:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def send_msg(self, text: str):
-        """
-        给用户发送私聊信息。目前仅支持纯文本。
-
-        Args:
-            text (str): 信息内容。
-
-        Returns:
-            dict: 调用接口返回的内容。
-        """
-        self.credential.raise_for_no_sessdata()
-        self.credential.raise_for_no_bili_jct()
-
-        api = API["operate"]["send_msg"]
-        self_info = await self.__get_self_info()
-        sender_uid = self_info["mid"]
-
-        data = {
-            "msg[sender_uid]": sender_uid,
-            "msg[receiver_id]": self.uid,
-            "msg[receiver_type]": 1,
-            "msg[msg_type]": 1,
-            "msg[msg_status]": 0,
-            "msg[content]": json.dumps({"content": text}),
-            "msg[dev_id]": "B9A37BF3-AA9D-4076-A4D3-366AC8C4C5DB",
-            "msg[new_face_version]": "0",
-            "msg[timestamp]": int(time.time()),
-            "from_filework": 0,
-            "build": 0,
-            "mobi_app": "web",
-        }
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
-
     async def get_channel_videos_series(self, sid: int, pn: int = 1, ps: int = 100):
         """
         查看频道内所有视频。仅供 series_list。
