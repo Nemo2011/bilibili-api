@@ -265,6 +265,16 @@
       },
       "comment": "用户关系操作"
     },
+    "del_channel_aids_series": {
+      "url": "https://api.bilibili.com/x/series/series/delArchives",
+      "method": "POST",
+      "verity": true,
+      "params": {
+        "mid": "int: uid",
+        "series_id": "int: series_id",
+        "aids": "int: aid 列表"
+      }
+    },
     "del_channel_series": {
       "url": "https://api.bilibili.com/x/series/series/delete",
       "method": "POST",
