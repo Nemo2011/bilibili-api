@@ -54,7 +54,7 @@ async def test(module):
         except Exception as e:
             print(f"{Fore.RED} before_all() 报错：{Fore.RESET}")
             print(traceback.format_exc())
-            result["failed_items"].append(f"{module.__name__}.before_all()")
+            result["failed_items"].append(f"{module.__name__}.before_all")
             result["failed"] += 1
             return result
 
@@ -85,7 +85,7 @@ async def test(module):
         except Exception as e:
             print(f"{Fore.RED} after_all() 报错：{Fore.RESET}")
             print(traceback.format_exc())
-            result["failed_items"].append(f"{module.__name__}.after_all()")
+            result["failed_items"].append(f"{module.__name__}.after_all")
             result["failed"] += 1
             return result
 
