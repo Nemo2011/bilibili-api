@@ -3,6 +3,7 @@ import datetime
 import json
 import logging
 import time
+from dataclasses import dataclass
 
 import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -88,6 +89,8 @@ async def send_msg(credential: Credential, receiver_id: int, text: str):
     给用户发送私聊信息。目前仅支持纯文本。
 
     Args:
+        credential (Credential): 凭证
+        receiver_id (int): 接收者 UID
         text (str): 信息内容。
 
     Returns:
@@ -118,19 +121,14 @@ async def send_msg(credential: Credential, receiver_id: int, text: str):
         "POST", url=api["url"], data=data, credential=credential
     )
 
-class Picture:  # 我老想用 TypedDict 了 但是 TypedDict 太高级了 低版本没有
+@dataclass
+class Picture:
     height:     int
     imageType:  str
     original:   int
     size:       str
     url:        str
     width:      int
-
-    def __init__(self, kwargs: dict):
-        self.__dict__.update(kwargs)
-    
-    def __str__(self):
-        return repr(self)[:-1] + f', width={self.width}, height={self.height}>'
 
     async def download(self, filepath: str = ''):
         if not filepath:
@@ -233,7 +231,7 @@ class Event:
             self.content = str(content)
 
         elif mt == Event.PICTURE or mt == Event.GROUPS_PICTURE:
-            self.content = Picture(content)
+            self.content = Picture(**content)
         
         elif mt == Event.SHARE_VIDEO or mt == Event.PUSHED_VIDEO:
             self.content = Video(bvid=content.get('bvid'), aid=content.get('id'))
@@ -319,7 +317,7 @@ class Session(AsyncEvent):
                 done, pending = await asyncio.wait(pending)
                 for done_task in done:
                     result: dict = await done_task
-                    if result is None:
+                    if result is None or result.get('messages') is None:
                         continue
                     for message in result.get('messages', [])[::-1]:
                         event = Event(message, self.uid)
