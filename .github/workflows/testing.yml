@@ -33,4 +33,5 @@ jobs:
           BILI_BUVID3: ${{ secrets.BILI_BUVID3 }}
           BILI_PHONE: ${{ secrets.BILI_PHONE }}
           BILI_PASSWORD: ${{ secrets.BILI_PASSWORD }}
+          BILI_DEDEUSERID: ${{ secrets.BILI_DEDEUSERID }}
         run: "python -m tests.main -a"
