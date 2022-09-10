@@ -4,7 +4,7 @@ from typing import List
 from .common import get_credential
 from bilibili_api import interactive_video
 
-v = interactive_video.InteractiveVideo(aid=73267982, credential=get_credential())
+v = interactive_video.InteractiveVideo("BV1Dt411N7LY", credential=get_credential())
 
 graph_version = None
 
