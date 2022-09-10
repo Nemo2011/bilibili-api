@@ -191,12 +191,12 @@ class Episode(Video):
         epid: epid
         credential: 凭据
         """
-        credential = self.credential if self.credential else Credential()
         self.credential = credential
+        credential = self.credential if self.credential else Credential()
         self.__epid = epid
         try:
             resp = httpx.get(
-                f"https://www.bilibili.com/bangumi/play/ep{self.epid}",
+                f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
                 cookies=credential.get_cookies(),
                 headers={"User-Agent": "Mozilla/5.0"},
             )
