@@ -71,9 +71,9 @@ class Comment:
             rpid       (int)         : 评论 ID。
             credential (Credential)  : Credential 类。
         """
-        self.oid = oid
-        self.rpid = rpid
-        self.type_ = type_
+        self.__oid = oid
+        self.__rpid = rpid
+        self.__type = type_
         self.credential = credential
 
     def __get_data(self, status: bool):
@@ -87,11 +87,29 @@ class Comment:
             dict: 请求载荷数据。
         """
         return {
-            "oid": self.oid,
-            "type": self.type_.value,
-            "rpid": self.rpid,
+            "oid": self.__oid,
+            "type": self.__type.value,
+            "rpid": self.__rpid,
             "action": 1 if status else 0,
         }
+
+    def get_rpid(self):
+        """
+        获取 rpid
+        """
+        return self.__rpid
+
+    def get_type(self):
+        """
+        获取所在资源
+        """
+        return self.__type
+
+    def get_oid(self):
+        """
+        获取资源 OID
+        """
+        return self.__oid
 
     async def like(self, status: bool = True):
         """
@@ -181,9 +199,9 @@ class Comment:
         params = {
             "pn": page_index,
             "ps": 10,
-            "type": self.type_.value,
-            "oid": self.oid,
-            "root": self.rpid,
+            "type": self.__type.value,
+            "oid": self.__oid,
+            "root": self.__rpid,
         }
 
         return await request(

@@ -78,6 +78,12 @@ from bilibili_api import dynamic
 
 动态类
 
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+
 ### Functions
 
 #### def \_\_init\_\_()
@@ -86,6 +92,10 @@ from bilibili_api import dynamic
 | ---------- | ---------- | ----------- |
 | dynamic_id | int        | 动态 ID     |
 | credential | Credential | 凭据        |
+
+#### def get_dynamic_id()
+
+获取 dynamic_id
 
 #### async def get_info()
 

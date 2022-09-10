@@ -15,6 +15,12 @@ from bilibili_api import cheese
 season_id(int): ssid
 ep_id(int): 单集 ep_id
 
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+
 ### Functions
 
 #### def \_\_init\_\_()
@@ -72,6 +78,13 @@ ep_id(int): 单集 ep_id
 ***
 
 ## class CheeseVideo()
+
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+| cheese | CheeseList | 对应的课程 |
 
 #### def \_\_init\_\_()
 

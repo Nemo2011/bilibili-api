@@ -136,6 +136,12 @@ from bilibili_api import session
 
 会话类，用来开启消息监听。
 
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+
 ### Functions
 
 #### def \_\_init\_\_()

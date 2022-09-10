@@ -83,8 +83,11 @@ class Article:
             credential if credential is not None else Credential()
         )
         self.__meta = None
-        self.cvid = cvid
+        self.__cvid = cvid
         self.__has_parsed: bool = False
+
+    def get_cvid(self):
+        return self.__cvid
 
     def markdown(self):
         """
@@ -380,7 +383,7 @@ class Article:
         """
 
         api = API["info"]["view"]
-        params = {"id": self.cvid}
+        params = {"id": self.__cvid}
         return await request(
             "GET", api["url"], params=params, credential=self.credential
         )
@@ -393,7 +396,7 @@ class Article:
             API 调用返回结果。
         """
         sess = get_session()
-        resp = await sess.get(f"https://www.bilibili.com/read/cv{self.cvid}")
+        resp = await sess.get(f"https://www.bilibili.com/read/cv{self.__cvid}")
         html = resp.text
 
         match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", html, re.I)
@@ -415,7 +418,7 @@ class Article:
         self.credential.raise_for_no_sessdata()
 
         api = API["operate"]["like"]
-        data = {"id": self.cvid, "type": 1 if status else 2}
+        data = {"id": self.__cvid, "type": 1 if status else 2}
         return await request("POST", api["url"], data=data, credential=self.credential)
 
     async def set_favorite(self, status: bool = True):
@@ -431,7 +434,7 @@ class Article:
             API["operate"]["add_favorite"] if status else API["operate"]["del_favorite"]
         )
 
-        data = {"id": self.cvid}
+        data = {"id": self.__cvid}
         return await request("POST", api["url"], data=data, credential=self.credential)
 
     async def add_coins(self):
@@ -442,7 +445,7 @@ class Article:
 
         upid = (await self.get_info())["mid"]
         api = API["operate"]["coin"]
-        data = {"aid": self.cvid, "multiply": 1, "upid": upid, "avtype": 2}
+        data = {"aid": self.__cvid, "multiply": 1, "upid": upid, "avtype": 2}
         return await request("POST", api["url"], data=data, credential=self.credential)
 
 

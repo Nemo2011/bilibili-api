@@ -63,6 +63,13 @@ from bilibili_api import live
 
 直播类，获取各种直播间的操作均在里边。
 
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+| room_display_id | 房间展示 ID |
+
 ### Functions
 
 #### def \_\_init\_\_()

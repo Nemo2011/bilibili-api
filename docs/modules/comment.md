@@ -44,6 +44,12 @@ from bilibili_api import comment
 
 对单条评论的相关操作
 
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+
 ### Functions
 
 #### def \_\_init\_\_()
@@ -54,6 +60,18 @@ from bilibili_api import comment
 | type\_      | CommentResourceType | 评论所在资源类型枚举。 |
 | rpid       | int          | 评论 ID。              |
 | credential | Credential   | 凭据                   |
+
+#### def get_oid()
+
+获取 OID
+
+#### def get_type()
+
+获取所在资源类型
+
+#### def get_rpid()
+
+获取 rpid
 
 #### async def like()
 

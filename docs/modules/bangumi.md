@@ -23,6 +23,12 @@ from bilibili_api import bangumi
 
 番剧类
 
+### Atrributes
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
 ### Functions
 
 #### def \_\_init\_\_()
@@ -122,6 +128,14 @@ from bilibili_api import bangumi
 **Extends: bilibili_api.video.Video**
 
 番剧剧集类
+
+### Atrributes
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+| video_class | Video | 对应视频 |
+| bangumi | Bangumi | 对应番剧 |
 
 ### Functions
 
