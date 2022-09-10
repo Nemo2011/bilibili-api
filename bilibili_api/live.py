@@ -383,13 +383,13 @@ class LiveRoom:
 
         api = API["operate"]["send_danmaku"]
         data = {
-            "mode": danmaku.mode.value,
+            "mode": danmaku.mode,
             "msg": danmaku.text,
             "roomid": self.room_display_id,
             "bubble": 0,
             "rnd": int(time.time()),
             "color": int(danmaku.color, 16),
-            "fontsize": danmaku.font_size.value,
+            "fontsize": danmaku.font_size,
         }
         return await request(
             api["method"], api["url"], data=data, credential=self.credential
