@@ -60,7 +60,13 @@ async def test_e_Video_get_tags():
 
 
 async def test_f_Video_get_download_url():
-    return await video.get_download_url(0)
+    try:
+        return await video.get_download_url(0)
+    except ResponseCodeException as e:
+        if e.code == -404:
+            return e.raw
+        else:
+            raise e
 
 
 async def test_g_Video_get_chargers():
