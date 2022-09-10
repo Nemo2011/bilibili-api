@@ -1,9 +1,11 @@
 import asyncio
 import datetime
+import enum
 import json
 import logging
 import time
 from dataclasses import dataclass
+from typing import Union
 
 import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -170,7 +172,7 @@ class Event:
     msg_type:      int
     msg_key:       int
     timestamp:     int
-    content:       int | str | Picture | Video
+    content:       Union[str, int, Picture, Video]
 
     TEXT = '1'
     PICTURE = '2'

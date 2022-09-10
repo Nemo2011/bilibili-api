@@ -4,32 +4,28 @@ bilibili_api.interactive_video
 互动视频相关操作
 """
 
+# pylint: skip-file
+
 import copy
 import datetime
 import enum
 from lib2to3.pytree import Node
-from typing import List
+from typing import List, TypeVar
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
 from .video import Video
 from urllib import parse
-from random import random as rand
+from random import randint as rand
 
 API = get_api("interactive_video")
 
 
-class InteractiveVideo(Video):
-    async def get_graph_version(self):
-        pass
-
-    async def get_edge_info(self, edge_id: int):
-        pass
-
+class InteractiveVideo:
+    pass
 
 class InteractiveNode:
     pass
-
 
 class InteractiveButtonAlign(enum.Enum):
     """

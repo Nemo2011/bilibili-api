@@ -682,7 +682,6 @@ class Video:
                     else:
                         break
                 danmakus.append(dm)
-        danmakus.pop()  # 最后一个弹幕是乱码
         return danmakus
 
     async def get_history_danmaku_index(

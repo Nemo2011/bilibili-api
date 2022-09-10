@@ -9,7 +9,7 @@ bilibili_api.login
 """
 
 import json
-import re
+import httpx
 from typing import Union
 import uuid
 import hashlib
@@ -145,7 +145,11 @@ def login_with_qrcode(root=None):
 def update_qrcode():
     global login_key, qrcode_image
     api = API["qrcode"]["get_qrcode_and_token"]
-    qrcode_login_data = sync(request("GET", api["url"]))
+    qrcode_login_data = json.loads(
+        httpx.get(
+            api["url"]
+        ).text
+    )["data"]
     login_key = qrcode_login_data["oauthKey"]
     qrcode = qrcode_login_data["url"]
     qrcode_image = make_qrcode(qrcode)
@@ -193,8 +197,8 @@ def login_with_password(username: str, password: str):
         Union[Credential, Check]: 如果需要验证，会返回 [`Check`](#check) 类，否则返回 `Credential` 类。
     """
     api_token = API["password"]["get_token"]
-    sess = get_session()
-    token_data = json.loads(sync(sess.get(api_token["url"])).text)
+    sess = httpx.Client()
+    token_data = json.loads(sess.get(api_token["url"]).text)
     hash_ = token_data["data"]["hash"]
     key = token_data["data"]["key"]
     final_password = encrypt(hash_, key, password)
@@ -224,19 +228,18 @@ def login_with_password(username: str, password: str):
     hasher = hashlib.md5(md5_string.encode(encoding="utf-8"))
     datas["sign"] = hasher.hexdigest()
     login_data = json.loads(
-        sync(
-            sess.request(
-                "POST",
-                login_api["url"],
-                data=datas,
-                headers={
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "User-Agent": "Mozilla/5.0",
-                    "Referer": "https://passport.bilibili.com/login",
-                },
-                cookies={"buvid3": str(uuid.uuid1())},
-            )
-        ).text
+        sess.request(
+            "POST",
+            login_api["url"],
+            data=datas,
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded",
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://passport.bilibili.com/login",
+            },
+            cookies={"buvid3": str(uuid.uuid1())},
+        )
+        .text
     )
     if login_data["code"] == 0:
         if login_data["data"]["status"] == 2:
