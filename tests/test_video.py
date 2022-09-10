@@ -70,7 +70,7 @@ async def test_Video_get_pages():
 
 
 async def test_Video_get_download_url():
-    pages = await video.get_download_url(0)
+    pages = await video_m.Video("BV1N34y1Y7ds").get_download_url(0)
     return pages
 
 
