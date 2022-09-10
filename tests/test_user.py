@@ -1,6 +1,7 @@
 # bilibili_api.user
 
 import asyncio
+from re import A
 from bilibili_api import user
 from . import common
 import time
@@ -148,6 +149,18 @@ async def test_za_get_self_events():
 
 async def test_zb_get_self_coins():
     return await user.get_self_coins(common.get_credential())
+
+
+async def test_zc_get_toview_list():
+    return await user.get_toview_list(common.get_credential())
+
+
+async def test_zd_delete_viewed_video_in_toview_list():
+    return await user.delete_viewed_videos_from_toview(common.get_credential())
+
+
+async def test_ze_clean_toview_list():
+    return await user.clear_toview_list(common.get_credential())
 
 
 async def after_all():
