@@ -6,12 +6,26 @@ from bilibili_api import article
 
 专栏相关
 
-## async def get_article_list()
+---
 
-| name       | type                 | description                                                  |
-| ---------- | -------------------- | ------------------------------------------------------------ |
+## class ArticleList
+
+### Atrributes
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
 | rlid       | int                  | 文集 ID，如 https://www.bilibili.com/read/readlist/rl000010 省略前导 0 |
 | credential | Credential, optional | 凭据. Defaults to None.                                      |
+
+#### async def get_content()
 
 获取专栏文集文章列表
 
@@ -20,6 +34,12 @@ from bilibili_api import article
 ## class Article
 
 专栏类
+
+### Atrributes
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
 
 ### Functions
 

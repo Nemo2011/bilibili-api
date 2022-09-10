@@ -49,18 +49,18 @@ class CheeseList:
         """
         if (season_id == -1) and (ep_id == -1):
             raise ValueError("season id 和 ep id 必须选一个")
-        self.season_id = season_id
-        self.ep_id = ep_id
+        self.__season_id = season_id
+        self.__ep_id = ep_id
         self.credential = credential
-        if self.season_id == -1:
+        if self.__season_id == -1:
             # self.season_id = str(sync(self.get_meta())["season_id"])
             api = API["info"]["meta"]
-            params = {"season_id": self.season_id, "ep_id": self.ep_id}
+            params = {"season_id": self.__season_id, "ep_id": self.__ep_id}
             meta = requests.get(
                 url=api["url"], params=params, cookies=self.credential.get_cookies()
             )
             meta.raise_for_status()
-            self.season_id = int(meta.json()["data"]["season_id"])
+            self.__season_id = int(meta.json()["data"]["season_id"])
 
     def set_season_id(self, season_id: int):
         self.__init__(season_id=season_id)
@@ -69,7 +69,7 @@ class CheeseList:
         self.__init__(ep_id=ep_id)
 
     def get_season_id(self):
-        return self.season_id
+        return self.__season_id
 
     async def get_meta(self):
         """
@@ -78,7 +78,7 @@ class CheeseList:
             调用 API 所得的结果。
         """
         api = API["info"]["meta"]
-        params = {"season_id": self.season_id, "ep_id": self.ep_id}
+        params = {"season_id": self.__season_id, "ep_id": self.__ep_id}
         return await request(
             "GET", api["url"], params=params, credential=self.credential
         )
@@ -90,7 +90,7 @@ class CheeseList:
             List[CheeseVideo]: 课程视频列表
         """
         api = API["info"]["list"]
-        params = {"season_id": self.season_id, "pn": 1, "ps": 1000}
+        params = {"season_id": self.__season_id, "pn": 1, "ps": 1000}
         lists = await request(
             "GET", api["url"], params=params, credential=self.credential
         )
@@ -108,12 +108,12 @@ class CheeseVideo:
         ep_id(int): 单集 ep_id
         credential(Credential): 凭据类
         """
-        self.epid = epid
-        self.cheese = CheeseList(ep_id=self.epid)
+        self.__epid = epid
+        self.cheese = CheeseList(ep_id=self.__epid)
         self.credential = credential
         if meta == None:
             api = API["info"]["meta"]
-            params = {"season_id": self.cheese.season_id, "ep_id": self.cheese.ep_id}
+            params = {"season_id": self.cheese.get_season_id(), "ep_id": self.__epid}
             metar = requests.get(
                 url=api["url"], params=params, cookies=self.credential.get_cookies()
             )
@@ -121,19 +121,19 @@ class CheeseVideo:
             metadata = metar.json()
             for v in metadata["data"]["episodes"]:
                 if v["id"] == epid:
-                    self.aid = v["aid"]
-                    self.cid = v["cid"]
-                    self.meta = v
+                    self.__aid = v["aid"]
+                    self.__cid = v["cid"]
+                    self.__meta = v
         else:
-            self.meta = meta
-            self.aid = meta["aid"]
-            self.cid = meta["cid"]
+            self.__meta = meta
+            self.__aid = meta["aid"]
+            self.__cid = meta["cid"]
 
     def get_aid(self):
-        return self.aid
+        return self.__aid
 
     def get_cid(self):
-        return self.cid
+        return self.__cid
 
     def get_meta(self):
         """
@@ -142,7 +142,7 @@ class CheeseVideo:
         Returns:
             视频元数据
         """
-        return self.meta
+        return self.__meta
 
     def get_cheese(self):
         """
@@ -163,7 +163,7 @@ class CheeseVideo:
         """
         获取 epid
         """
-        return self.epid
+        return self.__epid
 
     async def get_download_url(self):
         """
@@ -174,9 +174,9 @@ class CheeseVideo:
         """
         api = API["info"]["playurl"]
         params = {
-            "avid": self.aid,
-            "ep_id": self.epid,
-            "cid": self.cid,
+            "avid": self.get_aid(),
+            "ep_id": self.get_epid(),
+            "cid": self.get_cid(),
             "qn": 127,
             "fnval": 4048,
             "fourk": 1,
@@ -214,7 +214,7 @@ class CheeseVideo:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        cid = self.cid
+        cid = self.get_cid()
         session = get_session()
         api = API_video["danmaku"]["view"]
 
@@ -427,7 +427,7 @@ class CheeseVideo:
 
         session = get_session()
         aid = self.get_aid()
-        params = {"oid": self.cid, "type": 1, "pid": aid}
+        params = {"oid": self.get_cid(), "type": 1, "pid": aid}
         if date is not None:
             # 获取历史弹幕
             api = API_video["danmaku"]["get_history_danmaku"]
@@ -532,7 +532,7 @@ class CheeseVideo:
         Returns:
             调用 API 返回的结果
         """
-        cid = self.cid
+        cid = self.get_cid()
 
         api = API_video["info"]["pbp"]
 
@@ -572,7 +572,7 @@ class CheeseVideo:
             pool = 0
         data = {
             "type": 1,
-            "oid": self.cid,
+            "oid": self.get_cid(),
             "msg": danmaku.text,
             "aid": self.get_aid(),
             "progress": int(danmaku.dm_time * 1000),

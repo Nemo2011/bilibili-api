@@ -32,6 +32,12 @@ from bilibili_api import favorite_list
 
 收藏夹类
 
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+
 ### Functions
 
 #### def \_\_init\_\_()

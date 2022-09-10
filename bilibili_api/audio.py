@@ -17,10 +17,10 @@ class Audio:
             credential (Credential, optional): 凭据. Defaults to None
         """
         self.credential = credential if credential is not None else Credential()
-        self.auid = auid
+        self.__auid = auid
 
     def get_auid(self):
-        return self.auid
+        return self.__auid
 
     async def get_info(self):
         """
@@ -28,7 +28,7 @@ class Audio:
         """
 
         api = API["audio_info"]["info"]
-        params = {"sid": self.auid}
+        params = {"sid": self.__auid}
         return await request("GET", api["url"], params, credential=self.credential)
 
     async def get_tags(self):
@@ -36,7 +36,7 @@ class Audio:
         获取音频 tags
         """
         api = API["audio_info"]["tag"]
-        params = {"sid": self.auid}
+        params = {"sid": self.__auid}
         return await request("GET", api["url"], params, credential=self.credential)
 
     async def get_download_url(self):
@@ -44,7 +44,7 @@ class Audio:
         获取音频下载链接
         """
         api = API["audio_info"]["download_url"]
-        params = {"sid": self.auid, "privilege": 2, "quality": 2}
+        params = {"sid": self.__auid, "privilege": 2, "quality": 2}
         return await request("GET", api["url"], params, credential=self.credential)
 
     async def add_coins(self, num: int = 2):
@@ -57,7 +57,7 @@ class Audio:
         self.credential.raise_for_no_sessdata()
 
         api = API["audio_operate"]["coin"]
-        data = {"sid": self.auid, "multiply": num}
+        data = {"sid": self.__auid, "multiply": num}
 
         return await request("POST", api["url"], data=data, credential=self.credential)
 
@@ -74,11 +74,11 @@ class AudioList:
             amid       (int)                 : 歌单 ID
             credential (Credential, optional): 凭据. Defaults to None.
         """
-        self.amid = amid
+        self.__amid = amid
         self.credential = credential if credential is not None else Credential()
 
     def get_amid(self):
-        return self.amid
+        return self.__amid
 
     async def get_info(self):
         """
@@ -86,7 +86,7 @@ class AudioList:
         """
 
         api = API["list_info"]["info"]
-        params = {"sid": self.amid}
+        params = {"sid": self.__amid}
         return await request("GET", api["url"], params, credential=self.credential)
 
     async def get_tags(self):
@@ -95,7 +95,7 @@ class AudioList:
         """
 
         api = API["list_info"]["tag"]
-        params = {"sid": self.amid}
+        params = {"sid": self.__amid}
         return await request("GET", api["url"], params, credential=self.credential)
 
     async def get_song_list(self, pn: int = 1):
@@ -106,7 +106,7 @@ class AudioList:
             pn (int, optional): 页码. Defaults to 1
         """
         api = API["list_info"]["song_list"]
-        params = {"sid": self.amid, "pn": pn, "ps": 100}
+        params = {"sid": self.__amid, "pn": pn, "ps": 100}
 
         return await request("GET", api["url"], params, credential=self.credential)
 

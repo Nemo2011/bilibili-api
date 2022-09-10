@@ -10,6 +10,12 @@ from bilibili_api import audio
 
 音频类。
 
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+
 ### Functions
 
 #### def \_\_init\_\_()

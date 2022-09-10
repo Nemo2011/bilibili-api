@@ -130,7 +130,7 @@ class User:
             uid        (int)                 : 用户 UID
             credential (Credential, optional): 凭据. Defaults to None.
         """
-        self.uid = uid
+        self.__uid = uid
 
         if credential is None:
             credential = Credential()
@@ -145,7 +145,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["info"]
-        params = {"mid": self.uid}
+        params = {"mid": self.__uid}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -170,7 +170,7 @@ class User:
         Returns:
             用户 uid
         """
-        return self.uid
+        return self.__uid
 
     async def get_relation_info(self):
         """
@@ -180,7 +180,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["relation"]
-        params = {"vmid": self.uid}
+        params = {"vmid": self.__uid}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -195,7 +195,7 @@ class User:
         self.credential.raise_for_no_bili_jct()
 
         api = API["info"]["upstat"]
-        params = {"mid": self.uid}
+        params = {"mid": self.__uid}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -208,7 +208,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["live"]
-        params = {"mid": self.uid}
+        params = {"mid": self.__uid}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -236,7 +236,7 @@ class User:
         """
         api = API["info"]["video"]
         params = {
-            "mid": self.uid,
+            "mid": self.__uid,
             "ps": ps,
             "tid": tid,
             "pn": pn,
@@ -262,7 +262,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["audio"]
-        params = {"uid": self.uid, "ps": ps, "pn": pn, "order": order.value}
+        params = {"uid": self.__uid, "ps": ps, "pn": pn, "order": order.value}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -282,7 +282,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["article"]
-        params = {"mid": self.uid, "ps": ps, "pn": pn, "sort": order.value}
+        params = {"mid": self.__uid, "ps": ps, "pn": pn, "sort": order.value}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -298,7 +298,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["article_lists"]
-        params = {"mid": self.uid, "sort": order.value}
+        params = {"mid": self.__uid, "sort": order.value}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -321,7 +321,7 @@ class User:
         """
         api = API["info"]["dynamic"]
         params = {
-            "host_uid": self.uid,
+            "host_uid": self.__uid,
             "offset_dynamic_id": offset,
             "need_top": 1 if need_top else 0,
         }
@@ -349,7 +349,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["bangumi"]
-        params = {"vmid": self.uid, "pn": pn, "ps": 15, "type": type_.value}
+        params = {"vmid": self.__uid, "pn": pn, "ps": 15, "type": type_.value}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -367,7 +367,7 @@ class User:
         """
         api = API["info"]["followings"]
         params = {
-            "vmid": self.uid,
+            "vmid": self.__uid,
             "ps": 20,
             "pn": pn,
             "order": "desc" if desc else "asc",
@@ -384,7 +384,7 @@ class User:
             list: 关注列表
         """
         api = API["info"]["all_followings"]
-        params = {"mid": self.uid}
+        params = {"mid": self.__uid}
         sess = get_session()
         data = json.loads(
             (
@@ -409,7 +409,7 @@ class User:
 
         api = API["info"]["followers"]
         params = {
-            "vmid": self.uid,
+            "vmid": self.__uid,
             "ps": 20,
             "pn": pn,
             "order": "desc" if desc else "asc",
@@ -443,7 +443,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["overview"]
-        params = {"mid": self.uid, "jsonp": "jsonp"}
+        params = {"mid": self.__uid, "jsonp": "jsonp"}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -465,7 +465,7 @@ class User:
         self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["modify"]
-        data = {"fid": self.uid, "act": relation.value, "re_src": 11}
+        data = {"fid": self.__uid, "act": relation.value, "re_src": 11}
         return await request(
             "POST", url=api["url"], data=data, credential=self.credential
         )
@@ -483,7 +483,7 @@ class User:
             dict: 调用接口返回的内容
         """
         api = API["info"]["channel_video_series"]
-        param = {"mid": self.uid, "series_id": sid, "pn": pn, "ps": ps}
+        param = {"mid": self.__uid, "series_id": sid, "pn": pn, "ps": ps}
         return await request(
             "GET", url=api["url"], params=param, credential=self.credential
         )
@@ -509,7 +509,7 @@ class User:
         """
         api = API["info"]["channel_video_season"]
         param = {
-            "mid": self.uid,
+            "mid": self.__uid,
             "season_id": sid,
             "sort_reverse": sort.value,
             "page_num": pn,
@@ -529,7 +529,7 @@ class User:
             dict: 调用接口返回的结果
         """
         api = API["info"]["channel_list"]
-        param = {"mid": self.uid, "page_num": 1, "page_size": 1}
+        param = {"mid": self.__uid, "page_num": 1, "page_size": 1}
         res = await request(
             "GET", url=api["url"], params=param, credential=self.credential
         )
@@ -556,7 +556,7 @@ class User:
             meta = item["meta"]
             channels.append(
                 ChannelSeries(
-                    self.uid, ChannelSeriesType.SEASON, id_, self.credential, meta=meta
+                    self.__uid, ChannelSeriesType.SEASON, id_, self.credential, meta=meta
                 )
             )
         for item in channel_data["items_lists"]["series_list"]:
@@ -564,7 +564,7 @@ class User:
             meta = item["meta"]
             channels.append(
                 ChannelSeries(
-                    self.uid, ChannelSeriesType.SERIES, id_, self.credential, meta=meta
+                    self.__uid, ChannelSeriesType.SERIES, id_, self.credential, meta=meta
                 )
             )
         return channels
@@ -577,7 +577,7 @@ class User:
             dict: 调用接口返回的结果
         """
         api = API["info"]["pugv"]
-        params = {"mid": self.uid}
+        params = {"mid": self.__uid}
         return await request("GET", api["url"], params=params)
 
 
@@ -614,10 +614,10 @@ class ChannelSeries:
         id_(int)                : season_id 或 series_id
         credential(Credential)  : 凭证
         """
-        self.uid = uid
+        self.__uid = uid
         self.is_new = type_.value
         self.id_ = id_
-        self.owner = User(self.uid, credential=credential)
+        self.owner = User(self.__uid, credential=credential)
         self.credential = credential
         self.meta = None
         if self.is_new:
@@ -627,7 +627,7 @@ class ChannelSeries:
         if meta is None:
             credential = self.credential if self.credential else Credential()
             api = API["info"]["channel_list"]
-            param = {"mid": self.uid, "page_num": 1, "page_size": 1}
+            param = {"mid": self.__uid, "page_num": 1, "page_size": 1}
             res = httpx.request(
                 "GET", url=api["url"], params=param, cookies=credential.get_cookies()
             )

@@ -62,8 +62,8 @@ class FavoriteList:
             media_id(int, optional)          : 收藏家号（仅为视频收藏夹时提供）. Defaults to None.
             credential(Credential, optional) : 凭据类. Defaults to Credential().
         """
-        self.type = type_
-        self.media_id = media_id
+        self.__type = type_
+        self.__media_id = media_id
         self.credential = credential
 
     def is_video_favorite_list(self):
@@ -73,7 +73,7 @@ class FavoriteList:
         Returns:
             bool: 是否为视频收藏夹
         """
-        return self.type == FavoriteListType.VIDEO
+        return self.__type == FavoriteListType.VIDEO
 
     def get_favorite_list_type(self):
         """
@@ -82,7 +82,7 @@ class FavoriteList:
         Returns:
             FavoriteListType: 收藏夹类型
         """
-        return self.type
+        return self.__type
 
     async def get_content_video(
         self,
@@ -103,23 +103,23 @@ class FavoriteList:
         Returns:
             dict: 调用 API 返回结果。
         """
-        assert self.type != FavoriteListType.VIDEO, "此函数仅在收藏夹为视频收藏家时可用"
+        assert self.__type != FavoriteListType.VIDEO, "此函数仅在收藏夹为视频收藏家时可用"
 
         return await get_video_favorite_list_content(
-            self.media_id, page, keyword, order, tid, self.credential
+            self.__media_id, page, keyword, order, tid, self.credential
         )
 
     async def get_content(self, page: int = 1):
         """
         获取收藏夹内容。
         """
-        if self.type == FavoriteListType.ARTICLE:
+        if self.__type == FavoriteListType.ARTICLE:
             return await get_article_favorite_list(page, self.credential)
-        elif self.type == FavoriteListType.CHEESE:
+        elif self.__type == FavoriteListType.CHEESE:
             return await get_course_favorite_list(page, self.credential)
-        elif self.type == FavoriteListType.VIDEO:
+        elif self.__type == FavoriteListType.VIDEO:
             return await get_video_favorite_list_content(
-                self.media_id, page, credential=self.credential
+                self.__media_id, page, credential=self.credential
             )
 
 

@@ -293,8 +293,11 @@ class Dynamic:
             dynamic_id (int): 动态 ID
             credential (Credential, optional): [description]. Defaults to None.
         """
-        self.dynamic_id = dynamic_id
+        self.__dynamic_id = dynamic_id
         self.credential = credential if credential is not None else Credential()
+
+    def get_dynamic_id(self):
+        return self.__dynamic_id
 
     async def get_info(self):
         """
@@ -302,7 +305,7 @@ class Dynamic:
         """
 
         api = API["info"]["detail"]
-        params = {"dynamic_id": self.dynamic_id}
+        params = {"dynamic_id": self.__dynamic_id}
         data = await request(
             "GET", api["url"], params=params, credential=self.credential
         )
@@ -322,7 +325,7 @@ class Dynamic:
             调用 API 返回的结果
         """
         api = API["info"]["repost"]
-        params = {"dynamic_id": self.dynamic_id}
+        params = {"dynamic_id": self.__dynamic_id}
         if offset != "0":
             params["offset"] = offset
         return await request(
@@ -341,7 +344,7 @@ class Dynamic:
             调用 API 返回的结果
         """
         api = API["info"]["likes"]
-        params = {"dynamic_id": self.dynamic_id, "pn": pn, "ps": ps}
+        params = {"dynamic_id": self.__dynamic_id, "pn": pn, "ps": ps}
         return await request(
             "GET", api["url"], params=params, credential=self.credential
         )
@@ -362,7 +365,7 @@ class Dynamic:
 
         self_uid = user_info["mid"]
         data = {
-            "dynamic_id": self.dynamic_id,
+            "dynamic_id": self.__dynamic_id,
             "up": 1 if status else 2,
             "uid": self_uid,
         }
@@ -375,7 +378,7 @@ class Dynamic:
         self.credential.raise_for_no_sessdata()
 
         api = API["operate"]["delete"]
-        data = {"dynamic_id": self.dynamic_id}
+        data = {"dynamic_id": self.__dynamic_id}
         return await request("POST", api["url"], data=data, credential=self.credential)
 
     async def repost(self, text: str = "转发动态"):
@@ -389,5 +392,5 @@ class Dynamic:
 
         api = API["operate"]["repost"]
         data = await _get_text_data(text)
-        data["dynamic_id"] = self.dynamic_id
+        data["dynamic_id"] = self.__dynamic_id
         return await request("POST", api["url"], data=data, credential=self.credential)

@@ -49,32 +49,32 @@ class Bangumi:
         """番剧类"""
         if media_id == -1 and ssid == -1:
             raise ValueError("需要 Media_id 或 Season_id 中的一个 !")
-        self.media_id = media_id
+        self.__media_id = media_id
         self.credential = credential
         if ssid != -1:
-            self.ssid = ssid
+            self.__ssid = ssid
         else:
             api = API["info"]["meta"]
-            params = {"media_id": self.media_id}
+            params = {"media_id": self.__media_id}
             meta = requests.get(
                 url=api["url"], params=params, cookies=self.credential.get_cookies()
             )
             meta.raise_for_status()
-            self.ssid = meta.json()["result"]["media"]["season_id"]
-        if self.media_id == -1:
+            self.__ssid = meta.json()["result"]["media"]["season_id"]
+        if self.__media_id == -1:
             api = API["info"]["collective_info"]
-            params = {"season_id": self.ssid}
+            params = {"season_id": self.__ssid}
             overview = requests.get(
                 url=api["url"], params=params, cookies=self.credential.get_cookies()
             )
             overview.raise_for_status()
-            self.media_id = overview.json()["result"]["media_id"]
+            self.__media_id = overview.json()["result"]["media_id"]
 
     def get_media_id(self):
-        return self.media_id
+        return self.__media_id
 
     def get_season_id(self):
-        return self.ssid
+        return self.__ssid
 
     def set_media_id(self, media_id: int):
         self.__init__(media_id=media_id, credential=self.credential)
@@ -93,7 +93,7 @@ class Bangumi:
         credential = self.credential if self.credential is not None else Credential()
 
         api = API["info"]["meta"]
-        params = {"media_id": self.media_id}
+        params = {"media_id": self.__media_id}
         return await request("GET", api["url"], params, credential=credential)
 
     async def get_short_comment_list(
@@ -109,7 +109,7 @@ class Bangumi:
         credential = self.credential if self.credential is not None else Credential()
 
         api = API["info"]["short_comment"]
-        params = {"media_id": self.media_id, "ps": 20, "sort": order.value}
+        params = {"media_id": self.__media_id, "ps": 20, "sort": order.value}
         if next is not None:
             params["cursor"] = next
 
@@ -128,7 +128,7 @@ class Bangumi:
         credential = self.credential if self.credential is not None else Credential()
 
         api = API["info"]["long_comment"]
-        params = {"media_id": self.media_id, "ps": 20, "sort": order.value}
+        params = {"media_id": self.__media_id, "ps": 20, "sort": order.value}
         if next is not None:
             params["cursor"] = next
 
@@ -141,7 +141,7 @@ class Bangumi:
         credential = self.credential if self.credential is not None else Credential()
 
         api = API["info"]["episodes_list"]
-        params = {"season_id": self.ssid}
+        params = {"season_id": self.__ssid}
         return await request("GET", api["url"], params, credential=credential)
 
     async def get_stat(self):
@@ -151,7 +151,7 @@ class Bangumi:
         credential = self.credential if self.credential is not None else Credential()
 
         api = API["info"]["season_status"]
-        params = {"season_id": self.ssid}
+        params = {"season_id": self.__ssid}
         return await request("GET", api["url"], params, credential=credential)
 
     async def get_overview(self):
@@ -161,7 +161,7 @@ class Bangumi:
         credential = self.credential if self.credential is not None else Credential()
 
         api = API["info"]["collective_info"]
-        params = {"season_id": self.ssid}
+        params = {"season_id": self.__ssid}
         return await request("GET", api["url"], params, credential=credential)
 
 
@@ -180,7 +180,7 @@ async def set_follow(
     credential.raise_for_no_sessdata()
 
     api = API["operate"]["follow_add"] if status else API["operate"]["follow_del"]
-    data = {"season_id": bangumi.ssid}
+    data = {"season_id": bangumi.get_season_id()}
     return await request("POST", api["url"], data=data, credential=credential)
 
 
@@ -190,11 +190,10 @@ class Episode(Video):
         番剧视频类（没错重构了）
         epid: epid
         credential: 凭据
-        bangumi: 自动获取：番剧剧集所属的番剧
         """
-        self.credential = credential
-        self.epid = epid
         credential = self.credential if self.credential else Credential()
+        self.credential = credential
+        self.__epid = epid
         try:
             resp = httpx.get(
                 f"https://www.bilibili.com/bangumi/play/ep{self.epid}",
@@ -226,7 +225,7 @@ class Episode(Video):
         """
         获取 epid
         """
-        return self.epid
+        return self.__epid
 
     def set_aid_e(self, aid: str):
         print("Set aid is not allowed in Episode")
@@ -235,6 +234,9 @@ class Episode(Video):
         print("Set bvid is not allowed in Episode")
 
     async def get_cid(self):
+        """
+        获取稿件 cid
+        """
         return (await self.get_episode_info())["epInfo"]["cid"]
 
     def get_bangumi(self):
@@ -264,7 +266,7 @@ class Episode(Video):
 
         try:
             resp = await session.get(
-                f"https://www.bilibili.com/bangumi/play/ep{self.epid}",
+                f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
                 cookies=credential.get_cookies(),
                 headers={"User-Agent": "Mozilla/5.0"},
             )
