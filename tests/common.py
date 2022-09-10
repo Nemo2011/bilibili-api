@@ -16,4 +16,4 @@ def get_credential():
 
 
 async def delay():
-    await asyncio.sleep(float(os.getenv('BILI_RATELIMIT')))
+    await asyncio.sleep(float(os.getenv("BILI_RATELIMIT")))
