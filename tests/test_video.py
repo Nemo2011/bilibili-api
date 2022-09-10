@@ -205,3 +205,11 @@ async def test_za_Video_set_favorite():
     await asyncio.sleep(0.5)
     await video.set_favorite(del_media_ids=[1626035955])
     return data
+
+
+async def test_zb_Video_add_to_toview():
+    return await video.add_to_toview()
+
+
+async def test_zc_Video_delete_from_toview():
+    return await video.delete_from_toview()
