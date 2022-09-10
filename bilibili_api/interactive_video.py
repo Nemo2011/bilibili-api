@@ -8,13 +8,13 @@ import copy
 import datetime
 import enum
 from lib2to3.pytree import Node
-from typing import List
+from typing import List, overload
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
 from .video import Video
 from urllib import parse
-from random import random as rand
+from random import randint as rand
 
 API = get_api("interactive_video")
 
@@ -215,6 +215,7 @@ class InteractiveJumpingCondition:
         return f"{self.__command}"
 
 
+@overload
 class InteractiveNode:
     """
     互动视频节点类
@@ -400,6 +401,7 @@ class InteractiveGraph:
         return await self.__node.get_children()
 
 
+@overload
 class InteractiveVideo(Video):
     """
     互动视频类

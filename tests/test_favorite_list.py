@@ -1,10 +1,12 @@
+# bilibili_api.favorite_list
+
 import random
 
-from bilibili_api import favorite_list, video
+from bilibili_api import favorite_list, video, bvid2aid
 from . import common
 
 media_id = None
-aids = [2, 626357031]
+aids = [bvid2aid("BV1yQ4y117m3"), 975842744]
 uid = 1666311555
 default_media_id = 1626035955
 
@@ -17,7 +19,9 @@ async def test_a_get_video_favorite_list():
 
 
 async def test_b_get_video_favorite_list_content():
-    data = await favorite_list.get_video_favorite_list_content(1195349595, credential=credential)
+    data = await favorite_list.get_video_favorite_list_content(
+        1195349595, credential=credential
+    )
     return data
 
 
@@ -49,7 +53,9 @@ async def test_g_get_note_favorite_list():
 async def test_h_create_video_favorite_list():
     # 创建临时收藏夹
     rnd_name = random.randint(100000, 999999)
-    data = await favorite_list.create_video_favorite_list(f"TESTING_{rnd_name}", "", False, credential=credential)
+    data = await favorite_list.create_video_favorite_list(
+        f"TESTING_{rnd_name}", "", False, credential=credential
+    )
     global media_id
     media_id = data["id"]
 
@@ -62,29 +68,42 @@ async def test_h_create_video_favorite_list():
 
 async def test_i_modify_video_favorite_list():
     rnd_name = random.randint(100000, 999999)
-    data = await favorite_list.modify_video_favorite_list(media_id, f"TESTING_{rnd_name}", credential=credential)
+    data = await favorite_list.modify_video_favorite_list(
+        media_id, f"TESTING_{rnd_name}", credential=credential
+    )
     return data
 
 
 async def test_j_copy_video_favorite_list_content():
-    data = await favorite_list.copy_video_favorite_list_content(media_id, default_media_id, [aids[0]], credential=credential)
+    data = await favorite_list.copy_video_favorite_list_content(
+        media_id, default_media_id, [aids[0]], credential=credential
+    )
     return data
 
+
 async def test_k_move_video_favorite_list_content():
-    data = await favorite_list.move_video_favorite_list_content(media_id, default_media_id, [aids[1]], credential=credential)
+    data = await favorite_list.move_video_favorite_list_content(
+        media_id, default_media_id, [aids[1]], credential=credential
+    )
     return data
+
 
 async def test_l_clean_video_favorite_list_content():
     data = await favorite_list.clean_video_favorite_list_content(media_id, credential)
     return data
 
+
 async def test_m_delete_video_favorite_list_content():
-    data = await favorite_list.delete_video_favorite_list_content(default_media_id, [aids[0]], credential=credential)
+    data = await favorite_list.delete_video_favorite_list_content(
+        default_media_id, [aids[0]], credential=credential
+    )
     return data
+
 
 async def test_n_delete_video_favorite_list():
     data = await favorite_list.delete_video_favorite_list([media_id], credential)
     return data
+
 
 async def after_all():
     # 清理默认收藏夹中的视频

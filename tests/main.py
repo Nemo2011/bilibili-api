@@ -13,8 +13,9 @@ Environment:
     BILI_CSRF
     BILI_BUVID3
     BILI_DEDEUSERID
+    BILI_PHONE
+    BILI_PASSWORD
     BILI_RATELIMIT
-
 """
 import asyncio
 from colorama import Fore, init, Style
@@ -26,6 +27,7 @@ import traceback
 import os
 import importlib
 
+
 def collect_test_function(module):
     names = []
     for name in dir(module):
@@ -33,21 +35,20 @@ def collect_test_function(module):
             names.append(f"{name}")
     return names
 
-RATELIMIT = float(os.getenv('BILI_RATELIMIT')) if os.getenv('BILI_RATELIMIT') is not None else 0
+
+RATELIMIT = (
+    float(os.getenv("BILI_RATELIMIT")) if os.getenv("BILI_RATELIMIT") is not None else 0
+)
 
 
 async def test(module):
     print(Fore.YELLOW + f"::group::=========== 开始测试 {module.__name__} ===========")
     funcs = collect_test_function(module)
 
-    result = {
-        "passed": 0,
-        "failed": 0,
-        "failed_items": []
-    }
+    result = {"passed": 0, "failed": 0, "failed_items": []}
 
     if "before_all" in dir(module):
-        print(Fore.CYAN + '执行 before_all()')
+        print(Fore.CYAN + "执行 before_all()")
         try:
             await module.before_all()
             result["passed"] += 1
@@ -64,7 +65,7 @@ async def test(module):
         try:
             res = await func()
             print(Fore.GREEN + "[PASSED]")
-            if (res is not None):
+            if res is not None:
                 print(Fore.MAGENTA + str(res)[:100])
             result["passed"] += 1
         except Exception as e:
@@ -78,7 +79,7 @@ async def test(module):
         await asyncio.sleep(RATELIMIT)
 
     if "after_all" in dir(module):
-        print(Fore.CYAN + '执行 after_all()')
+        print(Fore.CYAN + "执行 after_all()")
         try:
             await module.after_all()
             result["passed"] += 1
@@ -92,6 +93,7 @@ async def test(module):
     print(Fore.YELLOW + f"=========== 结束测试 {module.__name__} ===========\n::endgroup::")
     return result
 
+
 def mixin(source, target):
     target["failed"] += source["failed"]
     target["passed"] += source["passed"]
@@ -102,12 +104,13 @@ def get_should_test_module():
     """
     获取将被测试的模块，仅寻找 tests 根目录下的模块
     """
+
     def get_all_modules():
         modules = []
-        base_path = os.path.join(os.path.dirname(__file__), '.')
+        base_path = os.path.join(os.path.dirname(__file__), ".")
         for root, dirs, files in os.walk(base_path):
             for file in files:
-                if file.startswith('test_') and file.endswith(".py"):
+                if file.startswith("test_") and file.endswith(".py"):
                     module_name = file[:-3]
                     modules.append(importlib.import_module("tests." + module_name))
             break
@@ -122,15 +125,28 @@ def get_should_test_module():
             print("找不到模块：" + name)
             return None
 
+    def find_module_in_arg(name: str):
+        try:
+            m = importlib.import_module("tests." + name)
+            return m
+        except Exception as e:
+            try:
+                m = importlib.import_module("tests.test_" + name)
+                return m
+            except:
+                print(e)
+                print("找不到模块：" + name)
+                return None
+
     modules = []
-    opts, args = getopt.getopt(sys.argv[1:], 'am:')
+    opts, args = getopt.getopt(sys.argv[1:], "am:")
 
     for opt, arg in opts:
         if opt == "-a":
             # 测试所有模块
             modules = get_all_modules()
         elif opt == "-m":
-            m = find_module(arg)
+            m = find_module_in_arg(arg)
             if m is None:
                 exit(1)
             else:
@@ -141,11 +157,7 @@ def get_should_test_module():
 async def main():
     start = time.time()
     init(True)
-    all_result = {
-        "passed": 0,
-        "failed": 0,
-        "failed_items": []
-    }
+    all_result = {"passed": 0, "failed": 0, "failed_items": []}
 
     modules = get_should_test_module()
     for module in modules:
@@ -153,7 +165,9 @@ async def main():
         mixin(result, all_result)
     # 打印结果
     elapsed = str(datetime.timedelta(seconds=time.time() - start))
-    print(f"{Fore.WHITE}{all_result['passed']} {Fore.GREEN}passed, {Fore.WHITE}{all_result['failed']} {Fore.RED}failed.")
+    print(
+        f"{Fore.WHITE}{all_result['passed']} {Fore.GREEN}passed, {Fore.WHITE}{all_result['failed']} {Fore.RED}failed."
+    )
     print(f"耗时 {Fore.YELLOW}{elapsed}")
     if all_result["failed"] > 0:
         print(f"{Fore.RED} 出错测试项目：{Fore.RESET}")
@@ -162,5 +176,6 @@ async def main():
         exit(1)
     else:
         exit(0)
+
 
 asyncio.run(main())
