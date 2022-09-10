@@ -14,7 +14,7 @@ AID = 811248323
 video = video_m.Video(BVID, credential=get_credential())
 
 
-async def test_Video_set_bvid():
+async def test_a_Video_set_bvid():
     # 设置正确 bvid
     video.set_bvid(BVID)
     assert video.get_bvid() == BVID, "bvid 应该被修改"
@@ -28,7 +28,7 @@ async def test_Video_set_bvid():
         video.set_bvid(BVID)
 
 
-async def test_Video_set_aid():
+async def test_b_Video_set_aid():
     # 设置正确 aid
     video.set_aid(AID)
     assert video.get_aid() == AID, "aid 应该被修改"
@@ -44,99 +44,98 @@ async def test_Video_set_aid():
         pass
 
 
-async def test_Video_get_info():
+async def test_c_Video_get_info():
     info = await video.get_info()
     return info
 
 
-async def test_Video_get_stat():
+async def test_d_Video_get_stat():
     info = await video.get_stat()
     return info
 
 
-async def test_Video_get_tags():
+async def test_e_Video_get_tags():
     tags = await video.get_tags()
     return tags
 
 
-async def test_Video_get_chargers():
+async def test_f_Video_get_download_url():
+    return await video.get_download_url(0)
+
+
+async def test_g_Video_get_chargers():
     chargers = await video.get_chargers()
     return chargers
 
 
-async def test_Video_get_pages():
+async def test_h_Video_get_pages():
     pages = await video.get_pages()
     return pages
 
 
-async def test_Video_get_download_url():
-    pages = await video_m.Video("BV1N34y1Y7ds").get_download_url(0)
-    return pages
-
-
-async def test_Video_get_related():
+async def test_i_Video_get_related():
     data = await video.get_related()
     return data
 
 
-async def test_Video_has_liked():
+async def test_j_Video_has_liked():
     data = await video.has_liked()
     return data
 
 
-async def test_Video_get_pay_coins():
+async def test_k_Video_get_pay_coins():
     data = await video.get_pay_coins()
     return data
 
 
-async def test_Video_has_favoured():
+async def test_l_Video_has_favoured():
     data = await video.has_favoured()
     return data
 
 
-async def test_Video_get_media_list():
+async def test_m_Video_get_media_list():
     data = await video.get_media_list()
     return data
 
 
-async def test_Video_get_danmaku_view():
+async def test_n_Video_get_danmaku_view():
     data = await video.get_danmaku_view(0)
     return data
 
 
-async def test_Video_get_danmaku():
+async def test_o_Video_get_danmaku():
     data = await video.get_danmakus(0)
     return data
 
 
-async def test_Video_get_danmaku_history():
+async def test_p_Video_get_danmaku_history():
     data = await video.get_danmakus(0, date=datetime.date(2020, 1, 1))
     return data
 
 
-async def test_Video_get_danmaku_xml():
+async def test_q_Video_get_danmaku_xml():
     return await video.get_danmaku_xml(0)
 
 
-async def test_Video_get_danmaku_snapshot():
+async def test_r_Video_get_danmaku_snapshot():
     return await video.get_danmaku_snapshot()
 
 
-async def test_Video_get_pbp():
+async def test_s_Video_get_pbp():
     return await video.get_pbp(0)
 
 
-async def test_Video_get_history_danmaku_index():
+async def test_t_Video_get_history_danmaku_index():
     return await video.get_history_danmaku_index(0, datetime.date(2022, 9, 1))
 
 
-async def test_Video_send_danmaku():
+async def test_u_Video_send_danmaku():
     dm = Danmaku("TESTING" + str(int(time.time())))
     data = await video.send_danmaku(0, dm)
     return data
 
 
-async def test_Video_like():
+async def test_v_Video_like():
     try:
         data = await video.like(True)
 
@@ -151,7 +150,7 @@ async def test_Video_like():
             return e.raw
 
 
-async def test_Video_pay_coin():
+async def test_w_Video_pay_coin():
     try:
         data = await video.pay_coin(2)
         return data
@@ -165,7 +164,7 @@ async def test_Video_pay_coin():
             return e.raw
 
 
-async def test_Video_add_tag():
+async def test_x_Video_add_tag():
     try:
         data = await video.add_tag("测试标签")
         return data
@@ -177,7 +176,7 @@ async def test_Video_add_tag():
             return e.raw
 
 
-async def test_Video_del_tag():
+async def test_y_Video_del_tag():
     try:
         data = await video.delete_tag(99999999)
         return data
@@ -189,13 +188,13 @@ async def test_Video_del_tag():
             return e.raw
 
 
-async def test_Video_subscribe_and_unsubscribe_tag():
+async def test_z_Video_subscribe_and_unsubscribe_tag():
     data = await video.subscribe_tag(8583026)
     await video.unsubscribe_tag(8583026)
     return data
 
 
-async def test_Video_set_favorite():
+async def test_za_Video_set_favorite():
     data = await video.set_favorite([1626035955])
     await asyncio.sleep(0.5)
     await video.set_favorite(del_media_ids=[1626035955])
