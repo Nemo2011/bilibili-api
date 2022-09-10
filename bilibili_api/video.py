@@ -48,7 +48,13 @@ VIDEO_QUALITY = {
 
 VIDEO_CODECS = {"hev": "HEVC(H.265)", "avc": "AVC(H.264)", "av01": "AV1"}
 
-AUDIO_QUALITY = {30280: "高品质", 30232: "中等品质", 30216: "低品质"}
+AUDIO_QUALITY = {
+    30216: "64 K",
+    30232: "132 K",
+    30250: "杜比全景声",
+    30251: "Hi-Res 无损",
+    30280: "192 K",
+}
 
 
 class DanmakuOperatorType(Enum):
