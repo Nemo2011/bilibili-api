@@ -35,7 +35,6 @@ from bilibili_api import ass
 | page | (int)                | 分 P 号 |
 | out | (str)              | 输出文件 |
 | cid | (int) | cid |
-| credential | (Credential)| 凭据 |
 | stage_size | (tuple|list)| 尺寸，一般都是 1920x1080 |
 | font_name | (str)        | 字体 |
 | font_size | (float)      | 字体大小 |

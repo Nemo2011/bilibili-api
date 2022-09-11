@@ -189,9 +189,8 @@ async def make_ass_file_danmakus_protobuf(
 async def make_ass_file_danmakus_xml(
     obj: Union[Video, Episode, CheeseVideo],
     page: int = None,
-    cid: int = None,
     out=None,
-    credential=None,
+    cid: int = None,
     font_name="Simsun",
     font_size=25.0,
     alpha=1,
@@ -207,7 +206,6 @@ async def make_ass_file_danmakus_xml(
         page(int)                : 分 P 号
         out(str)                 : 输出文件
         cid(int)                 : cid
-        credential(Credential)   : 凭据
         font_name(str)           : 字体
         font_size(float)         : 字体大小
         alpha(float)             : 透明度(0-1)

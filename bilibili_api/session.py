@@ -123,7 +123,6 @@ async def send_msg(credential: Credential, receiver_id: int, text: str):
         "POST", url=api["url"], data=data, credential=credential
     )
 
-@dataclass
 class Picture:
     height:     int
     imageType:  str

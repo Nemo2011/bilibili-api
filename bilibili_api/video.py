@@ -6,7 +6,6 @@ bilibili_api.video
 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 """
 
-from ast import Bytes
 from enum import Enum
 import re
 import datetime
@@ -15,6 +14,7 @@ import logging
 import json
 import struct
 import aiohttp
+import httpx
 from typing import List
 
 from .exceptions import ResponseException
@@ -26,7 +26,7 @@ from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
 from .utils.network import get_session as get_session_aiohttp
-from .utils.Danmaku import Danmaku
+from .utils.Danmaku import Danmaku, SpecialDanmaku
 from .utils.BytesReader import BytesReader
 from .utils.AsyncEvent import AsyncEvent
 from . import settings
@@ -586,8 +586,6 @@ class Video:
         if date is not None:
             self.credential.raise_for_no_sessdata()
 
-        # self.credential.raise_for_no_sessdata()
-
         if cid is None:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
@@ -689,6 +687,55 @@ class Video:
                         break
                 danmakus.append(dm)
         return danmakus
+
+    async def get_special_dms(self, page_index: int = None, cid: int = None):
+        if cid is None:
+            if page_index is None:
+                raise ArgsException("page_index 和 cid 至少提供一个。")
+
+            cid = await self.__get_page_id_by_index(page_index)
+        
+        view = await self.get_danmaku_view(cid = cid)
+        special_dms = view["special_dms"][0]
+        if settings.proxy != "":
+            sess = httpx.AsyncClient(proxies={"all://": settings.proxy})
+        else:
+            sess = httpx.AsyncClient()
+        dm_content = await sess.get(special_dms, cookies = self.credential.get_cookies())
+        dm_content.raise_for_status()
+        reader = BytesReader(dm_content.content)
+        dms: List[SpecialDanmaku] = []
+        while not reader.has_end():
+            spec_dm = SpecialDanmaku("")
+            type_ = reader.varint() >> 3
+            if type_ == 1:
+                reader_ = BytesReader(reader.bytes_string())
+                while not reader_.has_end():
+                    type__ = reader_.varint() >> 3
+                    if type__ == 1:
+                        spec_dm.id_ = reader_.varint()
+                    elif type__ == 3:
+                        spec_dm.mode = reader_.varint()
+                    elif type__ == 4:
+                        reader_.varint()
+                    elif type__ == 5:
+                        reader_.varint()
+                    elif type__ == 6:
+                        reader_.string()
+                    elif type__ == 7:
+                        spec_dm.content = reader_.string()
+                    elif type__ == 8:
+                        reader_.varint()
+                    elif type__ == 11:
+                        spec_dm.pool = reader_.varint()
+                    elif type__ == 12:
+                        spec_dm.id_str = reader_.string()
+                    else:
+                        continue
+            else:
+                continue
+            dms.append(spec_dm)
+        return dms
 
     async def get_history_danmaku_index(
         self, page_index: int = None, date: datetime.date = None, cid: int = None
