@@ -1,3 +1,7 @@
+"""
+IP 终端相关
+"""
+
 from .utils.network_httpx import request
 from .utils.utils import get_api
 
@@ -13,7 +17,7 @@ async def get_zone():
 
 async def get_client_info():
     """
-    获取终端信息
+    获取 IP 信息
     """
     api = API["info"]
     return await request("GET", api["url"])
