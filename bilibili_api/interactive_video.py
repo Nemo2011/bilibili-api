@@ -9,8 +9,7 @@ bilibili_api.interactive_video
 import copy
 import datetime
 import enum
-from lib2to3.pytree import Node
-from typing import List, TypeVar
+from typing import List
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
