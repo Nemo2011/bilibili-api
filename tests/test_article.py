@@ -35,7 +35,7 @@ async def test_e_Article_add_coins():
     try:
         return await ar.add_coins()
     except ResponseCodeException as e:
-        if e.code != 34005:
+        if e.code != 34005 and e.code != -104:
             raise e
 
         return e
