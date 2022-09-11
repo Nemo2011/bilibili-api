@@ -29,8 +29,7 @@ import os
 import tempfile
 import time
 import base64
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_v1_5
+import rsa
 
 API = get_api("login")
 
@@ -145,11 +144,7 @@ def login_with_qrcode(root=None):
 def update_qrcode():
     global login_key, qrcode_image
     api = API["qrcode"]["get_qrcode_and_token"]
-    qrcode_login_data = json.loads(
-        httpx.get(
-            api["url"]
-        ).text
-    )["data"]
+    qrcode_login_data = json.loads(httpx.get(api["url"]).text)["data"]
     login_key = qrcode_login_data["oauthKey"]
     qrcode = qrcode_login_data["url"]
     qrcode_image = make_qrcode(qrcode)
@@ -162,10 +157,12 @@ def update_qrcode():
 
 
 def encrypt(_hash, key, password):
-    encryptor = PKCS1_v1_5.new(RSA.importKey(bytes(key, "utf-8")))
-    return str(
-        base64.b64encode(encryptor.encrypt(bytes(_hash + password, "utf-8"))), "utf-8"
+    rsa_key = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode("utf-8"))
+    data = str(
+        base64.b64encode(rsa.encrypt(bytes(_hash + password, "utf-8"), rsa_key)),
+        "utf-8",
     )
+    return data
 
 
 def get_geetest():
@@ -238,8 +235,7 @@ def login_with_password(username: str, password: str):
                 "Referer": "https://passport.bilibili.com/login",
             },
             cookies={"buvid3": str(uuid.uuid1())},
-        )
-        .text
+        ).text
     )
     if login_data["code"] == 0:
         if login_data["data"]["status"] == 2:
