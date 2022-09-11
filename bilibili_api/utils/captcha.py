@@ -60,8 +60,8 @@ def _geetest_urlhandler(url, content_type):
         ) as f:
             html_source_bytes = (
                 f.read()
-                .replace("{Python_Interface: GT}", f'"{gt}"')
-                .replace("{Python_Interface: CHALLENGE}", f'"{challenge}"')
+                .replace("{ Python_Interface: GT }", f'"{gt}"')
+                .replace("{ Python_Interface: CHALLENGE }", f'"{challenge}"')
             )
         return html_source_bytes
     else:
