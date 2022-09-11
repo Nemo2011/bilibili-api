@@ -14,6 +14,7 @@ from ..article import Article, ArticleList
 from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
 from ..cheese import CheeseList, CheeseVideo
+from ..dynamic import Dynamic
 from ..exceptions import *
 from ..favorite_list import (FavoriteList, FavoriteListType,
                              get_video_favorite_list)
@@ -58,6 +59,7 @@ class ResourceType(Enum):
     LIVE = "live"
     CHANNEL_SERIES = "channel_series"
     ARTICLE_LIST = "article_list"
+    DYNAMIC = "dynamic"
 
 
 async def parse_link(url, credential: Credential = Credential()):
@@ -145,6 +147,9 @@ async def parse_link(url, credential: Credential = Credential()):
         live = parse_live(url)
         if not live == -1:
             obj = (live, ResourceType.LIVE)
+        dynamic = parse_dynamic(url)
+        if not dynamic == -1:
+            obj = (dynamic, ResourceType.DYNAMIC)
 
         if obj == None or obj[0] == None:
             return -1
@@ -484,5 +489,15 @@ def parse_article_list(url):
     if url[:41] == "https://www.bilibili.com/read/readlist/rl":
         last_part = int(url[41:].replace("/", ""))
         return ArticleList(last_part)
+    else:
+        return -1
+
+def parse_dynamic(url):
+    if url[:23] == "https://t.bilibili.com/":
+        last_part = url[23:].replace("/", "")
+        if last_part == "":
+            return -1
+        else:
+            return Dynamic(int(last_part))
     else:
         return -1
