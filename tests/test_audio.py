@@ -31,7 +31,7 @@ async def test_e_Audio_add_coins():
     try:
         return await audio.add_coins()
     except ResponseCodeException as e:
-        if e.code != 34005:
+        if e.code != 34005 and e.code != -104:
             raise e
 
         return e.raw
