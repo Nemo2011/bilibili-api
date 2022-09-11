@@ -7,6 +7,7 @@ bilibili_api.utils.Danmaku
 import time
 from enum import Enum
 import zlib
+from typing import Union
 
 from .utils import crack_uid
 
@@ -34,6 +35,7 @@ class DmMode(Enum):
     TOP = 5
     BOTTOM = 4
     REVERSE = 6
+    SPECIAL = 9
 
 
 class Danmaku:
@@ -52,8 +54,8 @@ class Danmaku:
         id_: int = -1,
         id_str: str = "",
         action: str = "",
-        mode: DmMode = DmMode.FLY,
-        font_size: DmFontSize = DmFontSize.NORMAL,
+        mode: Union[DmMode, int] = DmMode.FLY,
+        font_size: Union[DmFontSize, int] = DmFontSize.NORMAL,
         is_sub: bool = False,
         pool: int = 0,
         attr: int = -1,
@@ -114,28 +116,6 @@ class Danmaku:
         self.crc32_id = crc32_id
         self.uid = zlib.crc32(crc32_id.encode("utf8"))
 
-    def get_information(self):
-        """
-        获取弹幕信息
-        """
-        return {
-            "text": self.text,
-            "dm_time": self.dm_time,
-            "send_time": self.send_time,
-            "crc32_id": self.crc32_id,
-            "color": self.color,
-            "weight": self.weight,
-            "id": self.id_,
-            "id_str": self.id_str,
-            "action": self.action,
-            "mode": self.mode,
-            "font_size": self.font_size,
-            "is_sub": self.is_sub,
-            "pool": self.pool,
-            "attr": self.attr,
-            "uid": self.uid,
-        }
-
     def to_xml(self):
         """
         将弹幕转换为 xml 格式弹幕
@@ -143,3 +123,22 @@ class Danmaku:
         txt = self.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         string = f'<d p="{self.dm_time},{self.mode},{self.font_size},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id_},11">{txt}</d>'
         return string
+
+
+class SpecialDanmaku:
+    def __init__(
+        self, 
+        content: str, 
+        id_: int = -1, 
+        id_str: str = "", 
+        mode: Union[DmMode, int] = DmMode.SPECIAL, 
+        pool: int = 2
+    ):
+        self.content = content
+        self.id_ = id_
+        self.id_str = id_str
+        self.mode = mode.value if isinstance(mode, DmMode) else mode
+        self.pool = pool
+
+    def __str__(self):
+        return f"{self.content}"
