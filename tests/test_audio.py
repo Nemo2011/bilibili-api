@@ -6,7 +6,7 @@ from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 
 credential = get_credential()
 
-audio = Audio(11589, credential)
+audio = Audio(2010438, credential)
 
 audio_list = AudioList(26241, credential)
 
