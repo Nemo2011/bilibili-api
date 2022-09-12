@@ -5,8 +5,8 @@
         "method": "GET",
         "verify": true,
         "params": {
-          "talker_id": "int: 私聊用户 UID",
-          "session_type": "int: 未知作用，默认：1",
+          "talker_id": "int: 私聊时为用户UID 应援团时为团号",
+          "session_type": "int: 会话类型，1 私聊 2 应援团",
           "begin_seqno": "int: 起始 Seqno 可由具体消息获得"
         },
         "comment": "获取指定用户的近三十条消息"

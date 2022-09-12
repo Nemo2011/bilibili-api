@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-import enum
 import json
 import logging
 import time
@@ -20,14 +19,15 @@ from .video import Video
 API = get_api("session")
     
 
-async def fetch_session_msgs(talker_id: int, credential: Credential, begin_seqno: int = 0):
+async def fetch_session_msgs(talker_id: int, credential: Credential, session_type: int = 1, begin_seqno: int = 0):
     """
     获取指定用户的近三十条消息
 
     Args:
-        talker_id   (int)       : 用户 UID
-        credential  (Credential): Credential
-        begin_seqno (int)       : 起始 Seqno
+        talker_id    (int)       : 用户 UID
+        credential   (Credential): Credential
+        session_type (int)       : 会话类型 1 私聊 2 应援团
+        begin_seqno  (int)       : 起始 Seqno
 
     Returns:
         调用 API 返回结果
@@ -36,7 +36,7 @@ async def fetch_session_msgs(talker_id: int, credential: Credential, begin_seqno
     credential.raise_for_no_sessdata()
     params = {
         'talker_id': talker_id,
-        'session_type': 1,
+        'session_type': session_type,
         'begin_seqno': begin_seqno
     }
     api = API["session"]["fetch"]
@@ -56,7 +56,7 @@ async def new_sessions(credential: Credential, begin_ts: int = int(time.time()*1
     """
 
     credential.raise_for_no_sessdata()
-    params = {'begin_ts': begin_ts}
+    params = {'begin_ts': begin_ts, "build": 0, "mobi_app": "web"}
     api = API["session"]["new"]
 
     return await request("GET", api["url"], params=params,credential=credential)
@@ -123,7 +123,12 @@ async def send_msg(credential: Credential, receiver_id: int, text: str):
         "POST", url=api["url"], data=data, credential=credential
     )
 
+@dataclass
 class Picture:
+    '''
+    图片类，包含图片链接、尺寸以及下载操作。
+    '''
+
     height:     int
     imageType:  str
     original:   int
@@ -156,7 +161,7 @@ class Event:
     + TEXT:           纯文字消息
     + PICTURE:        图片消息
     + WITHDRAW:       撤回消息
-    + GROUPS_PICTURE: 应援团图片
+    + GROUPS_PICTURE: 应援团图片，但似乎不常触发，一般使用 PICTURE 即可
     + SHARE_VIDEO:    分享视频
     + NOTICE:         系统通知
     + PUSHED_VIDEO:   UP主推送的视频
@@ -217,7 +222,7 @@ class Event:
         return f'{msg_type} {user_id} 信息 {self.content}({self.timestamp})'
 
     def __content(self):
-        '更新消息内容'
+        '''更新消息内容'''
 
         content: dict = json.loads(self.content)
         mt = str(self.msg_type)
@@ -244,6 +249,10 @@ class Event:
             print(mt, content)
 
 class Session(AsyncEvent):
+    '''
+    会话类，用来开启消息监听。
+    '''
+
     def __init__(self, credential: Credential, debug=False):
         super().__init__()
         # 会话状态
@@ -252,7 +261,7 @@ class Session(AsyncEvent):
         # 已获取会话中最大的时间戳 默认当前时间
         self.maxTs = int(time.time()*1000000)
 
-        # 会话UID为键 会话中最大Seqno位置值
+        # 会话UID为键 会话中最大Seqno为值
         self.maxSeqno = dict()
 
         # 凭证
@@ -309,7 +318,7 @@ class Session(AsyncEvent):
                 self.maxTs = max(self.maxTs, session['session_ts'])
                 pending.add(
                     asyncio.create_task(
-                        fetch_session_msgs(session['talker_id'], self.credential, self.maxSeqno.get(session['talker_id']))
+                        fetch_session_msgs(session['talker_id'], self.credential, session['session_type'], self.maxSeqno.get(session['talker_id']))
                     )
                 )
                 self.maxSeqno[session['talker_id']] = session["max_seqno"]
@@ -329,7 +338,7 @@ class Session(AsyncEvent):
                                         event.content,
                                         f'key={event.content}'
                                     )
-                                ) + f'被撤回({event.timestamp})'
+                                ) + f' 被撤回({event.timestamp})'
                             )
                         else:
                             self.logger.info(event)
@@ -342,6 +351,7 @@ class Session(AsyncEvent):
 
             self.logger.debug(f'maxTs = {self.maxTs}')
 
+        self.__status = 1
         self.sched.start()
         self.logger.info('开始轮询')
 
@@ -371,9 +381,14 @@ class Session(AsyncEvent):
             dict: 调用接口返回的内容。
         '''
 
-        return await send_msg(self.credential, event.sender_uid, text)
+        if self.uid == event.sender_uid:
+            self.logger.error('不能给自己发送消息哦~')
+        else:
+            return await send_msg(self.credential, event.sender_uid, text)
 
     def close(self):
-        '结束轮询'
+        '''结束轮询'''
+
         self.sched.remove_job('query')
         self.__status = 2
+        self.logger.info('结束轮询')
