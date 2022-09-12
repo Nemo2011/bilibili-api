@@ -1,0 +1,37 @@
+{
+    "info": {
+        "meta": {
+            "url": "https://api.bilibili.com/pugv/view/web/season",
+            "method": "GET",
+            "verify": false,
+            "params": {
+                "season_id": "int: 季度 id，不与 bangumi 互通",
+                "ep_id": "int: 一个视频的 EPID，不与 bangumi 互通"
+            },
+            "comment": "获取课程元数据。"
+        },
+        "list": {
+            "url": "https://api.bilibili.com/pugv/view/web/ep/list",
+            "verify": false,
+            "params": {
+                "season_id": "int: 季度 id，不与 bangumi 互通",
+                "pn": "int: 第几页,defaults to 1",
+                "ps": "int: 每一页的视频数,defaults to 50"
+            },
+            "comment": "获取全部视频"
+        },
+        "playurl": {
+            "url": "https://api.bilibili.com/pugv/player/web/playurl",
+            "verify": false,
+            "params": {
+                "avid": "int: aid",
+                "ep_id": "int: epid",
+                "cid": "int: cid",
+                "qn": "127",
+                "fnval": 4048,
+                "fourk": 1
+            },
+            "comment": "获取下载链接"
+        }
+    }
+}

@@ -1,0 +1,36 @@
+{
+  "info": {
+    "videolist": {
+      "url": "https://member.bilibili.com/x/vupre/web/archive/view",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "bvid": "str: bv 号"
+      },
+      "comment": "视频列表数据"
+    },
+    "edge_info": {
+      "url": "https://api.bilibili.com/x/stein/edgeinfo_v2",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "bvid": "str: BV 号",
+        "graph_version": "int: 剧情图版本",
+        "edge_id": "int?: 节点 ID"
+      },
+      "comment": "互动视频节点信息"
+    }
+  },
+  "operate": {
+    "savestory": {
+      "url": "https://api.bilibili.com/x/stein/graph/save",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "preview": "int: 0 不清楚是什么",
+        "data": "故事树信息"
+      },
+      "comment": "保存故事树"
+    }
+  }
+}
