@@ -1,0 +1,9 @@
+{
+    "list": {
+        "url": "https://api.bilibili.com/x/emote/user/panel/web", 
+        "params": {
+            "business": "使用场景 reply/dynamic"
+        }, 
+        "comment": "获取表情包"
+    }
+}
