@@ -16,12 +16,20 @@ from .utils.Credential import Credential
 from .utils.network_httpx import request
 from .utils.utils import get_api
 from .video import Video
+from enum import Enum
 
 API = get_api("session")
 
-# 消息类型
-SESSION_TYPE = {1: "私聊", 2: "通知", 3: "应援团", 4: "全部"}
-
+class SessionType(Enum):
+    """
+    会话类型 
+    
+    1: 私聊, 2: 通知, 3: 应援团, 4: 全部
+    """
+    CHAT = 1
+    MSG = 2
+    MISSIONS = 3
+    ALL = 4
 
 async def fetch_session_msgs(
     talker_id: int, credential: Credential, begin_seqno: int = 0
@@ -66,13 +74,13 @@ async def new_sessions(
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_sessions(credential: Credential, session_type: int = 4):
+async def get_sessions(credential: Credential, session_type: SessionType = SessionType.ALL):
     """
     获取已有消息
 
     Args:
-        credential   (Credential): Credential
-        session_type (int)       : 会话类型 1: 私聊, 2: 通知, 3: 应援团, 4: 全部
+        credential   (Credential) : Credential
+        session_type (SessionType): 会话类型
 
     Returns:
         调用 API 返回结果
@@ -80,7 +88,7 @@ async def get_sessions(credential: Credential, session_type: int = 4):
 
     credential.raise_for_no_sessdata()
     params = {
-        "session_type": session_type,
+        "session_type": session_type.value,
         "group_fold": 1,
         "unfollow_fold": 0,
         "sort_rule": 2,

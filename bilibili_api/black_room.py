@@ -45,7 +45,14 @@ BLACK_TYPE = {
     32: "恶意冒充他人",
 }
 
-# 违规来源
-BLACK_FROM = {0: "系统封禁", 1: "风纪仲裁"}
+class BlackFrom(Enum):
+    """
+    违规来源
+
+    0: 系统封禁
+    1: 风纪仲裁
+    """
+    SYSTEM = 0
+    ADMIN = 1
 
 API = get_api("black-room")
