@@ -556,7 +556,11 @@ class User:
             meta = item["meta"]
             channels.append(
                 ChannelSeries(
-                    self.__uid, ChannelSeriesType.SEASON, id_, self.credential, meta=meta
+                    self.__uid,
+                    ChannelSeriesType.SEASON,
+                    id_,
+                    self.credential,
+                    meta=meta,
                 )
             )
         for item in channel_data["items_lists"]["series_list"]:
@@ -564,7 +568,11 @@ class User:
             meta = item["meta"]
             channels.append(
                 ChannelSeries(
-                    self.__uid, ChannelSeriesType.SERIES, id_, self.credential, meta=meta
+                    self.__uid,
+                    ChannelSeriesType.SERIES,
+                    id_,
+                    self.credential,
+                    meta=meta,
                 )
             )
         return channels
