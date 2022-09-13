@@ -34,6 +34,7 @@ from . import settings
 API = get_api("video")
 
 
+# 视频分辨率
 VIDEO_QUALITY = {
     126: "杜比视界",
     125: "真彩 HDR",
@@ -46,8 +47,10 @@ VIDEO_QUALITY = {
     16: "流畅 360P",
 }
 
+# 视频编码 | if "hev" in codecs: HEVC(H.265) |
 VIDEO_CODECS = {"hev": "HEVC(H.265)", "avc": "AVC(H.264)", "av01": "AV1"}
 
+# 音频编码
 AUDIO_QUALITY = {
     30216: "64 K",
     30232: "132 K",
