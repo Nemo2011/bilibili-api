@@ -4,7 +4,7 @@
         "verify": false, 
         "params": {
             "btype": "int: 违规来源, 见 black_room.BLACK_FROM", 
-            "otype": "int: 违规类型, 见 black_room.BLACK_TYPE", 
+            "otype": "int: 违规类型, 0: 系统封禁, 1: 风纪仲裁", 
             "pn": "int: 页码"
         }, 
         "comment": "获取小黑屋内容"
