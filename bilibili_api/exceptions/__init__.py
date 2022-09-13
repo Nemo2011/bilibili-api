@@ -1,3 +1,7 @@
+"""
+错误
+"""
+
 from .ApiException import *
 from .ResponseCodeException import *
 from .ResponseException import *
