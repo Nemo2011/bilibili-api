@@ -16,8 +16,7 @@ from ..bangumi import Bangumi, Episode
 from ..cheese import CheeseList, CheeseVideo
 from ..dynamic import Dynamic
 from ..exceptions import *
-from ..favorite_list import (FavoriteList, FavoriteListType,
-                             get_video_favorite_list)
+from ..favorite_list import FavoriteList, FavoriteListType, get_video_favorite_list
 from ..interactive_video import InteractiveVideo
 from ..live import LiveRoom
 from ..user import ChannelSeries, ChannelSeriesType, User, get_self_info
@@ -174,14 +173,12 @@ def check_short_name(name: str, credential: Credential):
       - rlxxxxxxxxxx
     """
     if name[:2].upper() == "AV":
-        v = (Video(aid=int(name[2:])))
+        v = Video(aid=int(name[2:]))
         info = json.loads(
             httpx.get(
-                "https://api.bilibili.com/x/web-interface/view", 
-                params={
-                    "bvid": v.get_bvid()
-                }, 
-                cookies=credential.get_cookies()
+                "https://api.bilibili.com/x/web-interface/view",
+                params={"bvid": v.get_bvid()},
+                cookies=credential.get_cookies(),
             ).text
         )
         is_interactive = info["data"]["rights"]["is_stein_gate"]
@@ -190,14 +187,12 @@ def check_short_name(name: str, credential: Credential):
         else:
             return (v, ResourceType.VIDEO)
     elif name[:2].upper() == "BV":
-        v = (Video(bvid=name))
+        v = Video(bvid=name)
         info = json.loads(
             httpx.get(
-                "https://api.bilibili.com/x/web-interface/view", 
-                params={
-                    "bvid": v.get_bvid()
-                }, 
-                cookies=credential.get_cookies()
+                "https://api.bilibili.com/x/web-interface/view",
+                params={"bvid": v.get_bvid()},
+                cookies=credential.get_cookies(),
             ).text
         )
         is_interactive = info["data"]["rights"]["is_stein_gate"]
@@ -240,11 +235,9 @@ def parse_video(url, credential: Credential):
             return -1
         info = json.loads(
             httpx.get(
-                "https://api.bilibili.com/x/web-interface/view", 
-                params={
-                    "bvid": v.get_bvid()
-                }, 
-                cookies=credential.get_cookies()
+                "https://api.bilibili.com/x/web-interface/view",
+                params={"bvid": v.get_bvid()},
+                cookies=credential.get_cookies(),
             ).text
         )
         is_interactive = info["data"]["rights"]["is_stein_gate"]
@@ -485,12 +478,14 @@ def parse_space_favorite_list(url, credential):
         return -1
     return -1
 
+
 def parse_article_list(url):
     if url[:41] == "https://www.bilibili.com/read/readlist/rl":
         last_part = int(url[41:].replace("/", ""))
         return ArticleList(last_part)
     else:
         return -1
+
 
 def parse_dynamic(url):
     if url[:23] == "https://t.bilibili.com/":

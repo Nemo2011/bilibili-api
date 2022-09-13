@@ -697,14 +697,14 @@ class Video:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.__get_page_id_by_index(page_index)
-        
-        view = await self.get_danmaku_view(cid = cid)
+
+        view = await self.get_danmaku_view(cid=cid)
         special_dms = view["special_dms"][0]
         if settings.proxy != "":
             sess = httpx.AsyncClient(proxies={"all://": settings.proxy})
         else:
             sess = httpx.AsyncClient()
-        dm_content = await sess.get(special_dms, cookies = self.credential.get_cookies())
+        dm_content = await sess.get(special_dms, cookies=self.credential.get_cookies())
         dm_content.raise_for_status()
         reader = BytesReader(dm_content.content)
         dms: List[SpecialDanmaku] = []

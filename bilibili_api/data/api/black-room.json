@@ -1,0 +1,20 @@
+{
+    "info": {
+        "url": "https://api.bilibili.com/x/credit/blocked/list", 
+        "verify": false, 
+        "params": {
+            "btype": "int: 违规来源, 见 black_room.BLACK_FROM", 
+            "otype": "int: 违规类型, 见 black_room.BLACK_TYPE", 
+            "pn": "int: 页码"
+        }, 
+        "comment": "获取小黑屋内容"
+    }, 
+    "detail": {
+        "url": "https://api.bilibili.com/x/credit/blocked/info", 
+        "verify": false, 
+        "params": {
+            "id": "小黑屋 id"
+        }, 
+        "comment": "获取小黑屋详细信息"
+    }
+}

@@ -23,8 +23,10 @@ API = get_api("interactive_video")
 class InteractiveVideo:
     pass
 
+
 class InteractiveNode:
     pass
+
 
 class InteractiveButtonAlign(enum.Enum):
     """

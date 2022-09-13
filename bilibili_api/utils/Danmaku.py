@@ -127,12 +127,12 @@ class Danmaku:
 
 class SpecialDanmaku:
     def __init__(
-        self, 
-        content: str, 
-        id_: int = -1, 
-        id_str: str = "", 
-        mode: Union[DmMode, int] = DmMode.SPECIAL, 
-        pool: int = 2
+        self,
+        content: str,
+        id_: int = -1,
+        id_str: str = "",
+        mode: Union[DmMode, int] = DmMode.SPECIAL,
+        pool: int = 2,
     ):
         self.content = content
         self.id_ = id_
