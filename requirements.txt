@@ -11,4 +11,5 @@ requests~=2.28.1
 keyboard~=0.13.5
 APScheduler~=3.9.1
 rsa~=4.9
+pillow~=9.1.1
 # ffmpeg-python~=0.2.0 
