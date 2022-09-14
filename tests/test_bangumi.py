@@ -36,15 +36,14 @@ async def test_g_Bangumi_get_overview():
     return await b.get_overview()
 
 
+from bilibili_api import sync
+# print(sync(test_f_Episode_get_episode_info()))
 # 港澳台 ep 测试 START
 e = bangumi.Bangumi(epid=562695, oversea=True)  # 港澳台番剧
 # e = bangumi.Bangumi(epid=674709)  # 内地番剧
-from bilibili_api import sync
-
 
 async def test_oversea_gangaotai_get_item():
-    return e.get_ep_info()
-
+    return e.get_episode_info()
 
 async def test_oversea_gangaotai_get_bangumi():
     return await e.get_meta()

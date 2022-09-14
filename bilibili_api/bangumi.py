@@ -113,7 +113,7 @@ class Bangumi:
         """
         return self.__raw, self.oversea
 
-    def get_ep_info(self):
+    def get_episode_info(self):
         """
         如果设置了 epid,回应对应条目的条目数据
         Returns:数据
