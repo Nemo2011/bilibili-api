@@ -35,22 +35,38 @@ async def test_f_Episode_get_episode_info():
 async def test_g_Bangumi_get_overview():
     return await b.get_overview()
 
+
 # 港澳台 ep 测试 START
-e = bangumi.Bangumi(epid=675686, oversea=True)  # 港澳台番剧
+e = bangumi.Bangumi(epid=562695, oversea=True)  # 港澳台番剧
 # e = bangumi.Bangumi(epid=674709)  # 内地番剧
 from bilibili_api import sync
-async def test_gangaotai_get_list():
-    return e.get_ep_list()
-async def test_gangaotai_get_item():
+
+
+async def test_oversea_gangaotai_get_item():
     return e.get_ep_info()
-async def test_gangaotai_get_bangumi():
+
+
+async def test_oversea_gangaotai_get_bangumi():
     return await e.get_meta()
-info1 = sync(test_gangaotai_get_list())
-info2 = sync(test_gangaotai_get_item())
-info3 = sync(test_gangaotai_get_bangumi())
+
+
+async def test_oversea_Bangumi_get_episode_list():
+    return await e.get_episode_list()
+
+
+async def test_oversea_Bangumi_get_stat():
+    return await e.get_stat()
+
 # 特性测试
-print(info1)
-print(info2)
+# info2 = sync(test_oversea_gangaotai_get_item())
+# print(info2)
 # 兼容测试
-print(info3)
+# info3 = sync(test_oversea_gangaotai_get_bangumi())
+# print(info3)
+# 转换测试
+# info4 = sync(test_oversea_Bangumi_get_episode_list())
+# print(info4)
+# 没有被限制的stat接口
+# info5 = sync(test_oversea_Bangumi_get_stat())
+# print(info5)
 # 港澳台 ep 测试 END
