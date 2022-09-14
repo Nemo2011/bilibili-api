@@ -47,7 +47,15 @@ class Bangumi:
         self, media_id: int = -1, ssid: int = -1, epid: int = -1, oversea: bool = False,
         credential: Credential = Credential()
     ):
-        """番剧类"""
+        """
+        番剧类相关
+        Args:
+            media_id: 番剧本身的 ID
+            ssid: 每季度的 ID
+            epid: 每集的 ID
+            oversea: bool，是否要采用兼容的港澳台Api,用于仅限港澳台地区番剧的信息请求
+            credential: 凭据类
+        """
         if media_id == -1 and ssid == -1 and epid == -1:
             raise ValueError("需要 Media_id 或 Season_id 或 epid 中的一个 !")
         self.credential = credential
@@ -82,11 +90,14 @@ class Bangumi:
         self.__epid = epid
         if not self.__raw.get("result"):
             raise ApiException("Api没有返回预期的结果")
+        # 确认有结果后，取出数据
         self.__ssid = req.json()["result"]["season_id"]
         self.__media_id = req.json()["result"]["media_id"]
         self.__up_info = req.json()["result"]["up_info"]
+        # 获取剧集相关
         self.ep_list = req.json()["result"].get("episodes")
-        self.ep_item = ["{}"]
+        self.ep_item = [{}]
+        # 出海 Api 和国内的字段有些不同
         if self.ep_list:
             if self.oversea:
                 self.ep_item = [item for item in self.ep_list if item["ep_id"] == self.__epid]
@@ -183,7 +194,7 @@ class Bangumi:
 
     async def get_episode_list(self):
         """
-        获取季度分集列表
+        获取季度分集列表，自动转换出海Api的字段，适配部分，但是键还是有不同
         """
         if self.oversea:
             # 转换 ep_id->id ，index_title->longtitle ，index->title

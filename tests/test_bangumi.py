@@ -39,7 +39,7 @@ async def test_g_Bangumi_get_overview():
 from bilibili_api import sync
 # print(sync(test_f_Episode_get_episode_info()))
 # 港澳台 ep 测试 START
-e = bangumi.Bangumi(epid=562695, oversea=True)  # 港澳台番剧
+e = bangumi.Bangumi(media_id=28338523, oversea=True)  # 港澳台番剧
 # e = bangumi.Bangumi(epid=674709)  # 内地番剧
 
 async def test_oversea_gangaotai_get_item():
