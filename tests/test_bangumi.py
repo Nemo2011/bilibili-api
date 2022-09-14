@@ -36,8 +36,8 @@ async def test_g_Bangumi_get_overview():
     return await b.get_overview()
 
 # 港澳台 ep 测试 START
-r = bangumi.Bangumi(epid=675686)  # 港澳台番剧
-e = bangumi.Bangumi(epid=674709)  # 内地番剧
+e = bangumi.Bangumi(epid=675686, oversea=True)  # 港澳台番剧
+# e = bangumi.Bangumi(epid=674709)  # 内地番剧
 from bilibili_api import sync
 async def test_gangaotai_get_list():
     return e.get_ep_list()
@@ -45,12 +45,12 @@ async def test_gangaotai_get_item():
     return e.get_ep_info()
 async def test_gangaotai_get_bangumi():
     return await e.get_meta()
-# info1 = sync(test_gangaotai_get_list())
-# info2 = sync(test_gangaotai_get_item())
-# info3 = sync(test_gangaotai_get_bangumi())
+info1 = sync(test_gangaotai_get_list())
+info2 = sync(test_gangaotai_get_item())
+info3 = sync(test_gangaotai_get_bangumi())
 # 特性测试
-# print(info1)
-# print(info2)
+print(info1)
+print(info2)
 # 兼容测试
-# print(info3)
+print(info3)
 # 港澳台 ep 测试 END

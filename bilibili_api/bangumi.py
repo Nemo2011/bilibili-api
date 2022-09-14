@@ -44,51 +44,66 @@ class BangumiCommentOrder(Enum):
 
 class Bangumi:
     def __init__(
-        self, media_id: int = -1, ssid: int = -1, epid: int = -1, credential: Credential = Credential()
+        self, media_id: int = -1, ssid: int = -1, epid: int = -1, oversea: bool = False,
+        credential: Credential = Credential()
     ):
         """番剧类"""
         if media_id == -1 and ssid == -1 and epid == -1:
             raise ValueError("需要 Media_id 或 Season_id 或 epid 中的一个 !")
-        self.__media_id = media_id
-        self.__epid = epid
         self.credential = credential
-        if epid != -1 and ssid == -1 and media_id == -1:
-            api = API["info"]["collective_info_oversea"]
-            params = {"ep_id": self.__epid}
-            oversea = requests.get(
+        # 处理极端情况
+        params = {}
+        self.__ssid = ssid
+        if self.__ssid == -1 and epid == -1:
+            api = API["info"]["meta"]
+            params = {"media_id": media_id}
+            meta = requests.get(
                 url=api["url"], params=params, cookies=self.credential.get_cookies()
             )
-            oversea.raise_for_status()
-            self.__ssid = oversea.json()["result"]["season_id"]
-            self.__media_id = oversea.json()["result"]["media_id"]
-            self.ep_list = oversea.json()["result"]["episodes"]
-            self.ep_item = [item for item in oversea.json()["result"]["episodes"] if item["ep_id"] == self.__epid][0]
+            meta.raise_for_status()
+            print(meta.json())
+            self.__ssid = meta.json()["result"]["media"]["season_id"]
+            params["media_id"] = media_id
+        # 处理正常情况
+        if self.__ssid != -1:
+            params["season_id"] = self.__ssid
+        if epid != -1:
+            params["ep_id"] = epid
+        self.oversea = oversea
+        if oversea:
+            api = API["info"]["collective_info_oversea"]
         else:
-            if ssid != -1:
-                self.__ssid = ssid
+            api = API["info"]["collective_info"]
+        req = requests.get(
+            url=api["url"], params=params, cookies=self.credential.get_cookies()
+        )
+        req.raise_for_status()
+        self.__raw = req.json()
+        self.__epid = epid
+        if not self.__raw.get("result"):
+            raise ApiException("Api没有返回预期的结果")
+        self.__ssid = req.json()["result"]["season_id"]
+        self.__media_id = req.json()["result"]["media_id"]
+        self.ep_list = req.json()["result"].get("episodes")
+        self.ep_item = ["{}"]
+        if self.ep_list:
+            if self.oversea:
+                self.ep_item = [item for item in self.ep_list if item["ep_id"] == self.__epid]
             else:
-                api = API["info"]["meta"]
-                params = {"media_id": self.__media_id}
-                meta = requests.get(
-                    url=api["url"], params=params, cookies=self.credential.get_cookies()
-                )
-                meta.raise_for_status()
-                self.__ssid = meta.json()["result"]["media"]["season_id"]
-
-            if self.__media_id == -1:
-                api = API["info"]["collective_info"]
-                params = {"season_id": self.__ssid}
-                overview = requests.get(
-                    url=api["url"], params=params, cookies=self.credential.get_cookies()
-                )
-                overview.raise_for_status()
-                self.__media_id = overview.json()["result"]["media_id"]
+                self.ep_item = [item for item in self.ep_list if item["id"] == self.__epid]
 
     def get_media_id(self):
         return self.__media_id
 
     def get_season_id(self):
         return self.__ssid
+
+    def get_raw(self):
+        """
+        原始初始化数据，番剧的全部数据
+        Returns:self.__raw, self.oversea
+        """
+        return self.__raw, self.oversea
 
     def get_ep_info(self):
         """
@@ -102,13 +117,10 @@ class Bangumi:
 
     def get_ep_list(self):
         """
-        如果设置了 epid,回应所有的条目数据
+        回应所有的条目数据
         Returns:数据
         """
-        if self.__epid != -1:
-            return self.ep_list
-        else:
-            raise ValueError("没有设置任何 epid 参数")
+        return self.ep_list
 
     def set_media_id(self, media_id: int):
         self.__init__(media_id=media_id, credential=self.credential)
