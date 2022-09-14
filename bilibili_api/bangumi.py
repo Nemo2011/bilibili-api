@@ -44,8 +44,12 @@ class BangumiCommentOrder(Enum):
 
 class Bangumi:
     def __init__(
-        self, media_id: int = -1, ssid: int = -1, epid: int = -1, oversea: bool = False,
-        credential: Credential = Credential()
+        self,
+        media_id: int = -1,
+        ssid: int = -1,
+        epid: int = -1,
+        oversea: bool = False,
+        credential: Credential = Credential(),
     ):
         """
         番剧类相关
@@ -100,9 +104,13 @@ class Bangumi:
         # 出海 Api 和国内的字段有些不同
         if self.ep_list:
             if self.oversea:
-                self.ep_item = [item for item in self.ep_list if item["ep_id"] == self.__epid]
+                self.ep_item = [
+                    item for item in self.ep_list if item["ep_id"] == self.__epid
+                ]
             else:
-                self.ep_item = [item for item in self.ep_list if item["id"] == self.__epid]
+                self.ep_item = [
+                    item for item in self.ep_list if item["id"] == self.__epid
+                ]
 
     def get_media_id(self):
         return self.__media_id
@@ -204,9 +212,11 @@ class Bangumi:
                 item["longtitle"] = item.get("index_title")
                 item["title"] = item.get("index")
                 fix_ep_list.append(item)
-            return {'main_section': {'episodes': fix_ep_list}}
+            return {"main_section": {"episodes": fix_ep_list}}
         else:
-            credential = self.credential if self.credential is not None else Credential()
+            credential = (
+                self.credential if self.credential is not None else Credential()
+            )
             api = API["info"]["episodes_list"]
             params = {"season_id": self.__ssid}
             return await request("GET", api["url"], params, credential=credential)
