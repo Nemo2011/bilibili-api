@@ -101,7 +101,7 @@ class Bangumi:
 
     def get_up_info(self):
         """
-        原始初始化数据
+        番剧上传者信息 出差或者原版
         Returns:self.__raw, self.oversea
         """
         return self.__up_info
