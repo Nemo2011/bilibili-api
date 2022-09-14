@@ -7,6 +7,8 @@ bilibili_api.black_room
 from enum import Enum
 
 from .utils.utils import get_api
+from .utils.network_httpx import request
+from .utils.Credential import Credential
 
 # 违规类型代码
 BLACK_TYPE = {
@@ -49,10 +51,63 @@ class BlackFrom(Enum):
     """
     违规来源
 
-    0: 系统封禁
-    1: 风纪仲裁
+    SYSTEM: 系统封禁
+    ADMIN: 风纪仲裁
+    ALL: 全部
     """
     SYSTEM = 0
     ADMIN = 1
+    ALL = None
 
 API = get_api("black-room")
+
+async def get_blocked_list(
+    from_: BlackFrom = BlackFrom.ALL, 
+    type_: int = 0, 
+    pn: int = 1, 
+    credential: Credential = None
+):  
+    """
+    获取小黑屋中的违规列表
+
+    Args:
+        from_(BlackFrom)      : 违规来源. Defaults to BlackFrom.ALL
+        type_(int)            : 违规类型. 查看 black_room.BLACK_TYPE。Defaults to 0 (ALL) 
+        pn(int)               : 页数. Defaults to 1
+        credential(Credential): 凭据, Defaults to None
+    """
+    credential = credential if credential else Credential()
+    api = API["info"]
+    params = {
+        "pn": pn, 
+        "otype": type_
+    }
+    if from_.value != None:
+        params["btype"] = from_.value
+    return await request("GET", api["url"], params = params, credential = credential)
+
+class BlackRoom:
+    def __init__(self, black_room_id: int, credential: Credential = None):
+        """
+        Args:
+            black_room_id(int)    : 小黑屋 id
+            credential(Credential): 凭据类
+        """
+        self.__id = black_room_id
+        self.credential = credential if credential else Credential()
+
+    async def get_details(self):
+        """
+        获取小黑屋详细信息
+        """
+        api = API["detail"]
+        params = {
+            "id": self.__id
+        }
+        return await request("GET", api["url"], params=params, credential=self.credential)
+
+    async def get_id(self):
+        """
+        获取小黑屋 id
+        """
+        return self.__id

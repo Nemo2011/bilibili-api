@@ -102,7 +102,6 @@ __all__ = [
     "ResourceType",
     "ResponseCodeException",
     "ResponseException",
-    "SESSION_TYPE",
     "SpecialDanmaku",
     "VIDEO_CODECS",
     "VIDEO_QUALITY",
