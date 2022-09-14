@@ -3,9 +3,11 @@
 ```python
 from bilibili_api import bangumi
 ```
+
 番剧相关
 
 概念：
+
 + media_id: 番剧本身的 ID，有时候也是每季度的 ID，如 https://www.bilibili.com/bangumi/media/md28231846/
 + season_id: 每季度的 ID，只能通过 get_meta() 获取。
 + episode_id: 每集的 ID，如 https://www.bilibili.com/bangumi/play/ep374717
@@ -33,11 +35,15 @@ from bilibili_api import bangumi
 
 #### def \_\_init\_\_()
 
-| name | type | description |
-| ---- | ---- | ----------- |
-| media_id | int | 教程 ID（不与番剧相通） |
-| ssid | int | 教程季度 ID（不与番剧相通） |
-| credential | Credential | 凭据 |
+| name       | type       | description        |
+|------------|------------|--------------------|
+| media_id   | int        | 教程 ID（不与番剧相通）      |
+| ssid       | int        | 教程季度 ID（不与番剧相通）    |
+| epid       | int        | 剧集 ID              |
+| oversea    | bool       | 是否采用港澳台 Api(与大陆通用) |
+| credential | Credential | 凭据                 |
+
+media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段会被提交到Api查询
 
 #### def get_media_id()
 
@@ -49,7 +55,23 @@ from bilibili_api import bangumi
 
 获取 season_id
 
-**Returns:** season_id
+#### def get_up_info()
+
+获取番剧的上传者信息，一般为哔哩哔哩出差和哔哩哔哩两种
+
+**Returns:** Api 相关字段
+
+#### def get_episode_info()
+
+获取ep剧集相对应的各种数据，比如 标题，avid,bvid 等等
+
+**Returns:** Api 相关字段
+
+#### def get_raw()
+
+获取初始化得到的，和 get_overview 一个格式的数据
+
+**Returns:** Api 字段
 
 #### async def set_ssid()
 
@@ -71,10 +93,10 @@ from bilibili_api import bangumi
 
 #### async def get_short_comment_list()
 
-| name       | type                          | description                                                  |
-| ---------- | ----------------------------- | ------------------------------------------------------------ |
-| order      | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT            |
-| next       | str, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None |
+| name  | type                          | description                                  |
+|-------|-------------------------------|----------------------------------------------|
+| order | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT |
+| next  | str, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None  |
 
 获取短评列表
 
@@ -82,10 +104,10 @@ from bilibili_api import bangumi
 
 #### async def get_long_comment_list()
 
-| name       | type                          | description                                                  |
-| ---------- | ----------------------------- | ------------------------------------------------------------ |
-| order      | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT            |
-| next       | str, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None |
+| name  | type                          | description                                  |
+|-------|-------------------------------|----------------------------------------------|
+| order | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT |
+| next  | str, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None  |
 
 获取长评列表
 
@@ -113,11 +135,11 @@ from bilibili_api import bangumi
 
 ## async def set_follow()
 
-| name       | type                 | description                |
-| ---------- | -------------------- | -------------------------- |
-| bangumi | Bangumi | 番剧类 |
+| name       | type                 | description           |
+|------------|----------------------|-----------------------|
+| bangumi    | Bangumi              | 番剧类                   |
 | status     | bool, optional       | 追番状态，Defaults to True |
-| credential | Credential, optional | 凭据. Defaults to None     |
+| credential | Credential, optional | 凭据. Defaults to None  |
 
 追番状态设置
 
@@ -143,10 +165,10 @@ from bilibili_api import bangumi
 
 #### def \_\_init\_\_()
 
-| name | type | description |
-| ---- | ---- | ----------- |
-| epid | int | epid | 
-| credential | Credential | 凭据 |
+| name       | type       | description |
+|------------|------------|-------------|
+| epid       | int        | epid        | 
+| credential | Credential | 凭据          |
 
 #### def get_bangumi()
 
@@ -178,20 +200,17 @@ from bilibili_api import bangumi
 
 **Returns:** API 调用返回结果。
 
-
 #### async def get_danmaku_view()
 
 获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
-
 **Returns:** API 调用返回结果。
-
 
 #### async def get_danmakus()
 
-| name       | type                    | description                                               |
-| ---------- | ----------------------- | --------------------------------------------------------- |
-| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+| name | type                    | description                           |
+|------|-------------------------|---------------------------------------|
+| date | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
 
 获取弹幕
 
@@ -205,9 +224,9 @@ from bilibili_api import bangumi
 
 #### async def get_history_danmaku_index()
 
-| name       | type                    | description                                               |
-| ---------- | ----------------------- | --------------------------------------------------------- |
-| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+| name | type                    | description                           |
+|------|-------------------------|---------------------------------------|
+| date | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
 
 获取特定月份存在历史弹幕的日期。
 
