@@ -61,7 +61,7 @@ class Bangumi:
                 url=api["url"], params=params, cookies=self.credential.get_cookies()
             )
             meta.raise_for_status()
-            print(meta.json())
+            # print(meta.json())
             self.__ssid = meta.json()["result"]["media"]["season_id"]
             params["media_id"] = media_id
         # 处理正常情况
@@ -84,6 +84,7 @@ class Bangumi:
             raise ApiException("Api没有返回预期的结果")
         self.__ssid = req.json()["result"]["season_id"]
         self.__media_id = req.json()["result"]["media_id"]
+        self.__up_info = req.json()["result"]["up_info"]
         self.ep_list = req.json()["result"].get("episodes")
         self.ep_item = ["{}"]
         if self.ep_list:
@@ -98,9 +99,16 @@ class Bangumi:
     def get_season_id(self):
         return self.__ssid
 
+    def get_up_info(self):
+        """
+        原始初始化数据
+        Returns:self.__raw, self.oversea
+        """
+        return self.__up_info
+
     def get_raw(self):
         """
-        原始初始化数据，番剧的全部数据
+        原始初始化数据
         Returns:self.__raw, self.oversea
         """
         return self.__raw, self.oversea
@@ -114,13 +122,6 @@ class Bangumi:
             return self.ep_item
         else:
             raise ValueError("没有设置任何 epid 参数")
-
-    def get_ep_list(self):
-        """
-        回应所有的条目数据
-        Returns:数据
-        """
-        return self.ep_list
 
     def set_media_id(self, media_id: int):
         self.__init__(media_id=media_id, credential=self.credential)
@@ -184,11 +185,20 @@ class Bangumi:
         """
         获取季度分集列表
         """
-        credential = self.credential if self.credential is not None else Credential()
-
-        api = API["info"]["episodes_list"]
-        params = {"season_id": self.__ssid}
-        return await request("GET", api["url"], params, credential=credential)
+        if self.oversea:
+            # 转换 ep_id->id ，index_title->longtitle ，index->title
+            fix_ep_list = []
+            for item in self.ep_list:
+                item["id"] = item.get("ep_id")
+                item["longtitle"] = item.get("index_title")
+                item["title"] = item.get("index")
+                fix_ep_list.append(item)
+            return {'main_section': {'episodes': fix_ep_list}}
+        else:
+            credential = self.credential if self.credential is not None else Credential()
+            api = API["info"]["episodes_list"]
+            params = {"season_id": self.__ssid}
+            return await request("GET", api["url"], params, credential=credential)
 
     async def get_stat(self):
         """
@@ -205,8 +215,10 @@ class Bangumi:
         获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
         """
         credential = self.credential if self.credential is not None else Credential()
-
-        api = API["info"]["collective_info"]
+        if self.oversea:
+            api = API["info"]["collective_info_oversea"]
+        else:
+            api = API["info"]["collective_info"]
         params = {"season_id": self.__ssid}
         return await request("GET", api["url"], params, credential=credential)
 
