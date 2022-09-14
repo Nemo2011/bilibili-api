@@ -8,6 +8,18 @@ from bilibili_api import video
 
 ?> 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 
+## const dict VIDEO_QUALITIES
+
+视频清晰度枚举
+
+## const dict AUDIO_QUALITIES
+
+音频音质枚举
+
+## const dict VIDEO_CODECS
+
+视频编码枚举
+
 ## class DanmakuOperatorType(Enum)
 
 弹幕操作枚举

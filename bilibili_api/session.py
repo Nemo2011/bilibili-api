@@ -20,17 +20,6 @@ from enum import Enum
 
 API = get_api("session")
 
-class SessionType(Enum):
-    """
-    会话类型 
-    
-    1: 私聊, 2: 通知, 3: 应援团, 4: 全部
-    """
-    CHAT = 1
-    MSG = 2
-    MISSIONS = 3
-    ALL = 4
-
 async def fetch_session_msgs(
     talker_id: int, credential: Credential, begin_seqno: int = 0
 ):
@@ -74,13 +63,13 @@ async def new_sessions(
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_sessions(credential: Credential, session_type: SessionType = SessionType.ALL):
+async def get_sessions(credential: Credential, session_type: int = 4):
     """
     获取已有消息
 
     Args:
         credential   (Credential) : Credential
-        session_type (SessionType): 会话类型
+        session_type (int)        : 会话类型, 1: 私聊, 2: 通知, 3: 应援团, 4: 全部
 
     Returns:
         调用 API 返回结果
@@ -88,7 +77,7 @@ async def get_sessions(credential: Credential, session_type: SessionType = Sessi
 
     credential.raise_for_no_sessdata()
     params = {
-        "session_type": session_type.value,
+        "session_type": session_type,
         "group_fold": 1,
         "unfollow_fold": 0,
         "sort_rule": 2,
@@ -136,6 +125,7 @@ async def send_msg(credential: Credential, receiver_id: int, text: str):
     return await request("POST", url=api["url"], data=data, credential=credential)
 
 
+@dataclass
 class Picture:
     height: int
     imageType: str
