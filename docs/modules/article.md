@@ -8,6 +8,10 @@ from bilibili_api import article
 
 ---
 
+## const dict ARTICLE_COLOR_MAP
+
+专栏颜色表
+
 ## class ArticleList
 
 ### Atrributes
