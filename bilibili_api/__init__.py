@@ -85,7 +85,6 @@ __all__ = [
     "AUDIO_QUALITY",
     "ApiException",
     "ArgsException",
-    "BLACK_FROM",
     "BLACK_TYPE",
     "Credential",
     "CredentialNoBiliJctException",
