@@ -72,6 +72,15 @@
       },
       "comment": "获取一个剧集的全面概括信息"
     },
+    "collective_info_oversea": {
+      "url": "https://bangumi.bilibili.com/view/web_api/season",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "season_id": "int: B 站每个剧集会对应一个唯一 ID,适用于港澳台番剧和内陆番剧"
+      },
+      "comment": "获取一个剧集的全面概括信息"
+    },
     "playurl": {
       "url": "https://api.bilibili.com/pgc/player/web/playurl",
       "method": "GET",
