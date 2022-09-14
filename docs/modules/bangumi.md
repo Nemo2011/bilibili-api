@@ -63,7 +63,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 #### def get_episode_info()
 
-获取ep剧集相对应的各种数据，比如 标题，avid,bvid 等等
+获取传入的 epid 剧集相对应的各种数据，比如 标题，avid,bvid 等等,如果没有传入 epid 参数将会抛出错误
 
 **Returns:** Api 相关字段
 
