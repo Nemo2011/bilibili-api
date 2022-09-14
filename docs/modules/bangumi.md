@@ -62,6 +62,8 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 获取 season_id
 
+**Returns:** season_id
+
 #### def get_up_info()
 
 获取番剧的上传者信息，一般为哔哩哔哩出差和哔哩哔哩两种
