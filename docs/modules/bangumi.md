@@ -27,16 +27,16 @@ from bilibili_api import bangumi
 
 ### Atrributes
 
-| name            | type       | description                    |
-|-----------------|------------|--------------------------------|
-| credential      | Credential | 凭据类                            |
-| self.__raw      | dict       | 初始化时从Api拉取的原始数据                |
-| self.__epid     | int        | 剧集ID,如果不传入就为 `-1`              |
-| self.__ssid     | int        | 成功即存在的季度ID                     |
-| self.__media_id | int        | 成功即存在的番剧ID                     |
-| self.__up_info  | dict       | 上传者信息/所属                       |
-| self.ep_list    | list       | 获取到的分集列表                       |
-| self.ep_item    | list       | 如果存在有效`epid`则获取对应数据，不存在为`[{}]` |
+| name       | type       | description                    |
+|------------|------------|--------------------------------|
+| credential | Credential | 凭据类                            |
+| __raw      | dict       | 初始化时从Api拉取的原始数据                |
+| __epid     | int        | 剧集ID,如果不传入就为 `-1`              |
+| __ssid     | int        | 成功即存在的季度ID                     |
+| __media_id | int        | 成功即存在的番剧ID                     |
+| __up_info  | dict       | 上传者信息/所属                       |
+| ep_list    | list       | 获取到的分集列表                       |
+| ep_item    | list       | 如果存在有效`epid`则获取对应数据，不存在为`[{}]` |
 
 ### Functions
 
