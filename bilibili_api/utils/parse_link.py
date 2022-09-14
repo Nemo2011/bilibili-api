@@ -13,6 +13,7 @@ import httpx
 from ..article import Article, ArticleList
 from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
+from ..black_room import BlackRoom
 from ..cheese import CheeseList, CheeseVideo
 from ..dynamic import Dynamic
 from ..exceptions import *
@@ -43,6 +44,7 @@ class ResourceType(Enum):
     + USER: 用户
     + LIVE: 直播间
     + CHANNEL_SERIES: 合集与列表
+    + BLACK_ROOM: 小黑屋
     """
 
     VIDEO = "video"
@@ -59,21 +61,12 @@ class ResourceType(Enum):
     CHANNEL_SERIES = "channel_series"
     ARTICLE_LIST = "article_list"
     DYNAMIC = "dynamic"
+    BLACK_ROOM = "black_room"
 
 
 async def parse_link(url, credential: Credential = Credential()):
     """
     解析 bilibili url 的函数。
-    可以解析：
-    - 视频
-    - 番剧
-    - 番剧剧集
-    - 收藏夹
-    - 课程视频
-    - 音频
-    - 歌单
-    - 专栏
-    - 用户
 
     Args:
         url(str)              : 链接
@@ -89,6 +82,12 @@ async def parse_link(url, credential: Credential = Credential()):
         if sobj != -1:
             sobj[0].credential = credential
             return sobj
+
+        
+        black_room = parse_black_room(url)
+        if not black_room == -1:
+            obj = (black_room, ResourceType.BLACK_ROOM)
+            return obj
 
         url = await get_real_url(url)
 
@@ -494,5 +493,18 @@ def parse_dynamic(url):
             return -1
         else:
             return Dynamic(int(last_part))
+    else:
+        return -1
+
+
+def parse_black_room(url: str):
+    if url.lstrip("https:") == url:
+        url = "https:" + url
+    if url[:39] == 'https://www.bilibili.com/blackroom/ban/':
+        last_part = url[39:].replace("/", "")
+        if last_part == "":
+            return -1
+        else:
+            return BlackRoom(int(last_part))
     else:
         return -1
