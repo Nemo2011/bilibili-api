@@ -61,6 +61,7 @@ class Bangumi:
             oversea.raise_for_status()
             self.__ssid = oversea.json()["result"]["season_id"]
             self.__media_id = oversea.json()["result"]["media_id"]
+            self.ep_list = oversea.json()["result"]["episodes"]
             self.ep_item = [item for item in oversea.json()["result"]["episodes"] if item["ep_id"] == self.__epid][0]
         else:
             if ssid != -1:
@@ -90,10 +91,24 @@ class Bangumi:
         return self.__ssid
 
     def get_ep_info(self):
+        """
+        如果设置了 epid,回应对应条目的条目数据
+        Returns:数据
+        """
         if self.__epid != -1:
             return self.ep_item
         else:
-            print("没有设置 epid 参数")
+            raise ValueError("没有设置任何 epid 参数")
+
+    def get_ep_list(self):
+        """
+        如果设置了 epid,回应所有的条目数据
+        Returns:数据
+        """
+        if self.__epid != -1:
+            return self.ep_list
+        else:
+            raise ValueError("没有设置任何 epid 参数")
 
     def set_media_id(self, media_id: int):
         self.__init__(media_id=media_id, credential=self.credential)
