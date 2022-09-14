@@ -1,10 +1,24 @@
 # bilibili_api.bangumi
 
 from bilibili_api import bangumi
-from .common import get_credential
+
+# from .common import get_credential
 
 b = bangumi.Bangumi(28231846)
 ep = bangumi.Episode(374717)
+
+# 港澳台 ep 测试
+r = bangumi.Bangumi(epid=675686)  # 港澳台
+e = bangumi.Bangumi(epid=674709)  # 内地
+from bilibili_api import sync
+
+
+async def test_gangaotai_get_meta():
+    return e.get_ep_list()
+
+
+info = sync(test_gangaotai_get_meta())
+print(info)
 
 
 async def test_a_Bangumi_get_meta():
