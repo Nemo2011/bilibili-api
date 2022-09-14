@@ -43,8 +43,12 @@ async def test_gangaotai_get_list():
     return e.get_ep_list()
 async def test_gangaotai_get_item():
     return e.get_ep_info()
+async def test_gangaotai_get_bangumi():
+    return await e.get_meta()
 info1 = sync(test_gangaotai_get_list())
 info2 = sync(test_gangaotai_get_item())
+info3 = sync(test_gangaotai_get_bangumi())
 print(info1)
 print(info2)
+print(info3)
 # 港澳台 ep 测试 END
