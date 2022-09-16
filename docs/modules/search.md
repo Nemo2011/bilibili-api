@@ -35,12 +35,12 @@ from bilibili_api import search
 
 指定关键字和类型进行搜索，返回未经处理的字典
 
-| name        | type             | description      |
-|-------------|------------------|------------------|
-| keyword     | string           | 搜索关键词            |
-| search_type | SearchObjectType | 搜索类别             |
-| order_type  | SearchObjectType | 搜索类别             |
-| page        | int              | 页数，defaults to 1 |
+| name        | type                                            | description      |
+|-------------|-------------------------------------------------|------------------|
+| keyword     | string                                          | 搜索关键词            |
+| search_type | SearchObjectType                                | 搜索类别             |
+| order_type  | UserOrder,VideoOrder,ArticleOrder,LiveRoomOrder | 搜索类型             |
+| page        | int                                             | 页数，defaults to 1 |
 
 **Returns:** 调用 API 返回的结果
 
