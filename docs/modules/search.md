@@ -35,12 +35,16 @@ from bilibili_api import search
 
 指定关键字和类型进行搜索，返回未经处理的字典
 
-| name        | type                                            | description      |
-|-------------|-------------------------------------------------|------------------|
-| keyword     | string                                          | 搜索关键词            |
-| search_type | SearchObjectType                                | 搜索类别             |
-| order_type  | UserOrder,VideoOrder,ArticleOrder,LiveRoomOrder | 搜索类型             |
-| page        | int                                             | 页数，defaults to 1 |
+| name        | type                                                   | description      |
+|-------------|--------------------------------------------------------|------------------|
+| keyword     | string                                                 | 搜索关键词            |
+| search_type | SearchObjectType                                       | 搜索类别             |
+| order_type  | UserOrder,VideoOrder,ArticleOrder,LiveRoomOrder 排序分类类型 | 搜索类型             |
+| time_range  | int 分钟数，仅用于视频                                          | 搜索类型             |
+| topic_type  | int , TopicType                                        | 搜索类型             |
+| order_sort  | 仅用于用户用户，设置粉丝数及等级排序顺序,默认,由高到低:0 ,由低到高：1                 | 搜索类型             |
+| category_id | int ,CategoryTypePhoto , CategoryTypeArticle           | 搜索类型             |
+| page        | int                                                    | 页数，defaults to 1 |
 
 **Returns:** 调用 API 返回的结果
 

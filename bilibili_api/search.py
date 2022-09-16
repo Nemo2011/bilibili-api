@@ -83,7 +83,7 @@ class OrderArticle(Enum):
 
 class OrderUser(Enum):
     """
-    用户的排序类型
+    搜索用户的排序类型
     + FANS : 按照粉丝数量排序
     + LEVEL : 按照等级排序
     """
@@ -93,8 +93,7 @@ class OrderUser(Enum):
 
 class CategoryTypePhoto(Enum):
     """
-    话题分区，太多了，写描述要我命
-    部分文档来源 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/video/video_zone.md
+    相册分类
     """
     All = 0
     DrawFriend = 2
@@ -103,8 +102,7 @@ class CategoryTypePhoto(Enum):
 
 class CategoryTypeArticle(Enum):
     """
-    话题分区，太多了，写描述要我命
-    部分文档来源 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/video/video_zone.md
+    文章分类
     """
     All = 0
     Anime = 2
@@ -219,7 +217,7 @@ async def search_by_type(keyword: str, search_type: SearchObjectType = None,
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、专栏(article)、话题(topic)、用户(bili_user)
 
     Args:
-        order_sort: 默认为0 由高到低：0 由低到高：1
+        order_sort: 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
         category_id: (int/str) 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
         time_range: (int): 指定时间，只在视频类型下生效
         topic_type: (str/int): 话题类型，指定tid或者使用枚举类型
