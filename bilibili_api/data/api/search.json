@@ -19,7 +19,7 @@
         "search_type": "str: 搜索时限定类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、专栏(article)、话题(topic)、用户(bili_user)",
         "page": "int: 页码"
       },
-      "comment": "搜索关键字时限定类型"
+      "comment": "搜索关键字时限定类型,可以指定排序号"
     },
     "default_search_keyword": {
       "url": "https://api.bilibili.com/x/web-interface/search/default",
