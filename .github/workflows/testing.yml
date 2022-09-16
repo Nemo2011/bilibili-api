@@ -11,7 +11,7 @@ on:
     - cron: '0 4 * * 6'
 
 jobs:
-  test-3.8:
+  test-3_8:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,7 @@ jobs:
           BILI_PASSWORD: ${{ secrets.BILI_PASSWORD }}
           BILI_DEDEUSERID: ${{ secrets.BILI_DEDEUSERID }}
         run: "python -m tests.main -a"
-  test-3.9:
+  test-3_9:
     runs-on: ubuntu-latest
 
     steps:
@@ -59,7 +59,7 @@ jobs:
           BILI_PASSWORD: ${{ secrets.BILI_PASSWORD }}
           BILI_DEDEUSERID: ${{ secrets.BILI_DEDEUSERID }}
         run: "python -m tests.main -a"
-  test-3.10:
+  test-3_10:
     runs-on: ubuntu-latest
 
     steps:
