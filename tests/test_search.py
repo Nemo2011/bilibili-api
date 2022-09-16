@@ -25,7 +25,7 @@ async def test_e_get_suggest_keywords():
 
 async def test_f_search_by_order():
     return await search.search_by_type("小马宝莉", search_type=search.SearchObjectType.USER,
-                                       rank_order=search.UserOrder.LEVEL)
+                                       order_type=search.UserOrder.LEVEL)
 
 
 from bilibili_api import sync

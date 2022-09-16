@@ -107,14 +107,14 @@ async def search(keyword: str, page: int = 1):
 
 
 async def search_by_type(keyword: str, search_type: SearchObjectType,
-                         rank_order: UserOrder | VideoOrder | ArticleOrder | LiveRoomOrder = None,
+                         order_type: UserOrder | VideoOrder | ArticleOrder | LiveRoomOrder = None,
                          page: int = 1):
     """
     指定关键字和类型进行搜索，返回未经处理的字典
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、专栏(article)、话题(topic)、用户(bili_user)
 
     Args:
-        rank_order: (str): 排序类型
+        order_type: (str): 排序类型
         keyword     (str): 搜索关键词
         search_type (str): 搜索类型
         page        (int): 页码
@@ -122,8 +122,8 @@ async def search_by_type(keyword: str, search_type: SearchObjectType,
         调用 api 返回的结果
     """
     params = {"keyword": keyword, "search_type": search_type.value, "page": page}
-    if rank_order:
-        params["order"] = rank_order.value
+    if order_type:
+        params["order"] = order_type.value
     api = API["search"]["web_search_by_type"]
     return await request("GET", url=api["url"], params=params)
 
