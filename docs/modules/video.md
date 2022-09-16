@@ -104,6 +104,20 @@ from bilibili_api import video
 
 **Returns:** API 调用返回结果。
 
+#### async def get_video_snapshot()
+
+| name | type | description |
+| - | - | - |
+| cid | int | 分 P 序号 |
+| json_index | bool | 是否需要json 数组截取时间表 |
+| pvideo | bool | 是否只获取封面预览 |
+
+获取视频快照信息。
+
+Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是未转义的 url
+
+**Returns:** WebAPI 调用返回结果
+
 #### async def get_pages()
 
 获取分 P 信息。
@@ -371,12 +385,12 @@ from bilibili_api import video
 
 ```json
 {
-	"font_size": "float: 字体大小，默认 0.4",
-	"font_color": "str: 字体颜色，默认 \"#FFFFFF\"",
-	"background_alpha": "float: 背景不透明度，默认 0.5",
-	"background_color": "str: 背景颜色，默认 \"#9C27B0\"",
-	"Stroke": "str: 描边，目前作用未知，默认为 \"none\"",
-	"body": [
+  "font_size": "float: 字体大小，默认 0.4",
+  "font_color": "str: 字体颜色，默认 \"#FFFFFF\"",
+  "background_alpha": "float: 背景不透明度，默认 0.5",
+  "background_color": "str: 背景颜色，默认 \"#9C27B0\"",
+  "Stroke": "str: 描边，目前作用未知，默认为 \"none\"",
+  "body": [
     {
       "from": "int: 字幕开始时间（秒）",
       "to": "int: 字幕结束时间（秒）",
@@ -416,15 +430,18 @@ from bilibili_api import video
 # 实例化
 r = video.VideoOnlineMonitor("BV1Bf4y1Q7QP")
 
+
 # 装饰器方法注册事件监听器
 @r.on("ONLINE")
 async def handler(data):
     print(data)
 
+
 # 函数方法注册事件监听器
 async def handler2(data):
     print(data)
     r.add_event_listener("ONLINE", handler2)
+
 
 asyncio.get_event_loop().run_until_complete(r.connect())
 ```
