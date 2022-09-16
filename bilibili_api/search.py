@@ -107,6 +107,13 @@ class CategoryTypeArticle(Enum):
     """
     文章分类
     + All 全部
+    + Anime
+    + Game
+    + TV
+    + Life
+    + Hobby
+    + LightNovel
+    + Technology
     """
     All = 0
     Anime = 2
