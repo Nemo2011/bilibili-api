@@ -124,7 +124,6 @@ async def search_by_type(keyword: str, search_type: SearchObjectType,
     params = {"keyword": keyword, "search_type": search_type.value, "page": page}
     if rank_order:
         params["order"] = rank_order.value
-    print(params)
     api = API["search"]["web_search_by_type"]
     return await request("GET", url=api["url"], params=params)
 
