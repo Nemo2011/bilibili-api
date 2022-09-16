@@ -120,7 +120,7 @@ class CategoryTypeArticle(Enum):
 
 class TopicType(Enum):
     """
-    话题分区，太多了，写描述要我命
+    话题分区，太多了，写描述要命
     此部分内容太长了
     部分文档来源 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/video/video_zone.md
     """
@@ -220,16 +220,16 @@ async def search_by_type(keyword: str, search_type: SearchObjectType = None,
                          debug_param_func=None
                          ):
     """
-    指定分区，类型，视频长度进行搜索，返回未经处理的字典
-    类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、专栏(article)、话题(topic)、用户(bili_user)
+    指定分区，类型，视频长度等参数进行搜索，返回未经处理的字典
+    类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、直播用户(liveuser)、专栏(article)、话题(topic)、用户(bili_user)
 
     Args:
-        debug_param_func: 参数回调器，用来存储或者什么的
-        order_sort: 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
-        category_id: (int/str) 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
-        time_range: (int): 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
-        topic_type: (str/int): 话题类型，指定tid或者使用枚举类型
-        order_type: (str): 排序分类类型
+        debug_param_func (func): 参数回调器，用来存储或者什么的
+        order_sort  (int):用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
+        category_id (int/str): 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
+        time_range  (int): 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
+        topic_type  (str/int): 话题类型，指定tid或者使用枚举类型
+        order_type  (str): 排序分类类型
         keyword     (str): 搜索关键词
         search_type (str): 搜索类型
         page        (int): 页码
