@@ -46,6 +46,8 @@ from bilibili_api import search
 | category_id | int ,CategoryTypePhoto , CategoryTypeArticle                   | 搜索类型             |
 | page        | int                                                            | 页数，defaults to 1 |
 
+
+
 **Returns:** 调用 API 返回的结果
 
 ## async def get_default_search_keyword()
