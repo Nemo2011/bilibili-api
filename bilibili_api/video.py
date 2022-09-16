@@ -33,7 +33,6 @@ from . import settings
 
 API = get_api("video")
 
-
 # 视频分辨率
 VIDEO_QUALITY = {
     126: "杜比视界",
@@ -235,6 +234,32 @@ class Video:
         cid = page["cid"]
         return cid
 
+    async def get_video_snapshot(self, cid: int = None, json_index: bool = False, pvideo: bool = True):
+        """
+        获取视频快照(视频各个时间段的截图拼图)
+
+        Args:
+            pvideo(bool): 是否只获取预览
+
+            cid(int): 分 P CID(可选)
+
+            json_index(bool): json 数组截取时间表 True 为需要，False 不需要
+
+        Returns:
+            dict: 调用 API 返回的结果,数据中 Url 没有 http 头
+        """
+        params = {"aid": self.get_aid()}
+        if pvideo:
+            url = API["info"]["video_snapshot_pvideo"]["url"]
+        else:
+            params["bvid"] = self.get_bvid()
+            if json_index:
+                params["index"] = 1
+            if cid:
+                params["cid"] = cid
+            url = API["info"]["video_snapshot"]["url"]
+        return await request("GET", url, params=params)
+
     async def get_cid(self, page_index: int):
         """
         获取稿件 cid
@@ -397,6 +422,7 @@ class Video:
         resp_data = resp.read()
         json_data = {}
         reader = BytesReader(resp_data)
+
         # 解析二进制数据流
 
         def read_dm_seg(stream: bytes):
@@ -513,8 +539,7 @@ class Video:
             while not reader_.has_end():
                 type_ = reader_.varint() >> 3
                 if type_ == 1:
-                    details_dict = {}
-                    details_dict["texts"] = []
+                    details_dict = {"texts": []}
                     img_details = reader_.bytes_string()
                     reader_details = BytesReader(img_details)
                     while not reader_details.has_end():
@@ -1595,13 +1620,13 @@ class VideoOnlineMonitor(AsyncEvent):
         real_data = []
         while offset < len(data):
             region_header = struct.unpack(">IIII", data[:16])
-            region_data = data[offset : offset + region_header[0]]
+            region_data = data[offset: offset + region_header[0]]
             real_data.append(
                 {
                     "type": region_header[2],
                     "number": region_header[3],
                     "data": json.loads(
-                        region_data[offset + 18 : offset + 18 + (region_header[0] - 16)]
+                        region_data[offset + 18: offset + 18 + (region_header[0] - 16)]
                     ),
                 }
             )
