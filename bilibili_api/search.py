@@ -219,7 +219,7 @@ async def search_by_type(keyword: str, search_type: SearchObjectType = None,
     Args:
         order_sort: 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
         category_id: (int/str) 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
-        time_range: (int): 指定时间，只在视频类型下生效
+        time_range: (int): 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
         topic_type: (str/int): 话题类型，指定tid或者使用枚举类型
         order_type: (str): 排序分类类型
         keyword     (str): 搜索关键词
