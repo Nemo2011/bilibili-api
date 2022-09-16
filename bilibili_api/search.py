@@ -4,6 +4,7 @@ bilibili_api.search
 搜索
 """
 from enum import Enum
+from typing import Union
 import json
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
@@ -218,11 +219,11 @@ async def search(keyword: str, page: int = 1):
 
 
 async def search_by_type(keyword: str, search_type: SearchObjectType = None,
-                         order_type: OrderUser | OrderVideo | OrderArticle | OrderLiveRoom = None,
+                         order_type: Union[OrderUser, OrderLiveRoom, OrderArticle, OrderVideo] = None,
                          time_range: int = -1,
-                         topic_type: int | TopicType = None,
+                         topic_type: Union[int, TopicType] = None,
                          order_sort: int = None,
-                         category_id: int | CategoryTypePhoto | CategoryTypeArticle = None,
+                         category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int] = None,
                          page: int = 1,
                          debug_param_func=None
                          ):
