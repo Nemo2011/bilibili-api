@@ -234,7 +234,9 @@ class Video:
         cid = page["cid"]
         return cid
 
-    async def get_video_snapshot(self, cid: int = None, json_index: bool = False, pvideo: bool = True):
+    async def get_video_snapshot(
+        self, cid: int = None, json_index: bool = False, pvideo: bool = True
+    ):
         """
         获取视频快照(视频各个时间段的截图拼图)
 
@@ -1620,13 +1622,13 @@ class VideoOnlineMonitor(AsyncEvent):
         real_data = []
         while offset < len(data):
             region_header = struct.unpack(">IIII", data[:16])
-            region_data = data[offset: offset + region_header[0]]
+            region_data = data[offset : offset + region_header[0]]
             real_data.append(
                 {
                     "type": region_header[2],
                     "number": region_header[3],
                     "data": json.loads(
-                        region_data[offset + 18: offset + 18 + (region_header[0] - 16)]
+                        region_data[offset + 18 : offset + 18 + (region_header[0] - 16)]
                     ),
                 }
             )

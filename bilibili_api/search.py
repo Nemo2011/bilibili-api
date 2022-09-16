@@ -33,7 +33,7 @@ class SearchObjectType(Enum):
     TOPIC = "topic"
     USER = "bili_user"
     LIVEUSER = "live_user"
-    PHOTO = 'photo'
+    PHOTO = "photo"
 
 
 class OrderVideo(Enum):
@@ -48,6 +48,7 @@ class OrderVideo(Enum):
     Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
     """
+
     TOTALRANK = "totalrank"
     CLICK = "click"
     PUBDATE = "pubdate"
@@ -62,6 +63,7 @@ class OrderLiveRoom(Enum):
     + NEWLIVE 最新开播
     + ONLINE 综合排序
     """
+
     NEWLIVE = "live_time"
     ONLINE = "online"
 
@@ -75,6 +77,7 @@ class OrderArticle(Enum):
     + ATTENTION : 最多喜欢
     + SCORES : 最多评论
     """
+
     TOTALRANK = "totalrank"
     PUBDATE = "pubdate"
     CLICK = "click"
@@ -88,6 +91,7 @@ class OrderUser(Enum):
     + FANS : 按照粉丝数量排序
     + LEVEL : 按照等级排序
     """
+
     FANS = "fans"
     LEVEL = "level"
 
@@ -99,6 +103,7 @@ class CategoryTypePhoto(Enum):
     + DrawFriend 画友
     + PhotoFriend 摄影
     """
+
     All = 0
     DrawFriend = 2
     PhotoFriend = 1
@@ -116,6 +121,7 @@ class CategoryTypeArticle(Enum):
     + LightNovel
     + Technology
     """
+
     All = 0
     Anime = 2
     Game = 1
@@ -132,6 +138,7 @@ class TopicType(Enum):
     此部分内容太长了
     部分文档来源 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/video/video_zone.md
     """
+
     Anime = 1
     AnimeMAD = 24
     AnimeMMD = 25
@@ -218,15 +225,17 @@ async def search(keyword: str, page: int = 1):
     return await request("GET", url=api["url"], params=params)
 
 
-async def search_by_type(keyword: str, search_type: SearchObjectType = None,
-                         order_type: Union[OrderUser, OrderLiveRoom, OrderArticle, OrderVideo] = None,
-                         time_range: int = -1,
-                         topic_type: Union[int, TopicType] = None,
-                         order_sort: int = None,
-                         category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int] = None,
-                         page: int = 1,
-                         debug_param_func=None
-                         ):
+async def search_by_type(
+    keyword: str,
+    search_type: SearchObjectType = None,
+    order_type: Union[OrderUser, OrderLiveRoom, OrderArticle, OrderVideo] = None,
+    time_range: int = -1,
+    topic_type: Union[int, TopicType] = None,
+    order_sort: int = None,
+    category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int] = None,
+    page: int = 1,
+    debug_param_func=None,
+):
     """
     指定分区，类型，视频长度等参数进行搜索，返回未经处理的字典
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、直播用户(liveuser)、专栏(article)、话题(topic)、用户(bili_user)
@@ -251,7 +260,10 @@ async def search_by_type(keyword: str, search_type: SearchObjectType = None,
         raise ValueError("Missing arg:search_type")
         # params["search_type"] = SearchObjectType.VIDEO.value
     # category_id
-    if search_type.value == SearchObjectType.ARTICLE.value or search_type.value == SearchObjectType.PHOTO.value:
+    if (
+        search_type.value == SearchObjectType.ARTICLE.value
+        or search_type.value == SearchObjectType.PHOTO.value
+    ):
         if category_id:
             if isinstance(category_id, int):
                 params["category_id"] = category_id

@@ -130,3 +130,31 @@ def get_channel_list_sub():
     ) as f:
         channel = json.loads(f.read())
     return channel
+
+
+async def get_channel_videos_count_today(credential: Credential = None):
+    """
+    获取每个分区当日最新投稿数量
+
+    Args:
+        credential(Credential): 凭据类
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential = credential if credential else Credential()
+    api = API["count"]
+    return (await request("GET", api["url"], credential=credential))["region_count"]
+
+
+async def get_channel_new_videos(tid: int, credential: Credential = None):
+    """
+    获取分区最新投稿
+
+    Args:
+        tid(int)              : 分区 id
+        credential(Credential): 凭据类
+    """
+    credential = credential if credential else Credential()
+    api = API["new"]
+    params = {"rid": tid}
+    return await request("GET", api["url"], params=params, credential=credential)

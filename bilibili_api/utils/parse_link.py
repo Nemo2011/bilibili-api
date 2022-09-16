@@ -83,7 +83,6 @@ async def parse_link(url, credential: Credential = Credential()):
             sobj[0].credential = credential
             return sobj
 
-        
         black_room = parse_black_room(url)
         if not black_room == -1:
             obj = (black_room, ResourceType.BLACK_ROOM)
@@ -500,7 +499,7 @@ def parse_dynamic(url):
 def parse_black_room(url: str):
     if url.lstrip("https:") == url:
         url = "https:" + url
-    if url[:39] == 'https://www.bilibili.com/blackroom/ban/':
+    if url[:39] == "https://www.bilibili.com/blackroom/ban/":
         last_part = url[39:].replace("/", "")
         if last_part == "":
             return -1
