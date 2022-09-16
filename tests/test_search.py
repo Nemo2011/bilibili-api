@@ -24,8 +24,8 @@ async def test_e_get_suggest_keywords():
 
 
 async def test_f_search_by_order():
-    return await search.search_by_type("小马宝莉", search_type=search.SearchObjectType.USER,
-                                       order_type=search.OrderUser.FANS)
+    return await search.search_by_type("小马宝莉", search_type=search.SearchObjectType.VIDEO,
+                                       order_type=search.OrderVideo.SCORES, time_range=50)
 
 
 from bilibili_api import sync
