@@ -5,7 +5,7 @@ bilibili_api.search
 """
 from enum import Enum
 import json
-from .utils.utils import get_api
+from .utils.utils import get_api, DictForm
 from .utils.network_httpx import request, get_session
 
 API = get_api("search")
@@ -34,7 +34,7 @@ class SearchObjectType(Enum):
     LIVEUSER = "live_user"
 
 
-class SearchRank(Enum):
+class VideoOrder(Enum):
     """
     视频搜索类型
     + TOTALRANK : 综合排序
@@ -43,40 +43,51 @@ class SearchRank(Enum):
     + DM : 最多弹幕
     + STOW : 最多收藏
     + SCORES : 最多评论
+    Ps: Api 中 的 order_sort 字段决定顺序还是倒序
+
+    """
+    TOTALRANK = "totalrank"
+    CLICK = "click"
+    PUBDATE = "pubdate"
+    DM = "dm"
+    STOW = "stow"
+    SCORES = "scores"
+
+
+class LiveRoomOrder(Enum):
+    """
     直播间搜索类型
     + NEWLIVE 最新开播
     + ONLINE 综合排序
+    """
+    NEWLIVE = "live_time"
+    ONLINE = "online"
+
+
+class ArticleOrder(Enum):
+    """
     文章的排序类型
     + TOTALRANK : 综合排序
     + CLICK : 最多点击
     + PUBDATE : 最新发布
     + ATTENTION : 最多喜欢
     + SCORES : 最多评论
+    """
+    TOTALRANK = "totalrank"
+    PUBDATE = "pubdate"
+    CLICK = "click"
+    ATTENTION = "attention"
+    SCORES = "scores"
+
+
+class UserOrder(Enum):
+    """
     用户的排序类型
     + FANS : 按照粉丝数量排序
     + LEVEL : 按照等级排序
-    Ps: Api 中 的 order_sort 字段决定顺序还是倒序
-
     """
-    Video = object
-    Video.TOTALRANK = "totalrank"
-    Video.CLICK = "click"
-    Video.PUBDATE = "pubdate"
-    Video.DM = "dm"
-    Video.STOW = "stow"
-    Video.SCORES = "scores"
-    LiveRoom = object
-    LiveRoom.NEWLIVE = "live_time"
-    LiveRoom.ONLINE = "online"
-    Article = object
-    Article.TOTALRANK = "totalrank"
-    Article.PUBDATE = "pubdate"
-    Article.CLICK = "click"
-    Article.ATTENTION = "attention"
-    Article.SCORES = "scores"
-    User = object
-    User.FANS = "fans"
-    User.LEVEL = "level"
+    FANS = "fans"
+    LEVEL = "level"
 
 
 async def search(keyword: str, page: int = 1):
@@ -95,24 +106,26 @@ async def search(keyword: str, page: int = 1):
     return await request("GET", url=api["url"], params=params)
 
 
-async def search_by_type(keyword: str, search_type: SearchObjectType, rank: SearchRank = None, page: int = 1):
+async def search_by_type(keyword: str, search_type: SearchObjectType,
+                         rank_order: UserOrder | VideoOrder | ArticleOrder | LiveRoomOrder = None,
+                         page: int = 1):
     """
     指定关键字和类型进行搜索，返回未经处理的字典
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、专栏(article)、话题(topic)、用户(bili_user)
 
     Args:
-        rank: (str): 排序类型
+        rank_order: (str): 排序类型
         keyword     (str): 搜索关键词
         search_type (str): 搜索类型
         page        (int): 页码
     Returns:
         调用 api 返回的结果
     """
-
-    api = API["search"]["web_search_by_type"]
     params = {"keyword": keyword, "search_type": search_type.value, "page": page}
-    if rank:
-        params["order"] = rank
+    if rank_order:
+        params["order"] = rank_order.value
+    print(params)
+    api = API["search"]["web_search_by_type"]
     return await request("GET", url=api["url"], params=params)
 
 
