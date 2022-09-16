@@ -18,7 +18,7 @@
         "aid": "int: av 号",
         "bvid": "string: BV 号"
       },
-      "comment": "视频详细信息"
+      "comment": "视频基本信息"
     },
     "tags": {
       "url": "https://api.bilibili.com/x/tag/archive/tags",
@@ -40,6 +40,27 @@
         "mid": "int: 用户 UID"
       },
       "comment": "视频充电信息"
+    },
+    "video_snapshot_pvideo": {
+      "url": "https://api.bilibili.com/pvideo",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "aid": "int: av 号"
+      },
+      "comment": "视频预览快照(web)"
+    },
+    "video_snapshot": {
+      "url": "https://api.bilibili.com/x/player/videoshot",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "aid": "int: av 号",
+        "bvid": "string: BV 号",
+        "cid": "int:分 P CID",
+        "index": "int:json 数组截取时间表1为需要，0不需要"
+      },
+      "comment": "视频快照(web)"
     },
     "pages": {
       "url": "https://api.bilibili.com/x/player/pagelist",
