@@ -21,7 +21,7 @@ class SearchObjectType(Enum):
     + ARTICLE : 专栏
     + TOPIC : 话题
     + USER : 用户
-
+    + LIVEUSER : 直播间用户
     """
 
     VIDEO = "video"
@@ -31,6 +31,62 @@ class SearchObjectType(Enum):
     ARTICLE = "article"
     TOPIC = "topic"
     USER = "bili_user"
+    LIVEUSER = "live_user"
+
+
+class SearchTypeVideo(Enum):
+    """
+    视频搜索类型
+    + TOTALRANK : 综合排序
+    + CLICK : 最多点击
+    + PUBDATE : 最新发布
+    + DM : 最多弹幕
+    + STOW : 最多收藏
+    + SCORES : 最多评论
+
+    """
+    TOTALRANK = "totalrank"
+    CLICK = "click"
+    PUBDATE = "pubdate"
+    DM = "dm"
+    STOW = "stow"
+    SCORES = "scores"
+
+
+class SearchTypeLiveRoom(Enum):
+    """
+    直播间搜索类型
+    + NEWLIVE 最新开播
+    + ONLINE 综合排序
+    """
+
+    NEWLIVE = "live_time"
+    ONLINE = "online"
+
+
+class SearchTypeArticle(Enum):
+    """
+    + TOTALRANK : 综合排序
+    + CLICK : 最多点击
+    + PUBDATE : 最新发布
+    + ATTENTION : 最多喜欢
+    + SCORES : 最多评论
+    """
+    TOTALRANK = "totalrank"
+    PUBDATE = "pubdate"
+    CLICK = "click"
+    ATTENTION = "attention"
+    SCORES = "scores"
+
+
+class SearchTypeUser(Enum):
+    """
+    + FANS : 按照粉丝数量排序
+    + LEVEL : 按照等级排序
+    Ps: Api 中 的 order_sort 字段决定顺序还是倒序
+    """
+    FANS = "fans"
+    LEVEL = "level"
 
 
 async def search(keyword: str, page: int = 1):
