@@ -20,6 +20,81 @@ from bilibili_api import search
 + TOPIC : 话题
 + USER : 用户
 
+## class TopicType
+
+**Extends:** enum.Enum
+
+支持了部分的[完整列表](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/video/video_zone.md)
+
+## class CategoryTypeArticle
+
+**Extends:** enum.Enum
+
+文章分类
+
++ All 全部
++ Anime
++ Game
++ TV
++ Life
++ Hobby
++ LightNovel
++ Technology
+
+## class CategoryTypePhoto
+
+**Extends:** enum.Enum
+
+相册分类
+
++ All 全部
++ DrawFriend 画友
++ PhotoFriend 摄影
+
+## class OrderUser
+
+**Extends:** enum.Enum
+
+搜索用户的排序类型
+
++ FANS : 按照粉丝数量排序
++ LEVEL : 按照等级排序
+
+## class OrderArticle
+
+**Extends:** enum.Enum
+
+文章的排序类型
+
++ TOTALRANK : 综合排序
++ CLICK : 最多点击
++ PUBDATE : 最新发布
++ ATTENTION : 最多喜欢
++ SCORES : 最多评论
+
+## class OrderLiveRoom
+
+**Extends:** enum.Enum
+
+直播间搜索类型
+
++ NEWLIVE 最新开播
++ ONLINE 综合排序
+
+## class OrderVideo
+
+**Extends:** enum.Enum
+
+视频搜索类型
+
++ TOTALRANK : 综合排序
++ CLICK : 最多点击
++ PUBDATE : 最新发布
++ DM : 最多弹幕
++ STOW : 最多收藏
++ SCORES : 最多评论
+  Ps: Api 中 的 order_sort 字段决定顺序还是倒序
+
 ## async def search()
 
 只指定关键字在 web 进行搜索，返回未经处理的字典
@@ -46,8 +121,6 @@ from bilibili_api import search
 | category_id      | int ,CategoryTypePhoto , CategoryTypeArticle    | 专栏/相册专用类型                                                  |
 | debug_param_func | func                                            | 参数回调器，用来存储或者什么的                                            |
 | page             | int                                             | 页数，defaults to 1                                           |
-
-
 
 **Returns:** 调用 API 返回的结果
 
