@@ -19,12 +19,21 @@ print(sync(
 
 # 示例：多条件搜索
 
-搜索关键词为`小马宝莉`的`30-60分钟`之间`视频`，指定为 `MMD`分区，`第二页`
+搜索关键词为`小马宝莉`的`10-30分钟`之间`视频`，指定为 `MMD`分区，`第二页`,且使用一个回调来打印具体参数
+
+> 分钟指定自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
 
 ```python
+from bilibili_api import search, sync
+
+
 async def test_f_search_by_order():
     return await search.search_by_type("小马宝莉", search_type=search.SearchObjectType.VIDEO,
-                                       order_type=search.OrderVideo.SCORES, time_range=50,
-                                       topic_type=search.TopicType.AnimeMMD, page=2)
+                                       order_type=search.OrderVideo.SCORES, time_range=10,
+                                       topic_type=search.TopicType.AnimeMMD, page=1, debug_param_func=print)
+
+
+res = sync(test_f_search_by_order())
+print(res)
 
 ```
