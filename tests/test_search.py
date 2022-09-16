@@ -29,7 +29,7 @@ async def test_f_search_by_order():
                                        topic_type=search.TopicType.AnimeMMD, page=1, debug_param_func=print)
 
 
-from bilibili_api import sync
-
-res = sync(test_f_search_by_order())
-print(res)
+# from bilibili_api import sync
+#
+# res = sync(test_f_search_by_order())
+# print(res)
