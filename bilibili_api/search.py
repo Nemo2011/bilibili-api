@@ -240,7 +240,8 @@ async def search_by_type(keyword: str, search_type: SearchObjectType = None,
     if search_type:
         params["search_type"] = search_type.value
     else:
-        params["search_type"] = SearchObjectType.VIDEO.value
+        raise ValueError("Missing arg:search_type")
+        # params["search_type"] = SearchObjectType.VIDEO.value
     # category_id
     if search_type.value == SearchObjectType.ARTICLE.value or search_type.value == SearchObjectType.PHOTO.value:
         if category_id:
