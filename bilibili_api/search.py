@@ -94,6 +94,9 @@ class OrderUser(Enum):
 class CategoryTypePhoto(Enum):
     """
     相册分类
+    + All 全部
+    + DrawFriend 画友
+    + PhotoFriend 摄影
     """
     All = 0
     DrawFriend = 2
@@ -103,6 +106,7 @@ class CategoryTypePhoto(Enum):
 class CategoryTypeArticle(Enum):
     """
     文章分类
+    + All 全部
     """
     All = 0
     Anime = 2
@@ -117,6 +121,7 @@ class CategoryTypeArticle(Enum):
 class TopicType(Enum):
     """
     话题分区，太多了，写描述要我命
+    此部分内容太长了
     部分文档来源 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/video/video_zone.md
     """
     Anime = 1
@@ -211,12 +216,15 @@ async def search_by_type(keyword: str, search_type: SearchObjectType = None,
                          topic_type: int | TopicType = None,
                          order_sort: int = None,
                          category_id: int | CategoryTypePhoto | CategoryTypeArticle = None,
-                         page: int = 1):
+                         page: int = 1,
+                         debug_param_func=None
+                         ):
     """
     指定分区，类型，视频长度进行搜索，返回未经处理的字典
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、专栏(article)、话题(topic)、用户(bili_user)
 
     Args:
+        debug_param_func: 参数回调器，用来存储或者什么的
         order_sort: 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
         category_id: (int/str) 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
         time_range: (int): 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
@@ -261,6 +269,8 @@ async def search_by_type(keyword: str, search_type: SearchObjectType = None,
     # order_sort
     if search_type.value == SearchObjectType.USER.value:
         params["order_sort"] = order_sort
+    if debug_param_func:
+        debug_param_func(params)
     api = API["search"]["web_search_by_type"]
     return await request("GET", url=api["url"], params=params)
 
