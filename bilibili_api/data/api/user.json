@@ -74,6 +74,18 @@
       },
       "comment": "搜索用户视频"
     },
+    "album": {
+      "url": "https://api.vc.bilibili.com/link_draw/v1/doc/doc_list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "uid": "int: uid 此项必须",
+        "page_size": "int: 每页项数 此项必须",
+        "page_num": "int: 页码",
+        "biz": "str: 全部：all 绘画：draw 摄影：photo 日常：daily 默认为 all"
+      },
+      "comment": "相簿"
+    },
     "audio": {
       "url": "https://api.bilibili.com/audio/music-service/web/song/upper",
       "method": "GET",
