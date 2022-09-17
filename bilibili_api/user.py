@@ -60,9 +60,9 @@ class AudioOrder(Enum):
     FAVORITE = 3
 
 
-class DrawOrder(Enum):
+class AlbumType(Enum):
     """
-    音频排序顺序。
+    相册类型
 
     + ALL : 全部。
     + DRAW: 绘画。
@@ -316,7 +316,7 @@ class User:
         )
 
     async def get_album(
-        self, biz: DrawOrder = DrawOrder.ALL,
+        self, biz: AlbumType = AlbumType.ALL,
         page_num: int = 1,
         page_size: int = 30
     ):
@@ -324,7 +324,7 @@ class User:
         获取用户投稿音频。
 
         Args:
-            biz (DrawOrder, optional): 排序方式. Defaults to DrawOrder.ALL.
+            biz (AlbumType, optional): 排序方式. Defaults to AlbumType.ALL.
             page_num      (int, optional)       : 页码数，从 1 开始。 Defaults to 1.
             page_size    (int)       : 每一页的相簿条目. Defaults to 30.
 

@@ -178,7 +178,7 @@ from bilibili_api import user
 |-----------|---------------------|---------------------------------|
 | page_num  | int, optional       | 页码，从 1 开始. Defaults to 1.       |
 | page_size | int, optional       | 每一页的相簿. Defaults to 30.         |
-| biz       | DrawOrder, optional | 排序方式. Defaults to DrawOrder.ALL |
+| biz       | AlbumType, optional | 排序方式. Defaults to AlbumType.ALL |
 
 获取用户投稿相簿。
 
