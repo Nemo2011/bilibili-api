@@ -134,6 +134,12 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_space_notice()
+
+获取用户空间公告
+
+**Returns:** 调用接口返回的内容。
+
 #### async def get_relation_info()
 
 获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
@@ -154,12 +160,12 @@ from bilibili_api import user
 
 #### async def get_videos()
 
-| name    | type                 | description                              |
-| ------- | -------------------- | ---------------------------------------- |
-| tid     | int, optional        | 分区 ID. Defaults to 0（全部）           |
-| pn      | int, optional        | 页码，从 1 开始. Defaults to 1.          |
-| ps      |(int, optional)       | 每一页的视频数. Defaults to 30. |
-| keyword | str, optional        | 搜索关键词. Defaults to "".              |
+| name    | type                 | description                          |
+|---------|----------------------|--------------------------------------|
+| tid     | int, optional        | 分区 ID. Defaults to 0（全部）             |
+| pn      | int, optional        | 页码，从 1 开始. Defaults to 1.            |
+| ps      | (int, optional)      | 每一页的视频数. Defaults to 30.             |
+| keyword | str, optional        | 搜索关键词. Defaults to "".               |
 | order   | VideoOrder, optional | 排序方式. Defaults to VideoOrder.PUBDATE |
 
 获取用户投稿视频信息。
@@ -180,10 +186,10 @@ from bilibili_api import user
 
 #### async def get_articles()
 
-| name  | type                   | description                                 |
-| ----- | ---------------------- | ------------------------------------------- |
+| name  | type                   | description                             |
+|-------|------------------------|-----------------------------------------|
 | order | ArticleOrder, optional | 排序方式. Defaults to ArticleOrder.PUBDATE. |
-| pn    | int, optional          | 页码，从 1 开始. Defaults to 1.             |
+| pn    | int, optional          | 页码，从 1 开始. Defaults to 1.               |
 
 获取用户投稿专栏。
 
@@ -191,11 +197,11 @@ from bilibili_api import user
 
 #### async def get_article_list()
 
-| name  | type                       | description                                   |
-| ----- | -------------------------- | --------------------------------------------- |
+| name  | type                       | description                               |
+|-------|----------------------------|-------------------------------------------|
 | order | ArticleListOrder, optional | 排序方式. Defaults to ArticleListOrder.LATEST |
-|pn    |(int, optional)         | 页码数，从 1 开始。 Defaults to 1.
-|ps     | (int, optional)       | 每一页的视频数. Defaults to 30. |
+| pn    | (int, optional)            | 页码数，从 1 开始。 Defaults to 1.                |
+| ps    | (int, optional)            | 每一页的视频数. Defaults to 30.                  |
 
 获取用户专栏文集。
 
@@ -212,11 +218,11 @@ from bilibili_api import user
 
 查看频道内所有视频。仅供 series_list。
 
-| name | type | description |
-| ---- | ---- | ----------- |
+| name | type | description                            |
+|------|------|----------------------------------------|
 | sid  | int  | 合集的 series_id (通过 get_channel_list 获取) |
-| pn   | int  | 页数，默认为1 |
-| ps   | int  | 每一页显示的视频数量，默认为100 |
+| pn   | int  | 页数，默认为1                                |
+| ps   | int  | 每一页显示的视频数量，默认为100                      |
 
 **Returns:** 调用接口返回的内容。
 
@@ -224,21 +230,21 @@ from bilibili_api import user
 
 查看频道内所有视频。仅供 season_list。
 
-| name | type | description |
-| ---- | ---- | ----------- |
-| sid  | int  | 季度 id(season_id) (通过 get_channel_list 获取) |
-| sort | ChannelOrder | 排序方式，默认为“默认排序” |
-| pn   | int  | 页数，默认为1 |
-| ps   | int  | 每一页显示的视频数量，默认为100 |
+| name | type         | description                               |
+|------|--------------|-------------------------------------------|
+| sid  | int          | 季度 id(season_id) (通过 get_channel_list 获取) |
+| sort | ChannelOrder | 排序方式，默认为“默认排序”                            |
+| pn   | int          | 页数，默认为1                                   |
+| ps   | int          | 每一页显示的视频数量，默认为100                         |
 
 **Returns:** 调用接口返回的内容。
 
 #### async def get_dynamics()
 
-| name     | type           | description                                                  |
-| -------- | -------------- | ------------------------------------------------------------ |
+| name     | type           | description                                                                                                                                          |
+|----------|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
 | offset   | str, optional  | 该值为第一次调用本方法时，数据中会有个 next_offset 字段，<br/>指向下一动态列表第一条动态（类似单向链表）。<br/>根据上一次获取结果中的 next_offset 字段值，<br/>循环填充该值即可获取到全部动态。<br/>0 为从头开始。<br/>Defaults to 0. |
-| need_top | bool, optional | 显示置顶动态. Defaults to False.                             |
+| need_top | bool, optional | 显示置顶动态. Defaults to False.                                                                                                                           |
 
 获取用户动态。
 
@@ -252,9 +258,9 @@ from bilibili_api import user
 
 #### async def get_subscribed_bangumi()
 
-| name  | type                  | description                               |
-| ----- | --------------------- | ----------------------------------------- |
-| pn    | int, optional         | 页码数，从 1 开始。 Defaults to 1.        |
+| name  | type                  | description                           |
+|-------|-----------------------|---------------------------------------|
+| pn    | int, optional         | 页码数，从 1 开始。 Defaults to 1.            |
 | type_ | BangumiType, optional | 资源类型. Defaults to BangumiType.BANGUMI |
 
 获取用户追番/追剧列表。
@@ -263,10 +269,10 @@ from bilibili_api import user
 
 #### async def get_followings()
 
-| name | type           | description                     |
-| ---- | -------------- | ------------------------------- |
+| name | type           | description               |
+|------|----------------|---------------------------|
 | pn   | int, optional  | 页码，从 1 开始. Defaults to 1. |
-| desc | bool, optional | 倒序排序. Defaults to True.     |
+| desc | bool, optional | 倒序排序. Defaults to True.   |
 
 获取用户关注列表（不是自己只能访问前5页）
 
@@ -280,15 +286,14 @@ from bilibili_api import user
 
 #### async def get_followers()
 
-| name | type           | description                     |
-| ---- | -------------- | ------------------------------- |
+| name | type           | description               |
+|------|----------------|---------------------------|
 | pn   | int, optional  | 页码，从 1 开始. Defaults to 1. |
-| desc | bool, optional | 倒序排序. Defaults to True.     |
+| desc | bool, optional | 倒序排序. Defaults to True.   |
 
 获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）
 
 **Returns:** 调用接口返回的内容。
-
 
 #### async def top_followers()
 
@@ -300,7 +305,6 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
-
 #### async def get_overview_stat()
 
 获取用户的简易订阅和投稿信息。
@@ -310,10 +314,20 @@ from bilibili_api import user
 #### async def modify_relation()
 
 | name     | type         | description |
-| -------- | ------------ | ----------- |
-| relation | RelationType | 用户关系    |
+|----------|--------------|-------------|
+| relation | RelationType | 用户关系        |
 
 修改和用户的关系，比如拉黑、关注、取关等。
+
+**Returns:** 调用接口返回的内容。
+
+#### async def set_space_notice()
+
+| name   | type | description |
+|--------|------|-------------|
+| notice | str  | 需要修改为？可以留空  |
+
+修改用户空间公告。
 
 **Returns:** 调用接口返回的内容。
 
@@ -322,8 +336,8 @@ from bilibili_api import user
 ## async def get_self_info()
 
 | name       | type       | description |
-| ---------- | ---------- | ----------- |
-| credential | Credential | 凭据        |
+|------------|------------|-------------|
+| credential | Credential | 凭据          |
 
 获取自己的信息。
 

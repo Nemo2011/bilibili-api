@@ -18,7 +18,6 @@ from .utils.Credential import Credential
 from typing import List
 import httpx
 
-
 API = get_api("user")
 
 
@@ -171,6 +170,39 @@ class User:
             用户 uid
         """
         return self.__uid
+
+    async def get_space_notice(self):
+        """
+        获取用户空间公告
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["space_notice"]
+        params = {"mid": self.__uid}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
+
+    async def set_space_notice(self, content: str = ""):
+        """
+        修改用户空间公告
+
+        Args:
+            content(str): 需要修改的内容
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["set_space_notice"]
+        data = {"notice": content}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
 
     async def get_relation_info(self):
         """
