@@ -172,13 +172,25 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_album()
+
+| name      | type                | description                     |
+|-----------|---------------------|---------------------------------|
+| page_num  | int, optional       | 页码，从 1 开始. Defaults to 1.       |
+| page_size | int, optional       | 每一页的相簿. Defaults to 30.         |
+| biz       | DrawOrder, optional | 排序方式. Defaults to DrawOrder.ALL |
+
+获取用户投稿相簿。
+
+**Returns:** 调用接口返回的内容。
+
 #### async def get_audios()
 
-| name  | type                 | description                               |
-| ----- | -------------------- | ----------------------------------------- |
+| name  | type                 | description                           |
+|-------|----------------------|---------------------------------------|
 | order | AudioOrder, optional | 排序方式. Defaults to AudioOrder.PUBDATE. |
-| pn    | int, optional        | 页码，从 1 开始. Defaults to 1.           |
-| ps     | (int, optional)       | 每一页的视频数. Defaults to 30. |
+| pn    | int, optional        | 页码，从 1 开始. Defaults to 1.             |
+| ps    | (int, optional)      | 每一页的视频数. Defaults to 30.              |
 
 获取用户投稿音频。
 
