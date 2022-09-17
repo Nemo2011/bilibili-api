@@ -60,6 +60,21 @@ class AudioOrder(Enum):
     FAVORITE = 3
 
 
+class DrawOrder(Enum):
+    """
+    音频排序顺序。
+
+    + PUBDATE : 上传日期倒序。
+    + FAVORITE: 收藏量倒序。
+    + VIEW    : 播放量倒序。
+    """
+
+    ALL = "all"
+    DRAW = "draw"
+    PHOTO = "photo"
+    DAILY = "daily"
+
+
 class ArticleOrder(Enum):
     """
     专栏排序顺序。
@@ -295,6 +310,28 @@ class User:
         """
         api = API["info"]["audio"]
         params = {"uid": self.__uid, "ps": ps, "pn": pn, "order": order.value}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
+
+    async def get_album(
+        self, biz: DrawOrder = DrawOrder.ALL,
+        page_num: int = 1,
+        page_size: int = 30
+    ):
+        """
+        获取用户投稿音频。
+
+        Args:
+            biz (DrawOrder, optional): 排序方式. Defaults to DrawOrder.ALL.
+            page_num      (int, optional)       : 页码数，从 1 开始。 Defaults to 1.
+            page_size    (int)       : 每一页的相簿条目. Defaults to 30.
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["album"]
+        params = {"uid": self.__uid, "page_num": page_num, "page_size": page_size, "biz": biz.value}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
