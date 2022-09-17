@@ -17,8 +17,8 @@ from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 
 UID = 660303135
 UID2 = 1033942996
-
-u = user.User(UID2, credential=credential)
+UID3 = 7949629
+u = user.User(UID3, credential=credential)
 
 
 async def test_a_User_get_user_info():
@@ -177,7 +177,15 @@ async def test_zf_get_space_notice():
     return await u.get_space_notice()
 
 
+async def test_zh_get_album():
+    return await u.get_album()
+
+
+async def test_zg_get_space_notice():
+    return await u.get_space_notice()
+
+#
 # from bilibili_api import sync
 #
-# res = sync(test_zf_get_space_notice())
+# res = sync(test_zh_get_album())
 # print(res)
