@@ -64,9 +64,10 @@ class DrawOrder(Enum):
     """
     音频排序顺序。
 
-    + PUBDATE : 上传日期倒序。
-    + FAVORITE: 收藏量倒序。
-    + VIEW    : 播放量倒序。
+    + ALL : 全部。
+    + DRAW: 绘画。
+    + PHOTO    : 摄影。
+    + DAILY    : 日常。
     """
 
     ALL = "all"
