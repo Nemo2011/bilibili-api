@@ -18,7 +18,6 @@ from .utils.Credential import Credential
 from typing import List
 import httpx
 
-
 API = get_api("user")
 
 
@@ -59,6 +58,22 @@ class AudioOrder(Enum):
     PUBDATE = 1
     VIEW = 2
     FAVORITE = 3
+
+
+class AlbumType(Enum):
+    """
+    相册类型
+
+    + ALL : 全部。
+    + DRAW: 绘画。
+    + PHOTO    : 摄影。
+    + DAILY    : 日常。
+    """
+
+    ALL = "all"
+    DRAW = "draw"
+    PHOTO = "photo"
+    DAILY = "daily"
 
 
 class ArticleOrder(Enum):
@@ -172,6 +187,39 @@ class User:
         """
         return self.__uid
 
+    async def get_space_notice(self):
+        """
+        获取用户空间公告
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["space_notice"]
+        params = {"mid": self.__uid}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
+
+    async def set_space_notice(self, content: str = ""):
+        """
+        修改用户空间公告
+
+        Args:
+            content(str): 需要修改的内容
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["set_space_notice"]
+        data = {"notice": content}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
+
     async def get_relation_info(self):
         """
         获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
@@ -263,6 +311,28 @@ class User:
         """
         api = API["info"]["audio"]
         params = {"uid": self.__uid, "ps": ps, "pn": pn, "order": order.value}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
+
+    async def get_album(
+        self, biz: AlbumType = AlbumType.ALL,
+        page_num: int = 1,
+        page_size: int = 30
+    ):
+        """
+        获取用户投稿音频。
+
+        Args:
+            biz (AlbumType, optional): 排序方式. Defaults to AlbumType.ALL.
+            page_num      (int, optional)       : 页码数，从 1 开始。 Defaults to 1.
+            page_size    (int)       : 每一页的相簿条目. Defaults to 30.
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["album"]
+        params = {"uid": self.__uid, "page_num": page_num, "page_size": page_size, "biz": biz.value}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )

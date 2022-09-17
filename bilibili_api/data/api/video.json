@@ -18,7 +18,7 @@
         "aid": "int: av 号",
         "bvid": "string: BV 号"
       },
-      "comment": "视频基本信息"
+      "comment": "视频详细信息"
     },
     "tags": {
       "url": "https://api.bilibili.com/x/tag/archive/tags",
