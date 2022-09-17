@@ -313,7 +313,7 @@
         "notice": "str: text ,不必要",
         "csrf": "str: CSRF Token（位于 cookie），必要"
       },
-      "comment": "修改用户个人空间公告,目前不可用"
+      "comment": "修改用户个人空间公告"
     },
     "del_channel_series": {
       "url": "https://api.bilibili.com/x/series/series/delete",
