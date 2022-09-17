@@ -52,6 +52,18 @@ from bilibili_api import user
 + VIEW    : 阅读量倒序。
 
 ---
+## class AlbumType
+
+**Extends:** enum.Enum
+
+相册内容类型。
+
++ ALL : 全部。
++ DRAW: 绘画。
++ PHOTO    : 摄影。
++ DAILY    : 日常。
+
+---
 
 ## class ArticleListOrder
 
