@@ -135,7 +135,7 @@ class Bangumi:
     def get_episode_info(self):
         """
         如果设置了 epid,回应对应条目的条目数据
-        Returns:数据
+        Returns:数据:list
         """
         if self.__epid != -1:
             return self.ep_item
