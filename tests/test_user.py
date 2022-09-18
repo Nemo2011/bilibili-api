@@ -181,11 +181,11 @@ async def test_zh_get_album():
     return await u.get_album()
 
 
-async def test_zg_get_space_notice():
-    return await u.get_space_notice()
+async def test_zg_get_user_fav_tag():
+    return await u.get_user_fav_tag()
 
-#
+
 # from bilibili_api import sync
 #
-# res = sync(test_zh_get_album())
+# res = sync(test_zg_get_user_fav_tag())
 # print(res)
