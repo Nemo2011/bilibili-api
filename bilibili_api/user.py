@@ -195,7 +195,6 @@ class User:
         Returns:
             dict: 调用接口返回的内容。
         """
-
         # (未打包至 utils 的) 获取被 ajax 重定向后的接口数据
         api = API["info"]["user_tag"]
         params = {"mid": self.__uid}
@@ -212,13 +211,11 @@ class User:
             params=params,
             follow_redirects=True,
             cookies=cookies,
-            # credential=self.credential
         )
         try:
-
             r_json = json.loads(resp.text)
         except JSONDecodeError:
-            r_json = {'status': False, 'data': f'解析接口返回的 Json 数据失败:{resp.status_code}'}
+            r_json = {'status': False, 'data': f'解析接口返回的数据失败:{resp.status_code}'}
         if not r_json:
             r_json = {'status': False, 'data': 'Failed'}
         return r_json
