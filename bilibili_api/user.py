@@ -215,9 +215,12 @@ class User:
             # credential=self.credential
         )
         try:
+
             r_json = json.loads(resp.text)
         except JSONDecodeError:
             r_json = {'status': False, 'data': f'解析接口返回的 Json 数据失败:{resp.status_code}'}
+        if not r_json:
+            r_json = {'status': False, 'data': 'Failed'}
         return r_json
 
     async def get_space_notice(self):
