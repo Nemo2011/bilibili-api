@@ -31,7 +31,7 @@
       "params": {
         "mid": "int: uid"
       },
-      "comment": "用户关注的 TAG / 话题,目前不可用，Api库无法应对重定向的，不带code字段的请求"
+      "comment": "用户关注的 TAG / 话题,认证方式：SESSDATA"
     },
     "relation": {
       "url": "https://api.bilibili.com/x/relation/stat",

@@ -6,6 +6,7 @@ bilibili_api.user
 
 from enum import Enum
 import json
+from json.decoder import JSONDecodeError
 import time
 
 from .exceptions import ResponseCodeException
@@ -186,6 +187,38 @@ class User:
             用户 uid
         """
         return self.__uid
+
+    async def get_user_fav_tag(self):
+        """
+        获取用户关注的 Tag 信息，如果用户设为隐私，则返回 获取登录数据失败
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        # (未打包至 utils 的) 获取被 ajax 重定向后的接口数据
+        api = API["info"]["user_tag"]
+        params = {"mid": self.__uid}
+        if self.credential is None:
+            cookies = Credential().get_cookies()
+        else:
+            cookies = self.credential.get_cookies()
+        # cookies["buvid3"] = str(uuid.uuid1())
+        cookies["Domain"] = ".bilibili.com"
+        sess = get_session()
+        resp = await sess.request(
+            "GET",
+            url=api["url"],
+            params=params,
+            follow_redirects=True,
+            cookies=cookies,
+        )
+        try:
+            r_json = json.loads(resp.text)
+        except JSONDecodeError:
+            r_json = {'status': False, 'data': f'解析接口返回的数据失败:{resp.status_code}'}
+        if not r_json:
+            r_json = {'status': False, 'data': 'Failed'}
+        return r_json
 
     async def get_space_notice(self):
         """
