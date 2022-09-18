@@ -152,6 +152,12 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_user_fav_tag()
+
+获取用户关注的 Tag 信息，如果用户设为隐私，则返回 获取登录数据失败
+
+**Returns:** 调用接口返回的内容。
+
 #### async def get_relation_info()
 
 获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
