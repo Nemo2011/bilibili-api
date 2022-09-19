@@ -18,7 +18,9 @@ from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 UID = 660303135
 UID2 = 1033942996
 UID3 = 7949629
-u = user.User(UID3, credential=credential)
+UID_Model_Test = 12344667
+
+u = user.User(UID_Model_Test, credential=credential)
 
 
 async def test_a_User_get_user_info():
@@ -185,7 +187,11 @@ async def test_zg_get_user_fav_tag():
     return await u.get_user_fav_tag()
 
 
+async def test_zg_get_user_medal():
+    return await u.get_user_medal()
+
+
 # from bilibili_api import sync
 #
-# res = sync(test_zg_get_user_fav_tag())
+# res = sync(test_zg_get_user_medal())
 # print(res)
