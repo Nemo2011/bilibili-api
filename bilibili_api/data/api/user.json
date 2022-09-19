@@ -51,6 +51,15 @@
       },
       "comment": "视频播放量，文章阅读量，总点赞数"
     },
+    "user_medal": {
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/MedalWall",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "target_id": "int: uid"
+      },
+      "comment": "读取用户粉丝牌详细信息，如果隐私则不可以"
+    },
     "live": {
       "url": "https://api.bilibili.com/x/space/acc/info",
       "method": "GET",
