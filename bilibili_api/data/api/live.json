@@ -131,7 +131,7 @@
       "method": "GET",
       "verify": false,
       "params": null,
-      "comment": "获取自己粉丝牌,大航海等数据"
+      "comment": "获取自己粉丝牌,粉丝勋章,大航海等数据"
     },
     "general_info": {
       "url": "https://api.live.bilibili.com/xlive/fuxi-interface/general/half/initial",
