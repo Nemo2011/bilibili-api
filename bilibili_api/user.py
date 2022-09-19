@@ -289,7 +289,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         self.credential.raise_for_no_sessdata()
-        self.credential.raise_for_no_bili_jct()
+        # self.credential.raise_for_no_bili_jct()
         api = API["info"]["user_medal"]
         params = {"target_id": self.__uid}
         return await request(
