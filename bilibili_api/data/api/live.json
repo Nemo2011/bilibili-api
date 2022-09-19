@@ -114,6 +114,18 @@
       },
       "comment": "获取高能榜"
     },
+    "fan_model": {
+      "url": "https://api.live.bilibili.com/xlive/app-ucenter/v1/fansMedal/panel",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "roomId": "int: 房间号，不是必须的",
+        "page": "int: 页码,不是必须的",
+        "target_id": "int: 主播Uid,不是必须的",
+        "pageSize": "int: 默认 10 是必须的，否则不返回有效数据"
+      },
+      "comment": "获取房间的粉丝牌,自己的粉丝牌等数据"
+    },
     "live_info": {
       "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/live_info",
       "method": "GET",

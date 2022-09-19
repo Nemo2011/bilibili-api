@@ -198,6 +198,34 @@ class LiveRoom:
             api["method"], api["url"], params, credential=self.credential
         )
 
+    async def get_fan_model(self, page_num: int = 1, target_id: int = None, roomId: int = None):
+        """
+        获取自己的粉丝勋章信息
+
+        如果带有房间号就返回是否具有的判断 has_medal
+
+        如果带有主播 id ，就返回主播的粉丝牌，没有就返回 null
+
+        Args:
+            roomId(int, optional): 指定房间，查询是否拥有此房间的粉丝牌
+            target_id(int, optional): 指定返回一个主播的粉丝牌，留空就不返回
+            page_num(int, optional): 粉丝牌列表，默认 1
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["info"]["general_info"]
+        params = {
+            "pageSize": 10,
+            "page": page_num,
+        }
+        if roomId:
+            params["roomId"] = roomId
+        if target_id:
+            params["target_id"] = target_id
+        return await request(
+            api["method"], api["url"], params=params, credential=self.credential
+        )
+
     async def get_user_info_in_room(self):
         """
         获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）
@@ -1024,14 +1052,14 @@ class LiveDanmaku(AsyncEvent):
             return ret
 
         while offset < len(realData):
-            header = struct.unpack(">IHHII", realData[offset : offset + 16])
+            header = struct.unpack(">IHHII", realData[offset: offset + 16])
             length = header[0]
             recvData = {
                 "protocol_version": header[2],
                 "datapack_type": header[3],
                 "data": None,
             }
-            chunkData = realData[(offset + 16) : (offset + length)]
+            chunkData = realData[(offset + 16): (offset + length)]
             if header[2] == 0:
                 recvData["data"] = json.loads(chunkData.decode())
             elif header[2] == 2:
