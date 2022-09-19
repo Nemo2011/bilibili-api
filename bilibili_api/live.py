@@ -213,7 +213,7 @@ class LiveRoom:
         """
         self.credential.raise_for_no_sessdata()
 
-        api = API["info"]["general_info"]
+        api = API["info"]["live_info"]
         params = {
             "pageSize": 10,
             "page": page_num,
