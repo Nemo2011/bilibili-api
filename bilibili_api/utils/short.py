@@ -35,6 +35,5 @@ async def get_headers(short_url: str):
     config["follow_redirects"] = False
     if settings.proxy:
         config["proxies"] = {settings.proxy_use: settings.proxy}
-    print(short_url)
     resp = await get_session().head(url=short_url, follow_redirects=False)
     return resp.headers
