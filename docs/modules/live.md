@@ -109,6 +109,22 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
+#### async def get_fan_model()
+
+| name      | type          | description         |
+|-----------|---------------|---------------------|
+| roomId    | int, optional | 指定房间，查询是否拥有此房间的粉丝牌  |
+| target_id | int, optional | 指定返回一个主播的粉丝牌，留空就不返回 |
+| page_num  | int, optional | 页码. Defaults to 1   |
+
+获取自己的粉丝勋章信息
+
+如果带有房间号就返回是否具有的判断 has_medal
+
+如果带有主播 id ，就返回主播的粉丝牌，没有就返回 null
+
+**Returns:** API 调用返回结果
+
 #### async def get_user_info_in_room()
 
 获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）
@@ -155,11 +171,11 @@ from bilibili_api import live
 
 #### async def get_room_play_info_v2()
 
-| name          | type                       | description                                          |
-| ------------- | -------------------------- | ---------------------------------------------------- |
+| name          | type                       | description                                    |
+|---------------|----------------------------|------------------------------------------------|
 | live_protocol | LiveProtocol, optional     | 直播源流协议. Defaults to LiveProtocol.DEFAULT.      |
-| live_format   | LiveFormat, optional       | 直播源容器格式. Defaults to LiveFormat.DEFAULT.      |
-| live_codec    | LiveCodec, optional        | 直播源视频编码. Defaults to LiveCodec.DEFAULT.       |
+| live_format   | LiveFormat, optional       | 直播源容器格式. Defaults to LiveFormat.DEFAULT.       |
+| live_codec    | LiveCodec, optional        | 直播源视频编码. Defaults to LiveCodec.DEFAULT.        |
 | live_qn       | ScreenResolution, optional | 直播源清晰度. Defaults to ScreenResolution.ORIGINAL. |
 
 获取房间信息及可用清晰度列表
@@ -186,7 +202,7 @@ from bilibili_api import live
 
 | name   | type | description                           |
 | ------ | ---- | ------------------------------------- |
-| tab_id | int  | 礼物类型.   2：特权礼物， 3：定制礼物 |
+| tab_id | int  | 礼物类型. 2：特权礼物， 3：定制礼物 |
 
 获取当前直播间内的特殊礼物列表
 
@@ -411,11 +427,11 @@ Websocket 实时获取直播弹幕
 | area_id        | int, optional | 子分区 ID. Defaults to None   |
 | area_parent_id | int, optional | 父分区 ID. Defaults to None   |
 
-  获取所有礼物的信息，包括礼物 ID、名称、价格、等级等。
+获取所有礼物的信息，包括礼物 ID、名称、价格、等级等。
 
-  同时填了 `room_id`、`area_id`、`area_parent_id`，则返回一个较小的 json，只包含该房间、该子区域、父区域的礼物。
+同时填了 `room_id`、`area_id`、`area_parent_id`，则返回一个较小的 json，只包含该房间、该子区域、父区域的礼物。
 
-  但即使限定了三个条件，仍然会返回约 1.5w 行的 json。不加限定则是 2.8w 行。
+但即使限定了三个条件，仍然会返回约 1.5w 行的 json。不加限定则是 2.8w 行。
 
 **Returns:** API 调用返回结果
 

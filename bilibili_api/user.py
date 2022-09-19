@@ -281,6 +281,21 @@ class User:
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
+    async def get_user_medal(self):
+        """
+        读取用户粉丝牌详细列表，如果隐私则不可以
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        self.credential.raise_for_no_sessdata()
+        # self.credential.raise_for_no_bili_jct()
+        api = API["info"]["user_medal"]
+        params = {"target_id": self.__uid}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
+
     async def get_live_info(self):
         """
         获取用户直播间信息。

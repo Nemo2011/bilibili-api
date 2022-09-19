@@ -52,6 +52,7 @@ from bilibili_api import user
 + VIEW    : 阅读量倒序。
 
 ---
+
 ## class AlbumType
 
 **Extends:** enum.Enum
@@ -167,6 +168,12 @@ from bilibili_api import user
 #### async def get_up_stat()
 
 获取 UP 主数据信息（视频总播放量，文章总阅读量，总点赞数）
+
+**Returns:** 调用接口返回的内容。
+
+#### async def get_user_medal()
+
+读取用户粉丝牌详细列表，如果隐私则不可以,需要登录状态，返回的数据带有 查询者的 uid
 
 **Returns:** 调用接口返回的内容。
 
