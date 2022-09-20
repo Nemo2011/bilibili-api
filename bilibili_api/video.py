@@ -1149,6 +1149,30 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
+    async def get_subtitle(
+        self,
+        cid: int = None,
+    ):
+        """
+        获取字幕信息
+        Args:
+            cid(int): 分P ID,从视频信息中获取
+        Returns:
+            调用 API 返回的结果
+        """
+        if cid is None:
+            raise ArgsException("需要 cid")
+        api = API["info"]["get_player_info"]
+
+        params = {
+            "aid": self.get_aid(),
+            "cid": cid,
+        }
+        result = await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+        return result.get("subtitle")
+
     async def submit_subtitle(
         self,
         lan: str,
