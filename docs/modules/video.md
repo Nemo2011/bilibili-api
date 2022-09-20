@@ -368,16 +368,26 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 **Returns:** API 调用返回结果。
 
+#### async def get_subtitle()
+
+| name       | type | description  |
+|------------|------|--------------|
+| cid        | cid  | 分 P id. 必须参数 |
+
+无需登陆, 获取视频播放信息Api中的字幕数据字段。
+
+**Returns:** API 调用返回结果。
+
 #### async def submit_subtitle()
 
-| name       | type | description                                                  |
-| ---------- | ---- | ------------------------------------------------------------ |
+| name       | type | description                                                |
+|------------|------|------------------------------------------------------------|
 | lan        | str  | 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm |
-| data       | dict | 字幕数据                                                     |
-| submit     | bool | 是否提交，不提交为草稿                                       |
-| sign       | bool | 是否署名                                                     |
-| page_index | int  | 分 P 索引. Defaults to None.                                 |
-| cid        | cid  | 分 P id. Defaults to None.                                   |
+| data       | dict | 字幕数据                                                       |
+| submit     | bool | 是否提交，不提交为草稿                                                |
+| sign       | bool | 是否署名                                                       |
+| page_index | int  | 分 P 索引. Defaults to None.                                  |
+| cid        | cid  | 分 P id. Defaults to None.                                  |
 
 上传字幕
 

@@ -227,7 +227,13 @@ async def test_zc_Video_delete_from_toview():
 async def test_zd_video_snapshot():
     return await video.get_video_snapshot(pvideo=False)
 
+
+async def test_zf_get_subtitle():
+    videos = video_m.Video(aid=288571926)
+    return await videos.get_subtitle(cid=281031471)
+
+
 # from bilibili_api import sync
 #
-# res = sync(test_zd_video_snapshot())
+# res = sync(test_zf_get_subtitle())
 # print(res)
