@@ -59,3 +59,24 @@ from bilibili_api import channel
 含父子关系（即一层次只有主分区）
 
 **Returns:** dict: 所有分区的数据
+
+---
+
+## async def get_channel_videos_count_today()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+获取每个分区当日最新投稿数量
+
+---
+
+## async def get_channel_new_videos()
+
+| name | type | description |
+| - | - | - |
+| tid | int | 分区 id |
+| credential | Credential | 凭据类 |
+
+获取分区最新投稿
