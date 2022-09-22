@@ -72,7 +72,7 @@ for dm in dms:
 ```python
 import asyncio
 from bilibili_api import video, Credential, HEADERS
-import aiohttp
+import httpx
 import os
 
 SESSDATA = ""
@@ -93,32 +93,31 @@ async def main():
     video_url = url["dash"]["video"][0]['baseUrl']
     # 音频轨链接
     audio_url = url["dash"]["audio"][0]['baseUrl']
-    async with aiohttp.ClientSession() as sess:
-        # 下载视频流
-        async with sess.get(video_url, headers=HEADERS) as resp:
-            length = resp.headers.get('content-length')
-            with open('video_temp.m4s', 'wb') as f:
-                process = 0
-                for chunk in resp.iter_bytes(1024):
-                    if not chunk:
-                        break
+    async with httpx.AsyncClient(headers=HEADERS) as sess:
+        resp = await sess.get(video_url)
+        length = resp.headers.get('content-length')
+        with open('video_temp.m4s', 'wb') as f:
+            process = 0
+            for chunk in resp.iter_bytes(1024):
+                if not chunk:
+                    break
 
-                    process += len(chunk)
-                    print(f'下载视频流 {process} / {length}')
-                    f.write(chunk)
+                process += len(chunk)
+                print(f'下载视频流 {process} / {length}')
+                f.write(chunk)
 
         # 下载音频流
-        async with sess.get(audio_url, headers=HEADERS) as resp:
-            length = resp.headers.get('content-length')
-            with open('audio_temp.m4s', 'wb') as f:
-                process = 0
-                for chunk in resp.iter_bytes(1024):
-                    if not chunk:
-                        break
+        resp = await sess.get(audio_url)
+        length = resp.headers.get('content-length')
+        with open('audio_temp.m4s', 'wb') as f:
+            process = 0
+            for chunk in resp.iter_bytes(1024):
+                if not chunk:
+                    break
 
-                    process += len(chunk)
-                    print(f'下载音频流 {process} / {length}')
-                    f.write(chunk)
+                process += len(chunk)
+                print(f'下载音频流 {process} / {length}')
+                f.write(chunk)
 
         # 混流
         print('混流中')
