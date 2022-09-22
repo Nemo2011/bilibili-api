@@ -10,6 +10,7 @@ bilibili_api.comment
 + 动态（画册类型）：{116859542}。
 + 动态（纯文本）：{497080393649439253}。
 + 课程：ep{5556}
++ 小黑屋: ban/{2600321}
 """
 from enum import Enum
 
@@ -33,6 +34,7 @@ class CommentResourceType(Enum):
     + AUDIO：音频。
     + AUDIO_LIST：歌单。
     + CHEESE: 课程
+    + BLACK_ROOM: 小黑屋
     """
 
     VIDEO = 1
@@ -42,6 +44,7 @@ class CommentResourceType(Enum):
     AUDIO = 14
     AUDIO_LIST = 19
     CHEESE = 33
+    BLACK_ROOM = 6
 
 
 class OrderType(Enum):

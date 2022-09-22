@@ -123,3 +123,17 @@ async def get_user_stat(uid: int, credential: Credential = None):
     api = API["audio_info"]["user"]
     params = {"uid": uid}
     return await request("GET", api["url"], params, credential=credential)
+
+
+async def get_hot_song_list(pn: int = 1, credential: Credential = None):
+    """
+    获取热门歌单
+
+    Args:
+        pn(int, optional)                : 页数. Defaults to 1
+        credential (Credential, optional): 凭据. Defaults to None
+    """
+    credential = credential if credential is not None else Credential()
+    api = API["list_info"]["hot"]
+    params = {"pn": pn, "ps": 100}
+    return await request("GET", api["url"], params, credential=credential)

@@ -15,6 +15,24 @@
       },
       "comment": "用户基本信息"
     },
+    "space_notice": {
+      "url": "http://api.bilibili.com/x/space/notice",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "mid": "int: uid"
+      },
+      "comment": "用户个人空间公告"
+    },
+    "user_tag": {
+      "url": "http://space.bilibili.com/ajax/tags/getSubList",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "mid": "int: uid"
+      },
+      "comment": "用户关注的 TAG / 话题,认证方式：SESSDATA"
+    },
     "relation": {
       "url": "https://api.bilibili.com/x/relation/stat",
       "method": "GET",
@@ -32,6 +50,15 @@
         "mid": "int: uid"
       },
       "comment": "视频播放量，文章阅读量，总点赞数"
+    },
+    "user_medal": {
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/MedalWall",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "target_id": "int: uid"
+      },
+      "comment": "读取用户粉丝牌详细信息，如果隐私则不可以"
     },
     "live": {
       "url": "https://api.bilibili.com/x/space/acc/info",
@@ -55,6 +82,18 @@
         "order": "str: pubdate 上传日期，pubdate 播放量，pubdate 收藏量"
       },
       "comment": "搜索用户视频"
+    },
+    "album": {
+      "url": "https://api.vc.bilibili.com/link_draw/v1/doc/doc_list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "uid": "int: uid 此项必须",
+        "page_size": "int: 每页项数 此项必须",
+        "page_num": "int: 页码",
+        "biz": "str: 全部：all 绘画：draw 摄影：photo 日常：daily 默认为 all"
+      },
+      "comment": "相簿"
     },
     "audio": {
       "url": "https://api.bilibili.com/audio/music-service/web/song/upper",
@@ -274,6 +313,16 @@
         "series_id": "int: series_id",
         "aids": "int: aid 列表"
       }
+    },
+    "set_space_notice": {
+      "url": "http://api.bilibili.com/x/space/notice/set",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "notice": "str: text ,不必要",
+        "csrf": "str: CSRF Token（位于 cookie），必要"
+      },
+      "comment": "修改用户个人空间公告"
     },
     "del_channel_series": {
       "url": "https://api.bilibili.com/x/series/series/delete",

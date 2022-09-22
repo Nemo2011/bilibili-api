@@ -1,6 +1,5 @@
 import asyncio
 import datetime
-import enum
 import json
 import logging
 import time
@@ -18,16 +17,19 @@ from .utils.utils import get_api
 from .video import Video
 
 API = get_api("session")
-    
 
-async def fetch_session_msgs(talker_id: int, credential: Credential, begin_seqno: int = 0):
+
+async def fetch_session_msgs(
+    talker_id: int, credential: Credential, session_type: int = 1, begin_seqno: int = 0
+):
     """
     获取指定用户的近三十条消息
 
     Args:
-        talker_id   (int)       : 用户 UID
-        credential  (Credential): Credential
-        begin_seqno (int)       : 起始 Seqno
+        talker_id    (int)       : 用户 UID
+        credential   (Credential): Credential
+        session_type (int)       : 会话类型 1 私聊 2 应援团
+        begin_seqno  (int)       : 起始 Seqno
 
     Returns:
         调用 API 返回结果
@@ -35,15 +37,18 @@ async def fetch_session_msgs(talker_id: int, credential: Credential, begin_seqno
 
     credential.raise_for_no_sessdata()
     params = {
-        'talker_id': talker_id,
-        'session_type': 1,
-        'begin_seqno': begin_seqno
+        "talker_id": talker_id,
+        "session_type": session_type,
+        "begin_seqno": begin_seqno,
     }
     api = API["session"]["fetch"]
 
-    return await request("GET", api["url"], params=params,credential=credential)
+    return await request("GET", api["url"], params=params, credential=credential)
 
-async def new_sessions(credential: Credential, begin_ts: int = int(time.time()*1000000)):
+
+async def new_sessions(
+    credential: Credential, begin_ts: int = int(time.time() * 1000000)
+):
     """
     获取新消息
 
@@ -56,10 +61,11 @@ async def new_sessions(credential: Credential, begin_ts: int = int(time.time()*1
     """
 
     credential.raise_for_no_sessdata()
-    params = {'begin_ts': begin_ts}
+    params = {"begin_ts": begin_ts, "build": 0, "mobi_app": "web"}
     api = API["session"]["new"]
 
-    return await request("GET", api["url"], params=params,credential=credential)
+    return await request("GET", api["url"], params=params, credential=credential)
+
 
 async def get_sessions(credential: Credential, session_type: int = 4):
     """
@@ -80,11 +86,12 @@ async def get_sessions(credential: Credential, session_type: int = 4):
         "unfollow_fold": 0,
         "sort_rule": 2,
         "build": 0,
-        "mobi_app": "web"
+        "mobi_app": "web",
     }
     api = API["session"]["get"]
 
-    return await request("GET", api["url"], params=params,credential=credential)
+    return await request("GET", api["url"], params=params, credential=credential)
+
 
 async def send_msg(credential: Credential, receiver_id: int, text: str):
     """
@@ -119,25 +126,30 @@ async def send_msg(credential: Credential, receiver_id: int, text: str):
         "build": 0,
         "mobi_app": "web",
     }
-    return await request(
-        "POST", url=api["url"], data=data, credential=credential
-    )
+    return await request("POST", url=api["url"], data=data, credential=credential)
 
+
+@dataclass
 class Picture:
-    height:     int
-    imageType:  str
-    original:   int
-    size:       str
-    url:        str
-    width:      int
+    """
+    图片类，包含图片链接、尺寸以及下载操作。
+    """
 
-    async def download(self, filepath: str = ''):
+    height: int
+    imageType: str
+    original: int
+    size: str
+    url: str
+    width: int
+
+    async def download(self, filepath: str = ""):
         if not filepath:
-            filepath = self.url.replace('https://message.biliimg.com/bfs/im/', '')
+            filepath = self.url.replace("https://message.biliimg.com/bfs/im/", "")
         async with httpx.AsyncClient() as session:
             r = await session.get(self.url)
-            with open(filepath, 'wb') as fp:
+            with open(filepath, "wb") as fp:
                 fp.write(r.content)
+
 
 class Event:
     """
@@ -156,31 +168,31 @@ class Event:
     + TEXT:           纯文字消息
     + PICTURE:        图片消息
     + WITHDRAW:       撤回消息
-    + GROUPS_PICTURE: 应援团图片
+    + GROUPS_PICTURE: 应援团图片，但似乎不常触发，一般使用 PICTURE 即可
     + SHARE_VIDEO:    分享视频
     + NOTICE:         系统通知
     + PUSHED_VIDEO:   UP主推送的视频
     + WELCOME:        新成员加入应援团欢迎
     """
 
-    receiver_id:   int
+    receiver_id: int
     receiver_type: int
-    sender_uid:    int
-    talker_id:     int
-    msg_seqno:     int
-    msg_type:      int
-    msg_key:       int
-    timestamp:     int
-    content:       Union[str, int, Picture, Video]
+    sender_uid: int
+    talker_id: int
+    msg_seqno: int
+    msg_type: int
+    msg_key: int
+    timestamp: int
+    content: Union[str, int, Picture, Video]
 
-    TEXT = '1'
-    PICTURE = '2'
-    WITHDRAW = '5'
-    GROUPS_PICTURE = '6'
-    SHARE_VIDEO = '7'
-    NOTICE = '10'
-    PUSHED_VIDEO = '11'
-    WELCOME = '306'
+    TEXT = "1"
+    PICTURE = "2"
+    WITHDRAW = "5"
+    GROUPS_PICTURE = "6"
+    SHARE_VIDEO = "7"
+    NOTICE = "10"
+    PUSHED_VIDEO = "11"
+    WELCOME = "306"
 
     def __init__(self, data: dict, self_uid: int):
         """
@@ -195,72 +207,77 @@ class Event:
             self.__content()
         except AttributeError:
             print(data)
-    
+
     def __str__(self):
         if self.receiver_type == 1:
             if self.receiver_id == self.uid:
-                msg_type = '收到'
+                msg_type = "收到"
                 user_id = self.sender_uid
             elif self.sender_uid == self.uid:
-                msg_type = '发送'
+                msg_type = "发送"
                 user_id = self.receiver_id
 
         elif self.receiver_type == 2:
             user_id = self.receiver_id
             if self.sender_uid == self.uid:
-                msg_type = '发送应援团' 
+                msg_type = "发送应援团"
             elif self.sender_uid == 0:
-                msg_type = '系统提示'
+                msg_type = "系统提示"
             else:
-                msg_type = '收到应援团'
+                msg_type = "收到应援团"
 
-        return f'{msg_type} {user_id} 信息 {self.content}({self.timestamp})'
+        return f"{msg_type} {user_id} 信息 {self.content}({self.timestamp})"
 
     def __content(self):
-        '更新消息内容'
+        """更新消息内容"""
 
         content: dict = json.loads(self.content)
         mt = str(self.msg_type)
 
         if mt == Event.TEXT:
-            self.content = content.get('content')
+            self.content = content.get("content")
 
         elif mt == Event.WELCOME:
-            self.content = content.get('content') + str(content.get('group_id'))
+            self.content = content.get("content") + str(content.get("group_id"))
 
         elif mt == Event.WITHDRAW:
             self.content = str(content)
 
         elif mt == Event.PICTURE or mt == Event.GROUPS_PICTURE:
             self.content = Picture(**content)
-        
+
         elif mt == Event.SHARE_VIDEO or mt == Event.PUSHED_VIDEO:
-            self.content = Video(bvid=content.get('bvid'), aid=content.get('id'))
-        
+            self.content = Video(bvid=content.get("bvid"), aid=content.get("id"))
+
         elif mt == Event.NOTICE:
-            self.content = content['title'] + " " + content['text']
-        
+            self.content = content["title"] + " " + content["text"]
+
         else:
             print(mt, content)
 
+
 class Session(AsyncEvent):
+    """
+    会话类，用来开启消息监听。
+    """
+
     def __init__(self, credential: Credential, debug=False):
         super().__init__()
         # 会话状态
         self.__status = 0
 
         # 已获取会话中最大的时间戳 默认当前时间
-        self.maxTs = int(time.time()*1000000)
+        self.maxTs = int(time.time() * 1000000)
 
-        # 会话UID为键 会话中最大Seqno位置值
+        # 会话UID为键 会话中最大Seqno为值
         self.maxSeqno = dict()
 
         # 凭证
         self.credential = credential
-        
+
         # 异步定时任务框架
         self.sched = AsyncIOScheduler(timezone="Asia/Shanghai")
-        
+
         # 已接收的所有事件 用于撤回时找回
         self.events = dict()
 
@@ -269,7 +286,11 @@ class Session(AsyncEvent):
         self.logger.setLevel(logging.DEBUG if debug else logging.INFO)
         if not self.logger.handlers:
             handler = logging.StreamHandler()
-            handler.setFormatter(logging.Formatter("[%(asctime)s][%(levelname)s]: %(message)s", '%Y-%m-%d %H:%M:%S'))
+            handler.setFormatter(
+                logging.Formatter(
+                    "[%(asctime)s][%(levelname)s]: %(message)s", "%Y-%m-%d %H:%M:%S"
+                )
+            )
             self.logger.addHandler(handler)
 
     def get_status(self):
@@ -282,12 +303,12 @@ class Session(AsyncEvent):
         return self.__status
 
     async def run(self, except_self: bool = True):
-        '''
+        """
         非阻塞异步爬虫 定时发送请求获取消息
 
         Args:
             except_self: bool 是否排除自己发出的消息，默认是
-        '''
+        """
 
         # 获取自身UID 用于后续判断消息是发送还是接收
         self_info = await get_self_info(self.credential)
@@ -295,41 +316,55 @@ class Session(AsyncEvent):
 
         # 初始化 只接收开始运行后的新消息
         js = await get_sessions(self.credential)
-        self.maxSeqno = {_session["talker_id"]: _session["max_seqno"] for _session in js.get('session_list', [])}
+        self.maxSeqno = {
+            _session["talker_id"]: _session["max_seqno"]
+            for _session in js.get("session_list", [])
+        }
 
         # 间隔 6 秒轮询消息列表 之前设置 3 秒询一次 跑了一小时给我账号冻结了
-        @self.sched.scheduled_job('interval', id='query', seconds=6, max_instances=3, next_run_time=datetime.datetime.now())
+        @self.sched.scheduled_job(
+            "interval",
+            id="query",
+            seconds=6,
+            max_instances=3,
+            next_run_time=datetime.datetime.now(),
+        )
         async def qurey():
             js: dict = await new_sessions(self.credential, self.maxTs)
-            if js.get('session_list') is None:
+            if js.get("session_list") is None:
                 return
 
             pending = set()
-            for session in js['session_list']:
-                self.maxTs = max(self.maxTs, session['session_ts'])
+            for session in js["session_list"]:
+                self.maxTs = max(self.maxTs, session["session_ts"])
                 pending.add(
                     asyncio.create_task(
-                        fetch_session_msgs(session['talker_id'], self.credential, self.maxSeqno.get(session['talker_id']))
+                        fetch_session_msgs(
+                            session["talker_id"],
+                            self.credential,
+                            session["session_type"],
+                            self.maxSeqno.get(session["talker_id"]),
+                        )
                     )
                 )
-                self.maxSeqno[session['talker_id']] = session["max_seqno"]
+                self.maxSeqno[session["talker_id"]] = session["max_seqno"]
 
             while pending:
                 done, pending = await asyncio.wait(pending)
                 for done_task in done:
                     result: dict = await done_task
-                    if result is None or result.get('messages') is None:
+                    if result is None or result.get("messages") is None:
                         continue
-                    for message in result.get('messages', [])[::-1]:
+                    for message in result.get("messages", [])[::-1]:
                         event = Event(message, self.uid)
                         if str(event.msg_type) == Event.WITHDRAW:
                             self.logger.info(
                                 str(
                                     self.events.get(
-                                        event.content,
-                                        f'key={event.content}'
+                                        event.content, f"key={event.content}"
                                     )
-                                ) + f'被撤回({event.timestamp})'
+                                )
+                                + f" 被撤回({event.timestamp})"
                             )
                         else:
                             self.logger.info(event)
@@ -340,18 +375,19 @@ class Session(AsyncEvent):
 
                         self.events.update({str(event.msg_key): event})
 
-            self.logger.debug(f'maxTs = {self.maxTs}')
+            self.logger.debug(f"maxTs = {self.maxTs}")
 
+        self.__status = 1
         self.sched.start()
-        self.logger.info('开始轮询')
+        self.logger.info("开始轮询")
 
     async def start(self, except_self: bool = True):
-        '''
+        """
         阻塞异步启动 通过调用 self.close() 后可断开连接
 
         Args:
             except_self: bool 是否排除自己发出的消息，默认是
-        '''
+        """
 
         await self.run(except_self)
         while self.get_status() < 2:
@@ -361,7 +397,7 @@ class Session(AsyncEvent):
             self.__status = 3
 
     async def reply(self, event: Event, text: str):
-        '''
+        """
         快速回复消息
 
         Args:
@@ -369,11 +405,16 @@ class Session(AsyncEvent):
             text:  str   要回复的文字内容
         Returns:
             dict: 调用接口返回的内容。
-        '''
+        """
 
-        return await send_msg(self.credential, event.sender_uid, text)
+        if self.uid == event.sender_uid:
+            self.logger.error("不能给自己发送消息哦~")
+        else:
+            return await send_msg(self.credential, event.sender_uid, text)
 
     def close(self):
-        '结束轮询'
-        self.sched.remove_job('query')
+        """结束轮询"""
+
+        self.sched.remove_job("query")
         self.__status = 2
+        self.logger.info("结束轮询")

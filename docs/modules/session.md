@@ -8,11 +8,12 @@ from bilibili_api import session
 
 #### async def fetch_session_msgs()
 
-| name        | type          | description                      |
-| ----------- | ------------- | -------------------------------- |
-| talker_id   | int           | 用户 UID                         |
-| credential  | Credential    | 凭证                             |
-| begin_seqno | int, optional | 起始 Seqno，每条信息有自己的Seqno |
+| name         | type          | description                      |
+| ------------ | ------------- | -------------------------------- |
+| talker_id    | int           | 用户 UID                         |
+| credential   | Credential    | 凭证                             |
+| session_type | int, optional | 会话类型 1 私聊 2 应援团          |
+| begin_seqno  | int, optional | 起始 Seqno，每条信息有自己的Seqno |
 
 获取指定用户的近三十条消息
 
@@ -62,15 +63,14 @@ from bilibili_api import session
 
 #### def \_\_init\_\_()
 
-| name   | type | description |
-| ------ | ---- | ----------- |
-| kwargs | dict | 图片content |
-
-#### def \_\_str\_\_()
-
-图片信息
-
-**Returns:** 含图片信息的字符串
+| name      | type | description     |
+| --------- | ---- | --------------- |
+| height    | int  | 高度            |
+| imageType | str  | 格式，例如: png |
+| original  | int  | 未知，默认为 1  |
+| size      | str  | 尺寸            |
+| url       | str  | 图片链接        |
+| width     | int  | 宽度            |  
 
 #### async def download()
 
