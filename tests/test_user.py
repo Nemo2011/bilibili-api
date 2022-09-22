@@ -3,16 +3,24 @@
 import asyncio
 from re import A
 from bilibili_api import user
-from . import common
+
+try:
+    from . import common
+
+    credential = common.get_credential()
+except:
+    credential = None
+    print("导入凭据未成功")
 import time
 import random
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 
-
 UID = 660303135
+UID2 = 1033942996
+UID3 = 7949629
+UID_Model_Test = 12344667
 
-credential = common.get_credential()
-u = user.User(UID, credential=credential)
+u = user.User(UID_Model_Test, credential=credential)
 
 
 async def test_a_User_get_user_info():
@@ -165,3 +173,25 @@ async def test_ze_clean_toview_list():
 
 async def after_all():
     await u.modify_relation(user.RelationType.UNSUBSCRIBE)
+
+
+async def test_zf_get_space_notice():
+    return await u.get_space_notice()
+
+
+async def test_zh_get_album():
+    return await u.get_album()
+
+
+async def test_zg_get_user_fav_tag():
+    return await u.get_user_fav_tag()
+
+
+async def test_zg_get_user_medal():
+    return await u.get_user_medal()
+
+
+# from bilibili_api import sync
+#
+# res = sync(test_zg_get_user_medal())
+# print(res)

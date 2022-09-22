@@ -6,6 +6,7 @@ bilibili_api.user
 
 from enum import Enum
 import json
+from json.decoder import JSONDecodeError
 import time
 
 from .exceptions import ResponseCodeException
@@ -17,7 +18,6 @@ from .utils.utils import get_api, join
 from .utils.Credential import Credential
 from typing import List
 import httpx
-
 
 API = get_api("user")
 
@@ -59,6 +59,22 @@ class AudioOrder(Enum):
     PUBDATE = 1
     VIEW = 2
     FAVORITE = 3
+
+
+class AlbumType(Enum):
+    """
+    相册类型
+
+    + ALL : 全部。
+    + DRAW: 绘画。
+    + PHOTO    : 摄影。
+    + DAILY    : 日常。
+    """
+
+    ALL = "all"
+    DRAW = "draw"
+    PHOTO = "photo"
+    DAILY = "daily"
 
 
 class ArticleOrder(Enum):
@@ -172,6 +188,71 @@ class User:
         """
         return self.__uid
 
+    async def get_user_fav_tag(self):
+        """
+        获取用户关注的 Tag 信息，如果用户设为隐私，则返回 获取登录数据失败
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        # (未打包至 utils 的) 获取被 ajax 重定向后的接口数据
+        api = API["info"]["user_tag"]
+        params = {"mid": self.__uid}
+        if self.credential is None:
+            cookies = Credential().get_cookies()
+        else:
+            cookies = self.credential.get_cookies()
+        # cookies["buvid3"] = str(uuid.uuid1())
+        cookies["Domain"] = ".bilibili.com"
+        sess = get_session()
+        resp = await sess.request(
+            "GET",
+            url=api["url"],
+            params=params,
+            follow_redirects=True,
+            cookies=cookies,
+        )
+        try:
+            r_json = json.loads(resp.text)
+        except JSONDecodeError:
+            r_json = {'status': False, 'data': f'解析接口返回的数据失败:{resp.status_code}'}
+        if not r_json:
+            r_json = {'status': False, 'data': 'Failed'}
+        return r_json
+
+    async def get_space_notice(self):
+        """
+        获取用户空间公告
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["space_notice"]
+        params = {"mid": self.__uid}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
+
+    async def set_space_notice(self, content: str = ""):
+        """
+        修改用户空间公告
+
+        Args:
+            content(str): 需要修改的内容
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["set_space_notice"]
+        data = {"notice": content}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
+
     async def get_relation_info(self):
         """
         获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）
@@ -196,6 +277,21 @@ class User:
 
         api = API["info"]["upstat"]
         params = {"mid": self.__uid}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
+
+    async def get_user_medal(self):
+        """
+        读取用户粉丝牌详细列表，如果隐私则不可以
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        self.credential.raise_for_no_sessdata()
+        # self.credential.raise_for_no_bili_jct()
+        api = API["info"]["user_medal"]
+        params = {"target_id": self.__uid}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -263,6 +359,28 @@ class User:
         """
         api = API["info"]["audio"]
         params = {"uid": self.__uid, "ps": ps, "pn": pn, "order": order.value}
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
+
+    async def get_album(
+        self, biz: AlbumType = AlbumType.ALL,
+        page_num: int = 1,
+        page_size: int = 30
+    ):
+        """
+        获取用户投稿音频。
+
+        Args:
+            biz (AlbumType, optional): 排序方式. Defaults to AlbumType.ALL.
+            page_num      (int, optional)       : 页码数，从 1 开始。 Defaults to 1.
+            page_size    (int)       : 每一页的相簿条目. Defaults to 30.
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["album"]
+        params = {"uid": self.__uid, "page_num": page_num, "page_size": page_size, "biz": biz.value}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -556,7 +674,11 @@ class User:
             meta = item["meta"]
             channels.append(
                 ChannelSeries(
-                    self.__uid, ChannelSeriesType.SEASON, id_, self.credential, meta=meta
+                    self.__uid,
+                    ChannelSeriesType.SEASON,
+                    id_,
+                    self.credential,
+                    meta=meta,
                 )
             )
         for item in channel_data["items_lists"]["series_list"]:
@@ -564,7 +686,11 @@ class User:
             meta = item["meta"]
             channels.append(
                 ChannelSeries(
-                    self.__uid, ChannelSeriesType.SERIES, id_, self.credential, meta=meta
+                    self.__uid,
+                    ChannelSeriesType.SERIES,
+                    id_,
+                    self.credential,
+                    meta=meta,
                 )
             )
         return channels

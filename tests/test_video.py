@@ -6,12 +6,21 @@ import time
 from bilibili_api.utils.Danmaku import Danmaku
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 from bilibili_api import video as video_m, exceptions
-from .common import get_credential
+
+# 调试兼容
+try:
+    from .common import get_credential
+
+    crd = get_credential()
+except:
+    print("未认证")
+    crd = None
+
 import datetime
 
 BVID = "BV1N34y1Y7ds"
 AID = 811248323
-video = video_m.Video(BVID, credential=get_credential())
+video = video_m.Video(aid=AID, credential=crd)
 
 
 async def test_a_Video_set_bvid():
@@ -213,3 +222,18 @@ async def test_zb_Video_add_to_toview():
 
 async def test_zc_Video_delete_from_toview():
     return await video.delete_from_toview()
+
+
+async def test_zd_video_snapshot():
+    return await video.get_video_snapshot(pvideo=False)
+
+
+async def test_zf_get_subtitle():
+    videos = video_m.Video(aid=288571926)
+    return await videos.get_subtitle(cid=281031471)
+
+
+# from bilibili_api import sync
+#
+# res = sync(test_zf_get_subtitle())
+# print(res)

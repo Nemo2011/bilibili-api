@@ -18,7 +18,7 @@ from urllib.parse import quote_plus
 import mimetypes
 
 from .utils.AsyncEvent import AsyncEvent
-from .utils.network import get_session, request, to_form_urlencoded
+from .utils.network_httpx import get_session, request, to_form_urlencoded
 from .utils.utils import chunk, get_api
 
 # import ffmpeg
@@ -202,7 +202,7 @@ class VideoUploader(AsyncEvent):
         # 首先获取视频文件预检信息
         session = get_session()
 
-        async with session.get(
+        resp = await session.get(
             api["url"],
             params={
                 "profile": "ugcfx/bup",
@@ -220,21 +220,21 @@ class VideoUploader(AsyncEvent):
                 "User-Agent": "Mozilla/5.0",
                 "Referer": "https://www.bilibili.com",
             },
-        ) as resp:
-            if resp.status >= 400:
-                self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
-                raise NetworkException(resp.status, resp.reason)
+        )
+        if resp.status_code >= 400:
+            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            raise NetworkException(resp.status_code, resp.reason_phrase)
 
-            preupload = await resp.json()
+        preupload = resp.json()
 
-            if preupload["OK"] != 1:
-                self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
-                raise ApiException(json.dumps(preupload))
+        if preupload["OK"] != 1:
+            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            raise ApiException(json.dumps(preupload))
 
         url = self._get_upload_url(preupload)
 
         # 获取 upload_id
-        async with session.post(
+        resp = await session.post(
             url,
             headers={
                 "x-upos-auth": preupload["auth"],
@@ -249,18 +249,18 @@ class VideoUploader(AsyncEvent):
                 "partsize": preupload["chunk_size"],
                 "biz_id": preupload["biz_id"],
             },
-        ) as resp:
-            if resp.status >= 400:
-                self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
-                raise ApiException("获取 upload_id 错误")
+        )
+        if resp.status_code >= 400:
+            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            raise ApiException("获取 upload_id 错误")
 
-            data = json.loads(await resp.text())
+        data = json.loads(resp.text)
 
-            if data["OK"] != 1:
-                self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
-                raise ApiException("获取 upload_id 错误：" + json.dumps(data))
+        if data["OK"] != 1:
+            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            raise ApiException("获取 upload_id 错误：" + json.dumps(data))
 
-            preupload["upload_id"] = data["upload_id"]
+        preupload["upload_id"] = data["upload_id"]
 
         # # 读取并上传视频元数据，这段代码暂时用不上
         # meta = ffmpeg.probe(page.path)
@@ -590,29 +590,29 @@ class VideoUploader(AsyncEvent):
         }
 
         try:
-            async with session.put(
+            resp = await session.put(
                 url,
                 data=chunk,
                 params=params,
                 headers={"x-upos-auth": preupload["auth"]},
-            ) as resp:
-                if resp.status >= 400:
-                    chunk_event_callback_data["info"] = f"Status {resp.status}"
-                    self.dispatch(
-                        VideoUploaderEvents.CHUNK_FAILED.value,
-                        chunk_event_callback_data,
-                    )
-                    return err_return
+            )
+            if resp.status_code >= 400:
+                chunk_event_callback_data["info"] = f"Status {resp.status_code}"
+                self.dispatch(
+                    VideoUploaderEvents.CHUNK_FAILED.value,
+                    chunk_event_callback_data,
+                )
+                return err_return
 
-                data = await resp.text()
+            data = resp.text
 
-                if data != "MULTIPART_PUT_SUCCESS":
-                    chunk_event_callback_data["info"] = "分块上传失败"
-                    self.dispatch(
-                        VideoUploaderEvents.CHUNK_FAILED.value,
-                        chunk_event_callback_data,
-                    )
-                    return err_return
+            if data != "MULTIPART_PUT_SUCCESS" and data != "":
+                chunk_event_callback_data["info"] = "分块上传失败"
+                self.dispatch(
+                    VideoUploaderEvents.CHUNK_FAILED.value,
+                    chunk_event_callback_data,
+                )
+                return err_return
 
         except Exception as e:
             chunk_event_callback_data["info"] = str(e)
@@ -659,7 +659,7 @@ class VideoUploader(AsyncEvent):
 
         session = get_session()
 
-        async with session.post(
+        resp = await session.post(
             url=url,
             data=json.dumps(data),
             headers={
@@ -667,24 +667,24 @@ class VideoUploader(AsyncEvent):
                 "content-type": "application/json; charset=UTF-8",
             },
             params=params,
-        ) as resp:
-            if resp.status >= 400:
-                err = NetworkException(resp.status, "状态码错误，提交分 P 失败")
-                self.dispatch(
-                    VideoUploaderEvents.PAGE_SUBMIT_FAILED.value,
-                    {"page": page, "err": err},
-                )
-                raise err
+        )
+        if resp.status_code >= 400:
+            err = NetworkException(resp.status_code, "状态码错误，提交分 P 失败")
+            self.dispatch(
+                VideoUploaderEvents.PAGE_SUBMIT_FAILED.value,
+                {"page": page, "err": err},
+            )
+            raise err
 
-            data = json.loads(await resp.read())
+        data = json.loads(resp.read())
 
-            if data["OK"] != 1:
-                err = ResponseCodeException(-1, f'提交分 P 失败，原因: {data["message"]}')
-                self.dispatch(
-                    VideoUploaderEvents.PAGE_SUBMIT_FAILED.value,
-                    {"page": page, "err": err},
-                )
-                raise err
+        if data["OK"] != 1:
+            err = ResponseCodeException(-1, f'提交分 P 失败，原因: {data["message"]}')
+            self.dispatch(
+                VideoUploaderEvents.PAGE_SUBMIT_FAILED.value,
+                {"page": page, "err": err},
+            )
+            raise err
 
         self.dispatch(VideoUploaderEvents.AFTER_PAGE_SUBMIT.value, {"page": page})
 

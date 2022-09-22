@@ -80,6 +80,16 @@
         "ps": "const int: 100"
       },
       "comment": "获取歌单歌曲列表"
+    }, 
+    "hot": {
+      "url": "https://www.bilibili.com/audio/music-service-c/web/menu/hit", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "pn": "int: 页码", 
+        "ps": "const int: 100"
+      }, 
+      "comment": "获取热门歌曲列表"
     }
   },
   "list_operate": {

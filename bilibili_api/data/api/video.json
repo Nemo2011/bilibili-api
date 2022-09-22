@@ -41,6 +41,27 @@
       },
       "comment": "视频充电信息"
     },
+    "video_snapshot_pvideo": {
+      "url": "https://api.bilibili.com/pvideo",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "aid": "int: av 号"
+      },
+      "comment": "视频预览快照(web)"
+    },
+    "video_snapshot": {
+      "url": "https://api.bilibili.com/x/player/videoshot",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "aid": "int: av 号",
+        "bvid": "string: BV 号",
+        "cid": "int:分 P CID",
+        "index": "int:json 数组截取时间表1为需要，0不需要"
+      },
+      "comment": "视频快照(web)"
+    },
     "pages": {
       "url": "https://api.bilibili.com/x/player/pagelist",
       "method": "GET",
@@ -114,6 +135,17 @@
         "type": "const int: 2"
       },
       "comment": "获取收藏夹列表信息，用于收藏操作"
+    },
+    "get_player_info": {
+      "url": "https://api.bilibili.com/x/player/v2",
+      "method": "GET",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号。与 bvid 任选其一",
+        "cid": "int: 分 P id",
+        "bvid": "int: bv 号。与 aid 任选其一"
+      },
+      "comment": "获取视频上一次播放的记录，字幕和地区信息。需要 分集的 cid, 返回数据中含有json字幕的链接"
     },
     "pbp": {
       "url": "https://bvc.bilivideo.com/pbp/data",
