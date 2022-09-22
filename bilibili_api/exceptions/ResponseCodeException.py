@@ -26,4 +26,4 @@ class ResponseCodeException(ApiException):
         self.raw = raw
 
     def __str__(self):
-        return f"接口返回错误代码：{self.code}，信息：{self.msg}。"
+        return f"接口返回错误代码：{self.code}，信息：{self.msg}。\n{self.raw}"
