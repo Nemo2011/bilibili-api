@@ -464,7 +464,7 @@ def login_with_sms(phonenumber: PhoneNumber, code: str):
             )
         ).text
     )
-    if return_data["code"] == 0:
+    if return_data["code"] == 0 and return_data["status"] != 5:
         captcha_id = None
         url = return_data["data"]["url"]
         cookies_list = url.split("?")[1].split("&")
