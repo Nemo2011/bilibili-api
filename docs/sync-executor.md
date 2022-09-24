@@ -41,8 +41,6 @@ def sync(coroutine: Coroutine):
     Returns:
         该异步函数的返回值
     """
-    if settings.nest_asyncio == True:
-        nest_asyncio.apply()
     __ensure_event_loop()
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(coroutine)
