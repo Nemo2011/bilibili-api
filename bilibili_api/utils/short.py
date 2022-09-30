@@ -14,20 +14,22 @@ async def get_real_url(short_url: str):
     Returns:
         目标链接（如果不是有效的链接会报错）
     """
+    config = {}
+    config["method"] = "GET"
+    config["url"] = short_url
+    config["follow_redirects"] = False
+    if settings.proxy:
+        config["proxies"] = {settings.proxy_use: settings.proxy}
     try:
-        url = short_url
-        headers = await get_headers(url)
-        while "location" in headers.keys():
-            url = headers["location"]
-            headers = await get_headers(url)
-        return url  # 已经是最终路径
+        resp = await get_session().head(url=short_url, follow_redirects=True)
+        return resp.url
     except Exception as e:
         raise e
 
 
 async def get_headers(short_url: str):
     """
-    获取链接的 headers
+    获取链接的 headers。
     """
     config = {}
     config["method"] = "GET"
