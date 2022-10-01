@@ -97,7 +97,10 @@ class Bangumi:
         # 确认有结果后，取出数据
         self.__ssid = req.json()["result"]["season_id"]
         self.__media_id = req.json()["result"]["media_id"]
-        self.__up_info = req.json()["result"]["up_info"]
+        if "up_info" in req.json()["result"]:
+            self.__up_info = req.json()["result"]["up_info"]
+        else:
+            self.__up_info = {}
         # 获取剧集相关
         self.ep_list = req.json()["result"].get("episodes")
         self.ep_item = [{}]
