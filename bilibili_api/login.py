@@ -464,7 +464,9 @@ def login_with_sms(phonenumber: PhoneNumber, code: str):
             )
         ).text
     )
-    if return_data["code"] == 0 and return_data["status"] != 5:
+    # return_data["status"] 已改为 return_data["data"]["status"]
+    # {'code': 0, 'message': '0', 'ttl': 1, 'data': {'is_new': False, 'status': 0, 'message': '', 'url': '', 'hint': '登录成功', 'in_reg_audit': 0, 'refresh_token': '', 'timestamp': }}
+    if return_data["code"] == 0 and return_data["data"]["status"] != 5:
         captcha_id = None
         url = return_data["data"]["url"]
         cookies_list = url.split("?")[1].split("&")
