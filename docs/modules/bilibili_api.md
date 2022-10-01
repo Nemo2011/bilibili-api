@@ -101,6 +101,12 @@ import bilibili_api
 
 **Returns:** None
 
+#### async def check_valid()
+
+检查 cookies 是否有效
+
+**Returns:** bool
+
 ---
 
 ## def sync()
