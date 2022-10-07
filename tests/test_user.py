@@ -1,7 +1,6 @@
 # bilibili_api.user
 
 import asyncio
-from re import A
 from bilibili_api import user
 
 try:
@@ -171,27 +170,24 @@ async def test_ze_clean_toview_list():
     return await user.clear_toview_list(common.get_credential())
 
 
-async def after_all():
-    await u.modify_relation(user.RelationType.UNSUBSCRIBE)
-
-
 async def test_zf_get_space_notice():
     return await u.get_space_notice()
 
 
-async def test_zh_get_album():
+async def test_zg_get_album():
     return await u.get_album()
 
 
-async def test_zg_get_user_fav_tag():
+async def test_zh_get_user_fav_tag():
     return await u.get_user_fav_tag()
 
 
-async def test_zg_get_user_medal():
+async def test_zi_get_user_medal():
     return await u.get_user_medal()
 
+async def test_zj_get_user_top_videos():
+    return await u.get_top_videos()
 
-# from bilibili_api import sync
-#
-# res = sync(test_zg_get_user_medal())
-# print(res)
+
+async def after_all():
+    await u.modify_relation(user.RelationType.UNSUBSCRIBE)
