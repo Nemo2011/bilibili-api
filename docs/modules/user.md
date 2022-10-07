@@ -171,6 +171,12 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_top_videos()
+
+获取用户的置顶视频
+
+**Returns:** 调用接口返回的结果
+
 #### async def get_user_medal()
 
 读取用户粉丝牌详细列表，如果隐私则不可以,需要登录状态，返回的数据带有 查询者的 uid

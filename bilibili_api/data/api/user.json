@@ -33,6 +33,15 @@
       },
       "comment": "用户关注的 TAG / 话题,认证方式：SESSDATA"
     },
+    "user_top_videos": {
+      "url": "https://api.bilibili.com/x/space/top/arc", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "vmid":"int: uid"
+      }, 
+      "comment": "用户代表作"
+    },
     "relation": {
       "url": "https://api.bilibili.com/x/relation/stat",
       "method": "GET",
