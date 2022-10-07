@@ -281,6 +281,19 @@ class User:
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
+    async def get_top_videos(self):
+        """
+        获取用户的指定视频（代表作）
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["user_top_videos"]
+        params = {
+            "vmid": self.get_uid()
+        }
+        return await request("GET", api["url"], params = params, credential = self.credential)
+
     async def get_user_medal(self):
         """
         读取用户粉丝牌详细列表，如果隐私则不可以
