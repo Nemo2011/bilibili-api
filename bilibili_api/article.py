@@ -21,7 +21,7 @@ API = get_api("article")
 
 # 文章颜色表
 ARTICLE_COLOR_MAP = {
-    "default": "000000",
+    "default": "222222",
     "blue-01": "56c1fe",
     "lblue-01": "73fdea",
     "green-01": "89fa4e",

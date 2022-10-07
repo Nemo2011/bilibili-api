@@ -29,7 +29,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
-    package_data={"": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*"]},
+    package_data={"": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*", "css/*.*"]},
     install_requires=requires.splitlines(),
     url="https://github.com/nemo2011/bilibili-api",
     python_requires=">=3.8",
