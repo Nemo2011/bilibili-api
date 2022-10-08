@@ -43,11 +43,13 @@ from .utils.parse_link import parse_link
 from .utils.short import get_real_url
 from .utils.sync import sync
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
+from .utils.get_item import get_item
 
 # Models
 from .utils.Credential import Credential
 from .utils.parse_link import ResourceType
 from .utils.Danmaku import Danmaku, DmMode, DmFontSize, SpecialDanmaku
+from .utils.get_item import GetItemObjectType
 
 # Errors
 from .errors import *

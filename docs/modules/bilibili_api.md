@@ -320,3 +320,34 @@ BV 号转 AV 号。
 | id_str | string | 弹幕字符串 ID |
 | mode | DmMode \| int | 弹幕模式 |
 | pool | int | 池 |
+
+---
+
+## class GetItemObjectType
+
+**Extends: enum.Enum**
+
+资源类型。(仅供 get_item 使用)
++ VIDEO : 视频
++ BANGUMI : 番剧
++ FT : 影视
++ LIVE : 直播
++ ARTICLE : 专栏
++ USER : 用户
++ LIVEUSER : 直播间用户
+
+## async def get_item()
+
+通过名称及类型获取对应资源。
+
+支持：视频，番剧，影视，直播间，专栏，用户，直播用户
+
+如：名称是"碧诗", 类型是用户, 就能得到 User(uid = 2)
+
+| name | type | description |
+| - | - | - |
+| name | str |             名称 |
+| obj_type | GetItemObjectType | 资源类型 |
+| credential | Credential     | 凭据 |
+
+**Returns:** 对应资源或 -1 (无匹配资源)
