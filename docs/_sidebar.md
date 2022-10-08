@@ -4,7 +4,6 @@
 + [获取 vote_id](/vote_id.md)
 + [同步执行异步代码](/sync-executor.md)
 + [短链接支持](/b23tv.md)
-+ [`parse_link` 函数](/parse_link.md)
 + [配置](/configuration.md)
 + API 示例
     + [视频](/examples/video.md)
