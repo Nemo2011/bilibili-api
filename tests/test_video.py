@@ -179,16 +179,16 @@ async def test_w_Video_pay_coin():
             return e.raw
 
 
-async def test_x_Video_add_tag():
-    try:
-        data = await video.add_tag("测试标签")
-        return data
-    except ResponseCodeException as e:
-        # 16070  只有 UP 才能添加
-        if e.code != 16070:
-            raise e
-        else:
-            return e.raw
+#async def test_x_Video_add_tag():
+#    try:
+#        data = await video.add_tag("测试标签")
+#        return data
+#    except ResponseCodeException as e:
+#        # 16070  只有 UP 才能添加
+#        if e.code != 16070:
+#            raise e
+#        else:
+#            return e.raw
 
 
 async def test_y_Video_del_tag():
