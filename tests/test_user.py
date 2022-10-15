@@ -58,8 +58,8 @@ async def test_l_User_get_dynamics():
     return await u.get_dynamics()
 
 
-async def test_j_User_subscribed_bangumis():
-    return await u.get_subscribed_bangumi()
+#async def test_j_User_subscribed_bangumis():
+#    return await u.get_subscribed_bangumi()
 
 
 async def test_k_User_get_followers():

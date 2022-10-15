@@ -87,11 +87,11 @@ async def test_g_Dynamic_set_like():
     return await dy.set_like()
 
 
-async def test_h_Dynamic_repost():
-    resp = await dy.repost()
-
-    print(resp)
-    return resp
+# async def test_h_Dynamic_repost():
+#    resp = await dy.repost()
+#
+#    print(resp)
+#    return resp
 
 
 async def test_i_Dynamic_delete():
