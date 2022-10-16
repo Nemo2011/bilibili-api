@@ -310,6 +310,12 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_reservation()
+
+获取用户空间预约
+
+**Returns:** 调用 API 返回的结果
+
 #### async def get_followings()
 
 | name | type           | description               |
