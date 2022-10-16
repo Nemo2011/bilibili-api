@@ -215,9 +215,9 @@ class User:
         try:
             r_json = json.loads(resp.text)
         except JSONDecodeError:
-            r_json = {'status': False, 'data': f'解析接口返回的数据失败:{resp.status_code}'}
+            r_json = {"status": False, "data": f"解析接口返回的数据失败:{resp.status_code}"}
         if not r_json:
-            r_json = {'status': False, 'data': 'Failed'}
+            r_json = {"status": False, "data": "Failed"}
         return r_json
 
     async def get_space_notice(self):
@@ -289,10 +289,10 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["user_top_videos"]
-        params = {
-            "vmid": self.get_uid()
-        }
-        return await request("GET", api["url"], params = params, credential = self.credential)
+        params = {"vmid": self.get_uid()}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
     async def get_user_medal(self):
         """
@@ -377,9 +377,7 @@ class User:
         )
 
     async def get_album(
-        self, biz: AlbumType = AlbumType.ALL,
-        page_num: int = 1,
-        page_size: int = 30
+        self, biz: AlbumType = AlbumType.ALL, page_num: int = 1, page_size: int = 30
     ):
         """
         获取用户投稿音频。
@@ -393,7 +391,12 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["album"]
-        params = {"uid": self.__uid, "page_num": page_num, "page_size": page_size, "biz": biz.value}
+        params = {
+            "uid": self.__uid,
+            "page_num": page_num,
+            "page_size": page_size,
+            "biz": biz.value,
+        }
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -728,7 +731,9 @@ class User:
         """
         api = API["info"]["get_reservation"]
         params = {"vmid": self.get_uid()}
-        return await request("GET", api["url"], params = params, credential = self.credential)
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
 
 class ChannelSeriesType(Enum):
