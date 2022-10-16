@@ -729,7 +729,7 @@ class User:
         Returns:
             dict: 调用接口返回的结果
         """
-        api = API["info"]["get_reservation"]
+        api = API["info"]["reservation"]
         params = {"vmid": self.get_uid()}
         return await request(
             "GET", api["url"], params=params, credential=self.credential
