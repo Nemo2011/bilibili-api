@@ -198,7 +198,9 @@ class LiveRoom:
             api["method"], api["url"], params, credential=self.credential
         )
 
-    async def get_fan_model(self, page_num: int = 1, target_id: int = None, roomId: int = None):
+    async def get_fan_model(
+        self, page_num: int = 1, target_id: int = None, roomId: int = None
+    ):
         """
         获取自己的粉丝勋章信息
 
