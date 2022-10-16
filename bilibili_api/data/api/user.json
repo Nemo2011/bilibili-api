@@ -92,6 +92,15 @@
       },
       "comment": "搜索用户视频"
     },
+    "reservation": {
+      "url": "https://api.bilibili.com/x/space/reservation", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "vmid": "int: uid"
+      }, 
+      "comment": "获取用户空间预约"
+    },
     "album": {
       "url": "https://api.vc.bilibili.com/link_draw/v1/doc/doc_list",
       "method": "GET",

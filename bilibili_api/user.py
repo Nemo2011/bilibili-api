@@ -719,6 +719,17 @@ class User:
         params = {"mid": self.__uid}
         return await request("GET", api["url"], params=params)
 
+    async def get_reservation(self):
+        """
+        获取用户空间预约
+
+        Returns:
+            dict: 调用接口返回的结果
+        """
+        api = API["info"]["get_reservation"]
+        params = {"vmid": self.get_uid()}
+        return await request("GET", api["url"], params = params, credential = self.credential)
+
 
 class ChannelSeriesType(Enum):
     """
