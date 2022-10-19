@@ -35,6 +35,30 @@
                 "type": "string: all"
             },
             "comment": "获取各个分区的排行榜"
+        }, 
+        "music_weakly_series": {
+            "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/all_period", 
+            "verify": false, 
+            "params": {
+                "list_type": "const int: 1"
+            }, 
+            "comment": "获取全站音乐榜每周信息(不包括具体的音频列表)"
+        }, 
+        "music_weakly_details": {
+            "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/detail", 
+            "verify": false, 
+            "params": {
+                "list_id": "int: 第几周"
+            }, 
+            "comment": "获取全站音乐榜一周的详细信息(不包括具体的音频列表)"
+        }, 
+        "music_weakly_content": {
+            "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/music_list", 
+            "verify": false, 
+            "params": {
+                "list_id": "int: 第几周"
+            }, 
+            "comment": "获取全站音乐榜一周的音频列表"
         }
     }
 }
