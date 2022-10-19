@@ -29,6 +29,7 @@
     + [视频上传](/examples/video_uploader.md)
     + [IP 终端](/examples/client.md)
     + [表情包](/examples/emoji.md)
+    + [游戏](/examples/game.md)
 + API 文档
   + [根模块](/modules/bilibili_api.md)
   + [video.py - 视频](/modules/video.md)
@@ -55,4 +56,5 @@
   + [video_uploader.py - 视频上传](/modules/video_uploader.md)
   + [client.py - IP 终端](/modules/client.md)
   + [emoji.py - 表情包](/modules/emoji.md)
+  + [game.py - 游戏](/modules/game.md)
 + [历史文档](/history.md)

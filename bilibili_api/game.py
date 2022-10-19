@@ -1,3 +1,9 @@
+"""
+bilibili_api.game
+
+游戏相关
+"""
+
 from .utils.network import request
 from .utils.Credential import Credential
 from .utils.utils import get_api
@@ -31,7 +37,7 @@ class Game:
         获取游戏简介
 
         Returns:
-            dict: 调用 API 返回的结构
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["info"]
         params = {
