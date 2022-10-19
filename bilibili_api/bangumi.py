@@ -43,6 +43,9 @@ class BangumiCommentOrder(Enum):
 
 
 class Bangumi:
+    """
+    番剧类
+    """
     def __init__(
         self,
         media_id: int = -1,
@@ -52,7 +55,6 @@ class Bangumi:
         credential: Credential = Credential(),
     ):
         """
-        番剧类相关
         Args:
             media_id: 番剧本身的 ID
             ssid: 每季度的 ID
@@ -267,11 +269,14 @@ async def set_follow(
 
 
 class Episode(Video):
+    """
+    番剧视频类（没错重构了）
+    """
     def __init__(self, epid: int, credential: Credential = None):
         """
-        番剧视频类（没错重构了）
-        epid: epid
-        credential: 凭据
+        Args:
+            epid(int)             : 番剧 epid
+            credential(Credential): 凭据
         """
         self.credential = credential
         credential = self.credential if self.credential else Credential()

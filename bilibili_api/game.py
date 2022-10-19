@@ -5,6 +5,9 @@ from .utils.utils import get_api
 API = get_api("game")
 
 class Game:
+    """
+    游戏类
+    """
     def __init__(self, game_id: int, credential: Credential = None):
         """
         Args:

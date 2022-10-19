@@ -10,6 +10,9 @@ API = get_api("audio")
 
 
 class Audio:
+    """
+    音频
+    """
     def __init__(self, auid: int, credential: Credential = None):
         """
         Args:
@@ -66,10 +69,8 @@ class AudioList:
     """
     歌单
     """
-
     def __init__(self, amid: int, credential: Credential = None):
         """
-
         Args:
             amid       (int)                 : 歌单 ID
             credential (Credential, optional): 凭据. Defaults to None.
