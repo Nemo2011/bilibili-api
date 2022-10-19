@@ -6,7 +6,7 @@ bilibili_api.utils.get_item
 
 from enum import Enum
 from .Credential import Credential
-from ..search import search_by_type
+from ..search import search_by_type, search_games
 from ..user import User
 from ..live import LiveRoom
 from ..article import Article
@@ -23,6 +23,7 @@ class GetItemObjectType(Enum):
     + ARTICLE : 专栏
     + USER : 用户
     + LIVEUSER : 直播间用户
+    + GAME: 游戏
     """
     VIDEO = "video"
     BANGUMI = "media_bangumi"
@@ -31,6 +32,7 @@ class GetItemObjectType(Enum):
     ARTICLE = "article"
     USER = "bili_user"
     LIVEUSER = "live_user"
+    GAME = "game"
 
 async def get_item(name: str, obj_type: GetItemObjectType, credential: Credential = None):
     """
@@ -50,7 +52,10 @@ async def get_item(name: str, obj_type: GetItemObjectType, credential: Credentia
     """
     credential = credential if credential else Credential()
     try:
-        result = (await search_by_type(name, obj_type))["result"]
+        if obj_type != GetItemObjectType.GAME:
+            result = (await search_by_type(name, obj_type))["result"]
+        else:
+            result = (await search_games(name))
         if obj_type == GetItemObjectType.USER:
             return User(uid = result[0]["mid"])
         elif obj_type == GetItemObjectType.LIVEUSER:
@@ -65,6 +70,8 @@ async def get_item(name: str, obj_type: GetItemObjectType, credential: Credentia
             return Bangumi(result[0]["media_id"])
         elif obj_type == GetItemObjectType.VIDEO:
             return Video(result[0]["bvid"])
+        elif obj_type == GetItemObjectType.GAME:
+            return result[0]
         else:
             return result
     except Exception as e:
