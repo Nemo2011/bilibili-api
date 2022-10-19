@@ -49,6 +49,7 @@ class FavoriteList:
     """
     收藏夹类
     """
+
     def __init__(
         self,
         type_: FavoriteListType = FavoriteListType.VIDEO,

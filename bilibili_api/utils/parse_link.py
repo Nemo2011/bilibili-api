@@ -90,7 +90,6 @@ async def parse_link(url, credential: Credential = Credential()):
 
         url = await get_real_url(url)
         url = url.scheme + "://" + url.host + url.path
-        
 
         # 特殊处理，因为后面会过滤参数，这两项需要参数完成
         channel = parse_season_series(url)

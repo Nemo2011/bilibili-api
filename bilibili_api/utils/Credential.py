@@ -131,7 +131,7 @@ class Credential:
         """
         api = API["valid"]
         try:
-            datas = httpx.request("GET", api["url"], cookies = self.get_cookies())
+            datas = httpx.request("GET", api["url"], cookies=self.get_cookies())
         except Exception as e:
             raise e
         datas = json.loads(datas.text)

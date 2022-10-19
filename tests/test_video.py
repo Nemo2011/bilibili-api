@@ -179,7 +179,7 @@ async def test_w_Video_pay_coin():
             return e.raw
 
 
-#async def test_x_Video_add_tag():
+# async def test_x_Video_add_tag():
 #    try:
 #        data = await video.add_tag("测试标签")
 #        return data

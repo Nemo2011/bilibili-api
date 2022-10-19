@@ -56,6 +56,7 @@ class ArticleList:
     """
     文集类
     """
+
     def __init__(self, rlid: int, credential: Credential = None):
         """
         Args:

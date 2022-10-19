@@ -46,6 +46,7 @@ class Bangumi:
     """
     番剧类
     """
+
     def __init__(
         self,
         media_id: int = -1,
@@ -272,6 +273,7 @@ class Episode(Video):
     """
     番剧视频类（没错重构了）
     """
+
     def __init__(self, epid: int, credential: Credential = None):
         """
         Args:
