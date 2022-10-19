@@ -18,7 +18,9 @@ async def test_c_get_new_sessions():
 
 async def test_d_send_msg():
     try:
-        return await session.send_msg(get_credential(), 660303135, "THIS IS A TEST MSG. ")
+        return await session.send_msg(
+            get_credential(), 660303135, "THIS IS A TEST MSG. "
+        )
     except ResponseCodeException as e:
         if e.code == 21045:
             return e.raw

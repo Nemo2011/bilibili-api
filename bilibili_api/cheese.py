@@ -36,6 +36,7 @@ class CheeseList:
     """
     课程类
     """
+
     def __init__(
         self,
         season_id: int = -1,
@@ -108,6 +109,7 @@ class CheeseVideo:
     教程视频类
     因为不和其他视频相通，所以这里是一个新的类，无继承
     """
+
     def __init__(self, epid, credential: Credential = Credential(), meta=None):
         """
         Args:

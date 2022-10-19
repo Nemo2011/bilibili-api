@@ -13,6 +13,7 @@ class Audio:
     """
     音频
     """
+
     def __init__(self, auid: int, credential: Credential = None):
         """
         Args:
@@ -69,6 +70,7 @@ class AudioList:
     """
     歌单
     """
+
     def __init__(self, amid: int, credential: Credential = None):
         """
         Args:

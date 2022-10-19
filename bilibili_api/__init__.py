@@ -18,7 +18,7 @@ from . import (
     comment,
     dynamic,
     favorite_list,
-    game, 
+    game,
     homepage,
     interactive_video,
     live,

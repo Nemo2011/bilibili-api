@@ -14,6 +14,7 @@ from ..bangumi import Bangumi
 from ..video import Video
 from ..game import Game
 
+
 class GetItemObjectType(Enum):
     """
     资源类型。(仅供 get_item 使用)
@@ -26,6 +27,7 @@ class GetItemObjectType(Enum):
     + LIVEUSER : 直播间用户
     + GAME: 游戏
     """
+
     VIDEO = "video"
     BANGUMI = "media_bangumi"
     FT = "media_ft"
@@ -35,7 +37,10 @@ class GetItemObjectType(Enum):
     LIVEUSER = "live_user"
     GAME = "game"
 
-async def get_item(name: str, obj_type: GetItemObjectType, credential: Credential = None):
+
+async def get_item(
+    name: str, obj_type: GetItemObjectType, credential: Credential = None
+):
     """
     通过名称及类型获取对应资源。
 
@@ -56,11 +61,11 @@ async def get_item(name: str, obj_type: GetItemObjectType, credential: Credentia
         if obj_type != GetItemObjectType.GAME:
             result = (await search_by_type(name, obj_type))["result"]
         else:
-            result = (await search_games(name))
+            result = await search_games(name)
         if obj_type == GetItemObjectType.USER:
-            return User(uid = result[0]["mid"])
+            return User(uid=result[0]["mid"])
         elif obj_type == GetItemObjectType.LIVEUSER:
-            return User(uid = result[0]["uid"])
+            return User(uid=result[0]["uid"])
         elif obj_type == GetItemObjectType.LIVE:
             return LiveRoom(result["live_room"][0]["roomid"])
         elif obj_type == GetItemObjectType.ARTICLE:

@@ -18,7 +18,7 @@ setuptools.setup(
         "bilibili_api",
         "bilibili_api.utils",
         "bilibili_api.exceptions",
-        "bilibili_api.errors", 
+        "bilibili_api.errors",
         "bilibili_api._pyinstaller",
     ],
     keywords=["bilibili", "api", "spider"],
@@ -29,7 +29,9 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
-    package_data={"": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*", "css/*.*"]},
+    package_data={
+        "": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*", "css/*.*"]
+    },
     install_requires=requires.splitlines(),
     url="https://github.com/nemo2011/bilibili-api",
     python_requires=">=3.8",

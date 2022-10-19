@@ -10,10 +10,12 @@ from .utils.utils import get_api
 
 API = get_api("game")
 
+
 class Game:
     """
     游戏类
     """
+
     def __init__(self, game_id: int, credential: Credential = None):
         """
         Args:
@@ -22,7 +24,7 @@ class Game:
         """
         self.__game_id = game_id
         self.credential = credential if credential else Credential()
-    
+
     def get_game_id(self):
         """
         获取游戏 id
@@ -40,10 +42,10 @@ class Game:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["info"]
-        params = {
-            "game_base_id": self.__game_id
-        }
-        return await request("GET", api["url"], params = params, credential = self.credential)
+        params = {"game_base_id": self.__game_id}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
     async def get_up_info(self):
         """
@@ -53,10 +55,10 @@ class Game:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["UP"]
-        params = {
-            "game_base_id": self.__game_id
-        }
-        return await request("GET", api["url"], params = params, credential = self.credential)
+        params = {"game_base_id": self.__game_id}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
     async def get_detail(self):
         """
@@ -66,10 +68,10 @@ class Game:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["detail"]
-        params = {
-            "game_base_id": self.__game_id
-        }
-        return await request("GET", api["url"], params = params, credential = self.credential)
+        params = {"game_base_id": self.__game_id}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
     async def get_wiki(self):
         """
@@ -79,10 +81,10 @@ class Game:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["wiki"]
-        params = {
-            "game_base_id": self.__game_id
-        }
-        return await request("GET", api["url"], params = params, credential = self.credential)
+        params = {"game_base_id": self.__game_id}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
     async def get_videos(self):
         """
@@ -92,7 +94,7 @@ class Game:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["videos"]
-        params = {
-            "game_base_id": self.__game_id
-        }
-        return await request("GET", api["url"], params = params, credential = self.credential)
+        params = {"game_base_id": self.__game_id}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )

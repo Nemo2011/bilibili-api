@@ -343,6 +343,7 @@ async def get_suggest_keywords(keyword: str):
         keywords.append(data[key]["value"])
     return keywords
 
+
 async def search_games(keyword: str):
     """
     搜索游戏特用函数
@@ -355,4 +356,4 @@ async def search_games(keyword: str):
     """
     api = API["search"]["game"]
     params = {"keyword": keyword}
-    return await request("GET", api["url"], params = params)
+    return await request("GET", api["url"], params=params)
