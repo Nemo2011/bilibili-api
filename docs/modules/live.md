@@ -97,6 +97,12 @@ from bilibili_api import live
 
 **Returns:** API 调用返回结果
 
+#### async def get_room_id()
+
+获取真实房号
+
+**Returns:** 真实房号
+
 #### async def get_chat_conf()
 
 获取聊天弹幕服务器配置信息(websocket)
