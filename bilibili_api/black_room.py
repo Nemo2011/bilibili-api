@@ -89,6 +89,9 @@ async def get_blocked_list(
 
 
 class BlackRoom:
+    """
+    小黑屋
+    """
     def __init__(self, black_room_id: int, credential: Credential = None):
         """
         Args:

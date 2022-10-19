@@ -53,7 +53,15 @@ ARTICLE_COLOR_MAP = {
 
 
 class ArticleList:
+    """
+    文集类
+    """
     def __init__(self, rlid: int, credential: Credential = None):
+        """
+        Args:
+            rlid(int)             : 文集 id
+            credential(Credential): 凭据类
+        """
         self.__rlid = rlid
         self.credential = credential
 

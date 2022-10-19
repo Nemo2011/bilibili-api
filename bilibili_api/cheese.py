@@ -33,6 +33,9 @@ API_video = get_api("video")
 
 
 class CheeseList:
+    """
+    课程类
+    """
     def __init__(
         self,
         season_id: int = -1,
@@ -40,10 +43,10 @@ class CheeseList:
         credential: Credential = Credential(),
     ):
         """
-        教程类
-        season_id(int): ssid
-        ep_id(int): 单集 ep_id
-        credential(Credential): 凭据类
+        Args:
+            season_id(int): ssid
+            ep_id(int): 单集 ep_id
+            credential(Credential): 凭据类
         注意：season_id 和 ep_id 任选一个即可，两个都选的话
         以 season_id 为主
         """
@@ -101,12 +104,15 @@ class CheeseList:
 
 
 class CheeseVideo:
+    """
+    教程视频类
+    因为不和其他视频相通，所以这里是一个新的类，无继承
+    """
     def __init__(self, epid, credential: Credential = Credential(), meta=None):
         """
-        教程视频类
-        因为不和其他视频相通，所以这里是一个新的类，无继承
-        ep_id(int): 单集 ep_id
-        credential(Credential): 凭据类
+        Args:
+            ep_id(int): 单集 ep_id
+            credential(Credential): 凭据类
         """
         self.__epid = epid
         self.cheese = CheeseList(ep_id=self.__epid)
