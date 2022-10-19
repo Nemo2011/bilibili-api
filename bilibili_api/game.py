@@ -25,3 +25,68 @@ class Game:
             游戏 id
         """
         return self.__game_id
+
+    async def get_info(self):
+        """
+        获取游戏简介
+
+        Returns:
+            dict: 调用 API 返回的结构
+        """
+        api = API["info"]["info"]
+        params = {
+            "game_base_id": self.__game_id
+        }
+        return await request("GET", api["url"], params = params, credential = self.credential)
+
+    async def get_up_info(self):
+        """
+        获取游戏官方账号
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["UP"]
+        params = {
+            "game_base_id": self.__game_id
+        }
+        return await request("GET", api["url"], params = params, credential = self.credential)
+
+    async def get_detail(self):
+        """
+        获取游戏详情
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["detail"]
+        params = {
+            "game_base_id": self.__game_id
+        }
+        return await request("GET", api["url"], params = params, credential = self.credential)
+
+    async def get_wiki(self):
+        """
+        获取游戏教程(wiki)
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["wiki"]
+        params = {
+            "game_base_id": self.__game_id
+        }
+        return await request("GET", api["url"], params = params, credential = self.credential)
+
+    async def get_videos(self):
+        """
+        获取游戏介绍视频
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["videos"]
+        params = {
+            "game_base_id": self.__game_id
+        }
+        return await request("GET", api["url"], params = params, credential = self.credential)
