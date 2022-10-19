@@ -342,3 +342,17 @@ async def get_suggest_keywords(keyword: str):
     for key in keys:
         keywords.append(data[key]["value"])
     return keywords
+
+async def search_games(keyword: str):
+    """
+    搜索游戏特用函数
+
+    Args:
+        keyword(string): 搜索关键词
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["search"]["game"]
+    params = {"keyword": keyword}
+    return await request("GET", api["url"], params = params)

@@ -1,0 +1,44 @@
+{
+    "info": {
+        "info": {
+            "url": "https://line1-h5-pc-api.biligame.com/game/detail/gameinfo", 
+            "method": "GET", 
+            "params": {
+                "game_base_id": "游戏 id"
+            },
+            "comment": "获取游戏简介"
+        }, 
+        "UP": {
+            "url": "https://line1-h5-pc-api.biligame.com/game/detail/account", 
+            "method": "GET", 
+            "params": {
+                "game_base_id": "游戏 id"
+            },
+            "comment": "获取游戏官方账户"
+        }, 
+        "detail": {
+            "url": "https://line1-h5-pc-api.biligame.com/game/detail/content", 
+            "method": "GET", 
+            "params": {
+                "game_base_id": "游戏 id"
+            },
+            "comment": "获取游戏详情"
+        },
+        "wiki": {
+            "url": "https://line1-h5-pc-api.biligame.com/game/detail/wiki", 
+            "method": "GET", 
+            "params": {
+                "game_base_id": "游戏 id"
+            },
+            "comment": "获取游戏教程"
+        },
+        "videos": {
+            "url": "https://line1-h5-pc-api.biligame.com/game/detail/get_video_v2", 
+            "method": "GET", 
+            "params": {
+                "game_base_id": "游戏 id"
+            },
+            "comment": "获取游戏视频"
+        }
+    }
+}
