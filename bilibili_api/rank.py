@@ -72,3 +72,42 @@ async def get_rank():
     api = API["info"]["ranking"]
     params = {"type": "all", "rid": 0}
     return await request("GET", api["url"], params=params)
+
+async def get_music_rank_list():
+    """
+    获取全站音乐榜每周信息(不包括具体的音频列表)
+    
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["music_weakly_series"]
+    params = {"list_type": 1}
+    return await request("GET", api["url"], params = params)
+
+async def get_music_rank_weakly_detail(week: int = 1):
+    """
+    获取全站音乐榜一周的详细信息(不包括具体的音频列表)
+
+    Args:
+        week(int): 第几周
+    
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["music_weakly_details"]
+    params = {"list_id": week}
+    return await request("GET", api["url"], params = params)
+
+async def get_music_rank_weakly_musics(week: int = 1):
+    """
+    获取全站音乐榜一周的音频列表
+
+    Args:
+        week(int): 第几周
+    
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["music_weakly_content"]
+    params = {"list_id": week}
+    return await request("GET", api["url"], params = params)
