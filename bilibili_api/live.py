@@ -167,8 +167,10 @@ class LiveRoom:
 
         # 缓存真实房间 ID
         self.__ruid = resp["uid"]
-        print(resp)
         return resp
+
+    async def get_room_id(self):
+        return (await self.get_room_play_info())["room_id"]
 
     async def __get_ruid(self):
         """
