@@ -12,6 +12,7 @@ from ..live import LiveRoom
 from ..article import Article
 from ..bangumi import Bangumi
 from ..video import Video
+from ..game import Game
 
 class GetItemObjectType(Enum):
     """
@@ -71,7 +72,7 @@ async def get_item(name: str, obj_type: GetItemObjectType, credential: Credentia
         elif obj_type == GetItemObjectType.VIDEO:
             return Video(result[0]["bvid"])
         elif obj_type == GetItemObjectType.GAME:
-            return result[0]
+            return Game(result[0]["game_base_id"])
         else:
             return result
     except Exception as e:
