@@ -22,7 +22,13 @@ async def get_real_url(short_url: str):
         config["proxies"] = {settings.proxy_use: settings.proxy}
     try:
         resp = await get_session().head(url=short_url, follow_redirects=True)
-        return resp.url
+        u = resp.url
+        return (
+            u.raw[0].decode(encoding = "ascii") + 
+            "://" + 
+            u.raw[1].decode(encoding = "ascii") + 
+            u.raw[3].decode(encoding = "ascii")
+        )
     except Exception as e:
         raise e
 
