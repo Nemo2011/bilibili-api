@@ -203,6 +203,7 @@ BV 号转 AV 号。
 - 用户
 - 直播间
 - 合集与列表
+- 游戏
 
 [查看示例](https://nemo2011.github.io/bilibili-api/#/parse_link)
 
