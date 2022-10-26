@@ -3,6 +3,10 @@
         "hot": {
             "url": "https://api.bilibili.com/x/web-interface/popular",
             "verify": false,
+            "params": {
+                "ps": "int: 每页视频数",
+                "pn": "int: 页码"
+            },
             "comment": "小破站的热门视频排行"
         },
         "weakly_series": {

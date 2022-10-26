@@ -13,15 +13,20 @@ from .utils.utils import get_api
 API = get_api("rank")
 
 
-async def get_hot_videos():
+async def get_hot_videos(pn: int = 1, ps: int = 20):
     """
     获取热门视频
+
+    Args:
+        pn(int): 第几页, default to 1
+        ps(int): 每页视频数, default to 20
 
     Returns:
         调用 API 返回的结果
     """
     api = API["info"]["hot"]
-    return await request("GET", url=api["url"])
+    params = {"ps": ps, "pn": pn}
+    return await request("GET", url=api["url"], params=params)
 
 
 async def get_weakly_hot_videos_list():
