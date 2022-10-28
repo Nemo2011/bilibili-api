@@ -2,7 +2,8 @@ urllib3~=1.26.12
 aiohttp~=3.8.3
 beautifulsoup4~=4.11.1
 colorama~=0.4.5
-lxml~=4.9.1
+lxml~=4.9.1; python_version<='3.10'
+https://download.lfd.uci.edu/pythonlibs/archived/lxml-4.9.0-cp311-cp311-win_amd64.whl; python_version=='3.11'
 pyyaml~=6.0
 brotli~=1.0.9
 httpx~=0.23.0

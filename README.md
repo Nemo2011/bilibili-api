@@ -7,9 +7,8 @@
 [![API 数量](https://img.shields.io/badge/API%20数量-200+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][LICENSE]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
-![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
+![Python](https://img.shields.io/badge/Python-3.11|3.10|3.9|3.8-blue)
 [![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
-
 
 </div>
 
