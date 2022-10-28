@@ -44,7 +44,7 @@ Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2
 $ pip3 install bilibili-api-python
 ```
 
-Python3.11 Windows 用户可能会遇到 `lxml` 安装失败的问题，可以直接用[轮子](https://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml)
+Python3.11 Windows 用户可能会遇到 `lxml` 安装失败的问题，可以直接用[轮子](https://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml)(具体版本参照 `requirements.txt`[(github)](https://github.com/Nemo2011/bilibili-api/blob/main/requirements.txt)[(gitee)](https://gitee.com/nemo2011/bilibili-api/blob/main/requirements.txt))
 
 接下来我们来获取视频的播放量等信息：
 
