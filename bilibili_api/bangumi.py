@@ -42,6 +42,35 @@ class BangumiCommentOrder(Enum):
     CTIME = 1
 
 
+class BangumiType(Enum):
+    """
+    番剧类型
+
+    + BANGUMI: 番剧
+    + FT: 影视
+    + GUOCHUANG: 国创
+    """
+    BANGUMI = 1
+    FT = 3
+    GUOCHUANG = 4
+
+async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0):
+    """
+    获取番剧时间线
+
+    Args:
+        type_(BangumiType): 番剧类型
+        before(int)       : 几天前开始(0~7), defaults to 7
+        after(int)        : 几天后结束(0~7), defaults to 0
+    """
+    api = API["info"]["timeline"]
+    params = {
+        "types": type_.value, 
+        "before": before, 
+        "after": after
+    }
+    return await request("GET", api["url"], params = params)
+
 class Bangumi:
     """
     番剧类

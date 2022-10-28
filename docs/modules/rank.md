@@ -8,6 +8,11 @@ from bilibili_api import rank
 
 获取热门视频
 
+| name | type | description          |
+|------| ---- |----------------------|
+| ps   | int | 每页视频数, default to 20 |
+| pn   | int | 页码, default to 1     |
+
 **Returns:**:调用 API 返回的结果
 
 ## async def get_weakly_hot_videos_list()

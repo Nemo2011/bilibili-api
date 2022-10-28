@@ -14,10 +14,38 @@ from bilibili_api import bangumi
 
 ## class BangumiCommentOrder
 
+**Extends: enum.Enum**
+
 短评 / 长评 排序方式
 
 + DEFAULT: 默认
 + CTIME: 发布时间倒序
+
+---
+
+## class BangumiType
+
+**Extends: enum.Enum**
+
+番剧类型
+
++ BANGUMI: 番剧
++ FT: 影视
++ GUOCHUANG: 国创
+
+---
+
+## async def get_timeline()
+
+| name | type | description |
+| - | - | - |
+| type_ | BangumiType | 番剧类型 ｜
+| before | int | 几天前开始(0~7), defaults to 7 |
+| after | int | 几天后结束(0~7), defaults to 0 |
+
+获取番剧时间线
+
+**Returns:** 调用 API 返回的结果
 
 ---
 
