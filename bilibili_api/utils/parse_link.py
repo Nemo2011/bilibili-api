@@ -22,6 +22,7 @@ from ..interactive_video import InteractiveVideo
 from ..live import LiveRoom
 from ..user import ChannelSeries, ChannelSeriesType, User, get_self_info
 from ..video import Video
+from ..game import Game
 from .Credential import Credential
 from .short import get_real_url
 from .sync import sync
@@ -45,6 +46,7 @@ class ResourceType(Enum):
     + LIVE: 直播间
     + CHANNEL_SERIES: 合集与列表
     + BLACK_ROOM: 小黑屋
+    + GAME: 游戏
     """
 
     VIDEO = "video"
@@ -62,6 +64,7 @@ class ResourceType(Enum):
     ARTICLE_LIST = "article_list"
     DYNAMIC = "dynamic"
     BLACK_ROOM = "black_room"
+    GAME = "game"
 
 
 async def parse_link(url, credential: Credential = Credential()):
@@ -89,7 +92,6 @@ async def parse_link(url, credential: Credential = Credential()):
             return obj
 
         url = await get_real_url(url)
-        url = url.scheme + "://" + url.host + url.path
 
         # 特殊处理，因为后面会过滤参数，这两项需要参数完成
         channel = parse_season_series(url)
@@ -98,6 +100,10 @@ async def parse_link(url, credential: Credential = Credential()):
         fl_space = parse_space_favorite_list(url, credential)
         if fl_space != -1:
             return fl_space
+        game = parse_game(url)
+        if game != -1:
+            game.credential = credential
+            return (game, ResourceType.GAME)
 
         # 过滤参数
         url = url.split("?")[0]
@@ -505,5 +511,12 @@ def parse_black_room(url: str):
             return -1
         else:
             return BlackRoom(int(last_part))
+    else:
+        return -1
+
+
+def parse_game(url: str):
+    if url[:36] == "https://www.biligame.com/detail/?id=":
+        return Game(int(url[36:]))
     else:
         return -1

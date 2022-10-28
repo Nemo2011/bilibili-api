@@ -1,5 +1,15 @@
 {
   "info": {
+    "timeline": {
+      "url": "https://api.bilibili.com/pgc/web/timeline", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "types": "int: 类型, 1. 番剧, 3. 影视, 4. 国创", 
+        "before": "几天前开始, 0~7", 
+        "after": "几天后结束, 0~7"
+      }
+    },
     "meta": {
       "url": "https://api.bilibili.com/pgc/review/user",
       "method": "GET",
