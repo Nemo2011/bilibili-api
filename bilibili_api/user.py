@@ -488,23 +488,23 @@ class User:
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
-    async def get_followings(self, pn: int = 1, desc: bool = True):
+    async def get_followings(self, pn: int = 1, attention: bool = False):
         """
         获取用户关注列表（不是自己只能访问前 5 页）
 
         Args:
-            pn   (int, optional) : 页码，从 1 开始. Defaults to 1.
-            desc (bool, optional): 倒序排序. Defaults to True.
+            pn        (int, optional)  : 页码，从 1 开始. Defaults to 1.
+            attention (bool, optional) : 是否采用“最常访问”排序. Defaults to False. 
 
         Returns:
             dict: 调用接口返回的内容。
         """
-        api = API["info"]["followings"]
+        api = API["info"]["all_followings2"]
         params = {
             "vmid": self.__uid,
-            "ps": 20,
+            "ps": 100,
             "pn": pn,
-            "order": "desc" if desc else "asc",
+            "order_type": "attention" if attention else "",
         }
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
@@ -544,7 +544,7 @@ class User:
         api = API["info"]["followers"]
         params = {
             "vmid": self.__uid,
-            "ps": 20,
+            "ps": 100,
             "pn": pn,
             "order": "desc" if desc else "asc",
         }
