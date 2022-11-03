@@ -191,6 +191,17 @@
       },
       "comment": "获取用户所有关注（需要用户公开信息）"
     },
+    "all_followings2": {
+      "url": "https://app.biliapi.net/x/v2/relation/followings", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "vmid": "int: uid", 
+        "pn": "int: 页码", 
+        "ps":"const int: 100"
+      }, 
+      "comment": "获取用户关注"
+    },
     "followers": {
       "url": "https://api.bilibili.com/x/relation/followers",
       "method": "GET",
