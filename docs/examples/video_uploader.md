@@ -25,8 +25,8 @@ async def main():
             "up_close_danmaku": True,
             "up_close_reply": True
         }
-    page = video_uploader.VideoUploaderPage(video_stream=open('video.mp4', 'rb'), title='test', description='', extension='mp4')
-    uploader = video_uploader.VideoUploader([page], meta, credential, threads=1)
+    page = video_uploader.VideoUploaderPage(path = 'video.mp4', title = '标题', description = '简介')
+    uploader = video_uploader.VideoUploader([page], meta, credential, cover_path = 'cover.png')
 
     @uploader.on("__ALL__")
     async def ev(data):
