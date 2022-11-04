@@ -38,11 +38,12 @@ def get_channel_info_by_tid(tid: int):
             return main_ch, None
 
         # 搜索子分区
-        for sub_ch in main_ch["sub"]:
-            if "tid" not in sub_ch:
-                continue
-            if tid == sub_ch["tid"]:
-                return main_ch, sub_ch
+        if "sub" in main_ch.keys():
+            for sub_ch in main_ch["sub"]:
+                if "tid" not in sub_ch:
+                    continue
+                if tid == sub_ch["tid"]:
+                    return main_ch, sub_ch
     else:
         return None, None
 
@@ -65,9 +66,10 @@ def get_channel_info_by_name(name: str):
     for main_ch in channel:
         if name in main_ch["name"]:
             return main_ch, None
-        for sub_ch in main_ch["sub"]:
-            if name in sub_ch["name"]:
-                return main_ch, sub_ch
+        if "sub" in main_ch.keys():
+            for sub_ch in main_ch["sub"]:
+                if name in sub_ch["name"]:
+                    return main_ch, sub_ch
     else:
         return None, None
 
@@ -110,10 +112,11 @@ def get_channel_list():
         channel_big_copy = copy.copy(channel_big)
         channel_big_copy.pop("sub")
         channel_list.append(channel_big_copy)
-        for channel_sub in channel_big["sub"]:
-            channel_sub_copy = copy.copy(channel_sub)
-            channel_sub_copy["father"] = channel_big_copy
-            channel_list.append(channel_sub_copy)
+        if "sub" in channel_big.keys():
+            for channel_sub in channel_big["sub"]:
+                channel_sub_copy = copy.copy(channel_sub)
+                channel_sub_copy["father"] = channel_big_copy
+                channel_list.append(channel_sub_copy)
     return channel_list
 
 
