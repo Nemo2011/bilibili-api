@@ -3,6 +3,7 @@ bilibili_api.live
 
 直播相关
 """
+import base64
 import time
 from enum import Enum
 import logging
@@ -758,7 +759,7 @@ class LiveDanmaku(AsyncEvent):
         self.__ws = None
         self.__tasks = []
         self.__debug = debug
-        self.__heartbeat_timer = 30.0
+        self.__heartbeat_timer = 60.0
         self.err_reason = ""
 
         # logging
@@ -997,6 +998,17 @@ class LiveDanmaku(AsyncEvent):
             if self.__heartbeat_timer == 0:
                 self.logger.debug("发送心跳包")
                 await ws.send_bytes(HEARTBEAT)
+                heartbeat_url = "https://live-trace.bilibili.com/xlive/rdata-interface/v1/heartbeat/webHeartBeat?pf=web&hb="
+                hb = str(base64.b64encode(f"60|{self.room_display_id}|1|0".encode("utf-8")), "utf-8")
+                await request(
+                    "GET", 
+                    heartbeat_url, 
+                    params = {
+                        "hb": hb, 
+                        "pf": "web"
+                    }, 
+                    json_body = True
+                )
             elif self.__heartbeat_timer <= -30:
                 # 视为已异常断开连接，发布 TIMEOUT 事件
                 self.dispatch("TIMEOUT")
