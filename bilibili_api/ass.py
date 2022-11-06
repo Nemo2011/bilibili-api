@@ -18,7 +18,7 @@ from .utils.danmaku2ass import Danmaku2ASS
 from .utils.json2srt import json2srt
 from .utils.srt2ass import srt2ass
 from .video import Video
-from tempfile import gettempdir, tempdir
+from tempfile import gettempdir
 
 
 def export_ass_from_xml(
@@ -169,6 +169,8 @@ async def make_ass_file_danmakus_protobuf(
     elif isinstance(obj, CheeseVideo):
         stage_size = (1440, 1080)
         danmakus = await obj.get_danmakus()
+    else:
+        raise ValueError("请传入 Video/Episode/CheeseVideo 类！")
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write("<i>")
         for d in danmakus:
@@ -237,6 +239,8 @@ async def make_ass_file_danmakus_xml(
     elif isinstance(obj, CheeseVideo):
         stage_size = (1440, 1080)
         xml_content = await obj.get_danmaku_xml()
+    else:
+        raise ValueError("请传入 Video/Episode/CheeseVideo 类！")
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write(xml_content)
     export_ass_from_xml(
