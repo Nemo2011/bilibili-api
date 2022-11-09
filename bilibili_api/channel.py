@@ -110,9 +110,9 @@ def get_channel_list():
     channel_list = []
     for channel_big in channel:
         channel_big_copy = copy.copy(channel_big)
-        channel_big_copy.pop("sub")
         channel_list.append(channel_big_copy)
         if "sub" in channel_big.keys():
+            channel_big_copy.pop("sub")
             for channel_sub in channel_big["sub"]:
                 channel_sub_copy = copy.copy(channel_sub)
                 channel_sub_copy["father"] = channel_big_copy
