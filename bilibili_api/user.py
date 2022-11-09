@@ -488,7 +488,7 @@ class User:
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
-    async def get_followings(self, pn: int = 1, attention: bool = False):
+    async def get_followings(self, pn: int = 1, ps: int = 100, attention: bool = False):
         """
         获取用户关注列表（不是自己只能访问前 5 页）
 
@@ -502,7 +502,7 @@ class User:
         api = API["info"]["all_followings2"]
         params = {
             "vmid": self.__uid,
-            "ps": 100,
+            "ps": ps,
             "pn": pn,
             "order_type": "attention" if attention else "",
         }
@@ -529,7 +529,7 @@ class User:
         )
         return data["card"]["attentions"]
 
-    async def get_followers(self, pn: int = 1, desc: bool = True):
+    async def get_followers(self, pn: int = 1, ps: int = 100, desc: bool = True):
         """
         获取用户粉丝列表（不是自己只能访问前 5 页，是自己也不能获取全部的样子）
 
@@ -544,7 +544,7 @@ class User:
         api = API["info"]["followers"]
         params = {
             "vmid": self.__uid,
-            "ps": 100,
+            "ps": ps,
             "pn": pn,
             "order": "desc" if desc else "asc",
         }
