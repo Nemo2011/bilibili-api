@@ -321,6 +321,7 @@ from bilibili_api import user
 | name | type           | description               |
 |------|----------------|---------------------------|
 | pn   | int, optional  | 页码，从 1 开始. Defaults to 1. |
+| ps   | int, optional | 每页的数据量. Defaults to 100. |
 | desc | bool, optional | 倒序排序. Defaults to True.   |
 
 获取用户关注列表（不是自己只能访问前5页）
@@ -338,6 +339,7 @@ from bilibili_api import user
 | name | type           | description               |
 |------|----------------|---------------------------|
 | pn   | int, optional  | 页码，从 1 开始. Defaults to 1. |
+| ps   | int, optional | 每页的数据量. Defaults to 100. |
 | desc | bool, optional | 倒序排序. Defaults to True.   |
 
 获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）
