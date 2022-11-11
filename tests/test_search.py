@@ -26,12 +26,12 @@ async def test_e_get_suggest_keywords():
 async def test_f_search_by_order():
     return await search.search_by_type(
         "小马宝莉",
-        search_type=search.SearchObjectType.VIDEO,
-        order_type=search.OrderVideo.SCORES,
-        time_range=10,
-        topic_type=search.TopicType.AnimeMMD,
-        page=1,
-        debug_param_func=print,
+        search_type = search.SearchObjectType.VIDEO,
+        order_type = search.OrderVideo.SCORES,
+        time_range = 10,
+        topic_type = 25,
+        page = 1,
+        debug_param_func = print,
     )
 
 
