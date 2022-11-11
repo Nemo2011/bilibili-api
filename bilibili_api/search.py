@@ -132,83 +132,6 @@ class CategoryTypeArticle(Enum):
     Technology = 17
 
 
-class TopicType(Enum):
-    """
-    话题分区，太多了，写描述要命
-    此部分内容太长了
-    部分文档来源 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/video/video_zone.md
-    """
-
-    Anime = 1
-    AnimeMAD = 24
-    AnimeMMD = 25
-    AnimeHANDDRAW = 47
-    AnimeGARAGE_KIT = 210
-    AnimeTOKUSATSU = 86
-    AnimeOTHER = 25
-    Animation = 13
-    AnimationFINISH = 32
-    AnimationSERIAL = 33
-    AnimationINFO = 51
-    AnimationOFFICIAL = 152
-    Guochuang = 167
-    GuochuangCHINESE = 153
-    GuochuangORIGINAL = 168
-    GuochuangPUPPETRY = 169
-    GuochuangMOTIONCOMIC = 195
-    GuochuangINFORMATION = 170
-    Music = 3
-    MusicORIGINAL = 28
-    MusicCOVER = 31
-    MusicVOCALOID = 30
-    MusicELECTRONIC = 194
-    MusicPERFORM = 59
-    MusicMV = 193
-    MusicLIVE = 29
-    MusicOTHER = 130
-    Dance = 129
-    DanceOTAKU = 20
-    DanceHIPHOP = 198
-    DanceSTAR = 199
-    DanceCHINA = 200
-    DanceTHREE_D = 154
-    DanceDEMO = 156
-    Game = 4
-    GameSTAND_ALONE = 17
-    GameESPORTS = 171
-    GameMOBILE = 172
-    GameONLINE = 65
-    GameBOARD = 173
-    GameGMV = 121
-    GameMUSIC = 136
-    GameMUGEN = 19
-    Knowledge = 36
-
-    Technology = 188
-
-    Sports = 234
-
-    Car = 223
-
-    Animal = 217
-
-    Kichiku = 119
-
-    Fashion = 155
-
-    News = 202
-
-    Fun = 5
-
-    TvAbout = 181
-
-    Documentary = 177
-
-    Film = 23
-
-    TvSeries = 11
-
-
 async def search(keyword: str, page: int = 1):
     """
     只指定关键字在 web 进行搜索，返回未经处理的字典
@@ -230,7 +153,7 @@ async def search_by_type(
     search_type: SearchObjectType = None,
     order_type: Union[OrderUser, OrderLiveRoom, OrderArticle, OrderVideo] = None,
     time_range: int = -1,
-    topic_type: Union[int, TopicType] = None,
+    topic_type: int = None,
     order_sort: int = None,
     category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int] = None,
     page: int = 1,
@@ -245,7 +168,7 @@ async def search_by_type(
         order_sort  (int):用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
         category_id (int/str): 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
         time_range  (int): 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
-        topic_type  (str/int): 话题类型，指定tid或者使用枚举类型
+        topic_type  (int): 话题类型，指定 tid (可使用 channel 模块查询)
         order_type  (str): 排序分类类型
         keyword     (str): 搜索关键词
         search_type (str): 搜索类型
