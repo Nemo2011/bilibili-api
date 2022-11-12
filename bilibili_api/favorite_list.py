@@ -54,7 +54,7 @@ class FavoriteList:
         self,
         type_: FavoriteListType = FavoriteListType.VIDEO,
         media_id: int = None,
-        credential: Credential = Credential(),
+        credential: Credential = None,
     ) -> None:
         """
         Args:
@@ -64,7 +64,7 @@ class FavoriteList:
         """
         self.__type = type_
         self.__media_id = media_id
-        self.credential = credential
+        self.credential = credential if credential else Credential()
 
     def is_video_favorite_list(self):
         """

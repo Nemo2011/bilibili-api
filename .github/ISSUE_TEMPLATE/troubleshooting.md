@@ -15,7 +15,7 @@ assignees: ''
 
 **模块路径：** `bilibili_api.xxxx`
 
-**解释器(Python)：** cpython / pypi
+**解释器：** cpython / pypi
 
 **报错信息：**
 

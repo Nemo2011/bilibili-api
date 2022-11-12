@@ -41,7 +41,7 @@ class CheeseList:
         self,
         season_id: int = -1,
         ep_id: int = -1,
-        credential: Credential = Credential(),
+        credential: Credential = None,
     ):
         """
         Args:
@@ -55,7 +55,7 @@ class CheeseList:
             raise ValueError("season id 和 ep id 必须选一个")
         self.__season_id = season_id
         self.__ep_id = ep_id
-        self.credential = credential
+        self.credential = credential if credential else Credential()
         if self.__season_id == -1:
             # self.season_id = str(sync(self.get_meta())["season_id"])
             api = API["info"]["meta"]
@@ -110,15 +110,15 @@ class CheeseVideo:
     因为不和其他视频相通，所以这里是一个新的类，无继承
     """
 
-    def __init__(self, epid, credential: Credential = Credential(), meta=None):
+    def __init__(self, epid, credential: Credential = None, meta=None):
         """
         Args:
-            ep_id(int): 单集 ep_id
+            ep_id     (int)       : 单集 ep_id
             credential(Credential): 凭据类
         """
         self.__epid = epid
         self.cheese = CheeseList(ep_id=self.__epid)
-        self.credential = credential
+        self.credential = credential if credential else Credential()
         if meta == None:
             api = API["info"]["meta"]
             params = {"season_id": self.cheese.get_season_id(), "ep_id": self.__epid}
