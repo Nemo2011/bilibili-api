@@ -6,7 +6,6 @@ bilibili_api.utils.Credential
 
 import json
 from ..exceptions import (
-    ResponseCodeException,
     CredentialNoBiliJctException,
     CredentialNoSessdataException,
     CredentialNoBuvid3Exception,
@@ -14,6 +13,7 @@ from ..exceptions import (
 )
 from .utils import get_api
 import httpx
+import uuid
 
 API = get_api("credential")
 
@@ -53,7 +53,7 @@ class Credential:
         """
         return {
             "SESSDATA": self.sessdata,
-            "buvid3": self.buvid3,
+            "buvid3": self.buvid3 if self.buvid3 else str(uuid.uuid1()) + "infoc",
             "bili_jct": self.bili_jct,
             "DedeUserID": self.dedeuserid,
         }
