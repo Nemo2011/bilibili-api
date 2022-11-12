@@ -21,6 +21,8 @@ from .utils.AsyncEvent import AsyncEvent
 from .utils.network_httpx import get_session, request, to_form_urlencoded
 from .utils.utils import chunk, get_api
 
+from .dynamic import upload_image
+
 # import ffmpeg
 
 _API = get_api("video_uploader")
@@ -435,21 +437,10 @@ class VideoUploader(AsyncEvent):
             str: 封面 URL
         """
         self.dispatch(VideoUploaderEvents.PRE_COVER.value, None)
-        api = _API["cover_up"]
-        mime = mimetypes.guess_type(self.cover_path)[0]
-
-        with open(self.cover_path, "rb") as f:
-            data = {
-                "cover": f"data:{mime};base64,{base64.b64encode(f.read()).decode()}"
-            }
-
         try:
-            resp = await request(
-                "POST", api["url"], data=data, credential=self.credential
-            )
+            resp = await upload_image(open(self.cover_path, "rb"))
             self.dispatch(VideoUploaderEvents.AFTER_COVER.value, {"url": resp["url"]})
-            return resp["url"]
-
+            return resp["image_url"]
         except Exception as e:
             self.dispatch(VideoUploaderEvents.COVER_FAILED.value, {"err": e})
             raise e
