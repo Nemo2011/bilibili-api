@@ -976,7 +976,7 @@ async def get_self_coins(credential: Credential = None):
     return (await request("GET", url=api["url"], credential=credential))["money"]
 
 
-async def get_toview_list(credential: Credential = Credential()):
+async def get_toview_list(credential: Credential = None):
     """
     获取稍后再看列表
 
@@ -991,7 +991,7 @@ async def get_toview_list(credential: Credential = Credential()):
     return await request("GET", api["url"], credential=credential)
 
 
-async def clear_toview_list(credential: Credential = Credential()):
+async def clear_toview_list(credential: Credential = None):
     """
     清空稍后再看列表
 

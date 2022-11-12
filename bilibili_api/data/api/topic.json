@@ -9,7 +9,7 @@
             "verify": false, 
             "comment": "获取话题简介"
         }, 
-        "details": {
+        "cards": {
             "url": "https://app.bilibili.com/x/topic/web/details/cards", 
             "method": "GET", 
             "params": {

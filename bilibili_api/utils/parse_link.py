@@ -67,7 +67,7 @@ class ResourceType(Enum):
     GAME = "game"
 
 
-async def parse_link(url, credential: Credential = Credential()):
+async def parse_link(url, credential: Credential = None):
     """
     解析 bilibili url 的函数。
 
@@ -78,6 +78,7 @@ async def parse_link(url, credential: Credential = Credential()):
     Returns:
         Union[tuple, int]: (对象，类型) 或 -1,-1 表示出错
     """
+    credential = credential if credential else Credential
     try:
         obj = None
 
