@@ -116,6 +116,18 @@ from bilibili_api import user
 
 ---
 
+## async def name2uid()
+
+| name | type | description |
+| - | - | - |
+| names | str/List\[str\] | 用户名 |
+
+将用户名转为 uid
+
+**Returns** dict: 调用 API 返回的结果
+
+---
+
 ## class User
 
 用户相关

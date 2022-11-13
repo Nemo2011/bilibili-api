@@ -16,7 +16,7 @@ from .utils.sync import sync
 from .utils.network_httpx import get_session, request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
-from typing import List
+from typing import List, Union
 import httpx
 
 API = get_api("user")
@@ -134,6 +134,26 @@ class RelationType(Enum):
     UNBLOCK = 6
     REMOVE_FANS = 7
 
+
+async def name2uid(names: Union[str, List[str]]):
+    """
+    将用户名转为 uid
+
+    Args:
+        names (str/List[str]): 用户名
+    
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["name_to_uid"]
+    if isinstance(names, str):
+        n = names
+    else:
+        n = ",".join(names)
+    params = {
+        "names": n
+    }
+    return await request("GET", api["url"], params = params)
 
 class User:
     """
