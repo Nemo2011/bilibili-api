@@ -45,6 +45,9 @@ class AsyncEvent:
 
         return decorator
 
+    def remove_all_event_listener(self):
+        self.__handlers = {}
+
     def remove_event_listener(self, name: str, handler: Coroutine):
         """
         移除事件监听函数。
