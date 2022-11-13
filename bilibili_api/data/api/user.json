@@ -1,5 +1,13 @@
 {
   "info": {
+    "name_to_uid": {
+      "url": "https://api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/name_to_uid", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "names": "string: 多个名称, 用,分割"
+      }
+    },
     "my_info": {
       "url": "https://api.bilibili.com/x/space/myinfo",
       "method": "GET",
