@@ -194,5 +194,9 @@ async def test_zk_get_reservation():
     return await u.get_reservation()
 
 
+async def test_zl_name2uid():
+    return await user.name2uid("田所こうじ")
+
+
 async def after_all():
     await u.modify_relation(user.RelationType.UNSUBSCRIBE)
