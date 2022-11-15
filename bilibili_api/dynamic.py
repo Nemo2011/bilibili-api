@@ -6,7 +6,6 @@ import re
 import json
 import datetime
 import asyncio
-from aiohttp import FormData
 from typing import List
 import io
 
@@ -398,3 +397,39 @@ class Dynamic:
         data = await _get_text_data(text)
         data["dynamic_id"] = self.__dynamic_id
         return await request("POST", api["url"], data=data, credential=self.credential)
+
+# TODO: get_new_dynamic_users
+async def get_new_dynamic_users(credential: Credential = None):
+    """
+    获取更新动态的关注者
+
+    Args:
+        credential (Credential): 凭据类. Defaults to None. 
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
+    api = API["info"]["attention_new_dynamic"]
+    return await request("GET", api["url"], credential = credential)
+
+# TODO: get_live_users
+async def get_live_users(size: int = 10, credential: Credential = None):
+    """
+    获取正在直播的关注者
+
+    Args:
+        size       (int)       : 获取的数据数量. Defaults to 10. 
+        credential (Credential): 凭据类. Defaults to None. 
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
+    api = API["info"]["attention_live"]
+    params = {
+        "size": size
+    }
+    return await request("GET", api["url"], params = params, credential = credential)
