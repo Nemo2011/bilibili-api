@@ -4,7 +4,7 @@ from bilibili_api import search
 
 
 async def test_a_search():
-    return await search.search("云社_")
+    return await search.search("这是他的笑容发生的变化")
 
 
 async def test_b_search_by_type():
