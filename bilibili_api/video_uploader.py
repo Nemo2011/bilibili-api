@@ -165,7 +165,7 @@ class VideoUploader(AsyncEvent):
                 "open": "int: 是否启用字幕投稿，1 or 0"
             },
             "tag": "str: 视频标签。使用英文半角逗号分隔的标签组。示例：标签 1,标签 1,标签 1",
-            "tid": "int: 分区 ID。可以使用 channel 模块进行查询。",
+            "tid": "int: 分区 ID (不能是主分区)。可以使用 channel 模块进行查询。",
             "title": "str: 视频标题",
             "up_close_danmaku": "bool: 是否关闭弹幕。",
             "up_close_reply": "bool: 是否关闭评论。",
@@ -438,8 +438,8 @@ class VideoUploader(AsyncEvent):
         """
         self.dispatch(VideoUploaderEvents.PRE_COVER.value, None)
         try:
-            resp = await upload_image(open(self.cover_path, "rb"))
-            self.dispatch(VideoUploaderEvents.AFTER_COVER.value, {"url": resp["url"]})
+            resp = await upload_image(open(self.cover_path, "rb").read(), self.credential)
+            self.dispatch(VideoUploaderEvents.AFTER_COVER.value, {"url": resp["image_url"]})
             return resp["image_url"]
         except Exception as e:
             self.dispatch(VideoUploaderEvents.COVER_FAILED.value, {"err": e})
