@@ -97,6 +97,11 @@ async def test_g_Dynamic_set_like():
 async def test_i_Dynamic_delete():
     return await dy.delete()
 
+async def test_j_get_new_dynamic_users():
+    return await dynamic.get_new_dynamic_users(common.get_credential())
+
+async def test_k_get_live_users():
+    return await dynamic.get_live_users(common.get_credential())
 
 async def after_all():
     print("删除所有未发定时动态")
