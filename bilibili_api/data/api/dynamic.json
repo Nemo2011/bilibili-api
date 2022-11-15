@@ -13,20 +13,6 @@
       },
       "comment": "上传图片"
     },
-    "attention_new_dynamic": {
-      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/w_dyn_uplist", 
-      "method": "GET", 
-      "verify": true, 
-      "comment": "获取发布新动态的关注者"
-    }, 
-    "attention_live": {
-      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/w_live_users", 
-      "method": "GET", 
-      "params": {
-        "size": "int: 用户数量"
-      }, 
-      "comment": "获取正在直播的关注者"
-    },
     "schedule": {
       "url": "https://api.vc.bilibili.com/dynamic_draft/v1/dynamic_draft/add_draft",
       "method": "POST",
@@ -132,6 +118,21 @@
     }
   },
   "info": {
+    "attention_new_dynamic": {
+      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/w_dyn_uplist", 
+      "method": "GET", 
+      "verify": true, 
+      "comment": "获取发布新动态的关注者"
+    }, 
+    "attention_live": {
+      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/w_live_users", 
+      "method": "GET", 
+      "params": {
+        "size": "int: 用户数量"
+      }, 
+      "verify": true, 
+      "comment": "获取正在直播的关注者"
+    },
     "repost": {
       "url": "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost_detail",
       "method": "GET",
