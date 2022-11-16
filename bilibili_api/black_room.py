@@ -75,10 +75,10 @@ async def get_blocked_list(
     获取小黑屋中的违规列表
 
     Args:
-        from_(BlackFrom)      : 违规来源. Defaults to BlackFrom.ALL
-        type_(int)            : 违规类型. 查看 black_room.BLACK_TYPE。Defaults to 0 (ALL)
-        pn(int)               : 页数. Defaults to 1
-        credential(Credential): 凭据, Defaults to None
+        from_      (BlackFrom) : 违规来源. Defaults to BlackFrom.ALL.
+        type_      (int)       : 违规类型. 查看 black_room.BLACK_TYPE。Defaults to 0 (ALL).
+        pn         (int)       : 页数. Defaults to 1.
+        credential (Credential): 凭据. Defaults to None.
     """
     credential = credential if credential else Credential()
     api = API["info"]
@@ -96,8 +96,8 @@ class BlackRoom:
     def __init__(self, black_room_id: int, credential: Credential = None):
         """
         Args:
-            black_room_id(int)    : 小黑屋 id
-            credential(Credential): 凭据类
+            black_room_id (int)                 : 小黑屋 id
+            credential    (Credential, optional): 凭据类. Defaults to None. 
         """
         self.__id = black_room_id
         self.credential = credential if credential else Credential()
@@ -105,6 +105,9 @@ class BlackRoom:
     async def get_details(self):
         """
         获取小黑屋详细信息
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["detail"]
         params = {"id": self.__id}
@@ -113,7 +116,7 @@ class BlackRoom:
         )
 
     async def get_id(self):
-        """
-        获取小黑屋 id
-        """
         return self.__id
+
+    async def set_id(self, id_):
+        self.__init__(id_, self.credential)

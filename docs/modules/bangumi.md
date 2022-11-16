@@ -121,7 +121,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 获取番剧元数据信息（评分，封面URL，标题等）
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_short_comment_list()
 
@@ -132,7 +132,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 获取短评列表
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_long_comment_list()
 
@@ -143,25 +143,25 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 获取长评列表
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_episode_list()
 
 获取季度分集列表
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_stat()
 
 获取番剧播放量，追番等信息
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_overview()
 
 获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 ***
 
@@ -175,7 +175,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 追番状态设置
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 ## class Episode
 
@@ -206,7 +206,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 获取对应的番剧
 
-**Returns:** 番剧类
+**Returns:** Bangumi: 番剧类
 
 #### def set_epid()
 
@@ -224,19 +224,19 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 获取番剧单集信息
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果。
 
 #### async def get_download_url()
 
 获取番剧下载链接
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果。
 
 #### async def get_danmaku_view()
 
 获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 二进制流解析结果
 
 #### async def get_danmakus()
 
@@ -246,13 +246,13 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 获取弹幕
 
-**Returns:** API 调用返回结果。
+**Returns:** dict\[Danmaku\]: 弹幕列表
 
 #### async def get_danmaku_xml()
 
 获取所有弹幕的 xml 源文件（非装填的弹幕）
 
-**Returns:** API 调用返回结果。
+**Returns:** str: 文件源
 
 #### async def get_history_danmaku_index()
 
@@ -268,4 +268,4 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 获取剧集对应的番剧
 
-**Returns**:输入的集对应的番剧类
+**Returns**: Bangumi: 输入的集对应的番剧类
