@@ -375,8 +375,8 @@ def get_id_by_code(code: int):
 class PhoneNumber:
     def __init__(self, number: str, country: Union[str, int] = "+86"):
         """
-        number(string): 手机号
-        country(string): 地区/地区码，如 +86
+        number(str): 手机号
+        country(str): 地区/地区码，如 +86
         """
         number = number.replace("-", "")
         if not have_country(country):
@@ -437,8 +437,8 @@ def login_with_sms(phonenumber: PhoneNumber, code: str):
     验证码登录
 
     Args:
-        phonenumber(string): 手机号类
-        code(string)       : 验证码
+        phonenumber(str): 手机号类
+        code(str)       : 验证码
 
     Returns:
         Credential: 凭据类
@@ -527,7 +527,7 @@ class Check:
         登录
 
         Args:
-            code(string)       : 验证码
+            code(str)       : 验证码
 
         Returns:
             Credential: 凭据类

@@ -28,7 +28,7 @@ def get_qrcode():
     获取二维码及登录密钥（后面有用）
 
     Returns:
-        tuple[dir, string]: 第一项是二维码图片地址（本地缓存）和登录密钥。登录密钥需要保存。
+        tuple[dir, str]: 第一项是二维码图片地址（本地缓存）和登录密钥。登录密钥需要保存。
     """
     img = login.update_qrcode()
     login_key = login.login_key
@@ -40,7 +40,7 @@ def check_qrcode_events(login_key):
     检查登录状态。（建议频率 1s，这个 API 也有风控！）
 
     Args:
-        login_key(string): 登录密钥（get_qrcode 的返回值第二项)
+        login_key(str): 登录密钥（get_qrcode 的返回值第二项)
 
     Returns:
         list[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）

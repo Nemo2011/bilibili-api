@@ -37,7 +37,7 @@ $ sudo apt-get install python3-tk
 
 | name | type | description |
 | - | - | - |
-| keyword | string | 关键词 |
+| keyword | str | 关键词 |
 
 搜索一个地区及其国际地区代码
 
@@ -47,7 +47,7 @@ $ sudo apt-get install python3-tk
 
 | name | type | description |
 | - | - | - |
-| keyword | string | 关键词 |
+| keyword | str | 关键词 |
 
 是否有地区
 
@@ -71,8 +71,8 @@ $ sudo apt-get install python3-tk
 
 | name | type | description |
 | - | - | - |
-| number | string | 号码 |
-| country | Union[string, int] | 地区（代码）如 `中国大陆` 或 `+86` |
+| number | str | 号码 |
+| country | Union[str, int] | 地区（代码）如 `中国大陆` 或 `+86` |
 
 ---
 
@@ -92,8 +92,8 @@ $ sudo apt-get install python3-tk
 
 | name | type | description |
 | - | - | - |
-| username | string | 手机号、邮箱 |
-| password | string | 密码 |
+| username | str | 手机号、邮箱 |
+| password | str | 密码 |
 
 密码登录。
 
@@ -114,7 +114,7 @@ $ sudo apt-get install python3-tk
 | name | type | description |
 | - | - | - |
 | phonenumber | PhoneNumber | 手机号类 |
-| code | string | 验证码 |
+| code | str | 验证码 |
 
 验证码登录
 
@@ -132,7 +132,7 @@ $ sudo apt-get install python3-tk
 
 | name | type | description |
 | - | - | - |
-| check_url | string | 验证网址 |
+| check_url | str | 验证网址 |
 
 #### def set_phone()
 
@@ -154,7 +154,7 @@ $ sudo apt-get install python3-tk
 
 | name | type | description |
 | - | - | - |
-| code | string | 验证码 |
+| code | str | 验证码 |
 
 登录
 

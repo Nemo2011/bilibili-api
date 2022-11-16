@@ -8,21 +8,21 @@ from bilibili_api import ass
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| obj | Union[Video, Episode, CheeseVideo] | 对象 |
-| page | (int)                | 分 P 号 |
-| out | (str)              | 输出文件 |
-| cid | (int) | cid |
-| credential | (Credential)| 凭据 |
-| date | (datetime.date)   | 获取时间 |
-| stage_size | (tuple|list)| 尺寸，一般都是 1920x1080 |
-| font_name | (str)        | 字体 |
-| font_size | (float)      | 字体大小 |
-| alpha | (float)          | 透明度(0-1) |
-| fly_time | (float)       | 滚动弹幕持续时间 |
-| static_time | (float)    | 静态弹幕持续时间 |
+| obj   |      Union[Video,Episode,CheeseVideo] |  对象  |
+| page   |     int, optional                    |  分 P 号. Defaults to 0.  |
+| out     |    str, optional                    | 输出文件. Defaults to "test.ass" |
+| cid      |   int, optional                    | cid. Defaults to None.  |
+| credential |  Credential, optional           | 凭据. Defaults to None.  |
+| date      |  datetime.date, optional        | 获取时间. Defaults to None.  |
+| font_name  | str, optional                    | 字体. Defaults to "Simsun".  |
+| font_size  | float, optional                  | 字体大小. Defaults to 25.0.  |
+| alpha      | float, optional                  | 透明度(0-1). Defaults to 1.  |
+| fly_time  |  float, optional                  | 滚动弹幕持续时间. Defaults to 7. | 
+| static_time | float, optional                  | 静态弹幕持续时间. Defaults to 5. |
 
 生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
 强烈推荐 PotPlayer, 电影与电视加载后全部都是静态弹幕，不能滚动。
+
 **采用 protobuf 源**
 
 **Returns**: None
@@ -33,17 +33,17 @@ from bilibili_api import ass
 | ---- | ---- | ----------- |
 | obj | Union[Video, Episode, CheeseVideo] | 对象 |
 | page | (int)                | 分 P 号 |
-| out | (str)              | 输出文件 |
-| cid | (int) | cid |
-| stage_size | (tuple|list)| 尺寸，一般都是 1920x1080 |
-| font_name | (str)        | 字体 |
-| font_size | (float)      | 字体大小 |
-| alpha | (float)          | 透明度(0-1) |
-| fly_time | (float)       | 滚动弹幕持续时间 |
-| static_time | (float)    | 静态弹幕持续时间 |
+| out | (str)              | 输出文件. Defaults to "test.ass" |
+| cid | (int) | cid. Defaults to None.  |
+| font_name | (str)        | 字体. Defaults to "Simsun".  |
+| font_size | (float)      | 字体大小. Defaults to 25.0.  |
+| alpha | (float)          | 透明度(0-1). Defaults to 1.  |
+| fly_time | (float)       | 滚动弹幕持续时间. Defaults to 7.  |
+| static_time | (float)    | 静态弹幕持续时间. Defaults to 5.  |
 
 生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
 强烈推荐 PotPlayer, 电影与电视加载后全部都是静态弹幕，不能滚动。
+
 **采用 xml 源**
 
 **Returns**: None
@@ -53,9 +53,8 @@ from bilibili_api import ass
 | name | type | description |
 | ---- | ---- | ----------- |
 | obj | Union[Video, Episode] | 对象 |
-| out | str | 输出位置 |
-| name | str | 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。|
-| credential | Credential | 凭据 |
+| out | str | 输出位置. Defaults to "test.ass".  |
+| name | str | 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）". |
 
 生成视频字幕文件
 

@@ -251,10 +251,10 @@ async def get_suggest_keywords(keyword: str):
     通过一些文字输入获取搜索建议。类似搜索词的联想。
 
     Args:
-        keyword(string): 搜索关键词
+        keyword(str): 搜索关键词
 
     Returns:
-        List[string]: 关键词列表
+        List[str]: 关键词列表
     """
     keywords = []
     sess = get_session()
@@ -272,7 +272,7 @@ async def search_games(keyword: str):
     搜索游戏特用函数
 
     Args:
-        keyword(string): 搜索关键词
+        keyword(str): 搜索关键词
 
     Returns:
         dict: 调用 API 返回的结果

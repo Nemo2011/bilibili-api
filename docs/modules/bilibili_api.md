@@ -294,7 +294,7 @@ BV 号转 AV 号。
 
 将弹幕转换为 xml 格式弹幕
 
-**Returns:** string: xml 格式弹幕
+**Returns:** str: xml 格式弹幕
 
 ---
 
@@ -304,10 +304,10 @@ BV 号转 AV 号。
 
 | name | type | description |
 | - | - | - |
-| content | string | 弹幕内容 |
+| content | str | 弹幕内容 |
 | id_ | int | 弹幕 ID |
-| id_str | string | 弹幕字符串 ID |
-| mode | DmMode \| int | 弹幕模式 |
+| id_str | str | 弹幕字符串 ID |
+| mode | DmMode | int | 弹幕模式 |
 | pool | int | 池 |
 
 ### Functions
@@ -316,9 +316,9 @@ BV 号转 AV 号。
 
 | name | type | description |
 | - | - | - |
-| content | string | 弹幕内容 |
+| content | str | 弹幕内容 |
 | id_ | int | 弹幕 ID |
-| id_str | string | 弹幕字符串 ID |
+| id_str | str | 弹幕字符串 ID |
 | mode | DmMode \| int | 弹幕模式 |
 | pool | int | 池 |
 
