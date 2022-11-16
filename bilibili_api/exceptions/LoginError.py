@@ -1,5 +1,5 @@
 """
-bilibili_api.exceptions.ArgsException
+bilibili_api.exceptions.LoginError
 
 登录错误。
 """

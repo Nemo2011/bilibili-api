@@ -1,3 +1,9 @@
+"""
+bilibili_api.utils.sync
+
+同步执行异步函数
+"""
+
 from typing import Coroutine
 import asyncio
 from .. import settings

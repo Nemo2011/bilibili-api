@@ -29,6 +29,9 @@ class Audio:
     async def get_info(self):
         """
         获取音频信息
+    
+        Returns:
+            dict: 调用 API 返回的结果
         """
 
         api = API["audio_info"]["info"]
@@ -38,6 +41,9 @@ class Audio:
     async def get_tags(self):
         """
         获取音频 tags
+    
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["audio_info"]["tag"]
         params = {"sid": self.__auid}
@@ -46,6 +52,9 @@ class Audio:
     async def get_download_url(self):
         """
         获取音频下载链接
+    
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["audio_info"]["download_url"]
         params = {"sid": self.__auid, "privilege": 2, "quality": 2}
@@ -57,6 +66,9 @@ class Audio:
 
         Args:
             num (int, optional): 投币数量。Defaults to 2.
+    
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
@@ -86,6 +98,9 @@ class AudioList:
     async def get_info(self):
         """
         获取歌单信息
+    
+        Returns:
+            dict: 调用 API 返回的结果
         """
 
         api = API["list_info"]["info"]
@@ -95,6 +110,9 @@ class AudioList:
     async def get_tags(self):
         """
         获取歌单 tags
+    
+        Returns:
+            dict: 调用 API 返回的结果
         """
 
         api = API["list_info"]["tag"]
@@ -107,6 +125,9 @@ class AudioList:
 
         Args:
             pn (int, optional): 页码. Defaults to 1
+    
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["list_info"]["song_list"]
         params = {"sid": self.__amid, "pn": pn, "ps": 100}
@@ -121,6 +142,9 @@ async def get_user_stat(uid: int, credential: Credential = None):
     Args:
         uid        (int)                 : 用户 UID
         credential (Credential, optional): 凭据. Defaults to None
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     credential = credential if credential is not None else Credential()
     api = API["audio_info"]["user"]
@@ -135,6 +159,9 @@ async def get_hot_song_list(pn: int = 1, credential: Credential = None):
     Args:
         pn(int, optional)                : 页数. Defaults to 1
         credential (Credential, optional): 凭据. Defaults to None
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     credential = credential if credential is not None else Credential()
     api = API["list_info"]["hot"]

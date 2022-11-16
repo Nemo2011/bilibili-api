@@ -5,10 +5,10 @@
 # bilibili-api
 
 [![API 数量](https://img.shields.io/badge/API%20数量-200+-blue)][api.json]
-[![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][license]
+[![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3-red)][LICENSE]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
-![Python](https://img.shields.io/badge/Python-3.10|3.9|3.8-blue)
-![NodeJS](https://img.shields.io/badge/Node.js-In_progress-blue)
+![Python](https://img.shields.io/badge/Python-3.11|3.10|3.9|3.8-blue)
+[![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
 
 </div>
 
@@ -43,6 +43,8 @@ Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2
 ```
 $ pip3 install bilibili-api-python
 ```
+
+Python3.11 Windows 用户可能会遇到 `lxml` 安装失败的问题，可以直接用[轮子](https://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml)(具体版本参照 `requirements.txt`[(github)](https://github.com/Nemo2011/bilibili-api/blob/main/requirements.txt)[(gitee)](https://gitee.com/nemo2011/bilibili-api/blob/main/requirements.txt))
 
 接下来我们来获取视频的播放量等信息：
 
@@ -177,7 +179,7 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 [docs-github]: https://github.com/nemo2011/bilibili-api/tree/main/docs
 [docs-gitee]: https://gitee.com/nemo2011/bilibili-api/tree/main/docs
 [api.json]: https://github.com/nemo2011/bilibili-api/tree/main/bilibili_api/data/api/
-[license]: https://github.com/nemo2011/bilibili-api/tree/main/LICENSE.md
+[license]: https://github.com/nemo2011/bilibili-api/tree/main/LICENSE
 [stargazers]: https://github.com/nemo2011/bilibili-api/stargazers
 [issues-new]: https://github.com/nemo2011/bilibili-api/issues/new
 [get-credential]: https://nemo2011.github.io/bilibili-api/#/get-credential

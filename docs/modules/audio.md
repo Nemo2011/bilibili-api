@@ -35,19 +35,19 @@ from bilibili_api import audio
 
 获取音频信息
 
-**Returns:** API 调用返回结果
+**Returns:** 调用 API 返回的结果
 
 #### async def get_tags()
 
 获取音频 tags
 
-**Returns:** API 调用返回结果
+**Returns:** 调用 API 返回的结果
 
 #### async def get_download_url()
 
 获取音频下载链接
 
-**Returns:** API 调用返回结果
+**Returns:** 调用 API 返回的结果
 
 #### async def add_coins()
 
@@ -57,7 +57,7 @@ from bilibili_api import audio
 
 投币
 
-**Returns:** API 调用返回结果
+**Returns:** 调用 API 返回的结果
 
 ---
 
@@ -84,13 +84,13 @@ from bilibili_api import audio
 
 获取歌单信息
 
-**Returns:** API 调用返回结果
+**Returns:** 调用 API 返回的结果
 
 #### async def get_tags()
 
 获取歌单 tags
 
-**Returns:** API 调用返回结果
+**Returns:** 调用 API 返回的结果
 
 #### async def get_song_list()
 
@@ -100,7 +100,7 @@ from bilibili_api import audio
 
 获取歌单歌曲列表
 
-**Returns:** API 调用返回结果
+**Returns:** 调用 API 返回的结果
 
 ---
 
@@ -113,4 +113,4 @@ from bilibili_api import audio
 
 获取用户数据（收听数，粉丝数等）
 
-**Returns:** API 调用返回结果
+**Returns:** 调用 API 返回的结果
