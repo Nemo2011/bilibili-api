@@ -398,7 +398,7 @@ class Dynamic:
         data["dynamic_id"] = self.__dynamic_id
         return await request("POST", api["url"], data=data, credential=self.credential)
 
-# TODO: get_new_dynamic_users
+
 async def get_new_dynamic_users(credential: Credential = None):
     """
     获取更新动态的关注者
@@ -414,7 +414,7 @@ async def get_new_dynamic_users(credential: Credential = None):
     api = API["info"]["attention_new_dynamic"]
     return await request("GET", api["url"], credential = credential)
 
-# TODO: get_live_users
+
 async def get_live_users(size: int = 10, credential: Credential = None):
     """
     获取正在直播的关注者
