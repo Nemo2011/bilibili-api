@@ -141,4 +141,23 @@ from bilibili_api import dynamic
 
 ---
 
-<!--TODO: 完善文档-->
+#### async def get_new_dynamic_users()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类. Defaults to None. |
+
+获取更新动态的关注者
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_live_users()
+
+| name | type | description |
+| - | - | - |
+| size | int | 获取的数据数量. Defaults to 10.  |
+| credential | Credential | 凭据类. Defaults to None. |
+
+获取正在直播的关注者
+
+**Returns:** dict: 调用 API 返回的结果
