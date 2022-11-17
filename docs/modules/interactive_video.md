@@ -58,27 +58,37 @@ o----|xxx| (TEXT_RIGHT)
 | var_id | str | 变量 id |
 | var_value | int | 变量的值 |
 | show | bool | 是否显示 |
-| random | bool | 是否随机值 |
+| random | bool | 是否随机值(1-100) |
 
 #### def get_id()
 
 获取变量 id
 
+**Returns:** int: 变量 id
+
 #### def get_value()
 
 获取变量数值
+
+**Returns:** int: 变量数值
 
 #### def is_show()
 
 变量是否显示
 
+**Returns:** bool: 变量是否显示
+
 #### def is_random()
 
 是否随机数值
 
+**Returns:** bool: 变量是否随机数值
+
 #### def get_name()
 
 获取变量名
+
+**Returns:** str: 变量名
 
 ---
 
@@ -101,13 +111,19 @@ o----|xxx| (TEXT_RIGHT)
 
 获取文字
 
+**Returns:** str: 按钮文字
+
 #### def get_align()
 
 获取按钮的文字在按钮中的位置
 
+**Returns:** 按钮的文字在按钮中的位置
+
 #### def get_pos()
 
 获取按钮的位置
+
+**Returns:** 按钮的位置
 
 ---
 
@@ -127,6 +143,8 @@ o----|xxx| (TEXT_RIGHT)
 #### def get_result()
 
 计算公式获得结果
+
+**Returns:** bool: 是否成立
 
 ---
 
@@ -151,41 +169,61 @@ o----|xxx| (TEXT_RIGHT)
 
 获取节点的所有变量
 
+**Returns:** List[InteractiveVariable]: 节点的所有变量
+
 #### async def get_children()
 
 获取节点的所有子节点
+
+**Returns:** List[InteractiveNode]: 所有子节点
 
 #### def is_default()
 
 是不是默认节点
 
+**Returns:** bool: 是否默认节点
+
 #### async def get_jumping_type()
 
-获取子节点跳转方式
+获取子节点跳转方式 (参考 InteractiveNodeJumpingType)
+
+**Returns:** int: 子节点跳转方式
 
 #### def get_node_id()
 
 获取节点 id
 
+**Returns:** int: 节点 id
+
 #### def get_cid()
 
 获取节点 cid
+
+**Returns:** int: 节点 cid
 
 #### def get_self_button()
 
 获取节点对应的按钮
 
+**Returns:** InteractiveButton: 节点对应按钮
+
 #### def get_jumping_condition()
 
 获取节点跳转的公式
+
+**Returns:** InteractiveJumpingCondition: 节点跳转公式
 
 #### def get_video()
 
 获取节点对应的视频
 
+**Returns:** 节点对应视频
+
 #### async def get_info()
 
 获取节点的简介
+
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -205,17 +243,25 @@ o----|xxx| (TEXT_RIGHT)
 
 获取情节树对应视频
 
+**Returns:** 对应视频
+
 #### def get_skin()
 
 获取样式
+
+**Returns:** 样式
 
 #### def get_root_node()
 
 获取根节点
 
+**Returns:** InteractiveNode: 根节点
+
 #### async def get_children()
 
 获取子节点
+
+**Returns:** List[InteractiveNode]: 子节点
 
 --- 
 
@@ -223,7 +269,13 @@ o----|xxx| (TEXT_RIGHT)
 
 **Extends: bilibili_api.video.Video**
 
-番剧剧集类
+互动视频类
+
+### Attributes
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
 
 ### Functions
 
@@ -237,7 +289,7 @@ o----|xxx| (TEXT_RIGHT)
 
 提交情节树。up 主需要拥有交互视频。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def up_get_ivideo_pages()
 | name       | type                 | description                           |
@@ -247,7 +299,7 @@ o----|xxx| (TEXT_RIGHT)
 
 获取交互视频分 P。up 主需要拥有交互视频。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_graph_version()
 
@@ -258,7 +310,7 @@ o----|xxx| (TEXT_RIGHT)
 
  获取剧情图版本号，仅供 `get_edge_info()` 使用。
 
-**Returns:** API 调用返回结果
+**Returns:** int: 剧情图版本号
 
 #### async def get_edge_info()
 
@@ -268,9 +320,9 @@ o----|xxx| (TEXT_RIGHT)
 | edge_id    | int, optional        | 节点 ID，为 None 时获取根节点信息. Defaults to None. |
 | credential | Credential, optional | 凭据. Defaults to None.                              |
 
- 获取剧情树节点信息。
+获取剧情树节点信息。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_graph()
 
@@ -284,10 +336,11 @@ o----|xxx| (TEXT_RIGHT)
 | name | type | description |
 | - | - | - |
 | cid | int | 分 P 的 ID |
+| html5 | bool | 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。 |
 
-获取番剧下载链接
+获取视频下载信息
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 
 #### async def get_danmaku_view()
@@ -299,7 +352,7 @@ o----|xxx| (TEXT_RIGHT)
 获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 
 #### async def get_danmakus()
@@ -311,7 +364,7 @@ o----|xxx| (TEXT_RIGHT)
 
 获取弹幕
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_danmaku_xml()
 
@@ -321,7 +374,7 @@ o----|xxx| (TEXT_RIGHT)
 
 获取所有弹幕的 xml 源文件（非装填的弹幕）
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_history_danmaku_index()
 

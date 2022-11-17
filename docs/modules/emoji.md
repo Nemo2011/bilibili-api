@@ -12,4 +12,4 @@ from bilibili_api import emoji
 | - | - | - |
 | business | str | 使用场景, reply / dynamic |
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果

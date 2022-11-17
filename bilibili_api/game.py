@@ -14,24 +14,21 @@ API = get_api("game")
 class Game:
     """
     游戏类
+
+    Attributes:
+        credential (Credential): 凭据类
     """
 
     def __init__(self, game_id: int, credential: Credential = None):
         """
         Args:
-            game_id(int)          : 游戏 id
-            credential(Credential): 凭据类
+            game_id    (int)       : 游戏 id
+            credential (Credential): 凭据类
         """
         self.__game_id = game_id
         self.credential = credential if credential else Credential()
 
     def get_game_id(self):
-        """
-        获取游戏 id
-
-        Returns:
-            游戏 id
-        """
         return self.__game_id
 
     async def get_info(self):

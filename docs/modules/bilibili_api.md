@@ -105,7 +105,7 @@ import bilibili_api
 
 检查 cookies 是否有效
 
-**Returns:** bool
+**Returns:** bool: cookies 是否有效
 
 ---
 

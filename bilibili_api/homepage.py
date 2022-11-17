@@ -15,6 +15,7 @@ async def get_top_photo():
     """
     获取主页最上方的图像。
     例如：b 站的风叶穿行，通过这个 API 获取的图片就是风叶穿行的图片。
+
     Returns:
         调用 API 返回的结果。
     """
@@ -27,8 +28,10 @@ async def get_links(credential: Credential = None):
     """
     获取主页左面的链接。
     可能和个人喜好有关。
+
     Args:
-        credential(Credential): 凭据类
+        credential (Credential): 凭据类
+
     Returns:
         调用 API 返回的结果
     """
@@ -40,9 +43,11 @@ async def get_links(credential: Credential = None):
 async def get_popularize(credential: Credential = None):
     """
     获取推广的项目。
-    ~~有视频有广告~~
+    (有视频有广告)
+
     Args:
         credential(Credential): 凭据类
+
     Returns:
         调用 API 返回的结果
     """
@@ -54,9 +59,10 @@ async def get_popularize(credential: Credential = None):
 async def get_videos(credential: Credential = None):
     """
     获取首页推荐的视频。
-    注意：推荐视频更新有冷却时间！
+
     Args:
-        credential(Credential): 凭据类
+        credential (Credential): 凭据类
+
     Returns:
         调用 API 返回的结果
     """
