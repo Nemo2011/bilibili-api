@@ -21,7 +21,7 @@ def get_channel_info_by_tid(tid: int):
     根据 tid 获取频道信息。
 
     Args:
-        tid (int):               频道的 tid。
+        tid (int): 频道的 tid。
 
     Returns:
         `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
@@ -53,7 +53,7 @@ def get_channel_info_by_name(name: str):
     根据频道名称获取频道信息。
 
     Args:
-        name (str):               频道的名称。
+        name (str): 频道的名称。
 
     Returns:
         tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
@@ -79,9 +79,9 @@ async def get_top10(tid: int, day: int = 7, credential: Credential = None):
     获取分区前十排行榜。
 
     Args:
-        tid (int):                          频道的 tid。
-        day (int, optional):                          3 天排行还是 7 天排行。 Defaults to 7.
-        credential (Credential, optional):  Credential 类。Defaults to None.
+        tid        (int)                 : 频道的 tid。
+        day        (int, optional)       : 3 天排行还是 7 天排行。 Defaults to 7.
+        credential (Credential, optional): Credential 类。Defaults to None.
 
     Returns:
         list: 前 10 的视频信息。
@@ -156,6 +156,9 @@ async def get_channel_new_videos(tid: int, credential: Credential = None):
     Args:
         tid(int)              : 分区 id
         credential(Credential): 凭据类
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     credential = credential if credential else Credential()
     api = API["new"]

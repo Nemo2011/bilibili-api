@@ -74,6 +74,9 @@ async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0):
 class Bangumi:
     """
     番剧类
+    
+    Attributes:
+        credential (Credential): 凭据类
     """
 
     def __init__(
@@ -316,6 +319,11 @@ async def set_follow(
 class Episode(Video):
     """
     番剧剧集类
+
+    Attributes:
+        credential  (Credential): 凭据类
+        video_class (Video)     : 视频类
+        bangumi     (Bangumi)   : 所属番剧
     """
 
     def __init__(self, epid: int, credential: Credential = None):

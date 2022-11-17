@@ -35,6 +35,9 @@ API_video = get_api("video")
 class CheeseList:
     """
     课程类
+    
+    Attributes:
+        credential (Credential): 凭据类
     """
 
     def __init__(
@@ -45,9 +48,10 @@ class CheeseList:
     ):
         """
         Args:
-            season_id(int): ssid
-            ep_id(int): 单集 ep_id
-            credential(Credential): 凭据类
+            season_id  (int)       : ssid
+            ep_id      (int)       : 单集 ep_id
+            credential (Credential): 凭据类
+
         注意：season_id 和 ep_id 任选一个即可，两个都选的话
         以 season_id 为主
         """
@@ -78,6 +82,7 @@ class CheeseList:
     async def get_meta(self):
         """
         获取教程元数据
+
         Returns:
             调用 API 所得的结果。
         """
@@ -90,6 +95,7 @@ class CheeseList:
     async def get_list(self):
         """
         获取教程所有视频
+
         Returns:
             List[CheeseVideo]: 课程视频列表
         """
@@ -108,13 +114,17 @@ class CheeseVideo:
     """
     教程视频类
     因为不和其他视频相通，所以这里是一个新的类，无继承
+
+    Attributes:
+        credential (Credential): 凭据类
+        cheese     (CheeseList): 所属的课程
     """
 
     def __init__(self, epid, credential: Credential = None, meta=None):
         """
         Args:
-            ep_id     (int)       : 单集 ep_id
-            credential(Credential): 凭据类
+            ep_id      (int)       : 单集 ep_id
+            credential (Credential): 凭据类
         """
         self.__epid = epid
         self.cheese = CheeseList(ep_id=self.__epid)
@@ -148,29 +158,23 @@ class CheeseVideo:
         获取课程元数据
 
         Returns:
-            视频元数据
+            dict: 视频元数据
         """
         return self.__meta
 
     def get_cheese(self):
         """
         获取所属课程
+
+        Returns:
+            CheeseList: 所属课程
         """
         return self.cheese
 
     def set_epid(self, epid: int):
-        """
-        设置 epid
-
-        Returns:
-            None
-        """
         self.__init__(epid, self.credential)
 
     def get_epid(self):
-        """
-        获取 epid
-        """
         return self.__epid
 
     async def get_download_url(self):
@@ -178,7 +182,7 @@ class CheeseVideo:
         获取下载链接
 
         Returns:
-            调用 API 所得的结果。
+            dict: 调用 API 返回的结果。
         """
         api = API["info"]["playurl"]
         params = {
@@ -423,7 +427,7 @@ class CheeseVideo:
         获取弹幕。
 
         Args:
-            date       (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+            date (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
 
         Returns:
             List[Danmaku]: Danmaku 类的列表。
@@ -534,8 +538,8 @@ class CheeseVideo:
         获取高能进度条
 
         Args:
-            page_index(int): 分 P 号
-            cid(int)       : 分 P 编码
+            page_index (int): 分 P 号
+            cid        (int): 分 P 编码
 
         Returns:
             调用 API 返回的结果
@@ -561,7 +565,8 @@ class CheeseVideo:
         发送弹幕。
 
         Args:
-            danmaku    (Danmaku): Danmaku 类。
+            danmaku (Danmaku): Danmaku 类。
+
         Returns:
             dict: 调用 API 返回的结果。
         """
@@ -716,6 +721,9 @@ class CheeseVideo:
     async def get_danmaku_xml(self):
         """
         获取弹幕(xml 源)
+
+        Returns:
+            str: xml 文件源
         """
         url = f"https://comment.bilibili.com/{self.get_cid()}.xml"
         sess = get_session()

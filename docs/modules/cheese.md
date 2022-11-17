@@ -220,3 +220,9 @@ ep_id(int): 单集 ep_id
 设置视频收藏状况。
 
 **Returns:** API 调用返回结果。
+
+#### async def get_danmaku_xml()
+
+获取弹幕(xml 源)
+
+**Return:** str: xml 文件源
