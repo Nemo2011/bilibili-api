@@ -12,6 +12,9 @@ API = get_api("audio")
 class Audio:
     """
     音频
+    
+    Attributes:
+        credential (Credential): 凭据类
     """
 
     def __init__(self, auid: int, credential: Credential = None):
@@ -81,6 +84,9 @@ class Audio:
 class AudioList:
     """
     歌单
+
+    Attributes:
+        credential (Credential): 凭据类
     """
 
     def __init__(self, amid: int, credential: Credential = None):

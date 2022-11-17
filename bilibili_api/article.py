@@ -57,6 +57,9 @@ ARTICLE_COLOR_MAP = {
 class ArticleList:
     """
     文集类
+
+    Attributes:
+        credential (Credential): 凭据类
     """
 
     def __init__(self, rlid: int, credential: Credential = None):
@@ -88,6 +91,9 @@ class ArticleList:
 class Article:
     """
     专栏类
+    
+    Attributes:
+        credential (Credential): 凭据类
     """
 
     def __init__(self, cvid: int, credential: Credential = None):
