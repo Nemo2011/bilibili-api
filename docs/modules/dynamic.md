@@ -15,7 +15,7 @@ from bilibili_api import dynamic
 
 上传动态图片
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -32,7 +32,7 @@ from bilibili_api import dynamic
 
 如需 @ 人，请使用格式 "@UID "，注意最后有一个空格
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -44,7 +44,7 @@ from bilibili_api import dynamic
 
 获取待发送定时动态列表
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -57,7 +57,7 @@ from bilibili_api import dynamic
 
 立即发送定时动态
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -70,7 +70,7 @@ from bilibili_api import dynamic
 
 删除定时动态
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -101,7 +101,7 @@ from bilibili_api import dynamic
 
 获取动态信息
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_reposts()
 
@@ -111,7 +111,18 @@ from bilibili_api import dynamic
 
 获取动态转发列表
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_like()
+
+| name   | type           | description                 |
+| ------ | -------------- | --------------------------- |
+| pn | int | 页码. Defaults to 1. |
+| ps | int | 每页大小. Defaults to 30. |
+
+获取动态点赞列表
+
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def set_like()
 
@@ -121,13 +132,13 @@ from bilibili_api import dynamic
 
 设置动态点赞状态
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def delete()
 
 删除动态
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def repost()
 
@@ -137,7 +148,7 @@ from bilibili_api import dynamic
 
 转发动态
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 

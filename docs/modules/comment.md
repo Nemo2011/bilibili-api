@@ -65,13 +65,19 @@ from bilibili_api import comment
 
 获取 OID
 
+**Returns:** OID
+
 #### def get_type()
 
 获取所在资源类型
 
+**Returns:** 资源类型
+
 #### def get_rpid()
 
 获取 rpid
+
+**Returns:** rpid
 
 #### async def like()
 
@@ -81,7 +87,7 @@ from bilibili_api import comment
 
 点赞评论。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def hate()
 
@@ -91,7 +97,7 @@ from bilibili_api import comment
 
 点踩评论。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def pin()
 
@@ -101,13 +107,13 @@ from bilibili_api import comment
 
 置顶评论。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def delete()
 
 删除评论
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_sub_comments()
 
@@ -117,7 +123,7 @@ from bilibili_api import comment
 
 获取子评论。即评论下的评论。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -142,7 +148,7 @@ from bilibili_api import comment
 
 当 root 为空时，parent 必须为空。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -158,4 +164,4 @@ from bilibili_api import comment
 
 获取资源评论列表。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果

@@ -59,6 +59,12 @@ from bilibili_api import favorite_list
 
 **Returns:** FavoriteListType: 收藏夹类型
 
+#### def get_media_id()
+
+获取收藏夹 id
+
+**Returns:** int: 收藏夹 id
+
 #### async def get_content_video()
 
 | name       | type                               | description                                           |
@@ -70,7 +76,7 @@ from bilibili_api import favorite_list
 
 获取视频收藏夹内容。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_content()
 
@@ -80,7 +86,7 @@ from bilibili_api import favorite_list
 
 获取收藏夹内容。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -94,7 +100,7 @@ from bilibili_api import favorite_list
 
 获取视频收藏夹列表。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -111,7 +117,7 @@ from bilibili_api import favorite_list
 
 获取视频收藏夹列表内容。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -124,7 +130,7 @@ from bilibili_api import favorite_list
 
 获取自己的话题收藏夹内容。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -137,7 +143,7 @@ from bilibili_api import favorite_list
 
 获取自己的专栏收藏夹内容。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -150,7 +156,7 @@ from bilibili_api import favorite_list
 
 获取自己的相簿收藏夹内容。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -163,7 +169,7 @@ from bilibili_api import favorite_list
 
 获取自己的课程收藏夹内容。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -176,7 +182,7 @@ from bilibili_api import favorite_list
 
 获取自己的笔记收藏夹内容。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -191,7 +197,7 @@ from bilibili_api import favorite_list
 
 新建视频收藏夹列表。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def modify_video_favorite_list()
 
@@ -205,7 +211,7 @@ from bilibili_api import favorite_list
 
 修改视频收藏夹信息。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def delete_video_favorite_list()
 
@@ -216,7 +222,7 @@ from bilibili_api import favorite_list
 
 删除视频收藏夹，可批量删除。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def copy_video_favorite_list_content()
 
@@ -229,7 +235,7 @@ from bilibili_api import favorite_list
 
 复制视频收藏夹内容
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def move_video_favorite_list_content()
 
@@ -242,7 +248,7 @@ from bilibili_api import favorite_list
 
 移动视频收藏夹内容
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def delete_video_favorite_list_content()
 
@@ -254,7 +260,7 @@ from bilibili_api import favorite_list
 
 删除视频收藏夹内容
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def clean_video_favorite_list_content()
 
@@ -265,4 +271,4 @@ from bilibili_api import favorite_list
 
 清除视频收藏夹失效内容
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果

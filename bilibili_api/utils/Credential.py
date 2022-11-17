@@ -127,7 +127,7 @@ class Credential:
         检查 cookies 是否有效
 
         Returns:
-            bool
+            bool: cookies 是否有效
         """
         api = API["valid"]
         try:
