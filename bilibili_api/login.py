@@ -55,12 +55,13 @@ def make_qrcode(url):
     return os.path.join(tempfile.gettempdir(), "qrcode.png")
 
 
-def login_with_qrcode(root=None):
+def login_with_qrcode(root = None):
     """
     扫描二维码登录
 
     Args:
-        root: 根窗口，默认为 tkinter.Tk()，如果有需要可以换成 tkinter.Toplevel()
+        root (tkinter.Tk | tkinter.Toplevel, optional): 根窗口，默认为 tkinter.Tk()，如果有需要可以换成 tkinter.Toplevel(). Defaults to None. 
+
     Returns:
         Credential: 凭据
     """
@@ -187,8 +188,8 @@ def login_with_password(username: str, password: str):
     密码登录。
 
     Args:
-        username(str): 用户手机号、邮箱
-        password(str): 密码
+        username (str): 用户手机号、邮箱
+        password (str): 密码
 
     Returns:
         Union[Credential, Check]: 如果需要验证，会返回 [`Check`](#check) 类，否则返回 `Credential` 类。
@@ -282,7 +283,8 @@ def search_countries(keyword: str):
     搜索一个地区及其国际地区代码
 
     Args:
-        keyword(str): 关键词
+        keyword (str): 关键词
+
     Returns:
         List[dict]: 地区列表
     """
@@ -299,7 +301,7 @@ def have_country(keyword: str):
     是否有地区
 
     Args:
-        keyword(str): 关键词
+        keyword (str): 关键词
 
     Returns:
         bool: 是否存在
@@ -373,10 +375,14 @@ def get_id_by_code(code: int):
 
 
 class PhoneNumber:
+    """
+    手机号类
+    """
     def __init__(self, number: str, country: Union[str, int] = "+86"):
         """
-        number(str): 手机号
-        country(str): 地区/地区码，如 +86
+        Args:
+            number(str): 手机号
+            country(str): 地区/地区码，如 +86
         """
         number = number.replace("-", "")
         if not have_country(country):
@@ -399,10 +405,7 @@ def send_sms(phonenumber: PhoneNumber):
     发送验证码
 
     Args:
-        phonenumber: 手机号类
-
-    Returns:
-        None
+        phonenumber (PhoneNumber): 手机号类
     """
     global captcha_id
     api = API["sms"]["send"]
@@ -437,8 +440,8 @@ def login_with_sms(phonenumber: PhoneNumber, code: str):
     验证码登录
 
     Args:
-        phonenumber(str): 手机号类
-        code(str)       : 验证码
+        phonenumber (str): 手机号类
+        code        (str): 验证码
 
     Returns:
         Credential: 凭据类
@@ -499,15 +502,12 @@ class Check:
         self.now_time = time.perf_counter()
         self.phonenumber = None
 
-    def set_phone(self, phonenumber):
+    def set_phone(self, phonenumber: PhoneNumber):
         """
         设置手机号
 
         Args:
-            phonenumber: 手机号类
-
-        Returns:
-            None
+            phonenumber (PhoneNumber): 手机号类
         """
         self.phonenumber = phonenumber
 
@@ -527,7 +527,7 @@ class Check:
         登录
 
         Args:
-            code(str)       : 验证码
+            code (str): 验证码
 
         Returns:
             Credential: 凭据类

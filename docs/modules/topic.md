@@ -31,7 +31,7 @@ from bilibili_api import topic
 
 获取话题简介
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_cards()
 
@@ -41,4 +41,4 @@ from bilibili_api import topic
 
 获取话题下的内容
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果

@@ -10,7 +10,7 @@ from bilibili_api import login_func
 
 ---
 
-## const list countries_list
+## const list COUNTRIES_LIST
 
 国际地区代码列表
 
@@ -66,7 +66,10 @@ from bilibili_api import login_func
 
 bilibili_api 完成极验验证的方式是新建一个 `http.server.HttpServer`。~~具体实现抄了 `pydoc`(Python 模块文档)~~
 
-返回的是验证码服务的进程，验证码服务的地址是返回值的 url 属性。
+返回值内函数及属性: 
+    - url   (str)     : 验证码服务地址
+    - start (Callable): 开启进程
+    - stop  (Callable): 结束进程
 
 ``` python
 print(start_geetest_server().url)
@@ -80,6 +83,6 @@ print(start_geetest_server().url)
 
 ### def done_geetest()
 
-检查是否完成了极验验证。**如果没有完成极验验证码就开始短信登录，那么可能会让你的项目卡住。**
+检查是否完成了极验验证。**如果没有完成极验验证码就开始短信登录发送短信，那么可能会让你的项目卡住。**
 
 **Returns:** bool: 是否完成极验验证

@@ -11,12 +11,15 @@ API = get_api("topic")
 class Topic:
     """
     话题类
+
+    Attributes:
+        credential (Credential): 凭据类
     """
     def __init__(self, topic_id: int, credential: Credential = None):
         """
         Args:
-            topic_id  (int)       : 话题 id
-            credential(Credential): 凭据类
+            topic_id   (int)       : 话题 id
+            credential (Credential): 凭据类
         """
         self.__topic_id = topic_id
         self.credential = credential if credential else Credential()

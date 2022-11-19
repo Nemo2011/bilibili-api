@@ -65,6 +65,8 @@ $ sudo apt-get install python3-tk
 
 ## class PhoneNumber()
 
+手机号类
+
 ### Functions
 
 #### def \_\_init\_\_()
@@ -125,6 +127,8 @@ $ sudo apt-get install python3-tk
 ---
 
 ## <span id="check"> class Check </span>
+
+验证类，如果密码登录需要验证会返回此类
 
 ### Functions
 

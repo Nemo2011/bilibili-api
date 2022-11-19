@@ -32,7 +32,7 @@ async def fetch_session_msgs(
         begin_seqno  (int)       : 起始 Seqno
 
     Returns:
-        调用 API 返回结果
+        dict: 调用 API 返回结果
     """
 
     credential.raise_for_no_sessdata()
@@ -57,7 +57,7 @@ async def new_sessions(
         begin_ts   (int)       : 起始时间戳
 
     Returns:
-        调用 API 返回结果
+        dict: 调用 API 返回结果
     """
 
     credential.raise_for_no_sessdata()
@@ -76,7 +76,7 @@ async def get_sessions(credential: Credential, session_type: int = 4):
         session_type (int)       : 会话类型 1: 私聊, 2: 通知, 3: 应援团, 4: 全部
 
     Returns:
-        调用 API 返回结果
+        dict: 调用 API 返回结果
     """
 
     credential.raise_for_no_sessdata()
@@ -98,12 +98,12 @@ async def send_msg(credential: Credential, receiver_id: int, text: str):
     给用户发送私聊信息。目前仅支持纯文本。
 
     Args:
-        credential (Credential): 凭证
-        receiver_id (int): 接收者 UID
-        text (str): 信息内容。
+        credential  (Credential): 凭证
+        receiver_id (int)       : 接收者 UID
+        text        (str)       : 信息内容。
 
     Returns:
-        dict: 调用接口返回的内容。
+        dict: 调用 API 返回结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -133,6 +133,16 @@ async def send_msg(credential: Credential, receiver_id: int, text: str):
 class Picture:
     """
     图片类，包含图片链接、尺寸以及下载操作。
+
+    Args:
+    | name      | type | description     |
+    | --------- | ---- | --------------- |
+    | height    | int  | 高度            |
+    | imageType | str  | 格式，例如: png |
+    | original  | int  | 未知，默认为 1  |
+    | size      | str  | 尺寸            |
+    | url       | str  | 图片链接        |
+    | width     | int  | 宽度            |  
     """
 
     height: int
@@ -143,6 +153,9 @@ class Picture:
     width: int
 
     async def download(self, filepath: str = ""):
+        """
+        下载图片
+        """
         if not filepath:
             filepath = self.url.replace("https://message.biliimg.com/bfs/im/", "")
         async with httpx.AsyncClient() as session:

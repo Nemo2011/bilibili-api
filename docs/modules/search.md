@@ -102,9 +102,9 @@ from bilibili_api import search
 | name    | type   | description      |
 |---------|--------|------------------|
 | keyword | str | 搜索关键词            |
-| page    | int    | 页数，defaults to 1 |
+| page    | int    | 页数. Defaults to 1 |
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def search_by_type()
 
@@ -122,19 +122,19 @@ from bilibili_api import search
 | debug_param_func | func                                            | 参数回调器，用来存储或者什么的                                            |
 | page             | int                                             | 页数，defaults to 1                                           |
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_default_search_keyword()
 
 获取默认的搜索内容
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_hot_search_keywords()
 
 获取热搜
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_suggest_keywords()
 

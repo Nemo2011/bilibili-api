@@ -18,11 +18,11 @@ async def get_hot_videos(pn: int = 1, ps: int = 20):
     获取热门视频
 
     Args:
-        pn(int): 第几页, default to 1
-        ps(int): 每页视频数, default to 20
+        pn (int): 第几页. Default to 1.
+        ps (int): 每页视频数. Default to 20.
 
     Returns:
-        调用 API 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["hot"]
     params = {"ps": ps, "pn": pn}
@@ -45,10 +45,10 @@ async def get_weakly_hot_videos(week: int = 1):
     获取一周的每周必看视频列表
 
     Args:
-        week(int): 第几周, default to 1
+        week(int): 第几周. Default to 1. 
 
     Returns:
-        调用 API 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["weakly_details"]
     params = {"number": week}
@@ -60,7 +60,7 @@ async def get_history_popular_videos():
     获取入站必刷 85 个视频
 
     Returns:
-        调用 API 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["history_popular"]
     params = {"page_size": 85, "page": 1}
@@ -72,7 +72,7 @@ async def get_rank():
     获取视频排行榜
 
     Returns:
-        调用 API 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["ranking"]
     params = {"type": "all", "rid": 0}
@@ -96,7 +96,7 @@ async def get_music_rank_weakly_detail(week: int = 1):
     获取全站音乐榜一周的详细信息(不包括具体的音频列表)
 
     Args:
-        week(int): 第几周
+        week(int): 第几周. Defaults to 1. 
 
     Returns:
         dict: 调用 API 返回的结果
@@ -111,7 +111,7 @@ async def get_music_rank_weakly_musics(week: int = 1):
     获取全站音乐榜一周的音频列表
 
     Args:
-        week(int): 第几周
+        week(int): 第几周. Defaults to 1. 
 
     Returns:
         dict: 调用 API 返回的结果

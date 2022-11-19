@@ -17,7 +17,7 @@ from bilibili_api import session
 
 获取指定用户的近三十条消息
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回结果
 
 #### async def new_sessions()
 
@@ -28,7 +28,7 @@ from bilibili_api import session
 
 获取新消息
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回结果
 
 #### async def get_sessions()
 
@@ -39,7 +39,7 @@ from bilibili_api import session
 
 获取已有消息
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回结果
 
 #### async def send_msg()
 
@@ -51,10 +51,11 @@ from bilibili_api import session
 
 给用户发送私聊信息。目前仅支持纯文本。
 
-**Returns:** 调用接口返回的内容。
+**Returns:** dict: 调用 API 返回结果
 
 ---
 
+**@dataclass**
 ## class Picture
 
 图片类，包含图片链接、尺寸以及下载操作。
