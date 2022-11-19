@@ -181,7 +181,7 @@ def get_session():
     if session is None or last_proxy != settings.proxy:
         if settings.proxy != "":
             last_proxy = settings.proxy
-            proxies = {settings.proxy_use: settings.proxy}
+            proxies = {"all://": settings.proxy}
             session = httpx.AsyncClient(proxies=proxies)
         else:
             last_proxy = ""

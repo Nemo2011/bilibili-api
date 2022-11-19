@@ -1,7 +1,7 @@
 """
 bilibili_api.channel
 
-频道相关操作。
+分区相关操作。
 """
 
 import json

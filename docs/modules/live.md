@@ -68,7 +68,7 @@ from bilibili_api import live
 | name | type | description |
 | ---- | ---- | ----------- |
 | credential | Credential | 凭据 |
-| room_display_id | 房间展示 ID |
+| room_display_id | int | 房间展示 ID |
 
 ### Functions
 
@@ -81,21 +81,25 @@ from bilibili_api import live
 
 #### async def start()
 
+| name | type | description |
+| - | - | - |
+| area_id | int | 直播分区id（子分区id）。可使用 live_area 模块查询。 |
+
 开始直播
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def stop()
 
 停止直播
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_room_play_info()
 
 获取房间信息（真实房间号，直播状态，封禁情况等）
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_room_id()
 
@@ -103,17 +107,23 @@ from bilibili_api import live
 
 **Returns:** 真实房号
 
+#### async def get_ruid()
+
+获取真实房间 id
+
+**Returns:** 真实房间 id
+
 #### async def get_chat_conf()
 
 获取聊天弹幕服务器配置信息(websocket)
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_room_info()
 
 获取直播间信息（标题，简介，直播状态，直播开始时间，分区信息等）
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_fan_model()
 
@@ -129,13 +139,13 @@ from bilibili_api import live
 
 如果带有主播 id ，就返回主播的粉丝牌，没有就返回 null
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_user_info_in_room()
 
 获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_dahanghai()
 
@@ -145,25 +155,25 @@ from bilibili_api import live
 
 获取大航海列表
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_seven_rank()
 
 获取七日榜
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_fans_medal_rank()
 
 获取粉丝勋章排行
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_black_list()
 
 获取房间黑名单
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_room_play_url()
 
@@ -173,7 +183,7 @@ from bilibili_api import live
 
 获取房间直播流列表
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_room_play_info_v2()
 
@@ -186,7 +196,7 @@ from bilibili_api import live
 
 获取房间信息及可用清晰度列表
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_general_info()
 
@@ -196,13 +206,13 @@ from bilibili_api import live
 
 获取自己在该房间的大航海信息, 比如是否开通, 等级等
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_gift_common()
 
 获取当前直播间内的普通礼物列表，此 API 只返回 `gift_id`，不包含礼物 `price` 参数
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_gift_special()
 
@@ -212,24 +222,7 @@ from bilibili_api import live
 
 获取当前直播间内的特殊礼物列表
 
-**Returns:** API 调用返回结果
-
-#### async def get_live_followers_info()
-
-| name           | type           | description                          |
-| -------------- | -------------- | ------------------------------------ |
-| need_recommend | bool, optional | 是否接受推荐直播间. Defaults to True |
-
-获取关注列表中正在直播的直播间信息，包括房间直播热度，房间名称及标题，清晰度，是否官方认证等信息。
-
-#### async def get_unlive_followers_info()
-
-| name      | type          | description              |
-| --------- | ------------- | ------------------------ |
-| page      | int, optional | 页码. Defaults to 1      |
-| page_size | int, optional | 每页数量. Defaults to 30 |
-
-获取关注列表中未在直播的直播间信息，包括上次开播时间，上次开播的类别，直播间公告，是否有录播等。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def ban_user()
 
@@ -239,7 +232,7 @@ from bilibili_api import live
 
 封禁用户
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def unban_user()
 
@@ -259,7 +252,7 @@ from bilibili_api import live
 
 领取自己在直播间内所有可领取的航海日志奖励
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def sign_up_dahanghai()
 
@@ -269,7 +262,7 @@ from bilibili_api import live
 
 航海日志每日签到
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def send_danmaku()
 
@@ -279,7 +272,7 @@ from bilibili_api import live
 
 直播间发送弹幕
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### asyc def send_gift_from_bag()
 
@@ -294,7 +287,7 @@ from bilibili_api import live
 
 直播间赠送背包中的礼物
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### asyc def send_gift_gold()
 
@@ -308,7 +301,7 @@ from bilibili_api import live
 
 在直播间赠送金瓜子礼物，礼物id可通过 `get_gift_commom` 或 `get_gift_special` 或 `get_gift_config` 获取.
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 #### asyc def send_gift_silver()
 
@@ -328,7 +321,7 @@ from bilibili_api import live
 
 ## class LiveDanmaku
 
-**Extends:** bilibili_api.utils.asyncEvent.asyncEvent
+**Extends:** bilibili_api.utils.asyncEvent.AsyncEvent
 
 Websocket 实时获取直播弹幕
 
@@ -397,7 +390,7 @@ Websocket 实时获取直播弹幕
 
 获取自己直播等级、排行、硬币数、金银瓜子数等信息
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_self_live_info()
 
@@ -407,7 +400,7 @@ Websocket 实时获取直播弹幕
 
 获取自己直播间的等级、粉丝牌、自己开通的大航海数量等信息
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_self_bag()
 
@@ -417,13 +410,13 @@ Websocket 实时获取直播弹幕
 
 获取自己的直播礼物包裹信息
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_area_info()
 
 获取所有分区信息
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_gift_config()
 
@@ -439,7 +432,7 @@ Websocket 实时获取直播弹幕
 
 但即使限定了三个条件，仍然会返回约 1.5w 行的 json。不加限定则是 2.8w 行。
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_self_dahanghai_info()
 
@@ -451,7 +444,28 @@ Websocket 实时获取直播弹幕
 
 获取自己开通的大航海列表
 
-**Returns:** API 调用返回结果
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
+#### async def get_live_followers_info()
+
+| name           | type           | description                          |
+| -------------- | -------------- | ------------------------------------ |
+| need_recommend | bool, optional | 是否接受推荐直播间. Defaults to True |
+
+获取关注列表中正在直播的直播间信息，包括房间直播热度，房间名称及标题，清晰度，是否官方认证等信息。
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_unlive_followers_info()
+
+| name      | type          | description              |
+| --------- | ------------- | ------------------------ |
+| page      | int, optional | 页码. Defaults to 1      |
+| page_size | int, optional | 每页数量. Defaults to 30 |
+
+获取关注列表中未在直播的直播间信息，包括上次开播时间，上次开播的类别，直播间公告，是否有录播等。
+
+
+**Returns:** dict: 调用 API 返回的结果
