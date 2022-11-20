@@ -1,3 +1,8 @@
+"""
+bilibili_api.video_uploader
+
+视频上传
+"""
 import asyncio
 from asyncio.exceptions import CancelledError
 from asyncio.tasks import Task, create_task
