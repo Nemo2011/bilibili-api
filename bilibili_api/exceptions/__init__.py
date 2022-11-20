@@ -14,3 +14,5 @@ from .CredentialNoDedeUserIDException import *
 from .DanmakuClosedException import *
 from .VideoUploadException import *
 from .LoginError import *
+from .LiveException import LiveException
+from .DynamicExceedImagesException import DynamicExceedImagesException
