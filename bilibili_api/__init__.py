@@ -5,15 +5,10 @@ bilibili_api
 import asyncio
 import platform
 
-# Modules
 from . import (app, article, ass, audio, bangumi, black_room, channel, cheese,
                comment, dynamic, favorite_list, game, homepage,
                interactive_video, live, login, login_func, rank, search,
                settings, topic, user, video, video_uploader)
-from .article import ARTICLE_COLOR_MAP
-from .black_room import BLACK_TYPE
-# CONSTANTS
-from .video import AUDIO_QUALITY, VIDEO_CODECS, VIDEO_QUALITY
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
 from .errors import *
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
