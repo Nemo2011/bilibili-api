@@ -15,14 +15,11 @@ from .black_room import BLACK_TYPE
 # CONSTANTS
 from .video import AUDIO_QUALITY, VIDEO_CODECS, VIDEO_QUALITY
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
-# Errors
 from .errors import *
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
-# Models
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
 from .utils.get_item import GetItemObjectType, get_item
-# Functions
 from .utils.parse_link import ResourceType, parse_link
 from .utils.short import get_real_url
 from .utils.sync import sync
