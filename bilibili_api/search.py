@@ -202,7 +202,7 @@ async def search_by_type(
         elif 10 < time_range <= 30:
             time_code = 2
         elif 0 < time_range <= 10:
-            time_code = 2
+            time_code = 1
         else:
             time_code = 0
         params["duration"] = time_code
