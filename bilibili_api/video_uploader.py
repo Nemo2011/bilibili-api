@@ -11,7 +11,6 @@ import time
 
 from .video import Video
 from .utils.aid_bvid_transformer import bvid2aid
-from . import settings
 from .utils.Credential import Credential
 from copy import copy, deepcopy
 from .exceptions.ResponseCodeException import ResponseCodeException
@@ -20,15 +19,11 @@ from enum import Enum
 
 from .exceptions.ApiException import ApiException
 from .exceptions.NetworkException import NetworkException
-from typing import TypedDict, List
-from hashlib import md5
-import base64
-from urllib.parse import quote_plus
-import mimetypes
+from typing import List
 
 from .utils.AsyncEvent import AsyncEvent
-from .utils.network_httpx import get_session, request, to_form_urlencoded
-from .utils.utils import chunk, get_api
+from .utils.network_httpx import get_session, request
+from .utils.utils import get_api
 
 from .dynamic import upload_image
 
@@ -440,7 +435,7 @@ class VideoUploader(AsyncEvent):
             return result
         except CancelledError:
             # 忽略 task 取消异常
-            self.dispatch(VideoUploaderEvents.ABORTED.value)
+            pass
         except Exception as e:
             self.dispatch(VideoUploaderEvents.FAILED.value, {"err": e})
             raise e
@@ -803,6 +798,7 @@ class VideoEditor(AsyncEvent):
     Attributes:
         bvid (str)             : 稿件 BVID
         meta (dict)            : 视频信息
+        cover_path (str)       : 封面路径. Defaults to None(不更换封面). 
         credential (Credential): 凭据类. Defaults to None. 
     """
     def __init__(self, bvid: str, meta: dict, cover_path: str = None, credential: Credential = None):
@@ -824,7 +820,6 @@ class VideoEditor(AsyncEvent):
             "desc": "str: 描述",
             "dynamic": "str: 动态信息",
             "interactive": "const int: 0",
-            "aid": "int: aid",
             "new_web_edit": "const int: 1",
             "act_reserve_create": "const int: 0",
             "handle_staff": "const bool: false",
@@ -845,6 +840,7 @@ class VideoEditor(AsyncEvent):
         self.cover_path = cover_path
         self.__old_configs = {}
         self.meta["aid"] = bvid2aid(bvid)
+        self.__task: Task = None
 
     async def _fetch_configs(self):
         """
@@ -916,3 +912,35 @@ class VideoEditor(AsyncEvent):
         self.meta["tid"] = self.__old_configs["archive"]["tid"]
         await self._change_cover()
         await self._submit()
+        self.dispatch(VideoEditorEvents.COMPLETED)
+
+    async def start(self) -> dict:
+        """
+        开始更改
+
+        Returns:
+            dict: 返回带有 bvid 和 aid 的字典。
+        """
+
+        task = create_task(self._main())
+        self.__task = task
+
+        try:
+            result = await task
+            self.__task = None
+            return result
+        except CancelledError:
+            # 忽略 task 取消异常
+            pass
+        except Exception as e:
+            self.dispatch(VideoEditorEvents.FAILED.value, {"err": e})
+            raise e
+
+    async def abort(self):
+        """
+        中断更改
+        """
+        if self.__task:
+            self.__task.cancel("用户手动取消")
+
+        self.dispatch(VideoEditorEvents.ABORTED.value, None)
