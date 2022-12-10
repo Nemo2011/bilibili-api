@@ -109,10 +109,10 @@ from bilibili_api import user
 
 合集与列表类型
 
-+ SERIES: 旧版
-+ SEASON: 新版
++ SERIES: 相同视频分类
++ SEASON: 新概念多 P
 
-**新版合集名字为`合集·XXX`，请注意区别**
+**SEASON 类合集与列表名字为`合集·XXX`，请注意区别**
 
 ---
 

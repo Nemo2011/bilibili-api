@@ -762,10 +762,10 @@ class ChannelSeriesType(Enum):
     """
     合集与列表类型
 
-    + SERIES: 旧版
-    + SEASON: 新版
+    + SERIES: 相同视频分类
+    + SEASON: 新概念多 P
 
-    **新版合集名字为`合集·XXX`，请注意区别**
+    **SEASON 类合集与列表名字为`合集·XXX`，请注意区别**
     """
 
     SERIES = 0
@@ -775,21 +775,24 @@ class ChannelSeriesType(Enum):
 class ChannelSeries:
     """
     合集与列表类
+
+    Attributes:
+        credential (Credential): 凭据类. Defaults to None.
     """
 
     def __init__(
         self,
         uid: int,
-        type_: ChannelSeriesType = ChannelSeriesType.SEASON,
-        id_: int = 0,
+        type_: ChannelSeriesType,
+        id_: int,
         credential: Credential = None,
         meta=None,
     ):
         """
-        uid(int)                : 用户 uid
+        uid(int)                : 用户 uid. Defaults to None. 
         type_(ChannelSeriesType): 合集与列表类型
         id_(int)                : season_id 或 series_id
-        credential(Credential)  : 凭证
+        credential(Credential)  : 凭证. Defaults to None. 
         """
         self.__uid = uid
         self.is_new = type_.value
