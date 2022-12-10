@@ -18,6 +18,7 @@ from .utils.get_item import GetItemObjectType, get_item
 from .utils.parse_link import ResourceType, parse_link
 from .utils.short import get_real_url
 from .utils.sync import sync
+from .utils.AsyncEvent import AsyncEvent
 
 # 如果系统为 Windows，则修改默认策略，以解决代理报错问题
 if "windows" in platform.system().lower():
