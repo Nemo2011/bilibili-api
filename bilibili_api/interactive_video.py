@@ -190,6 +190,40 @@ class InteractiveJumpingCondition:
     def __str__(self):
         return f"{self.__command}"
 
+class InteractiveJumpingCommand:
+    """
+    节点跳转对变量的操作
+    """
+    def __init__(self, var: List[InteractiveVariable] = [], command: str = ""):
+        """
+        Args:
+            var       (List[InteractiveVariable]): 所有变量
+            condition (str)                      : 公式
+        """
+        self.__vars = var
+        self.__command = command
+
+    def run_command(self):
+        """
+        执行操作
+
+        Returns:
+            List[InteractiveVariable]
+        """
+        if self.__command == "": 
+            return self.__vars
+        for code in self.__command.split(";"):
+            var_name_ = code.split("=")[0]
+            var_new_value = code.split("=")[1]
+            for var in self.__vars:
+                var_name = var.get_id()
+                var_value = var.get_value()
+                var_new_value = var_new_value.replace(var_name, str(var_value))
+            var_new_value_calc = eval(var_new_value)
+            for var in self.__vars:
+                if var.get_id() == var_name_:
+                    var._InteractiveVariable__var_value = var_new_value_calc
+        return self.__vars
 
 class InteractiveNode:
     """
@@ -201,18 +235,22 @@ class InteractiveNode:
         video: InteractiveVideo,
         node_id: int,
         cid: int,
+        vars: List[InteractiveVariable], 
         button: InteractiveButton = None,
         condition: InteractiveJumpingCondition = InteractiveJumpingCondition(),
+        native_command: InteractiveJumpingCommand = InteractiveJumpingCommand(),
         is_default: bool = False,
     ):
         """
         Args:
-            video      (InteractiveVideo)           : 视频类
-            node_id    (int)                        : 节点 id
-            cid        (int)                        : CID
-            button     (InteractiveButton)          : 对应的按钮
-            condition  (InteractiveJumpingCondition): 跳转公式
-            is_default (bool)                       : 是不是默认的跳转的节点
+            video          (InteractiveVideo)           : 视频类
+            node_id        (int)                        : 节点 id
+            cid            (int)                        : CID
+            vars           (List[InteractiveVariable])  : 变量
+            button         (InteractiveButton)          : 对应的按钮
+            condition      (InteractiveJumpingCondition): 跳转公式
+            native_command (InteractiveJumpingCommand)  : 跳转时变量操作
+            is_default     (bool)                       : 是不是默认的跳转的节点
         """
         self.__parent = video
         self.__id = node_id
@@ -220,6 +258,9 @@ class InteractiveNode:
         self.__button = button
         self.__jumping_command = condition
         self.__is_default = is_default
+        self.__vars = vars
+        self.__command = native_command
+        self.__vars = self.__command.run_command()
 
     async def get_vars(self) -> List[InteractiveVariable]:
         """
@@ -228,22 +269,7 @@ class InteractiveNode:
         Returns:
             List[InteractiveVariable]: 节点的所有变量
         """
-        edge_info = await self.__parent.get_edge_info(self.__id)
-        node_vars = edge_info["hidden_vars"]
-        var_list = []
-        for var in node_vars:
-            var_value = var["value"]
-            var_name = var["name"]
-            var_show = var["is_show"]
-            var_id = var["id_v2"]
-            if var["type"] == 2:
-                random = True
-            else:
-                random = False
-            var_list.append(
-                InteractiveVariable(var_name, var_id, var_value, var_show, random)
-            )
-        return var_list
+        return self.__vars
 
     async def get_children(self) -> List[InteractiveNode]:
         """
@@ -270,20 +296,24 @@ class InteractiveNode:
             node_condition = InteractiveJumpingCondition(
                 await self.get_vars(), node["condition"]
             )
+            node_command = InteractiveJumpingCommand(
+                await self.get_vars(), node["native_action"]
+            )
             if "is_default" in node.keys():
                 node_is_default = node["is_default"]
             else:
                 node_is_default = False
-            nodes.append(
-                InteractiveNode(
-                    self.__parent,
-                    node_id,
-                    node_cid,
-                    node_button,
-                    node_condition,
-                    node_is_default,
-                )
-            )
+            node_vars = copy.deepcopy(await self.get_vars())
+            nodes.append(InteractiveNode(
+                self.__parent,
+                node_id,
+                node_cid,
+                node_vars,
+                node_button,
+                node_condition,
+                node_command,
+                node_is_default,
+            ))
         return nodes
 
     def is_default(self):
@@ -340,7 +370,7 @@ class InteractiveGraph:
         """
         self.__parent = video
         self.__skin = skin
-        self.__node = InteractiveNode(self.__parent, None, root_cid)
+        self.__node = InteractiveNode(self.__parent, None, root_cid, [])
 
     def get_video(self):
         return self.__parent
@@ -348,13 +378,32 @@ class InteractiveGraph:
     def get_skin(self):
         return self.__skin
 
-    def get_root_node(self):
+    async def get_root_node(self):
         """
         获取根节点
 
         Returns:
             InteractiveNode: 根节点
         """
+        edge_info = await self.__parent.get_edge_info(None)
+        node_vars = edge_info["hidden_vars"]
+        var_list = []
+        for var in node_vars:
+            var_value = var["value"]
+            var_name = var["name"]
+            var_show = var["is_show"]
+            var_id = var["id_v2"]
+            if var["type"] == 2:
+                random = True
+            else:
+                random = False
+            var_list.append(
+                InteractiveVariable(var_name, var_id, var_value, var_show, random)
+            )
+        self.__node._InteractiveNode__command = InteractiveJumpingCommand(
+            var_list
+        )
+        self.__node._InteractiveNode__vars = var_list
         return self.__node
 
     async def get_children(self):
