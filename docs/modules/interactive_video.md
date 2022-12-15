@@ -148,6 +148,21 @@ o----|xxx| (TEXT_RIGHT)
 
 ---
 
+## class InteractiveJumpingCommand
+
+节点跳转对变量的操作
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| var | List[InteractiveVariable] | 所有变量 |
+| condition | str | 公式 |
+
+---
+
 ## class InteractiveNode
 
 互动视频节点类
@@ -161,8 +176,10 @@ o----|xxx| (TEXT_RIGHT)
 | video | InteractiveVideo | 视频类 |
 | node_id | int | 节点 id |
 | cid | int | CID |
+| vars | List[InteractiveVariable] | 变量 |
 | button | InteractiveButton | 对应的按钮 |
 | condition | InteractiveJumpingCondition | 跳转公式 |
+| native_command | InteractiveJumpingCommand | 跳转时变量的操作 |
 | is_default | bool | 是不是默认的跳转的节点 |
 
 #### async def get_vars()
@@ -251,7 +268,7 @@ o----|xxx| (TEXT_RIGHT)
 
 **Returns:** 样式
 
-#### def get_root_node()
+#### async def get_root_node()
 
 获取根节点
 
