@@ -11,6 +11,8 @@ import datetime
 import enum
 import json
 import os
+import shutil
+import time
 from typing import Callable, List
 from .utils.Credential import Credential
 from .utils.utils import get_api
@@ -18,6 +20,9 @@ from .utils.network_httpx import request, get_session
 from .video import Video
 from urllib import parse
 from random import randint as rand
+import requests
+from . import settings
+import zipfile
 
 API = get_api("interactive_video")
 
@@ -596,9 +601,42 @@ class InteractiveVideo(Video):
         """
         return await super().get_history_danmaku_index(date, cid)
 
-async def download(v: InteractiveVideo, out: str = "", debug_func: Callable = print):
+def __download(url: str, out: str, debug_func: Callable):
+    resp = requests.get(
+        url,
+        headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"},
+        proxies={"all://": settings.proxy},
+        stream=True,
+    )
+    resp.raise_for_status()
+
+    if os.path.exists(out):
+        os.remove(out)
+
+    parent = os.path.dirname(out)
+    if not os.path.exists(parent):
+        os.mkdir(parent)
+
+    debug_func("DWN_BEGIN", url, out)
+
+    all_length = int(resp.headers["Content-Length"])
+    parts = all_length // 1024 + (1 if all_length % 1024 != 0 else 0)
+    cnt = 0
+    start_time = time.perf_counter()
+
+    with open(out, "wb") as f:
+        for chunk in resp.iter_content(1024):
+            cnt += 1
+            debug_func("DWN_PART", str(cnt), str(parts), str(int(time.perf_counter() - start_time)))
+            f.write(chunk)
+
+    debug_func("DWN_COPLETE")
+
+async def download(v: InteractiveVideo, out: str = "", debug_func: Callable = print, download_func: Callable = __download):
     # 初始化
+    debug_func("START")
     if out == "": out = v.get_bvid() + ".ivi"
+    if out.endswith(".ivi"): out = out.rstrip(".ivi")
     tmp_dir_name = out + ".tmp"
     if not os.path.exists(tmp_dir_name):
         os.mkdir(tmp_dir_name)
@@ -611,9 +649,9 @@ async def download(v: InteractiveVideo, out: str = "", debug_func: Callable = pr
             "cid": None,
             "button": None, 
             "condition": None, 
-            "vars": None, 
             "jump_type": None, 
-            "is_default": None
+            "is_default": None, 
+            "command": None
         }
     def var2dict(var: InteractiveVariable):
         return {
@@ -642,12 +680,10 @@ async def download(v: InteractiveVideo, out: str = "", debug_func: Callable = pr
         "pos": (n.get_self_button().get_pos())
     }
     edges_info[n.get_node_id()]['vars'] = [var2dict(var) for var in (await n.get_vars())]
-    edges_info[n.get_node_id()]['condition'] = {
-        "value": n.get_jumping_condition()._InteractiveJumpingCondition__command, 
-        "vars": [var2dict(var) for var in (n.get_jumping_condition()._InteractiveJumpingCondition__vars)]
-    }
+    edges_info[n.get_node_id()]['condition'] = n.get_jumping_condition()._InteractiveJumpingCondition__command, 
     edges_info[n.get_node_id()]['jump_type'] = 0
     edges_info[n.get_node_id()]['is_default'] = True
+    edges_info[n.get_node_id()]['command'] = n._InteractiveNode__command._InteractiveJumpingCommand__command
 
     while queue:
         # 出队
@@ -702,14 +738,35 @@ async def download(v: InteractiveVideo, out: str = "", debug_func: Callable = pr
                     "show": var.is_show(), 
                     "random": var.is_random()
                 }
-            edges_info[n.get_node_id()]['vars'] = [var2dict(var) for var in (await n.get_vars())]
-            edges_info[n.get_node_id()]['condition'] = {
-                "value": n.get_jumping_condition()._InteractiveJumpingCondition__command, 
-                "vars": [var2dict(var) for var in (n.get_jumping_condition()._InteractiveJumpingCondition__vars)]
-            }
+            edges_info[n.get_node_id()]['condition'] = n.get_jumping_condition()._InteractiveJumpingCondition__command
             edges_info[n.get_node_id()]['jump_type'] = await now_node.get_jumping_type()
             edges_info[n.get_node_id()]['is_default'] = n.is_default()
+            edges_info[n.get_node_id()]['command'] = n._InteractiveNode__command._InteractiveJumpingCommand__command
+            edges_info[now_node.get_node_id()]['sub'] = [n.get_node_id() for n in await now_node.get_children()]
             # 所有可达顶点 ID 入队
             queue.insert(0, n)
 
     json.dump(edges_info, open(tmp_dir_name + "/ivi.json", "w+"), indent = 2, ensure_ascii = False)
+
+    for key, item in edges_info.items():
+        cid = item["cid"]
+        url = await v.get_download_url(cid)
+        download_func(url["dash"]["video"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".video.mp4", debug_func)
+        download_func(url["dash"]["audio"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".audio.mp4", debug_func)
+
+    cid = await v.get_cid()
+    url = await v.get_download_url(cid)
+    download_func(url["dash"]["video"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".video.mp4", debug_func)
+    download_func(url["dash"]["audio"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".audio.mp4", debug_func)
+
+    debug_func("PACKAGING")
+    zip = zipfile.ZipFile(out + ".ivi", "w", zipfile.ZIP_DEFLATED)  # outFullName为压缩文件的完整路径
+    for path, dirnames, filenames in os.walk(tmp_dir_name):
+        # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
+        fpath = path.replace(tmp_dir_name, '')
+
+        for filename in filenames:
+            zip.write(os.path.join(path, filename), os.path.join(fpath, filename))
+    zip.close()
+    shutil.rmtree(tmp_dir_name)
+    debug_func("SUCCESS")
