@@ -9,7 +9,9 @@ bilibili_api.interactive_video
 import copy
 import datetime
 import enum
-from typing import List
+import json
+import os
+from typing import Callable, List
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
@@ -135,6 +137,7 @@ class InteractiveButton:
         """
         self.__text = text
         self.__pos = (x, y)
+        if isinstance(align, InteractiveButtonAlign): align = align.value
         self.__align = align
 
     def get_text(self):
@@ -370,7 +373,7 @@ class InteractiveGraph:
         """
         self.__parent = video
         self.__skin = skin
-        self.__node = InteractiveNode(self.__parent, None, root_cid, [])
+        self.__node = InteractiveNode(self.__parent, 1, root_cid, [])
 
     def get_video(self):
         return self.__parent
@@ -579,16 +582,134 @@ class InteractiveVideo(Video):
             cid   (int, optional) : 分 P 的 ID。Defaults to None
             html5 (bool, optional): 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。
         """
-        return await super().get_download_url(cid, html5)
+        return await super().get_download_url(cid = cid, html5 = html5)
 
     async def get_history_danmaku_index(
         self, date: datetime.date = None, cid: int = None
     ):
         """
-        获取视频下载信息。
+        获取特定月份存在历史弹幕的日期。
 
         Args:
             cid  (int, optional)          : 分 P 的 ID。Defaults to None
             date (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
         """
         return await super().get_history_danmaku_index(date, cid)
+
+async def download(v: InteractiveVideo, out: str = "", debug_func: Callable = print):
+    # 初始化
+    if out == "": out = v.get_bvid() + ".ivi"
+    tmp_dir_name = out + ".tmp"
+    if not os.path.exists(tmp_dir_name):
+        os.mkdir(tmp_dir_name)
+    def createEdge(edge_id: int):
+        """
+        创建节点信息到 edges_info
+        """
+        edges_info[edge_id] = {
+            "title": None,
+            "cid": None,
+            "button": None, 
+            "condition": None, 
+            "vars": None, 
+            "jump_type": None, 
+            "is_default": None
+        }
+    def var2dict(var: InteractiveVariable):
+        return {
+            "name": var.get_name(), 
+            "id": var.get_id(), 
+            "value": var.get_value(), 
+            "show": var.is_show(), 
+            "random": var.is_random()
+        }
+
+
+    # 存储顶点信息
+    edges_info = {}
+
+    # 使用队列来遍历剧情图，初始为 None 是为了从初始顶点开始
+    queue: List[InteractiveNode] = [await (await v.get_graph()).get_root_node()]
+
+    # 设置初始顶点
+    n = await (await v.get_graph()).get_root_node()
+    if n.get_node_id() not in edges_info:
+        createEdge(n.get_node_id())
+    edges_info[n.get_node_id()]['cid'] = n.get_cid()
+    edges_info[n.get_node_id()]['button'] = {
+        "text": n.get_self_button().get_text(), 
+        "align": n.get_self_button().get_align(), 
+        "pos": (n.get_self_button().get_pos())
+    }
+    edges_info[n.get_node_id()]['vars'] = [var2dict(var) for var in (await n.get_vars())]
+    edges_info[n.get_node_id()]['condition'] = {
+        "value": n.get_jumping_condition()._InteractiveJumpingCondition__command, 
+        "vars": [var2dict(var) for var in (n.get_jumping_condition()._InteractiveJumpingCondition__vars)]
+    }
+    edges_info[n.get_node_id()]['jump_type'] = 0
+    edges_info[n.get_node_id()]['is_default'] = True
+
+    while queue:
+        # 出队
+        now_node = queue.pop()
+
+        if now_node.get_node_id() in edges_info and edges_info[now_node.get_node_id()]['title'] is not None and edges_info[now_node.get_node_id()]['cid'] is not None:
+            # 该情况为已获取到所有信息，说明是跳转到之前已处理的顶点，不作处理
+            continue
+
+        # 获取顶点信息，最大重试 3 次
+        retry = 3
+        while True:
+            try:
+                node = await now_node.get_info()
+                debug_func("GET", node['title'], now_node.get_node_id())
+                break
+            except Exception as e:
+                retry -= 1
+                if retry < 0:
+                    raise e
+
+        # 下载节点
+
+        # 检查节顶点是否在 edges_info 中，本次步骤得到 title 信息
+        if node['edge_id'] not in edges_info:
+            # 不在，新建
+            createEdge(node['edge_id'])
+
+        # 设置 title
+        edges_info[node['edge_id']]['title'] = node['title']
+
+        # 无可达顶点，即不能再往下走了，类似树的叶子节点
+        if 'questions' not in node['edges']:
+            continue
+
+        # 遍历所有可达顶点
+        for n in (await now_node.get_children()):
+            # 该步骤获取顶点的 cid（视频分 P 的 ID）
+            if n.get_node_id() not in edges_info:
+                createEdge(n.get_node_id())
+            edges_info[n.get_node_id()]['cid'] = n.get_cid()
+            edges_info[n.get_node_id()]['button'] = {
+                "text": n.get_self_button().get_text(), 
+                "align": n.get_self_button().get_align(), 
+                "pos": n.get_self_button().get_pos()
+            }
+            def var2dict(var: InteractiveVariable):
+                return {
+                    "name": var.get_name(), 
+                    "id": var.get_id(), 
+                    "value": var.get_value(), 
+                    "show": var.is_show(), 
+                    "random": var.is_random()
+                }
+            edges_info[n.get_node_id()]['vars'] = [var2dict(var) for var in (await n.get_vars())]
+            edges_info[n.get_node_id()]['condition'] = {
+                "value": n.get_jumping_condition()._InteractiveJumpingCondition__command, 
+                "vars": [var2dict(var) for var in (n.get_jumping_condition()._InteractiveJumpingCondition__vars)]
+            }
+            edges_info[n.get_node_id()]['jump_type'] = await now_node.get_jumping_type()
+            edges_info[n.get_node_id()]['is_default'] = n.is_default()
+            # 所有可达顶点 ID 入队
+            queue.insert(0, n)
+
+    json.dump(edges_info, open(tmp_dir_name + "/ivi.json", "w+"), indent = 2, ensure_ascii = False)
