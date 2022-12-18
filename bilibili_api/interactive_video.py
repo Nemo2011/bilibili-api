@@ -746,7 +746,11 @@ async def download(v: InteractiveVideo, out: str = "", debug_func: Callable = pr
             # 所有可达顶点 ID 入队
             queue.insert(0, n)
 
-    json.dump(edges_info, open(tmp_dir_name + "/ivi.json", "w+"), indent = 2, ensure_ascii = False)
+    json.dump(edges_info, open(tmp_dir_name + "/ivideo.json", "w+"), indent = 2, ensure_ascii = False)
+    json.dump({
+        "bvid": v.get_bvid(), 
+        "title": (await v.get_info())["title"]
+    }, open(tmp_dir_name + "/bilivideo.json", "w+"), indent = 2, ensure_ascii = False)
 
     for key, item in edges_info.items():
         cid = item["cid"]

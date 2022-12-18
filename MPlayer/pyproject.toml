@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "mplayer"
+version = "0.0.1"
+description = "Bilibili Interactive Video Player"
+authors = ["Nemo2011 <yimoxia@outlook.com>"]
+license = "GPLv3+"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+opencv-python = "^4.6.0.66"
+pillow = "^9.3.0"
+pyglet = "^2.0.1"
+pyqt6 = "^6.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
