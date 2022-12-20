@@ -73,6 +73,7 @@ class MPlayer(object):
         self.slider.setGeometry(QtCore.QRect(120, 455, 571, 22))
         self.slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.slider.setObjectName("slider")
+        self.slider.setEnabled(False)
         self.pp = QtWidgets.QPushButton(Form)
         self.pp.setGeometry(QtCore.QRect(0, 450, 113, 32))
         self.pp.setObjectName("pp")
@@ -116,24 +117,88 @@ class MPlayer(object):
         self.label_2.setObjectName("label_2")
 
         self.win = Form
+        self.pp.setEnabled(False)
+        self.pushButton.setEnabled(False)
         self.retranslateUi(Form)
         self.pushButton_2.clicked.connect(self.open_ivi)
         self.pushButton_3.clicked.connect(self.close_ivi)
+        self.pushButton_4.clicked.connect(self.sound_on_off_event)
         self.horizontalSlider.valueChanged.connect(self.volume_change_event)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+        # InteractiveVariables
+        self.current_node = 0
+        self.variables = []
+        self.state_log = []
+
+        # Video Play Variables & Functions
+        self.is_stoping = False
+        self.win.startTimer(5)
+        self.has_end = False
+        self.final_position = -1
+        def timerEvent(*args, **kwargs):
+            if self.has_end:
+                print("END")
+            if self.mediaplayer.duration() == 0:
+                self.slider.setValue(100)
+                return
+            if ((self.mediaplayer.duration() // 1000) == (self.mediaplayer.position() // 1000)) and (not self.has_end):
+                self.has_end = True
+                self.final_position = self.mediaplayer.position()
+                self.slider.setValue(100)
+                return
+            elif self.has_end:
+                self.has_end = True
+                self.slider.setValue(100)
+                self.mediaplayer.setPosition(self.final_position)
+                self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput().setVolume(0))
+                return
+            else:
+                self.has_end = False
+            self.last_position = self.mediaplayer.position()
+            self.slider.setValue(int(self.mediaplayer.position() / self.mediaplayer.duration() * 100))
+        self.win.timerEvent = timerEvent
+
+    def start_playing(self):
+        self.mediaplayer.play()
+        self.is_stoping = False
+    
+    def stop_playing(self):
+        self.mediaplayer.stop()
+        self.is_stoping = True
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.pp.setText(_translate("Form", "Play/Pause"))
-        self.pushButton.setText(_translate("Form", "<- Prevous"))
+        self.pushButton.setText(_translate("Form", "<- Previous"))
         self.node.setText(_translate("Form", "(当前节点: 无)"))
         self.info.setText(_translate("Form", "视频标题(BVID)"))
         self.pushButton_2.setText(_translate("Form", "Open"))
         self.pushButton_3.setText(_translate("Form", "Close"))
-        self.pushButton_4.setText(_translate("Form", "Sound: On"))
+        self.pushButton_4.setText(_translate("Form", "Sound: Off"))
         self.label.setText(_translate("Form", "--:--/--:--"))
         self.label_2.setText(_translate("Form", "0"))
+
+    def set_source(self, cid: int):
+        self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100))
+        self.has_end = False
+        self.stop_playing()
+        path1 = ".mplayer/" + str(cid) + ".video.mp4"
+        path2 = ".mplayer/" + str(cid) + ".audio.mp4"
+        dest = ".mplayer/" + str(cid) + ".mp4"
+        if not os.path.exists(path2):
+            self.mediaplayer.setSource(QtCore.QUrl(".mplayer/" + str(cid) + ".video.mp4"))
+            self.mediaplayer.setPosition(0)
+            self.start_playing()
+            return
+        os.system(
+            f'{get_ffmpeg_path()}\
+            -y -i "{path1}" -i "{path2}" -strict -2 -acodec copy -vcodec copy -f mp4 "{dest}"'
+        )
+        self.mediaplayer.setSource(QtCore.QUrl(".mplayer/" + str(cid) + ".mp4"))
+        self.mediaplayer.setPosition(0)
+        self.start_playing()
 
     def extract_ivi(self, path: str):
         if os.path.exists(".mplayer"):
@@ -149,10 +214,11 @@ class MPlayer(object):
             + ")"
         )
         self.graph = json.load(open(".mplayer/ivideo.json", "r"))
-        # self.mediaplayer.play()
+        self.current_node = 1
+        self.set_source(self.graph["1"]["cid"])
 
     def close_ivi(self):
-        self.mediaplayer.stop()
+        self.stop_playing()
         self.mediaplayer = QtMultimedia.QMediaPlayer() # Clear the multimedia source
         self.mediaplayer.setVideoOutput(self.player)
         self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput())
@@ -161,6 +227,9 @@ class MPlayer(object):
         self.node.setText("(当前节点: 无)")
         self.info.setText("视频标题(BVID)")
         self.win.setWindowTitle("MPlayer")
+        self.lineEdit.setText("")
+        self.pp.setEnabled(False)
+        self.pushButton.setEnabled(False)
 
     def open_ivi(self):
         try:
@@ -177,30 +246,56 @@ class MPlayer(object):
                 self.extract_ivi(filename)
                 self.win.setWindowTitle("MPlayer - " + filename)
                 self.lineEdit.setText(filename)
+            self.pp.setEnabled(True)
+            self.pushButton.setEnabled(True)
         except Exception as e:
             warning = QtWidgets.QMessageBox()
             warning.warning(self.win, "Oops...", str(e))
 
     def volume_change_event(self):
         curpos = self.mediaplayer.position()
-        self.mediaplayer.stop()
+        if self.horizontalSlider.value() == 0:
+            self.pushButton_4.setText("Sound: Off")
+        else:
+            self.pushButton_4.setText("Sound: On")
+        if not self.has_end:
+            self.stop_playing()
         volume = self.horizontalSlider.value()
         self.label_2.setText(str(volume))
-        self.audio_output = QtMultimedia.QAudioOutput()
         self.audio_output.setVolume(float(volume / 100))
         self.mediaplayer.setAudioOutput(self.audio_output)
         self.mediaplayer.setPosition(curpos)
-        self.mediaplayer.play()
+        if not self.has_end:
+            self.start_playing()
 
-    def set_source(self, cid: int):
-        path1 = ".mplayer/" + str(cid) + ".video.mp4"
-        path2 = ".mplayer/" + str(cid) + ".audio.mp4"
-        dest = ".mplayer/" + str(cid) + ".mp4"
-        os.system(
-            f'{get_ffmpeg_path()}\
-            -y -i "{path1}" -i "{path2}" -strict -2 -acodec copy -vcodec copy -f mp4 "{dest}"'
-        )
-        self.mediaplayer.setSource(QtCore.QUrl(".mplayer/" + str(cid) + ".mp4"))
+    def position_change_event(self):
+        pass
+
+    def sound_on_off_event(self):
+        if "on" in self.pushButton_4.text().lower():
+            self.pushButton_4.setText("Sound: Off")
+            curpos = self.mediaplayer.position()
+            self.stop_playing()
+            volume = self.horizontalSlider.value()
+            self.label_2.setText(str(volume))
+            self.audio_output = QtMultimedia.QAudioOutput()
+            self.audio_output.setVolume(0.0)
+            self.mediaplayer.setAudioOutput(self.audio_output)
+            self.mediaplayer.setPosition(curpos)
+            self.start_playing()
+            self.horizontalSlider.setSliderPosition(0)
+        else:
+            self.pushButton_4.setText("Sound: On")
+            curpos = self.mediaplayer.position()
+            self.stop_playing()
+            volume = self.horizontalSlider.value()
+            self.label_2.setText(str(volume))
+            self.audio_output = QtMultimedia.QAudioOutput()
+            self.audio_output.setVolume(1.0)
+            self.mediaplayer.setAudioOutput(self.audio_output)
+            self.mediaplayer.setPosition(curpos)
+            self.start_playing()
+            self.horizontalSlider.setSliderPosition(100)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

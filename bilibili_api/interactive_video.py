@@ -637,6 +637,8 @@ async def download(v: InteractiveVideo, out: str = "", debug_func: Callable = pr
     debug_func("START")
     if out == "": out = v.get_bvid() + ".ivi"
     if out.endswith(".ivi"): out = out.rstrip(".ivi")
+    if os.path.exists(out + ".ivi"):
+        os.remove(out + ".ivi")
     tmp_dir_name = out + ".tmp"
     if not os.path.exists(tmp_dir_name):
         os.mkdir(tmp_dir_name)
@@ -756,7 +758,8 @@ async def download(v: InteractiveVideo, out: str = "", debug_func: Callable = pr
         cid = item["cid"]
         url = await v.get_download_url(cid)
         download_func(url["dash"]["video"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".video.mp4", debug_func)
-        download_func(url["dash"]["audio"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".audio.mp4", debug_func)
+        if url["dash"]["audio"] != None:
+            download_func(url["dash"]["audio"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".audio.mp4", debug_func)
 
     cid = await v.get_cid()
     url = await v.get_download_url(cid)
