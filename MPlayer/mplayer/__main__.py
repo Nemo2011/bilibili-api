@@ -2,6 +2,7 @@ import json
 from PyQt6 import QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
 import sys, os, shutil, zipfile, platform
 
+
 def get_ffmpeg_path():
     if "darwin" in platform.system().lower():
         # MacOS
@@ -48,11 +49,14 @@ def get_ffmpeg_path():
     else:
         raise SystemError("您的系统不受支持：", platform.platform())
 
+
 class MPlayer(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(800, 600)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
@@ -139,13 +143,17 @@ class MPlayer(object):
         self.win.startTimer(5)
         self.has_end = False
         self.final_position = -1
+
         def timerEvent(*args, **kwargs):
             if self.is_draging_slider:
                 return
             if self.mediaplayer.duration() == 0:
                 self.slider.setValue(100)
                 return
-            if ((self.mediaplayer.duration() // 1000) == (self.mediaplayer.position() // 1000)) and (not self.has_end):
+            if (
+                (self.mediaplayer.duration() // 1000)
+                == (self.mediaplayer.position() // 1000)
+            ) and (not self.has_end):
                 self.has_end = True
                 self.final_position = self.mediaplayer.position()
                 self.slider.setValue(100)
@@ -154,22 +162,27 @@ class MPlayer(object):
                 self.has_end = True
                 self.slider.setValue(100)
                 self.mediaplayer.setPosition(self.final_position)
-                self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput().setVolume(0))
+                self.mediaplayer.setAudioOutput(
+                    QtMultimedia.QAudioOutput().setVolume(0)
+                )
                 return
             else:
                 self.has_end = False
             self.last_position = self.mediaplayer.position()
-            self.slider.setValue(int(self.mediaplayer.position() / self.mediaplayer.duration() * 100))
+            self.slider.setValue(
+                int(self.mediaplayer.position() / self.mediaplayer.duration() * 100)
+            )
+
         self.win.timerEvent = timerEvent
 
     def start_playing(self):
         self.mediaplayer.play()
         self.is_stoping = False
-    
+
     def stop_playing(self):
         self.mediaplayer.stop()
         self.is_stoping = True
-    
+
     def pause_playing(self):
         self.mediaplayer.pause()
         self.is_stoping = True
@@ -188,13 +201,17 @@ class MPlayer(object):
 
     def set_source(self, cid: int):
         self.has_end = False
-        self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100))
+        self.mediaplayer.setAudioOutput(
+            QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100)
+        )
         self.stop_playing()
         path1 = ".mplayer/" + str(cid) + ".video.mp4"
         path2 = ".mplayer/" + str(cid) + ".audio.mp4"
         dest = ".mplayer/" + str(cid) + ".mp4"
         if not os.path.exists(path2):
-            self.mediaplayer.setSource(QtCore.QUrl(".mplayer/" + str(cid) + ".video.mp4"))
+            self.mediaplayer.setSource(
+                QtCore.QUrl(".mplayer/" + str(cid) + ".video.mp4")
+            )
             self.mediaplayer.setPosition(0)
             self.start_playing()
             return
@@ -214,9 +231,13 @@ class MPlayer(object):
         bilivideo_parser = json.JSONDecoder()
         self.node.setText("(当前节点: 视频主节点)")
         self.info.setText(
-            bilivideo_parser.decode(open(".mplayer/bilivideo.json", "r").read())["title"]
-            + "(" 
-            + bilivideo_parser.decode(open(".mplayer/bilivideo.json", "r").read())["bvid"] 
+            bilivideo_parser.decode(open(".mplayer/bilivideo.json", "r").read())[
+                "title"
+            ]
+            + "("
+            + bilivideo_parser.decode(open(".mplayer/bilivideo.json", "r").read())[
+                "bvid"
+            ]
             + ")"
         )
         self.graph = json.load(open(".mplayer/ivideo.json", "r"))
@@ -227,7 +248,7 @@ class MPlayer(object):
         self.stop_playing()
         self.pp.setText("Pause")
         self.has_end = False
-        self.mediaplayer = QtMultimedia.QMediaPlayer() # Clear the multimedia source
+        self.mediaplayer = QtMultimedia.QMediaPlayer()  # Clear the multimedia source
         self.mediaplayer.setVideoOutput(self.player)
         self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput())
         if os.path.exists(".mplayer"):
@@ -247,9 +268,9 @@ class MPlayer(object):
             else:
                 dialog = QtWidgets.QFileDialog()
                 filename, _ = dialog.getOpenFileName(
-                    self.win, 
-                    "Choose an 'ivi' file to open. ", 
-                    filter = "All Files (*);;Bilibili Interactive Video (*.ivi)"
+                    self.win,
+                    "Choose an 'ivi' file to open. ",
+                    filter="All Files (*);;Bilibili Interactive Video (*.ivi)",
                 )
                 self.extract_ivi(filename)
                 self.win.setWindowTitle("MPlayer - " + filename)
@@ -286,7 +307,11 @@ class MPlayer(object):
         volume = self.slider.value()
         if volume != 100 and self.has_end:
             self.has_end = False
-            self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100))  
+            self.mediaplayer.setAudioOutput(
+                QtMultimedia.QAudioOutput().setVolume(
+                    self.horizontalSlider.value() / 100
+                )
+            )
             self.volume_change_event()
         self.mediaplayer.setPosition(int(self.mediaplayer.duration() * volume / 100))
         self.start_playing()
@@ -326,7 +351,8 @@ class MPlayer(object):
             self.pause_playing()
             self.pp.setText("Play")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
     ui = MPlayer()
