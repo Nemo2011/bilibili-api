@@ -73,6 +73,7 @@ class MPlayer(object):
         self.slider.setGeometry(QtCore.QRect(120, 455, 571, 22))
         self.slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.slider.setObjectName("slider")
+        self.slider.setValue(100)
         self.pp = QtWidgets.QPushButton(Form)
         self.pp.setGeometry(QtCore.QRect(0, 450, 113, 32))
         self.pp.setObjectName("pp")
@@ -283,9 +284,11 @@ class MPlayer(object):
 
     def position_change_event(self):
         volume = self.slider.value()
+        if volume != 100 and self.has_end:
+            self.has_end = False
+            self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100))  
+            self.volume_change_event()
         self.mediaplayer.setPosition(int(self.mediaplayer.duration() * volume / 100))
-        if self.has_end:
-            return
         self.start_playing()
         self.is_draging_slider = False
 
