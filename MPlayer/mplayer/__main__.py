@@ -73,7 +73,6 @@ class MPlayer(object):
         self.slider.setGeometry(QtCore.QRect(120, 455, 571, 22))
         self.slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.slider.setObjectName("slider")
-        self.slider.setEnabled(False)
         self.pp = QtWidgets.QPushButton(Form)
         self.pp.setGeometry(QtCore.QRect(0, 450, 113, 32))
         self.pp.setObjectName("pp")
@@ -123,8 +122,10 @@ class MPlayer(object):
         self.pushButton_2.clicked.connect(self.open_ivi)
         self.pushButton_3.clicked.connect(self.close_ivi)
         self.pushButton_4.clicked.connect(self.sound_on_off_event)
+        self.pp.clicked.connect(self.pp_button)
         self.horizontalSlider.valueChanged.connect(self.volume_change_event)
-        QtCore.QMetaObject.connectSlotsByName(Form)
+        self.slider.sliderReleased.connect(self.position_change_event)
+        self.slider.sliderPressed.connect(self.position_start_change_event)
 
         # InteractiveVariables
         self.current_node = 0
@@ -132,13 +133,14 @@ class MPlayer(object):
         self.state_log = []
 
         # Video Play Variables & Functions
+        self.is_draging_slider = False
         self.is_stoping = False
         self.win.startTimer(5)
         self.has_end = False
         self.final_position = -1
         def timerEvent(*args, **kwargs):
-            if self.has_end:
-                print("END")
+            if self.is_draging_slider:
+                return
             if self.mediaplayer.duration() == 0:
                 self.slider.setValue(100)
                 return
@@ -166,11 +168,14 @@ class MPlayer(object):
     def stop_playing(self):
         self.mediaplayer.stop()
         self.is_stoping = True
+    
+    def pause_playing(self):
+        self.mediaplayer.pause()
+        self.is_stoping = True
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
-        self.pp.setText(_translate("Form", "Play/Pause"))
+        self.pp.setText(_translate("Form", "Pause"))
         self.pushButton.setText(_translate("Form", "<- Previous"))
         self.node.setText(_translate("Form", "(当前节点: 无)"))
         self.info.setText(_translate("Form", "视频标题(BVID)"))
@@ -181,8 +186,8 @@ class MPlayer(object):
         self.label_2.setText(_translate("Form", "0"))
 
     def set_source(self, cid: int):
-        self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100))
         self.has_end = False
+        self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100))
         self.stop_playing()
         path1 = ".mplayer/" + str(cid) + ".video.mp4"
         path2 = ".mplayer/" + str(cid) + ".audio.mp4"
@@ -219,6 +224,8 @@ class MPlayer(object):
 
     def close_ivi(self):
         self.stop_playing()
+        self.pp.setText("Pause")
+        self.has_end = False
         self.mediaplayer = QtMultimedia.QMediaPlayer() # Clear the multimedia source
         self.mediaplayer.setVideoOutput(self.player)
         self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput())
@@ -253,23 +260,34 @@ class MPlayer(object):
             warning.warning(self.win, "Oops...", str(e))
 
     def volume_change_event(self):
-        curpos = self.mediaplayer.position()
         if self.horizontalSlider.value() == 0:
             self.pushButton_4.setText("Sound: Off")
         else:
             self.pushButton_4.setText("Sound: On")
-        if not self.has_end:
-            self.stop_playing()
+        if (not self.has_end) or (not self.is_stoping):
+            pass
+        else:
+            self.pause_playing()
         volume = self.horizontalSlider.value()
         self.label_2.setText(str(volume))
         self.audio_output.setVolume(float(volume / 100))
         self.mediaplayer.setAudioOutput(self.audio_output)
-        self.mediaplayer.setPosition(curpos)
-        if not self.has_end:
+        if (not self.has_end) or (not self.is_stoping):
+            pass
+        else:
             self.start_playing()
 
+    def position_start_change_event(self):
+        self.pause_playing()
+        self.is_draging_slider = True
+
     def position_change_event(self):
-        pass
+        volume = self.slider.value()
+        self.mediaplayer.setPosition(int(self.mediaplayer.duration() * volume / 100))
+        if self.has_end:
+            return
+        self.start_playing()
+        self.is_draging_slider = False
 
     def sound_on_off_event(self):
         if "on" in self.pushButton_4.text().lower():
@@ -296,6 +314,14 @@ class MPlayer(object):
             self.mediaplayer.setPosition(curpos)
             self.start_playing()
             self.horizontalSlider.setSliderPosition(100)
+
+    def pp_button(self):
+        if self.is_stoping:
+            self.start_playing()
+            self.pp.setText("Pause")
+        else:
+            self.pause_playing()
+            self.pp.setText("Play")
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
