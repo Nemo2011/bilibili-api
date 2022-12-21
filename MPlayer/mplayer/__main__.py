@@ -153,14 +153,23 @@ class MPlayer(object):
                 return
             if self.mediaplayer.duration() == 0:
                 self.slider.setValue(100)
+                self.label.setText("--:--/--:--")
                 return
             if (
                 (self.mediaplayer.duration() // 1000)
-                == (self.mediaplayer.position() // 1000)
+                == ((self.mediaplayer.position() // 1000))
             ) and (not self.has_end):
                 self.has_end = True
                 self.final_position = self.mediaplayer.position()
                 self.slider.setValue(100)
+                duration = self.mediaplayer.duration() // 1000
+                duration_sec = duration % 60
+                duration_min = duration // 60
+                if duration_sec < 10:
+                    duration_sec = "0" + str(duration_sec)
+                if duration_min < 10:
+                    duration_min = "0" + str(duration_min)
+                self.label.setText(f'{duration_min}:{duration_sec}/{duration_min}:{duration_sec}')
                 return
             elif self.has_end:
                 self.has_end = True
@@ -169,6 +178,14 @@ class MPlayer(object):
                 self.mediaplayer.setAudioOutput(
                     QtMultimedia.QAudioOutput().setVolume(0)
                 )
+                duration = self.mediaplayer.duration() // 1000
+                duration_sec = duration % 60
+                duration_min = duration // 60
+                if duration_sec < 10:
+                    duration_sec = "0" + str(duration_sec)
+                if duration_min < 10:
+                    duration_min = "0" + str(duration_min)
+                self.label.setText(f'{duration_min}:{duration_sec}/{duration_min}:{duration_sec}')
                 return
             else:
                 self.has_end = False
@@ -176,6 +193,21 @@ class MPlayer(object):
             self.slider.setValue(
                 int(self.mediaplayer.position() / self.mediaplayer.duration() * 100)
             )
+            duration = self.mediaplayer.duration() // 1000
+            position = self.mediaplayer.position() // 1000
+            duration_sec = duration % 60
+            duration_min = duration // 60
+            position_sec = position % 60
+            position_min = position // 60
+            if duration_sec < 10:
+                duration_sec = "0" + str(duration_sec)
+            if duration_min < 10:
+                duration_min = "0" + str(duration_min)
+            if position_sec < 10:
+                position_sec = "0" + str(position_sec)
+            if position_min < 10:
+                position_min = "0" + str(position_min)
+            self.label.setText(f'{position_min}:{position_sec}/{duration_min}:{duration_sec}')
         self.win.timerEvent = timerEvent
 
     def start_playing(self):
@@ -306,7 +338,7 @@ class MPlayer(object):
             self.start_playing()
 
     def position_start_change_event(self):
-        self.pause_playing()
+        self.mediaplayer.pause()
         self.is_draging_slider = True
 
     def position_change_event(self):
@@ -320,7 +352,8 @@ class MPlayer(object):
             )
             self.volume_change_event()
         self.mediaplayer.setPosition(int(self.mediaplayer.duration() * volume / 100))
-        self.start_playing()
+        if not self.is_stoping:
+            self.start_playing()
         self.is_draging_slider = False
 
     def sound_on_off_event(self):
