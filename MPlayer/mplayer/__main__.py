@@ -51,7 +51,8 @@ def get_ffmpeg_path():
 
 
 class MPlayer(object):
-    def setupUi(self, Form):
+    def setup(self, Form):
+        # UI
         Form.setObjectName("Form")
         Form.resize(800, 600)
         sizePolicy = QtWidgets.QSizePolicy(
@@ -120,10 +121,12 @@ class MPlayer(object):
         self.label_2.setGeometry(QtCore.QRect(700, 490, 60, 16))
         self.label_2.setObjectName("label_2")
 
-        self.win = Form
+        # Slot & String
+        self.win: QtWidgets.QWidget = Form
         self.pp.setEnabled(False)
         self.pushButton.setEnabled(False)
         self.retranslateUi(Form)
+        self.win.closeEvent = self.on_close_check
         self.pushButton_2.clicked.connect(self.open_ivi)
         self.pushButton_3.clicked.connect(self.close_ivi)
         self.pushButton_4.clicked.connect(self.sound_on_off_event)
@@ -144,6 +147,7 @@ class MPlayer(object):
         self.has_end = False
         self.final_position = -1
 
+        # Timer & Refresh
         def timerEvent(*args, **kwargs):
             if self.is_draging_slider:
                 return
@@ -172,7 +176,6 @@ class MPlayer(object):
             self.slider.setValue(
                 int(self.mediaplayer.position() / self.mediaplayer.duration() * 100)
             )
-
         self.win.timerEvent = timerEvent
 
     def start_playing(self):
@@ -245,6 +248,9 @@ class MPlayer(object):
         self.set_source(self.graph["1"]["cid"])
 
     def close_ivi(self):
+        self.current_node = 0
+        self.variables = []
+        self.state_log = []
         self.stop_playing()
         self.pp.setText("Pause")
         self.has_end = False
@@ -351,11 +357,21 @@ class MPlayer(object):
             self.pause_playing()
             self.pp.setText("Play")
 
+    def on_close_check(self, event):
+        if self.current_node != 0:
+            reply = QtWidgets.QMessageBox.question(self.win, "WARNING", "IVI file is playing. Are you sure to exit? ",
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No, QtWidgets.QMessageBox.StandardButton.No)
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
+                event.accept()
+            else:
+                event.ignore()
+        else:
+            event.accept()
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
     ui = MPlayer()
-    ui.setupUi(win)
+    ui.setup(win)
     win.show()
     sys.exit(app.exec())
