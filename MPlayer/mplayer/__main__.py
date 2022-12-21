@@ -1,7 +1,12 @@
 import json
 from PyQt6 import QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
 import sys, os, shutil, zipfile, platform
-
+from bilibili_api.interactive_video import (
+    InteractiveButton, 
+    InteractiveJumpingCondition, 
+    InteractiveJumpingCommand, 
+    InteractiveNodeJumpingType
+)
 
 def get_ffmpeg_path():
     if "darwin" in platform.system().lower():
@@ -139,16 +144,32 @@ class MPlayer(object):
         self.current_node = 0
         self.variables = []
         self.state_log = []
+        self.graph = None
+        self.choice_buttons = []
 
         # Video Play Variables & Functions
         self.is_draging_slider = False
         self.is_stoping = False
-        self.win.startTimer(5)
+        self.win.startTimer(100)
         self.has_end = False
         self.final_position = -1
 
         # Timer & Refresh
         def timerEvent(*args, **kwargs):
+            # 处理节点跳转
+            if self.has_end:
+                children = self.graph[str(self.current_node)]["sub"]
+                if len(children) == 0:
+                    self.win.setWindowTitle(self.win.windowTitle() + " - COMPLETED")
+                else:
+                    # 跳转类型
+                    if self.graph[str(children[0])]["jump_type"] == InteractiveNodeJumpingType.DEFAULT.value:
+                        # 直接跳转
+                        self.set_source(self.graph[str(children[0])]["cid"])
+                    else:
+                        # 进行选择
+                        print(children)
+            # 处理进度条
             if self.is_draging_slider:
                 return
             if self.mediaplayer.duration() == 0:
@@ -283,6 +304,7 @@ class MPlayer(object):
         self.current_node = 0
         self.variables = []
         self.state_log = []
+        self.graph = None
         self.stop_playing()
         self.pp.setText("Pause")
         self.has_end = False
