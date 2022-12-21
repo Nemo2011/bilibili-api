@@ -362,6 +362,7 @@ class MPlayer(object):
             reply = QtWidgets.QMessageBox.question(self.win, "WARNING", "IVI file is playing. Are you sure to exit? ",
             QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No, QtWidgets.QMessageBox.StandardButton.No)
             if reply == QtWidgets.QMessageBox.StandardButton.Yes:
+                self.close_ivi()
                 event.accept()
             else:
                 event.ignore()
