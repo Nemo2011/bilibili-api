@@ -1,11 +1,14 @@
 import json
+import time
 from PyQt6 import QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
 import sys, os, shutil, zipfile, platform
 from bilibili_api.interactive_video import (
     InteractiveButton, 
     InteractiveJumpingCondition, 
     InteractiveJumpingCommand, 
-    InteractiveNodeJumpingType
+    InteractiveNodeJumpingType, 
+    InteractiveButtonAlign, 
+    InteractiveVariable
 )
 
 def get_ffmpeg_path():
@@ -55,6 +58,35 @@ def get_ffmpeg_path():
         raise SystemError("您的系统不受支持：", platform.platform())
 
 
+class Button:
+    def __init__(self, pos, text, condition, command):
+        # A class that provides the button model. 
+        self.pos = pos
+        self.text = text
+        self.condition = condition
+        self.command = command
+        # 什么？别问我为什么不用 TypedDict / dataclass
+
+
+class ButtonLabel(QtWidgets.QLabel):
+    def __init__(self, parent: QtWidgets.QWidget):
+        super().__init__(parent = parent)
+        self.setObjectName(str(time.time()))
+
+    def prep_text(self, text: str):
+        self.setText(text)
+        self.setWordWrap(True)
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        font.setBold(True)
+        self.setFont(font)
+        self.raise_()
+        return self
+
+    def show(self):
+        super().show()
+        return self
+
 class MPlayer(object):
     def setup(self, Form):
         # UI
@@ -67,9 +99,9 @@ class MPlayer(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
         Form.setSizePolicy(sizePolicy)
-        Form.setMinimumSize(QtCore.QSize(800, 600))
-        Form.setMaximumSize(QtCore.QSize(800, 600))
-        Form.setBaseSize(QtCore.QSize(800, 600))
+        Form.setMinimumSize(QtCore.QSize(800, 650))
+        Form.setMaximumSize(QtCore.QSize(800, 650))
+        Form.setBaseSize(QtCore.QSize(800, 650))
         Form.setWindowTitle("MPlayer")
         self.player = QtMultimediaWidgets.QVideoWidget(Form)
         self.player.setGeometry(QtCore.QRect(0, 0, 800, 450))
@@ -146,6 +178,7 @@ class MPlayer(object):
         self.state_log = []
         self.graph = None
         self.choice_buttons = []
+        self.choice_labels = []
 
         # Video Play Variables & Functions
         self.is_draging_slider = False
@@ -156,19 +189,28 @@ class MPlayer(object):
 
         # Timer & Refresh
         def timerEvent(*args, **kwargs):
-            # 处理节点跳转
+            # 创建要跳转的节点
             if self.has_end:
-                children = self.graph[str(self.current_node)]["sub"]
-                if len(children) == 0:
-                    self.win.setWindowTitle(self.win.windowTitle() + " - COMPLETED")
+                if len(self.choice_labels) != 0:
+                    for lbl in self.choice_labels:
+                        lbl.raise_()
+                    self.player.lower()
                 else:
-                    # 跳转类型
-                    if self.graph[str(children[0])]["jump_type"] == InteractiveNodeJumpingType.DEFAULT.value:
-                        # 直接跳转
-                        self.set_source(self.graph[str(children[0])]["cid"])
+                    children = self.graph[str(self.current_node)]["sub"]
+                    if len(children) == 0:
+                        self.win.setWindowTitle(self.win.windowTitle() + " - COMPLETED")
                     else:
-                        # 进行选择
-                        print(children)
+                        # 跳转类型
+                        if self.graph[str(children[0])]["jump_type"] == InteractiveNodeJumpingType.DEFAULT.value:
+                            # 直接跳转
+                            self.set_source(self.graph[str(children[0])]["cid"])
+                        else:
+                            # 进行选择
+                            pass
+            # 显示变量
+            for var in self.variables:
+                if var.is_show():
+                    self.win.setWindowTitle(self.win.windowTitle() + f' - {var.get_name()}: {var.get_value()}')
             # 处理进度条
             if self.is_draging_slider:
                 return
@@ -191,6 +233,9 @@ class MPlayer(object):
                 if duration_min < 10:
                     duration_min = "0" + str(duration_min)
                 self.label.setText(f'{duration_min}:{duration_sec}/{duration_min}:{duration_sec}')
+                self.player.lower()
+                for lbl in self.choice_labels:
+                    lbl.raise_()
                 return
             elif self.has_end:
                 self.has_end = True
@@ -207,6 +252,9 @@ class MPlayer(object):
                 if duration_min < 10:
                     duration_min = "0" + str(duration_min)
                 self.label.setText(f'{duration_min}:{duration_sec}/{duration_min}:{duration_sec}')
+                self.player.lower()
+                for lbl in self.choice_labels:
+                    lbl.raise_()
                 return
             else:
                 self.has_end = False
@@ -229,6 +277,9 @@ class MPlayer(object):
             if position_min < 10:
                 position_min = "0" + str(position_min)
             self.label.setText(f'{position_min}:{position_sec}/{duration_min}:{duration_sec}')
+            # 将选择的按钮置于最上层
+            for lbl in self.choice_labels:
+                lbl.raise_()
         self.win.timerEvent = timerEvent
 
     def start_playing(self):
@@ -298,6 +349,15 @@ class MPlayer(object):
         )
         self.graph = json.load(open(".mplayer/ivideo.json", "r"))
         self.current_node = 1
+        variables = self.graph["1"]["vars"]
+        for var in variables:
+            self.variables.append(InteractiveVariable(
+                var["name"], 
+                var["id"], 
+                var["value"], 
+                var["show"], 
+                var["random"]
+            ))
         self.set_source(self.graph["1"]["cid"])
 
     def close_ivi(self):
