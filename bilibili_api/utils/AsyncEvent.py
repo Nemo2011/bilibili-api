@@ -82,7 +82,7 @@ class AsyncEvent:
     
     def remove_ignore_events(self):
         """
-        移除所有忽略的事件
+        移除所有忽略事件
         """
         self.__ignore_events = []
 

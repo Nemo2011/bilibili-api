@@ -185,6 +185,7 @@ class MPlayer(object):
         self.horizontalSlider.valueChanged.connect(self.volume_change_event)
         self.slider.sliderReleased.connect(self.position_change_event)
         self.slider.sliderPressed.connect(self.position_start_change_event)
+        self.pushButton.clicked.connect(self.back_to_previous)
 
         # InteractiveVariables
         self.current_node = 0
@@ -217,7 +218,32 @@ class MPlayer(object):
                         # 跳转类型
                         if self.graph[str(children[0])]["jump_type"] == InteractiveNodeJumpingType.DEFAULT.value:
                             # 直接跳转
-                            self.set_source(self.graph[str(children[0])]["cid"])
+                            for node_id in children:
+                                btn = Button(
+                                    node_id, 
+                                    [0, 0], 
+                                    "", 
+                                    self.graph[str(node_id)]["condition"], 
+                                    self.graph[str(node_id)]["command"]
+                                )
+                                condition = InteractiveJumpingCondition(
+                                    self.variables, 
+                                    btn.condition
+                                )
+                                if condition.get_result():
+                                    # 可以跳转
+                                    native_command = InteractiveJumpingCommand(
+                                        self.variables, 
+                                        btn.command
+                                    )
+                                    self.variables = native_command.run_command()
+                                    btn_id = btn.node_id
+                                    self.set_source(self.graph[str(btn_id)]["cid"])
+                                    self.current_node = btn.node_id
+                                    self.volume_change_event()
+                                    title = self.graph[str(node_id)]["title"]
+                                    self.node.setText(f"(当前节点: {title})")
+                                    break
                         else:
                             # 进行选择
                             def get_info(node_id: int):
@@ -281,10 +307,6 @@ class MPlayer(object):
                                 ))
                             for btn in self.choice_buttons:
                                 btn.pos[0] += add_space
-            # 显示变量
-            for var in self.variables:
-                if var.is_show():
-                    self.win.setWindowTitle(self.win.windowTitle() + f' - {var.get_name()}: {var.get_value()}')
             # 处理进度条
             if self.is_draging_slider:
                 return
@@ -366,7 +388,7 @@ class MPlayer(object):
             pos = [pos.x(), pos.y()]
             for var in self.variables:
                 if var.is_random():
-                    var._InteractiveVariable__var_value = random.randrange(0, 100)
+                    var._InteractiveVariable__var_value = random.random() * 100
             for btn in self.choice_buttons:
                 if (pos[0] - btn.pos[0] <= 200) and (pos[0] - btn.pos[0] >= 0) \
                     and (pos[1] - btn.pos[1] <= 50) and (pos[1] - btn.pos[1] >= 0):
@@ -385,6 +407,8 @@ class MPlayer(object):
                         self.set_source(self.graph[str(btn_id)]["cid"])
                         self.current_node = btn.node_id
                         self.volume_change_event()
+                        title = self.graph[str(btn.node_id)]["title"]
+                        self.node.setText(f"(当前节点: {title})")
                         break
         self.win.mouseReleaseEvent = mouseReleaseEvent
 
@@ -413,6 +437,15 @@ class MPlayer(object):
         self.label_2.setText(_translate("Form", "0"))
 
     def set_source(self, cid: int):
+        wintitle = "MPlayer"
+        for var in self.variables:
+            if var.is_show():
+                wintitle += f' - {var.get_name()}: {int(var.get_value())}'
+        self.win.setWindowTitle(wintitle)
+        self.state_log.append({
+            "cid": cid, 
+            "vars": self.variables
+        })
         self.has_end = False
         self.mediaplayer.setAudioOutput(
             QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100)
@@ -490,7 +523,6 @@ class MPlayer(object):
         try:
             if self.lineEdit.text() != "":
                 self.extract_ivi(self.lineEdit.text())
-                self.win.setWindowTitle("MPlayer - " + self.lineEdit.text())
             else:
                 dialog = QtWidgets.QFileDialog()
                 filename, _ = dialog.getOpenFileName(
@@ -499,7 +531,6 @@ class MPlayer(object):
                     filter="All Files (*);;Bilibili Interactive Video (*.ivi)",
                 )
                 self.extract_ivi(filename)
-                self.win.setWindowTitle("MPlayer - " + filename)
                 self.lineEdit.setText(filename)
             self.pp.setEnabled(True)
             self.pushButton.setEnabled(True)
@@ -589,11 +620,35 @@ class MPlayer(object):
                 event.ignore()
         else:
             event.accept()
+        
+    def back_to_previous(self):
+        if len(self.state_log) < 2:
+            QtWidgets.QMessageBox.warning(
+                self.win, 
+                "WTF???", 
+                "MPlayer can't find the previous node. \nMaybe there's not any node or only one node?"
+            )
+            return
+        new_cid = self.state_log[-2]["cid"]
+        new_vars = self.state_log[-2]["vars"]
+        self.state_log.pop()
+        for key in self.graph.keys():
+            if self.graph[key]["cid"] == new_cid:
+                new_node_id = int(key)
+                self.current_node = new_node_id
+                self.variables = new_vars
+                self.set_source(new_cid)
+                self.state_log.pop()
+                title = self.graph[str(new_node_id)]["title"]
+                self.node.setText(f"(当前节点: {title})")
 
-if __name__ == "__main__":
+def main():
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
     ui = MPlayer()
     ui.setup(win)
     win.show()
     sys.exit(app.exec())
+
+if __name__ == '__main__':
+    main()

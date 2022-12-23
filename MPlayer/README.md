@@ -14,7 +14,7 @@
 
 ## 原理介绍
 
-本项目使用 Python**3.11**(内含 python**3.10** `match-case` 最新语法)，基于 PyQt**6** 开发，许多地方与 PyQt**5** 不兼容，因此你需要另外安装 PyQt**6**，虚拟环境及第三方包管理工具是 **Poetry**，用的是 `pyproject.toml`，因此不能用 `setup.py`。
+本项目使用 Python**3.11**(内含 python**3.10** `match-case` 最新语法)，基于 PyQt**6** 开发，许多地方与 PyQt**5** 不兼容，因此你需要另外安装 PyQt**6**。
 
 ## Download & Run
 

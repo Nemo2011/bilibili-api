@@ -395,3 +395,15 @@ BV 号转 AV 号。
 | handler | Coroutine |   要移除的函数 |
 
 **Returns:** bool, 是否移除成功。
+
+#### def ignore_event()
+
+忽略指定事件
+
+| name | type | description |
+| - | - | - |
+| name | str | 事件名 |
+
+#### def remove_ignore_events()
+
+移除所有忽略事件
