@@ -277,7 +277,7 @@ class MPlayer(object):
                                     if (abs(curpos[0] - previouspos[0]) <= 5) and (abs(curpos[1] - previouspos[1]) <= 5):
                                         # 可确定与上一个按钮同一个位置（即概率按钮）
                                         # 不再生成单独的 label
-                                        pass
+                                        self.choice_buttons[-1].pos[0] -= 200
                                     else:
                                         # 生成 label
                                         cnt += 1
@@ -463,7 +463,7 @@ class MPlayer(object):
             return
         os.system(
             f'{get_ffmpeg_path()}\
-            -y -i "{path1}" -i "{path2}" -strict -2 -acodec copy -vcodec copy -f mp4 "{dest}"'
+            -y -i "{path1}" -i "{path2}" -strict -2 -acodec copy -vcodec copy -f mp4 "{dest}" > ffmpeg.out'
         )
         self.mediaplayer.setSource(QtCore.QUrl(".mplayer/" + str(cid) + ".mp4"))
         self.mediaplayer.setPosition(0)

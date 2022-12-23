@@ -9,5 +9,51 @@
 
 - 1. `MPlayer` 是为了播放 `.ivi` 文件而编写的播放器，基于 `PyQt6`
 - 2. 因为技术方面的原因，使用 `MPlayer` 播放互动视频文件不能百分之百还原互动视频的体验。
-- 3. `MPlayer` 不会在安装 `bilibili_api` 时自动安装，需要单独安装。(`pip3 install mplayer`)
+- 3. `MPlayer` 不会在安装 `bilibili_api` 时自动安装。[下载地址](https://github.com/Nemo2011/bilibili-api/raw/dev/assets/MPlayer.zip)。运行请戳 `MPlayer.py`。(运行需要 Python >= 3.10 环境及以下依赖)
+  - PyQt6
+  - bilibili-api-python
+- 4. `EXE` 文件编译在做。
 - 4. 更多有关信息，请查看 [README](/MPlayer/README.md)
+
+# MacOS 用户打开 MPlayer 注意
+
+**请务必在打开 `MPlayer` 之前按照以下步骤进行操作，否则你可能会遇到下面的情况**
+
+![](/mplayer-tip-pictures/2.png)
+
+---
+
+1. 在访达中找到 `ffmpeg` 的 `MacOS` 可执行文件。
+
+![](/mplayer-tip-pictures/1.png)
+
+2. 双击打开，出现如下情况。点击右上角的 `?` 按钮。
+
+![](/mplayer-tip-pictures/2.png)
+
+3. 之后进入 `MacOS 帮助手册` 页面，点击：`为我打开隐私与安全性设置`。
+
+![](/mplayer-tip-pictures/3.png)
+
+4. 进入 `设置` 的 `隐私与安全性设置` 页面后找到 `已阻止使用“ffmpeg“，因为来自身份不明的开发者` 这里，点击：`仍然允许`。
+
+![](/mplayer-tip-pictures/4.png)
+
+5. 随后输入密码以解锁，再次弹出一个确认框，点 `确认` 之后将打开文件。
+
+![](/mplayer-tip-pictures/5.png)
+
+6. 如果一切正常，终端会显示以下信息：
+
+```
+ffmpeg version 5.0.1 Copyright (c) 2000-2022 the FFmpeg developers
+...
+Hyper fast Audio and Video encoder
+usage: ffmpeg [options] [[infile options] -i infile]... {[outfile options] outfile}...
+
+Use -h to get full help or, even better, run 'man ffmpeg'
+```
+
+---
+
+**打开 `MPlayer` 时遇到其他问题？请提出 [Issues][issues-new] 以便解决。**
