@@ -1,5 +1,6 @@
 import copy
 import json
+import random
 import time
 from typing import List
 from PyQt6 import QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
@@ -61,8 +62,9 @@ def get_ffmpeg_path():
 
 
 class Button:
-    def __init__(self, pos, text, condition, command):
+    def __init__(self, id_, pos, text, condition, command):
         # A class that provides the button model. 
+        self.node_id = id_
         self.pos = pos
         self.text = text
         self.condition = condition
@@ -186,7 +188,7 @@ class MPlayer(object):
 
         # InteractiveVariables
         self.current_node = 0
-        self.variables = []
+        self.variables: List[InteractiveVariable] = []
         self.state_log = []
         self.graph = None
         self.choice_buttons: List[Button] = []
@@ -227,6 +229,7 @@ class MPlayer(object):
                                 cur_info = get_info(child)
                                 # 生成 Button 对象
                                 self.choice_buttons.append(Button(
+                                    child, 
                                     [pos_x, pos_y], 
                                     cur_info["button"]["text"], 
                                     cur_info["condition"], 
@@ -330,6 +333,8 @@ class MPlayer(object):
             else:
                 self.has_end = False
                 self.choice_buttons = []
+                for lbl in self.choice_labels:
+                    lbl.hide()
                 self.choice_labels = []
             self.last_position = self.mediaplayer.position()
             self.slider.setValue(
@@ -354,6 +359,34 @@ class MPlayer(object):
             for lbl in self.choice_labels:
                 lbl.raise_()
         self.win.timerEvent = timerEvent
+
+        # Click & Jump
+        def mouseReleaseEvent(event: QtGui.QMouseEvent):
+            pos = event.position()
+            pos = [pos.x(), pos.y()]
+            for var in self.variables:
+                if var.is_random():
+                    var._InteractiveVariable__var_value = random.randrange(0, 100)
+            for btn in self.choice_buttons:
+                if (pos[0] - btn.pos[0] <= 200) and (pos[0] - btn.pos[0] >= 0) \
+                    and (pos[1] - btn.pos[1] <= 50) and (pos[1] - btn.pos[1] >= 0):
+                    condition = InteractiveJumpingCondition(
+                        self.variables, 
+                        btn.condition
+                    )
+                    if condition.get_result():
+                        # 可以跳转
+                        native_command = InteractiveJumpingCommand(
+                            self.variables, 
+                            btn.command
+                        )
+                        self.variables = native_command.run_command()
+                        btn_id = btn.node_id
+                        self.set_source(self.graph[str(btn_id)]["cid"])
+                        self.current_node = btn.node_id
+                        self.volume_change_event()
+                        break
+        self.win.mouseReleaseEvent = mouseReleaseEvent
 
     def start_playing(self):
         self.mediaplayer.play()

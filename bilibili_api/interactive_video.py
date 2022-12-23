@@ -709,7 +709,8 @@ class InteractiveVideoDownloader(AsyncEvent):
                 "condition": None, 
                 "jump_type": None, 
                 "is_default": None, 
-                "command": None
+                "command": None, 
+                "sub": []
             }
         def var2dict(var: InteractiveVariable):
             return {
