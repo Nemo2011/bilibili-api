@@ -2,7 +2,7 @@
 /.idea
 /test*.*
 **/__pycache__
-/bilibili_api_python.egg-info
+*.egg-info
 /.vscode
 **/dist
 *.ass
