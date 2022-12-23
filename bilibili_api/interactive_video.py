@@ -110,9 +110,14 @@ class InteractiveVariable:
     def get_id(self):
         return self.__var_id
 
-    def get_value(self):
+    def refresh_value(self):
+        """
+        刷新变量数值
+        """
         if self.is_random():
-            return rand(0, 100)
+            self.__var_value = rand(0, 100)
+
+    def get_value(self):
         return self.__var_value
 
     def is_show(self):

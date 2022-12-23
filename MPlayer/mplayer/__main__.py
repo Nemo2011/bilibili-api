@@ -69,6 +69,9 @@ class Button:
         self.command = command
         # 什么？别问我为什么不用 TypedDict / dataclass
 
+    def __str__(self) -> str:
+        return f'{self.pos} {self.text} {self.condition} {self.command}'
+
 
 class ButtonLabel(QtWidgets.QLabel):
     def __init__(self, parent: QtWidgets.QWidget = None):

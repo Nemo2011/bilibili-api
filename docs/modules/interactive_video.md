@@ -66,6 +66,12 @@ o----|xxx| (TEXT_RIGHT)
 
 **Returns:** int: 变量 id
 
+#### def refresh_value()
+
+刷新变量数值
+
+**Returns:** None
+
 #### def get_value()
 
 获取变量数值
