@@ -13,7 +13,7 @@
   - PyQt6
   - bilibili-api-python
 - 4. `EXE` 文件编译在做。
-- 4. 更多有关信息，请查看 [README](/MPlayer/README.md)
+- 4. 更多有关信息，请查看 [README](https://github.com/Nemo2011/bilibili-api/tree/dev/MPlayer)
 
 # MacOS 用户打开 MPlayer 注意
 

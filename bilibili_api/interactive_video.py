@@ -637,7 +637,7 @@ class InteractiveVideoDownloaderEvents(enum.Enum):
 
 class InteractiveVideoDownloader(AsyncEvent):
     """
-    互动视频下载类
+    互动视频下载类(下载格式：ivi)
     """
     def __init__(self, video: InteractiveVideo, out: str = "", self_download_func: Callable = None):
         """
@@ -836,6 +836,9 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.dispatch("SUCCESS")
 
     async def start(self):
+        """
+        开始下载
+        """
         task = create_task(self.__main())
         self.__task = task
 
@@ -852,7 +855,7 @@ class InteractiveVideoDownloader(AsyncEvent):
 
     async def abort(self):
         """
-        中断更改
+        中断下载
         """
         if self.__task:
             self.__task.cancel("用户手动取消")

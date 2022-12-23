@@ -409,3 +409,31 @@ o----|xxx| (TEXT_RIGHT)
 获取特定月份存在历史弹幕的日期。
 
 **Returns**: None | List[str]: 调用 API 返回的结果。不存在时为 None。
+
+---
+
+## class InteractiveVideoDownloader
+
+**Extends: AsyncEvent**
+
+互动视频下载类(下载格式：ivi)
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name               | type             | description                 |
+| ------------------ | ---------------- | --------------------------- |
+| video              | InteractiveVideo | 互动视频类                   |
+| out                | str              | 输出文件地址                  |
+| self_download_func | Coroutine        | 自定义下载函数（需 async 函数） |
+
+`self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
+
+#### async def start()
+
+开始下载
+
+#### async def abort()
+
+中断下载

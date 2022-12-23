@@ -82,7 +82,23 @@ async def main():
 sync(main())
 ```
 
+# 示例：下载互动视频(`.ivi` 格式)
 
+``` python
+from bilibili_api import interactive_video
+import asyncio
+
+async def main():
+    ivideo = interactive_video.InteractiveVideo("BV1UE411y7Wy")
+    downloader = interactive_video.InteractiveVideoDownloader(ivideo, "test.ivi")
+    downloader.ignore_event("DOWNLOAD_PART")
+    @downloader.on("__ALL__")
+    async def on_event(data: dict):
+        print(data)
+    await downloader.start()
+
+asyncio.get_event_loop().run_until_complete(main())
+```
 
 # 示例：提交情节图
 
@@ -202,7 +218,7 @@ if __name__ == '__main__':
   bvid = info["bvid"]
   time.sleep(120) # 为了 B 站视频编码的时间, 躺平 2 分钟
   graph_result = asyncio.get_event_loop().run_until_complete(save_tree(bvid))
-  print(graph_result) # 成功之后，编辑树会延迟，不超过5分钟。 如果觉得有问题，就在执行一次上个存树的命令, 这时多半立即执行，推测是队列机制。
+  print(graph_result) # 成功之后，编辑树会延迟，不超过5分钟。 如果觉得有问题，就再执行一次上个存树的命令, 这时多半立即执行，推测是队列机制。
 
 ```
 
