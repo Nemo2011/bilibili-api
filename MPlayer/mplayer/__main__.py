@@ -1,5 +1,7 @@
+import copy
 import json
 import time
+from typing import List
 from PyQt6 import QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
 import sys, os, shutil, zipfile, platform
 from bilibili_api.interactive_video import (
@@ -69,23 +71,30 @@ class Button:
 
 
 class ButtonLabel(QtWidgets.QLabel):
-    def __init__(self, parent: QtWidgets.QWidget):
+    def __init__(self, parent: QtWidgets.QWidget = None):
         super().__init__(parent = parent)
         self.setObjectName(str(time.time()))
 
-    def prep_text(self, text: str):
+    def prep_text(self, text: str, x: int, y: int):
         self.setText(text)
         self.setWordWrap(True)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         font = QtGui.QFont()
         font.setPointSize(15)
         font.setBold(True)
         self.setFont(font)
+        rect = QtCore.QRect(x, y, 200, 50)
+        self.setGeometry(rect)
+        self.setStyleSheet(
+            'border-width: 5px;\
+             border-style: solid;\
+             border-color: rgb(100, 100, 100);\
+             background-color: rgb(50, 50, 50);\
+             color: rgb(255, 255, 255);'
+        )
         self.raise_()
         return self
 
-    def show(self):
-        super().show()
-        return self
 
 class MPlayer(object):
     def setup(self, Form):
@@ -103,6 +112,7 @@ class MPlayer(object):
         Form.setMaximumSize(QtCore.QSize(800, 650))
         Form.setBaseSize(QtCore.QSize(800, 650))
         Form.setWindowTitle("MPlayer")
+        self.win: QtWidgets.QWidget = Form
         self.player = QtMultimediaWidgets.QVideoWidget(Form)
         self.player.setGeometry(QtCore.QRect(0, 0, 800, 450))
         self.player.setObjectName("player")
@@ -159,7 +169,6 @@ class MPlayer(object):
         self.label_2.setObjectName("label_2")
 
         # Slot & String
-        self.win: QtWidgets.QWidget = Form
         self.pp.setEnabled(False)
         self.pushButton.setEnabled(False)
         self.retranslateUi(Form)
@@ -177,8 +186,8 @@ class MPlayer(object):
         self.variables = []
         self.state_log = []
         self.graph = None
-        self.choice_buttons = []
-        self.choice_labels = []
+        self.choice_buttons: List[Button] = []
+        self.choice_labels: List[ButtonLabel] = []
 
         # Video Play Variables & Functions
         self.is_draging_slider = False
@@ -206,7 +215,66 @@ class MPlayer(object):
                             self.set_source(self.graph[str(children[0])]["cid"])
                         else:
                             # 进行选择
-                            pass
+                            def get_info(node_id: int):
+                                return self.graph[str(node_id)]
+                            cnt = 0
+                            for idx, child in enumerate(children):
+                                pos_x = cnt * 200
+                                pos_y = 600
+                                cur_info = get_info(child)
+                                # 生成 Button 对象
+                                self.choice_buttons.append(Button(
+                                    [pos_x, pos_y], 
+                                    cur_info["button"]["text"], 
+                                    cur_info["condition"], 
+                                    cur_info["command"]
+                                ))
+                                # 生成 ButtonLabel 对象
+                                if cur_info["button"]["pos"][0] == None:
+                                    cnt += 1
+                                    lbl = ButtonLabel(self.win)
+                                    lbl.prep_text(cur_info["button"]["text"], pos_x, pos_y)
+                                    lbl.show()
+                                    self.choice_labels.append(
+                                        lbl
+                                    )
+                                    continue
+                                if idx != 0:
+                                    previous_info = get_info(children[idx - 1])
+                                    curpos, previouspos = cur_info["button"]["pos"], previous_info["button"]["pos"]
+                                    if (abs(curpos[0] - previouspos[0]) <= 5) and (abs(curpos[1] - previouspos[1]) <= 5):
+                                        # 可确定与上一个按钮同一个位置（即概率按钮）
+                                        # 不再生成单独的 label
+                                        pass
+                                    else:
+                                        # 生成 label
+                                        cnt += 1
+                                        lbl = ButtonLabel(self.win)
+                                        lbl.prep_text(cur_info["button"]["text"], pos_x, pos_y)
+                                        lbl.show()
+                                        self.choice_labels.append(
+                                            lbl
+                                        )
+                                else:
+                                    # 生成 label
+                                    cnt += 1
+                                    lbl = ButtonLabel(self.win)
+                                    lbl.prep_text(cur_info["button"]["text"], pos_x, pos_y)
+                                    lbl.show()
+                                    self.choice_labels.append(
+                                        lbl
+                                    )
+                                    pass
+                            add_space = int((800 - cnt * 200) / 2)
+                            for idx, lbl in enumerate(self.choice_labels):
+                                lbl.setGeometry(QtCore.QRect(
+                                    lbl.geometry().left() + add_space, 
+                                    lbl.geometry().top(), 
+                                    lbl.geometry().width(), 
+                                    lbl.geometry().height()
+                                ))
+                            for btn in self.choice_buttons:
+                                btn.pos[0] += add_space
             # 显示变量
             for var in self.variables:
                 if var.is_show():
@@ -258,6 +326,8 @@ class MPlayer(object):
                 return
             else:
                 self.has_end = False
+                self.choice_buttons = []
+                self.choice_labels = []
             self.last_position = self.mediaplayer.position()
             self.slider.setValue(
                 int(self.mediaplayer.position() / self.mediaplayer.duration() * 100)
