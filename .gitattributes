@@ -4,3 +4,4 @@ MPlayer/mplayer/bin/ffmpeg/linux/arm64/ffmpeg filter=lfs diff=lfs merge=lfs -tex
 MPlayer/mplayer/bin/ffmpeg/linux/x64/ffmpeg filter=lfs diff=lfs merge=lfs -text
 MPlayer/mplayer/bin/ffmpeg/windows/all/ffmpeg.exe filter=lfs diff=lfs merge=lfs -text
 MPlayer/mplayer/bin/ffmpeg/macos/all/ffmpeg filter=lfs diff=lfs merge=lfs -text
+assets/MPlayer.zip filter=lfs diff=lfs merge=lfs -text
