@@ -9,20 +9,18 @@
 
 - 1. `MPlayer` 是为了播放 `.ivi` 文件而编写的播放器，基于 `PyQt6`
 - 2. 因为技术方面的原因，使用 `MPlayer` 播放互动视频文件不能百分之百还原互动视频的体验。
-- 3. `MPlayer` 不会在安装 `bilibili_api` 时自动安装。运行请戳 `MPlayer.py`。(运行需要 Python >= 3.10 环境及以下依赖)
-
-        - `PyQt6`
-        - `bilibili-api-python>=14.0.0.a3`
-
-    下载信息：
-
-        - commit: `181a588b4df012260fac6ba97342ccc438b7d51e`
-        - url: `https://transfer.sh/nodxYp/MPlayer.zip` [(JUMP TO IT)](https://transfer.sh/nodxYp/MPlayer.zip)
+- 3. `MPlayer` 不会在安装 `bilibili_api` 时自动安装。
+- 4. `MPlayer` 下载信息：
+        - commit: `35d9393`
+        - url: `https://transfer.sh/Ral4Dn/MPlayer.zip`
         - date: `2022-12-14`
-
-
-- 4. 可执行文件编译在做。
-- 5. 更多有关信息，请查看 [README](https://github.com/Nemo2011/bilibili-api/tree/dev/MPlayer)
+- 5. 运行需要 `python>=3.10`, `PyQt6` 及 `bilibili-api-python>=14.0.0.a3`。指令如下：
+     ```
+     pip3 install -r requirements.txt
+     python3 MPlayer.py
+     ```
+- 6. 可执行文件编译在做。
+- 7. 更多有关信息，请查看 [README](https://github.com/Nemo2011/bilibili-api/tree/dev/MPlayer)
 
 **Windows 用户如果打开 MPlayer 后播放视频呈现黑屏，请试着安装 `K-Lite Codec Pack`**
 
