@@ -4,13 +4,11 @@ import random
 import time
 from typing import List
 from PyQt6 import QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
-import sys, os, shutil, zipfile, platform, subprocess
+import sys, os, shutil, zipfile, platform
 from bilibili_api.interactive_video import (
-    InteractiveButton, 
     InteractiveJumpingCondition, 
     InteractiveJumpingCommand, 
     InteractiveNodeJumpingType, 
-    InteractiveButtonAlign, 
     InteractiveVariable
 )
 
@@ -141,7 +139,8 @@ class MPlayer(object):
         self.node.setGeometry(QtCore.QRect(120, 530, 191, 16))
         self.node.setObjectName("node")
         self.info = QtWidgets.QLabel(Form)
-        self.info.setGeometry(QtCore.QRect(320, 530, 471, 16))
+        self.info.setGeometry(QtCore.QRect(320, 520, 471, 36))
+        self.info.setWordWrap(True)
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
