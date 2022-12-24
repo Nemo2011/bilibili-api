@@ -733,6 +733,31 @@ class User:
             )
         return channels
 
+    async def create_channel_series(
+        name: str, 
+        aids: List[int] = [], 
+        keywords: List[str] = [], 
+        description: str = ""
+    ):
+        pass
+
+    async def del_channel_series(
+        series_id: int
+    ):
+        pass
+
+    async def add_aids_to_series(
+        series_id: int, 
+        aids: List[int]
+    ):
+        pass
+
+    async def del_aids_from_series(
+        series_id: int, 
+        aids: List[int]
+    ):
+        pass
+
     async def get_cheese(self):
         """
         查看用户的所有课程
