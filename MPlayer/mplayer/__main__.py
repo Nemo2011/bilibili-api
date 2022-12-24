@@ -1,16 +1,21 @@
 import copy
 import json
+import os
+import platform
 import random
+import shutil
+import sys
 import time
+import zipfile
 from typing import List
-from PyQt6 import QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
-import sys, os, shutil, zipfile, platform
-from bilibili_api.interactive_video import (
-    InteractiveJumpingCondition, 
-    InteractiveJumpingCommand, 
-    InteractiveNodeJumpingType, 
-    InteractiveVariable
-)
+
+from PyQt6 import QtCore, QtGui, QtMultimedia, QtMultimediaWidgets, QtWidgets
+
+from bilibili_api.interactive_video import (InteractiveJumpingCommand,
+                                            InteractiveJumpingCondition,
+                                            InteractiveNodeJumpingType,
+                                            InteractiveVariable)
+
 
 def get_ffmpeg_path():
     if "darwin" in platform.system().lower():
@@ -61,7 +66,7 @@ def get_ffmpeg_path():
 
 class Button:
     def __init__(self, id_, pos, text, condition, command):
-        # A class that provides the button model. 
+        # A class that provides the button model.
         self.node_id = id_
         self.pos = pos
         self.text = text
@@ -70,12 +75,12 @@ class Button:
         # 什么？别问我为什么不用 TypedDict / dataclass
 
     def __str__(self) -> str:
-        return f'{self.pos} {self.text} {self.condition} {self.command}'
+        return f"{self.pos} {self.text} {self.condition} {self.command}"
 
 
 class ButtonLabel(QtWidgets.QLabel):
     def __init__(self, parent: QtWidgets.QWidget = None):
-        super().__init__(parent = parent)
+        super().__init__(parent=parent)
         self.setObjectName(str(time.time()))
 
     def prep_text(self, text: str, x: int, y: int):
@@ -89,11 +94,11 @@ class ButtonLabel(QtWidgets.QLabel):
         rect = QtCore.QRect(x, y, 200, 50)
         self.setGeometry(rect)
         self.setStyleSheet(
-            'border-width: 5px;\
+            "border-width: 5px;\
              border-style: solid;\
              border-color: rgb(100, 100, 100);\
              background-color: rgb(50, 50, 50);\
-             color: rgb(255, 255, 255);'
+             color: rgb(255, 255, 255);"
         )
         self.raise_()
         return self
@@ -215,25 +220,26 @@ class MPlayer(object):
                         self.win.setWindowTitle(self.win.windowTitle() + " - COMPLETED")
                     else:
                         # 跳转类型
-                        if self.graph[str(children[0])]["jump_type"] == InteractiveNodeJumpingType.DEFAULT.value:
+                        if (
+                            self.graph[str(children[0])]["jump_type"]
+                            == InteractiveNodeJumpingType.DEFAULT.value
+                        ):
                             # 直接跳转
                             for node_id in children:
                                 btn = Button(
-                                    node_id, 
-                                    [0, 0], 
-                                    "", 
-                                    self.graph[str(node_id)]["condition"], 
-                                    self.graph[str(node_id)]["command"]
+                                    node_id,
+                                    [0, 0],
+                                    "",
+                                    self.graph[str(node_id)]["condition"],
+                                    self.graph[str(node_id)]["command"],
                                 )
                                 condition = InteractiveJumpingCondition(
-                                    self.variables, 
-                                    btn.condition
+                                    self.variables, btn.condition
                                 )
                                 if condition.get_result():
                                     # 可以跳转
                                     native_command = InteractiveJumpingCommand(
-                                        self.variables, 
-                                        btn.command
+                                        self.variables, btn.command
                                     )
                                     self.variables = native_command.run_command()
                                     btn_id = btn.node_id
@@ -247,33 +253,41 @@ class MPlayer(object):
                             # 进行选择
                             def get_info(node_id: int):
                                 return self.graph[str(node_id)]
+
                             cnt = 0
                             for idx, child in enumerate(children):
                                 pos_x = cnt * 200
                                 pos_y = 600
                                 cur_info = get_info(child)
                                 # 生成 Button 对象
-                                self.choice_buttons.append(Button(
-                                    child, 
-                                    [pos_x, pos_y], 
-                                    cur_info["button"]["text"], 
-                                    cur_info["condition"], 
-                                    cur_info["command"]
-                                ))
+                                self.choice_buttons.append(
+                                    Button(
+                                        child,
+                                        [pos_x, pos_y],
+                                        cur_info["button"]["text"],
+                                        cur_info["condition"],
+                                        cur_info["command"],
+                                    )
+                                )
                                 # 生成 ButtonLabel 对象
                                 if cur_info["button"]["pos"][0] == None:
                                     cnt += 1
                                     lbl = ButtonLabel(self.win)
-                                    lbl.prep_text(cur_info["button"]["text"], pos_x, pos_y)
-                                    lbl.show()
-                                    self.choice_labels.append(
-                                        lbl
+                                    lbl.prep_text(
+                                        cur_info["button"]["text"], pos_x, pos_y
                                     )
+                                    lbl.show()
+                                    self.choice_labels.append(lbl)
                                     continue
                                 if idx != 0:
                                     previous_info = get_info(children[idx - 1])
-                                    curpos, previouspos = cur_info["button"]["pos"], previous_info["button"]["pos"]
-                                    if (abs(curpos[0] - previouspos[0]) <= 5) and (abs(curpos[1] - previouspos[1]) <= 5):
+                                    curpos, previouspos = (
+                                        cur_info["button"]["pos"],
+                                        previous_info["button"]["pos"],
+                                    )
+                                    if (abs(curpos[0] - previouspos[0]) <= 5) and (
+                                        abs(curpos[1] - previouspos[1]) <= 5
+                                    ):
                                         # 可确定与上一个按钮同一个位置（即概率按钮）
                                         # 不再生成单独的 label
                                         self.choice_buttons[-1].pos[0] -= 200
@@ -281,29 +295,31 @@ class MPlayer(object):
                                         # 生成 label
                                         cnt += 1
                                         lbl = ButtonLabel(self.win)
-                                        lbl.prep_text(cur_info["button"]["text"], pos_x, pos_y)
-                                        lbl.show()
-                                        self.choice_labels.append(
-                                            lbl
+                                        lbl.prep_text(
+                                            cur_info["button"]["text"], pos_x, pos_y
                                         )
+                                        lbl.show()
+                                        self.choice_labels.append(lbl)
                                 else:
                                     # 生成 label
                                     cnt += 1
                                     lbl = ButtonLabel(self.win)
-                                    lbl.prep_text(cur_info["button"]["text"], pos_x, pos_y)
-                                    lbl.show()
-                                    self.choice_labels.append(
-                                        lbl
+                                    lbl.prep_text(
+                                        cur_info["button"]["text"], pos_x, pos_y
                                     )
+                                    lbl.show()
+                                    self.choice_labels.append(lbl)
                                     pass
                             add_space = int((800 - cnt * 200) / 2)
                             for idx, lbl in enumerate(self.choice_labels):
-                                lbl.setGeometry(QtCore.QRect(
-                                    lbl.geometry().left() + add_space, 
-                                    lbl.geometry().top(), 
-                                    lbl.geometry().width(), 
-                                    lbl.geometry().height()
-                                ))
+                                lbl.setGeometry(
+                                    QtCore.QRect(
+                                        lbl.geometry().left() + add_space,
+                                        lbl.geometry().top(),
+                                        lbl.geometry().width(),
+                                        lbl.geometry().height(),
+                                    )
+                                )
                             for btn in self.choice_buttons:
                                 btn.pos[0] += add_space
             # 处理进度条
@@ -327,7 +343,9 @@ class MPlayer(object):
                     duration_sec = "0" + str(duration_sec)
                 if duration_min < 10:
                     duration_min = "0" + str(duration_min)
-                self.label.setText(f'{duration_min}:{duration_sec}/{duration_min}:{duration_sec}')
+                self.label.setText(
+                    f"{duration_min}:{duration_sec}/{duration_min}:{duration_sec}"
+                )
                 self.player.lower()
                 for lbl in self.choice_labels:
                     lbl.raise_()
@@ -346,7 +364,9 @@ class MPlayer(object):
                     duration_sec = "0" + str(duration_sec)
                 if duration_min < 10:
                     duration_min = "0" + str(duration_min)
-                self.label.setText(f'{duration_min}:{duration_sec}/{duration_min}:{duration_sec}')
+                self.label.setText(
+                    f"{duration_min}:{duration_sec}/{duration_min}:{duration_sec}"
+                )
                 self.player.lower()
                 for lbl in self.choice_labels:
                     lbl.raise_()
@@ -375,10 +395,13 @@ class MPlayer(object):
                 position_sec = "0" + str(position_sec)
             if position_min < 10:
                 position_min = "0" + str(position_min)
-            self.label.setText(f'{position_min}:{position_sec}/{duration_min}:{duration_sec}')
+            self.label.setText(
+                f"{position_min}:{position_sec}/{duration_min}:{duration_sec}"
+            )
             # 将选择的按钮置于最上层
             for lbl in self.choice_labels:
                 lbl.raise_()
+
         self.win.timerEvent = timerEvent
 
         # Click & Jump
@@ -389,17 +412,19 @@ class MPlayer(object):
                 if var.is_random():
                     var._InteractiveVariable__var_value = random.random() * 100
             for btn in self.choice_buttons:
-                if (pos[0] - btn.pos[0] <= 200) and (pos[0] - btn.pos[0] >= 0) \
-                    and (pos[1] - btn.pos[1] <= 50) and (pos[1] - btn.pos[1] >= 0):
+                if (
+                    (pos[0] - btn.pos[0] <= 200)
+                    and (pos[0] - btn.pos[0] >= 0)
+                    and (pos[1] - btn.pos[1] <= 50)
+                    and (pos[1] - btn.pos[1] >= 0)
+                ):
                     condition = InteractiveJumpingCondition(
-                        self.variables, 
-                        btn.condition
+                        self.variables, btn.condition
                     )
                     if condition.get_result():
                         # 可以跳转
                         native_command = InteractiveJumpingCommand(
-                            self.variables, 
-                            btn.command
+                            self.variables, btn.command
                         )
                         self.variables = native_command.run_command()
                         btn_id = btn.node_id
@@ -409,6 +434,7 @@ class MPlayer(object):
                         title = self.graph[str(btn.node_id)]["title"]
                         self.node.setText(f"(当前节点: {title})")
                         break
+
         self.win.mouseReleaseEvent = mouseReleaseEvent
 
     def start_playing(self):
@@ -439,12 +465,9 @@ class MPlayer(object):
         wintitle = "MPlayer"
         for var in self.variables:
             if var.is_show():
-                wintitle += f' - {var.get_name()}: {int(var.get_value())}'
+                wintitle += f" - {var.get_name()}: {int(var.get_value())}"
         self.win.setWindowTitle(wintitle)
-        self.state_log.append({
-            "cid": cid, 
-            "vars": copy.deepcopy(self.variables)
-        })
+        self.state_log.append({"cid": cid, "vars": copy.deepcopy(self.variables)})
         self.has_end = False
         self.mediaplayer.setAudioOutput(
             QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100)
@@ -489,13 +512,11 @@ class MPlayer(object):
         self.current_node = 1
         variables = self.graph["1"]["vars"]
         for var in variables:
-            self.variables.append(InteractiveVariable(
-                var["name"], 
-                var["id"], 
-                var["value"], 
-                var["show"], 
-                var["random"]
-            ))
+            self.variables.append(
+                InteractiveVariable(
+                    var["name"], var["id"], var["value"], var["show"], var["random"]
+                )
+            )
         self.set_source(self.graph["1"]["cid"])
 
     def close_ivi(self):
@@ -610,8 +631,14 @@ class MPlayer(object):
 
     def on_close_check(self, event):
         if self.current_node != 0:
-            reply = QtWidgets.QMessageBox.question(self.win, "WARNING", "IVI file is playing. Are you sure to exit? ",
-            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No, QtWidgets.QMessageBox.StandardButton.No)
+            reply = QtWidgets.QMessageBox.question(
+                self.win,
+                "WARNING",
+                "IVI file is playing. Are you sure to exit? ",
+                QtWidgets.QMessageBox.StandardButton.Yes
+                | QtWidgets.QMessageBox.StandardButton.No,
+                QtWidgets.QMessageBox.StandardButton.No,
+            )
             if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                 self.close_ivi()
                 event.accept()
@@ -619,13 +646,13 @@ class MPlayer(object):
                 event.ignore()
         else:
             event.accept()
-        
+
     def back_to_previous(self):
         if len(self.state_log) < 2:
             QtWidgets.QMessageBox.warning(
-                self.win, 
-                "WTF???", 
-                "MPlayer can't find the previous node. \nMaybe there's not any node or only one node?"
+                self.win,
+                "WTF???",
+                "MPlayer can't find the previous node. \nMaybe there's not any node or only one node?",
             )
             return
         new_cid = copy.deepcopy(self.state_log[-2]["cid"])
@@ -642,6 +669,7 @@ class MPlayer(object):
                 self.node.setText(f"(当前节点: {title})")
                 return
 
+
 def main():
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
@@ -650,5 +678,6 @@ def main():
     win.show()
     sys.exit(app.exec())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
