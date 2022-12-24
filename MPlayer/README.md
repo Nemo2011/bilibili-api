@@ -27,11 +27,12 @@
 
 本项目使用 Python**3.11**(内含 python**3.10** `match-case` 最新语法)，基于 PyQt**6** 开发，许多地方与 PyQt**5** 不兼容，因此你需要另外安装 PyQt**6**。
 
-## Download & Run
+## Run
 
-下载地址：[下载地址](https://github.com/Nemo2011/bilibili-api/raw/dev/assets/MPlayer.zip)
-
-运行：戳 `MPlayer.py`
+```
+pip3 install -r requirements.txt // 依赖：PyQt6, bilibili-api-python>=14.0.0.a3
+python3 MPlayer.py
+```
 
 ## 测试通过平台
 
