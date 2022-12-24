@@ -479,6 +479,7 @@ class MPlayer(object):
             QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100)
         )
         self.stop_playing()
+        self.pp.setText("Pause")
         path1 = self.temp_dir + str(cid) + ".video.mp4"
         path2 = self.temp_dir + str(cid) + ".audio.mp4"
         dest = self.temp_dir + str(cid) + ".mp4"
@@ -532,6 +533,10 @@ class MPlayer(object):
         self.current_node = 0
         self.variables = []
         self.state_log = []
+        self.choice_buttons = []
+        for lbl in self.choice_labels:
+            lbl.hide()
+        self.choice_labels = []
         self.graph = None
         self.stop_playing()
         self.pp.setText("Pause")
