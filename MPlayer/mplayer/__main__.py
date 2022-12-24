@@ -200,6 +200,7 @@ class MPlayer(object):
         self.choice_labels: List[ButtonLabel] = []
 
         # Video Play Variables & Functions
+        self.temp_dir = ""
         self.is_draging_slider = False
         self.is_stoping = False
         self.win.startTimer(10)
@@ -474,12 +475,12 @@ class MPlayer(object):
             QtMultimedia.QAudioOutput().setVolume(self.horizontalSlider.value() / 100)
         )
         self.stop_playing()
-        path1 = ".mplayer/" + str(cid) + ".video.mp4"
-        path2 = ".mplayer/" + str(cid) + ".audio.mp4"
-        dest = ".mplayer/" + str(cid) + ".mp4"
+        path1 = self.temp_dir + str(cid) + ".video.mp4"
+        path2 = self.temp_dir + str(cid) + ".audio.mp4"
+        dest = self.temp_dir + str(cid) + ".mp4"
         if not os.path.exists(path2):
             self.mediaplayer.setSource(
-                QtCore.QUrl(".mplayer/" + str(cid) + ".video.mp4")
+                QtCore.QUrl(path1)
             )
             self.mediaplayer.setPosition(0)
             self.start_playing()
@@ -488,7 +489,7 @@ class MPlayer(object):
             f'{get_ffmpeg_path()}\
             -y -i "{path1}" -i "{path2}" -strict -2 -acodec copy -vcodec copy -f mp4 "{dest}"'
         )
-        self.mediaplayer.setSource(QtCore.QUrl(".mplayer/" + str(cid) + ".mp4"))
+        self.mediaplayer.setSource(QtCore.QUrl(dest))
         self.mediaplayer.setPosition(0)
         self.start_playing()
 
@@ -496,20 +497,21 @@ class MPlayer(object):
         if os.path.exists(".mplayer"):
             shutil.rmtree(".mplayer")
         ivi = zipfile.ZipFile(path)
-        ivi.extractall(".mplayer/")
+        self.temp_dir = ".mplayer/" + str(time.time()) + "/"
+        ivi.extractall(self.temp_dir)
         bilivideo_parser = json.JSONDecoder()
         self.node.setText("(当前节点: 视频主节点)")
         self.info.setText(
-            bilivideo_parser.decode(open(".mplayer/bilivideo.json", "r").read())[
+            bilivideo_parser.decode(open(self.temp_dir + "bilivideo.json", "r").read())[
                 "title"
             ]
             + "("
-            + bilivideo_parser.decode(open(".mplayer/bilivideo.json", "r").read())[
+            + bilivideo_parser.decode(open(self.temp_dir + "bilivideo.json", "r").read())[
                 "bvid"
             ]
             + ")"
         )
-        self.graph = json.load(open(".mplayer/ivideo.json", "r"))
+        self.graph = json.load(open(self.temp_dir + "ivideo.json", "r"))
         self.current_node = 1
         variables = self.graph["1"]["vars"]
         for var in variables:
@@ -521,6 +523,7 @@ class MPlayer(object):
         self.set_source(self.graph["1"]["cid"])
 
     def close_ivi(self):
+        self.temp_dir = ""
         self.current_node = 0
         self.variables = []
         self.state_log = []
