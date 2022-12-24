@@ -202,7 +202,7 @@ class MPlayer(object):
         # Video Play Variables & Functions
         self.is_draging_slider = False
         self.is_stoping = False
-        self.win.startTimer(100)
+        self.win.startTimer(10)
         self.has_end = False
         self.final_position = -1
 
@@ -217,7 +217,8 @@ class MPlayer(object):
                 else:
                     children = self.graph[str(self.current_node)]["sub"]
                     if len(children) == 0:
-                        self.win.setWindowTitle(self.win.windowTitle() + " - COMPLETED")
+                        # 已结束
+                        pass
                     else:
                         # 跳转类型
                         if (
@@ -667,6 +668,7 @@ class MPlayer(object):
                 self.state_log.pop()
                 title = self.graph[str(new_node_id)]["title"]
                 self.node.setText(f"(当前节点: {title})")
+                self.volume_change_event()
                 return
 
 

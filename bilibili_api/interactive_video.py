@@ -402,7 +402,10 @@ class InteractiveGraph:
             InteractiveNode: 根节点
         """
         edge_info = await self.__parent.get_edge_info(None)
-        node_vars = edge_info["hidden_vars"]
+        if "hidden_vars" in edge_info.keys():
+            node_vars = edge_info["hidden_vars"]
+        else:
+            node_vars = []
         var_list = []
         for var in node_vars:
             var_value = var["value"]
