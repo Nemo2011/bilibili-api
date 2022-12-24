@@ -28,3 +28,8 @@ mplayer:
 
 docs:
 	cd docs;$(NPM) run localhost
+
+upload_mplayer:
+	$(PYTHON) scripts/build_mplayer_zip.py
+	curl --upload-file ./MPlayer.zip https://transfer.sh/MPlayer.zip
+	rm MPlayer.zip

@@ -13,8 +13,10 @@
   - PyQt6
   - bilibili-api-python
 - 4. 可执行文件编译在做。
-- 5. 测试文件：[BV1UE411y7Wy](https://transfer.sh/I3Opzf/BV1UE411y7Wy.ivi)
+- 5. 测试文件：[BV1UE411y7Wy](https://transfer.sh/Gr1Wpq/MPlayer.zip)
 - 5. 更多有关信息，请查看 [README](https://github.com/Nemo2011/bilibili-api/tree/dev/MPlayer)
+
+**Windows 用户如果打开 MPlayer 后播放视频呈现黑屏，请试着安装 `K-Lite Codec Pack`**
 
 # MacOS 用户打开 MPlayer 注意
 
@@ -28,7 +30,7 @@
 
 ![](/mplayer-tip-pictures/1.png)
 
-2. 双击打开，出现如下情况。点击右上角的 `?` 按钮。
+2. 双击打开，如果出现如下情况。点击右上角的 `?` 按钮。(如果没有出现其他情况，则可以跳过后面所有步骤。)
 
 ![](/mplayer-tip-pictures/2.png)
 
