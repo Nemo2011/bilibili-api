@@ -782,54 +782,48 @@ class ChannelSeries:
 
     def __init__(
         self,
-        uid: int,
-        type_: ChannelSeriesType,
-        id_: int,
+        uid: int = None,
+        type_: ChannelSeriesType = ChannelSeriesType.SERIES,
+        id_: int = None,
         credential: Credential = None,
         meta=None,
     ):
         """
-        uid(int)                : 用户 uid. Defaults to None. 
-        type_(ChannelSeriesType): 合集与列表类型
-        id_(int)                : season_id 或 series_id
-        credential(Credential)  : 凭证. Defaults to None. 
+        Args:
+            uid(int)                : 用户 uid. Defaults to None. 
+            type_(ChannelSeriesType): 合集与列表类型
+            id_(int)                : season_id 或 series_id
+            credential(Credential)  : 凭证. Defaults to None. 
         """
+        assert id_ != None
+        assert type_ != None
         self.__uid = uid
         self.is_new = type_.value
         self.id_ = id_
         self.owner = User(self.__uid, credential=credential)
         self.credential = credential
         self.meta = None
-        if self.is_new:
-            look_type = "seasons"
-        else:
-            look_type = "series"
         if meta is None:
-            credential = self.credential if self.credential else Credential()
-            api = API["info"]["channel_list"]
-            param = {"mid": self.__uid, "page_num": 1, "page_size": 1}
-            res = httpx.request(
-                "GET", url=api["url"], params=param, cookies=credential.get_cookies()
-            )
-            items = json.loads(res.text)["data"]["items_lists"]["page"]["total"]
-            time.sleep(0.5)
-            if items == 0:
-                items = 1
-            param["page_size"] = items
-            channel_list = json.loads(
-                httpx.request(
-                    "GET",
-                    url=api["url"],
-                    params=param,
-                    cookies=credential.get_cookies(),
-                ).text
-            )["data"]
-            for channel in channel_list["items_lists"][look_type + "_list"]:
-                type_id = channel["meta"]["season_id" if self.is_new else "series_id"]
-                if type_id == self.id_:
-                    self.meta = channel["meta"]
-            if self.meta is None:
-                raise ValueError("未找到频道信息。")
+            if self.is_new:
+                api = API["channel_series"]["season_info"]
+                params = {
+                    "season_id": self.id_
+                }
+            else:
+                api = API["channel_series"]["info"]
+                params = {
+                    "series_id": self.id_
+                }
+            resp = json.loads(httpx.get(api["url"], params = params).text)["data"]
+            if self.is_new:
+                self.meta = resp["info"]
+                self.meta["mid"] = resp["upper"]["mid"]
+                self.__uid = self.meta["mid"]
+                self.owner = User(self.__uid, credential=credential)
+            else:
+                self.meta = resp["meta"]
+                self.__uid = self.meta["mid"]
+                self.owner = User(self.__uid, credential=credential)
         else:
             self.meta = meta
 
