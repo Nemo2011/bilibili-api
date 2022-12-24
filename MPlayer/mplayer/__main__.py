@@ -494,10 +494,8 @@ class MPlayer(object):
         self.start_playing()
 
     def extract_ivi(self, path: str):
-        if os.path.exists(".mplayer"):
-            shutil.rmtree(".mplayer")
-        ivi = zipfile.ZipFile(path)
         self.temp_dir = ".mplayer/" + str(time.time()) + "/"
+        ivi = zipfile.ZipFile(path)
         ivi.extractall(self.temp_dir)
         bilivideo_parser = json.JSONDecoder()
         self.node.setText("(当前节点: 视频主节点)")
@@ -523,7 +521,6 @@ class MPlayer(object):
         self.set_source(self.graph["1"]["cid"])
 
     def close_ivi(self):
-        self.temp_dir = ""
         self.current_node = 0
         self.variables = []
         self.state_log = []
@@ -534,8 +531,16 @@ class MPlayer(object):
         self.mediaplayer = QtMultimedia.QMediaPlayer()  # Clear the multimedia source
         self.mediaplayer.setVideoOutput(self.player)
         self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput())
-        if os.path.exists(".mplayer"):
-            shutil.rmtree(".mplayer")
+        shutil.rmtree(self.temp_dir)
+        while True:
+            if not os.path.exists(self.temp_dir):
+                break
+        try:
+            os.rmdir(".mplayer")
+        except:
+            # Not empty
+            pass
+        self.temp_dir = ""
         self.node.setText("(当前节点: 无)")
         self.info.setText("视频标题(BVID)")
         self.win.setWindowTitle("MPlayer")
@@ -544,6 +549,8 @@ class MPlayer(object):
         self.pushButton.setEnabled(False)
 
     def open_ivi(self):
+        if self.current_node != 0:
+            return
         try:
             if self.lineEdit.text() != "":
                 self.extract_ivi(self.lineEdit.text())
@@ -638,7 +645,7 @@ class MPlayer(object):
             reply = QtWidgets.QMessageBox.question(
                 self.win,
                 "WARNING",
-                "IVI file is playing. Are you sure to exit? ",
+                "IVI file is playing. Are you sure want to exit? ",
                 QtWidgets.QMessageBox.StandardButton.Yes
                 | QtWidgets.QMessageBox.StandardButton.No,
                 QtWidgets.QMessageBox.StandardButton.No,
