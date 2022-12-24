@@ -203,7 +203,7 @@ class MPlayer(object):
         self.temp_dir = ""
         self.is_draging_slider = False
         self.is_stoping = False
-        self.win.startTimer(10)
+        self.win.startTimer(100)
         self.has_end = False
         self.final_position = -1
 
@@ -336,7 +336,11 @@ class MPlayer(object):
                 == ((self.mediaplayer.position() // 1000))
             ) and (not self.has_end):
                 self.has_end = True
+                self.mediaplayer.pause()
                 self.final_position = self.mediaplayer.position()
+                self.mediaplayer.setAudioOutput(
+                    QtMultimedia.QAudioOutput().setVolume(0)
+                )
                 self.slider.setValue(100)
                 duration = self.mediaplayer.duration() // 1000
                 duration_sec = duration % 60
@@ -522,6 +526,7 @@ class MPlayer(object):
                 )
             )
         self.set_source(self.graph["1"]["cid"])
+        self.volume_change_event()
 
     def close_ivi(self):
         self.current_node = 0
@@ -534,6 +539,7 @@ class MPlayer(object):
         self.mediaplayer = QtMultimedia.QMediaPlayer()  # Clear the multimedia source
         self.mediaplayer.setVideoOutput(self.player)
         self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput())
+        self.volume_change_event()
         shutil.rmtree(self.temp_dir)
         while True:
             if not os.path.exists(self.temp_dir):
@@ -577,6 +583,7 @@ class MPlayer(object):
             self.pushButton_4.setText("Sound: Off")
         else:
             self.pushButton_4.setText("Sound: On")
+        position = self.mediaplayer.position()
         if (not self.has_end) or (not self.is_stoping):
             pass
         else:
@@ -588,6 +595,7 @@ class MPlayer(object):
         if (not self.has_end) or (not self.is_stoping):
             pass
         else:
+            self.mediaplayer.setPosition(position)
             self.start_playing()
 
     def position_start_change_event(self):
@@ -613,7 +621,7 @@ class MPlayer(object):
         if "on" in self.pushButton_4.text().lower():
             self.pushButton_4.setText("Sound: Off")
             curpos = self.mediaplayer.position()
-            self.stop_playing()
+            self.pause_playing()
             volume = self.horizontalSlider.value()
             self.label_2.setText(str(volume))
             self.audio_output = QtMultimedia.QAudioOutput()
@@ -625,7 +633,7 @@ class MPlayer(object):
         else:
             self.pushButton_4.setText("Sound: On")
             curpos = self.mediaplayer.position()
-            self.stop_playing()
+            self.pause_playing()
             volume = self.horizontalSlider.value()
             self.label_2.setText(str(volume))
             self.audio_output = QtMultimedia.QAudioOutput()

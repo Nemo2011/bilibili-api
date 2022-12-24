@@ -32,3 +32,10 @@
 下载地址：[下载地址](https://github.com/Nemo2011/bilibili-api/raw/dev/assets/MPlayer.zip)
 
 运行：戳 `MPlayer.py`
+
+## 测试通过平台
+
+| name | version | py_version | note |
+| ---- | ------- | ---------- | ---- |
+| Windows | 11 (21H2) | 3.11.0 | (EMPTY) |
+| MacOS | 13.1 | 3.11.1 | (EMPTY) |
