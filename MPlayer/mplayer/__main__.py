@@ -494,7 +494,10 @@ class MPlayer(object):
         self.start_playing()
 
     def extract_ivi(self, path: str):
-        self.temp_dir = ".mplayer/" + str(time.time()) + "/"
+        curtime = str(time.time())
+        os.mkdir(".mplayer")
+        os.mkdir(".mplayer/" + curtime)
+        self.temp_dir = ".mplayer/" + curtime + "/"
         ivi = zipfile.ZipFile(path)
         ivi.extractall(self.temp_dir)
         bilivideo_parser = json.JSONDecoder()
