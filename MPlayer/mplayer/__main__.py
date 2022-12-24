@@ -4,7 +4,7 @@ import random
 import time
 from typing import List
 from PyQt6 import QtCore, QtGui, QtWidgets, QtMultimedia, QtMultimediaWidgets
-import sys, os, shutil, zipfile, platform
+import sys, os, shutil, zipfile, platform, subprocess
 from bilibili_api.interactive_video import (
     InteractiveButton, 
     InteractiveJumpingCondition, 
@@ -444,7 +444,7 @@ class MPlayer(object):
         self.win.setWindowTitle(wintitle)
         self.state_log.append({
             "cid": cid, 
-            "vars": self.variables
+            "vars": copy.deepcopy(self.variables)
         })
         self.has_end = False
         self.mediaplayer.setAudioOutput(
@@ -463,7 +463,7 @@ class MPlayer(object):
             return
         os.system(
             f'{get_ffmpeg_path()}\
-            -y -i "{path1}" -i "{path2}" -strict -2 -acodec copy -vcodec copy -f mp4 "{dest}" > ffmpeg.out'
+            -y -i "{path1}" -i "{path2}" -strict -2 -acodec copy -vcodec copy -f mp4 "{dest}"'
         )
         self.mediaplayer.setSource(QtCore.QUrl(".mplayer/" + str(cid) + ".mp4"))
         self.mediaplayer.setPosition(0)
@@ -629,8 +629,8 @@ class MPlayer(object):
                 "MPlayer can't find the previous node. \nMaybe there's not any node or only one node?"
             )
             return
-        new_cid = self.state_log[-2]["cid"]
-        new_vars = self.state_log[-2]["vars"]
+        new_cid = copy.deepcopy(self.state_log[-2]["cid"])
+        new_vars = copy.deepcopy(self.state_log[-2]["vars"])
         self.state_log.pop()
         for key in self.graph.keys():
             if self.graph[key]["cid"] == new_cid:
@@ -641,6 +641,7 @@ class MPlayer(object):
                 self.state_log.pop()
                 title = self.graph[str(new_node_id)]["title"]
                 self.node.setText(f"(当前节点: {title})")
+                return
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
