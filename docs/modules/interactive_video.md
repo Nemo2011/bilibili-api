@@ -412,6 +412,29 @@ o----|xxx| (TEXT_RIGHT)
 
 ---
 
+## class InteractiveVideoDownloaderEvents
+
+**Extends: enum.Enum**
+
++ START           : 开始下载
++ GET             : 获取到节点信息
++ PREPARE_DOWNLOAD: 准备下载节点
+
+**(以下为内建下载函数发布事件)**
+
++ DOWNLOAD_START  : 开始下载单个文件
++ DOWNLOAD_PART   : 文件分块部分完成
++ DOWNLOAD_SUCCESS: 完成下载
+
+**(END)**
+
++ PACKAGING       : 打包文件
++ SUCCESS         : 完成下载
++ ABORTED         : 终止下载
++ FAILED          : 下载失败
+
+---
+
 ## class InteractiveVideoDownloader
 
 **Extends: AsyncEvent**
@@ -437,3 +460,15 @@ o----|xxx| (TEXT_RIGHT)
 #### async def abort()
 
 中断下载
+
+---
+
+## def get_ivi_file_info()
+
+| name | type | description |
+| - | - | - |
+| path | str | ivi 文件地址 |
+
+获取 ivi 文件的信息
+
+**Returns:** dict: ivi 文件信息

@@ -1,3 +1,33 @@
+# 示例：下载互动视频
+
+用途：下载 `ivi` 文件，可以通过 `MPlayer` 播放
+
+``` python
+from bilibili_api import interactive_video as ivideo
+import asyncio
+
+BVID = ""
+
+async def main():
+  # 实例化下载器
+  v = ivideo.InteractiveVideo(bvid = BVID)
+  downloader = ivideo.InteractiveVideoDownloader(video = v, out = "test.ivi")
+  # 监听事件
+  downloader.ignore_event("DOWNLOAD_PART") # 忽略下载部分完成信息
+  @downloader.on("__ALL__")
+  async def ev(data):
+    print(data)
+  # 开始下载
+  try:
+    await downloader.start()
+  except Exception as e:
+    downloader.abort()
+
+if __name__ == '__main__':
+  # 运行
+  asyncio.run(main())
+```
+
 # 示例：获取剧情图所有节点
 
 用途：下载所有节点视频信息、获取剧情图结构。

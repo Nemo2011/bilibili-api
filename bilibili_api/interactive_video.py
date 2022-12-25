@@ -618,6 +618,7 @@ class InteractiveVideoDownloaderEvents(enum.Enum):
 
     + START           : 开始下载
     + GET             : 获取到节点信息
+    + PREPARE_DOWNLOAD: 准备下载节点
     (以下为内建下载函数发布事件)
     + DOWNLOAD_START  : 开始下载单个文件
     + DOWNLOAD_PART   : 文件分块部分完成
@@ -815,6 +816,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         }, open(tmp_dir_name + "/bilivideo.json", "w+"), indent = 2, ensure_ascii = False)
 
         for key, item in edges_info.items():
+            self.dispatch("PREPARE_DOWNLOAD", {"node_id": int(key), "cid": item["cid"]})
             cid = item["cid"]
             url = await self.__video.get_download_url(cid)
             await self.__download_func(url["dash"]["video"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".video.mp4")
@@ -864,3 +866,17 @@ class InteractiveVideoDownloader(AsyncEvent):
             self.__task.cancel("用户手动取消")
 
         self.dispatch("ABORTED", None)
+
+def get_ivi_file_meta(path: str):
+    """
+    获取 ivi 文件信息
+
+    Args:
+        path (str): 文件地址
+
+    Returns:
+        dict: 文件信息
+    """
+    ivi = zipfile.ZipFile(path)
+    info = ivi.open("bilivideo.json").read()
+    return json.loads(info)

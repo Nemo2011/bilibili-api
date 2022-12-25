@@ -1,16 +1,54 @@
 """
 bilibili_api
+
+哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。
 """
 
 import asyncio
 import platform
 
-from . import (app, article, ass, audio, bangumi, black_room, channel, cheese,
-               comment, dynamic, favorite_list, game, homepage,
-               interactive_video, live, login, login_func, rank, search,
-               settings, topic, user, video, video_uploader)
-HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
-from .errors import *
+from . import (
+    app,
+    article,
+    ass,
+    audio,
+    bangumi,
+    black_room,
+    channel,
+    cheese,
+    comment,
+    dynamic,
+    favorite_list,
+    game,
+    homepage,
+    interactive_video,
+    live,
+    login,
+    login_func,
+    rank,
+    search,
+    settings,
+    topic,
+    user,
+    video,
+    video_uploader,
+)
+from .errors import (
+    ApiException,
+    ResponseCodeException,
+    ResponseException,
+    NetworkException,
+    ArgsException,
+    CredentialNoSessdataException,
+    CredentialNoBiliJctException,
+    CredentialNoBuvid3Exception,
+    CredentialNoDedeUserIDException,
+    DanmakuClosedException,
+    VideoUploadException,
+    LoginError,
+    LiveException,
+    DynamicExceedImagesException,
+)
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku

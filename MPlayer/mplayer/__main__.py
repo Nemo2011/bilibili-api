@@ -273,6 +273,17 @@ class MPlayer(object):
                                 )
                                 # 生成 ButtonLabel 对象
                                 if cur_info["button"]["pos"][0] == None:
+                                    if idx != 0:
+                                        previous_info = get_info(children[idx - 1])
+                                        curtext, previoustext = (
+                                            cur_info["button"]["text"],
+                                            previous_info["button"]["text"],
+                                        )
+                                        if curtext[2:] == previoustext[2:]:
+                                            # 可确定与上一个按钮同一个位置（即概率按钮）
+                                            # 不再生成单独的 label
+                                            self.choice_buttons[-1].pos[0] -= 200
+                                            continue
                                     cnt += 1
                                     lbl = ButtonLabel(self.win)
                                     lbl.prep_text(
@@ -500,7 +511,10 @@ class MPlayer(object):
 
     def extract_ivi(self, path: str):
         curtime = str(time.time())
-        os.mkdir(".mplayer")
+        try:
+            os.mkdir(".mplayer")
+        except:
+            pass
         os.mkdir(".mplayer/" + curtime)
         self.temp_dir = ".mplayer/" + curtime + "/"
         ivi = zipfile.ZipFile(path)
