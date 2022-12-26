@@ -382,6 +382,22 @@ from bilibili_api import user
 
 ---
 
+## async def edit_user_info()
+
+| name       | type       | description |
+|------------|------------|-------------|
+| birthday   | str        | 生日 YYYY-MM-DD|
+| sex        | str        | 性别 男、女或保密 |
+| uname      | str        | 昵称          |
+| usersign   | str        | 个性签名       |
+| credential | Credential | 凭据           |
+
+修改自己的信息
+
+**Returns:** 调用接口返回的内容。
+
+---
+
 ## class ChannelSeries
 
 合集与列表类
