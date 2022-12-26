@@ -6,6 +6,18 @@
       "verify": true,
       "comment": "获取自己的信息"
     },
+    "edit_my_info": {
+      "url": "https://api.bilibili.com/x/member/web/update",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "birthday": "string: 用户生日",
+        "sex": "string: 用户性别",
+        "uname": "string: 用户昵称",
+        "usersign": "string: 用户签名"
+      },
+      "comment": "修改自己的信息"
+    },
     "info": {
       "url": "https://api.bilibili.com/x/space/acc/info",
       "method": "GET",

@@ -819,6 +819,25 @@ async def get_self_info(credential: Credential):
 
     return await request("GET", api["url"], credential=credential)
 
+async def edit_self_info(birthday: str, sex: str, uname: str, usersign: str, credential: Credential):
+    """
+    修改自己的信息 (Web) 
+    
+    Args:
+        birthday (str)      : 生日 YYYY-MM-DD
+        sex (str)           : 性别 男|女|保密
+        uname (str)         : 用户名
+        usersign (str)      : 个性签名
+        credential (Credential): Credential
+    """
+    
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+
+    api = API["info"]["edit_my_info"]
+    data = {"birthday": birthday, "sex": sex, "uname": uname, "usersign": usersign}
+
+    return await request("POST", api["url"], data=data, credential=credential)
 
 async def create_subscribe_group(name: str, credential: Credential):
     """
