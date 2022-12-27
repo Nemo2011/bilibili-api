@@ -29,6 +29,9 @@ from . import (
     user,
     video_uploader,
     video,
+    emoji,
+    session,
+    vote,
 )
 
 # CONSTANTS
@@ -110,4 +113,7 @@ __all__ = [
     "get_real_url",
     "parse_link",
     "sync",
+    "emoji",
+    "session",
+    "vote",
 ]
