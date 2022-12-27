@@ -1,9 +1,10 @@
 + [主页](/)
 <!-- + [目录](/tree-python.md) -->
 + [获取 Credential 类所需信息](/get-credential.md)
++ [`.ivi` 文件和 `MPlayer` 相关](/ivifile.md)
 + [获取 vote_id](/vote_id.md)
-+ [同步执行异步代码](/sync-executor.md)
 + [短链接支持](/b23tv.md)
++ [同步执行异步代码](/sync-executor.md)
 + [配置](/configuration.md)
 + API 示例
     + [视频](/examples/video.md)

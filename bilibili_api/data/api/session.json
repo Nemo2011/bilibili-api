@@ -33,6 +33,12 @@
           "mobi_app": "web"
         },
         "comment": "获取已有消息"
+      }, 
+      "likes": {
+        "url": "https://api.bilibili.com/x/msgfeed/like?platform=web&build=0&mobi_app=web",
+        "method": "GET", 
+        "verify": true, 
+        "comment": "获取点赞"
       }
     },
     "operate": {

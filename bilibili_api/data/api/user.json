@@ -14,6 +14,18 @@
       "verify": true,
       "comment": "获取自己的信息"
     },
+    "edit_my_info": {
+      "url": "https://api.bilibili.com/x/member/web/update",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "birthday": "string: 用户生日",
+        "sex": "string: 用户性别",
+        "uname": "string: 用户昵称",
+        "usersign": "string: 用户签名"
+      },
+      "comment": "修改自己的信息"
+    },
     "info": {
       "url": "https://api.bilibili.com/x/space/acc/info",
       "method": "GET",
@@ -341,16 +353,6 @@
       },
       "comment": "用户关系操作"
     },
-    "del_channel_aids_series": {
-      "url": "https://api.bilibili.com/x/series/series/delArchives",
-      "method": "POST",
-      "verity": true,
-      "params": {
-        "mid": "int: uid",
-        "series_id": "int: series_id",
-        "aids": "int: aid 列表"
-      }
-    },
     "set_space_notice": {
       "url": "http://api.bilibili.com/x/space/notice/set",
       "method": "POST",
@@ -360,17 +362,6 @@
         "csrf": "str: CSRF Token（位于 cookie），必要"
       },
       "comment": "修改用户个人空间公告"
-    },
-    "del_channel_series": {
-      "url": "https://api.bilibili.com/x/series/series/delete",
-      "method": "POST",
-      "verity": true,
-      "query": {
-        "mid": "int: uid",
-        "series_id": "int: series_id",
-        "aids": "list: 所有 aid 列表",
-        "csrf": "string: bili_jct 的值"
-      }
     },
     "create_subscribe_group": {
       "url": "https://api.bilibili.com/x/relation/tag/create",
@@ -409,6 +400,69 @@
         "tagids": "commaSeparatedList[int]: 分组的 tagids，逗号分隔"
       },
       "comment": "移动用户到关注分组"
+    }
+  }, 
+  "channel_series": {
+    "info": {
+      "url": "https://api.bilibili.com/x/series/series", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "series_id": "int: series_id"
+      }, 
+      "comment": "获取简介"
+    }, 
+    "season_info": {
+      "url": "https://api.bilibili.com/x/space/fav/season/list", 
+      "method": "GET", 
+      "verify": false, 
+      "params": {
+        "season_id": "int: season_id"
+      }, 
+      "comment": "获取简介"
+    },
+    "del_channel_aids_series": {
+      "url": "https://api.bilibili.com/x/series/series/delArchives",
+      "method": "POST",
+      "verity": true,
+      "params": {
+        "mid": "int: uid",
+        "series_id": "int: series_id",
+        "aids": "int: aid 列表"
+      }
+    },
+    "add_channel_aids_series": {
+      "url": "https://api.bilibili.com/x/series/series/addArchives",
+      "method": "POST",
+      "verity": true,
+      "params": {
+        "mid": "int: uid",
+        "series_id": "int: series_id",
+        "aids": "int: aid 列表"
+      }
+    },
+    "del_channel_series": {
+      "url": "https://api.bilibili.com/x/series/series/delete",
+      "method": "POST",
+      "verity": true,
+      "query": {
+        "mid": "int: uid",
+        "series_id": "int: series_id",
+        "aids": "list: 所有 aid 列表",
+        "csrf": "string: bili_jct 的值"
+      }
+    }, 
+    "create": {
+      "url": "https://api.bilibili.com/x/series/series/createAndAddArchives", 
+      "method": "POST", 
+      "verify": true, 
+      "params": {
+        "mid": "int: uid",
+        "aids": "int: aid 列表", 
+        "name": "str", 
+        "keywords": "str,str", 
+        "description": "str"
+      }
     }
   }
 }

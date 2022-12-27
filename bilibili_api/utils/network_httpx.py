@@ -1,7 +1,7 @@
 """
 bilibili_api.utils.network_httpx
 
-重写，使用 httpx
+复写了 .utils.network，使用 httpx
 """
 
 from typing import Any
@@ -21,6 +21,7 @@ from .. import settings
 __session_pool = {}
 last_proxy = ""
 
+HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
 
 @atexit.register
 def __clean():

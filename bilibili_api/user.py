@@ -733,6 +733,31 @@ class User:
             )
         return channels
 
+    async def create_channel_series(
+        name: str, 
+        aids: List[int] = [], 
+        keywords: List[str] = [], 
+        description: str = ""
+    ):
+        pass
+
+    async def del_channel_series(
+        series_id: int
+    ):
+        pass
+
+    async def add_aids_to_series(
+        series_id: int, 
+        aids: List[int]
+    ):
+        pass
+
+    async def del_aids_from_series(
+        series_id: int, 
+        aids: List[int]
+    ):
+        pass
+
     async def get_cheese(self):
         """
         查看用户的所有课程
@@ -762,10 +787,10 @@ class ChannelSeriesType(Enum):
     """
     合集与列表类型
 
-    + SERIES: 旧版
-    + SEASON: 新版
+    + SERIES: 相同视频分类
+    + SEASON: 新概念多 P
 
-    **新版合集名字为`合集·XXX`，请注意区别**
+    **SEASON 类合集与列表名字为`合集·XXX`，请注意区别**
     """
 
     SERIES = 0
@@ -775,58 +800,55 @@ class ChannelSeriesType(Enum):
 class ChannelSeries:
     """
     合集与列表类
+
+    Attributes:
+        credential (Credential): 凭据类. Defaults to None.
     """
 
     def __init__(
         self,
-        uid: int,
-        type_: ChannelSeriesType = ChannelSeriesType.SEASON,
-        id_: int = 0,
+        uid: int = None,
+        type_: ChannelSeriesType = ChannelSeriesType.SERIES,
+        id_: int = None,
         credential: Credential = None,
         meta=None,
     ):
         """
-        uid(int)                : 用户 uid
-        type_(ChannelSeriesType): 合集与列表类型
-        id_(int)                : season_id 或 series_id
-        credential(Credential)  : 凭证
+        Args:
+            uid(int)                : 用户 uid. Defaults to None. 
+            type_(ChannelSeriesType): 合集与列表类型
+            id_(int)                : season_id 或 series_id
+            credential(Credential)  : 凭证. Defaults to None. 
         """
+        assert id_ != None
+        assert type_ != None
         self.__uid = uid
         self.is_new = type_.value
         self.id_ = id_
         self.owner = User(self.__uid, credential=credential)
         self.credential = credential
         self.meta = None
-        if self.is_new:
-            look_type = "seasons"
-        else:
-            look_type = "series"
         if meta is None:
-            credential = self.credential if self.credential else Credential()
-            api = API["info"]["channel_list"]
-            param = {"mid": self.__uid, "page_num": 1, "page_size": 1}
-            res = httpx.request(
-                "GET", url=api["url"], params=param, cookies=credential.get_cookies()
-            )
-            items = json.loads(res.text)["data"]["items_lists"]["page"]["total"]
-            time.sleep(0.5)
-            if items == 0:
-                items = 1
-            param["page_size"] = items
-            channel_list = json.loads(
-                httpx.request(
-                    "GET",
-                    url=api["url"],
-                    params=param,
-                    cookies=credential.get_cookies(),
-                ).text
-            )["data"]
-            for channel in channel_list["items_lists"][look_type + "_list"]:
-                type_id = channel["meta"]["season_id" if self.is_new else "series_id"]
-                if type_id == self.id_:
-                    self.meta = channel["meta"]
-            if self.meta is None:
-                raise ValueError("未找到频道信息。")
+            if self.is_new:
+                api = API["channel_series"]["season_info"]
+                params = {
+                    "season_id": self.id_
+                }
+            else:
+                api = API["channel_series"]["info"]
+                params = {
+                    "series_id": self.id_
+                }
+            resp = json.loads(httpx.get(api["url"], params = params).text)["data"]
+            if self.is_new:
+                self.meta = resp["info"]
+                self.meta["mid"] = resp["upper"]["mid"]
+                self.__uid = self.meta["mid"]
+                self.owner = User(self.__uid, credential=credential)
+            else:
+                self.meta = resp["meta"]
+                self.__uid = self.meta["mid"]
+                self.owner = User(self.__uid, credential=credential)
         else:
             self.meta = meta
 
@@ -870,6 +892,25 @@ async def get_self_info(credential: Credential):
 
     return await request("GET", api["url"], credential=credential)
 
+async def edit_self_info(birthday: str, sex: str, uname: str, usersign: str, credential: Credential):
+    """
+    修改自己的信息 (Web) 
+    
+    Args:
+        birthday (str)      : 生日 YYYY-MM-DD
+        sex (str)           : 性别 男|女|保密
+        uname (str)         : 用户名
+        usersign (str)      : 个性签名
+        credential (Credential): Credential
+    """
+    
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+
+    api = API["info"]["edit_my_info"]
+    data = {"birthday": birthday, "sex": sex, "uname": uname, "usersign": usersign}
+
+    return await request("POST", api["url"], data=data, credential=credential)
 
 async def create_subscribe_group(name: str, credential: Credential):
     """

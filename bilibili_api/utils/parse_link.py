@@ -78,7 +78,7 @@ async def parse_link(url, credential: Credential = None):
     Returns:
         Union[tuple, int]: (对象，类型) 或 -1,-1 表示出错
     """
-    credential = credential if credential else Credential
+    credential = credential if credential else Credential()
     try:
         obj = None
 

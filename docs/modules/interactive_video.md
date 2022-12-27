@@ -66,6 +66,12 @@ o----|xxx| (TEXT_RIGHT)
 
 **Returns:** int: 变量 id
 
+#### def refresh_value()
+
+刷新变量数值
+
+**Returns:** None
+
 #### def get_value()
 
 获取变量数值
@@ -148,6 +154,21 @@ o----|xxx| (TEXT_RIGHT)
 
 ---
 
+## class InteractiveJumpingCommand
+
+节点跳转对变量的操作
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| var | List[InteractiveVariable] | 所有变量 |
+| condition | str | 公式 |
+
+---
+
 ## class InteractiveNode
 
 互动视频节点类
@@ -161,8 +182,10 @@ o----|xxx| (TEXT_RIGHT)
 | video | InteractiveVideo | 视频类 |
 | node_id | int | 节点 id |
 | cid | int | CID |
+| vars | List[InteractiveVariable] | 变量 |
 | button | InteractiveButton | 对应的按钮 |
 | condition | InteractiveJumpingCondition | 跳转公式 |
+| native_command | InteractiveJumpingCommand | 跳转时变量的操作 |
 | is_default | bool | 是不是默认的跳转的节点 |
 
 #### async def get_vars()
@@ -251,7 +274,7 @@ o----|xxx| (TEXT_RIGHT)
 
 **Returns:** 样式
 
-#### def get_root_node()
+#### async def get_root_node()
 
 获取根节点
 
@@ -386,3 +409,66 @@ o----|xxx| (TEXT_RIGHT)
 获取特定月份存在历史弹幕的日期。
 
 **Returns**: None | List[str]: 调用 API 返回的结果。不存在时为 None。
+
+---
+
+## class InteractiveVideoDownloaderEvents
+
+**Extends: enum.Enum**
+
++ START           : 开始下载
++ GET             : 获取到节点信息
++ PREPARE_DOWNLOAD: 准备下载节点
+
+**(以下为内建下载函数发布事件)**
+
++ DOWNLOAD_START  : 开始下载单个文件
++ DOWNLOAD_PART   : 文件分块部分完成
++ DOWNLOAD_SUCCESS: 完成下载
+
+**(END)**
+
++ PACKAGING       : 打包文件
++ SUCCESS         : 完成下载
++ ABORTED         : 终止下载
++ FAILED          : 下载失败
+
+---
+
+## class InteractiveVideoDownloader
+
+**Extends: AsyncEvent**
+
+互动视频下载类(下载格式：ivi)
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name               | type             | description                 |
+| ------------------ | ---------------- | --------------------------- |
+| video              | InteractiveVideo | 互动视频类                   |
+| out                | str              | 输出文件地址                  |
+| self_download_func | Coroutine        | 自定义下载函数（需 async 函数） |
+
+`self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
+
+#### async def start()
+
+开始下载
+
+#### async def abort()
+
+中断下载
+
+---
+
+## def get_ivi_file_info()
+
+| name | type | description |
+| - | - | - |
+| path | str | ivi 文件地址 |
+
+获取 ivi 文件的信息
+
+**Returns:** dict: ivi 文件信息

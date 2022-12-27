@@ -138,3 +138,9 @@ class Credential:
         if datas["code"] == 0:
             return True
         return False
+
+    def generate_buvid3(self):
+        """
+        生成 buvid3
+        """
+        self.buvid3 = str(uuid.uuid1()) + "infoc"

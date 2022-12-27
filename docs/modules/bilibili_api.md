@@ -353,3 +353,57 @@ BV 号转 AV 号。
 | credential | Credential     | 凭据 |
 
 **Returns:** 对应资源或 -1 (无匹配资源)
+
+---
+
+## class AsyncEvent
+
+发布-订阅模式异步事件类支持。
+
+特殊事件：\_\_ALL\_\_ 所有事件均触发
+
+### Functions
+
+#### def add_eevent_listener()
+
+| name | type | description |
+| - | - | - |
+| name | str |           事件名。 |
+| handler | Coroutine |   回调异步函数。 |
+
+注册事件监听器。
+
+#### def on()
+
+装饰器注册事件监听器。
+
+| name | type | description |
+| - | - | - |
+| event_name | str | 事件名。 |
+
+#### def remove_all_event_listener()
+
+移除所有事件监听函数
+
+#### def remove_event_listener()
+
+移除事件监听函数。
+
+| name | type | description |
+| - | - | - |
+| name | str |            事件名 |
+| handler | Coroutine |   要移除的函数 |
+
+**Returns:** bool, 是否移除成功。
+
+#### def ignore_event()
+
+忽略指定事件
+
+| name | type | description |
+| - | - | - |
+| name | str | 事件名 |
+
+#### def remove_ignore_events()
+
+移除所有忽略事件
