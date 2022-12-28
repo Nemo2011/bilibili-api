@@ -4,7 +4,7 @@ from bilibili_api import search
 
 
 async def test_a_search():
-    return await search.search("云社_")
+    return await search.search("这是他的笑容发生的变化")
 
 
 async def test_b_search_by_type():
@@ -24,9 +24,15 @@ async def test_e_get_suggest_keywords():
 
 
 async def test_f_search_by_order():
-    return await search.search_by_type("小马宝莉", search_type=search.SearchObjectType.VIDEO,
-                                       order_type=search.OrderVideo.SCORES, time_range=10,
-                                       topic_type=search.TopicType.AnimeMMD, page=1, debug_param_func=print)
+    return await search.search_by_type(
+        "小马宝莉",
+        search_type = search.SearchObjectType.VIDEO,
+        order_type = search.OrderVideo.SCORES,
+        time_range = 10,
+        topic_type = 25,
+        page = 1,
+        debug_param_func = print,
+    )
 
 
 # from bilibili_api import sync

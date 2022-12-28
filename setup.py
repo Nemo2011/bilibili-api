@@ -8,9 +8,9 @@ with open("requirements.txt", "r", encoding="utf8") as f:
 
 setuptools.setup(
     name="bilibili-api-python",
-    version="12.5.1",
+    version="14.0.0.b0",
     license="GPLv3+",
-    author="MoyuScript, Nemo2011",
+    author="Nemo2011,Passkou",
     description="哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -18,7 +18,11 @@ setuptools.setup(
         "bilibili_api",
         "bilibili_api.utils",
         "bilibili_api.exceptions",
-        "bilibili_api.errors", 
+        "bilibili_api.errors",
+        "bilibili_api.tools", 
+        "bilibili_api.tools.opendocs", 
+        "bilibili_api.tools.ivitools", 
+        "bilibili_api.tools.ivitools.ffmpeg", 
         "bilibili_api._pyinstaller",
     ],
     keywords=["bilibili", "api", "spider"],
@@ -28,8 +32,11 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
-    package_data={"": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*"]},
+    package_data={
+        "": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*", "css/*.*"]
+    },
     install_requires=requires.splitlines(),
     url="https://github.com/nemo2011/bilibili-api",
     python_requires=">=3.8",
@@ -37,6 +44,9 @@ setuptools.setup(
         "pyinstaller40": [
             "hook-dirs = bilibili_api._pyinstaller.entry_points:get_hook_dirs"
         ],
-        "console_scripts": ["bilibili-api = bilibili_api.__main__:main"],
+        "console_scripts": [
+            "bilibili-api-docs = bilibili_api.tools.opendocs.__main__:main", 
+            "ivitools = bilibili_api.tools.ivitools.__main__:main"
+        ],
     },
 )

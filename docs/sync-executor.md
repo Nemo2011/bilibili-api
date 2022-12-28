@@ -17,9 +17,14 @@ print(sync(v.get_download_url(0)))
 原理其实也很简单，`sync()` 代码如下：
 
 ```python
+"""
+bilibili_api.utils.sync
+
+同步执行异步函数
+"""
+
 from typing import Coroutine
 import asyncio
-import nest_asyncio
 from .. import settings
 
 
@@ -41,10 +46,7 @@ def sync(coroutine: Coroutine):
     Returns:
         该异步函数的返回值
     """
-    if settings.nest_asyncio == True:
-        nest_asyncio.apply()
     __ensure_event_loop()
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(coroutine)
-
 ```

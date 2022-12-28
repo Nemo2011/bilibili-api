@@ -1,7 +1,7 @@
 """
 bilibili_api.utils.network_httpx
 
-重写，使用 httpx
+复写了 .utils.network，使用 httpx
 """
 
 from typing import Any
@@ -21,6 +21,7 @@ from .. import settings
 __session_pool = {}
 last_proxy = ""
 
+HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
 
 @atexit.register
 def __clean():
@@ -61,7 +62,7 @@ async def request(
         data       (Any, optional)       : 请求载荷。
         credential (Credential, optional): Credential 类。
         no_csrf    (bool, optional)      : 不要自动添加 CSRF。
-        json_body (bool, optional) 载荷是否为 JSON
+        json_body  (bool, optional)      : 载荷是否为 JSON
 
     Returns:
         接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
@@ -181,7 +182,7 @@ def get_session():
     if session is None or last_proxy != settings.proxy:
         if settings.proxy != "":
             last_proxy = settings.proxy
-            proxies = {settings.proxy_use: settings.proxy}
+            proxies = {"all://": settings.proxy}
             session = httpx.AsyncClient(proxies=proxies)
         else:
             last_proxy = ""

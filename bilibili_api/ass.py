@@ -1,10 +1,11 @@
 """
 bilibili_api.ass
+
 有关 ASS 文件的操作
 """
+
 import os
 from typing import Union
-import aiohttp
 
 from bilibili_api.bangumi import Episode
 from bilibili_api.cheese import CheeseVideo
@@ -18,7 +19,7 @@ from .utils.danmaku2ass import Danmaku2ASS
 from .utils.json2srt import json2srt
 from .utils.srt2ass import srt2ass
 from .video import Video
-from tempfile import gettempdir, tempdir
+from tempfile import gettempdir
 
 
 def export_ass_from_xml(
@@ -34,15 +35,16 @@ def export_ass_from_xml(
     """
     以一个 XML 文件创建 ASS
     一定看清楚 Arguments!
+
     Args:
-        file_local(str)       : 文件输入
-        output_local(str)     : 文件输出
-        stage_size(tuple(int)): 视频大小
-        font_name(str)        : 字体
-        font_size(float)      : 字体大小
-        alpha(float)          : 透明度(0-1)
-        fly_time(float)       : 滚动弹幕持续时间
-        static_time(float)    : 静态弹幕持续时间
+        file_local   (str)       : 文件输入
+        output_local (str)       : 文件输出
+        stage_size   (tuple(int)): 视频大小
+        font_name    (str)       : 字体
+        font_size    (float)     : 字体大小
+        alpha        (float)     : 透明度(0-1)
+        fly_time     (float)     : 滚动弹幕持续时间
+        static_time  (float)     : 静态弹幕持续时间
     """
     Danmaku2ASS(
         input_files=file_local,
@@ -62,11 +64,10 @@ def export_ass_from_xml(
 def export_ass_from_srt(file_local, output_local):
     """
     转换 srt 至 ass
+
     Args:
-        file_local(str)  : 文件位置
-        output_local(str): 输出位置
-    Returns:
-        None
+        file_local   (str): 文件位置
+        output_local (str): 输出位置
     """
     srt2ass(file_local, output_local, "movie")
 
@@ -74,11 +75,10 @@ def export_ass_from_srt(file_local, output_local):
 def export_ass_from_json(file_local, output_local):
     """
     转换 json 至 ass
+
     Args:
-        file_local(str)  : 文件位置
-        output_local(str): 输出位置
-    Returns:
-        None
+        file_local   (str): 文件位置
+        output_local (str): 输出位置
     """
     json2srt(file_local, output_local.replace(".ass", ".srt"))
     srt2ass(output_local.replace(".ass", ".srt"), output_local, "movie")
@@ -86,17 +86,15 @@ def export_ass_from_json(file_local, output_local):
 
 
 async def make_ass_file_subtitle(
-    obj: Union[Video, Episode], out, name, credential=None
+    obj: Union[Video, Episode], out = "test.ass", name = "中文（自动生成）"
 ):
     """
     生成视频字幕文件
+
     Args:
-        obj(Video|Episode)    : 视频 BVID
-        out(str)              : 输出位置
-        name(str)             : 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。
-        credential(Credential): 凭据
-    Returns:
-        None
+        obj        (Union[Video,Episode]): 对象
+        out        (str, optional)       : 输出位置. Defaults to "test.ass". 
+        name       (str, optional)       : 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）". 
     """
     info = await obj.get_info()
     json_files = info["subtitle"]["list"]
@@ -114,36 +112,36 @@ async def make_ass_file_subtitle(
 
 async def make_ass_file_danmakus_protobuf(
     obj: Union[Video, Episode, CheeseVideo],
-    page: int = None,
-    out=None,
+    page: int = 0,
+    out = "test.ass",
     cid: int = None,
-    credential=None,
-    date=None,
-    font_name="Simsun",
-    font_size=25.0,
-    alpha=1,
-    fly_time=7,
-    static_time=5,
+    credential = None,
+    date = None,
+    font_name = "Simsun",
+    font_size = 25.0,
+    alpha = 1,
+    fly_time = 7,
+    static_time = 5,
 ):
     """
     生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
     强烈推荐 PotPlayer, 电影与电视全部都是静态的，不能滚动。
     来源：protobuf
+
     Args:
-        obj(Video|Episode|CheeseVideo): BVID
-        page(int)                     : 分 P 号
-        out(str)                      : 输出文件
-        cid(int)                      : cid
-        credential(Credential)        : 凭据
-        date(datetime.date)           : 获取时间
-        font_name(str)                : 字体
-        font_size(float)              : 字体大小
-        alpha(float)                  : 透明度(0-1)
-        fly_time(float)               : 滚动弹幕持续时间
-        static_time(float)            : 静态弹幕持续时间
-    Returns:
-        None
+        obj         (Union[Video,Episode,CheeseVideo]): 对象
+        page        (int, optional)                   : 分 P 号. Defaults to 0. 
+        out         (str, optional)                   : 输出文件. Defaults to "test.ass"
+        cid         (int, optional)                   : cid. Defaults to None. 
+        credential  (Credential, optional)            : 凭据. Defaults to None. 
+        date        (datetime.date, optional)         : 获取时间. Defaults to None. 
+        font_name   (str, optional)                   : 字体. Defaults to "Simsun". 
+        font_size   (float, optional)                 : 字体大小. Defaults to 25.0. 
+        alpha       (float, optional)                 : 透明度(0-1). Defaults to 1. 
+        fly_time    (float, optional)                 : 滚动弹幕持续时间. Defaults to 7. 
+        static_time (float, optional)                 : 静态弹幕持续时间. Defaults to 5.
     """
+    credential = credential if credential else Credential()
     if date:
         credential.raise_for_no_sessdata()
     if isinstance(obj, Video):
@@ -169,6 +167,8 @@ async def make_ass_file_danmakus_protobuf(
     elif isinstance(obj, CheeseVideo):
         stage_size = (1440, 1080)
         danmakus = await obj.get_danmakus()
+    else:
+        raise ValueError("请传入 Video/Episode/CheeseVideo 类！")
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write("<i>")
         for d in danmakus:
@@ -188,31 +188,29 @@ async def make_ass_file_danmakus_protobuf(
 
 async def make_ass_file_danmakus_xml(
     obj: Union[Video, Episode, CheeseVideo],
-    page: int = None,
-    out=None,
+    page: int = 0,
+    out = "test.ass",
     cid: int = None,
-    font_name="Simsun",
-    font_size=25.0,
-    alpha=1,
-    fly_time=7,
-    static_time=5,
+    font_name = "Simsun",
+    font_size = 25.0,
+    alpha = 1,
+    fly_time = 7,
+    static_time = 5,
 ):
     """
     生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
     强烈推荐 PotPlayer, 电影与电视全部都是静态的，不能滚动。
     来源：xml
     Args:
-        obj(Video|Episode|Cheese): BVID
-        page(int)                : 分 P 号
-        out(str)                 : 输出文件
-        cid(int)                 : cid
-        font_name(str)           : 字体
-        font_size(float)         : 字体大小
-        alpha(float)             : 透明度(0-1)
-        fly_time(float)          : 滚动弹幕持续时间
-        static_time(float)       : 静态弹幕持续时间
-    Returns:
-        None
+        obj         (Union[Video,Episode,Cheese]): 对象
+        page        (int, optional)              : 分 P 号. Defaults to 0. 
+        out         (str, optional)              : 输出文件. Defaults to "test.ass". 
+        cid         (int, optional)              : cid. Defaults to None. 
+        font_name   (str, optional)              : 字体. Defaults to "Simsun". 
+        font_size   (float, optional)            : 字体大小. Defaults to 25.0. 
+        alpha       (float, optional)            : 透明度(0-1). Defaults to 1. 
+        fly_time    (float, optional)            : 滚动弹幕持续时间. Defaults to 7. 
+        static_time (float, optional)            : 静态弹幕持续时间. Defaults to 5. 
     """
     if isinstance(obj, Video):
         v = obj
@@ -237,6 +235,8 @@ async def make_ass_file_danmakus_xml(
     elif isinstance(obj, CheeseVideo):
         stage_size = (1440, 1080)
         xml_content = await obj.get_danmaku_xml()
+    else:
+        raise ValueError("请传入 Video/Episode/CheeseVideo 类！")
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write(xml_content)
     export_ass_from_xml(

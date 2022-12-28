@@ -4,12 +4,18 @@ bilibili_api.utils.Credential
 凭据类，用于各种请求操作的验证。
 """
 
+import json
 from ..exceptions import (
     CredentialNoBiliJctException,
     CredentialNoSessdataException,
     CredentialNoBuvid3Exception,
     CredentialNoDedeUserIDException,
 )
+from .utils import get_api
+import httpx
+import uuid
+
+API = get_api("credential")
 
 
 class Credential:
@@ -47,7 +53,7 @@ class Credential:
         """
         return {
             "SESSDATA": self.sessdata,
-            "buvid3": self.buvid3,
+            "buvid3": self.buvid3 if self.buvid3 else str(uuid.uuid1()) + "infoc",
             "bili_jct": self.bili_jct,
             "DedeUserID": self.dedeuserid,
         }
@@ -115,3 +121,26 @@ class Credential:
         """
         if not self.has_dedeuserid():
             raise CredentialNoDedeUserIDException()
+
+    async def check_valid(self):
+        """
+        检查 cookies 是否有效
+
+        Returns:
+            bool: cookies 是否有效
+        """
+        api = API["valid"]
+        try:
+            datas = httpx.request("GET", api["url"], cookies=self.get_cookies())
+        except Exception as e:
+            raise e
+        datas = json.loads(datas.text)
+        if datas["code"] == 0:
+            return True
+        return False
+
+    def generate_buvid3(self):
+        """
+        生成 buvid3
+        """
+        self.buvid3 = str(uuid.uuid1()) + "infoc"

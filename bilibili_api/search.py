@@ -132,93 +132,16 @@ class CategoryTypeArticle(Enum):
     Technology = 17
 
 
-class TopicType(Enum):
-    """
-    话题分区，太多了，写描述要命
-    此部分内容太长了
-    部分文档来源 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/video/video_zone.md
-    """
-
-    Anime = 1
-    AnimeMAD = 24
-    AnimeMMD = 25
-    AnimeHANDDRAW = 47
-    AnimeGARAGE_KIT = 210
-    AnimeTOKUSATSU = 86
-    AnimeOTHER = 25
-    Animation = 13
-    AnimationFINISH = 32
-    AnimationSERIAL = 33
-    AnimationINFO = 51
-    AnimationOFFICIAL = 152
-    Guochuang = 167
-    GuochuangCHINESE = 153
-    GuochuangORIGINAL = 168
-    GuochuangPUPPETRY = 169
-    GuochuangMOTIONCOMIC = 195
-    GuochuangINFORMATION = 170
-    Music = 3
-    MusicORIGINAL = 28
-    MusicCOVER = 31
-    MusicVOCALOID = 30
-    MusicELECTRONIC = 194
-    MusicPERFORM = 59
-    MusicMV = 193
-    MusicLIVE = 29
-    MusicOTHER = 130
-    Dance = 129
-    DanceOTAKU = 20
-    DanceHIPHOP = 198
-    DanceSTAR = 199
-    DanceCHINA = 200
-    DanceTHREE_D = 154
-    DanceDEMO = 156
-    Game = 4
-    GameSTAND_ALONE = 17
-    GameESPORTS = 171
-    GameMOBILE = 172
-    GameONLINE = 65
-    GameBOARD = 173
-    GameGMV = 121
-    GameMUSIC = 136
-    GameMUGEN = 19
-    Knowledge = 36
-
-    Technology = 188
-
-    Sports = 234
-
-    Car = 223
-
-    Animal = 217
-
-    Kichiku = 119
-
-    Fashion = 155
-
-    News = 202
-
-    Fun = 5
-
-    TvAbout = 181
-
-    Documentary = 177
-
-    Film = 23
-
-    TvSeries = 11
-
-
 async def search(keyword: str, page: int = 1):
     """
     只指定关键字在 web 进行搜索，返回未经处理的字典
 
     Args:
         keyword (str): 搜索关键词
-        page (int)   : 页码
+        page    (int): 页码. Defaults to 1. 
 
     Returns:
-        调用 api 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["search"]["web_search"]
     params = {"keyword": keyword, "page": page}
@@ -230,7 +153,7 @@ async def search_by_type(
     search_type: SearchObjectType = None,
     order_type: Union[OrderUser, OrderLiveRoom, OrderArticle, OrderVideo] = None,
     time_range: int = -1,
-    topic_type: Union[int, TopicType] = None,
+    topic_type: int = None,
     order_sort: int = None,
     category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int] = None,
     page: int = 1,
@@ -241,17 +164,18 @@ async def search_by_type(
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、直播用户(liveuser)、专栏(article)、话题(topic)、用户(bili_user)
 
     Args:
-        debug_param_func (func): 参数回调器，用来存储或者什么的
-        order_sort  (int):用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
-        category_id (int/str): 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
-        time_range  (int): 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
-        topic_type  (str/int): 话题类型，指定tid或者使用枚举类型
-        order_type  (str): 排序分类类型
-        keyword     (str): 搜索关键词
-        search_type (str): 搜索类型
-        page        (int): 页码
+        debug_param_func (func)                                              : 参数回调器，用来存储或者什么的
+        order_sort       (int)                                               : 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
+        category_id      (Union[CategoryTypeArticle, CategoryTypePhoto, int]): 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
+        time_range       (int)                                               : 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
+        topic_type       (int)                                               : 话题类型，指定 tid (可使用 channel 模块查询)
+        order_type       (str)                                               : 排序分类类型
+        keyword          (str)                                               : 搜索关键词
+        search_type      (str)                                               : 搜索类型
+        page             (int)                                               : 页码
+
     Returns:
-        调用 api 返回的结果
+        dict: 调用 API 返回的结果
     """
     params = {"keyword": keyword, "page": page}
     if search_type:
@@ -278,7 +202,7 @@ async def search_by_type(
         elif 10 < time_range <= 30:
             time_code = 2
         elif 0 < time_range <= 10:
-            time_code = 2
+            time_code = 1
         else:
             time_code = 0
         params["duration"] = time_code
@@ -305,7 +229,7 @@ async def get_default_search_keyword():
     获取默认的搜索内容
 
     Returns:
-        调用 api 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["search"]["default_search_keyword"]
     return await request("GET", api["url"])
@@ -316,7 +240,7 @@ async def get_hot_search_keywords():
     获取热搜
 
     Returns:
-        调用 api 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["search"]["hot_search_keywords"]
     sess = get_session()
@@ -328,10 +252,10 @@ async def get_suggest_keywords(keyword: str):
     通过一些文字输入获取搜索建议。类似搜索词的联想。
 
     Args:
-        keyword(string): 搜索关键词
+        keyword(str): 搜索关键词
 
     Returns:
-        List[string]: 关键词列表
+        List[str]: 关键词列表
     """
     keywords = []
     sess = get_session()
@@ -342,3 +266,18 @@ async def get_suggest_keywords(keyword: str):
     for key in keys:
         keywords.append(data[key]["value"])
     return keywords
+
+
+async def search_games(keyword: str):
+    """
+    搜索游戏特用函数
+
+    Args:
+        keyword(str): 搜索关键词
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["search"]["game"]
+    params = {"keyword": keyword}
+    return await request("GET", api["url"], params=params)

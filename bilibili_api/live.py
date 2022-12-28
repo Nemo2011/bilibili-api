@@ -3,6 +3,7 @@ bilibili_api.live
 
 直播相关
 """
+import base64
 import time
 from enum import Enum
 import logging
@@ -99,6 +100,10 @@ class LiveCodec(Enum):
 class LiveRoom:
     """
     直播类，获取各种直播间的操作均在里边。
+
+    AttributesL
+        credential      (Credential): 凭据类
+        room_display_id (int)       : 房间展示 id
     """
 
     def __init__(self, room_display_id: int, credential: Credential = None):
@@ -116,12 +121,15 @@ class LiveRoom:
 
         self.__ruid = None
 
-    async def start(self, area_id):
+    async def start(self, area_id: int):
         """
         开始直播
 
+        Args:
+            area_id (int): 直播分区id（子分区id）。可使用 live_area 模块查询。
+
         Returns:
-            API 调用返回结果
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["start"]
         params = {
@@ -139,7 +147,7 @@ class LiveRoom:
         关闭直播
 
         Returns:
-            API 调用返回结果
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["stop"]
         params = {
@@ -155,7 +163,7 @@ class LiveRoom:
         获取房间信息（真实房间号，封禁情况等）
 
         Returns:
-            API 调用返回结果
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["room_play_info"]
         params = {
@@ -169,6 +177,9 @@ class LiveRoom:
         self.__ruid = resp["uid"]
         return resp
 
+    async def get_room_id(self):
+        return (await self.get_room_play_info())["room_id"]
+
     async def __get_ruid(self):
         """
         获取真实房间 ID，若有缓存则使用缓存
@@ -178,9 +189,15 @@ class LiveRoom:
 
         return self.__ruid
 
+    async def get_ruid(self):
+        return await self.__get_ruid()
+
     async def get_chat_conf(self):
         """
         获取聊天弹幕服务器配置信息(websocket)
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["chat_conf"]
         params = {"room_id": self.room_display_id}
@@ -191,6 +208,9 @@ class LiveRoom:
     async def get_room_info(self):
         """
         获取直播间信息（标题，简介等）
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["room_info"]
         params = {"room_id": self.room_display_id}
@@ -198,7 +218,9 @@ class LiveRoom:
             api["method"], api["url"], params, credential=self.credential
         )
 
-    async def get_fan_model(self, page_num: int = 1, target_id: int = None, roomId: int = None):
+    async def get_fan_model(
+        self, page_num: int = 1, target_id: int = None, roomId: int = None
+    ):
         """
         获取自己的粉丝勋章信息
 
@@ -207,9 +229,12 @@ class LiveRoom:
         如果带有主播 id ，就返回主播的粉丝牌，没有就返回 null
 
         Args:
-            roomId(int, optional): 指定房间，查询是否拥有此房间的粉丝牌
-            target_id(int, optional): 指定返回一个主播的粉丝牌，留空就不返回
-            page_num(int, optional): 粉丝牌列表，默认 1
+            roomId    (int, optional): 指定房间，查询是否拥有此房间的粉丝牌
+            target_id (int, optional): 指定返回一个主播的粉丝牌，留空就不返回
+            page_num  (int, optional): 粉丝牌列表，默认 1
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
@@ -229,6 +254,9 @@ class LiveRoom:
     async def get_user_info_in_room(self):
         """
         获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
@@ -243,7 +271,10 @@ class LiveRoom:
         获取大航海列表
 
         Args:
-            page (int, optional): 页码. Defaults to 1
+            page (int, optional): 页码. Defaults to 1. 
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["dahanghai"]
         params = {
@@ -262,6 +293,9 @@ class LiveRoom:
 
         Args:
             page (int, optional): 页码. Defaults to 1
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["gaonengbang"]
         params = {
@@ -277,6 +311,9 @@ class LiveRoom:
     async def get_seven_rank(self):
         """
         获取七日榜
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["seven_rank"]
         params = {
@@ -290,6 +327,9 @@ class LiveRoom:
     async def get_fans_medal_rank(self):
         """
         获取粉丝勋章排行
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["fans_medal_rank"]
         params = {"roomid": self.room_display_id, "ruid": await self.__get_ruid()}
@@ -302,7 +342,10 @@ class LiveRoom:
         获取黑名单列表
 
         Args:
-            page (int, optional): 页码. Defaults to 1
+            page (int, optional): 页码. Defaults to 1. 
+
+        Returns: 
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["black_list"]
         params = {"room_id": self.room_display_id, "ps": 1}
@@ -319,6 +362,9 @@ class LiveRoom:
 
         Args:
             screen_resolution (ScreenResolution, optional): 清晰度. Defaults to ScreenResolution.ORIGINAL
+        
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["room_play_url"]
         params = {
@@ -347,6 +393,9 @@ class LiveRoom:
             live_format   (LiveFormat, optional)      : 直播源容器格式. Defaults to LiveFormat.DEFAULT.
             live_codec    (LiveCodec, optional)       : 直播源视频编码. Defaults to LiveCodec.DEFAULT.
             live_qn       (ScreenResolution, optional): 直播源清晰度. Defaults to ScreenResolution.ORIGINAL.
+        
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["room_play_info_v2"]
         params = {
@@ -368,6 +417,9 @@ class LiveRoom:
 
         Args:
             uid (int): 用户 UID
+
+        Returns: 
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
@@ -388,6 +440,9 @@ class LiveRoom:
 
         Args:
             block_id (int): 封禁用户时会返回该封禁事件的 ID，使用该值
+       
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
         api = API["operate"]["del_block"]
@@ -406,19 +461,25 @@ class LiveRoom:
 
         Args:
             danmaku (Danmaku): 弹幕类
+        
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
         api = API["operate"]["send_danmaku"]
+        room_id = (await self.get_room_play_info())["room_id"]
+
         data = {
             "mode": danmaku.mode,
             "msg": danmaku.text,
-            "roomid": self.room_display_id,
+            "roomid": room_id,
             "bubble": 0,
             "rnd": int(time.time()),
             "color": int(danmaku.color, 16),
             "fontsize": danmaku.font_size,
         }
+
         return await request(
             api["method"], api["url"], data=data, credential=self.credential
         )
@@ -429,6 +490,9 @@ class LiveRoom:
 
         Args:
             task_id (int, optional): 签到任务 ID. Defaults to 1447
+        
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -461,6 +525,9 @@ class LiveRoom:
             gift_num (int)                  : 礼物数量
             storm_beat_id (int, optional)   : 未知， Defaults to 0
             price (int, optional)           : 礼物单价，Defaults to 0
+        
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -488,7 +555,10 @@ class LiveRoom:
         领取自己在某个直播间的航海日志奖励
 
         Args:
-            receive_type (int) : 领取类型，Defaults to 2
+            receive_type (int) : 领取类型，Defaults to 2.
+
+        Returns:
+            dict: 调用 API 返回的结果 
         """
         self.credential.raise_for_no_sessdata()
 
@@ -507,6 +577,9 @@ class LiveRoom:
 
         Args:
             act_id (int, optional) : 未知，Defaults to 100061
+        
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
@@ -523,6 +596,9 @@ class LiveRoom:
     async def get_gift_common(self):
         """
         获取当前直播间内的普通礼物列表
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api_room_info = API["info"]["room_info"]
         params_room_info = {
@@ -557,6 +633,9 @@ class LiveRoom:
 
         Args:
             tab_id (int) : 2：特权礼物，3：定制礼物
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         api_room_info = API["info"]["room_info"]
         params_room_info = {
@@ -602,6 +681,8 @@ class LiveRoom:
             price         (int)          : 礼物单价
             storm_beat_id (int, Optional): 未知，Defaults to 0
 
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -646,6 +727,8 @@ class LiveRoom:
             price         (int)          : 礼物单价
             storm_beat_id (int, Optional): 未知, Defaults to 0
 
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -747,7 +830,7 @@ class LiveDanmaku(AsyncEvent):
         self.__ws = None
         self.__tasks = []
         self.__debug = debug
-        self.__heartbeat_timer = 30.0
+        self.__heartbeat_timer = 60.0
         self.err_reason = ""
 
         # logging
@@ -811,7 +894,7 @@ class LiveDanmaku(AsyncEvent):
         """
         入口
         """
-        self.__status == self.STATUS_CONNECTING
+        self.__status = self.STATUS_CONNECTING
 
         room = LiveRoom(self.room_display_id, self.credential)
         self.logger.info(f"准备连接直播间 {self.room_display_id}")
@@ -853,7 +936,7 @@ class LiveDanmaku(AsyncEvent):
             port = host["wss_port"]
             protocol = "wss"
             uri = f"{protocol}://{host['host']}:{port}/sub"
-            self.__status == self.STATUS_CONNECTING
+            self.__status = self.STATUS_CONNECTING
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
@@ -986,6 +1069,17 @@ class LiveDanmaku(AsyncEvent):
             if self.__heartbeat_timer == 0:
                 self.logger.debug("发送心跳包")
                 await ws.send_bytes(HEARTBEAT)
+                heartbeat_url = "https://live-trace.bilibili.com/xlive/rdata-interface/v1/heartbeat/webHeartBeat?pf=web&hb="
+                hb = str(base64.b64encode(f"60|{self.room_display_id}|1|0".encode("utf-8")), "utf-8")
+                await request(
+                    "GET", 
+                    heartbeat_url, 
+                    params = {
+                        "hb": hb, 
+                        "pf": "web"
+                    }, 
+                    json_body = True
+                )
             elif self.__heartbeat_timer <= -30:
                 # 视为已异常断开连接，发布 TIMEOUT 事件
                 self.dispatch("TIMEOUT")
@@ -1077,6 +1171,9 @@ class LiveDanmaku(AsyncEvent):
 async def get_self_info(credential: Credential):
     """
     获取自己直播等级、排行等信息
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     credential.raise_for_no_sessdata()
 
@@ -1087,6 +1184,9 @@ async def get_self_info(credential: Credential):
 async def get_self_live_info(credential: Credential):
     """
     获取自己的粉丝牌、大航海等信息
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
 
     credential.raise_for_no_sessdata()
@@ -1113,6 +1213,9 @@ async def get_self_dahanghai_info(
     info = live.get_self_live_info(credential)
     pages = math.ceil(info['data']['guards'] / 10)
     ```
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()
@@ -1129,6 +1232,9 @@ async def get_self_dahanghai_info(
 async def get_self_bag(credential: Credential):
     """
     获取自己的直播礼物包裹信息
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
 
     credential.raise_for_no_sessdata()
@@ -1149,6 +1255,9 @@ async def get_gift_config(
         room_id (int, optional)         : 房间显示 ID. Defaults to None.
         area_id (int, optional)         : 子分区 ID. Defaults to None.
         area_parent_id (int, optional)  : 父分区 ID. Defaults to None.
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["gift_config"]
     params = {
@@ -1164,6 +1273,9 @@ async def get_gift_config(
 async def get_area_info():
     """
     获取所有分区信息
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["area_info"]
     return await request(api["method"], api["url"])
@@ -1177,6 +1289,9 @@ async def get_live_followers_info(
 
     Args:
         need_recommend (bool, optional): 是否接受推荐直播间，Defaults to True
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()
@@ -1199,6 +1314,9 @@ async def get_unlive_followers_info(
     Args:
         page      (int, optional): 页码, Defaults to 1.
         page_size (int, optional): 每页数量 Defaults to 30.
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()

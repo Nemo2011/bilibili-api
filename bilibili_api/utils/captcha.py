@@ -219,7 +219,15 @@ def _start_server(urlhandler, hostname, port):
 
 def start_server():
     """
-    打开服务器
+    验证码服务打开服务器
+
+    Returns:
+        ServerThread: 服务进程
+
+    返回值内函数及属性: 
+        - url   (str)     : 验证码服务地址
+        - start (Callable): 开启进程
+        - stop  (Callable): 结束进程
     """
     global thread
     thread = _start_server(_geetest_urlhandler, "127.0.0.1", 0)
@@ -238,6 +246,9 @@ def close_server():
 def get_result():
     """
     获取结果
+
+    Returns:
+        dict: 验证结果
     """
     global validate, seccode, challenge, gt, key
     if (

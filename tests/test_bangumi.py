@@ -46,6 +46,7 @@ e = bangumi.Bangumi(epid=562695, oversea=True)  # 港澳台番剧
 # e = bangumi.Bangumi(media_id=28338523, oversea=True)  # 港澳台番剧
 # e = bangumi.Bangumi(epid=674709)  # 内地番剧
 
+
 async def test_oversea_gangaotai_get_item():
     return e.get_episode_info()
 
@@ -60,6 +61,7 @@ async def test_oversea_Bangumi_get_episode_list():
 
 async def test_oversea_Bangumi_get_stat():
     return await e.get_stat()
+
 
 # 特性测试
 # info2 = sync(test_oversea_gangaotai_get_item())

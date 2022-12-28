@@ -1,43 +1,30 @@
-.PHONY: help test lint clean
+.PHONY: build clean docs install lint onlinedocs test
 
 PYTHON=python3
+RM=rm -f -v
 PIP=pip3
-
-.DEFAULT: help
-help:
-	@echo "make test"
-	@echo "       run tests"
-	@echo "make lint"
-	@echo "       run pylint and mypy"
-	@echo "make run"
-	@echo "       run project"
-	@echo "make clean"
-	@echo "       clean python cache files"
-	@echo "make doc"
-	@echo "       build sphinx documentation"
-
-prepare:
-	${PYTHON} install.py
-	${PIP} install -r requirements.txt
-	${PIP} install wheel
-
-install:
-	${PYTHON} setup.py install
+NPM=npm
 
 build:
-	${PYTHON} setup.py sdist bdist_wheel
+	$(PIP) install wheel
+	$(PYTHON) setup.py sdist bdist_wheel
 
-test: 
-	${PYTHON} -m tests -a
+clean:
+	find . -type f -name *.pyc -delete
+	find . -type d -name __pycache__ -delete
 
-lint: 
-	${PYTHON} -m pylint
+docs:
+	cd docs;$(NPM) run localhost
 
+install:
+	$(PPI) install -r requirements.txt
+	$(PYTHON) setup.py install
 
-clean-pyc:
-	@find . -name '*.pyc' -delete
-	@find . -name '__pycache__' -type d | xargs rm -fr
-	@find . -name '.pytest_cache' -type d | xargs rm -fr
+lint:
+	$(PYTHON) scripts/lint.py
 
-clean:clean-pyc
-	@echo "## Clean all data."
+onlinedocs:
+	$(PYTHON) -m bilibili_api.tools.opendocs
+
+test:
+	$(PYTHON) -m tests -a

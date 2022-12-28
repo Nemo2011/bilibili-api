@@ -1,4 +1,6 @@
 """
+bilibili_api.article
+
 专栏相关
 """
 
@@ -21,7 +23,7 @@ API = get_api("article")
 
 # 文章颜色表
 ARTICLE_COLOR_MAP = {
-    "default": "000000",
+    "default": "222222",
     "blue-01": "56c1fe",
     "lblue-01": "73fdea",
     "green-01": "89fa4e",
@@ -53,13 +55,31 @@ ARTICLE_COLOR_MAP = {
 
 
 class ArticleList:
+    """
+    文集类
+
+    Attributes:
+        credential (Credential): 凭据类
+    """
+
     def __init__(self, rlid: int, credential: Credential = None):
+        """
+        Args:
+            rlid       (int)                 : 文集 id
+            credential (Credential, optional): 凭据类. Defaults to None. 
+        """
         self.__rlid = rlid
         self.credential = credential
+
+    def get_rlid(self):
+        return self.__rlid
 
     async def get_content(self):
         """
         获取专栏文集文章列表
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         credential = self.credential if self.credential is not None else Credential()
 
@@ -71,6 +91,9 @@ class ArticleList:
 class Article:
     """
     专栏类
+    
+    Attributes:
+        credential (Credential): 凭据类
     """
 
     def __init__(self, cvid: int, credential: Credential = None):
@@ -139,9 +162,6 @@ class Article:
         获取并解析专栏内容
 
         该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
-
-        Returns:
-            None
         """
         resp = await self.get_all()
 
@@ -381,6 +401,9 @@ class Article:
     async def get_info(self):
         """
         获取专栏信息
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
 
         api = API["info"]["view"]
@@ -394,7 +417,7 @@ class Article:
         一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等
 
         Returns:
-            API 调用返回结果。
+            dict: 调用 API 返回的结果
         """
         sess = get_session()
         resp = await sess.get(f"https://www.bilibili.com/read/cv{self.__cvid}")
@@ -415,6 +438,9 @@ class Article:
 
         Args:
             status (bool, optional): 点赞状态. Defaults to True
+        
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
@@ -428,6 +454,9 @@ class Article:
 
         Args:
             status (bool, optional): 收藏状态. Defaults to True
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
@@ -441,6 +470,9 @@ class Article:
     async def add_coins(self):
         """
         给专栏投币，目前只能投一个
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 

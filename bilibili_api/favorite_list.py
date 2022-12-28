@@ -48,23 +48,26 @@ class FavoriteListType(Enum):
 class FavoriteList:
     """
     收藏夹类
+
+    Attributes:
+        credential (Credential): 凭据类
     """
 
     def __init__(
         self,
         type_: FavoriteListType = FavoriteListType.VIDEO,
         media_id: int = None,
-        credential: Credential = Credential(),
+        credential: Credential = None,
     ) -> None:
         """
         Args:
-            type_(FavoriteListType, optional): 收藏家类型. Defaults to FavoriteListType.VIDEO.
-            media_id(int, optional)          : 收藏家号（仅为视频收藏夹时提供）. Defaults to None.
-            credential(Credential, optional) : 凭据类. Defaults to Credential().
+            type_      (FavoriteListType, optional): 收藏夹类型. Defaults to FavoriteListType.VIDEO.
+            media_id   (int, optional)             : 收藏夹号（仅为视频收藏夹时提供）. Defaults to None.
+            credential (Credential, optional)      : 凭据类. Defaults to Credential().
         """
         self.__type = type_
         self.__media_id = media_id
-        self.credential = credential
+        self.credential = credential if credential else Credential()
 
     def is_video_favorite_list(self):
         """
@@ -75,33 +78,30 @@ class FavoriteList:
         """
         return self.__type == FavoriteListType.VIDEO
 
-    def get_favorite_list_type(self):
-        """
-        获取收藏夹类型
+    def get_media_id(self):
+        return self.__media_id
 
-        Returns:
-            FavoriteListType: 收藏夹类型
-        """
+    def get_favorite_list_type(self):
         return self.__type
 
     async def get_content_video(
         self,
-        page=1,
-        keyword=None,
+        page = 1,
+        keyword = None,
         order: FavoriteListContentOrder = FavoriteListContentOrder.MTIME,
-        tid=0,
+        tid = 0,
     ):
         """
         获取视频收藏夹内容。
 
         Args:
-            page       (int, optional)                     : 页码. Defaults to 1.
-            keyword    (str, optional)                     : 搜索关键词. Defaults to None.
-            order      (FavoriteListContentOrder, optional): 排序方式. Defaults to FavoriteListContentOrder.MTIME.
-            tid        (int, optional)                     : 分区 ID. Defaults to 0.
+            page    (int, optional)                     : 页码. Defaults to 1.
+            keyword (str, optional)                     : 搜索关键词. Defaults to None.
+            order   (FavoriteListContentOrder, optional): 排序方式. Defaults to FavoriteListContentOrder.MTIME.
+            tid     (int, optional)                     : 分区 ID. Defaults to 0.
 
         Returns:
-            dict: 调用 API 返回结果。
+            dict: 调用 API 返回的结果
         """
         assert self.__type != FavoriteListType.VIDEO, "此函数仅在收藏夹为视频收藏家时可用"
 
@@ -112,6 +112,12 @@ class FavoriteList:
     async def get_content(self, page: int = 1):
         """
         获取收藏夹内容。
+
+        Args:
+            page (int, optional): 页码. Defaults to 1. 
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         if self.__type == FavoriteListType.ARTICLE:
             return await get_article_favorite_list(page, self.credential)
@@ -135,7 +141,7 @@ async def get_video_favorite_list(
         credential (Credential, optional): 凭据. Defaults to None.
 
     Returns:
-        dict: API 调用结果。
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["list_list"]
     params = {"up_mid": uid, "type": 2}
@@ -166,7 +172,7 @@ async def get_video_favorite_list_content(
         credential (Credential, optional)              : Credential. Defaults to None.
 
     Returns:
-        dict: 调用 API 返回结果。
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["list_content"]
     params = {
@@ -190,6 +196,9 @@ async def get_topic_favorite_list(page: int = 1, credential: Credential = None):
     Args:
         page       (int, optional): 页码. Defaults to 1.
         credential (Credential)   : Credential
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()
@@ -209,6 +218,9 @@ async def get_article_favorite_list(page: int = 1, credential: Credential = None
     Args:
         page       (int, optional)       : 页码. Defaults to 1.
         credential (Credential, optional): Credential. Defaults to None.
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()
@@ -228,6 +240,9 @@ async def get_album_favorite_list(page: int = 1, credential: Credential = None):
     Args:
         page       (int, optional)       : 页码. Defaults to 1.
         credential (Credential, optional): Credential. Defaults to None.
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()
@@ -247,6 +262,9 @@ async def get_course_favorite_list(page: int = 1, credential: Credential = None)
     Args:
         page       (int, optional)       : 页码. Defaults to 1.
         credential (Credential, optional): Credential. Defaults to None.
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()
@@ -267,6 +285,9 @@ async def get_note_favorite_list(page: int = 1, credential: Credential = None):
     Args:
         page       (int, optional)       : 页码. Defaults to 1.
         credential (Credential, optional): Credential. Defaults to None.
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()
@@ -295,7 +316,7 @@ async def create_video_favorite_list(
         credential   (Credential, optional): 凭据. Defaults to None.
 
     Returns:
-        dict: API 调用结果。
+        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()
@@ -332,7 +353,7 @@ async def modify_video_favorite_list(
         credential   (Credential, optional): Credential. Defaults to None.
 
     Returns:
-        dict: API 调用结果。
+        dict: 调用 API 返回的结果
     """
 
     if credential is None:
@@ -362,7 +383,7 @@ async def delete_video_favorite_list(media_ids: List[int], credential: Credentia
         credential (Credential): Credential.
 
     Returns:
-        dict: API 调用结果。
+        dict: 调用 API 返回的结果
     """
 
     credential.raise_for_no_sessdata()
@@ -387,7 +408,7 @@ async def copy_video_favorite_list_content(
         credential    (Credential): 凭据
 
     Returns:
-        dict: API 调用结果。
+        dict: 调用 API 返回的结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -418,7 +439,7 @@ async def move_video_favorite_list_content(
         credential    (Credential): 凭据
 
     Returns:
-        dict: API 调用结果。
+        dict: 调用 API 返回的结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()

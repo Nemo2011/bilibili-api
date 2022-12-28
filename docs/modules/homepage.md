@@ -44,6 +44,4 @@ from bilibili_api import homepage
 
 获取首页推荐的视频。
 
-**注意：推荐视频更新有冷却时间！**
-
 **Returns:** 调用 API 返回的结果

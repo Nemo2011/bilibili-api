@@ -1,0 +1,23 @@
+{
+    "info": {
+        "info": {
+            "url": "https://app.bilibili.com/x/topic/web/details/top", 
+            "method": "GET", 
+            "params": {
+                "topic_id": "int: 话题 id"
+            }, 
+            "verify": false, 
+            "comment": "获取话题简介"
+        }, 
+        "cards": {
+            "url": "https://app.bilibili.com/x/topic/web/details/cards", 
+            "method": "GET", 
+            "params": {
+                "topic_id": "int: 话题 id", 
+                "page_size": "int: 数据数量"
+            }, 
+            "verify": false, 
+            "comment": "获取话题详情"
+        }
+    }
+}

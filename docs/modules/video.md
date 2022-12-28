@@ -205,7 +205,7 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 获取所有弹幕的 XML 源
 
-**Returns** String: XML 源
+**Returns** str: XML 源
 
 #### async def get_history_danmaku_index()
 

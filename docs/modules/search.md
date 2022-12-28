@@ -101,10 +101,10 @@ from bilibili_api import search
 
 | name    | type   | description      |
 |---------|--------|------------------|
-| keyword | string | 搜索关键词            |
-| page    | int    | 页数，defaults to 1 |
+| keyword | str | 搜索关键词            |
+| page    | int    | 页数. Defaults to 1 |
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def search_by_type()
 
@@ -112,7 +112,7 @@ from bilibili_api import search
 
 | name             | type                                            | description                                                |
 |------------------|-------------------------------------------------|------------------------------------------------------------|
-| keyword          | string                                          | 搜索关键词                                                      |
+| keyword          | str                                          | 搜索关键词                                                      |
 | search_type      | SearchObjectType                                | 搜索类别                                                       |
 | order_type       | UserOrder,VideoOrder,ArticleOrder,LiveRoomOrder | 排序分类类型                                                     |
 | time_range       | int                                             | 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上 |
@@ -122,26 +122,36 @@ from bilibili_api import search
 | debug_param_func | func                                            | 参数回调器，用来存储或者什么的                                            |
 | page             | int                                             | 页数，defaults to 1                                           |
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_default_search_keyword()
 
 获取默认的搜索内容
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_hot_search_keywords()
 
 获取热搜
 
-**Returns:** 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果
 
 ## async def get_suggest_keywords()
 
 | name | type | description |
 | - | - | - |
-| keyword | string | 搜索关键词 |
+| keyword | str | 搜索关键词 |
 
 通过一些文字输入获取搜索建议。类似搜索词的联想。
 
 **Returns:** list[str]: 关键词列表
+
+## async def search_games()
+
+| name | type | description |
+| - | - | - |
+| keyword | str | 搜索关键词 |
+
+搜索游戏特用函数
+
+**Returns:** dict: 调用 API 返回的结果

@@ -6,7 +6,6 @@ import re
 import json
 import datetime
 import asyncio
-from aiohttp import FormData
 from typing import List
 import io
 
@@ -95,7 +94,7 @@ async def upload_image(image_stream: io.BufferedIOBase, credential: Credential):
         credential   (Credential)       : 凭据
 
     Returns:
-        API 调用返回结果
+        dict: 调用 API 返回的结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -120,7 +119,6 @@ async def _get_draw_data(
     Args:
         text (str): 文本内容
         image_streams (List[io.BufferedIOBase]): 图片流
-
     """
     new_text, at_uids, ctrl = await _parse_at(text)
     images_info = await asyncio.gather(
@@ -183,7 +181,7 @@ async def send_dynamic(
         credential    (Credential, optional)             : 凭据. Defaults to None.
 
     Returns:
-        dict: API 调用结果
+        dict: 调用 API 返回的结果
     """
 
     if credential is None:
@@ -248,6 +246,9 @@ async def get_schedules_list(credential: Credential):
 
     Args:
         credential  (Credential): 凭据
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     credential.raise_for_no_sessdata()
 
@@ -263,6 +264,8 @@ async def send_schedule_now(draft_id: int, credential: Credential):
         draft_id (int): 定时动态 ID
         credential  (Credential): 凭据
 
+    Returns:
+        dict: 调用 API 返回的结果
     """
     credential.raise_for_no_sessdata()
 
@@ -278,6 +281,9 @@ async def delete_schedule(draft_id: int, credential: Credential):
     Args:
         draft_id (int): 定时动态 ID
         credential  (Credential): 凭据
+    
+    Returns:
+        dict: 调用 API 返回的结果
     """
     credential.raise_for_no_sessdata()
 
@@ -287,11 +293,18 @@ async def delete_schedule(draft_id: int, credential: Credential):
 
 
 class Dynamic:
+    """
+    动态类
+
+    Attributes: 
+        credential (Credential): 凭据类
+    """
+
     def __init__(self, dynamic_id: int, credential: Credential = None):
         """
         Args:
-            dynamic_id (int): 动态 ID
-            credential (Credential, optional): [description]. Defaults to None.
+            dynamic_id (int)                 : 动态 ID
+            credential (Credential, optional): 凭据类. Defaults to None.
         """
         self.__dynamic_id = dynamic_id
         self.credential = credential if credential is not None else Credential()
@@ -302,6 +315,9 @@ class Dynamic:
     async def get_info(self):
         """
         获取动态信息
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
 
         api = API["info"]["detail"]
@@ -322,7 +338,7 @@ class Dynamic:
             offset (str, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0"
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["repost"]
         params = {"dynamic_id": self.__dynamic_id}
@@ -337,11 +353,11 @@ class Dynamic:
         获取动态点赞列表
 
         Args:
-            pn(int): 页码，defaults to 1
-            ps(int): 每页大小，defaults to 30
+            pn (int, optional): 页码，defaults to 1
+            ps (int, optional): 每页大小，defaults to 30
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["likes"]
         params = {"dynamic_id": self.__dynamic_id, "pn": pn, "ps": ps}
@@ -355,6 +371,9 @@ class Dynamic:
 
         Args:
             status (bool, optional): 点赞状态. Defaults to True.
+        
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -374,6 +393,9 @@ class Dynamic:
     async def delete(self):
         """
         删除动态
+
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
@@ -387,6 +409,9 @@ class Dynamic:
 
         Args:
             text (str, optional): 转发动态时的文本内容. Defaults to "转发动态"
+        
+        Returns:
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
 
@@ -394,3 +419,39 @@ class Dynamic:
         data = await _get_text_data(text)
         data["dynamic_id"] = self.__dynamic_id
         return await request("POST", api["url"], data=data, credential=self.credential)
+
+
+async def get_new_dynamic_users(credential: Credential = None):
+    """
+    获取更新动态的关注者
+
+    Args:
+        credential (Credential): 凭据类. Defaults to None. 
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
+    api = API["info"]["attention_new_dynamic"]
+    return await request("GET", api["url"], credential = credential)
+
+
+async def get_live_users(size: int = 10, credential: Credential = None):
+    """
+    获取正在直播的关注者
+
+    Args:
+        size       (int)       : 获取的数据数量. Defaults to 10. 
+        credential (Credential): 凭据类. Defaults to None. 
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
+    api = API["info"]["attention_live"]
+    params = {
+        "size": size
+    }
+    return await request("GET", api["url"], params = params, credential = credential)

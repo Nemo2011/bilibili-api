@@ -109,10 +109,22 @@ from bilibili_api import user
 
 合集与列表类型
 
-+ SERIES: 旧版
-+ SEASON: 新版
++ SERIES: 相同视频分类
++ SEASON: 新概念多 P
 
-**新版合集名字为`合集·XXX`，请注意区别**
+**SEASON 类合集与列表名字为`合集·XXX`，请注意区别**
+
+---
+
+## async def name2uid()
+
+| name | type | description |
+| - | - | - |
+| names | str/List\[str\] | 用户名 |
+
+将用户名转为 uid
+
+**Returns** dict: 调用 API 返回的结果
 
 ---
 
@@ -170,6 +182,12 @@ from bilibili_api import user
 获取 UP 主数据信息（视频总播放量，文章总阅读量，总点赞数）
 
 **Returns:** 调用接口返回的内容。
+
+#### async def get_top_videos()
+
+获取用户的置顶视频
+
+**Returns:** 调用接口返回的结果
 
 #### async def get_user_medal()
 
@@ -304,11 +322,18 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_reservation()
+
+获取用户空间预约
+
+**Returns:** 调用 API 返回的结果
+
 #### async def get_followings()
 
 | name | type           | description               |
 |------|----------------|---------------------------|
 | pn   | int, optional  | 页码，从 1 开始. Defaults to 1. |
+| ps   | int, optional | 每页的数据量. Defaults to 100. |
 | desc | bool, optional | 倒序排序. Defaults to True.   |
 
 获取用户关注列表（不是自己只能访问前5页）
@@ -326,6 +351,7 @@ from bilibili_api import user
 | name | type           | description               |
 |------|----------------|---------------------------|
 | pn   | int, optional  | 页码，从 1 开始. Defaults to 1. |
+| ps   | int, optional | 每页的数据量. Defaults to 100. |
 | desc | bool, optional | 倒序排序. Defaults to True.   |
 
 获取用户粉丝列表（不是自己只能访问前5页，是自己也不能获取全部的样子）

@@ -101,6 +101,12 @@ import bilibili_api
 
 **Returns:** None
 
+#### async def check_valid()
+
+检查 cookies 是否有效
+
+**Returns:** bool: cookies 是否有效
+
 ---
 
 ## def sync()
@@ -197,6 +203,7 @@ BV 号转 AV 号。
 - 用户
 - 直播间
 - 合集与列表
+- 游戏
 
 [查看示例](https://nemo2011.github.io/bilibili-api/#/parse_link)
 
@@ -287,7 +294,7 @@ BV 号转 AV 号。
 
 将弹幕转换为 xml 格式弹幕
 
-**Returns:** string: xml 格式弹幕
+**Returns:** str: xml 格式弹幕
 
 ---
 
@@ -297,10 +304,10 @@ BV 号转 AV 号。
 
 | name | type | description |
 | - | - | - |
-| content | string | 弹幕内容 |
+| content | str | 弹幕内容 |
 | id_ | int | 弹幕 ID |
-| id_str | string | 弹幕字符串 ID |
-| mode | DmMode \| int | 弹幕模式 |
+| id_str | str | 弹幕字符串 ID |
+| mode | DmMode | int | 弹幕模式 |
 | pool | int | 池 |
 
 ### Functions
@@ -309,8 +316,94 @@ BV 号转 AV 号。
 
 | name | type | description |
 | - | - | - |
-| content | string | 弹幕内容 |
+| content | str | 弹幕内容 |
 | id_ | int | 弹幕 ID |
-| id_str | string | 弹幕字符串 ID |
+| id_str | str | 弹幕字符串 ID |
 | mode | DmMode \| int | 弹幕模式 |
 | pool | int | 池 |
+
+---
+
+## class GetItemObjectType
+
+**Extends: enum.Enum**
+
+资源类型。(仅供 get_item 使用)
++ VIDEO : 视频
++ BANGUMI : 番剧
++ FT : 影视
++ LIVE : 直播
++ ARTICLE : 专栏
++ USER : 用户
++ LIVEUSER : 直播间用户
++ GAME: 游戏
+
+## async def get_item()
+
+通过名称及类型获取对应资源。
+
+支持：视频，番剧，影视，直播间，专栏，用户，直播用户，游戏
+
+如：名称是"碧诗", 类型是用户, 就能得到 User(uid = 2)
+
+| name | type | description |
+| - | - | - |
+| name | str |             名称 |
+| obj_type | GetItemObjectType | 资源类型 |
+| credential | Credential     | 凭据 |
+
+**Returns:** 对应资源或 -1 (无匹配资源)
+
+---
+
+## class AsyncEvent
+
+发布-订阅模式异步事件类支持。
+
+特殊事件：\_\_ALL\_\_ 所有事件均触发
+
+### Functions
+
+#### def add_eevent_listener()
+
+| name | type | description |
+| - | - | - |
+| name | str |           事件名。 |
+| handler | Coroutine |   回调异步函数。 |
+
+注册事件监听器。
+
+#### def on()
+
+装饰器注册事件监听器。
+
+| name | type | description |
+| - | - | - |
+| event_name | str | 事件名。 |
+
+#### def remove_all_event_listener()
+
+移除所有事件监听函数
+
+#### def remove_event_listener()
+
+移除事件监听函数。
+
+| name | type | description |
+| - | - | - |
+| name | str |            事件名 |
+| handler | Coroutine |   要移除的函数 |
+
+**Returns:** bool, 是否移除成功。
+
+#### def ignore_event()
+
+忽略指定事件
+
+| name | type | description |
+| - | - | - |
+| name | str | 事件名 |
+
+#### def remove_ignore_events()
+
+移除所有忽略事件

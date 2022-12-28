@@ -16,7 +16,7 @@ from .utils.sync import sync
 from .utils.network_httpx import get_session, request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
-from typing import List
+from typing import List, Union
 import httpx
 
 API = get_api("user")
@@ -135,6 +135,26 @@ class RelationType(Enum):
     REMOVE_FANS = 7
 
 
+async def name2uid(names: Union[str, List[str]]):
+    """
+    将用户名转为 uid
+
+    Args:
+        names (str/List[str]): 用户名
+    
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["name_to_uid"]
+    if isinstance(names, str):
+        n = names
+    else:
+        n = ",".join(names)
+    params = {
+        "names": n
+    }
+    return await request("GET", api["url"], params = params)
+
 class User:
     """
     用户相关
@@ -215,9 +235,9 @@ class User:
         try:
             r_json = json.loads(resp.text)
         except JSONDecodeError:
-            r_json = {'status': False, 'data': f'解析接口返回的数据失败:{resp.status_code}'}
+            r_json = {"status": False, "data": f"解析接口返回的数据失败:{resp.status_code}"}
         if not r_json:
-            r_json = {'status': False, 'data': 'Failed'}
+            r_json = {"status": False, "data": "Failed"}
         return r_json
 
     async def get_space_notice(self):
@@ -279,6 +299,19 @@ class User:
         params = {"mid": self.__uid}
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
+        )
+
+    async def get_top_videos(self):
+        """
+        获取用户的指定视频（代表作）
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["user_top_videos"]
+        params = {"vmid": self.get_uid()}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
         )
 
     async def get_user_medal(self):
@@ -364,9 +397,7 @@ class User:
         )
 
     async def get_album(
-        self, biz: AlbumType = AlbumType.ALL,
-        page_num: int = 1,
-        page_size: int = 30
+        self, biz: AlbumType = AlbumType.ALL, page_num: int = 1, page_size: int = 30
     ):
         """
         获取用户投稿音频。
@@ -380,7 +411,12 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["album"]
-        params = {"uid": self.__uid, "page_num": page_num, "page_size": page_size, "biz": biz.value}
+        params = {
+            "uid": self.__uid,
+            "page_num": page_num,
+            "page_size": page_size,
+            "biz": biz.value,
+        }
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -472,23 +508,24 @@ class User:
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
-    async def get_followings(self, pn: int = 1, desc: bool = True):
+    async def get_followings(self, pn: int = 1, ps: int = 100, attention: bool = False):
         """
         获取用户关注列表（不是自己只能访问前 5 页）
 
         Args:
-            pn   (int, optional) : 页码，从 1 开始. Defaults to 1.
-            desc (bool, optional): 倒序排序. Defaults to True.
+            pn        (int, optional)  : 页码，从 1 开始. Defaults to 1.
+            ps        (int, optional)  : 每页的数据量. Defaults to 100. 
+            attention (bool, optional) : 是否采用“最常访问”排序. Defaults to False. 
 
         Returns:
             dict: 调用接口返回的内容。
         """
-        api = API["info"]["followings"]
+        api = API["info"]["all_followings2"]
         params = {
             "vmid": self.__uid,
-            "ps": 20,
+            "ps": ps,
             "pn": pn,
-            "order": "desc" if desc else "asc",
+            "order_type": "attention" if attention else "",
         }
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
@@ -513,12 +550,13 @@ class User:
         )
         return data["card"]["attentions"]
 
-    async def get_followers(self, pn: int = 1, desc: bool = True):
+    async def get_followers(self, pn: int = 1, ps: int = 100, desc: bool = True):
         """
         获取用户粉丝列表（不是自己只能访问前 5 页，是自己也不能获取全部的样子）
 
         Args:
             pn   (int, optional) : 页码，从 1 开始. Defaults to 1.
+            ps   (int, optional) : 每页的数据量. Defaults to 100. 
             desc (bool, optional): 倒序排序. Defaults to True.
 
         Returns:
@@ -528,7 +566,7 @@ class User:
         api = API["info"]["followers"]
         params = {
             "vmid": self.__uid,
-            "ps": 20,
+            "ps": ps,
             "pn": pn,
             "order": "desc" if desc else "asc",
         }
@@ -695,6 +733,31 @@ class User:
             )
         return channels
 
+    async def create_channel_series(
+        name: str, 
+        aids: List[int] = [], 
+        keywords: List[str] = [], 
+        description: str = ""
+    ):
+        pass
+
+    async def del_channel_series(
+        series_id: int
+    ):
+        pass
+
+    async def add_aids_to_series(
+        series_id: int, 
+        aids: List[int]
+    ):
+        pass
+
+    async def del_aids_from_series(
+        series_id: int, 
+        aids: List[int]
+    ):
+        pass
+
     async def get_cheese(self):
         """
         查看用户的所有课程
@@ -706,15 +769,28 @@ class User:
         params = {"mid": self.__uid}
         return await request("GET", api["url"], params=params)
 
+    async def get_reservation(self):
+        """
+        获取用户空间预约
+
+        Returns:
+            dict: 调用接口返回的结果
+        """
+        api = API["info"]["reservation"]
+        params = {"vmid": self.get_uid()}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
 
 class ChannelSeriesType(Enum):
     """
     合集与列表类型
 
-    + SERIES: 旧版
-    + SEASON: 新版
+    + SERIES: 相同视频分类
+    + SEASON: 新概念多 P
 
-    **新版合集名字为`合集·XXX`，请注意区别**
+    **SEASON 类合集与列表名字为`合集·XXX`，请注意区别**
     """
 
     SERIES = 0
@@ -724,58 +800,55 @@ class ChannelSeriesType(Enum):
 class ChannelSeries:
     """
     合集与列表类
+
+    Attributes:
+        credential (Credential): 凭据类. Defaults to None.
     """
 
     def __init__(
         self,
-        uid: int,
-        type_: ChannelSeriesType = ChannelSeriesType.SEASON,
-        id_: int = 0,
+        uid: int = None,
+        type_: ChannelSeriesType = ChannelSeriesType.SERIES,
+        id_: int = None,
         credential: Credential = None,
         meta=None,
     ):
         """
-        uid(int)                : 用户 uid
-        type_(ChannelSeriesType): 合集与列表类型
-        id_(int)                : season_id 或 series_id
-        credential(Credential)  : 凭证
+        Args:
+            uid(int)                : 用户 uid. Defaults to None. 
+            type_(ChannelSeriesType): 合集与列表类型
+            id_(int)                : season_id 或 series_id
+            credential(Credential)  : 凭证. Defaults to None. 
         """
+        assert id_ != None
+        assert type_ != None
         self.__uid = uid
         self.is_new = type_.value
         self.id_ = id_
         self.owner = User(self.__uid, credential=credential)
         self.credential = credential
         self.meta = None
-        if self.is_new:
-            look_type = "seasons"
-        else:
-            look_type = "series"
         if meta is None:
-            credential = self.credential if self.credential else Credential()
-            api = API["info"]["channel_list"]
-            param = {"mid": self.__uid, "page_num": 1, "page_size": 1}
-            res = httpx.request(
-                "GET", url=api["url"], params=param, cookies=credential.get_cookies()
-            )
-            items = json.loads(res.text)["data"]["items_lists"]["page"]["total"]
-            time.sleep(0.5)
-            if items == 0:
-                items = 1
-            param["page_size"] = items
-            channel_list = json.loads(
-                httpx.request(
-                    "GET",
-                    url=api["url"],
-                    params=param,
-                    cookies=credential.get_cookies(),
-                ).text
-            )["data"]
-            for channel in channel_list["items_lists"][look_type + "_list"]:
-                type_id = channel["meta"]["season_id" if self.is_new else "series_id"]
-                if type_id == self.id_:
-                    self.meta = channel["meta"]
-            if self.meta is None:
-                raise ValueError("未找到频道信息。")
+            if self.is_new:
+                api = API["channel_series"]["season_info"]
+                params = {
+                    "season_id": self.id_
+                }
+            else:
+                api = API["channel_series"]["info"]
+                params = {
+                    "series_id": self.id_
+                }
+            resp = json.loads(httpx.get(api["url"], params = params).text)["data"]
+            if self.is_new:
+                self.meta = resp["info"]
+                self.meta["mid"] = resp["upper"]["mid"]
+                self.__uid = self.meta["mid"]
+                self.owner = User(self.__uid, credential=credential)
+            else:
+                self.meta = resp["meta"]
+                self.__uid = self.meta["mid"]
+                self.owner = User(self.__uid, credential=credential)
         else:
             self.meta = meta
 
@@ -964,7 +1037,7 @@ async def get_self_coins(credential: Credential = None):
     return (await request("GET", url=api["url"], credential=credential))["money"]
 
 
-async def get_toview_list(credential: Credential = Credential()):
+async def get_toview_list(credential: Credential = None):
     """
     获取稍后再看列表
 
@@ -979,7 +1052,7 @@ async def get_toview_list(credential: Credential = Credential()):
     return await request("GET", api["url"], credential=credential)
 
 
-async def clear_toview_list(credential: Credential = Credential()):
+async def clear_toview_list(credential: Credential = None):
     """
     清空稍后再看列表
 

@@ -29,9 +29,17 @@ from bilibili_api import article
 | rlid       | int                  | 文集 ID，如 https://www.bilibili.com/read/readlist/rl000010 省略前导 0 |
 | credential | Credential, optional | 凭据. Defaults to None.                                      |
 
+#### def get_rlid()
+
+获取 rlid
+
+**Returns:** rlid
+
 #### async def get_content()
 
 获取专栏文集文章列表
+
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -53,6 +61,12 @@ from bilibili_api import article
 | ---------- | -------------------- | ----------------------- |
 | cvid       | int                  | 专栏 ID                 |
 | credential | Credential, optional | 凭据. Defaults to None. |
+
+#### def get_rlid()
+
+获取 rlid
+
+**Returns:** rlid
 
 #### def markdown()
 

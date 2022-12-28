@@ -1,4 +1,6 @@
 """
+bilibili_api.app
+
 手机 APP 相关
 """
 
@@ -33,7 +35,7 @@ async def get_loading_images(
         credential (Credential, optional): 凭据
 
     Returns:
-        API 调用返回结果
+        dict: 调用 API 返回的结果
     """
     credential = credential if credential is not None else Credential()
 
@@ -67,7 +69,7 @@ async def get_loading_images_special(
         credential (Credential, optional): 凭据
 
     Returns:
-        API 调用返回结果
+        dict: 调用 API 返回的结果
     """
     APPKEY = "1d8b6e7d45233436"
     APPSEC = "560c52ccd288fed045859ed18bffd973"

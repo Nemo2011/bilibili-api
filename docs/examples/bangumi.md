@@ -22,8 +22,6 @@ sync(main())
 from bilibili_api import bangumi, sync
 from bilibili_api import settings
 
-settings.nest_asyncio = True
-
 async def main():
     b = bangumi.Bangumi(28231846)
     next = None
