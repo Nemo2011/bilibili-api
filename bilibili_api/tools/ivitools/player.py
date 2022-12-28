@@ -46,7 +46,7 @@ class ButtonLabel(QtWidgets.QLabel):
         self.setWordWrap(True)
         self.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(12)
         font.setBold(True)
         self.setFont(font)
         rect = QtCore.QRect(x, y, 200, 50)
@@ -442,6 +442,10 @@ class MPlayer(object):
         for var in self.variables:
             if var.is_show():
                 wintitle += f" - {var.get_name()}: {int(var.get_value())}"
+        for lbl in self.choice_labels:
+            lbl.hide()
+        self.choice_labels = []
+        self.choice_buttons = []
         self.win.setWindowTitle(wintitle)
         self.state_log.append({"cid": cid, "vars": copy.deepcopy(self.variables)})
         self.has_end = False
@@ -485,16 +489,16 @@ class MPlayer(object):
         bilivideo_parser = json.JSONDecoder()
         self.node.setText("(当前节点: 视频主节点)")
         self.info.setText(
-            bilivideo_parser.decode(open(self.temp_dir + "bilivideo.json", "r").read())[
+            bilivideo_parser.decode(open(self.temp_dir + "bilivideo.json", "r", encoding = "utf-8").read())[
                 "title"
             ]
             + "("
-            + bilivideo_parser.decode(open(self.temp_dir + "bilivideo.json", "r").read())[
+            + bilivideo_parser.decode(open(self.temp_dir + "bilivideo.json", "r", encoding = "utf-8").read())[
                 "bvid"
             ]
             + ")"
         )
-        self.graph = json.load(open(self.temp_dir + "ivideo.json", "r"))
+        self.graph = json.load(open(self.temp_dir + "ivideo.json", "r", encoding = "utf-8"))
         self.current_node = 1
         variables = self.graph["1"]["vars"]
         for var in variables:
@@ -507,6 +511,11 @@ class MPlayer(object):
         self.volume_change_event()
 
     def close_ivi(self):
+        self.player.hide()
+        self.player = QtMultimediaWidgets.QVideoWidget(self.win)
+        self.player.setGeometry(QtCore.QRect(0, 0, 800, 450))
+        self.player.setObjectName("player")
+        self.player.show()
         self.current_node = 0
         self.variables = []
         self.state_log = []
@@ -587,13 +596,8 @@ class MPlayer(object):
     def position_change_event(self):
         volume = self.slider.value()
         if volume != 100 and self.has_end:
-            self.has_end = False
-            self.mediaplayer.setAudioOutput(
-                QtMultimedia.QAudioOutput().setVolume(
-                    self.horizontalSlider.value() / 100
-                )
-            )
-            self.volume_change_event()
+            self.slider.setValue(100)
+            return
         self.mediaplayer.setPosition(int(self.mediaplayer.duration() * volume / 100))
         if not self.is_stoping:
             self.start_playing()
