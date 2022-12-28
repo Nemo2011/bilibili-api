@@ -35,7 +35,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.11",
     ],
     package_data={
-        "": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*", "css/*.*"]
+        "": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*", "css/*.*", "tools/ivitools/ffmpeg/*.*"]
     },
     install_requires=requires.splitlines(),
     url="https://github.com/nemo2011/bilibili-api",
