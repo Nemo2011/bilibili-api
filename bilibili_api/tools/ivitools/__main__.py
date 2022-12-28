@@ -31,7 +31,7 @@ Commands: download, extract, help, play, scan, touch\n\
 ivitools download [BVID] [OUT]\n\
 ivitools extract [IVI]\n\
 ivitools help\n\
-ivitools play [IVI]\n\
+ivitools play [IVI] (PyQT6 require)\n\
 ivitools scan [IVI]\n\
 ivitools touch [IVI]")
         case "scan":
@@ -65,7 +65,6 @@ def main():
         args = sys.argv
         run_args(args[1], args[2:])
     except Exception as e:
-        raise e
         print(Fore.RED + '[ERR]: ' + str(e) + Fore.RESET)
 
 if __name__ == '__main__':
