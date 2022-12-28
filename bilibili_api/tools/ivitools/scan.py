@@ -27,14 +27,14 @@ def scan_ivi_file(path: str):
     # Then, extract the ivi file. 
     extract_dir = os.path.join(tmp_dir, "ivitools", str(time.time())) 
                                                     # Use the time to make folders different
-    zipfile.ZipFile(path).extractall(extract_dir)
+    zipfile.ZipFile(open(path, "rb")).extractall(extract_dir)
     # Finally, display the result. 
     Cursor.UP()
     clear_line()
     print(path)
     meta = get_ivi_file_meta(path)
     print(f'{meta["title"]}({meta["bvid"]})')
-    graph = json.load(open(os.path.join(extract_dir, "ivideo.json")))
+    graph = json.load(open(os.path.join(extract_dir, "ivideo.json"), encoding = "utf-8"))
     print(f"There're {len(graph.keys())} nodes in the file! ")
     bar = tqdm(graph.keys())
     for item in bar:

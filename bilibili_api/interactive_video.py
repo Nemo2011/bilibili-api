@@ -809,11 +809,11 @@ class InteractiveVideoDownloader(AsyncEvent):
                 # 所有可达顶点 ID 入队
                 queue.insert(0, n)
 
-        json.dump(edges_info, open(tmp_dir_name + "/ivideo.json", "w+"), indent = 2, ensure_ascii = False)
+        json.dump(edges_info, open(tmp_dir_name + "/ivideo.json", "w+", encoding = "utf-8"), indent = 2, ensure_ascii = False)
         json.dump({
             "bvid": self.__video.get_bvid(), 
             "title": (await self.__video.get_info())["title"]
-        }, open(tmp_dir_name + "/bilivideo.json", "w+"), indent = 2, ensure_ascii = False)
+        }, open(tmp_dir_name + "/bilivideo.json", "w+", encoding = "utf-8"), indent = 2, ensure_ascii = False)
 
         for key, item in edges_info.items():
             self.dispatch("PREPARE_DOWNLOAD", {"node_id": int(key), "cid": item["cid"]})
@@ -830,7 +830,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         await self.__download_func(url["dash"]["audio"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".audio.mp4")
 
         self.dispatch("PACKAGING")
-        zip = zipfile.ZipFile(self.__out + ".ivi", "w", zipfile.ZIP_DEFLATED)  # outFullName为压缩文件的完整路径
+        zip = zipfile.ZipFile(open(self.__out + ".ivi", "wb+"), mode = "w", compression = zipfile.ZIP_DEFLATED)  # outFullName为压缩文件的完整路径
         for path, dirnames, filenames in os.walk(tmp_dir_name):
             # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
             fpath = path.replace(tmp_dir_name, '')
@@ -878,6 +878,6 @@ def get_ivi_file_meta(path: str):
     Returns:
         dict: 文件信息
     """
-    ivi = zipfile.ZipFile(path)
+    ivi = zipfile.ZipFile(open(path, "rb"))
     info = ivi.open("bilivideo.json").read()
     return json.loads(info)

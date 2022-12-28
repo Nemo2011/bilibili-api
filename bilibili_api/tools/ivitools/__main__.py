@@ -68,6 +68,7 @@ def main():
         args = sys.argv
         run_args(args[1], args[2:])
     except Exception as e:
+        raise e
         print(Fore.RED + '[ERR]: ' + str(e) + Fore.RESET)
 
 if __name__ == '__main__':
