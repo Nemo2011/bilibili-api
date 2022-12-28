@@ -16,7 +16,9 @@ def freeze_file(part1: str, part2: str):
         os.path.join(os.path.dirname(__file__), part2), 
         os.path.join(os.path.dirname(__file__), "temp.file")
     )
-    os.system(f'unzip -o {os.path.join(os.path.dirname(__file__), "temp.file")}')
+    zipfile.ZipFile(open(os.path.join(os.path.dirname(__file__), "temp.file"), "rb")).extractall(
+        os.path.dirname(__file__)
+    )
 
 def freeze_ffmpeg():
     if "darwin" in platform.system().lower():
