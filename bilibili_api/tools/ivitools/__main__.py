@@ -44,18 +44,15 @@ ivitools touch [IVI]")
             download_interactive_video(args[0], args[1])
         case "play":
             try:
-                import wx
+                import PyQt6
             except ImportError:
-                warnings.warn("IVITools Built-in Player require WXPython but IVITools can't find it. \nYou can install it by `pip3 install wxpython`. ")
+                warnings.warn("IVITools Built-in Player require PyQt6 but IVITools can't find it. \nYou can install it by `pip3 install PyQt6`. ")
                 return
-            if "darwin" in platform.system().lower():
-                print("Notice: You should use `pythonw` command to start ivitools player if you are using conda right now. \nYou can install `pythonw` by `conda install Python.app`. \nMore details at: https://www.wxpython.org/pages/downloads/. \n\n")
-            from .player import IVIPlayer
-            app = wx.App()
-            player = IVIPlayer()
-            player.open_ivi(args[0])
-            player.Show()
-            app.MainLoop()
+            from .player import main, prepopen
+            if len(args) == 0:
+                main()
+            else:
+                prepopen(args[0])
         case _:
             raise ValueError("Command not found. Use `ivitools help` for helps. ")
 

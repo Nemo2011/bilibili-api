@@ -1,3 +1,6 @@
+import os
+
+
 def get_size(path: str):
     size: int = 0
     stream = open(path, "rb")
@@ -19,6 +22,11 @@ def chai(path: str, out1: str, out2: str):
     stream.close()
 
 def hebing(path1: str, path2: str, dest: str):
+    if os.path.exists(dest):
+        os.remove(dest)
+    while True:
+        if not os.path.exists(dest):
+            break
     stream = open(dest, "wb+")
     stream.write(open(path1, "rb").read())
     stream.write(open(path2, "rb").read())
