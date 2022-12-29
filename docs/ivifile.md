@@ -6,7 +6,7 @@
 
 # 有关 `ivitools` 的说明
 
-`ivitools` 是管理 `ivi` 文件的工具，支持：拆开、播放、扫描 `ivi` 文件。`ivitools` 将在 `bilibili_api` 安装的时候自动安装完毕，可以直接用 `ivitools` 调用相关功能。
+`ivitools` 是管理 `ivi` 文件的工具，支持：拆开、播放、扫描 `ivi` 文件。因为文件大小原因，`ivitools` 需要单独安装。(`pip3 install ivitools`)
 
 # `ivitools` 命令详解
 

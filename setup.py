@@ -21,8 +21,6 @@ setuptools.setup(
         "bilibili_api.errors",
         "bilibili_api.tools", 
         "bilibili_api.tools.opendocs", 
-        "bilibili_api.tools.ivitools", 
-        "bilibili_api.tools.ivitools.ffmpeg", 
         "bilibili_api._pyinstaller",
     ],
     keywords=["bilibili", "api", "spider"],
@@ -35,7 +33,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.11",
     ],
     package_data={
-        "": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*", "css/*.*", "tools/ivitools/ffmpeg/*.*"]
+        "": ["data/**/*.*", "requirements.txt", "data/*.*", "html/*.*", "css/*.*"]
     },
     install_requires=requires.splitlines(),
     url="https://github.com/nemo2011/bilibili-api",
@@ -45,8 +43,7 @@ setuptools.setup(
             "hook-dirs = bilibili_api._pyinstaller.entry_points:get_hook_dirs"
         ],
         "console_scripts": [
-            "bilibili-api-docs = bilibili_api.tools.opendocs.__main__:main", 
-            "ivitools = bilibili_api.tools.ivitools.__main__:main"
+            "bilibili-api-docs = bilibili_api.tools.opendocs.__main__:main"
         ],
     },
 )
