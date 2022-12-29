@@ -13,7 +13,7 @@
 
 `tar.gz`: <https://transfer.sh/FSOu6w/ivitools-0.0.1.tar.gz> (112MB) **(Large File)**
 
-`whl`: (已上传至 `PyPi`)
+`whl`: 
   - `windows`:  
     - `win32`: <https://transfer.sh/2YSXle/ivitools-0.0.1-py3-none-win32.whl> (39.1MB)
     - `amd64`: <https://transfer.sh/jURMkK/ivitools-0.0.1-py3-none-win_amd64.whl> (39.1MB) **(Test Passing)**
