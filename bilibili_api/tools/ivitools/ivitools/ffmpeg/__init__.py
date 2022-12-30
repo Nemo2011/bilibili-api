@@ -40,21 +40,8 @@ def freeze_ffmpeg():
         )
     elif "linux" in platform.platform().lower():
         # Linux
-        if "arm" in platform.platform().lower():
-            # Linux arm
-            freeze_file("linux.arm.chunk1", "linux.arm.chunk2")
-            return os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "ffmpeg",
-                "ffmpeg.arm.linux"
-            )
-        else:
-            # Linux x64
-            freeze_file("linux.x64.chunk1", "linux.x64.chunk2")
-            return os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                "ffmpeg",
-                "ffmpeg.x64.linux"
-            )
+        if os.system("ffmpeg -version") != 0:
+            raise SystemError("FFmpeg binary not found. You can install it by apt or yum. \n因为 linux 系统架构类型太多了，不会只有 x64 和 arm，所以这里建议自己编译。")
+        return "ffmpeg"
     else:
         raise SystemError("您的系统不受支持：", platform.platform())
