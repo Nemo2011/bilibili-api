@@ -358,7 +358,7 @@ class Episode(Video):
                 bvid = content["epInfo"]["bvid"]
                 self.bangumi = Bangumi(ssid=content["mediaInfo"]["season_id"])
         self.video_class = Video(bvid=bvid, credential=credential)
-        super().__init__(bvid=bvid, credential=credential)
+        super().__init__(bvid=bvid)
         self.set_aid = self.set_aid_e
         self.set_bvid = self.set_bvid_e
 
