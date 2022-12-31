@@ -29,7 +29,7 @@
 1. `ivitools download [BVID] [OUT]` 下载互动视频至 `ivi` 格式
 2. `ivitools extract [IVI] [OUT]` 拆开 `ivi` 文件至目标文件夹
 3. `ivitools help` 帮助
-4. `ivitools play [IVI]` 播放 `ivi` 文件
+4. `ivitools play [IVI]` 播放 `ivi` 文件 (`linux` 用户需将 `ffmpeg` 加入环境变量)
 5. `ivitools scan [IVI]` 扫描 `ivi` 文件
 6. `ivitools touch [IVI]` 获取 `ivi` 文件简介 (`JSON` 格式 )
 
