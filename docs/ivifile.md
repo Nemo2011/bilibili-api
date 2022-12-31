@@ -11,18 +11,16 @@
 <details>
 <summary>下载地址</summary>
 
-`tar.gz`: <https://transfer.sh/FSOu6w/ivitools-0.0.1.tar.gz> (112MB) **(Large File)**
+`tar.gz`: (已上传至 pypi)
 
 `whl`: 
+  - 万能轮子: (已上传至 pypi)
   - `windows`:  
     - `win32`: <https://transfer.sh/2YSXle/ivitools-0.0.1-py3-none-win32.whl> (39.1MB)
     - `amd64`: <https://transfer.sh/jURMkK/ivitools-0.0.1-py3-none-win_amd64.whl> (39.1MB) **(Test Passing)**
   - `macos`: 
     - `x64`: <https://transfer.sh/xGbDxe/ivitools-0.0.1-py3-none-macosx_10_4_universal2.whl> (24.8MB)
     - `arm64`: <https://transfer.sh/xGbDxe/ivitools-0.0.1-py3-none-macosx_10_4_universal2.whl> (24.8MB) **(Test Passing)**
-  - `linux`: 
-    - `x64`: <https://transfer.sh/U2UdO6/ivitools-0.0.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl> (28.8MB)
-    - `arm64`: <https://transfer.sh/Nt7yEK/ivitools-0.0.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl> (25MB)
 
 </details>
 
