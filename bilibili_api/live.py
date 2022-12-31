@@ -894,7 +894,7 @@ class LiveDanmaku(AsyncEvent):
         """
         入口
         """
-        self.__status = self.STATUS_CONNECTING
+        self.__status == self.STATUS_CONNECTING
 
         room = LiveRoom(self.room_display_id, self.credential)
         self.logger.info(f"准备连接直播间 {self.room_display_id}")
@@ -936,7 +936,7 @@ class LiveDanmaku(AsyncEvent):
             port = host["wss_port"]
             protocol = "wss"
             uri = f"{protocol}://{host['host']}:{port}/sub"
-            self.__status = self.STATUS_CONNECTING
+            self.__status == self.STATUS_CONNECTING
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
