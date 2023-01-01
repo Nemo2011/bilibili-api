@@ -23,6 +23,11 @@ from .utils.utils import get_api
 from .utils.sync import sync
 from .utils.network_httpx import get_session, request, to_form_urlencoded
 from .utils.captcha import start_server, close_server, get_result
+from .utils.safecenter_captcha import (
+    start_server as safecenter_start_server, 
+    close_server as safecenter_close_server, 
+    get_result as safecenter_get_result
+)
 from . import settings
 import qrcode
 import os
@@ -492,46 +497,111 @@ def login_with_sms(phonenumber: PhoneNumber, code: str):
 # 验证类
 
 
+def get_safecenter_geetest():
+    if safecenter_get_result() != -1:
+        return safecenter_get_result()
+    thread = safecenter_start_server()
+    if settings.geetest_auto_open:
+        webbrowser.open(thread.url)
+    try:
+        while True:
+            result = safecenter_get_result()
+            if result != -1:
+                safecenter_close_server()
+                return result
+    except KeyboardInterrupt:
+        safecenter_close_server()
+        exit()
+
 class Check:
     """
     验证类，如果密码登录需要验证会返回此类
+
+    Attributes:
+        check_url (str): 验证 url
+        tmp_token (str): 验证 token
     """
 
     def __init__(self, check_url, username):
         self.check_url = check_url
-        self.now_time = time.perf_counter()
-        self.phonenumber = None
+        self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
+        self.geetest_result = None
+        self.captcha_key = None
 
-    def set_phone(self, phonenumber: PhoneNumber):
+    def fetch_info(self):
         """
-        设置手机号
-
-        Args:
-            phonenumber (PhoneNumber): 手机号类
-        """
-        self.phonenumber = phonenumber
-
-    def send_code(self):
-        """
-        发送验证码
+        获取验证信息
 
         Returns:
-            None
+            dict: 调用 API 返回的结果
         """
-        if self.phonenumber == None:
-            raise LoginError("请使用 self.set_phone 函数设置手机号")
-        send_sms(self.phonenumber)
+        api = API["safecenter"]["check_info"]
+        self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
+        params = {
+            "tmp_code": self.tmp_token
+        }
+        return json.loads(
+            httpx.get(
+                api["url"], params = params
+            ).text
+        )["data"]
 
-    def login(self, code: str):
+    def send_sms(self):
         """
-        登录
+        发送验证码
+        """
+        try:
+            api = API["safecenter"]["send"]
+            geetest_data = get_safecenter_geetest()
+            data = {
+                "sms_type": "loginTelCheck",
+                "tmp_code": self.tmp_token, 
+                "recaptcha_token": geetest_data["token"],
+                "gee_challenge": geetest_data["challenge"],
+                "gee_gt": geetest_data["gt"], 
+                "gee_validate": geetest_data["validate"],
+                "gee_seccode": geetest_data["seccode"],
+            }
+            res = json.loads(httpx.post(api["url"], data = data).text)
+            self.captcha_key = res["data"]["captcha_key"]
+        except Exception as e:
+            raise LoginError(str(e))
+
+    def complete_check(self, code: str):
+        """
+        完成验证
 
         Args:
             code (str): 验证码
-
+        
         Returns:
             Credential: 凭据类
         """
-        if self.phonenumber == None:
-            raise LoginError("请使用 self.set_phone 函数设置手机号")
-        return login_with_sms(self.phonenumber, code)
+        try:
+            api = API["safecenter"]["get_exchange"]
+            data = {
+                "type": "loginTelCheck", 
+                "code": code, 
+                "tmp_code": self.tmp_token, 
+                "request_id": self.check_url.split("?")[1].split("&")[1][11:], 
+                "captcha_key": self.captcha_key
+            }
+            exchange_code = json.loads(
+                httpx.post(
+                    api["url"], 
+                    data = data
+                ).text
+            )["data"]["code"]
+            exchange_url = API["safecenter"]["get_cookies"]["url"]
+            resp = httpx.post(exchange_url, data = {
+                "code": exchange_code
+            })
+            credential = Credential(
+                sessdata = resp.cookies.get("SESSDATA"), 
+                bili_jct = resp.cookies.get("bili_jct"), 
+                buvid3 = None, 
+                dedeuserid = resp.cookies.get("DedeUserID")
+            )
+            return credential
+        except Exception as e:
+            raise LoginError(str(e))

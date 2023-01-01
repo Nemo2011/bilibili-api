@@ -84,5 +84,54 @@
             },
             "comment": "验证码登录"
         }
+    }, 
+    "safecenter": {
+        "#": "https://ivan.hanloth.cn/index.php/archives/530/", 
+        "check_info": {
+            "url": "https://api.bilibili.com/x/safecenter/user/info", 
+            "method": "GET", 
+            "verify": false, 
+            "params": {
+                "tmp_code": "str: 验证标记代码"
+            }, 
+            "comment": "获取验证信息"
+        }, 
+        "captcha": {
+            "url": "https://passport.bilibili.com/x/safecenter/captcha/pre"
+        }, 
+        "send": {
+            "url": "https://passport.bilibili.com/x/safecenter/common/sms/send", 
+            "method": "POST", 
+            "verify": false, 
+            "params": {
+                "sms_type": "str: loginTelCheck", 
+                "tmp_code": "str: 验证标记代码", 
+                "gee_challenge": "str: 极验 challenge", 
+                "gee_gt": "str: 极验 gt", 
+                "gee_seccode": "str: 极验 seccode", 
+                "gee_validate": "str: 极验 validate", 
+                "recaptcha_token": "str: 极验 token"
+            }
+        }, 
+        "get_exchange": {
+            "url": "https://passport.bilibili.com/x/safecenter/login/tel/verify", 
+            "method": "POST",
+            "params": [
+                "type: (str)loginTelCheck",	
+                "code: (int)验证码内容",
+                "tmp_code: (str)验证标记代码,来自数据处理中的解析出的参数tmp_token",
+                "request_id: (str)验证请求标记,来自数据处理中的解析出的参数requestId",
+                "captcha_key: (str)验证秘钥,来自申请验证码的captcha_key（data->captcha_key）"
+            ], 
+            "comment": "获取交换验证码"
+        }, 
+        "get_cookies": {
+            "url": "https://passport.bilibili.com/x/passport-login/web/exchange_cookie", 
+            "method": "POST", 
+            "params": {
+                "code": "str: 交换代码"
+            }, 
+            "comment": "获取 cookies (头部会执行 set-cookies)"
+        }
     }
 }
