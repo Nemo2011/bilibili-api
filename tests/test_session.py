@@ -27,3 +27,6 @@ async def test_d_send_msg():
             return e.raw
         else:
             raise e
+
+async def test_e_get_likes():
+    return await session.get_likes(get_credential())

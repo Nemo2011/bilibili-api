@@ -55,6 +55,18 @@ from bilibili_api import session
 
 ---
 
+#### async def get_likes()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据类 |
+
+获取收到的点赞。
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
 **@dataclass**
 ## class Picture
 

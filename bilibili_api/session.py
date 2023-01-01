@@ -93,6 +93,23 @@ async def get_sessions(credential: Credential, session_type: int = 4):
     return await request("GET", api["url"], params=params, credential=credential)
 
 
+async def get_likes(credential: Credential):
+    """
+    获取收到的赞
+
+    Args:
+        credential (Credential): 凭据类. 
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["session"]["likes"]
+    return await request(
+        "GET", 
+        api["url"], 
+        credential = credential
+    )
+
 async def send_msg(credential: Credential, receiver_id: int, text: str):
     """
     给用户发送私聊信息。目前仅支持纯文本。
