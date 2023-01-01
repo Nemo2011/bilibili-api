@@ -1,19 +1,13 @@
-/dist
-/.idea
-/test*.*
-**/__pycache__
-/bilibili_api_python.egg-info
-/.vscode
-**/dist
+# Python binariees
+__pycache__/
+# MacOS
+.DS_Store
+# Danmakus
 *.ass
 *.srt
-node_modules/
-*.proto
-*.bin
-site.bat
-.DS_Store
-.VSCodeCounter/
+# Interactive Videos
+*.ivi
+# Videos
 *.mp4
-*.mp3
-*.out
-*.list
+# Tests
+test*.*
