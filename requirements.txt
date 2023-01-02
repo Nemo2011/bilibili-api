@@ -10,5 +10,5 @@ qrcode~=7.3.1
 requests~=2.28.1
 APScheduler~=3.9.1
 rsa~=4.9
-pillow~=9.3.0
+pillow~=9.4.0
 tqdm>=4.0.0
