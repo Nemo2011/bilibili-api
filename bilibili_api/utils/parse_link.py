@@ -7,6 +7,7 @@ bilibili_api.utils.parse_link
 import json
 import re
 from enum import Enum
+from typing import Any
 
 import httpx
 
@@ -14,10 +15,10 @@ from ..article import Article, ArticleList
 from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
 from ..black_room import BlackRoom
-from ..cheese import CheeseList, CheeseVideo
+from ..cheese import CheeseVideo
 from ..dynamic import Dynamic
 from ..exceptions import *
-from ..favorite_list import FavoriteList, FavoriteListType, get_video_favorite_list
+from ..favorite_list import FavoriteList, FavoriteListType
 from ..interactive_video import InteractiveVideo
 from ..live import LiveRoom
 from ..user import ChannelSeries, ChannelSeriesType, User, get_self_info
@@ -47,6 +48,7 @@ class ResourceType(Enum):
     + CHANNEL_SERIES: 合集与列表
     + BLACK_ROOM: 小黑屋
     + GAME: 游戏
+    + FAILED: 错误
     """
 
     VIDEO = "video"
@@ -65,9 +67,10 @@ class ResourceType(Enum):
     DYNAMIC = "dynamic"
     BLACK_ROOM = "black_room"
     GAME = "game"
+    FAILED = "failed"
 
 
-async def parse_link(url, credential: Credential = None):
+async def parse_link(url: str, credential: Credential = None) -> tuple[Any, ResourceType]:
     """
     解析 bilibili url 的函数。
 
@@ -112,7 +115,7 @@ async def parse_link(url, credential: Credential = None):
             try:
                 info = sync(get_self_info(credential))
             except:
-                return -1
+                return (-1, ResourceType.FAILED)
             else:
                 return (User(info["mid"], credential=credential), ResourceType.USER)
         obj = None
@@ -157,12 +160,12 @@ async def parse_link(url, credential: Credential = None):
             obj = (dynamic, ResourceType.DYNAMIC)
 
         if obj == None or obj[0] == None:
-            return -1
+            return (-1, ResourceType.FAILED)
         else:
             obj[0].credential = credential
             return obj
     except Exception as e:
-        return -1
+        return (str(e), ResourceType.FAILED)
 
 
 def check_short_name(name: str, credential: Credential):
@@ -521,3 +524,4 @@ def parse_game(url: str):
         return Game(int(url[36:]))
     else:
         return -1
+
