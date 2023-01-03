@@ -10,7 +10,7 @@ with open(
 
 setuptools.setup(
     name = "ivitools", 
-    version = "0.0.1", 
+    version = "2.33", 
     license = "GPLv3+", 
     author = "Nemo2011", 
     packages = [
@@ -26,7 +26,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.11",
     ], 
     package_data = {
-        "": ["ffmpeg/*.*"]
+        "": ["ffmpeg/*.*", "ffmpeg/*"]
     }, 
     install_requires = requires.splitlines(), 
     python_requires = ">=3.8", 

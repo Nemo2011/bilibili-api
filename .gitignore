@@ -2,6 +2,10 @@
 __pycache__/
 # MacOS
 .DS_Store
+# Build
+build/
+dist/
+*.egg-info/
 # Danmakus
 *.ass
 *.srt
