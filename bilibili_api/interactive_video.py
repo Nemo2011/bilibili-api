@@ -809,11 +809,11 @@ class InteractiveVideoDownloader(AsyncEvent):
                 # 所有可达顶点 ID 入队
                 queue.insert(0, n)
 
-        json.dump(edges_info, open(tmp_dir_name + "/ivideo.json", "w+", encoding = "utf-8"), indent = 2, ensure_ascii = False)
+        json.dump(edges_info, open(tmp_dir_name + "/ivideo.json", "w+", encoding = "utf-8"), indent = 2)
         json.dump({
             "bvid": self.__video.get_bvid(), 
             "title": (await self.__video.get_info())["title"]
-        }, open(tmp_dir_name + "/bilivideo.json", "w+", encoding = "utf-8"), indent = 2, ensure_ascii = False)
+        }, open(tmp_dir_name + "/bilivideo.json", "w+", encoding = "utf-8"), indent = 2)
 
         for key, item in edges_info.items():
             self.dispatch("PREPARE_DOWNLOAD", {"node_id": int(key), "cid": item["cid"]})

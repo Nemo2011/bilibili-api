@@ -1,12 +1,10 @@
 import setuptools
 import os
 
-with open(
-    os.path.join(os.path.dirname(__file__), "requirements.txt"), 
-    "r", 
-    encoding="utf8"
-) as f:
-    requires = f.read()
+requires = """bilibili-api-python>=14.0.0.b0
+colorama>=0.4
+tqdm>=4.0.0
+"""
 
 setuptools.setup(
     name = "ivitools", 
