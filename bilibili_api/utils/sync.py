@@ -7,9 +7,10 @@ bilibili_api.utils.sync
 from typing import Coroutine
 import asyncio
 from .. import settings
+from typing import Any
 
 
-def __ensure_event_loop():
+def __ensure_event_loop() -> None:
     try:
         asyncio.get_event_loop()
 
@@ -17,7 +18,7 @@ def __ensure_event_loop():
         asyncio.set_event_loop(asyncio.new_event_loop())
 
 
-def sync(coroutine: Coroutine):
+def sync(coroutine: Coroutine) -> Any:
     """
     同步执行异步函数，使用可参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
 

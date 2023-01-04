@@ -3,11 +3,12 @@ bilibili_api.utils.short
 
 一个很简单的处理短链接的模块，主要是读取跳转链接。
 """
+import httpx
 from .network_httpx import get_session
 from .. import settings
 
 
-async def get_real_url(short_url: str):
+async def get_real_url(short_url: str) -> str:
     """
     获取短链接跳转目标，以进行操作。
     Params:
@@ -29,7 +30,7 @@ async def get_real_url(short_url: str):
         raise e
 
 
-async def get_headers(short_url: str):
+async def get_headers(short_url: str) -> httpx.Headers:
     """
     获取链接的 headers。
     """

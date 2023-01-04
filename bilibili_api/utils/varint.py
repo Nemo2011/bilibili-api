@@ -5,7 +5,7 @@ bilibili_api.utils.varint
 """
 
 
-def read_varint(stream: bytes):
+def read_varint(stream: bytes) -> tuple[int, int]:
     """
     读取 varint。
 

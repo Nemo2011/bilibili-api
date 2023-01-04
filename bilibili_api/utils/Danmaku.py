@@ -9,8 +9,6 @@ from enum import Enum
 import zlib
 from typing import Union
 
-from .utils import crack_uid
-
 
 class DmFontSize(Enum):
     """
@@ -48,7 +46,7 @@ class Danmaku:
         text: str,
         dm_time: float = 0.0,
         send_time: float = time.time(),
-        crc32_id: str = None,
+        crc32_id: str = "",
         color: str = "ffffff",
         weight: int = -1,
         id_: int = -1,
@@ -65,7 +63,7 @@ class Danmaku:
             (self.)text      (str)                             : 弹幕文本。
             (self.)dm_time   (float, optional)                 : 弹幕在视频中的位置，单位为秒。Defaults to 0.0.
             (self.)send_time (float, optional)                 : 弹幕发送的时间。Defaults to time.time().
-            (self.)crc32_id  (str, optional)                   : 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to None.
+            (self.)crc32_id  (str, optional)                   : 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to "".
             (self.)color     (str, optional)                   : 弹幕十六进制颜色。Defaults to "ffffff".
             (self.)weight    (int, optional)                   : 弹幕在弹幕列表显示的权重。Defaults to -1.
             (self.)id_       (int, optional)                   : 弹幕 ID。Defaults to -1.
@@ -94,7 +92,7 @@ class Danmaku:
         self.pool = pool
         self.attr = attr
 
-        if crc32_id != None:
+        if crc32_id != "":
             self.uid = zlib.crc32(crc32_id.encode("utf8"))
         else:
             self.uid = 0
@@ -134,6 +132,14 @@ class SpecialDanmaku:
         mode: Union[DmMode, int] = DmMode.SPECIAL,
         pool: int = 2,
     ):
+        """
+        Args:
+            (self.)content (str)               : 弹幕内容
+            (self.)id_     (int)               : 弹幕 id. Defaults to -1. 
+            (self.)id_str  (str)               : 弹幕 id (string 类型). Defaults to "". 
+            (self.)mode    (Union[DmMode, int]): 弹幕类型. Defaults to DmMode.SPECIAL. 
+            (self.)pool    (int)               : 弹幕池. Defaults to 2. 
+        """
         self.content = content
         self.id_ = id_
         self.id_str = id_str

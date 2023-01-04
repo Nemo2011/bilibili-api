@@ -9,6 +9,7 @@ def json2srt(doc: str, out: str):
     """
     Args:
         doc: 文件
+
     Returns:
         None
     """

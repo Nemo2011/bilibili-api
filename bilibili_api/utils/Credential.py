@@ -14,6 +14,7 @@ from ..exceptions import (
 from .utils import get_api
 import httpx
 import uuid
+from typing import Union
 
 API = get_api("credential")
 
@@ -25,19 +26,19 @@ class Credential:
 
     def __init__(
         self,
-        sessdata: str = None,
-        bili_jct: str = None,
-        buvid3: str = None,
-        dedeuserid: str = None,
+        sessdata: Union[str, None] = None,
+        bili_jct: Union[str, None] = None,
+        buvid3: Union[str, None] = None,
+        dedeuserid: Union[str, None] = None,
     ):
         """
         各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
         Args:
-            sessdata (str, optional):   浏览器 Cookies 中的 SESSDATA 字段值
-            bili_jct (str, optional):   浏览器 Cookies 中的 bili_jct 字段值
-            buvid3 (str, optional):     浏览器 Cookies 中的 BUVID3 字段值
-            dedeuserid (str, optional): 浏览器 Cookies 中的 DedeUserID 字段值
+            sessdata   (str | None, optional): 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None. 
+            bili_jct   (str | None, optional): 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None. 
+            buvid3     (str | None, optional): 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None. 
+            dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None. 
         """
         self.sessdata = sessdata
         self.bili_jct = bili_jct

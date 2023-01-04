@@ -1,10 +1,12 @@
+# type: ignore
+# pylint: skip-file
+
 import sys
 import os
 import re
 import io
 import getopt
 
-# pylint: skip-file
 
 DEBUG = False
 

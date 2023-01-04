@@ -22,7 +22,7 @@ thread = None
 API = get_api("login")
 
 
-def _geetest_urlhandler(url, content_type):
+def _geetest_urlhandler(url: str, content_type: str):
     """
     极验验证服务器 html 源获取函数
     """
@@ -143,7 +143,7 @@ def _start_server(urlhandler, hostname, port):
             self.send_response(200)
             self.send_header("Content-Type", "%s; charset=UTF-8" % content_type)
             self.end_headers()
-            self.wfile.write(self.urlhandler(self.path, content_type).encode("utf-8"))
+            self.wfile.write(self.urlhandler(self.path, content_type).encode("utf-8")) # type: ignore
 
         def log_message(self, *args):
             # Don't log messages.
@@ -154,7 +154,7 @@ def _start_server(urlhandler, hostname, port):
             self.host = host
             self.address = (self.host, port)
             self.callback = callback
-            self.base.__init__(self, self.address, self.handler)
+            self.base.__init__(self, self.address, self.handler) # type: ignore
             self.quit = False
 
         def serve_until_quit(self):
@@ -165,7 +165,7 @@ def _start_server(urlhandler, hostname, port):
             self.server_close()
 
         def server_activate(self):
-            self.base.server_activate(self)
+            self.base.server_activate(self) # type: ignore
             if self.callback:
                 self.callback(self)
 
@@ -181,10 +181,10 @@ def _start_server(urlhandler, hostname, port):
         def run(self):
             """Start the server."""
             try:
-                DocServer.base = http.server.HTTPServer
-                DocServer.handler = DocHandler
-                DocHandler.MessageClass = email.message.Message
-                DocHandler.urlhandler = staticmethod(self.urlhandler)
+                DocServer.base = http.server.HTTPServer # type: ignore
+                DocServer.handler = DocHandler # type: ignore
+                DocHandler.MessageClass = email.message.Message # type: ignore
+                DocHandler.urlhandler = staticmethod(self.urlhandler) # type: ignore
                 docsvr = DocServer(self.host, self.port, self.ready)
                 self.docserver = docsvr
                 docsvr.serve_until_quit()
@@ -231,7 +231,7 @@ def start_server():
     """
     global thread
     thread = _start_server(_geetest_urlhandler, "127.0.0.1", 0)
-    print("请打开 " + thread.url + " 进行验证。")
+    print("请打开 " + thread.url + " 进行验证。") # type: ignore
     return thread
 
 
@@ -240,7 +240,7 @@ def close_server():
     关闭服务器
     """
     global thread
-    thread.stop()
+    thread.stop() # type: ignore
 
 
 def get_result():

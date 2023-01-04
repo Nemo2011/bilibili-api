@@ -4,7 +4,7 @@ bilibili_api.utils.network_httpx
 复写了 .utils.network，使用 httpx
 """
 
-from typing import Any
+from typing import Any, Union
 from urllib.parse import quote
 import json
 import re
@@ -24,7 +24,7 @@ last_proxy = ""
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
 
 @atexit.register
-def __clean():
+def __clean() -> None:
     """
     程序退出清理操作。
     """
@@ -45,13 +45,13 @@ def __clean():
 async def request(
     method: str,
     url: str,
-    params: dict = None,
+    params: Union[dict, None] = None,
     data: Any = None,
-    credential: Credential = None,
+    credential: Union[Credential, None] = None,
     no_csrf: bool = False,
     json_body: bool = False,
     **kwargs,
-):
+) -> Union[None, dict, list]:
     """
     向接口发送请求。
 
@@ -145,7 +145,7 @@ async def request(
 
     if "callback" in params:
         # JSONP 请求
-        resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1))
+        resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1)) # type: ignore
     else:
         # JSON
         resp_data = json.loads(raw_data)
@@ -169,7 +169,7 @@ async def request(
     return real_data
 
 
-def get_session():
+def get_session() -> httpx.AsyncClient:
     """
     获取当前模块的 httpx.AsyncClient 对象，用于自定义请求
 
@@ -183,7 +183,7 @@ def get_session():
         if settings.proxy != "":
             last_proxy = settings.proxy
             proxies = {"all://": settings.proxy}
-            session = httpx.AsyncClient(proxies=proxies)
+            session = httpx.AsyncClient(proxies=proxies) # type: ignore
         else:
             last_proxy = ""
             session = httpx.AsyncClient()
@@ -192,7 +192,7 @@ def get_session():
     return session
 
 
-def set_session(session: httpx.AsyncClient):
+def set_session(session: httpx.AsyncClient) -> None:
     """
     用户手动设置 Session
 

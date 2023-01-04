@@ -22,7 +22,7 @@ class BytesReader:
         self.__stream = stream
         self.__offset = 0
 
-    def has_end(self):
+    def has_end(self) -> bool:
         """
         是否已读到末尾
 
@@ -31,7 +31,7 @@ class BytesReader:
         """
         return self.__offset >= len(self.__stream)
 
-    def double(self, LE=False):
+    def double(self, LE=False) -> float:
         """
         读 double。
 
@@ -47,7 +47,7 @@ class BytesReader:
         self.__offset += 8
         return data[0]
 
-    def float(self, LE=False):
+    def float(self, LE=False) -> float:
         """
         读 float。
 
@@ -62,7 +62,7 @@ class BytesReader:
         self.__offset += 4
         return data[0]
 
-    def varint(self):
+    def varint(self) -> int:
         """
         读 varint。
 
@@ -73,7 +73,7 @@ class BytesReader:
         self.__offset += l
         return d
 
-    def byte(self):
+    def byte(self) -> int:
         """
         读 byte。
 
@@ -84,7 +84,7 @@ class BytesReader:
         self.__offset += 1
         return data
 
-    def string(self, encoding="utf8"):
+    def string(self, encoding="utf8") -> str:
         """
         读 string。
 
@@ -99,7 +99,7 @@ class BytesReader:
         self.__offset += str_len
         return data.decode(encoding=encoding, errors="ignore")
 
-    def bool(self):
+    def bool(self) -> bool:
         """
         读 bool。
 
@@ -110,7 +110,7 @@ class BytesReader:
         self.__offset += 1
         return data == 1
 
-    def bytes_string(self):
+    def bytes_string(self) -> bytes:
         """
         读原始字节流。
 
@@ -122,7 +122,7 @@ class BytesReader:
         self.__offset += str_len
         return data
 
-    def fixed16(self, LE=False):
+    def fixed16(self, LE=False) -> int:
         """
         读 Fixed int16。
 
@@ -138,7 +138,7 @@ class BytesReader:
         self.__offset += 2
         return data[0]
 
-    def fixed32(self, LE=False):
+    def fixed32(self, LE=False) -> int:
         """
         读 Fixed int32.
 
@@ -154,7 +154,7 @@ class BytesReader:
         self.__offset += 4
         return data[0]
 
-    def fixed64(self, LE=False):
+    def fixed64(self, LE=False) -> int:
         """
         读 Fixed int64。
 
@@ -170,7 +170,7 @@ class BytesReader:
         self.__offset += 8
         return data[0]
 
-    def ufixed16(self, LE=False):
+    def ufixed16(self, LE=False) -> int:
         """
         读 Unsigned fixed Int16。
 
@@ -186,7 +186,7 @@ class BytesReader:
         self.__offset += 2
         return data[0]
 
-    def ufixed32(self, LE=False):
+    def ufixed32(self, LE=False) -> int:
         """
         读 Unsigned fixed Int32。
 
@@ -202,7 +202,7 @@ class BytesReader:
         self.__offset += 4
         return data[0]
 
-    def ufixed64(self, LE=False):
+    def ufixed64(self, LE=False) -> int:
         """
         读 Unsigned fixed Int64。
 
@@ -218,7 +218,7 @@ class BytesReader:
         self.__offset += 8
         return data[0]
 
-    def set_pos(self, pos: int):
+    def set_pos(self, pos: int) -> None:
         """
         设置读取起始位置。
 
@@ -233,7 +233,7 @@ class BytesReader:
 
         self.__offset = pos
 
-    def get_pos(self):
+    def get_pos(self) -> int:
         """
         获取当前位置。
 

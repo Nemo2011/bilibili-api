@@ -12,6 +12,7 @@
 # Please update to the latest version before complaining.
 
 # pylint: skip-file
+# type: ignore
 
 import argparse
 import calendar

@@ -4,7 +4,7 @@ bilibili_api.utils.network
 与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。
 """
 
-from typing import Any
+from typing import Any, Union
 from urllib.parse import quote
 import aiohttp
 import json
@@ -21,7 +21,7 @@ __session_pool = {}
 
 
 @atexit.register
-def __clean():
+def __clean() -> None:
     """
     程序退出清理操作。
     """
@@ -42,13 +42,13 @@ def __clean():
 async def request(
     method: str,
     url: str,
-    params: dict = None,
+    params: Union[dict, None] = None,
     data: Any = None,
-    credential: Credential = None,
+    credential: Union[Credential, None] = None,
     no_csrf: bool = False,
     json_body: bool = False,
     **kwargs,
-):
+) -> Union[None, dict, list]:
     """
     向接口发送请求。
 
@@ -135,6 +135,7 @@ async def request(
 
         # 检查响应头 Content-Type
         content_type = resp.headers.get("content-type")
+        assert isinstance(content_type, str)
 
         # 不是 application/json
         if content_type.lower().index("application/json") == -1:
@@ -145,7 +146,7 @@ async def request(
 
         if "callback" in params:
             # JSONP 请求
-            resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1))
+            resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1)) # type: ignore
         else:
             # JSON
             resp_data = json.loads(raw_data)
@@ -170,7 +171,7 @@ async def request(
         return real_data
 
 
-def get_session():
+def get_session() -> aiohttp.ClientSession:
     """
     获取当前模块的 aiohttp.ClientSession 对象，用于自定义请求
 
@@ -188,7 +189,7 @@ def get_session():
     return session
 
 
-def set_session(session: aiohttp.ClientSession):
+def set_session(session: aiohttp.ClientSession) -> None:
     """
     用户手动设置 Session
 

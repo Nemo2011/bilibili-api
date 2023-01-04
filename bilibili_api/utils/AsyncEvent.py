@@ -4,7 +4,7 @@ bilibili_api.utils.AsyncEvent
 发布-订阅模式异步事件类支持。
 """
 
-from typing import Any, Coroutine
+from typing import Any, Coroutine, Callable
 import asyncio
 
 
@@ -19,7 +19,7 @@ class AsyncEvent:
         self.__handlers = {}
         self.__ignore_events = []
 
-    def add_event_listener(self, name: str, handler: Coroutine):
+    def add_event_listener(self, name: str, handler: Coroutine) -> None:
         """
         注册事件监听器。
 
@@ -32,7 +32,7 @@ class AsyncEvent:
             self.__handlers[name] = []
         self.__handlers[name].append(handler)
 
-    def on(self, event_name: str):
+    def on(self, event_name: str) -> Callable:
         """
         装饰器注册事件监听器。
 
@@ -46,13 +46,13 @@ class AsyncEvent:
 
         return decorator
 
-    def remove_all_event_listener(self):
+    def remove_all_event_listener(self) -> None:
         """
         移除所有事件监听函数
         """
         self.__handlers = {}
 
-    def remove_event_listener(self, name: str, handler: Coroutine):
+    def remove_event_listener(self, name: str, handler: Coroutine) -> bool:
         """
         移除事件监听函数。
 
@@ -70,7 +70,7 @@ class AsyncEvent:
                 return True
         return False
     
-    def ignore_event(self, name: str):
+    def ignore_event(self, name: str) -> None:
         """
         忽略指定事件
 
@@ -80,13 +80,13 @@ class AsyncEvent:
         name = name.upper()
         self.__ignore_events.append(name)
     
-    def remove_ignore_events(self):
+    def remove_ignore_events(self) -> None:
         """
         移除所有忽略事件
         """
         self.__ignore_events = []
 
-    def dispatch(self, name: str, data: Any = None):
+    def dispatch(self, name: str, data: Any = None) -> None:
         """
         异步发布事件。
 
