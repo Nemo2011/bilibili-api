@@ -30,43 +30,9 @@ async def test_a_send_dynamic():
     dyid.append(resp["dynamic_id"])
     print(resp)
 
-    print("测试定时发布纯文本动态")
-    date = datetime.fromtimestamp(time() + 86400)
-    resp = await dynamic.send_dynamic(
-        text="测试定时发布纯文本动态", send_time=date, credential=credential
-    )
-    print(resp)
-    draft_ids.append(resp["draft_id"])
-
-    print("测试定时发布图片动态")
-    resp = await dynamic.send_dynamic(
-        text="测试定时发送图片动态",
-        send_time=date,
-        image_streams=[open("./design/logo.png", "rb")],
-        credential=credential,
-    )
-    print(resp)
-    draft_ids.append(resp["draft_id"])
-
 
 async def test_b_get_schedules_list():
     return await dynamic.get_schedules_list(credential=credential)
-
-
-async def test_c_send_schedule_now():
-    draft_id = draft_ids.pop()
-
-    resp = await dynamic.send_schedule_now(draft_id, credential)
-    dyid.append(resp["dynamic_id"])
-
-    return resp
-
-
-async def test_d_delete_schedule():
-    draft_id = draft_ids.pop()
-
-    resp = await dynamic.delete_schedule(draft_id, credential)
-    return resp
 
 
 dy = None
@@ -101,21 +67,10 @@ async def test_j_get_new_dynamic_users():
     return await dynamic.get_new_dynamic_users(common.get_credential())
 
 async def test_k_get_live_users():
-    return await dynamic.get_live_users(common.get_credential())
+    return await dynamic.get_live_users(credential = common.get_credential())
 
 async def after_all():
-    print("删除所有未发定时动态")
-    for i in draft_ids:
-        await dynamic.delete_schedule(i, credential)
-
     print("删除所有动态")
     for i in dyid:
         d = dynamic.Dynamic(i, credential)
         await d.delete()
-
-    print("删除转发动态")
-    u = user.User(1666311555, credential=credential)
-    dy = await u.get_dynamics()
-    dyid1 = dy["cards"][0]["desc"]["dynamic_id"]
-    d = dynamic.Dynamic(dyid1, credential)
-    await d.delete()

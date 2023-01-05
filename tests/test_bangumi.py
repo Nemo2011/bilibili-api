@@ -48,7 +48,7 @@ e = bangumi.Bangumi(epid=562695, oversea=True)  # 港澳台番剧
 
 
 async def test_oversea_gangaotai_get_item():
-    return e.get_episode_info()
+    return e.get_episode_list()
 
 
 async def test_oversea_gangaotai_get_bangumi():

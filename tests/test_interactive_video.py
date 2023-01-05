@@ -23,7 +23,7 @@ async def test_c_get_all_nodes():
     edges_info = {}
 
     queue: List[interactive_video.InteractiveNode] = [
-        (await v.get_graph()).get_root_node()
+        await (await v.get_graph()).get_root_node()
     ]
 
     def createEdge(edge_id: int):
