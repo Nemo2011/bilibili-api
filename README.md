@@ -50,7 +50,7 @@ $ pip3 install bilibili-api-python
 import asyncio
 from bilibili_api import video
 
-async def main():
+async def main() -> None:
     # 实例化 Video 类
     v = video.Video(bvid="BV1uv411q7Mv")
     # 获取信息
@@ -59,7 +59,7 @@ async def main():
     print(info)
 
 if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 输出（已格式化，已省略部分）：
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 import asyncio
 from bilibili_api import video, Credential
 
-async def main():
+async def main() -> None:
     # 实例化 Credential 类
     credential = Credential(sessdata=SESSDATA, bili_jct=BILI_JCT, buvid3=BUVID3)
     # 实例化 Video 类
@@ -101,7 +101,7 @@ async def main():
     await v.like(True)
 
 if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 如果没有报错，就代表调用 API 成功，你可以到视频页面确认是不是调用成功了。

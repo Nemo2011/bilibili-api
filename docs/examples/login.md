@@ -1,7 +1,4 @@
-# 示例： 二维码登录
-
-<details>
-<summary>展开</summary>
+# 示例: 终端简易二维码登录脚本
 
 ``` python
 from bilibili_api import login, user, sync
@@ -15,13 +12,10 @@ except:
     exit()
 print("欢迎，", sync(user.get_self_info(credential))['name'], "!")
 ```
-</details>
+
 <br>
 
-# 示例：密码登录和验证码登录
-
-<details>
-<summary>展开</summary>
+# 示例：终端简易密码登录和验证码登录脚本
 
 ``` python
 from bilibili_api.login import login_with_password, login_with_sms, send_sms, PhoneNumber, Check
@@ -74,8 +68,6 @@ if credential != None:
     print(f"欢迎，{name}!")
 ```
 
-</details>
-
 ---
 
-## **详细信息请参考[正文文档](/modules/login.md)**
+### **详细信息请参考[正文文档](/modules/login.md)**

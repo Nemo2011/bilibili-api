@@ -11,16 +11,11 @@
 <details>
 <summary>下载地址</summary>
 
-`tar.gz`: (已上传至 pypi)
-
-`whl`: 
-  - 万能轮子: (已上传至 pypi)
-  - `windows`:  
-    - `win32`: <https://transfer.sh/2YSXle/ivitools-0.0.1-py3-none-win32.whl> (39.1MB)
-    - `amd64`: <https://transfer.sh/jURMkK/ivitools-0.0.1-py3-none-win_amd64.whl> (39.1MB) **(Test Passing)**
-  - `macos`: 
-    - `x64`: <https://transfer.sh/xGbDxe/ivitools-0.0.1-py3-none-macosx_10_4_universal2.whl> (24.8MB)
-    - `arm64`: <https://transfer.sh/xGbDxe/ivitools-0.0.1-py3-none-macosx_10_4_universal2.whl> (24.8MB) **(Test Passing)**
+- `windows`: <https://transfer.sh/UfCzif/ivitools-2.33-py3-none-win_amd64.whl>
+- `macos`: <https://transfer.sh/KRPfzg/ivitools-2.33-py3-none-macosx_10_9_universal2.whl>
+- `linux`: 
+  - `x64`: <https://transfer.sh/S3kw6L/ivitools-2.33-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.tar.gz>
+  - `arm64`: <https://transfer.sh/CjCzRx/ivitools-2.33-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.tar.gz>
 
 </details>
 
@@ -35,7 +30,7 @@
 
 # `ivi` 文件详解
 
-**提示：所有 `json` 文件全部采用 `utf-8` 编码，所有视频和文件整体为字节码。请不要用错编码，否则后悔一辈子！**
+**提示：所有文件请采用 `utf-8` 编码或是 `ascii` 编码打开/保存，请不要用 `gbk` 编码。**
 
 解析 `ivi` 文件首先需要拆开它，可以用 `ivitools extract` 命令，当然，`ivi` 文件的打包格式就是 `zip`。
 
