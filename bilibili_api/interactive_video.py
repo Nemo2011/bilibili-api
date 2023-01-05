@@ -14,7 +14,7 @@ import json
 import os
 import shutil
 import time
-from typing import Callable, List
+from typing import Callable, List, Union
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
@@ -28,14 +28,6 @@ from .utils.AsyncEvent import AsyncEvent
 from typing import Coroutine
 
 API = get_api("interactive_video")
-
-
-class InteractiveVideo:
-    pass
-
-
-class InteractiveNode:
-    pass
 
 
 class InteractiveButtonAlign(enum.Enum):
@@ -91,13 +83,13 @@ class InteractiveVariable:
     """
 
     def __init__(
-        self, name: str, var_id: str, var_value: float, show: bool = False, random: bool = False
+        self, name: str, var_id: str, var_value: int, show: bool = False, random: bool = False
     ):
         """
         Args:
             name      (str)  : 变量名
             var_id    (str)  : 变量 id
-            var_value (float): 变量的值
+            var_value (int)  : 变量的值
             show      (bool) : 是否显示
             random    (bool) : 是否为随机值(1-100)
         """
@@ -107,26 +99,26 @@ class InteractiveVariable:
         self.__is_show = show
         self.__random = random
 
-    def get_id(self):
+    def get_id(self) -> str:
         return self.__var_id
 
-    def refresh_value(self):
+    def refresh_value(self) -> None:
         """
         刷新变量数值
         """
         if self.is_random():
-            self.__var_value = rand(0, 100)
+            self.__var_value = int(rand(0, 100))
 
-    def get_value(self):
+    def get_value(self) -> int:
         return self.__var_value
 
-    def is_show(self):
+    def is_show(self) -> bool:
         return self.__is_show
 
-    def is_random(self):
+    def is_random(self) -> bool:
         return self.__random
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.__name
 
     def __str__(self):
@@ -139,27 +131,27 @@ class InteractiveButton:
     """
 
     def __init__(
-        self, text: str, x: int, y: int, align: InteractiveButtonAlign = InteractiveButtonAlign.DEFAULT
+        self, text: str, x: int, y: int, align: Union[InteractiveButtonAlign, int] = InteractiveButtonAlign.DEFAULT
     ):
         """
         Args:
-            text  (str)                   : 文字
-            x     (int)                   : x 轴
-            y     (int)                   : y 轴
-            align (InteractiveButtonAlign): 按钮的文字在按钮中的位置
+            text  (str)                         : 文字
+            x     (int)                         : x 轴
+            y     (int)                         : y 轴
+            align (InteractiveButtonAlign | int): 按钮的文字在按钮中的位置
         """
         self.__text = text
         self.__pos = (x, y)
         if isinstance(align, InteractiveButtonAlign): align = align.value
         self.__align = align
 
-    def get_text(self):
+    def get_text(self) -> str:
         return self.__text
 
-    def get_align(self):
-        return self.__align
+    def get_align(self) -> int:
+        return self.__align # type: ignore
 
-    def get_pos(self):
+    def get_pos(self) -> tuple[int, int]:
         return self.__pos
 
     def __str__(self):
@@ -180,7 +172,7 @@ class InteractiveJumpingCondition:
         self.__vars = var
         self.__command = condition
 
-    def get_result(self):
+    def get_result(self) -> bool:
         """
         计算公式获得结果
 
@@ -219,7 +211,7 @@ class InteractiveJumpingCommand:
         self.__vars = var
         self.__command = command
 
-    def run_command(self):
+    def run_command(self) -> List["InteractiveVariable"]:
         """
         执行操作
 
@@ -238,7 +230,7 @@ class InteractiveJumpingCommand:
             var_new_value_calc = eval(var_new_value)
             for var in self.__vars:
                 if var.get_id() == var_name_:
-                    var._InteractiveVariable__var_value = var_new_value_calc
+                    var._InteractiveVariable__var_value = var_new_value_calc # type: ignore
         return self.__vars
 
 class InteractiveNode:
@@ -248,11 +240,11 @@ class InteractiveNode:
 
     def __init__(
         self,
-        video: InteractiveVideo,
+        video: "InteractiveVideo",
         node_id: int,
         cid: int,
         vars: List[InteractiveVariable], 
-        button: InteractiveButton = None,
+        button: Union[InteractiveButton, None] = None,
         condition: InteractiveJumpingCondition = InteractiveJumpingCondition(),
         native_command: InteractiveJumpingCommand = InteractiveJumpingCommand(),
         is_default: bool = False,
@@ -287,7 +279,7 @@ class InteractiveNode:
         """
         return self.__vars
 
-    async def get_children(self) -> List[InteractiveNode]:
+    async def get_children(self) -> List["InteractiveNode"]:
         """
         获取节点的所有子节点
 
@@ -332,7 +324,7 @@ class InteractiveNode:
             ))
         return nodes
 
-    def is_default(self):
+    def is_default(self) -> bool:
         return self.__is_default
 
     async def get_jumping_type(self) -> int:
@@ -342,24 +334,24 @@ class InteractiveNode:
         edge_info = await self.__parent.get_edge_info(self.__id)
         return edge_info["edges"]["questions"][0]["type"]
 
-    def get_node_id(self):
+    def get_node_id(self) -> int:
         return self.__id
 
-    def get_cid(self):
+    def get_cid(self) -> int:
         return self.__cid
 
-    def get_self_button(self):
+    def get_self_button(self) -> "InteractiveButton":
         if self.__button == None:
             return InteractiveButton("", -1, -1)
         return self.__button
 
-    def get_jumping_condition(self):
+    def get_jumping_condition(self) -> "InteractiveJumpingCondition":
         return self.__jumping_command
 
-    def get_video(self):
+    def get_video(self) -> "InteractiveVideo":
         return self.__parent
 
-    async def get_info(self):
+    async def get_info(self) -> dict:
         """
         获取节点的简介
 
@@ -377,7 +369,7 @@ class InteractiveGraph:
     情节树类
     """
 
-    def __init__(self, video: InteractiveVideo, skin: dict, root_cid: int):
+    def __init__(self, video: "InteractiveVideo", skin: dict, root_cid: int):
         """
         Args:
             video    (InteractiveVideo): 互动视频类
@@ -388,13 +380,13 @@ class InteractiveGraph:
         self.__skin = skin
         self.__node = InteractiveNode(self.__parent, 1, root_cid, [])
 
-    def get_video(self):
+    def get_video(self) -> "InteractiveVideo":
         return self.__parent
 
-    def get_skin(self):
+    def get_skin(self) -> dict:
         return self.__skin
 
-    async def get_root_node(self):
+    async def get_root_node(self) -> "InteractiveNode":
         """
         获取根节点
 
@@ -419,13 +411,13 @@ class InteractiveGraph:
             var_list.append(
                 InteractiveVariable(var_name, var_id, var_value, var_show, random)
             )
-        self.__node._InteractiveNode__command = InteractiveJumpingCommand(
+        self.__node._InteractiveNode__command = InteractiveJumpingCommand( # type: ignore
             var_list
         )
-        self.__node._InteractiveNode__vars = var_list
+        self.__node._InteractiveNode__vars = var_list # type: ignore
         return self.__node
 
-    async def get_children(self):
+    async def get_children(self) -> List["InteractiveNode"]:
         """
         获取子节点
 
@@ -443,9 +435,10 @@ class InteractiveVideo(Video):
     def __init__(self, bvid = None, aid = None, credential=None):
         super().__init__(bvid, aid, credential)
 
-    async def up_get_ivideo_pages(self):
+    async def up_get_ivideo_pages(self) -> dict:
         """
         获取交互视频的分 P 信息。up 主需要拥有视频所有权。
+
         Args:
             bvid       (str)       : BV 号.
             credential (Credential): 凭据类 类.
@@ -458,15 +451,15 @@ class InteractiveVideo(Video):
         params = {"bvid": self.get_bvid()}
         return await request("GET", url=url, params=params, credential=credential)
 
-    async def up_submit_story_tree(self, story_tree: str):
+    async def up_submit_story_tree(self, story_tree: str) -> dict:
         """
         上传交互视频的情节树。up 主需要拥有视频所有权。
 
         Args:
-        story_tree (str): 情节树的描述，参考 bilibili_storytree.StoryGraph, 需要 Serialize 这个结构
+            story_tree (str): 情节树的描述，参考 bilibili_storytree.StoryGraph, 需要 Serialize 这个结构
 
         Returns:
-        dict: 调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         credential = self.credential if self.credential else Credential()
         url = API["operate"]["savestory"]["url"]
@@ -488,7 +481,7 @@ class InteractiveVideo(Video):
             credential=credential,
         )
 
-    async def get_graph_version(self):
+    async def get_graph_version(self) -> int:
         """
         获取剧情图版本号，仅供 `get_edge_info()` 使用。
 
@@ -513,7 +506,7 @@ class InteractiveVideo(Video):
         resp = await request("GET", api, params, credential=credential)
         return resp["interaction"]["graph_version"]
 
-    async def get_edge_info(self, edge_id: int = None):
+    async def get_edge_info(self, edge_id: Union[int, None] = None):
         """
         获取剧情图节点信息
 
@@ -537,47 +530,11 @@ class InteractiveVideo(Video):
 
         return await request("GET", url, params, credential=credential)
 
-    async def get_cid(self):
+    async def get_cid(self) -> int:
         """
         获取稿件 cid
         """
         return await super().get_cid(0)
-
-    async def get_pbp(self, cid: int):
-        """
-        获取高能进度条
-        Args:
-            cid(int) : 分 P 编码
-        """
-        return await super().get_pbp(cid = cid)
-
-    async def get_danmaku_view(self, cid: int = None):
-        """
-        获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
-
-        Args:
-            cid        (int, optional): 分 P 的 ID。Defaults to None
-        """
-        return await super().get_danmaku_view(cid = cid)
-
-    async def get_danmaku_xml(self, cid: int = None):
-        """
-        获取所有弹幕的 xml 源文件（非装填）
-
-        Args:
-            cid: cid
-        """
-        return await super().get_danmaku_xml(cid = cid)
-
-    async def get_danmakus(self, cid: int = None, date: datetime.date = None):
-        """
-        获取弹幕。
-
-        Args:
-            date (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
-            cid (int, optional): 分 P 的 ID。Defaults to None
-        """
-        return await super().get_danmakus(cid = cid, date = date)
 
     async def get_graph(self):
         """
@@ -590,27 +547,6 @@ class InteractiveVideo(Video):
         cid = await self.get_cid()
         return InteractiveGraph(self, edge_info["edges"]["skin"], cid)
 
-    async def get_download_url(self, cid: int = None, html5: bool = False):
-        """
-        获取视频下载信息。
-
-        Args:
-            cid   (int, optional) : 分 P 的 ID。Defaults to None
-            html5 (bool, optional): 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。
-        """
-        return await super().get_download_url(cid = cid, html5 = html5)
-
-    async def get_history_danmaku_index(
-        self, date: datetime.date = None, cid: int = None
-    ):
-        """
-        获取特定月份存在历史弹幕的日期。
-
-        Args:
-            cid  (int, optional)          : 分 P 的 ID。Defaults to None
-            date (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
-        """
-        return await super().get_history_danmaku_index(date, cid)
 
 class InteractiveVideoDownloaderEvents(enum.Enum):
     """
@@ -639,16 +575,17 @@ class InteractiveVideoDownloaderEvents(enum.Enum):
     ABORTED = "ABORTED"
     FAILED = "FAILED"
 
+
 class InteractiveVideoDownloader(AsyncEvent):
     """
     互动视频下载类(下载格式：ivi)
     """
-    def __init__(self, video: InteractiveVideo, out: str = "", self_download_func: Callable = None):
+    def __init__(self, video: InteractiveVideo, out: str = "", self_download_func: Union[Callable, None] = None):
         """
         Args:
-            video (InteractiveVideo)      : 互动视频类
-            out   (str)                   : 输出文件地址
-            self_download_func (Coroutine): 自定义下载函数（需 async 函数）
+            video (InteractiveVideo)             : 互动视频类
+            out   (str)                          : 输出文件地址
+            self_download_func (Coroutine | None): 自定义下载函数（需 async 函数）
 
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
         """
@@ -661,7 +598,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.__task = None
         self.__out = out
 
-    async def __download(self, url: str, out: str):
+    async def __download(self, url: str, out: str) -> None:
         resp = requests.get(
             url,
             headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"},
@@ -692,7 +629,7 @@ class InteractiveVideoDownloader(AsyncEvent):
 
         self.dispatch("DOWNLOAD_SUCCESS")
 
-    async def __main(self):
+    async def __main(self) -> None:
         # 初始化
         self.dispatch("START")
         if self.__out == "": self.__out = self.__video.get_bvid() + ".ivi"
@@ -743,10 +680,10 @@ class InteractiveVideoDownloader(AsyncEvent):
             "pos": (n.get_self_button().get_pos())
         }
         edges_info[n.get_node_id()]['vars'] = [var2dict(var) for var in (await n.get_vars())]
-        edges_info[n.get_node_id()]['condition'] = n.get_jumping_condition()._InteractiveJumpingCondition__command, 
+        edges_info[n.get_node_id()]['condition'] = n.get_jumping_condition()._InteractiveJumpingCondition__command,  # type: ignore
         edges_info[n.get_node_id()]['jump_type'] = 0
         edges_info[n.get_node_id()]['is_default'] = True
-        edges_info[n.get_node_id()]['command'] = n._InteractiveNode__command._InteractiveJumpingCommand__command
+        edges_info[n.get_node_id()]['command'] = n._InteractiveNode__command._InteractiveJumpingCommand__command # type: ignore
 
         while queue:
             # 出队
@@ -801,10 +738,10 @@ class InteractiveVideoDownloader(AsyncEvent):
                         "show": var.is_show(), 
                         "random": var.is_random()
                     }
-                edges_info[n.get_node_id()]['condition'] = n.get_jumping_condition()._InteractiveJumpingCondition__command
+                edges_info[n.get_node_id()]['condition'] = n.get_jumping_condition()._InteractiveJumpingCondition__command # type: ignore
                 edges_info[n.get_node_id()]['jump_type'] = await now_node.get_jumping_type()
                 edges_info[n.get_node_id()]['is_default'] = n.is_default()
-                edges_info[n.get_node_id()]['command'] = n._InteractiveNode__command._InteractiveJumpingCommand__command
+                edges_info[n.get_node_id()]['command'] = n._InteractiveNode__command._InteractiveJumpingCommand__command # type: ignore
                 edges_info[now_node.get_node_id()]['sub'] = [n.get_node_id() for n in await now_node.get_children()]
                 # 所有可达顶点 ID 入队
                 queue.insert(0, n)
@@ -841,7 +778,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         shutil.rmtree(tmp_dir_name)
         self.dispatch("SUCCESS")
 
-    async def start(self):
+    async def start(self) -> None:
         """
         开始下载
         """
@@ -859,7 +796,7 @@ class InteractiveVideoDownloader(AsyncEvent):
             self.dispatch("FAILED", {"err": e})
             raise e
 
-    async def abort(self):
+    async def abort(self) -> None:
         """
         中断下载
         """
@@ -868,7 +805,7 @@ class InteractiveVideoDownloader(AsyncEvent):
 
         self.dispatch("ABORTED", None)
 
-def get_ivi_file_meta(path: str):
+def get_ivi_file_meta(path: str) -> dict:
     """
     获取 ivi 文件信息
 

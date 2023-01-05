@@ -4,6 +4,7 @@ bilibili_api.homepage
 主页相关操作。
 """
 
+from typing import Union
 from .utils.utils import get_api
 from .utils.network_httpx import request
 from .utils.Credential import Credential
@@ -11,7 +12,7 @@ from .utils.Credential import Credential
 API = get_api("homepage")
 
 
-async def get_top_photo():
+async def get_top_photo() -> dict:
     """
     获取主页最上方的图像。
     例如：b 站的风叶穿行，通过这个 API 获取的图片就是风叶穿行的图片。
@@ -24,13 +25,13 @@ async def get_top_photo():
     return await request("GET", api["url"], params=params)
 
 
-async def get_links(credential: Credential = None):
+async def get_links(credential: Union[Credential, None] = None):
     """
     获取主页左面的链接。
     可能和个人喜好有关。
 
     Args:
-        credential (Credential): 凭据类
+        credential (Credential | None): 凭据类
 
     Returns:
         调用 API 返回的结果
@@ -40,13 +41,13 @@ async def get_links(credential: Credential = None):
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_popularize(credential: Credential = None):
+async def get_popularize(credential: Union[Credential, None] = None):
     """
     获取推广的项目。
     (有视频有广告)
 
     Args:
-        credential(Credential): 凭据类
+        credential(Credential | None): 凭据类
 
     Returns:
         调用 API 返回的结果
@@ -56,12 +57,12 @@ async def get_popularize(credential: Credential = None):
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_videos(credential: Credential = None):
+async def get_videos(credential: Union[Credential, None] = None):
     """
     获取首页推荐的视频。
 
     Args:
-        credential (Credential): 凭据类
+        credential (Credential | None): 凭据类
 
     Returns:
         调用 API 返回的结果

@@ -4,9 +4,10 @@ bilibili_api.game
 游戏相关
 """
 
-from .utils.network import request
+from .utils.network_httpx import request
 from .utils.Credential import Credential
 from .utils.utils import get_api
+from typing import Union
 
 API = get_api("game")
 
@@ -19,19 +20,19 @@ class Game:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, game_id: int, credential: Credential = None):
+    def __init__(self, game_id: int, credential: Union[None, Credential] = None):
         """
         Args:
             game_id    (int)       : 游戏 id
-            credential (Credential): 凭据类
+            credential (Credential): 凭据类. Defaults to None. 
         """
         self.__game_id = game_id
         self.credential = credential if credential else Credential()
 
-    def get_game_id(self):
+    def get_game_id(self) -> int:
         return self.__game_id
 
-    async def get_info(self):
+    async def get_info(self) -> dict:
         """
         获取游戏简介
 
@@ -44,7 +45,7 @@ class Game:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_up_info(self):
+    async def get_up_info(self) -> dict:
         """
         获取游戏官方账号
 
@@ -57,7 +58,7 @@ class Game:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_detail(self):
+    async def get_detail(self) -> dict:
         """
         获取游戏详情
 
@@ -70,7 +71,7 @@ class Game:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_wiki(self):
+    async def get_wiki(self) -> dict:
         """
         获取游戏教程(wiki)
 
@@ -83,7 +84,7 @@ class Game:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_videos(self):
+    async def get_videos(self) -> dict:
         """
         获取游戏介绍视频
 

@@ -8,6 +8,7 @@ import json
 import os
 import copy
 import enum
+from typing import Union
 
 from .exceptions import ArgsException
 from .utils.utils import get_api
@@ -17,7 +18,7 @@ from .utils.Credential import Credential
 API = get_api("channel")
 
 
-def get_channel_info_by_tid(tid: int):
+def get_channel_info_by_tid(tid: int) -> tuple[Union[dict, None], Union[dict, None]]:
     """
     根据 tid 获取频道信息。
 
@@ -49,7 +50,7 @@ def get_channel_info_by_tid(tid: int):
         return None, None
 
 
-def get_channel_info_by_name(name: str):
+def get_channel_info_by_name(name: str) -> tuple[Union[dict, None], Union[dict, None]]:
     """
     根据频道名称获取频道信息。
 
@@ -75,14 +76,14 @@ def get_channel_info_by_name(name: str):
         return None, None
 
 
-async def get_top10(tid: int, day: int = 7, credential: Credential = None):
+async def get_top10(tid: int, day: int = 7, credential: Union[Credential, None] = None) -> dict:
     """
     获取分区前十排行榜。
 
     Args:
-        tid        (int)                 : 频道的 tid。
-        day        (int, optional)       : 3 天排行还是 7 天排行。 Defaults to 7.
-        credential (Credential, optional): Credential 类。Defaults to None.
+        tid        (int)                        : 频道的 tid。
+        day        (int, optional)              : 3 天排行还是 7 天排行。 Defaults to 7.
+        credential (Credential | None, optional): Credential 类。Defaults to None.
 
     Returns:
         list: 前 10 的视频信息。
@@ -97,12 +98,12 @@ async def get_top10(tid: int, day: int = 7, credential: Credential = None):
     return await request("GET", url, params=params, credential=credential)
 
 
-def get_channel_list():
+def get_channel_list() -> list[dict]:
     """
     获取所有分区的数据
 
     Returns:
-        dict: 所有分区的数据
+        List[dict]: 所有分区的数据
     """
     with open(
         os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
@@ -121,7 +122,7 @@ def get_channel_list():
     return channel_list
 
 
-def get_channel_list_sub():
+def get_channel_list_sub() -> dict:
     """
     获取所有分区的数据
     含父子关系（即一层次只有主分区）
@@ -136,12 +137,12 @@ def get_channel_list_sub():
     return channel
 
 
-async def get_channel_videos_count_today(credential: Credential = None):
+async def get_channel_videos_count_today(credential: Union[Credential, None] = None) -> dict:
     """
     获取每个分区当日最新投稿数量
 
     Args:
-        credential(Credential): 凭据类
+        credential (Credential | None): 凭据类
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -150,13 +151,13 @@ async def get_channel_videos_count_today(credential: Credential = None):
     return (await request("GET", api["url"], credential=credential))["region_count"]
 
 
-async def get_channel_new_videos(tid: int, credential: Credential = None):
+async def get_channel_new_videos(tid: int, credential: Union[Credential, None] = None) -> dict:
     """
     获取分区最新投稿
 
     Args:
-        tid(int)              : 分区 id
-        credential(Credential): 凭据类
+        tid        (int)              : 分区 id
+        credential (Credential | None): 凭据类
     
     Returns:
         dict: 调用 API 返回的结果

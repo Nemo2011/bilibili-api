@@ -71,7 +71,7 @@ from bilibili_api import bangumi
 | ssid       | int        | 教程季度 ID（不与番剧相通）    |
 | epid       | int        | 剧集 ID              |
 | oversea    | bool       | 是否采用港澳台 Api(与大陆通用) |
-| credential | Credential | 凭据                 |
+| credential | Credential \| None | 凭据                 |
 
 media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段会被提交到Api查询
 
@@ -128,7 +128,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 | name  | type                          | description                                  |
 |-------|-------------------------------|----------------------------------------------|
 | order | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT |
-| next  | str, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None  |
+| next  | str \| None, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None  |
 
 获取短评列表
 
@@ -139,7 +139,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 | name  | type                          | description                                  |
 |-------|-------------------------------|----------------------------------------------|
 | order | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT |
-| next  | str, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None  |
+| next  | str \| None, optional                 | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None  |
 
 获取长评列表
 
@@ -171,7 +171,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 |------------|----------------------|-----------------------|
 | bangumi    | Bangumi              | 番剧类                   |
 | status     | bool, optional       | 追番状态，Defaults to True |
-| credential | Credential, optional | 凭据. Defaults to None  |
+| credential | Credential \| None, optional | 凭据. Defaults to None  |
 
 追番状态设置
 
@@ -200,7 +200,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 | name       | type       | description |
 |------------|------------|-------------|
 | epid       | int        | epid        | 
-| credential | Credential | 凭据          |
+| credential | Credential \| None | 凭据          |
 
 #### def get_bangumi()
 
@@ -258,7 +258,7 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 | name | type                    | description                           |
 |------|-------------------------|---------------------------------------|
-| date | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+| date | datetime.Date \| None, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
 
 获取特定月份存在历史弹幕的日期。
 

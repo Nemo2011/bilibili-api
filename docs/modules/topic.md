@@ -10,7 +10,7 @@ from bilibili_api import topic
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| credential | Credential \| None | 凭据类 |
 
 ### Methods
 

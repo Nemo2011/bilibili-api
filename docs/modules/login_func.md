@@ -67,6 +67,7 @@ from bilibili_api import login_func
 bilibili_api 完成极验验证的方式是新建一个 `http.server.HttpServer`。~~具体实现抄了 `pydoc`(Python 模块文档)~~
 
 返回值内函数及属性: 
+    (继承：threading.Thread)
     - url   (str)     : 验证码服务地址
     - start (Callable): 开启进程
     - stop  (Callable): 结束进程

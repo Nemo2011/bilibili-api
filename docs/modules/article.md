@@ -18,7 +18,7 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| credential | Credential \| None | 凭据类 |
 
 ### Functions
 
@@ -27,7 +27,7 @@ from bilibili_api import article
 | name | type | description |
 | - | - | - |
 | rlid       | int                  | 文集 ID，如 https://www.bilibili.com/read/readlist/rl000010 省略前导 0 |
-| credential | Credential, optional | 凭据. Defaults to None.                                      |
+| credential | Credential \| None, optional | 凭据. Defaults to None.                                      |
 
 #### def get_rlid()
 
@@ -60,7 +60,7 @@ from bilibili_api import article
 | name       | type                 | description             |
 | ---------- | -------------------- | ----------------------- |
 | cvid       | int                  | 专栏 ID                 |
-| credential | Credential, optional | 凭据. Defaults to None. |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
 
 #### def get_rlid()
 

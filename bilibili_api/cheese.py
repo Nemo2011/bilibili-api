@@ -26,7 +26,7 @@ from .utils.Danmaku import Danmaku
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import get_session, request
-from typing import List
+from typing import Any, List, Union
 
 API = get_api("cheese")
 API_video = get_api("video")
@@ -44,7 +44,7 @@ class CheeseList:
         self,
         season_id: int = -1,
         ep_id: int = -1,
-        credential: Credential = None,
+        credential: Union[Credential, None] = None,
     ):
         """
         Args:
@@ -70,16 +70,16 @@ class CheeseList:
             meta.raise_for_status()
             self.__season_id = int(meta.json()["data"]["season_id"])
 
-    def set_season_id(self, season_id: int):
+    def set_season_id(self, season_id: int) -> None:
         self.__init__(season_id=season_id)
 
-    def set_ep_id(self, ep_id: int):
+    def set_ep_id(self, ep_id: int) -> None:
         self.__init__(ep_id=ep_id)
 
-    def get_season_id(self):
+    def get_season_id(self) -> int:
         return self.__season_id
 
-    async def get_meta(self):
+    async def get_meta(self) -> dict:
         """
         获取教程元数据
 
@@ -92,7 +92,7 @@ class CheeseList:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_list(self):
+    async def get_list(self) -> List["CheeseVideo"]:
         """
         获取教程所有视频
 
@@ -120,7 +120,7 @@ class CheeseVideo:
         cheese     (CheeseList): 所属的课程
     """
 
-    def __init__(self, epid, credential: Credential = None, meta=None):
+    def __init__(self, epid, credential: Union[Credential, None] = None, meta=None):
         """
         Args:
             ep_id      (int)       : 单集 ep_id
@@ -147,13 +147,13 @@ class CheeseVideo:
             self.__aid = meta["aid"]
             self.__cid = meta["cid"]
 
-    def get_aid(self):
+    def get_aid(self) -> int:
         return self.__aid
 
-    def get_cid(self):
+    def get_cid(self) -> int:
         return self.__cid
 
-    def get_meta(self):
+    def get_meta(self) -> dict:
         """
         获取课程元数据
 
@@ -162,7 +162,7 @@ class CheeseVideo:
         """
         return self.__meta
 
-    def get_cheese(self):
+    def get_cheese(self) -> "CheeseList":
         """
         获取所属课程
 
@@ -171,13 +171,13 @@ class CheeseVideo:
         """
         return self.cheese
 
-    def set_epid(self, epid: int):
+    def set_epid(self, epid: int) -> None:
         self.__init__(epid, self.credential)
 
-    def get_epid(self):
+    def get_epid(self) -> int:
         return self.__epid
 
-    async def get_download_url(self):
+    async def get_download_url(self) -> dict:
         """
         获取下载链接
 
@@ -197,7 +197,7 @@ class CheeseVideo:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_stat(self):
+    async def get_stat(self) -> dict:
         """
         获取视频统计数据（播放量，点赞数等）。
 
@@ -208,7 +208,7 @@ class CheeseVideo:
         params = {"aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_pages(self):
+    async def get_pages(self) -> dict:
         """
         获取分 P 信息。
 
@@ -219,7 +219,7 @@ class CheeseVideo:
         params = {"aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_danmaku_view(self):
+    async def get_danmaku_view(self) -> dict:
         """
         获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
@@ -422,12 +422,12 @@ class CheeseVideo:
                 continue
         return json_data
 
-    async def get_danmakus(self, date: datetime.date = None):
+    async def get_danmakus(self, date: Union[datetime.date, None] = None):
         """
         获取弹幕。
 
         Args:
-            date (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+            date (datetime.Date | None, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
 
         Returns:
             List[Danmaku]: Danmaku 类的列表。
@@ -439,7 +439,7 @@ class CheeseVideo:
 
         session = get_session()
         aid = self.get_aid()
-        params = {"oid": self.get_cid(), "type": 1, "pid": aid}
+        params: dict[str, Any] = {"oid": self.get_cid(), "type": 1, "pid": aid}
         if date is not None:
             # 获取历史弹幕
             api = API_video["danmaku"]["get_history_danmaku"]
@@ -521,7 +521,7 @@ class CheeseVideo:
                     elif data_type == 9:
                         dm.weight = dm_reader.varint()
                     elif data_type == 10:
-                        dm.action = dm_reader.varint()
+                        dm.action = str(dm_reader.varint())
                     elif data_type == 11:
                         dm.pool = dm_reader.varint()
                     elif data_type == 12:
@@ -560,19 +560,18 @@ class CheeseVideo:
             ).text
         )
 
-    async def send_danmaku(self, danmaku: Danmaku = None):
+    async def send_danmaku(self, danmaku: Union[Danmaku, None] = None):
         """
         发送弹幕。
 
         Args:
-            danmaku (Danmaku): Danmaku 类。
+            danmaku (Danmaku | None): Danmaku 类。Defaults to None. 
 
         Returns:
             dict: 调用 API 返回的结果。
         """
 
-        if danmaku is None:
-            raise ArgsException("请提供 danmaku 参数")
+        danmaku = danmaku if danmaku else Danmaku("")
 
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -590,9 +589,9 @@ class CheeseVideo:
             "aid": self.get_aid(),
             "progress": int(danmaku.dm_time * 1000),
             "color": int(danmaku.color, 16),
-            "fontsize": danmaku.font_size.value,
+            "fontsize": danmaku.font_size,
             "pool": pool,
-            "mode": danmaku.mode.value,
+            "mode": danmaku.mode,
             "plat": 1,
         }
         return await request(
@@ -727,7 +726,7 @@ class CheeseVideo:
         """
         url = f"https://comment.bilibili.com/{self.get_cid()}.xml"
         sess = get_session()
-        config = {"url": url}
+        config: dict[str, Any] = {"url": url}
         # 代理
         if settings.proxy:
             config["proxies"] = {"all://", settings.proxy}

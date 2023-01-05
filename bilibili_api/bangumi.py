@@ -10,9 +10,12 @@
 
 import datetime
 from enum import Enum
+from typing import Any, Union
 import httpx
 
 import requests
+
+from bilibili_api.utils.Danmaku import Danmaku
 
 from . import settings
 
@@ -54,7 +57,7 @@ class BangumiType(Enum):
     FT = 3
     GUOCHUANG = 4
 
-async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0):
+async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0) -> dict:
     """
     获取番剧时间线
 
@@ -85,15 +88,15 @@ class Bangumi:
         ssid: int = -1,
         epid: int = -1,
         oversea: bool = False,
-        credential: Credential = None,
+        credential: Union[Credential, None] = None,
     ):
         """
         Args:
-            media_id   (int, optional)       : 番剧本身的 ID. Defaults to -1. 
-            ssid       (int, optional)       : 每季度的 ID. Defaults to -1. 
-            epid       (int, optional)       : 每集的 ID. Defaults to -1. 
-            oversea    (bool, optional)      : 是否要采用兼容的港澳台Api,用于仅限港澳台地区番剧的信息请求. Defaults to False. 
-            credential (Credential, optional): 凭据类. Defaults to None. 
+            media_id   (int, optional)              : 番剧本身的 ID. Defaults to -1. 
+            ssid       (int, optional)              : 每季度的 ID. Defaults to -1. 
+            epid       (int, optional)              : 每集的 ID. Defaults to -1. 
+            oversea    (bool, optional)             : 是否要采用兼容的港澳台Api,用于仅限港澳台地区番剧的信息请求. Defaults to False. 
+            credential (Credential | None, optional): 凭据类. Defaults to None. 
         """
         if media_id == -1 and ssid == -1 and epid == -1:
             raise ValueError("需要 Media_id 或 Season_id 或 epid 中的一个 !")
@@ -150,13 +153,13 @@ class Bangumi:
                     item for item in self.ep_list if item["id"] == self.__epid
                 ]
 
-    def get_media_id(self):
+    def get_media_id(self) -> int:
         return self.__media_id
 
-    def get_season_id(self):
+    def get_season_id(self) -> int:
         return self.__ssid
 
-    def get_up_info(self):
+    def get_up_info(self) -> dict:
         """
         番剧上传者信息 出差或者原版
 
@@ -165,7 +168,7 @@ class Bangumi:
         """
         return self.__up_info
 
-    def get_raw(self):
+    def get_raw(self) -> tuple[dict, bool]:
         """
         原始初始化数据
 
@@ -174,13 +177,13 @@ class Bangumi:
         """
         return self.__raw, self.oversea
 
-    def set_media_id(self, media_id: int):
+    def set_media_id(self, media_id: int) -> None:
         self.__init__(media_id=media_id, credential=self.credential)
 
-    def set_ssid(self, ssid: int):
+    def set_ssid(self, ssid: int) -> None:
         self.__init__(ssid=ssid, credential=self.credential)
 
-    async def get_meta(self):
+    async def get_meta(self) -> dict:
         """
         获取番剧元数据信息（评分，封面 URL，标题等）
 
@@ -198,14 +201,14 @@ class Bangumi:
         return await request("GET", api["url"], params, credential=credential)
 
     async def get_short_comment_list(
-        self, order: BangumiCommentOrder = BangumiCommentOrder.DEFAULT, next: str = None
-    ):
+        self, order: BangumiCommentOrder = BangumiCommentOrder.DEFAULT, next: Union[str, None] = None
+    ) -> dict:
         """
         获取短评列表
 
         Args:
             order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
-            next       (str, optional)                : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
+            next       (str | None, optional)         : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
         
         Returns:
             dict: 调用 API 返回的结果
@@ -220,14 +223,14 @@ class Bangumi:
         return await request("GET", api["url"], params, credential=credential)
 
     async def get_long_comment_list(
-        self, order: BangumiCommentOrder = BangumiCommentOrder.DEFAULT, next: str = None
-    ):
+        self, order: BangumiCommentOrder = BangumiCommentOrder.DEFAULT, next: Union[str, None] = None
+    ) -> dict:
         """
         获取长评列表
 
         Args:
             order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
-            next       (str, optional)                : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
+            next       (str | None, optional)         : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
         
         Returns:
             dict: 调用 API 返回的结果
@@ -241,7 +244,7 @@ class Bangumi:
 
         return await request("GET", api["url"], params, credential=credential)
 
-    async def get_episode_list(self):
+    async def get_episode_list(self) -> dict:
         """
         获取季度分集列表，自动转换出海Api的字段，适配部分，但是键还是有不同
        
@@ -265,7 +268,7 @@ class Bangumi:
             params = {"season_id": self.__ssid}
             return await request("GET", api["url"], params, credential=credential)
 
-    async def get_stat(self):
+    async def get_stat(self) -> dict:
         """
         获取番剧播放量，追番等信息
 
@@ -278,7 +281,7 @@ class Bangumi:
         params = {"season_id": self.__ssid}
         return await request("GET", api["url"], params, credential=credential)
 
-    async def get_overview(self):
+    async def get_overview(self) -> dict:
         """
         获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
         
@@ -295,15 +298,15 @@ class Bangumi:
 
 
 async def set_follow(
-    bangumi: Bangumi, status: bool = True, credential: Credential = None
-):
+    bangumi: Bangumi, status: bool = True, credential: Union[Credential, None] = None
+) -> dict:
     """
     追番状态设置
 
     Args:
-        bangumi    (Bangumi)             : 番剧类
-        status     (bool, optional)      : 追番状态，Defaults to True
-        credential (Credential, optional): 凭据. Defaults to None
+        bangumi    (Bangumi)                    : 番剧类
+        status     (bool, optional)             : 追番状态. Defaults to True. 
+        credential (Credential | None, optional): 凭据. Defaults to None. 
     
     Returns:
         dict: 调用 API 返回的结果
@@ -326,19 +329,18 @@ class Episode(Video):
         bangumi     (Bangumi)   : 所属番剧
     """
 
-    def __init__(self, epid: int, credential: Credential = None):
+    def __init__(self, epid: int, credential: Union[Credential, None] = None):
         """
         Args:
             epid       (int)                 : 番剧 epid
             credential (Credential, optional): 凭据. Defaults to None. 
         """
-        self.credential = credential
-        credential = self.credential if self.credential else Credential()
+        self.credential = credential if credential else Credential()
         self.__epid = epid
         try:
             resp = httpx.get(
                 f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
-                cookies=credential.get_cookies(),
+                cookies=self.credential.get_cookies(),
                 headers={"User-Agent": "Mozilla/5.0"},
             )
         except Exception as e:
@@ -357,24 +359,24 @@ class Episode(Video):
             else:
                 bvid = content["epInfo"]["bvid"]
                 self.bangumi = Bangumi(ssid=content["mediaInfo"]["season_id"])
-        self.video_class = Video(bvid=bvid, credential=credential)
+        self.video_class = Video(bvid=bvid, credential=self.credential)
         super().__init__(bvid=bvid)
         self.set_aid = self.set_aid_e
         self.set_bvid = self.set_bvid_e
 
-    def get_epid(self):
+    def get_epid(self) -> int:
         """
         获取 epid
         """
         return self.__epid
 
-    def set_aid_e(self, aid: str):
+    def set_aid_e(self, aid: int) -> None:
         print("Set aid is not allowed in Episode")
 
-    def set_bvid_e(self, bvid: str):
+    def set_bvid_e(self, bvid: str) -> None:
         print("Set bvid is not allowed in Episode")
 
-    async def get_cid(self):
+    async def get_cid(self) -> int:
         """
         获取稿件 cid
 
@@ -383,7 +385,7 @@ class Episode(Video):
         """
         return (await self.get_episode_info())["epInfo"]["cid"]
 
-    def get_bangumi(self):
+    def get_bangumi(self) -> "Bangumi":
         """
         获取对应的番剧
 
@@ -392,10 +394,10 @@ class Episode(Video):
         """
         return self.bangumi
 
-    def set_epid(self, epid: int):
+    def set_epid(self, epid: int) -> None:
         self.__init__(epid, self.credential)
 
-    async def get_episode_info(self):
+    async def get_episode_info(self) -> dict:
         """
         获取番剧单集信息
 
@@ -427,7 +429,7 @@ class Episode(Video):
 
             return content
 
-    async def get_bangumi_from_episode(self):
+    async def get_bangumi_from_episode(self) -> "Bangumi":
         """
         获取剧集对应的番剧
 
@@ -438,7 +440,7 @@ class Episode(Video):
         ssid = info["mediaInfo"]["season_id"]
         return Bangumi(ssid=ssid)
 
-    async def get_download_url(self):
+    async def get_download_url(self) -> dict:
         """
         获取番剧剧集下载信息。
 
@@ -457,7 +459,7 @@ class Episode(Video):
             }
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_danmaku_xml(self):
+    async def get_danmaku_xml(self) -> str:
         """
         获取所有弹幕的 xml 源文件（非装填）
 
@@ -467,14 +469,14 @@ class Episode(Video):
         cid = await self.get_cid()
         url = f"https://comment.bilibili.com/{cid}.xml"
         sess = get_session()
-        config = {"url": url}
+        config: dict[str, Any] = {"url": url}
         # 代理
         if settings.proxy:
             config["proxies"] = {"all://", settings.proxy}
         resp = await sess.get(**config)
         return resp.content.decode("utf-8")
 
-    async def get_danmaku_view(self):
+    async def get_danmaku_view(self) -> dict:
         """
         获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
@@ -483,18 +485,24 @@ class Episode(Video):
         """
         return await self.video_class.get_danmaku_view(0)
 
-    async def get_danmakus(self, date: datetime.date = None):
+    async def get_danmakus(self, date: Union[datetime.date, None] = None) -> list["Danmaku"]:
         """
         获取弹幕
+
+        Args:
+            date (datetime.date | None, optional): 指定某一天查询弹幕. Defaults to None. (不指定某一天)
 
         Returns:
             dict[Danmaku]: 弹幕列表
         """
         return await self.video_class.get_danmakus(0, date)
 
-    async def get_history_danmaku_index(self, date: datetime.date = None):
+    async def get_history_danmaku_index(self, date: Union[datetime.date, None] = None) -> dict:
         """
         获取特定月份存在历史弹幕的日期。
+
+        Args:
+            date (datetime.date | None, optional): 精确到年月. Defaults to None。
 
         Returns:
             None | List[str]: 调用 API 返回的结果。不存在时为 None。

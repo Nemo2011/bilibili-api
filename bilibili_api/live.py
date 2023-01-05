@@ -10,7 +10,7 @@ import logging
 import json
 import struct
 import asyncio
-from typing import List
+from typing import Any, List, Union
 import aiohttp
 import brotli
 
@@ -106,7 +106,7 @@ class LiveRoom:
         room_display_id (int)       : 房间展示 id
     """
 
-    def __init__(self, room_display_id: int, credential: Credential = None):
+    def __init__(self, room_display_id: int, credential: Union[Credential, None] = None):
         """
         Args:
             room_display_id (int)                 : 房间展示 ID（即 URL 中的 ID）
@@ -121,7 +121,7 @@ class LiveRoom:
 
         self.__ruid = None
 
-    async def start(self, area_id: int):
+    async def start(self, area_id: int) -> dict:
         """
         开始直播
 
@@ -142,7 +142,7 @@ class LiveRoom:
         )
         return resp
 
-    async def stop(self):
+    async def stop(self) -> dict:
         """
         关闭直播
 
@@ -158,7 +158,7 @@ class LiveRoom:
         )
         return resp
 
-    async def get_room_play_info(self):
+    async def get_room_play_info(self) -> dict:
         """
         获取房间信息（真实房间号，封禁情况等）
 
@@ -177,22 +177,22 @@ class LiveRoom:
         self.__ruid = resp["uid"]
         return resp
 
-    async def get_room_id(self):
+    async def get_room_id(self) -> int:
         return (await self.get_room_play_info())["room_id"]
 
-    async def __get_ruid(self):
+    async def __get_ruid(self) -> int:
         """
         获取真实房间 ID，若有缓存则使用缓存
         """
         if self.__ruid is None:
             await self.get_room_play_info()
 
-        return self.__ruid
+        return self.__ruid # type: ignore
 
-    async def get_ruid(self):
+    async def get_ruid(self) -> int:
         return await self.__get_ruid()
 
-    async def get_chat_conf(self):
+    async def get_chat_conf(self) -> dict:
         """
         获取聊天弹幕服务器配置信息(websocket)
 
@@ -205,7 +205,7 @@ class LiveRoom:
             api["method"], api["url"], params, credential=self.credential
         )
 
-    async def get_room_info(self):
+    async def get_room_info(self) -> dict:
         """
         获取直播间信息（标题，简介等）
 
@@ -219,8 +219,11 @@ class LiveRoom:
         )
 
     async def get_fan_model(
-        self, page_num: int = 1, target_id: int = None, roomId: int = None
-    ):
+        self, 
+        page_num: int = 1, 
+        target_id: Union[int, None] = None, 
+        roomId: Union[int, None] = None
+    ) -> dict:
         """
         获取自己的粉丝勋章信息
 
@@ -229,9 +232,9 @@ class LiveRoom:
         如果带有主播 id ，就返回主播的粉丝牌，没有就返回 null
 
         Args:
-            roomId    (int, optional): 指定房间，查询是否拥有此房间的粉丝牌
-            target_id (int, optional): 指定返回一个主播的粉丝牌，留空就不返回
-            page_num  (int, optional): 粉丝牌列表，默认 1
+            roomId    (int, optional)       : 指定房间，查询是否拥有此房间的粉丝牌
+            target_id (int | None, optional): 指定返回一个主播的粉丝牌，留空就不返回
+            page_num  (int | None, optional): 粉丝牌列表，默认 1
 
         Returns:
             dict: 调用 API 返回的结果
@@ -251,7 +254,7 @@ class LiveRoom:
             api["method"], api["url"], params=params, credential=self.credential
         )
 
-    async def get_user_info_in_room(self):
+    async def get_user_info_in_room(self) -> dict:
         """
         获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）
 
@@ -266,7 +269,7 @@ class LiveRoom:
             api["method"], api["url"], params, credential=self.credential
         )
 
-    async def get_dahanghai(self, page: int = 1):
+    async def get_dahanghai(self, page: int = 1) -> dict:
         """
         获取大航海列表
 
@@ -287,7 +290,7 @@ class LiveRoom:
             api["method"], api["url"], params, credential=self.credential
         )
 
-    async def get_gaonengbang(self, page: int = 1):
+    async def get_gaonengbang(self, page: int = 1) -> dict:
         """
         获取高能榜列表
 
@@ -308,7 +311,7 @@ class LiveRoom:
             api["method"], api["url"], params, credential=self.credential
         )
 
-    async def get_seven_rank(self):
+    async def get_seven_rank(self) -> dict:
         """
         获取七日榜
 
@@ -324,7 +327,7 @@ class LiveRoom:
             api["method"], api["url"], params, credential=self.credential
         )
 
-    async def get_fans_medal_rank(self):
+    async def get_fans_medal_rank(self) -> dict:
         """
         获取粉丝勋章排行
 
@@ -337,7 +340,7 @@ class LiveRoom:
             api["method"], api["url"], params, credential=self.credential
         )
 
-    async def get_black_list(self):
+    async def get_black_list(self) -> dict:
         """
         获取黑名单列表
 
@@ -356,7 +359,7 @@ class LiveRoom:
 
     async def get_room_play_url(
         self, screen_resolution: ScreenResolution = ScreenResolution.ORIGINAL
-    ):
+    ) -> dict:
         """
         获取房间直播流列表
 
@@ -384,7 +387,7 @@ class LiveRoom:
         live_format: LiveFormat = LiveFormat.DEFAULT,
         live_codec: LiveCodec = LiveCodec.DEFAULT,
         live_qn: ScreenResolution = ScreenResolution.ORIGINAL,
-    ):
+    ) -> dict:
         """
         获取房间信息及可用清晰度列表
 
@@ -411,7 +414,7 @@ class LiveRoom:
             api["method"], api["url"], params=params, credential=self.credential
         )
 
-    async def ban_user(self, uid: int):
+    async def ban_user(self, uid: int) -> dict:
         """
         封禁用户
 
@@ -434,7 +437,7 @@ class LiveRoom:
             api["method"], api["url"], data=data, credential=self.credential
         )
 
-    async def unban_user(self, block_id: int):
+    async def unban_user(self, block_id: int) -> dict:
         """
         解封用户
 
@@ -455,7 +458,7 @@ class LiveRoom:
             api["method"], api["url"], data=data, credential=self.credential
         )
 
-    async def send_danmaku(self, danmaku: Danmaku):
+    async def send_danmaku(self, danmaku: Danmaku) -> dict:
         """
         直播间发送弹幕
 
@@ -484,7 +487,7 @@ class LiveRoom:
             api["method"], api["url"], data=data, credential=self.credential
         )
 
-    async def sign_up_dahanghai(self, task_id: int = 1447):
+    async def sign_up_dahanghai(self, task_id: int = 1447) -> dict:
         """
         大航海签到
 
@@ -514,7 +517,7 @@ class LiveRoom:
         gift_num: int,
         storm_beat_id: int = 0,
         price: int = 0,
-    ):
+    ) -> dict:
         """
         赠送包裹中的礼物，获取包裹信息可以使用 get_self_bag 方法
 
@@ -550,7 +553,7 @@ class LiveRoom:
             api["method"], api["url"], data=data, credential=self.credential
         )
 
-    async def receive_reward(self, receive_type: int = 2):
+    async def receive_reward(self, receive_type: int = 2) -> dict:
         """
         领取自己在某个直播间的航海日志奖励
 
@@ -571,7 +574,7 @@ class LiveRoom:
             api["method"], api["url"], data=data, credential=self.credential
         )
 
-    async def get_general_info(self, act_id: int = 100061):
+    async def get_general_info(self, act_id: int = 100061) -> dict:
         """
         获取自己在该房间的大航海信息, 比如是否开通, 等级等
 
@@ -593,7 +596,7 @@ class LiveRoom:
             api["method"], api["url"], params=params, credential=self.credential
         )
 
-    async def get_gift_common(self):
+    async def get_gift_common(self) -> dict:
         """
         获取当前直播间内的普通礼物列表
 
@@ -627,7 +630,7 @@ class LiveRoom:
             api["method"], api["url"], params=params, credential=self.credential
         )
 
-    async def get_gift_special(self, tab_id: int):
+    async def get_gift_special(self, tab_id: int) -> dict:
         """
         获取当前直播间内的特殊礼物列表
 
@@ -669,7 +672,7 @@ class LiveRoom:
 
     async def send_gift_gold(
         self, uid: int, gift_id: int, gift_num: int, price: int, storm_beat_id: int = 0
-    ):
+    ) -> dict:
 
         """
         赠送金瓜子礼物
@@ -715,7 +718,7 @@ class LiveRoom:
         gift_num: int,
         price: int,
         storm_beat_id: int = 0,
-    ):
+    ) -> dict:
 
         """
         赠送银瓜子礼物
@@ -807,17 +810,17 @@ class LiveDanmaku(AsyncEvent):
         self,
         room_display_id: int,
         debug: bool = False,
-        credential: Credential = None,
+        credential: Union[Credential, None] = None,
         max_retry: int = 5,
         retry_after: float = 1,
     ):
         """
         Args:
-            room_display_id (int)                 : 房间展示 ID
-            debug           (bool, optional)      : 调试模式，将输出更多信息。. Defaults to False.
-            credential      (Credential, optional): 凭据. Defaults to None.
-            max_retry       (int, optional)       : 连接出错后最大重试次数. Defaults to 5
-            retry_after     (int, optional)       : 连接出错后重试间隔时间（秒）. Defaults to 1
+            room_display_id (int)                        : 房间展示 ID
+            debug           (bool, optional)             : 调试模式，将输出更多信息。. Defaults to False.
+            credential      (Credential | None, optional): 凭据. Defaults to None.
+            max_retry       (int, optional)              : 连接出错后最大重试次数. Defaults to 5
+            retry_after     (int, optional)              : 连接出错后重试间隔时间（秒）. Defaults to 1
         """
         super().__init__()
 
@@ -847,7 +850,7 @@ class LiveDanmaku(AsyncEvent):
             )
             self.logger.addHandler(handler)
 
-    def get_status(self):
+    def get_status(self) -> int:
         """
         获取连接状态
 
@@ -856,7 +859,7 @@ class LiveDanmaku(AsyncEvent):
         """
         return self.__status
 
-    async def connect(self):
+    async def connect(self) -> None:
         """
         连接直播间
         """
@@ -871,7 +874,7 @@ class LiveDanmaku(AsyncEvent):
 
         await self.__main()
 
-    async def disconnect(self):
+    async def disconnect(self) -> None:
         """
         断开连接
         """
@@ -886,15 +889,15 @@ class LiveDanmaku(AsyncEvent):
             self.__tasks.pop().cancel()
 
         self.__status = self.STATUS_CLOSED
-        await self.__ws.close()
+        await self.__ws.close() # type: ignore
 
         self.logger.info("连接已关闭")
 
-    async def __main(self):
+    async def __main(self) -> None:
         """
         入口
         """
-        self.__status == self.STATUS_CONNECTING
+        self.__status = self.STATUS_CONNECTING
 
         room = LiveRoom(self.room_display_id, self.credential)
         self.logger.info(f"准备连接直播间 {self.room_display_id}")
@@ -919,7 +922,7 @@ class LiveDanmaku(AsyncEvent):
         async def on_timeout(ev):
             # 连接超时
             self.err_reason = "心跳响应超时"
-            await self.__ws.close()
+            await self.__ws.close() # type: ignore
 
         while True:
             self.err_reason = ""
@@ -936,7 +939,7 @@ class LiveDanmaku(AsyncEvent):
             port = host["wss_port"]
             protocol = "wss"
             uri = f"{protocol}://{host['host']}:{port}/sub"
-            self.__status == self.STATUS_CONNECTING
+            self.__status = self.STATUS_CONNECTING
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
@@ -989,7 +992,7 @@ class LiveDanmaku(AsyncEvent):
                 retry -= 1
                 await asyncio.sleep(self.retry_after)
 
-    async def __handle_data(self, data):
+    async def __handle_data(self, data) -> None:
         """
         处理数据
         """
@@ -1042,7 +1045,7 @@ class LiveDanmaku(AsyncEvent):
             else:
                 self.logger.warning("检测到未知的数据包类型，无法处理")
 
-    async def __send_verify_data(self, ws: ClientWebSocketResponse, token: str):
+    async def __send_verify_data(self, ws: ClientWebSocketResponse, token: str) -> None:
         verifyData = {
             "uid": 0,
             "roomid": self.__room_real_id,
@@ -1056,7 +1059,7 @@ class LiveDanmaku(AsyncEvent):
             data, self.PROTOCOL_VERSION_HEARTBEAT, self.DATAPACK_TYPE_VERIFY, ws
         )
 
-    async def __heartbeat(self, ws: ClientWebSocketResponse):
+    async def __heartbeat(self, ws: ClientWebSocketResponse) -> None:
         """
         定时发送心跳包
         """
@@ -1094,7 +1097,7 @@ class LiveDanmaku(AsyncEvent):
         protocol_version: int,
         datapack_type: int,
         ws: ClientWebSocketResponse,
-    ):
+    ) -> None:
         """
         自动打包并发送数据
         """
@@ -1103,7 +1106,7 @@ class LiveDanmaku(AsyncEvent):
         await ws.send_bytes(data)
 
     @staticmethod
-    def __pack(data: bytes, protocol_version: int, datapack_type: int):
+    def __pack(data: bytes, protocol_version: int, datapack_type: int) -> bytes:
         """
         打包数据
         """
@@ -1119,7 +1122,7 @@ class LiveDanmaku(AsyncEvent):
         return bytes(sendData)
 
     @staticmethod
-    def __unpack(data: bytes):
+    def __unpack(data: bytes) -> List[Any]:
         """
         解包数据
         """
@@ -1168,7 +1171,7 @@ class LiveDanmaku(AsyncEvent):
         return ret
 
 
-async def get_self_info(credential: Credential):
+async def get_self_info(credential: Credential) -> dict:
     """
     获取自己直播等级、排行等信息
 
@@ -1181,7 +1184,7 @@ async def get_self_info(credential: Credential):
     return await request(api["method"], api["url"], credential=credential)
 
 
-async def get_self_live_info(credential: Credential):
+async def get_self_live_info(credential: Credential) -> dict:
     """
     获取自己的粉丝牌、大航海等信息
 
@@ -1196,8 +1199,10 @@ async def get_self_live_info(credential: Credential):
 
 
 async def get_self_dahanghai_info(
-    page: int = 1, page_size: int = 10, credential: Credential = None
-):
+    page: int = 1, 
+    page_size: int = 10, 
+    credential: Union[Credential, None] = None
+) -> dict:
     """
     获取自己开通的大航海信息
 
@@ -1229,7 +1234,7 @@ async def get_self_dahanghai_info(
     )
 
 
-async def get_self_bag(credential: Credential):
+async def get_self_bag(credential: Credential) -> dict:
     """
     获取自己的直播礼物包裹信息
 
@@ -1244,7 +1249,9 @@ async def get_self_bag(credential: Credential):
 
 
 async def get_gift_config(
-    room_id: int = None, area_id: int = None, area_parent_id: int = None
+    room_id: Union[int, None] = None, 
+    area_id: Union[int, None] = None, 
+    area_parent_id: Union[int, None] = None
 ):
     """
     获取所有礼物的信息，包括礼物 id、名称、价格、等级等。
@@ -1270,7 +1277,7 @@ async def get_gift_config(
     return await request(api["method"], api["url"], params=params)
 
 
-async def get_area_info():
+async def get_area_info() -> dict:
     """
     获取所有分区信息
 
@@ -1282,8 +1289,9 @@ async def get_area_info():
 
 
 async def get_live_followers_info(
-    need_recommend: bool = True, credential: Credential = None
-):
+    need_recommend: bool = True, 
+    credential: Union[Credential, None] = None
+) -> dict:
     """
     获取关注列表中正在直播的直播间信息，包括房间直播热度，房间名称及标题，清晰度，是否官方认证等信息。
 
@@ -1306,8 +1314,10 @@ async def get_live_followers_info(
 
 
 async def get_unlive_followers_info(
-    page: int = 1, page_size: int = 30, credential: Credential = None
-):
+    page: int = 1, 
+    page_size: int = 30, 
+    credential: Union[Credential, None] = None
+) -> dict:
     """
     获取关注列表中未在直播的直播间信息，包括上次开播时间，上次开播的类别，直播间公告，是否有录播等。
 

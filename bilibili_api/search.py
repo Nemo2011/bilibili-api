@@ -4,7 +4,7 @@ bilibili_api.search
 搜索
 """
 from enum import Enum
-from typing import Union
+from typing import Callable, Union
 import json
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
@@ -132,7 +132,7 @@ class CategoryTypeArticle(Enum):
     Technology = 17
 
 
-async def search(keyword: str, page: int = 1):
+async def search(keyword: str, page: int = 1) -> dict:
     """
     只指定关键字在 web 进行搜索，返回未经处理的字典
 
@@ -150,29 +150,29 @@ async def search(keyword: str, page: int = 1):
 
 async def search_by_type(
     keyword: str,
-    search_type: SearchObjectType = None,
-    order_type: Union[OrderUser, OrderLiveRoom, OrderArticle, OrderVideo] = None,
+    search_type: Union[SearchObjectType, None] = None,
+    order_type: Union[OrderUser, OrderLiveRoom, OrderArticle, OrderVideo, None] = None,
     time_range: int = -1,
-    topic_type: int = None,
-    order_sort: int = None,
-    category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int] = None,
+    topic_type: Union[int, None] = None,
+    order_sort: Union[int, None] = None,
+    category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int, None] = None,
     page: int = 1,
-    debug_param_func=None,
-):
+    debug_param_func: Union[Callable, None]=None,
+) -> dict:
     """
     指定分区，类型，视频长度等参数进行搜索，返回未经处理的字典
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、直播用户(liveuser)、专栏(article)、话题(topic)、用户(bili_user)
 
     Args:
-        debug_param_func (func)                                              : 参数回调器，用来存储或者什么的
-        order_sort       (int)                                               : 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
-        category_id      (Union[CategoryTypeArticle, CategoryTypePhoto, int]): 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
-        time_range       (int)                                               : 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
-        topic_type       (int)                                               : 话题类型，指定 tid (可使用 channel 模块查询)
-        order_type       (str)                                               : 排序分类类型
-        keyword          (str)                                               : 搜索关键词
-        search_type      (str)                                               : 搜索类型
-        page             (int)                                               : 页码
+        debug_param_func (Callable | None, optional)                                             : 参数回调器，用来存储或者什么的
+        order_sort       (int | None, optional)                                                  : 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
+        category_id      (CategoryTypeArticle | CategoryTypePhoto | int | None, optional)        : 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
+        time_range       (int, optional)                                                         : 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
+        topic_type       (int | None, optional)                                                  : 话题类型，指定 tid (可使用 channel 模块查询)
+        order_type       (OrderUser | OrderLiveRoom | OrderArticle | OrderVideo | None, optional): 排序分类类型
+        keyword          (str)                                                                   : 搜索关键词
+        search_type      (SearchObjectType | None, optional)                                     : 搜索类型
+        page             (int, optional)                                                         : 页码
 
     Returns:
         dict: 调用 API 返回的结果
@@ -224,7 +224,7 @@ async def search_by_type(
     return await request("GET", url=api["url"], params=params)
 
 
-async def get_default_search_keyword():
+async def get_default_search_keyword() -> dict:
     """
     获取默认的搜索内容
 
@@ -235,7 +235,7 @@ async def get_default_search_keyword():
     return await request("GET", api["url"])
 
 
-async def get_hot_search_keywords():
+async def get_hot_search_keywords() -> dict:
     """
     获取热搜
 
@@ -247,7 +247,7 @@ async def get_hot_search_keywords():
     return json.loads((await sess.request("GET", api["url"])).text)["cost"]
 
 
-async def get_suggest_keywords(keyword: str):
+async def get_suggest_keywords(keyword: str) -> list[str]:
     """
     通过一些文字输入获取搜索建议。类似搜索词的联想。
 
@@ -268,7 +268,7 @@ async def get_suggest_keywords(keyword: str):
     return keywords
 
 
-async def search_games(keyword: str):
+async def search_games(keyword: str) -> dict:
     """
     搜索游戏特用函数
 

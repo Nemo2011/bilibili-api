@@ -18,7 +18,7 @@ from bilibili_api import homepage
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| credential | Credential \| None | 凭据类 |
 
 获取主页左面的链接。
 可能和个人喜好有关。
@@ -29,7 +29,7 @@ from bilibili_api import homepage
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| credential | Credential \| None | 凭据类 |
 
 获取推广的项目。
 ~~有视频有广告~~
@@ -40,7 +40,7 @@ from bilibili_api import homepage
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| credential | Credential \| None | 凭据类 |
 
 获取首页推荐的视频。
 

@@ -24,9 +24,9 @@ from bilibili_api import dynamic
 | name         | type                              | description                         |
 | ------------ | --------------------------------- | ----------------------------------- |
 | text         | str                               | 动态文本                            |
-| image_stream | List[io.BufferedIOBase], optional | 图片流列表. Defaults to None.       |
-| send_time    | datetime.datetime, optional       | 定时动态发送时间. Defaults to None. |
-| credential   | Credential, optional              | 凭据. Defaults to None.             |
+| image_stream | List[io.BufferedIOBase] \| None, optional | 图片流列表. Defaults to None.       |
+| send_time    | datetime.datetime \| None, optional       | 定时动态发送时间. Defaults to None. |
+| credential   | Credential \| None, optional              | 凭据. Defaults to None.             |
 
 自动判断动态类型选择合适的 API 并发送动态。
 
@@ -91,7 +91,7 @@ from bilibili_api import dynamic
 | name       | type       | description |
 | ---------- | ---------- | ----------- |
 | dynamic_id | int        | 动态 ID     |
-| credential | Credential | 凭据        |
+| credential | Credential \| None | 凭据        |
 
 #### def get_dynamic_id()
 
@@ -144,7 +144,7 @@ from bilibili_api import dynamic
 
 | name | type          | description                                  |
 | ---- | ------------- | -------------------------------------------- |
-| text | str, optional | 转发动态时的文本内容. Defaults to "转发动态" |
+| text | str \| None, optional | 转发动态时的文本内容. Defaults to "转发动态" |
 
 转发动态
 
@@ -156,18 +156,20 @@ from bilibili_api import dynamic
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类. Defaults to None. |
+| credential | Credential \| None | 凭据类. Defaults to None. |
 
 获取更新动态的关注者
 
 **Returns:** dict: 调用 API 返回的结果
+
+---
 
 #### async def get_live_users()
 
 | name | type | description |
 | - | - | - |
 | size | int | 获取的数据数量. Defaults to 10.  |
-| credential | Credential | 凭据类. Defaults to None. |
+| credential | Credential \| None | 凭据类. Defaults to None. |
 
 获取正在直播的关注者
 

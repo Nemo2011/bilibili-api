@@ -13,7 +13,7 @@ from .utils.utils import get_api
 API = get_api("rank")
 
 
-async def get_hot_videos(pn: int = 1, ps: int = 20):
+async def get_hot_videos(pn: int = 1, ps: int = 20) -> dict:
     """
     获取热门视频
 
@@ -29,7 +29,7 @@ async def get_hot_videos(pn: int = 1, ps: int = 20):
     return await request("GET", url=api["url"], params=params)
 
 
-async def get_weakly_hot_videos_list():
+async def get_weakly_hot_videos_list() -> dict:
     """
     获取每周必看列表(仅概述)
 
@@ -40,7 +40,7 @@ async def get_weakly_hot_videos_list():
     return await request("GET", url=api["url"])
 
 
-async def get_weakly_hot_videos(week: int = 1):
+async def get_weakly_hot_videos(week: int = 1) -> dict:
     """
     获取一周的每周必看视频列表
 
@@ -55,7 +55,7 @@ async def get_weakly_hot_videos(week: int = 1):
     return await request("GET", url=api["url"], params=params)
 
 
-async def get_history_popular_videos():
+async def get_history_popular_videos() -> dict:
     """
     获取入站必刷 85 个视频
 
@@ -67,7 +67,7 @@ async def get_history_popular_videos():
     return await request("GET", url=api["url"], params=params)
 
 
-async def get_rank():
+async def get_rank() -> dict:
     """
     获取视频排行榜
 
@@ -79,7 +79,7 @@ async def get_rank():
     return await request("GET", api["url"], params=params)
 
 
-async def get_music_rank_list():
+async def get_music_rank_list() -> dict:
     """
     获取全站音乐榜每周信息(不包括具体的音频列表)
 
@@ -91,7 +91,7 @@ async def get_music_rank_list():
     return await request("GET", api["url"], params=params)
 
 
-async def get_music_rank_weakly_detail(week: int = 1):
+async def get_music_rank_weakly_detail(week: int = 1) -> dict:
     """
     获取全站音乐榜一周的详细信息(不包括具体的音频列表)
 
@@ -106,7 +106,7 @@ async def get_music_rank_weakly_detail(week: int = 1):
     return await request("GET", api["url"], params=params)
 
 
-async def get_music_rank_weakly_musics(week: int = 1):
+async def get_music_rank_weakly_musics(week: int = 1) -> dict:
     """
     获取全站音乐榜一周的音频列表
 

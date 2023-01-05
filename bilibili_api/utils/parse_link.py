@@ -7,7 +7,7 @@ bilibili_api.utils.parse_link
 import json
 import re
 from enum import Enum
-from typing import Any
+from typing import Any, Union
 
 import httpx
 
@@ -70,7 +70,7 @@ class ResourceType(Enum):
     FAILED = "failed"
 
 
-async def parse_link(url: str, credential: Credential = None) -> tuple[Any, ResourceType]:
+async def parse_link(url: str, credential: Union[Credential, None] = None) -> tuple[Any, ResourceType]:
     """
     解析 bilibili url 的函数。
 

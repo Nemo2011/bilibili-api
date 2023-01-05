@@ -16,7 +16,7 @@ from bilibili_api import app
 | height     | int, optional        | 屏幕高度                  |
 | width      | int, optional        | 屏幕宽度                  |
 | birth      | str, optional        | 生日日期(四位数，例 0101) |
-| credential | Credential, optional | 凭据                      |
+| credential | Credential \| None, optional | 凭据                      |
 
 获取开屏启动画面
 
@@ -32,7 +32,7 @@ from bilibili_api import app
 | platform   | str, optional        | android / ios  / ios    |
 | height     | int, optional        | 屏幕高度                |
 | width      | int, optional        | 屏幕宽度                |
-| credential | Credential, optional | 凭据                    |
+| credential | Credential \| None, optional | 凭据                    |
 
 获取特殊开屏启动画面
 

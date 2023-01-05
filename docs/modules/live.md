@@ -77,7 +77,7 @@ from bilibili_api import live
 | name            | type                 | description                   |
 | --------------- | -------------------- | ----------------------------- |
 | room_display_id | int                  | 房间展示 ID（即 URL 中的 ID） |
-| credential      | Credential, optional | 凭据. Defaults to None.       |
+| credential      | Credential \| None, optional | 凭据. Defaults to None.       |
 
 #### async def start()
 
@@ -130,8 +130,8 @@ from bilibili_api import live
 | name      | type          | description         |
 |-----------|---------------|---------------------|
 | roomId    | int, optional | 指定房间，查询是否拥有此房间的粉丝牌  |
-| target_id | int, optional | 指定返回一个主播的粉丝牌，留空就不返回 |
-| page_num  | int, optional | 页码. Defaults to 1   |
+| target_id | int \| None, optional | 指定返回一个主播的粉丝牌，留空就不返回 |
+| page_num  | int \| None, optional | 页码. Defaults to 1   |
 
 获取自己的粉丝勋章信息
 
@@ -358,7 +358,7 @@ Websocket 实时获取直播弹幕
 | --------------- | -------------------- | ---------------------------------------------- |
 | room_display_id | int                  | 房间展示 ID                                    |
 | debug           | bool, optional       | 调试模式，将输出更多信息。. Defaults to False. |
-| credential      | Credential, optional | 凭据. Defaults to None.                        |
+| credential      | Credential \| None, optional | 凭据. Defaults to None.                        |
 | max_retry       | int, optional        | 连接出错后最大重试次数. Defaults to 5          |
 | retry_after     | int, optional        | 连接出错后重试间隔时间（秒）. Defaults to 1    |
 
@@ -422,9 +422,9 @@ Websocket 实时获取直播弹幕
 
 | name           | type          | description                  |
 | -------------- | ------------- | ---------------------------- |
-| room_id        | int, optional | 房间显示 ID. Defaults to None |
-| area_id        | int, optional | 子分区 ID. Defaults to None   |
-| area_parent_id | int, optional | 父分区 ID. Defaults to None   |
+| room_id        | int \| None, optional | 房间显示 ID. Defaults to None |
+| area_id        | int \| None, optional | 子分区 ID. Defaults to None   |
+| area_parent_id | int \| None, optional | 父分区 ID. Defaults to None   |
 
 获取所有礼物的信息，包括礼物 ID、名称、价格、等级等。
 
@@ -440,7 +440,7 @@ Websocket 实时获取直播弹幕
 | ---------- | ------------- | ------------------------ |
 | page       | int, optional | 页数. Defaults to 1      |
 | page_size  | int, optional | 每页数量. Defaults to 10 |
-| credential | Credential    | 凭据                     |
+| credential | Credential    | 凭据.  |
 
 获取自己开通的大航海列表
 

@@ -27,7 +27,7 @@ from bilibili_api import black_room
 | from_ | BlackFrom | 违规来源. Defaults to BlackFrom.ALL. |
 | type_ | int | 违规类型. 查看 black_room.BLACK_TYPE。Defaults to 0 (ALL). |
 | pn | int | 页数. Defaults to 1. |
-| credential | Credential | 凭据, Defaults to None. |
+| credential | Credential \| None | 凭据, Defaults to None. |
 
 ## class BlackRoom()
 
@@ -35,7 +35,7 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 ｜
+| credential | Credential \| None | 凭据类 ｜
 
 ### Functions
 
@@ -44,7 +44,7 @@ from bilibili_api import black_room
 | name | type | description |
 | - | - | - |
 | black_room_id | int | 小黑屋 id |
-| credential | Credential | 凭据类. Defaults to None. |
+| credential | Credential \| None | 凭据类. Defaults to None. |
 
 ## async def get_details()
 

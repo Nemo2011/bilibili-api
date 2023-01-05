@@ -5,6 +5,7 @@ bilibili_api.black_room
 """
 
 from enum import Enum
+from typing import Union
 
 from .utils.utils import get_api
 from .utils.network_httpx import request
@@ -69,16 +70,16 @@ async def get_blocked_list(
     from_: BlackFrom = BlackFrom.ALL,
     type_: int = 0,
     pn: int = 1,
-    credential: Credential = None,
-):
+    credential: Union[Credential, None] = None,
+) -> dict:
     """
     获取小黑屋中的违规列表
 
     Args:
-        from_      (BlackFrom) : 违规来源. Defaults to BlackFrom.ALL.
-        type_      (int)       : 违规类型. 查看 black_room.BLACK_TYPE。Defaults to 0 (ALL).
-        pn         (int)       : 页数. Defaults to 1.
-        credential (Credential): 凭据. Defaults to None.
+        from_      (BlackFrom)        : 违规来源. Defaults to BlackFrom.ALL.
+        type_      (int)              : 违规类型. 查看 black_room.BLACK_TYPE。Defaults to 0 (ALL).
+        pn         (int)              : 页数. Defaults to 1.
+        credential (Credential | None): 凭据. Defaults to None.
     """
     credential = credential if credential else Credential()
     api = API["info"]
@@ -96,16 +97,16 @@ class BlackRoom:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, black_room_id: int, credential: Credential = None):
+    def __init__(self, black_room_id: int, credential: Union[Credential, None] = None):
         """
         Args:
-            black_room_id (int)                 : 小黑屋 id
-            credential    (Credential, optional): 凭据类. Defaults to None. 
+            black_room_id (int)                        : 小黑屋 id
+            credential    (Credential | None, optional): 凭据类. Defaults to None. 
         """
         self.__id = black_room_id
         self.credential = credential if credential else Credential()
 
-    async def get_details(self):
+    async def get_details(self) -> dict:
         """
         获取小黑屋详细信息
 
@@ -118,8 +119,8 @@ class BlackRoom:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_id(self):
+    async def get_id(self) -> int:
         return self.__id
 
-    async def set_id(self, id_):
+    async def set_id(self, id_) -> None:
         self.__init__(id_, self.credential)

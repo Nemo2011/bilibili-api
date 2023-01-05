@@ -21,7 +21,7 @@ API = get_api("session")
 
 async def fetch_session_msgs(
     talker_id: int, credential: Credential, session_type: int = 1, begin_seqno: int = 0
-):
+) -> dict:
     """
     获取指定用户的近三十条消息
 
@@ -48,7 +48,7 @@ async def fetch_session_msgs(
 
 async def new_sessions(
     credential: Credential, begin_ts: int = int(time.time() * 1000000)
-):
+) -> dict:
     """
     获取新消息
 
@@ -67,7 +67,7 @@ async def new_sessions(
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_sessions(credential: Credential, session_type: int = 4):
+async def get_sessions(credential: Credential, session_type: int = 4) -> dict:
     """
     获取已有消息
 
@@ -93,7 +93,7 @@ async def get_sessions(credential: Credential, session_type: int = 4):
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_likes(credential: Credential):
+async def get_likes(credential: Credential) -> dict:
     """
     获取收到的赞
 
@@ -110,7 +110,7 @@ async def get_likes(credential: Credential):
         credential = credential
     )
 
-async def send_msg(credential: Credential, receiver_id: int, text: str):
+async def send_msg(credential: Credential, receiver_id: int, text: str) -> dict:
     """
     给用户发送私聊信息。目前仅支持纯文本。
 
@@ -256,19 +256,19 @@ class Event:
             else:
                 msg_type = "收到应援团"
 
-        return f"{msg_type} {user_id} 信息 {self.content}({self.timestamp})"
+        return f"{msg_type} {user_id} 信息 {self.content}({self.timestamp})" # type: ignore
 
-    def __content(self):
+    def __content(self) -> None:
         """更新消息内容"""
 
-        content: dict = json.loads(self.content)
+        content: dict = json.loads(self.content) # type: ignore
         mt = str(self.msg_type)
 
         if mt == Event.TEXT:
-            self.content = content.get("content")
+            self.content = content.get("content") # type: ignore
 
         elif mt == Event.WELCOME:
-            self.content = content.get("content") + str(content.get("group_id"))
+            self.content = content.get("content") + str(content.get("group_id")) # type: ignore
 
         elif mt == Event.WITHDRAW:
             self.content = str(content)
@@ -323,7 +323,7 @@ class Session(AsyncEvent):
             )
             self.logger.addHandler(handler)
 
-    def get_status(self):
+    def get_status(self) -> int:
         """
         获取连接状态
 
@@ -332,7 +332,7 @@ class Session(AsyncEvent):
         """
         return self.__status
 
-    async def run(self, except_self: bool = True):
+    async def run(self, except_self: bool = True) -> None:
         """
         非阻塞异步爬虫 定时发送请求获取消息
 
@@ -373,7 +373,7 @@ class Session(AsyncEvent):
                             session["talker_id"],
                             self.credential,
                             session["session_type"],
-                            self.maxSeqno.get(session["talker_id"]),
+                            self.maxSeqno.get(session["talker_id"]), # type: ignore
                         )
                     )
                 )
@@ -411,7 +411,7 @@ class Session(AsyncEvent):
         self.sched.start()
         self.logger.info("开始轮询")
 
-    async def start(self, except_self: bool = True):
+    async def start(self, except_self: bool = True) -> None:
         """
         阻塞异步启动 通过调用 self.close() 后可断开连接
 
@@ -426,7 +426,7 @@ class Session(AsyncEvent):
         if self.get_status() == 2:
             self.__status = 3
 
-    async def reply(self, event: Event, text: str):
+    async def reply(self, event: Event, text: str) -> dict: # type: ignore
         """
         快速回复消息
 
@@ -442,7 +442,7 @@ class Session(AsyncEvent):
         else:
             return await send_msg(self.credential, event.sender_uid, text)
 
-    def close(self):
+    def close(self) -> None:
         """结束轮询"""
 
         self.sched.remove_job("query")

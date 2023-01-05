@@ -15,7 +15,7 @@ import json
 import struct
 import aiohttp
 import httpx
-from typing import List
+from typing import Any, List, Union
 
 from .exceptions import ResponseException
 from .exceptions import NetworkException
@@ -71,13 +71,16 @@ class Video:
     """
 
     def __init__(
-        self, bvid: str = None, aid: int = None, credential: Credential = None
+        self, 
+        bvid: Union[None, str] = None, 
+        aid: Union[None, int] = None, 
+        credential: Union[None, Credential] = None
     ):
         """
         Args:
-            bvid       (str, optional)       : BV 号. bvid 和 aid 必须提供其中之一。
-            aid        (int, optional)       : AV 号. bvid 和 aid 必须提供其中之一。
-            credential (Credential, optional): Credential 类. Defaults to None.
+            bvid       (str | None, optional)       : BV 号. bvid 和 aid 必须提供其中之一。
+            aid        (int | None, optional)       : AV 号. bvid 和 aid 必须提供其中之一。
+            credential (Credential | None, optional): Credential 类. Defaults to None.
         """
         # ID 检查
         if bvid is not None:
@@ -92,9 +95,9 @@ class Video:
         self.credential: Credential = Credential() if credential is None else credential
 
         # 用于存储视频信息，避免接口依赖视频信息时重复调用
-        self.__info: dict or None = None
+        self.__info: Union[dict, None] = None
 
-    def set_bvid(self, bvid: str):
+    def set_bvid(self, bvid: str) -> None:
         """
         设置 bvid。
 
@@ -107,7 +110,7 @@ class Video:
         self.__bvid = bvid
         self.__aid = bvid2aid(bvid)
 
-    def get_bvid(self):
+    def get_bvid(self) -> str:
         """
         获取 BVID。
 
@@ -116,7 +119,7 @@ class Video:
         """
         return self.__bvid
 
-    def set_aid(self, aid: int):
+    def set_aid(self, aid: int) -> None:
         """
         设置 aid。
 
@@ -129,7 +132,7 @@ class Video:
         self.__aid = aid
         self.__bvid = aid2bvid(aid)
 
-    def get_aid(self):
+    def get_aid(self) -> int:
         """
         获取 AID。
 
@@ -138,7 +141,7 @@ class Video:
         """
         return self.__aid
 
-    async def get_info(self):
+    async def get_info(self) -> dict:
         """
         获取视频信息。
 
@@ -154,7 +157,7 @@ class Video:
         self.__info = resp
         return resp
 
-    async def __get_info_cached(self):
+    async def __get_info_cached(self) -> dict:
         """
         获取视频信息，如果已获取过则使用之前获取的信息，没有则重新获取。
 
@@ -165,7 +168,7 @@ class Video:
             return await self.get_info()
         return self.__info
 
-    async def get_stat(self):
+    async def get_stat(self) -> dict:
         """
         获取视频统计数据（播放量，点赞数等）。
 
@@ -176,7 +179,7 @@ class Video:
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_tags(self):
+    async def get_tags(self) -> dict:
         """
         获取视频标签。
 
@@ -187,7 +190,7 @@ class Video:
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_chargers(self):
+    async def get_chargers(self) -> dict:
         """
         获取视频充电用户。
 
@@ -200,7 +203,7 @@ class Video:
         params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "mid": mid}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_pages(self):
+    async def get_pages(self) -> dict:
         """
         获取分 P 信息。
 
@@ -211,7 +214,7 @@ class Video:
         params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def __get_page_id_by_index(self, page_index: int):
+    async def __get_page_id_by_index(self, page_index: int) -> int:
         """
         根据分 p 号获取 page_id。
 
@@ -235,22 +238,23 @@ class Video:
         return cid
 
     async def get_video_snapshot(
-        self, cid: int = None, json_index: bool = False, pvideo: bool = True
-    ):
+        self, 
+        cid: Union[int, None] = None, 
+        json_index: bool = False, 
+        pvideo: bool = True
+    ) -> dict:
         """
         获取视频快照(视频各个时间段的截图拼图)
 
         Args:
-            pvideo(bool): 是否只获取预览
-
             cid(int): 分 P CID(可选)
-
             json_index(bool): json 数组截取时间表 True 为需要，False 不需要
+            pvideo(bool): 是否只获取预览
 
         Returns:
             dict: 调用 API 返回的结果,数据中 Url 没有 http 头
         """
-        params = {"aid": self.get_aid()}
+        params: dict[str, Any] = {"aid": self.get_aid()}
         if pvideo:
             url = API["info"]["video_snapshot_pvideo"]["url"]
         else:
@@ -262,7 +266,7 @@ class Video:
             url = API["info"]["video_snapshot"]["url"]
         return await request("GET", url, params=params)
 
-    async def get_cid(self, page_index: int):
+    async def get_cid(self, page_index: int) -> int:
         """
         获取稿件 cid
 
@@ -275,16 +279,19 @@ class Video:
         return await self.__get_page_id_by_index(page_index)
 
     async def get_download_url(
-        self, page_index: int = None, cid: int = None, html5: bool = False
-    ):
+        self, 
+        page_index: Union[int, None] = None, 
+        cid: Union[int, None] = None, 
+        html5: bool = False
+    ) -> dict:
         """
         获取视频下载信息。
 
         page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
         Args:
-            page_index (int, optional) : 分 P 号，从 0 开始。Defaults to None
-            cid        (int, optional) : 分 P 的 ID。Defaults to None
+            page_index (int | None, optional) : 分 P 号，从 0 开始。Defaults to None
+            cid        (int | None, optional) : 分 P 的 ID。Defaults to None
             html5      (bool, optional): 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。
 
         Returns:
@@ -318,7 +325,7 @@ class Video:
             }
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_related(self):
+    async def get_related(self) -> dict:
         """
         获取相关视频信息。
 
@@ -329,7 +336,7 @@ class Video:
         params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def has_liked(self):
+    async def has_liked(self) -> bool:
         """
         视频是否点赞过。
 
@@ -342,7 +349,7 @@ class Video:
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential) == 1
 
-    async def get_pay_coins(self):
+    async def get_pay_coins(self) -> int:
         """
         获取视频已投币数量。
 
@@ -357,7 +364,7 @@ class Video:
             "multiply"
         ]
 
-    async def has_favoured(self):
+    async def has_favoured(self) -> bool:
         """
         是否已收藏。
 
@@ -372,7 +379,7 @@ class Video:
             "favoured"
         ]
 
-    async def get_media_list(self):
+    async def get_media_list(self) -> dict:
         """
         获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
 
@@ -387,7 +394,11 @@ class Video:
         params = {"type": 2, "rid": self.get_aid(), "up_mid": info["owner"]["mid"]}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_danmaku_view(self, page_index: int = None, cid: int = None):
+    async def get_danmaku_view(
+        self, 
+        page_index: Union[int, None] = None, 
+        cid: Union[int, None] = None
+    ) -> dict:
         """
         获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
@@ -541,7 +552,7 @@ class Video:
             while not reader_.has_end():
                 type_ = reader_.varint() >> 3
                 if type_ == 1:
-                    details_dict = {"texts": []}
+                    details_dict: dict[Any, Any] = {"texts": []}
                     img_details = reader_.bytes_string()
                     reader_details = BytesReader(img_details)
                     while not reader_details.has_end():
@@ -600,15 +611,18 @@ class Video:
         return json_data
 
     async def get_danmakus(
-        self, page_index: int = 0, date: datetime.date = None, cid: int = None
+        self, 
+        page_index: int = 0, 
+        date: Union[datetime.date, None] = None, 
+        cid: Union[int, None] = None
     ) -> List[Danmaku]:
         """
         获取弹幕。
 
         Args:
             page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
-            date       (datetime.Date, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
-            cid        (int, optional): 分 P 的 ID。Defaults to None
+            date       (datetime.Date | None, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+            cid        (int | None, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             List[Danmaku]: Danmaku 类的列表。
@@ -624,7 +638,7 @@ class Video:
 
         session = get_session()
         aid = self.get_aid()
-        params = {"oid": cid, "type": 1, "pid": aid}
+        params: dict[str, Any] = {"oid": cid, "type": 1, "pid": aid}
         if date is not None:
             # 获取历史弹幕
             api = API["danmaku"]["get_history_danmaku"]
@@ -706,7 +720,7 @@ class Video:
                     elif data_type == 9:
                         dm.weight = dm_reader.varint()
                     elif data_type == 10:
-                        dm.action = dm_reader.varint()
+                        dm.action = str(dm_reader.varint())
                     elif data_type == 11:
                         dm.pool = dm_reader.varint()
                     elif data_type == 12:
@@ -718,7 +732,21 @@ class Video:
                 danmakus.append(dm)
         return danmakus
 
-    async def get_special_dms(self, page_index: int = None, cid: int = None):
+    async def get_special_dms(
+        self, 
+        page_index: int = 0, 
+        cid: Union[int, None] = None
+    ) -> List[SpecialDanmaku]:
+        """
+        获取特殊弹幕
+
+        Args:
+            page_index (int, optional)       : 分 P 号. Defaults to 0. 
+            cid        (int | None, optional): 分 P id. Defaults to None. 
+        
+        Returns:
+            List[SpecialDanmaku]: 调用接口解析后的结果
+        """
         if cid is None:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
@@ -768,15 +796,18 @@ class Video:
         return dms
 
     async def get_history_danmaku_index(
-        self, page_index: int = None, date: datetime.date = None, cid: int = None
-    ):
+        self, 
+        page_index: Union[int, None] = None, 
+        date: Union[datetime.date, None] = None, 
+        cid: Union[int, None] = None
+    ) -> Union[None, List[str]]:
         """
         获取特定月份存在历史弹幕的日期。
 
         Args:
-            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
-            date       (datetime.date): 精确到年月. Defaults to None。
-            cid        (int, optional): 分 P 的 ID。Defaults to None
+            page_index (int | None, optional): 分 P 号，从 0 开始。Defaults to None
+            date       (datetime.date | None): 精确到年月. Defaults to None。
+            cid        (int | None, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             None | List[str]: 调用 API 返回的结果。不存在时为 None。
@@ -799,15 +830,18 @@ class Video:
         )
 
     async def has_liked_danmakus(
-        self, page_index: int = None, ids: List[int] = None, cid: int = None
-    ):
+        self, 
+        page_index: Union[int, None] = None, 
+        ids: Union[List[int], None] = None, 
+        cid: Union[int, None] = None
+    ) -> dict:
         """
         是否已点赞弹幕。
 
         Args:
-            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
-            ids        (List[int]): 要查询的弹幕 ID 列表。
-            cid        (int, optional): 分 P 的 ID。Defaults to None
+            page_index (int | None, optional): 分 P 号，从 0 开始。Defaults to None
+            ids        (List[int] | None): 要查询的弹幕 ID 列表。
+            cid        (int | None, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             dict: 调用 API 返回的结果。
@@ -824,21 +858,24 @@ class Video:
             cid = await self.__get_page_id_by_index(page_index)
 
         api = API["danmaku"]["has_liked_danmaku"]
-        params = {"oid": cid, "ids": ",".join(ids)}
+        params = {"oid": cid, "ids": ",".join(ids)} # type: ignore
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
     async def send_danmaku(
-        self, page_index: int = None, danmaku: Danmaku = None, cid: int = None
-    ):
+        self, 
+        page_index: Union[int, None] = None, 
+        danmaku: Union[Danmaku, None] = None, 
+        cid: Union[int, None] = None
+    ) -> dict:
         """
         发送弹幕。
 
         Args:
-            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
-            danmaku    (Danmaku): Danmaku 类。
-            cid        (int, optional): 分 P 的 ID。Defaults to None
+            page_index (int | None, optional): 分 P 号，从 0 开始。Defaults to None
+            danmaku    (Danmaku | None)      : Danmaku 类。
+            cid        (int | None, optional): 分 P 的 ID。Defaults to None
 
         Returns:
             dict: 调用 API 返回的结果。
@@ -879,13 +916,17 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def get_danmaku_xml(self, page_index: int = None, cid: int = None):
+    async def get_danmaku_xml(
+        self, 
+        page_index: Union[int, None] = None, 
+        cid: Union[int, None] = None
+    ) -> str:
         """
         获取所有弹幕的 xml 源文件（非装填）
 
         Args:
-            page_index: 分 P 序号
-            cid: cid
+            page_index (int, optional)       : 分 P 序号. Defaults to 0. 
+            cid        (int | None, optional): cid. Defaults to None. 
 
         Return:
             xml 文件源
@@ -897,7 +938,7 @@ class Video:
             cid = await self.__get_page_id_by_index(page_index)
         url = f"https://comment.bilibili.com/{cid}.xml"
         sess = get_session()
-        config = {"url": url}
+        config: dict[Any, Any] = {"url": url}
         # 代理
         if settings.proxy:
             config["proxies"] = {"all://", settings.proxy}
@@ -906,19 +947,19 @@ class Video:
 
     async def like_danmaku(
         self,
-        page_index: int = None,
-        dmid: int = None,
-        status: bool = True,
-        cid: int = None,
-    ):
+        page_index: Union[int, None] = None,
+        dmid: Union[int, None] = None,
+        status: Union[bool, None] = True,
+        cid: Union[int, None] = None,
+    ) -> dict:
         """
         点赞弹幕。
 
         Args:
-            page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
-            dmid       (int)           : 弹幕 ID。
-            status     (bool, optional): 点赞状态。Defaults to True
-            cid        (int, optional): 分 P 的 ID。Defaults to None
+            page_index (int | None, optional) : 分 P 号，从 0 开始。Defaults to None
+            dmid       (int | None)           : 弹幕 ID。
+            status     (bool | None, optional): 点赞状态。Defaults to True
+            cid        (int | None, optional) : 分 P 的 ID。Defaults to None
 
         Returns:
             dict: 调用 API 返回的结果。
@@ -949,19 +990,19 @@ class Video:
 
     async def operate_danmaku(
         self,
-        page_index: int = None,
-        dmids: List[int] = None,
-        cid: int = None,
-        type_: DanmakuOperatorType = None,
-    ):
+        page_index: Union[int, None] = None,
+        dmids: Union[List[int], None] = None,
+        cid: Union[int, None] = None,
+        type_: Union[DanmakuOperatorType, None] = None,
+    ) -> dict:
         """
         操作弹幕
 
         Args:
-            page_index (int, optional)      : 分 P 号，从 0 开始。Defaults to None
-            dmids      (List[int])          : 弹幕 ID 列表。
-            cid        (int, optional)      : 分 P 的 ID。Defaults to None
-            type_      (DanmakuOperatorType): 操作类型
+            page_index (int | None, optional)      : 分 P 号，从 0 开始。Defaults to None
+            dmids      (List[int] | None)          : 弹幕 ID 列表。
+            cid        (int | None, optional)      : 分 P 的 ID。Defaults to None
+            type_      (DanmakuOperatorType | None): 操作类型
 
         Returns:
             dict: 调用 API 返回的结果。
@@ -995,7 +1036,7 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def like(self, status: bool = True):
+    async def like(self, status: bool = True) -> dict:
         """
         点赞视频。
 
@@ -1014,7 +1055,7 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def pay_coin(self, num: int = 1, like: bool = False):
+    async def pay_coin(self, num: int = 1, like: bool = False) -> dict:
         """
         投币。
 
@@ -1042,7 +1083,7 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def add_tag(self, name: str):
+    async def add_tag(self, name: str) -> dict:
         """
         添加标签。
 
@@ -1061,7 +1102,7 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def delete_tag(self, tag_id: int):
+    async def delete_tag(self, tag_id: int) -> dict:
         """
         删除标签。
 
@@ -1081,7 +1122,7 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def subscribe_tag(self, tag_id: int):
+    async def subscribe_tag(self, tag_id: int) -> dict:
         """
         关注标签。
 
@@ -1101,7 +1142,7 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def unsubscribe_tag(self, tag_id: int):
+    async def unsubscribe_tag(self, tag_id: int) -> dict:
         """
         取关标签。
 
@@ -1123,7 +1164,7 @@ class Video:
 
     async def set_favorite(
         self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
-    ):
+    ) -> dict:
         """
         设置视频收藏状况。
 
@@ -1153,12 +1194,14 @@ class Video:
 
     async def get_subtitle(
         self,
-        cid: int = None,
+        cid: Union[int, None] = None,
     ):
         """
         获取字幕信息
+
         Args:
-            cid(int): 分P ID,从视频信息中获取
+            cid (int | None): 分 P ID,从视频信息中获取
+
         Returns:
             调用 API 返回的结果
         """
@@ -1181,8 +1224,8 @@ class Video:
         data: dict,
         submit: bool,
         sign: bool,
-        page_index: int = None,
-        cid: int = None,
+        page_index: Union[int, None] = None,
+        cid: Union[int, None] = None,
     ):
         """
         上传字幕
@@ -1208,13 +1251,12 @@ class Video:
         ```
 
         Args:
-            lan        (str)          : 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm
-
-            data       (dict)         : 字幕数据
-            submit     (bool)         : 是否提交，不提交为草稿
-            sign       (bool)         : 是否署名
-            page_index (int, optional): 分 P 索引. Defaults to None.
-            cid        (int, optional): 分 P id. Defaults to None.
+            lan        (str)                 : 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm
+            data       (dict)                : 字幕数据
+            submit     (bool)                : 是否提交，不提交为草稿
+            sign       (bool)                : 是否署名
+            page_index (int | None, optional): 分 P 索引. Defaults to None.
+            cid        (int | None, optional): 分 P id. Defaults to None.
 
         Returns:
             dict: API 调用返回结果
@@ -1245,7 +1287,7 @@ class Video:
             "POST", api["url"], data=payload, credential=self.credential
         )
 
-    async def get_danmaku_snapshot(self):
+    async def get_danmaku_snapshot(self) -> dict:
         """
         获取弹幕快照
 
@@ -1261,15 +1303,18 @@ class Video:
         )
 
     async def recall_danmaku(
-        self, page_index: int = None, dmid: int = 0, cid: int = None
-    ):
+        self, 
+        page_index: Union[int, None] = None, 
+        dmid: int = 0, 
+        cid: Union[int, None] = None
+    ) -> dict:
         """
         撤回弹幕
 
         Args:
-            page_index(int): 分 P 号
+            page_index(int | None, optional): 分 P 号
             dmid(int)      : 弹幕 id
-            cid(int)       : 分 P 编码
+            cid(int | None, optional)       : 分 P 编码
         Returns:
             调用 API 返回的结果
         """
@@ -1289,13 +1334,17 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def get_pbp(self, page_index: int = None, cid: int = None):
+    async def get_pbp(
+        self, 
+        page_index: Union[int, None] = None, 
+        cid: Union[int, None] = None
+    ) -> dict:
         """
         获取高能进度条
 
         Args:
-            page_index(int): 分 P 号
-            cid(int)       : 分 P 编码
+            page_index(int | None): 分 P 号
+            cid(int | None)       : 分 P 编码
 
         Returns:
             调用 API 返回的结果
@@ -1320,7 +1369,7 @@ class Video:
             ).text
         )
 
-    async def add_to_toview(self):
+    async def add_to_toview(self) -> dict:
         """
         添加视频至稍后再看列表
 
@@ -1335,7 +1384,7 @@ class Video:
         }
         return await request("POST", api["url"], data=datas, credential=self.credential)
 
-    async def delete_from_toview(self):
+    async def delete_from_toview(self) -> dict:
         """
         从稍后再看列表删除视频
 
@@ -1406,19 +1455,19 @@ class VideoOnlineMonitor(AsyncEvent):
 
     def __init__(
         self,
-        bvid: str = None,
-        aid: int = None,
+        bvid: Union[str, None] = None,
+        aid: Union[int, None] = None,
         page_index: int = 0,
-        credential: Credential = None,
+        credential: Union[Credential, None] = None,
         debug: bool = False,
     ):
         """
         Args:
-            bvid       (str, optional)       : BVID. Defaults to None.
-            aid        (int, optional)       : AID. Defaults to None.
-            page_index (int, optional)       : 分 P 序号. Defaults to 0.
-            credential (Credential, optional): Credential 类. Defaults to None.
-            debug      (bool, optional)      : 调试模式，将输出更详细信息. Defaults to False.
+            bvid       (str | None, optional)       : BVID. Defaults to None.
+            aid        (int | None, optional)       : AID. Defaults to None.
+            page_index (int, optional)              : 分 P 序号. Defaults to 0.
+            credential (Credential | None, optional): Credential 类. Defaults to None.
+            debug      (bool, optional)             : 调试模式，将输出更详细信息. Defaults to False.
         """
         super().__init__()
         self.credential = credential
@@ -1509,7 +1558,7 @@ class VideoOnlineMonitor(AsyncEvent):
                 if msg.type == aiohttp.WSMsgType.BINARY:
                     data = self.__unpack(msg.data)
                     self.logger.debug(f"收到消息：{data}")
-                    await self.__handle_data(data)
+                    await self.__handle_data(data) # type: ignore
 
                 elif msg.type == aiohttp.WSMsgType.ERROR:
                     self.logger.warning("连接被异常断开")

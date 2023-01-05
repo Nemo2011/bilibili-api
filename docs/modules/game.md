@@ -21,7 +21,7 @@ from bilibili_api import game
 | name | type | description |
 | - | - | - |
 | game_id | int | 游戏 id |
-| credential | Credential | 凭据类 ｜
+| credential | Credential \| None | 凭据类. Defaults to None.  ｜
 
 #### def get_game_id()
 

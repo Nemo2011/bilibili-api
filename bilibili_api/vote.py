@@ -12,7 +12,7 @@ from .utils.network_httpx import request
 API = get_api("common")
 
 
-async def get_vote_info(vote_id: int):
+async def get_vote_info(vote_id: int) -> dict:
     """
     获取投票详情
 

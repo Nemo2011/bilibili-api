@@ -136,7 +136,7 @@ from bilibili_api import user
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| credential | Credential | 凭据 |
+| credential | Credential \| None | 凭据 |
 
 ### Functions
 
@@ -437,7 +437,7 @@ from bilibili_api import user
 | uid | int | 用户 uid |
 | type_ | ChannelSeriesType | 合集与列表的类型，分旧版和新版 |
 | id_ | int | season_id 或 series_id |
-| credential | Credential | 凭据类 |
+| credential | Credential \| None | 凭据类 |
 
 #### def get_meta()
 
@@ -513,7 +513,7 @@ from bilibili_api import user
 | ------------- | ------------- | ----------------------------------- |
 | page_num      | int, optional | 页码数. Defaults to 1               |
 | per_page_item | int, optional | 每页多少条历史记录, Defaults to 100 |
-| credential    | Credential    | 凭据                                |
+| credential    | Credential \| None    | 凭据                                |
 
 获取用户浏览历史记录
 
@@ -586,7 +586,7 @@ from bilibili_api import user
 | name | type | description |
 | - | - | - |
 | ts | int, optional | 时间戳. Defaults to 0 |
-| credential | Credential, optional | 凭据类. Defaults to None |
+| credential | Credential | None, optional | 凭据类. Defaults to None |
 
 获取自己入站后每一刻的事件(可以不带 credential)
 

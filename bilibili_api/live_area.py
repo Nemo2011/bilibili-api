@@ -7,14 +7,9 @@ bilibili_api.live_area
 import json
 import os
 import copy
+from typing import Union
 
-from .exceptions import ArgsException
-from .utils.utils import get_api
-from .utils.network_httpx import request
-from .utils.Credential import Credential
-
-
-def get_channel_info_by_tid(id: int):
+def get_channel_info_by_tid(id: int) -> tuple[Union[dict, None], Union[dict, None]]:
     """
     根据 id 获取分区信息。
 
@@ -46,7 +41,7 @@ def get_channel_info_by_tid(id: int):
         return None, None
 
 
-def get_channel_info_by_name(name: str):
+def get_channel_info_by_name(name: str) -> tuple[Union[dict, None], Union[dict, None]]:
     """
     根据频道名称获取频道信息。
 
@@ -72,12 +67,12 @@ def get_channel_info_by_name(name: str):
         return None, None
 
 
-def get_channel_list():
+def get_channel_list() -> list[dict]:
     """
     获取所有分区的数据
 
     Returns:
-        dict: 所有分区的数据
+        list[dict]: 所有分区的数据
     """
     with open(
         os.path.join(os.path.dirname(__file__), "data/live_area.json"), encoding="utf8"
@@ -96,7 +91,7 @@ def get_channel_list():
     return channel_list
 
 
-def get_channel_list_sub():
+def get_channel_list_sub() -> dict:
     """
     获取所有分区的数据
     含父子关系（即一层次只有主分区）

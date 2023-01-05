@@ -141,7 +141,7 @@ meta 保留字段：`videos`, `cover`
 | name       | type                 | description             |
 | ---------- | -------------------- | ----------------------- |
 | tid        | int, optional        | 分区 ID. Defaults to 0. |
-| credential | Credential, optional | 凭据. Defaults to None. |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
 
 获取活动信息
 
@@ -179,7 +179,7 @@ meta 保留字段：`videos`, `cover`
 | bvid | str | 稿件 BVID |
 | meta | dict | 视频信息 |
 | cover_path | str | 封面路径. Defaults to None(不更换封面).  |
-| credential | Credential | 凭据类. Defaults to None.  |
+| credential | Credential \| None | 凭据类. Defaults to None.  |
 
 ### Functions
 

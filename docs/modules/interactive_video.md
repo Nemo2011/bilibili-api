@@ -111,7 +111,7 @@ o----|xxx| (TEXT_RIGHT)
 | text | str | 文字 |
 | x | int | X 轴 |
 | y | int | Y 轴 |
-| align | InteractiveButtonAlign | 按钮的文字在按钮中的位置 |
+| align | int \| InteractiveButtonAlign | 按钮的文字在按钮中的位置 |
 
 #### def get_text()
 
@@ -183,7 +183,7 @@ o----|xxx| (TEXT_RIGHT)
 | node_id | int | 节点 id |
 | cid | int | CID |
 | vars | List[InteractiveVariable] | 变量 |
-| button | InteractiveButton | 对应的按钮 |
+| button | InteractiveButton \| None | 对应的按钮 |
 | condition | InteractiveJumpingCondition | 跳转公式 |
 | native_command | InteractiveJumpingCommand | 跳转时变量的操作 |
 | is_default | bool | 是不是默认的跳转的节点 |
@@ -340,7 +340,7 @@ o----|xxx| (TEXT_RIGHT)
 | name       | type                 | description                                          |
 | ---------- | -------------------- | ---------------------------------------------------- |
 | bvid       | str                  | BV 号。                                              |
-| edge_id    | int, optional        | 节点 ID，为 None 时获取根节点信息. Defaults to None. |
+| edge_id    | int \| None, optional        | 节点 ID，为 None 时获取根节点信息. Defaults to None. |
 | credential | Credential, optional | 凭据. Defaults to None.                              |
 
 获取剧情树节点信息。
@@ -354,63 +354,8 @@ o----|xxx| (TEXT_RIGHT)
 **Returns:** InteractiveGraph: 情节树
 
 
-#### async def get_download_url()
-
-| name | type | description |
-| - | - | - |
-| cid | int | 分 P 的 ID |
-| html5 | bool | 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。 |
-
-获取视频下载信息
-
-**Returns:** dict: 调用 API 返回的结果
-
-
-#### async def get_danmaku_view()
-
-| name | type | description |
-| - | - | - |
-| cid | int | 分 P 的 ID |
-
-获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
-
-
-**Returns:** dict: 调用 API 返回的结果
-
-
-#### async def get_danmakus()
-
-| name       | type                    | description                                               |
-| ---------- | ----------------------- | --------------------------------------------------------- |
-| cid | int | 分 P 的 ID |
-| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
-
-获取弹幕
-
-**Returns:** dict: 调用 API 返回的结果
-
-#### async def get_danmaku_xml()
-
-| name | type | description |
-| - | - | - |
-| cid | int | 分 P 的 ID |
-
-获取所有弹幕的 xml 源文件（非装填的弹幕）
-
-**Returns:** dict: 调用 API 返回的结果
-
-#### async def get_history_danmaku_index()
-
-| name       | type                    | description                                               |
-| ---------- | ----------------------- | --------------------------------------------------------- |
-| cid | int | 分 P 的 ID |
-| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
-
-获取特定月份存在历史弹幕的日期。
-
-**Returns**: None | List[str]: 调用 API 返回的结果。不存在时为 None。
-
 ---
+
 
 ## class InteractiveVideoDownloaderEvents
 
@@ -449,7 +394,7 @@ o----|xxx| (TEXT_RIGHT)
 | ------------------ | ---------------- | --------------------------- |
 | video              | InteractiveVideo | 互动视频类                   |
 | out                | str              | 输出文件地址                  |
-| self_download_func | Coroutine        | 自定义下载函数（需 async 函数） |
+| self_download_func | Coroutine \| None        | 自定义下载函数（需 async 函数） |
 
 `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
 

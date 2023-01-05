@@ -11,8 +11,8 @@ from bilibili_api import ass
 | obj   |      Union[Video,Episode,CheeseVideo] |  对象  |
 | page   |     int, optional                    |  分 P 号. Defaults to 0.  |
 | out     |    str, optional                    | 输出文件. Defaults to "test.ass" |
-| cid      |   int, optional                    | cid. Defaults to None.  |
-| credential |  Credential, optional           | 凭据. Defaults to None.  |
+| cid      |   int \| None, optional                    | cid. Defaults to None.  |
+| credential |  Credential \| None, optional           | 凭据. Defaults to None.  |
 | date      |  datetime.date, optional        | 获取时间. Defaults to None.  |
 | font_name  | str, optional                    | 字体. Defaults to "Simsun".  |
 | font_size  | float, optional                  | 字体大小. Defaults to 25.0.  |
@@ -34,7 +34,7 @@ from bilibili_api import ass
 | obj | Union[Video, Episode, CheeseVideo] | 对象 |
 | page | (int)                | 分 P 号 |
 | out | (str)              | 输出文件. Defaults to "test.ass" |
-| cid | (int) | cid. Defaults to None.  |
+| cid | (int \| None) | cid. Defaults to None.  |
 | font_name | (str)        | 字体. Defaults to "Simsun".  |
 | font_size | (float)      | 字体大小. Defaults to 25.0.  |
 | alpha | (float)          | 透明度(0-1). Defaults to 1.  |

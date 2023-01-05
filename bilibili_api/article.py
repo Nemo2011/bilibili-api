@@ -6,7 +6,7 @@ bilibili_api.article
 
 from copy import copy
 import json
-from typing import List, overload
+from typing import List, overload, Union
 from .utils.utils import get_api
 from .utils.Credential import Credential
 import re
@@ -62,19 +62,19 @@ class ArticleList:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, rlid: int, credential: Credential = None):
+    def __init__(self, rlid: int, credential: Union[Credential, None] = None):
         """
         Args:
-            rlid       (int)                 : 文集 id
-            credential (Credential, optional): 凭据类. Defaults to None. 
+            rlid       (int)                        : 文集 id
+            credential (Credential | None, optional): 凭据类. Defaults to None. 
         """
         self.__rlid = rlid
         self.credential = credential
 
-    def get_rlid(self):
+    def get_rlid(self) -> int:
         return self.__rlid
 
-    async def get_content(self):
+    async def get_content(self) -> dict:
         """
         获取专栏文集文章列表
 
@@ -96,11 +96,11 @@ class Article:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, cvid: int, credential: Credential = None):
+    def __init__(self, cvid: int, credential: Union[Credential, None] = None):
         """
         Args:
-            cvid       (int)                 : cv 号
-            credential (Credential, optional): 凭据. Defaults to None.
+            cvid       (int)                        : cv 号
+            credential (Credential | None, optional): 凭据. Defaults to None.
         """
         self.__children: List[Node] = []
         self.credential: Credential = (
@@ -110,10 +110,10 @@ class Article:
         self.__cvid = cvid
         self.__has_parsed: bool = False
 
-    def get_cvid(self):
+    def get_cvid(self) -> int:
         return self.__cvid
 
-    def markdown(self):
+    def markdown(self) -> str:
         """
         转换为 Markdown
 
@@ -139,7 +139,7 @@ class Article:
         content = f"---\n{meta_yaml}\n---\n\n{content}"
         return content
 
-    def json(self):
+    def json(self) -> dict:
         """
         转换为 JSON 数据
 
@@ -157,7 +157,7 @@ class Article:
             "children": list(map(lambda x: x.json(), self.__children)),
         }
 
-    async def fetch_content(self):
+    async def fetch_content(self) -> None:
         """
         获取并解析专栏内容
 
@@ -398,7 +398,7 @@ class Article:
 
         self.__has_parsed = True
 
-    async def get_info(self):
+    async def get_info(self) -> dict:
         """
         获取专栏信息
 
@@ -412,7 +412,7 @@ class Article:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_all(self):
+    async def get_all(self) -> dict:
         """
         一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等
 
@@ -432,7 +432,7 @@ class Article:
 
         return data
 
-    async def set_like(self, status: bool = True):
+    async def set_like(self, status: bool = True) -> dict:
         """
         设置专栏点赞状态
 
@@ -448,7 +448,7 @@ class Article:
         data = {"id": self.__cvid, "type": 1 if status else 2}
         return await request("POST", api["url"], data=data, credential=self.credential)
 
-    async def set_favorite(self, status: bool = True):
+    async def set_favorite(self, status: bool = True) -> dict:
         """
         设置专栏收藏状态
 
@@ -467,7 +467,7 @@ class Article:
         data = {"id": self.__cvid}
         return await request("POST", api["url"], data=data, credential=self.credential)
 
-    async def add_coins(self):
+    async def add_coins(self) -> dict:
         """
         给专栏投币，目前只能投一个
 

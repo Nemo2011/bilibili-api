@@ -21,7 +21,7 @@ from .exceptions.LoginError import LoginError
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.sync import sync
-from .utils.network_httpx import get_session, request, to_form_urlencoded
+from .utils.network_httpx import get_session, to_form_urlencoded
 from .utils.captcha import start_server, close_server, get_result
 from .utils.safecenter_captcha import (
     start_server as safecenter_start_server, 
@@ -52,7 +52,7 @@ is_destroy = False
 id_ = 0  # 事件 id,用于取消 after 绑定
 
 
-def make_qrcode(url):
+def make_qrcode(url) -> str:
     qr = qrcode.QRCode()
     qr.add_data(url)
     img = qr.make_image()
@@ -60,7 +60,7 @@ def make_qrcode(url):
     return os.path.join(tempfile.gettempdir(), "qrcode.png")
 
 
-def login_with_qrcode(root = None):
+def login_with_qrcode(root = None) -> Credential:
     """
     扫描二维码登录
 
@@ -138,16 +138,16 @@ def login_with_qrcode(root = None):
 
     def destroy():
         global id_
-        root.after_cancel(id_)
+        root.after_cancel(id_) # type: ignore
         root.destroy()
 
     root.after(500, update_events)
     root.mainloop()
-    root.after_cancel(id_)
+    root.after_cancel(id_) # type: ignore
     return credential
 
 
-def update_qrcode():
+def update_qrcode() -> str:
     global login_key, qrcode_image
     api = API["qrcode"]["get_qrcode_and_token"]
     qrcode_login_data = json.loads(httpx.get(api["url"]).text)["data"]
@@ -162,7 +162,7 @@ def update_qrcode():
 # ----------------------------------------------------------------
 
 
-def encrypt(_hash, key, password):
+def encrypt(_hash, key, password) -> str:
     rsa_key = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode("utf-8"))
     data = str(
         base64.b64encode(rsa.encrypt(bytes(_hash + password, "utf-8"), rsa_key)),
@@ -171,12 +171,12 @@ def encrypt(_hash, key, password):
     return data
 
 
-def get_geetest():
+def get_geetest() -> object:
     if get_result() != -1:
         return get_result()
     thread = start_server()
     if settings.geetest_auto_open:
-        webbrowser.open(thread.url)
+        webbrowser.open(thread.url) # type: ignore
     try:
         while True:
             result = get_result()
@@ -188,7 +188,7 @@ def get_geetest():
         exit()
 
 
-def login_with_password(username: str, password: str):
+def login_with_password(username: str, password: str) -> Union[Credential, "Check"]:
     """
     密码登录。
 
@@ -262,7 +262,7 @@ def login_with_password(username: str, password: str):
 captcha_id = None
 
 
-def get_countries_list():
+def get_countries_list() -> list[dict]:
     """
     获取国际地区代码列表
 
@@ -283,7 +283,7 @@ def get_countries_list():
     return countries
 
 
-def search_countries(keyword: str):
+def search_countries(keyword: str) -> list[dict]:
     """
     搜索一个地区及其国际地区代码
 
@@ -301,7 +301,7 @@ def search_countries(keyword: str):
     return countries
 
 
-def have_country(keyword: str):
+def have_country(keyword: str) -> bool:
     """
     是否有地区
 
@@ -318,7 +318,7 @@ def have_country(keyword: str):
     return False
 
 
-def have_code(code: Union[str, int]):
+def have_code(code: Union[str, int]) -> bool:
     """
     是否存在地区代码
 
@@ -345,7 +345,7 @@ def have_code(code: Union[str, int]):
     return False
 
 
-def get_code_by_country(country: str):
+def get_code_by_country(country: str) -> int:
     """
     获取地区对应代码
 
@@ -362,7 +362,7 @@ def get_code_by_country(country: str):
     return -1
 
 
-def get_id_by_code(code: int):
+def get_id_by_code(code: int) -> int:
     """
     获取地区码对应的地区 id
 
@@ -390,13 +390,13 @@ class PhoneNumber:
             country(str): 地区/地区码，如 +86
         """
         number = number.replace("-", "")
-        if not have_country(country):
+        if not have_country(country): # type: ignore
             if not have_code(country):
                 raise ValueError("地区代码或地区名错误")
             else:
                 code = country if isinstance(country, int) else int(country.lstrip("+"))
         else:
-            code = get_code_by_country(country)
+            code = get_code_by_country(country) # type: ignore
         self.number = number
         self.code = code
         self.id_ = get_id_by_code(self.code)
@@ -405,7 +405,7 @@ class PhoneNumber:
         return f"+{self.code} {self.number} (bilibili 地区 id {self.id_})"
 
 
-def send_sms(phonenumber: PhoneNumber):
+def send_sms(phonenumber: PhoneNumber) -> None:
     """
     发送验证码
 
@@ -426,10 +426,10 @@ def send_sms(phonenumber: PhoneNumber):
                     "tel": tell,
                     "cid": code,
                     "source": "main_web",
-                    "token": geetest_data["token"],
-                    "challenge": geetest_data["challenge"],
-                    "validate": geetest_data["validate"],
-                    "seccode": geetest_data["seccode"],
+                    "token": geetest_data["token"],         # type: ignore
+                    "challenge": geetest_data["challenge"], # type: ignore
+                    "validate": geetest_data["validate"],   # type: ignore
+                    "seccode": geetest_data["seccode"],     # type: ignore
                 },
             )
         ).text
@@ -440,7 +440,7 @@ def send_sms(phonenumber: PhoneNumber):
         raise LoginError(return_data["message"])
 
 
-def login_with_sms(phonenumber: PhoneNumber, code: str):
+def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
     """
     验证码登录
 
@@ -497,12 +497,12 @@ def login_with_sms(phonenumber: PhoneNumber, code: str):
 # 验证类
 
 
-def get_safecenter_geetest():
+def get_safecenter_geetest() -> object:
     if safecenter_get_result() != -1:
         return safecenter_get_result()
     thread = safecenter_start_server()
     if settings.geetest_auto_open:
-        webbrowser.open(thread.url)
+        webbrowser.open(thread.url) # type: ignore
     try:
         while True:
             result = safecenter_get_result()
@@ -528,7 +528,7 @@ class Check:
         self.geetest_result = None
         self.captcha_key = None
 
-    def fetch_info(self):
+    def fetch_info(self) -> dict:
         """
         获取验证信息
 
@@ -546,7 +546,7 @@ class Check:
             ).text
         )["data"]
 
-    def send_sms(self):
+    def send_sms(self) -> None:
         """
         发送验证码
         """
@@ -556,18 +556,18 @@ class Check:
             data = {
                 "sms_type": "loginTelCheck",
                 "tmp_code": self.tmp_token, 
-                "recaptcha_token": geetest_data["token"],
-                "gee_challenge": geetest_data["challenge"],
-                "gee_gt": geetest_data["gt"], 
-                "gee_validate": geetest_data["validate"],
-                "gee_seccode": geetest_data["seccode"],
+                "recaptcha_token": geetest_data["token"],   # type: ignore
+                "gee_challenge": geetest_data["challenge"], # type: ignore
+                "gee_gt": geetest_data["gt"],               # type: ignore
+                "gee_validate": geetest_data["validate"],   # type: ignore
+                "gee_seccode": geetest_data["seccode"],     # type: ignore
             }
             res = json.loads(httpx.post(api["url"], data = data).text)
             self.captcha_key = res["data"]["captcha_key"]
         except Exception as e:
             raise LoginError(str(e))
 
-    def complete_check(self, code: str):
+    def complete_check(self, code: str) -> Credential:
         """
         完成验证
 

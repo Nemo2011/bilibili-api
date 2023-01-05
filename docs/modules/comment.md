@@ -59,7 +59,7 @@ from bilibili_api import comment
 | oid        | int          | 评论所在资源 ID。      |
 | type\_      | CommentResourceType | 评论所在资源类型枚举。 |
 | rpid       | int          | 评论 ID。              |
-| credential | Credential   | 凭据                   |
+| credential | Credential \| None   | 凭据                   |
 
 #### def get_oid()
 
@@ -134,9 +134,9 @@ from bilibili_api import comment
 | text       | str           | 评论内容                     |
 | oid        | int           | 资源 ID                      |
 | type\_      | CommentResourceType  | 资源类型枚举                 |
-| root       | int, optional | 根评论 ID, Defaults to None. |
-| parent     | int, optional | 父评论 ID, Defaults to None. |
-| credential | Credential    | 凭据                         |
+| root       | int \| None, optional | 根评论 ID, Defaults to None. |
+| parent     | int \| None, optional | 父评论 ID, Defaults to None. |
+| credential | Credential \| None    | 凭据                         |
 
 通用发送评论 API。
 
@@ -160,7 +160,7 @@ from bilibili_api import comment
 | type\_     | CommentResourceType         | 资源类型枚举                              |
 | page_index | int, optional        | 页码. Defaults to 1.                      |
 | order      | OrderType, optional  | 排序方式枚举. Defaults to OrderType.TIME. |
-| credential | Credential, optional | 凭据. Defaults to None.                   |
+| credential | Credential \| None, optional | 凭据. Defaults to None.                   |
 
 获取资源评论列表。
 

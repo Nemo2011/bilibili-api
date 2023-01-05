@@ -23,7 +23,7 @@ from bilibili_api import audio
 | name       | type                 | description            |
 | ---------- | -------------------- | ---------------------- |
 | auid       | int                  | 音频 AU 号             |
-| credential | Credential, optional | 凭据. Defaults to None |
+| credential | Credential \| None, optional | 凭据. Defaults to None |
 
 #### def get_auid()
 
@@ -72,7 +72,7 @@ from bilibili_api import audio
 | name       | type                 | description            |
 | ---------- | -------------------- | ---------------------- |
 | amid       | int                  | 歌单 ID                |
-| credential | Credential, optional | 凭据. Defaults to None |
+| credential | Credential \| None, optional | 凭据. Defaults to None |
 
 #### def get_amid()
 
@@ -109,7 +109,7 @@ from bilibili_api import audio
 | name       | type                 | description            |
 | ---------- | -------------------- | ---------------------- |
 | uid        | int                  | 用户 UID               |
-| credential | Credential, optional | 凭据. Defaults to None |
+| credential | Credential \| None, optional | 凭据. Defaults to None |
 
 获取用户数据（收听数，粉丝数等）
 

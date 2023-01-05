@@ -44,9 +44,9 @@ from bilibili_api import video
 
 | name       | type                 | description                           |
 | ---------- | -------------------- | ------------------------------------- |
-| bvid       | str, optional        | BV 号。bvid 和 aid 必须提供其中之一。 |
-| aid        | int, optional        | AV 号。bvid 和 aid 必须提供其中之一。 |
-| credential | Credential, optional | Credential 类。Defaults to None.      |
+| bvid       | str \| None, optional        | BV 号。bvid 和 aid 必须提供其中之一。 |
+| aid        | int \| None, optional        | AV 号。bvid 和 aid 必须提供其中之一。 |
+| credential | Credential \| None, optional | Credential 类。Defaults to None.      |
 
 #### def set_bvid()
 
@@ -108,7 +108,7 @@ from bilibili_api import video
 
 | name | type | description |
 | - | - | - |
-| cid | int | 分 P 序号 |
+| cid | int \| None | 分 P 序号 |
 | json_index | bool | 是否需要json 数组截取时间表 |
 | pvideo | bool | 是否只获取封面预览 |
 
@@ -136,8 +136,8 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 | name       | type          | description                          |
 | ---------- | ------------- | ------------------------------------ |
-| page_index | int, optional | 分 P 号，从 0 开始。Defaults to None |
-| cid        | int, optional | 分 P 的 ID。Defaults to None         |
+| page_index | int \| None, optional | 分 P 号，从 0 开始。Defaults to None |
+| cid        | int \| None, optional | 分 P 的 ID。Defaults to None         |
 | html5      | bool, optional | 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。 |
 
 获取视频下载信息。
@@ -178,8 +178,8 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 | name       | type          | description                          |
 | ---------- | ------------- | ------------------------------------ |
-| page_index | int, optional | 分 P 号，从 0 开始。Defaults to None |
-| cid        | int, optional | 分 P 的 ID。Defaults to None         |
+| page_index | int \| None, optional | 分 P 号，从 0 开始。Defaults to None |
+| cid        | int \| None, optional | 分 P 的 ID。Defaults to None         |
 
 获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
 
@@ -190,8 +190,8 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 | name       | type                    | description                                               |
 | ---------- | ----------------------- | --------------------------------------------------------- |
 | page_index | int, optional           | 分 P 号，从 0 开始。Defaults to None                      |
-| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
-| cid        | int, optional           | 分 P 的 ID。Defaults to None                              |
+| date       | datetime.Date \| None, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+| cid        | int \| None, optional           | 分 P 的 ID。Defaults to None                              |
 
 获取弹幕。
 
@@ -202,18 +202,30 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 | name | type | description |
 | ---- | ---- | ----------- |
 | page_index | int, optional | 分 P 号，从 0 开始。 |
+| cid | int \| None, optional | 分 P 编号. Defaults to None. |
 
 获取所有弹幕的 XML 源
 
 **Returns** str: XML 源
 
+#### async def get_special_dms()
+
+获取特殊弹幕
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| page_index | int, optional        | 分 P 号. Defaults to 0.  |
+| cid        | int | None, optional | 分 P id. Defaults to None.  |
+
+**Returns:** List[SpecialDanmaku]: 调用接口解析后的结果
+
 #### async def get_history_danmaku_index()
 
 | name       | type                    | description                                               |
 | ---------- | ----------------------- | --------------------------------------------------------- |
-| page_index | int, optional           | 分 P 号，从 0 开始。Defaults to None                      |
-| date       | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
-| cid        | int, optional           | 分 P 的 ID。Defaults to None                              |
+| page_index | int \| None, optional           | 分 P 号，从 0 开始。Defaults to None                      |
+| date       | datetime.Date \| None | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+| cid        | int \| None, optional           | 分 P 的 ID。Defaults to None                              |
 
 获取特定月份存在历史弹幕的日期。
 
@@ -235,9 +247,9 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 | name       | type          | description                          |
 | ---------- | ------------- | ------------------------------------ |
-| page_index | int, optional | 分 P 号，从 0 开始。Defaults to None |
-| danmaku    | Danmaku       | Danmaku 类。                         |
-| cid        | int, optional | 分 P 的 ID。Defaults to None         |
+| page_index | int \| None, optional | 分 P 号，从 0 开始。Defaults to None |
+| danmaku    | Danmaku \| None       | Danmaku 类。                         |
+| cid        | int \| None, optional | 分 P 的 ID。Defaults to None         |
 
 发送弹幕。
 
@@ -247,10 +259,10 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 | name       | type           | description                          |
 | ---------- | -------------- | ------------------------------------ |
-| page_index | int, optional  | 分 P 号，从 0 开始。Defaults to None |
-| dmid       | int            | 弹幕 ID。                            |
-| status     | bool, optional | 点赞状态。Defaults to True.          |
-| cid        | int, optional  | 分 P 的 ID。Defaults to None         |
+| page_index | int \| None, optional  | 分 P 号，从 0 开始。Defaults to None |
+| dmid       | int \| None            | 弹幕 ID。                            |
+| status     | bool \| None, optional | 点赞状态。Defaults to True.          |
+| cid        | int \| None, optional  | 分 P 的 ID。Defaults to None         |
 
 点赞弹幕。
 
@@ -258,10 +270,10 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 | name       | type                | description                          |
 | ---------- | ------------------- | ------------------------------------ |
-| page_index | int, optional       | 分 P 号，从 0 开始。Defaults to None |
-| dmids      | List[int]           | 弹幕 ID 列表。                       |
-| type_      | DanmakuOperatorType | 操作类型                             |
-| cid        | int, optional       | 分 P 的 ID。Defaults to None         |
+| page_index | int \| None, optional       | 分 P 号，从 0 开始。Defaults to None |
+| dmids      | List[int] \| None          | 弹幕 ID 列表。                       |
+| type_      | DanmakuOperatorType \| None | 操作类型                             |
+| cid        | int \| None, optional       | 分 P 的 ID。Defaults to None         |
 
 操作弹幕（如删除、保护等）。
 
@@ -277,9 +289,9 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 | name | type | description |
 | - | - | - |
-| page_index | int | 分 P 号 |
+| page_index | int \| None, optional | 分 P 号 |
 | dmid | int | 弹幕 id |
-| cid | int | 分 P 编码 |
+| cid | int \| None, optional | 分 P 编码 |
 
 撤回弹幕
 
@@ -289,8 +301,8 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 | name | type | description |
 | - | - | - |
-| page_index | int | 分 P 号 |
-| cid | int | 分 P 编码 |
+| page_index | int \| None, optional | 分 P 号 |
+| cid | int \| None, optional | 分 P 编码 |
 
 获取高能进度条
 
@@ -372,9 +384,9 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 | name       | type | description  |
 |------------|------|--------------|
-| cid        | cid  | 分 P id. 必须参数 |
+| cid        | cid \| None  | 分 P id. 必须参数 |
 
-无需登陆, 获取视频播放信息Api中的字幕数据字段。
+无需登陆, 获取视频播放信息 Api 中的字幕数据字段。
 
 **Returns:** API 调用返回结果。
 
@@ -386,8 +398,8 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 | data       | dict | 字幕数据                                                       |
 | submit     | bool | 是否提交，不提交为草稿                                                |
 | sign       | bool | 是否署名                                                       |
-| page_index | int  | 分 P 索引. Defaults to None.                                  |
-| cid        | cid  | 分 P id. Defaults to None.                                  |
+| page_index | int \| None  | 分 P 索引. Defaults to None.                                  |
+| cid        | cid \| None  | 分 P id. Defaults to None.                                  |
 
 上传字幕
 
@@ -486,10 +498,10 @@ asyncio.get_event_loop().run_until_complete(r.connect())
 
 | name       | type                 | description                                    |
 | ---------- | -------------------- | ---------------------------------------------- |
-| bvid       | str, optional        | BVID                                           |
-| aid        | int, optional        | AID                                            |
+| bvid       | str \| None, optional        | BVID                                           |
+| aid        | int \| None, optional        | AID                                            |
 | page_index | int, optional        | 分 P 序号. Defaults to 0.                      |
-| credential | Credential, optional | Credential 类. Defaults to None.               |
+| credential | Credential \| None, optional | Credential 类. Defaults to None.               |
 | debug      | bool, optional       | 调试模式，将输出更详细信息. Defaults to False. |
 
 #### async def connect()

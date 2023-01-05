@@ -4,8 +4,18 @@ bilibili_api.settings
 这里是配置模块的地方
 """
 
-# 代理设置
 proxy: str = ""
+"""
+代理设置
 
-# 自动打开 geetest 验证窗口
-geetest_auto_open = True
+e.x.: 
+``` python
+from bilibili_api import settings
+settings.proxy = "https://www.example.com"
+```
+"""
+
+geetest_auto_open: bool = True
+"""
+自动打开 geetest 验证窗口
+"""

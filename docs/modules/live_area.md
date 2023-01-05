@@ -34,7 +34,7 @@ from bilibili_api import live_area
 
 获取所有分区的数据
 
-**Returns:** dict: 所有分区的数据
+**Returns:** list[dict]: 所有分区的数据
 
 ---
 

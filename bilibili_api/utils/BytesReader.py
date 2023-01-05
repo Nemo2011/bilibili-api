@@ -20,9 +20,9 @@ class BytesReader:
             stream (bytes): 字节流
         """
         self.__stream = stream
-        self.__offset = 0
+        self.__offset: int = 0
 
-    def has_end(self) -> bool:
+    def has_end(self) -> bool: # pylint: disable=used-before-assignment
         """
         是否已读到末尾
 
@@ -31,7 +31,7 @@ class BytesReader:
         """
         return self.__offset >= len(self.__stream)
 
-    def double(self, LE=False) -> float:
+    def double(self, LE=False) -> float: # pylint: disable=used-before-assignment
         """
         读 double。
 

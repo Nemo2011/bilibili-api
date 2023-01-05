@@ -29,7 +29,7 @@ ep_id(int): 单集 ep_id
 | ---- | ---- | ----------- |
 | season_id | int | 课程的 ssid（不与番剧相通）|
 | ep_id | int | 单集的 epid（不与番剧相通） |
-| credential | Credential | 凭据 |
+| credential | Credential \| None | 凭据 |
 
 注意：season_id 和 ep_id 任选一个即可，两个都选的话
 以 season_id 为主
@@ -91,7 +91,7 @@ ep_id(int): 单集 ep_id
 | name | type | description |
 | ---- | ---- | ----------- |
 | ep_id | int | epid（不与番剧相通） |
-| credential | Credential | 凭据 |
+| credential | Credential \| None | 凭据 |
 
 #### def get_cheese()
 
@@ -159,7 +159,7 @@ ep_id(int): 单集 ep_id
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| date | datetime.Date, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+| date | datetime.Date | None, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
 
 获取弹幕。
 

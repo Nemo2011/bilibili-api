@@ -51,7 +51,7 @@ async def request(
     no_csrf: bool = False,
     json_body: bool = False,
     **kwargs,
-) -> Union[None, dict, list]:
+) -> Any:
     """
     向接口发送请求。
 
