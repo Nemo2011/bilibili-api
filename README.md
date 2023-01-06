@@ -59,7 +59,7 @@ async def main() -> None:
     print(info)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.get_event_loop().run_until_complete(main())
 ```
 
 输出（已格式化，已省略部分）：
@@ -101,7 +101,7 @@ async def main() -> None:
     await v.like(True)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.get_event_loop().run_until_complete(main())
 ```
 
 如果没有报错，就代表调用 API 成功，你可以到视频页面确认是不是调用成功了。

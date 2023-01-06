@@ -1,9 +1,7 @@
 + [主页](/)
-<!-- + [目录](/tree-python.md) -->
 + [获取 Credential 类所需信息](/get-credential.md)
 + [`.ivi` 文件和 `ivitools` 相关](/ivifile.md)
 + [获取 vote_id](/vote_id.md)
-+ [短链接支持](/b23tv.md)
 + [同步执行异步代码](/sync-executor.md)
 + [配置](/configuration.md)
 + API 示例
@@ -15,7 +13,7 @@
     + [排行榜](/examples/rank.md)
     + [分区](/examples/channel.md)
     + [登录](/examples/login.md)
-    + [登录函数](/examples/login_func.md)
+    + [登录功能](/examples/login_func.md)
     + [直播](/examples/live.md)
     + [直播分区](/examples/live_area.md)
     + [动态](/examples/dynamic.md)
@@ -43,7 +41,7 @@
   + [rank.py - 排行榜](/modules/rank.md)
   + [channel.py - 分区](/modules/channel.md)
   + [login.py - 登录](/modules/login.md)
-  + [login_func.py - 登录函数](/modules/login_func.md)
+  + [login_func.py - 登录功能](/modules/login_func.md)
   + [live.py - 直播](/modules/live.md)
   + [live_area.py - 直播分区](/modules/live_area.md)
   + [dynamic.py - 动态](/modules/dynamic.md)
