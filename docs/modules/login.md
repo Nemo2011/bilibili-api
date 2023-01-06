@@ -8,7 +8,8 @@ from bilibili_api import login
 
 ---
 **注意：**
-用 `linux` 的小伙伴先装一下 `python3-tk` 吧。
+
+用 `linux` 的小伙伴在使用 `login_with_qrcode` 时先装一下 `python3-tk` 吧。
 
 ``` bash
 $ sudo apt-get install python3-tk
@@ -103,6 +104,8 @@ $ sudo apt-get install python3-tk
 
 ## def send_sms()
 
+**需要经过极验验证**
+
 | name | type | description |
 | - | - | - |
 | phonenumber | PhoneNumber | 手机号类 |
@@ -138,30 +141,26 @@ $ sudo apt-get install python3-tk
 | - | - | - |
 | check_url | str | 验证网址 |
 
-#### def set_phone()
+#### def fetch_info()
 
-设置手机号
+获取验证信息
 
-| name | type | description |
-| - | - | - |
-| phonenumber | PhoneNumber | 手机号类 |
+**Returns:** dict: 调用 API 返回的结果
 
-**Returns:** None
+#### def send_sms()
 
-#### def send_code()
+**需要经过极验验证**
 
 发送验证码
 
-**Returns:** None
+#### def complete_check()
 
-#### def login()
+完成验证
 
 | name | type | description |
 | - | - | - |
 | code | str | 验证码 |
 
-登录
-
-**Returns:** Credential 凭据类
+**Returns:** Credential: 凭据类
 
 ---

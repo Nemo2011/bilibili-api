@@ -247,7 +247,7 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
     )
     if login_data["code"] == 0:
         if login_data["data"]["status"] == 2:
-            return Check(login_data["data"]["url"], username)
+            return Check(login_data["data"]["url"])
         sessdata = login_data["data"]["cookie_info"]["cookies"][0]["value"]
         bili_jct = login_data["data"]["cookie_info"]["cookies"][1]["value"]
         dede = login_data["data"]["cookie_info"]["cookies"][2]["value"]
@@ -524,7 +524,7 @@ class Check:
         tmp_token (str): 验证 token
     """
 
-    def __init__(self, check_url, username):
+    def __init__(self, check_url):
         self.check_url = check_url
         self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
         self.geetest_result = None
@@ -551,6 +551,8 @@ class Check:
     def send_sms(self) -> None:
         """
         发送验证码
+
+        **需要经过极验验证**
         """
         try:
             api = API["safecenter"]["send"]
