@@ -4,7 +4,7 @@ bilibili_api.search
 搜索
 """
 from enum import Enum
-from typing import Callable, Union
+from typing import Callable, Union, List
 import json
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
@@ -247,7 +247,7 @@ async def get_hot_search_keywords() -> dict:
     return json.loads((await sess.request("GET", api["url"])).text)["cost"]
 
 
-async def get_suggest_keywords(keyword: str) -> list[str]:
+async def get_suggest_keywords(keyword: str) -> List[str]:
     """
     通过一些文字输入获取搜索建议。类似搜索词的联想。
 

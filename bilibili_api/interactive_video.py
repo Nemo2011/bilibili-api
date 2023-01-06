@@ -14,7 +14,7 @@ import json
 import os
 import shutil
 import time
-from typing import Callable, List, Union
+from typing import Callable, List, Tuple, Union
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
@@ -151,7 +151,7 @@ class InteractiveButton:
     def get_align(self) -> int:
         return self.__align # type: ignore
 
-    def get_pos(self) -> tuple[int, int]:
+    def get_pos(self) -> Tuple[int, int]:
         return self.__pos
 
     def __str__(self):

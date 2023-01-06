@@ -6,7 +6,7 @@ import re
 import json
 import datetime
 import asyncio
-from typing import Any, List, Union
+from typing import Any, List, Tuple, Union
 import io
 
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
@@ -18,7 +18,7 @@ from .utils import utils
 API = utils.get_api("dynamic")
 
 
-async def _parse_at(text: str) -> tuple[str, str, str]:
+async def _parse_at(text: str) -> Tuple[str, str, str]:
     """
     @人格式：“@UID ”(注意最后有空格）
 

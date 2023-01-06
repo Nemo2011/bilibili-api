@@ -144,7 +144,7 @@ from bilibili_api import search
 
 通过一些文字输入获取搜索建议。类似搜索词的联想。
 
-**Returns:** list[str]: 关键词列表
+**Returns:** List[str]: 关键词列表
 
 ## async def search_games()
 

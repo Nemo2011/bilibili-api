@@ -36,6 +36,8 @@ import time
 import base64
 import rsa
 
+from typing import List, Dict
+
 API = get_api("login")
 
 # ----------------------------------------------------------------
@@ -262,7 +264,7 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
 captcha_id = None
 
 
-def get_countries_list() -> list[dict]:
+def get_countries_list() -> List[Dict]:
     """
     获取国际地区代码列表
 
@@ -283,7 +285,7 @@ def get_countries_list() -> list[dict]:
     return countries
 
 
-def search_countries(keyword: str) -> list[dict]:
+def search_countries(keyword: str) -> List[Dict]:
     """
     搜索一个地区及其国际地区代码
 

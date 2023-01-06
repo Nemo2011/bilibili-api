@@ -7,7 +7,7 @@ bilibili_api.utils.parse_link
 import json
 import re
 from enum import Enum
-from typing import Literal, Union
+from typing import Literal, Tuple, Union
 
 import httpx
 
@@ -77,24 +77,24 @@ async def parse_link(
     url: str, 
     credential: Union[Credential, None] = None
 ) -> Union[
-    tuple[Video, Literal[ResourceType.VIDEO]], 
-    tuple[InteractiveVideo, Literal[ResourceType.INTERACTIVE_VIDEO]], 
-    tuple[Bangumi, Literal[ResourceType.BANGUMI]], 
-    tuple[Episode, Literal[ResourceType.EPISODE]], 
-    tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]], 
-    tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]], 
-    tuple[Audio, Literal[ResourceType.AUDIO]], 
-    tuple[AudioList, Literal[ResourceType.AUDIO_LIST]], 
-    tuple[Article, Literal[ResourceType.ARTICLE]], 
-    tuple[User, Literal[ResourceType.USER]], 
-    tuple[LiveRoom, Literal[ResourceType.LIVE]], 
-    tuple[ChannelSeries, Literal[ResourceType.CHANNEL_SERIES]], 
-    tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]], 
-    tuple[Dynamic, Literal[ResourceType.DYNAMIC]], 
-    tuple[BlackRoom, Literal[ResourceType.BLACK_ROOM]], 
-    tuple[Game, Literal[ResourceType.GAME]], 
-    tuple[Topic, Literal[ResourceType.TOPIC]], 
-    tuple[Literal[-1], Literal[ResourceType.FAILED]]
+    Tuple[Video, Literal[ResourceType.VIDEO]], 
+    Tuple[InteractiveVideo, Literal[ResourceType.INTERACTIVE_VIDEO]], 
+    Tuple[Bangumi, Literal[ResourceType.BANGUMI]], 
+    Tuple[Episode, Literal[ResourceType.EPISODE]], 
+    Tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]], 
+    Tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]], 
+    Tuple[Audio, Literal[ResourceType.AUDIO]], 
+    Tuple[AudioList, Literal[ResourceType.AUDIO_LIST]], 
+    Tuple[Article, Literal[ResourceType.ARTICLE]], 
+    Tuple[User, Literal[ResourceType.USER]], 
+    Tuple[LiveRoom, Literal[ResourceType.LIVE]], 
+    Tuple[ChannelSeries, Literal[ResourceType.CHANNEL_SERIES]], 
+    Tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]], 
+    Tuple[Dynamic, Literal[ResourceType.DYNAMIC]], 
+    Tuple[BlackRoom, Literal[ResourceType.BLACK_ROOM]], 
+    Tuple[Game, Literal[ResourceType.GAME]], 
+    Tuple[Topic, Literal[ResourceType.TOPIC]], 
+    Tuple[Literal[-1], Literal[ResourceType.FAILED]]
 ]:
     """
     解析 bilibili url 的函数。
@@ -104,7 +104,7 @@ async def parse_link(
         credential(Credential): 凭据类
 
     Returns:
-        tuple[obj, ResourceType]: (对象，类型) 或 -1,-1 表示出错
+        Tuple[obj, ResourceType]: (对象，类型) 或 -1,-1 表示出错
     """
     credential = credential if credential else Credential()
     try:

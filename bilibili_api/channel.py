@@ -8,7 +8,7 @@ import json
 import os
 import copy
 import enum
-from typing import Union
+from typing import Tuple, Union, List, Dict
 
 from .exceptions import ArgsException
 from .utils.utils import get_api
@@ -18,7 +18,7 @@ from .utils.Credential import Credential
 API = get_api("channel")
 
 
-def get_channel_info_by_tid(tid: int) -> tuple[Union[dict, None], Union[dict, None]]:
+def get_channel_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
     根据 tid 获取频道信息。
 
@@ -26,7 +26,7 @@ def get_channel_info_by_tid(tid: int) -> tuple[Union[dict, None], Union[dict, No
         tid (int): 频道的 tid。
 
     Returns:
-        `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+        `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(
         os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
@@ -50,7 +50,7 @@ def get_channel_info_by_tid(tid: int) -> tuple[Union[dict, None], Union[dict, No
         return None, None
 
 
-def get_channel_info_by_name(name: str) -> tuple[Union[dict, None], Union[dict, None]]:
+def get_channel_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
     根据频道名称获取频道信息。
 
@@ -58,7 +58,7 @@ def get_channel_info_by_name(name: str) -> tuple[Union[dict, None], Union[dict, 
         name (str): 频道的名称。
 
     Returns:
-        tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
+        Tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(
         os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
@@ -98,7 +98,7 @@ async def get_top10(tid: int, day: int = 7, credential: Union[Credential, None] 
     return await request("GET", url, params=params, credential=credential)
 
 
-def get_channel_list() -> list[dict]:
+def get_channel_list() -> List[Dict]:
     """
     获取所有分区的数据
 

@@ -14,7 +14,7 @@ from bilibili_api import live_area
 
 根据 id 获取频道信息。
 
-**Returns:** `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+**Returns:** `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
 
 ---
 
@@ -26,7 +26,7 @@ from bilibili_api import live_area
 
 根据频道名称获取频道信息。
 
-**Returns:** `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+**Returns:** `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
 
 ---
 
@@ -34,7 +34,7 @@ from bilibili_api import live_area
 
 获取所有分区的数据
 
-**Returns:** list[dict]: 所有分区的数据
+**Returns:** List[dict]: 所有分区的数据
 
 ---
 

@@ -42,7 +42,7 @@ from bilibili_api import login_func
 
 获取二维码及登录密钥（后面有用）
 
-**returns:** tuple[dir, str]: 第一项是二维码图片地址（本地缓存）和登录密钥。登录密钥需要保存。
+**returns:** Tuple[dir, str]: 第一项是二维码图片地址（本地缓存）和登录密钥。登录密钥需要保存。
 
 ### def check_qrcode_events()
 
@@ -52,7 +52,7 @@ from bilibili_api import login_func
 
 检查登录状态。（建议频率 1s，这个 API 也有风控！）
 
-**returns:** list[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
+**returns:** List[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
 
 ---
 

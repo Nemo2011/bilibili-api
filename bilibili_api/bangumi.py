@@ -10,7 +10,7 @@
 
 import datetime
 from enum import Enum
-from typing import Any, Union
+from typing import Any, Tuple, Union, List
 import httpx
 
 import requests
@@ -168,7 +168,7 @@ class Bangumi:
         """
         return self.__up_info
 
-    def get_raw(self) -> tuple[dict, bool]:
+    def get_raw(self) -> Tuple[dict, bool]:
         """
         原始初始化数据
 
@@ -485,7 +485,7 @@ class Episode(Video):
         """
         return await self.video_class.get_danmaku_view(0)
 
-    async def get_danmakus(self, date: Union[datetime.date, None] = None) -> list["Danmaku"]:
+    async def get_danmakus(self, date: Union[datetime.date, None] = None) -> List["Danmaku"]:
         """
         获取弹幕
 
@@ -497,7 +497,7 @@ class Episode(Video):
         """
         return await self.video_class.get_danmakus(0, date)
 
-    async def get_history_danmaku_index(self, date: Union[datetime.date, None] = None) -> dict:
+    async def get_history_danmaku_index(self, date: Union[datetime.date, None] = None) -> Union[None, List[str]]:
         """
         获取特定月份存在历史弹幕的日期。
 

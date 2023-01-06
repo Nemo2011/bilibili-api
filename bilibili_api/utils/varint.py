@@ -4,8 +4,9 @@ bilibili_api.utils.varint
 变长数字字节相关。
 """
 
+from typing import Tuple
 
-def read_varint(stream: bytes) -> tuple[int, int]:
+def read_varint(stream: bytes) -> Tuple[int, int]:
     """
     读取 varint。
 
@@ -13,7 +14,7 @@ def read_varint(stream: bytes) -> tuple[int, int]:
         stream (bytes): 字节流。
 
     Returns:
-        tuple[int, int]，真实值和占用长度。
+        Tuple[int, int]，真实值和占用长度。
     """
     value = 0
     position = 0

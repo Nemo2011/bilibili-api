@@ -14,7 +14,7 @@ from bilibili_api import channel
 
 根据 tid 获取频道信息。
 
-**Returns:** `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+**Returns:** `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
 
 ---
 
@@ -26,7 +26,7 @@ from bilibili_api import channel
 
 根据频道名称获取频道信息。
 
-**Returns:** `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+**Returns:** `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
 
 ---
 

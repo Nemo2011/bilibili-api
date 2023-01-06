@@ -7,9 +7,9 @@ bilibili_api.live_area
 import json
 import os
 import copy
-from typing import Union
+from typing import Tuple, Union, List, Dict
 
-def get_channel_info_by_tid(id: int) -> tuple[Union[dict, None], Union[dict, None]]:
+def get_channel_info_by_tid(id: int) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
     根据 id 获取分区信息。
 
@@ -17,7 +17,7 @@ def get_channel_info_by_tid(id: int) -> tuple[Union[dict, None], Union[dict, Non
         id (int): 分区的 id。
 
     Returns:
-        `tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+        `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(
         os.path.join(os.path.dirname(__file__), "data/live_area.json"), encoding="utf8"
@@ -41,7 +41,7 @@ def get_channel_info_by_tid(id: int) -> tuple[Union[dict, None], Union[dict, Non
         return None, None
 
 
-def get_channel_info_by_name(name: str) -> tuple[Union[dict, None], Union[dict, None]]:
+def get_channel_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
     根据频道名称获取频道信息。
 
@@ -49,7 +49,7 @@ def get_channel_info_by_name(name: str) -> tuple[Union[dict, None], Union[dict, 
         name (str): 分区的名称。
 
     Returns:
-        tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
+        Tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(
         os.path.join(os.path.dirname(__file__), "data/live_area.json"), encoding="utf8"
@@ -67,12 +67,12 @@ def get_channel_info_by_name(name: str) -> tuple[Union[dict, None], Union[dict, 
         return None, None
 
 
-def get_channel_list() -> list[dict]:
+def get_channel_list() -> List[Dict]:
     """
     获取所有分区的数据
 
     Returns:
-        list[dict]: 所有分区的数据
+        List[dict]: 所有分区的数据
     """
     with open(
         os.path.join(os.path.dirname(__file__), "data/live_area.json"), encoding="utf8"

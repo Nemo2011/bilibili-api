@@ -577,7 +577,7 @@ from bilibili_api import user
 
 获取自己的电磁力等级
 
-**Returns:** tuple[bool, str]: 第一项为昵称是否可用，第二项为不可用的原因。
+**Returns:** Tuple[bool, str]: 第一项为昵称是否可用，第二项为不可用的原因。
 
 ---
 

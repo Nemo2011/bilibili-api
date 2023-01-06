@@ -1,5 +1,5 @@
 import threading
-from typing import Union
+from typing import Tuple, Union
 from . import login
 from .utils.Credential import Credential
 from .utils.utils import get_api
@@ -26,19 +26,19 @@ class QrCodeLoginEvents(enum.Enum):
     DONE = "done"
 
 
-def get_qrcode():
+def get_qrcode() -> Tuple[str, str]:
     """
     获取二维码及登录密钥（后面有用）
 
     Returns:
-        tuple[dir, str]: 第一项是二维码图片地址（本地缓存）和登录密钥。登录密钥需要保存。
+        Tuple[dir, str]: 第一项是二维码图片地址（本地缓存）和登录密钥。登录密钥需要保存。
     """
     img = login.update_qrcode()
     login_key = login.login_key
     return (img, login_key)
 
 
-def check_qrcode_events(login_key) -> tuple[QrCodeLoginEvents, Union[str, Credential]]:
+def check_qrcode_events(login_key) -> Tuple[QrCodeLoginEvents, Union[str, Credential]]:
     """
     检查登录状态。（建议频率 1s，这个 API 也有风控！）
 
@@ -46,7 +46,7 @@ def check_qrcode_events(login_key) -> tuple[QrCodeLoginEvents, Union[str, Creden
         login_key (str): 登录密钥（get_qrcode 的返回值第二项)
 
     Returns:
-        tuple[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
+        Tuple[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
     """
     events_api = API["qrcode"]["get_events"]
     data = {"oauthKey": login_key}

@@ -206,9 +206,7 @@ BV 号转 AV 号。
 - 游戏
 - 话题
 
-[查看示例](https://nemo2011.github.io/bilibili-api/#/parse_link)
-
-**Returns:** `tuple[obj, ResourceType]`: 第一项为返回对象，第二项为对象类型。
+**Returns:** `Tuple[obj, ResourceType]`: 第一项为返回对象，第二项为对象类型。
 
 **元组第一项是资源对象，第二项是资源类型**
 

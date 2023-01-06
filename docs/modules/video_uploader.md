@@ -80,7 +80,7 @@ Web 端视频上传。
 
 | name         | type                    | description                                                  |
 | ------------ | ----------------------- | ------------------------------------------------------------ |
-| pages        | list[VideoUploaderPage] | 分 P 列表                                                    |
+| pages        | List[VideoUploaderPage] | 分 P 列表                                                    |
 | meta         | dict                    | 视频信息                                                     |
 | credential   | VideoUploaderCredential | 凭据（注意，是 VideoUploaderCredential）                     |
 | cover_path | str          | 路径                                                      |
