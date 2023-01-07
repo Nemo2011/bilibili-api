@@ -339,6 +339,26 @@
       },
       "verify": true,
       "comment": "获取事件"
+    },
+    "public_notes": {
+      "url": "https://api.bilibili.com/x/note/publish/list/user",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "pn": "int: 页码",
+        "ps": "int: 每页项数"
+      },
+      "comment": "获取用户的公开笔记信息"
+    },
+    "all_notes": {
+      "url": "https://api.bilibili.com/x/note/list",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "pn": "int: 页码",
+        "ps": "int: 每页项数"
+      },
+      "comment": "获取用户的笔记信息"
     }
   },
   "operate": {

@@ -1114,3 +1114,29 @@ async def get_self_events(ts: int = 0, credential: Union[Credential, None] = Non
     api = API["info"]["events"]
     params = {"ts": ts}
     return await request("GET", api["url"], params=params, credential=credential)
+
+async def get_self_notes_info(page_num: int , page_size: int, credential: Credential) -> dict:
+    """
+    获取用户笔记列表
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+
+    api = API["info"]["all_notes"]
+    params = {"pn": page_num, "ps": page_size}
+    return await request("GET", api["url"], params=params, credential=credential)
+
+async def get_self_public_notes_info(page_num: int , page_size: int, credential: Credential) -> dict:
+    """
+    获取用户公开笔记列表
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+
+    api = API["info"]["public_notes"]
+    params = {"pn": page_num, "ps": page_size}
+    return await request("GET", api["url"], params=params, credential=credential)

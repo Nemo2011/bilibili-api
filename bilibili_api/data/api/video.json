@@ -156,6 +156,37 @@
         "bvid": "string: BV 号",
         "aid": "int: av 号"
       }
+    },
+    "is_forbid": {
+      "url": "https://api.bilibili.com/x/note/is_forbid",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "aid": "int: av 号"
+      },
+      "comment": "是否允许笔记"
+    },
+    "private_notes": {
+      "url": "https://api.bilibili.com/x/note/list/archive",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "oid": "int: av 号",
+        "oid_type": "int: oid_type"
+      },
+      "comment": "列出稿件私有笔记列表"
+    },
+    "public_notes": {
+      "url": "https://api.bilibili.com/x/note/publish/list/archive",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "oid": "int: av 号",
+        "oid_type": "int: oid_type",
+        "pn": "int: 页码",
+        "ps": "int: 每页项数"
+      },
+      "comment": "列出稿件公开笔记列表"
     }
   },
   "operate": {

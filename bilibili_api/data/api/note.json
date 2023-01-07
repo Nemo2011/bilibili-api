@@ -1,0 +1,27 @@
+{
+    "private":{
+        "detail":{
+            "url": "https://api.bilibili.com/x/note/info",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "oid": "oid",
+                "oid_type": "oid_type",
+                "note_id": "note_id"
+            },
+            "comment": "私有笔记详细信息"
+
+        }
+    },
+    "public":{
+        "detail":{
+            "url": "http://api.bilibili.com/x/note/publish/info",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "cvid": "cvid"
+            },
+            "comment": "公开笔记详细信息"
+        }
+    }
+}
