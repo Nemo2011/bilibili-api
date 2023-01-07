@@ -755,14 +755,14 @@ class InteractiveVideoDownloader(AsyncEvent):
         for key, item in edges_info.items():
             self.dispatch("PREPARE_DOWNLOAD", {"node_id": int(key), "cid": item["cid"]})
             cid = item["cid"]
-            url = await self.__video.get_download_url(cid)
+            url = await self.__video.get_download_url(cid = cid)
             await self.__download_func(url["dash"]["video"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".video.mp4")
             if url["dash"]["audio"] != None:
                 await self.__download_func(url["dash"]["audio"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".audio.mp4")
 
         self.dispatch("PREPARE_DOWNLOAD", {"node_id": 1, "cid": await self.__video.get_cid()})
         cid = await self.__video.get_cid()
-        url = await self.__video.get_download_url(cid)
+        url = await self.__video.get_download_url(cid = cid)
         await self.__download_func(url["dash"]["video"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".video.mp4")
         await self.__download_func(url["dash"]["audio"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".audio.mp4")
 
