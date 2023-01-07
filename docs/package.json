@@ -1,7 +1,7 @@
 {
     "name": "bilibili-api-docs",
     "version": "1.0.0",
-    "description": "文档，不是 ts 版源码！！！",
+    "description": "bilibili-api 文档",
     "private": "true",
     "scripts": {
         "start": "docsify serve ./docs",
