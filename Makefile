@@ -20,7 +20,7 @@ docs:
 	cd docs;$(NPM) run localhost
 
 install:
-	$(PPI) install -r requirements.txt
+	$(PIP) install -r requirements.txt
 	$(PYTHON) setup.py install
 
 lint:
