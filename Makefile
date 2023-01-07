@@ -5,6 +5,9 @@ RM=rm -f -v
 PIP=pip3
 NPM=npm
 
+bdist:
+	$(PYTHON) setup.py bdist_wheel
+
 build:
 	$(PIP) install wheel
 	$(PYTHON) setup.py sdist bdist_wheel
@@ -25,6 +28,9 @@ lint:
 
 onlinedocs:
 	$(PYTHON) -m bilibili_api.tools.opendocs
+
+sdist:
+	$(PYTHON) setup.py sdist
 
 test:
 	$(PYTHON) -m tests -a
