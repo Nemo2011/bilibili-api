@@ -104,22 +104,6 @@ from bilibili_api import note
 
 ---
 
-#### async def get_content()
-
-获取笔记内容。
-
-**Returns:** API 调用返回结果。
-
----
-
-#### async def get_summary()
-
-获取笔记摘要。
-
-**Returns:** API 调用返回结果。
-
----
-
 #### async def get_images_raw_info()
 
 获取笔记所有图片原始信息。
@@ -136,24 +120,68 @@ from bilibili_api import note
 
 ---
 
-#### async def get_title()
+#### async def get_all()
 
-获取笔记标题。
+一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等。
 
-**Returns:** str: 标题
-
----
-
-#### async def get_author()
-
-获取笔记作者信息。
-
-**Returns:** dict: 作者信息
+**Returns:** API 调用返回结果。
 
 ---
 
-#### async def get_video()
+#### async def fetch_content()
 
-获取笔记视频信息。
+加载专栏内容。该方法不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json() `来获取你需要的值。
 
-**Returns:** dict: 视频信息
+**Returns:** None
+
+---
+
+#### def markdown()
+
+转换为 Markdown
+
+请先调用 fetch_content()
+
+**Returns:** str: Markdown 内容
+
+---
+
+#### def json()
+
+转换为 JSON 数据
+
+请先调用 fetch_content()
+
+**Returns:** dict: JSON 数据
+
+---
+
+#### async def set_like()
+
+| name   | type           | description                |
+| ------ | -------------- | -------------------------- |
+| status | bool, optional | 点赞状态. Defaults to True |
+
+设置专栏点赞状态
+
+**Returns:** API 调用返回结果。
+
+---
+
+#### async def set_favorite()
+
+| name   | type           | description                |
+| ------ | -------------- | -------------------------- |
+| status | bool, optional | 收藏状态. Defaults to True |
+
+设置专栏收藏状态
+
+**Returns:** API 调用返回结果。
+
+---
+
+#### async def add_coins()
+
+给专栏投币，目前只能投一个
+
+**Returns:** API 调用返回结果。

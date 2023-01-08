@@ -147,12 +147,12 @@ class Article:
         return self.__cvid
 
     def get_type(self) -> ArticleType:
-        '''
+        """
         获取专栏类型(专栏/笔记)
 
         Returns:
             ArticleType: 专栏类型
-        '''
+        """
         return self.__type
 
     def is_note(self) -> bool:

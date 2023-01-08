@@ -12,9 +12,13 @@ from bilibili_api import article
 
 专栏颜色表
 
-## const dict ArticleType
+## class ArticleType
 
-专栏类别
+**Extends:** enum.Enum
+
+- ARTICLE        : 普通专栏
+- NOTE           : 笔记专栏
+- SPECIAL_ARTICLE: 特殊专栏，采用笔记格式
 
 ## class ArticleList
 
@@ -72,6 +76,18 @@ from bilibili_api import article
 
 **Returns:** rlid
 
+#### def is_note()
+
+专栏是否公开笔记
+
+**Returns:** bool: 是否公开笔记
+
+#### def turn_to_note()
+
+将专栏转换为笔记类（公开笔记）。需要保证专栏是公开笔记。
+
+**Returns:** Note: 笔记类
+
 #### def markdown()
 
 转换为 Markdown
@@ -98,13 +114,7 @@ from bilibili_api import article
 
 #### async def fetch_content()
 
-| name   | type       | description |
-| ------ | ---------- | ----------- |
-| type   | ArticleType  | 专栏类型      |
-
-根据 type 获取并解析专栏内容
-
-如果为笔记，直接返回笔记内容，否则该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json() `来获取你需要的值。
+加载专栏内容。该方法不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json() `来获取你需要的值。
 
 **Returns:** None
 
@@ -120,11 +130,11 @@ from bilibili_api import article
 
 **Returns:** API 调用返回结果。
 
-#### async def get_type()
+#### def get_type()
 
-获取专栏类型	。
+获取专栏类型。
 
-**Returns:** str 专栏类型。
+**Returns:** ArticleType: 专栏类型
 
 #### async def set_like()
 
@@ -151,4 +161,3 @@ from bilibili_api import article
 给专栏投币，目前只能投一个
 
 **Returns:** API 调用返回结果。
-
