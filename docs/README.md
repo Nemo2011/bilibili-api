@@ -179,5 +179,5 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 [api.json]: https://github.com/nemo2011/bilibili-api/tree/main/bilibili_api/data/api/
 [license]: https://github.com/nemo2011/bilibili-api/tree/main/LICENSE
 [stargazers]: https://github.com/nemo2011/bilibili-api/stargazers
-[issues-new]: https://github.com/nemo2011/bilibili-api/issues/new
+[issues-new]: https://github.com/Nemo2011/bilibili-api/issues/new/choose
 [get-credential]: https://nemo2011.github.io/bilibili-api/#/get-credential
