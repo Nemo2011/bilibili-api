@@ -11,7 +11,7 @@ from .utils.utils import get_api, join
 from .utils.Credential import Credential
 from .utils.network_httpx import request, get_session
 from .exceptions import ArgsException
-
+from bilibili_api import Picture
 from typing import List, Union
 
 API = get_api("note")
@@ -201,19 +201,35 @@ class Note:
 
         return (await self.__get_info_cached())["summary"]
 
-    async def get_images(self) -> list:
+    async def get_images_raw_info(self) -> list:
         '''
-        获取图片
+        获取笔记所有图片原始信息
 
         Returns:
             list: 图片信息
         '''
+
         result = []
         content = await self.get_content()
         for line in content:
             if type(line["insert"]) == dict:
                 if 'imageUpload' in line["insert"]:
-                    result.append(line["insert"]["imageUpload"])
+                    img_info = line["insert"]["imageUpload"]
+                    result.append(img_info)
+        return result
+
+    async def get_images(self) -> list:
+        '''
+        获取笔记所有图片并转为 Picture 类
+
+        Returns:
+            list: 图片信息
+        '''
+
+        result = []
+        images_raw_info = self.get_images_raw_info()
+        for image in images_raw_info:
+            result.append(await Picture().from_url(url=f'https:{image["url"]}'))
         return result
 
     async def get_title(self) -> str:
