@@ -50,6 +50,9 @@ class Note:
         # 私有笔记需要 credential
         self.credential: Credential = Credential() if credential is None else credential
 
+        # 用于存储视频信息，避免接口依赖视频信息时重复调用
+        self.__info: Union[dict, None] = None
+
     def set_oid(self, oid: int) -> None:
         '''
         为私有笔记设置稿件 ID
@@ -123,6 +126,17 @@ class Note:
         else:
             return await self.get_public_note_info()
 
+    async def __get_info_cached(self) -> dict:
+        """
+        获取视频信息，如果已获取过则使用之前获取的信息，没有则重新获取。
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        if self.__info is None:
+            return await self.get_info()
+        return self.__info
+
     async def get_private_note_info(self) -> dict:
         """
         获取私有笔记信息。
@@ -155,14 +169,68 @@ class Note:
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
-        
-    async def __get_info_cached(self) -> dict:
-        """
-        获取视频信息，如果已获取过则使用之前获取的信息，没有则重新获取。
+
+    async def get_content(self) -> list:
+        '''
+        获取原始内容
 
         Returns:
-            dict: 调用 API 返回的结果。
-        """
-        if self.__info is None:
-            return await self.get_info()
-        return self.__info
+            List[dict]: 原始内容
+        '''
+
+        return json.loads((await self.__get_info_cached())["content"].replace('\n', '\\n'))
+
+    async def get_summary(self) -> str:
+        '''
+        获取摘要
+
+        Returns:
+            str: 摘要
+        '''
+
+        return (await self.__get_info_cached())["summary"]
+
+    async def get_images(self) -> list:
+        '''
+        获取图片
+
+        Returns:
+            list: 图片信息
+        '''
+        result = []
+        content = await self.get_content()
+        for line in content:
+            if type(line["insert"]) == dict:
+                if 'imageUpload' in line["insert"]:
+                    result.append(line["insert"]["imageUpload"])
+        return result
+
+    async def get_title(self) -> str:
+        '''
+        获取标题
+
+        Returns:
+            str: 标题
+        '''
+
+        return (await self.__get_info_cached())["title"]
+
+    async def get_author(self) -> dict:
+        '''
+        获取作者信息
+
+        Returns:
+            dict: 作者信息
+        '''
+
+        return (await self.__get_info_cached())["author"]
+    
+    async def get_video(self) -> dict:
+        '''
+        获取视频信息
+
+        Returns:
+            dict: 视频信息
+        '''
+
+        return (await self.__get_info_cached())["arc"]
