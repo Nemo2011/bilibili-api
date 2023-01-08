@@ -43,20 +43,24 @@ class Picture:
         self.width = img.width
         self.imageType = imgtype
 
-    def from_url(self, url: str) -> "Picture":
+    @staticmethod
+    def from_url(url: str) -> "Picture":
+        obj = Picture()
         session = httpx.Client()
         resp = session.get(url)
-        self.content = resp.read()
-        self.url = url
-        self.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1])
-        return self
+        obj.content = resp.read()
+        obj.url = url
+        obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1])
+        return obj
 
-    def from_file(self, path: str) -> "Picture":
+    @staticmethod
+    def from_file(path: str) -> "Picture":
+        obj = Picture()
         with open(path, "rb") as file:
-            self.content = file.read()
-        self.url = "file://" + path
-        self.__set_picture_meta_from_bytes(os.path.basename(path).split(".")[1])
-        return self
+            obj.content = file.read()
+        obj.url = "file://" + path
+        obj.__set_picture_meta_from_bytes(os.path.basename(path).split(".")[1])
+        return obj
     
     async def upload_file(self, path: str, credential: Credential) -> "Picture":
         from ..dynamic import upload_image
