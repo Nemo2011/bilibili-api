@@ -222,7 +222,7 @@ class Article:
 
         document = BeautifulSoup(f"<div>{resp['readInfo']['content']}</div>", "lxml")
 
-        def parse(el: BeautifulSoup):
+        async def parse(el: BeautifulSoup):
             node_list = []
 
             for e in el.contents: # type: ignore
@@ -248,21 +248,21 @@ class Article:
                         else:
                             node.align = "left"
 
-                    node.children = parse(e)
+                    node.children = await parse(e)
 
                 elif e.name == "h1":
                     # 标题
                     node = HeadingNode()
                     node_list.append(node)
 
-                    node.children = parse(e)
+                    node.children = await parse(e)
 
                 elif e.name == "strong":
                     # 粗体
                     node = BoldNode()
                     node_list.append(node)
 
-                    node.children = parse(e)
+                    node.children = await parse(e)
 
                 elif e.name == "span":
                     # 各种样式
@@ -274,7 +274,7 @@ class Article:
                             node = DelNode()
                             node_list.append(node)
 
-                            node.children = parse(e)
+                            node.children = await parse(e)
 
                     elif "class" in e.attrs:
                         className = e.attrs["class"][0]
@@ -285,7 +285,7 @@ class Article:
                             node_list.append(node)
 
                             node.size = int(re.search("font-size-(\d\d)", className)[1]) # type: ignore
-                            node.children = parse(e)
+                            node.children = await parse(e)
 
                         elif "color" in className:
                             # 字体颜色
@@ -295,7 +295,7 @@ class Article:
                             color_text = re.search("color-(.*);?", className)[1] # type: ignore
                             node.color = ARTICLE_COLOR_MAP[color_text]
 
-                            node.children = parse(e)
+                            node.children = await parse(e)
                         else:
                             if e.text != "":
                                 # print(e.text.replace("\n", ""))
@@ -310,7 +310,7 @@ class Article:
                     # print(e.text)
                     node = BlockquoteNode()
                     node_list.append(node)
-                    node.children = parse(e)
+                    node.children = await parse(e)
 
                 elif e.name == "figure":
                     if "class" in e.attrs:
@@ -408,29 +408,52 @@ class Article:
                     node = OlNode()
                     node_list.append(node)
 
-                    node.children = parse(e)
+                    node.children = await parse(e)
 
                 elif e.name == "li":
                     # 列表元素
                     node = LiNode()
                     node_list.append(node)
 
-                    node.children = parse(e)
+                    node.children = await parse(e)
 
                 elif e.name == "ul":
                     # 无序列表
                     node = UlNode()
                     node_list.append(node)
 
-                    node.children = parse(e)
+                    node.children = await parse(e)
 
                 elif e.name == "a":
                     # 超链接
-                    node = AnchorNode()
-                    node_list.append(node)
+                    if len(e.contents) == 0:
+                        from .utils.parse_link import parse_link, ResourceType
+                        parse_link_res = await parse_link(e.attrs["href"])
+                        if parse_link_res[1] == ResourceType.VIDEO:
+                            node = VideoCardNode()
+                            node.aid = parse_link_res[0].get_aid()
+                            node_list.append(node)
+                        elif parse_link_res[1] == ResourceType.AUDIO:
+                            node = MusicCardNode()
+                            node.auid = parse_link_res[0].get_auid()
+                            node_list.append(node)
+                        elif parse_link_res[1] == ResourceType.LIVE:
+                            node = LiveCardNode()
+                            node.room_id = parse_link_res[0].room_display_id
+                            node_list.append(node)
+                        elif parse_link_res[1] == ResourceType.ARTICLE:
+                            node = ArticleCardNode()
+                            node.cvid = parse_link_res[0].get_cvid()
+                            node_list.append(node)
+                        else:
+                            # FIXME: 暂不支持其他链接
+                            pass
+                    else:
+                        node = AnchorNode()
+                        node_list.append(node)
 
-                    node.url = e.attrs["href"]
-                    node.text = e.contents[0] # type: ignore
+                        node.url = e.attrs["href"]
+                        node.text = e.contents[0] # type: ignore
 
                 elif e.name == "img":
                     className = e.attrs["class"]
@@ -499,7 +522,7 @@ class Article:
 
         # 解析正文
         if self.__type != ArticleType.SPECIAL_ARTICLE:
-            self.__children = parse(document.find("div")) # type: ignore
+            self.__children = await parse(document.find("div")) # type: ignore
         else:
             s = resp["readInfo"]["content"]
             s = unescape(s)
@@ -681,7 +704,7 @@ class BoldNode(Node):
         t = "".join([node.markdown() for node in self.children])
         if len(t) == 0:
             return ""
-        return f" **{t.lstrip().rstrip()}**"
+        return f" **{t.lstrip().rstrip()}** "
 
     def json(self):
         return {
