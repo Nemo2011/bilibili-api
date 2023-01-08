@@ -175,22 +175,23 @@ class Article:
 
         return Note(cvid=self.__cvid, credential=self.credential)
 
-    async def fetch_content(self, type: ArticleType = None):
+    async def fetch_content(self, type: ArticleType = ArticleType.ARTICLE):
         '''
         根据 type 获取并解析内容
 
         Args:
             type (str, optional): article 为专栏，note 为笔记. Defaults to None.
         '''
-
         if type is None:
             type = await self.get_type()
-        elif type not in ["article", "note"]:
-            raise ApiException("type 参数错误")
-        elif type == ArticleType.NOTE:
+
+        if type == ArticleType.NOTE:
             return await self.fetch_note_content()
-        else:
+        elif type == ArticleType.ARTICLE:
             await self.fetch_article_content()
+        else:
+            raise ApiException("type 参数错误")
+
 
     async def fetch_article_content(self) -> None:
         """
@@ -460,8 +461,13 @@ class Article:
         self.__info = resp
 
         # 设置专栏类别
-        self.__type = resp["type"]
-
+        if resp["type"] == 0:
+            self.__type = ArticleType.ARTICLE
+        elif resp["type"] == 2:
+            self.__type = ArticleType.NOTE
+        else:
+            raise ApiException(f'未知的 type {resp["type"]}')
+            
         return await resp
     
     async def __get_info_cached(self) -> dict:
@@ -496,7 +502,7 @@ class Article:
 
         return data
     
-    async def get_type(self) -> str:
+    async def get_type(self):
         '''
         获取专栏类型
 
@@ -508,9 +514,7 @@ class Article:
         if self.__type is None:
             await self.get_info()
         
-        if self.__type == ArticleType.NOTE:
-            return "note"
-        return "article"
+        return self.__type
 
     async def set_like(self, status: bool = True) -> dict:
         """
