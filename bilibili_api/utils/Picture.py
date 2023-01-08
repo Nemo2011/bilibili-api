@@ -4,6 +4,7 @@ from typing import Any
 import tempfile
 import os
 import httpx
+from .Credential import Credential
 
 
 @dataclass
@@ -55,6 +56,15 @@ class Picture:
             self.content = file.read()
         self.url = "file://" + path
         self.__set_picture_meta_from_bytes(os.path.basename(path).split(".")[1])
+        return self
+    
+    async def upload_file(self, path: str, credential: Credential) -> "Picture":
+        from ..dynamic import upload_image
+        self.from_file(path)
+        res = await upload_image(self, credential)
+        self.height = res["image_height"]
+        self.width = res["image_width"]
+        self.url = res["image_url"]
         return self
 
     def convert_format(self, new_format: str) -> None:

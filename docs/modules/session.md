@@ -43,13 +43,14 @@ from bilibili_api import session
 
 #### async def send_msg()
 
-| name        | type       | description |
-| ----------- | ---------- | ----------- |
-| credential  | Credential | 凭证        |
-| receiver_id | int        | 接收者 UID  |
-| text        | str        | 信息内容。  |
+| name        | type          | description |
+| ----------- | ------------- | ----------- |
+| credential  | Credential    | 凭证        |
+| receiver_id | int           | 接收者 UID  |
+| msg_type    | str           | 信息类型    |
+| content     | str 或 Picture | 信息内容。  |
 
-给用户发送私聊信息。目前仅支持纯文本。
+给用户发送私聊信息。目前支持纯文本、图片、撤回。
 
 **Returns:** dict: 调用 API 返回结果
 
@@ -188,10 +189,10 @@ from bilibili_api import session
 
 #### async def reply()
 
-| name  | type  | description |
-| ----- | ----- | ----------- |
-| event | Event | 要回复的消息 |
-| text  | str   | 回复文字     |
+| name    | type  | description |
+| ------- | ----- | ----------- |
+| event   | Event | 要回复的消息 |
+| content | str 或 Picture | 回复文字或图片 |
 
 快速回复
 

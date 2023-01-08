@@ -3,19 +3,24 @@
 ```python
 from bilibili_api import Credential, sync
 from bilibili_api.session import Session, Event
+from bilibili_api.utils.Picture import Picture
 
 session = Session(Credential(...))
 
 @session.on(Event.PICTURE)
 async def pic(event: Event):
-    await event.content.download()
+    img: Picture = event.content
+    img.download("./")
 
 @session.on(Event.TEXT)
 async def reply(event: Event):
-    if event.content == '/close':
+    if event.content == "/close":
         session.close()
+    elif event.content == "来张涩图":
+        img = await Picture().upload_file("test.png", session.credential)
+        await session.reply(event, img)
     else:
-        await session.reply(event, '你好李鑫')
+        await session.reply(event, "你好李鑫")
 
 sync(session.start())
 ```
