@@ -3,16 +3,15 @@ import datetime
 import json
 import logging
 import time
-from dataclasses import dataclass
 from typing import Union
 
-import httpx
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from .user import get_self_info
 from .utils.AsyncEvent import AsyncEvent
 from .utils.Credential import Credential
 from .utils.network_httpx import request
+from .utils.Picture import Picture
 from .utils.utils import get_api
 from .video import Video
 
@@ -110,7 +109,7 @@ async def get_likes(credential: Credential) -> dict:
         credential = credential
     )
 
-async def send_msg(credential: Credential, receiver_id: int, text: str) -> dict:
+async def send_msg(credential: Credential, receiver_id: int, msg_type: str, content: Union[str, Picture]) -> dict:
     """
     给用户发送私聊信息。目前仅支持纯文本。
 
@@ -129,13 +128,20 @@ async def send_msg(credential: Credential, receiver_id: int, text: str) -> dict:
     self_info = await get_self_info(credential)
     sender_uid = self_info["mid"]
 
+    if msg_type == Event.TEXT:
+        real_content = json.dumps({"content": content})
+    elif msg_type == Event.WITHDRAW:
+        real_content = str(content)
+    elif msg_type == Event.PICTURE or msg_type == Event.GROUPS_PICTURE:
+        real_content = json.dumps({"url": content.url, "height": content.height, "width": content.width, "imageType": content.imageType, "original":1, "size": content.size})
+
     data = {
         "msg[sender_uid]": sender_uid,
         "msg[receiver_id]": receiver_id,
         "msg[receiver_type]": 1,
-        "msg[msg_type]": 1,
+        "msg[msg_type]": int(msg_type),
         "msg[msg_status]": 0,
-        "msg[content]": json.dumps({"content": text}),
+        "msg[content]": real_content,
         "msg[dev_id]": "B9A37BF3-AA9D-4076-A4D3-366AC8C4C5DB",
         "msg[new_face_version]": "0",
         "msg[timestamp]": int(time.time()),
@@ -144,41 +150,6 @@ async def send_msg(credential: Credential, receiver_id: int, text: str) -> dict:
         "mobi_app": "web",
     }
     return await request("POST", url=api["url"], data=data, credential=credential)
-
-
-@dataclass
-class Picture:
-    """
-    图片类，包含图片链接、尺寸以及下载操作。
-
-    Args:
-    | name      | type | description     |
-    | --------- | ---- | --------------- |
-    | height    | int  | 高度            |
-    | imageType | str  | 格式，例如: png |
-    | original  | int  | 未知，默认为 1  |
-    | size      | str  | 尺寸            |
-    | url       | str  | 图片链接        |
-    | width     | int  | 宽度            |  
-    """
-
-    height: int
-    imageType: str
-    original: int
-    size: str
-    url: str
-    width: int
-
-    async def download(self, filepath: str = ""):
-        """
-        下载图片
-        """
-        if not filepath:
-            filepath = self.url.replace("https://message.biliimg.com/bfs/im/", "")
-        async with httpx.AsyncClient() as session:
-            r = await session.get(self.url)
-            with open(filepath, "wb") as fp:
-                fp.write(r.content)
 
 
 class Event:
@@ -274,6 +245,7 @@ class Event:
             self.content = str(content)
 
         elif mt == Event.PICTURE or mt == Event.GROUPS_PICTURE:
+            content.pop("original")
             self.content = Picture(**content)
 
         elif mt == Event.SHARE_VIDEO or mt == Event.PUSHED_VIDEO:
@@ -426,7 +398,7 @@ class Session(AsyncEvent):
         if self.get_status() == 2:
             self.__status = 3
 
-    async def reply(self, event: Event, text: str) -> dict: # type: ignore
+    async def reply(self, event: Event, content: Union[str, Picture]) -> dict: # type: ignore
         """
         快速回复消息
 
@@ -440,7 +412,8 @@ class Session(AsyncEvent):
         if self.uid == event.sender_uid:
             self.logger.error("不能给自己发送消息哦~")
         else:
-            return await send_msg(self.credential, event.sender_uid, text)
+            msg_type = Event.PICTURE if isinstance(content, Picture) else Event.TEXT
+            return await send_msg(self.credential, event.sender_uid, msg_type, content)
 
     def close(self) -> None:
         """结束轮询"""
