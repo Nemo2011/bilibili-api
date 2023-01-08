@@ -16,36 +16,40 @@ from typing import List, Union
 
 API = get_api("note")
 
+class NoteType(Enum):
+    PUBLIC = "public"
+    PRIVATE = "private"
+
 class Note:
     '''
     笔记相关
     '''
 
-    def __init__(self, cvid: int = None, oid: int = None, note_id: int = None, type: str = "public", credential: Union[Credential, None] = None):
+    def __init__(self, cvid: int = None, oid: int = None, note_id: int = None, type_: NoteType = NoteType.PUBLIC, credential: Union[Credential, None] = None):
         '''
         Args:
-            type       (str)                 : 笔记类型 (private, public)
+            type_       (str)                 : 笔记类型 (private, public)
             cvid       (int)                 : 公开笔记 ID
             oid        (int)                 : 稿件 ID（oid_type 为 0 时是 avid）
             note_id    (int)                 : 私有笔记 ID
             credential (Credential, optional): Credential. Defaults to None.
         '''
-        # type 检查
-        if type not in ["public", "private"]:
-            raise ArgsException("type 只能是 public 或 private")
-        self.type = type
-        
-        # ID 检查
-        if type == "private":
+
+        # ID 和 type 检查
+        if type_ == NoteType.PRIVATE:
             if not oid or not note_id:
                 raise ArgsException("私有笔记需要 oid 和 note_id")
             self.set_oid(oid=oid)
             self.set_note_id(note_id=note_id)
-        else:
+        elif type == NoteType.PUBLIC:
             if not cvid:
                 raise ArgsException("公开笔记需要 cvid")
             self.set_cvid(cvid=cvid)
-        
+        else:
+            raise ArgsException("type_ 只能是 public 或 private")
+
+        self.__type = type_
+
         # 未提供 credential 时初始化该类
         # 私有笔记需要 credential
         self.credential: Credential = Credential() if credential is None else credential
@@ -69,6 +73,7 @@ class Note:
 
         Args:
             note_id (int): 私有笔记 ID
+            
         '''
 
         self.__note_id = note_id
@@ -121,7 +126,7 @@ class Note:
             dict: 笔记信息
         '''
 
-        if self.type == "private":
+        if self.__type == NoteType.PRIVATE:
             return await self.get_private_note_info()
         else:
             return await self.get_public_note_info()
@@ -144,6 +149,9 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果。
         """
+
+        assert self.__type == NoteType.PRIVATE
+
         api = API["private"]["detail"]
         # oid 为 0 时指 avid
         params = {"oid": self.get_oid(), "note_id": self.get_note_id(), "oid_type": 0}
@@ -156,11 +164,14 @@ class Note:
         
     async def get_public_note_info(self) -> dict:
         """
-        获取私有笔记信息。
+        获取公有笔记信息。
 
         Returns:
             dict: 调用 API 返回的结果。
         """
+
+        assert self.__type == NoteType.PUBLIC
+
         api = API["public"]["detail"]
         params = {"cvid": self.get_cvid()}
         resp = await request(

@@ -424,6 +424,10 @@ class Video:
         """
         获取稿件公开笔记列表。
 
+        Args:
+            page_num: 页码
+            page_size: 每页项数
+
         Returns:
             dict: 调用 API 返回的结果。
         """

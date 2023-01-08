@@ -6,6 +6,7 @@ bilibili_api.article
 
 from copy import copy
 import json
+from enum import Enum
 from typing import List, overload, Union
 from .utils.utils import get_api
 from .utils.Credential import Credential
@@ -54,6 +55,9 @@ ARTICLE_COLOR_MAP = {
     "gray-03": "5f5f5f",
 }
 
+class ArticleType(Enum):
+    ARTICLE = 0
+    NOTE = 2
 
 class ArticleList:
     """
@@ -114,7 +118,7 @@ class Article:
         self.__meta = None
         self.__cvid = cvid
         self.__has_parsed: bool = False
-        self.__type = None # 0为专栏，2为笔记
+        self.__type : ArticleType = None # 0为专栏，2为笔记
 
     def get_cvid(self) -> int:
         return self.__cvid
@@ -167,6 +171,7 @@ class Article:
         '''
         将专栏转为 Note
         '''
+        assert self.__type == ArticleType.NOTE
 
         return Note(cvid=self.__cvid, credential=self.credential)
 
@@ -182,10 +187,10 @@ class Article:
             type = await self.get_type()
         elif type not in ["article", "note"]:
             raise ApiException("type 参数错误")
-        elif type == "article":
-            await self.fetch_article_content()
-        else:
+        elif type == ArticleType.NOTE:
             return await self.fetch_note_content()
+        else:
+            await self.fetch_article_content()
 
     async def fetch_article_content(self) -> None:
         """
@@ -433,6 +438,8 @@ class Article:
         获取笔记内容
         '''
 
+        assert self.__type == ArticleType.NOTE
+
         note = await self.to_note()
         return await note.get_content()
         
@@ -501,7 +508,7 @@ class Article:
         if self.__type is None:
             await self.get_info()
         
-        if self.__type == 2:
+        if self.__type == ArticleType.NOTE:
             return "note"
         return "article"
 
