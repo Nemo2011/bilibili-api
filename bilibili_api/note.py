@@ -11,7 +11,7 @@ from .utils.utils import get_api, join
 from .utils.Credential import Credential
 from .utils.network_httpx import request, get_session
 from .exceptions import ArgsException
-from bilibili_api import Picture
+from .utils.Picture import Picture
 from typing import List, Union
 
 API = get_api("note")
@@ -28,23 +28,23 @@ class Note:
     def __init__(self, cvid: int = None, oid: int = None, note_id: int = None, note_type: NoteType = NoteType.PUBLIC, credential: Union[Credential, None] = None):
         """
         Args:
-            type_       (str)                 : 笔记类型 (private, public)
+            note_type  (str)              : 笔记类型 (private, public)
             cvid       (int)                  : 公开笔记 ID
             oid        (int)                  : 稿件 ID（oid_type 为 0 时是 avid）
             note_id    (int)                  : 私有笔记 ID
             credential (Credential, optional) : Credential. Defaults to None.
         """
-
-        # ID 和 type 检查
-        if note_type == NoteType.PRIVATE:
+        if note_type == "public" or note_type == NoteType.PUBLIC:
+            note_type == NoteType.PUBLIC
+            if not cvid:
+                raise ArgsException("公开笔记需要 cvid")
+            self.set_cvid(cvid=cvid)
+        elif note_type == "private" or note_type == NoteType.PRIVATE:
+            note_type == NoteType.PRIVATE
             if not oid or not note_id:
                 raise ArgsException("私有笔记需要 oid 和 note_id")
             self.set_oid(oid=oid)
             self.set_note_id(note_id=note_id)
-        elif type == NoteType.PUBLIC:
-            if not cvid:
-                raise ArgsException("公开笔记需要 cvid")
-            self.set_cvid(cvid=cvid)
         else:
             raise ArgsException("type_ 只能是 public 或 private")
 
