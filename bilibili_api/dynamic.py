@@ -14,6 +14,7 @@ from .utils.network_httpx import request
 from .utils.Credential import Credential
 from . import user, exceptions
 from .utils import utils
+from .utils.Picture import Picture
 
 API = utils.get_api("dynamic")
 
@@ -85,13 +86,13 @@ async def _get_text_data(text: str) -> dict:
     return data
 
 
-async def upload_image(image_stream: io.BufferedIOBase, credential: Credential) -> dict:
+async def upload_image(image: Picture, credential: Credential) -> dict:
     """
     上传动态图片
 
     Args:
-        image_stream (io.BufferedIOBase): 图片流
-        credential   (Credential)       : 凭据
+        image_stream (Picture)   : 图片流
+        credential   (Credential): 凭据
 
     Returns:
         dict: 调用 API 返回的结果
@@ -101,24 +102,27 @@ async def upload_image(image_stream: io.BufferedIOBase, credential: Credential) 
 
     api = API["send"]["upload_img"]
     data = {"biz": "draw", "category": "daily"}
+
+    raw = image.content
+
     return await request(
         "POST",
         url=api["url"],
         data=data,
-        files={"file_up": image_stream.read()},
+        files={"file_up": raw},
         credential=credential,
     )
 
 
 async def _get_draw_data(
-    text: str, image_streams: List[io.BufferedIOBase], credential: Credential
+    text: str, image_streams: List[Picture], credential: Credential
 ) -> dict:
     """
     获取图片动态请求参数，将会自动上传图片
 
     Args:
         text (str): 文本内容
-        image_streams (List[io.BufferedIOBase]): 图片流
+        image_streams (List[Picture]): 图片流
     """
     new_text, at_uids, ctrl = await _parse_at(text)
     images_info = await asyncio.gather(
@@ -165,7 +169,7 @@ async def _get_draw_data(
 
 async def send_dynamic(
     text: str,
-    image_streams: Union[List[io.BufferedIOBase], None] = None,
+    image_streams: Union[List[Picture], None] = None,
     send_time: Union[datetime.datetime, None] = None,
     credential: Union[Credential, None] = None,
 ):
@@ -176,7 +180,7 @@ async def send_dynamic(
 
     Args:
         text          (str)                              : 动态文本
-        image_streams (List[io.BufferedIOBase] | None, optional): 图片流列表. Defaults to None.
+        image_streams (List[Picture] | None, optional)   : 图片流列表. Defaults to None.
         send_time     (datetime.datetime | None, optional)      : 定时动态发送时间. Defaults to None.
         credential    (Credential | None, optional)             : 凭据. Defaults to None.
 
