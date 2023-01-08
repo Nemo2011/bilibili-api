@@ -12,6 +12,7 @@ import time
 from .video import Video
 from .utils.aid_bvid_transformer import bvid2aid
 from .utils.Credential import Credential
+from .utils.Picture import Picture
 from copy import copy, deepcopy
 from .exceptions.ResponseCodeException import ResponseCodeException
 import json
@@ -145,7 +146,7 @@ class VideoUploader(AsyncEvent):
         pages: List[VideoUploaderPage],
         meta: dict,
         credential: Credential,
-        cover_path: str = "",
+        cover: Union[str, Picture] = "",
         #  ffprobe_path: str = 'ffprobe'
     ):
         """
@@ -153,7 +154,7 @@ class VideoUploader(AsyncEvent):
             pages        (List[VideoUploaderPage]): 分 P 列表
             meta         (dict)                   : 视频信息
             credential   (Credential)             : 凭据
-            cover_path   (str)                    : 封面路径
+            cover        (str | Picture)          : 封面路径 / Picture 对象
 
         meta 参数示例：
 
@@ -197,7 +198,7 @@ class VideoUploader(AsyncEvent):
         self.meta = meta
         self.pages = pages
         self.credential = credential
-        self.cover_path = cover_path
+        self.cover_path = cover
         # self.ffprobe_path = ffprobe_path
         self.__task: Union[Task, None] = None
 
@@ -449,7 +450,8 @@ class VideoUploader(AsyncEvent):
         """
         self.dispatch(VideoUploaderEvents.PRE_COVER.value, None)
         try:
-            resp = await upload_image(open(self.cover_path, "rb"), self.credential)
+            pic = self.cover_path if isinstance(self.cover_path, Picture) else Picture().from_file(self.cover_path)
+            resp = await upload_image(pic, self.credential)
             self.dispatch(VideoUploaderEvents.AFTER_COVER.value, {"url": resp["image_url"]})
             return resp["image_url"]
         except Exception as e:
@@ -801,12 +803,12 @@ class VideoEditor(AsyncEvent):
         cover_path (str)       : 封面路径. Defaults to None(不更换封面). 
         credential (Credential): 凭据类. Defaults to None. 
     """
-    def __init__(self, bvid: str, meta: dict, cover_path: str = "", credential: Union[Credential, None] = None):
+    def __init__(self, bvid: str, meta: dict, cover: Union[str, Picture] = "", credential: Union[Credential, None] = None):
         """
         Args:
             bvid (str)                    : 稿件 BVID
             meta (dict)                   : 视频信息
-            cover_path (str)              : 封面地址. Defaults to None(不更改封面). 
+            cover (str | Picture)         : 封面地址. Defaults to None(不更改封面). 
             credential (Credential | None): 凭据类. Defaults to None. 
 
         meta 参数示例: (保留 video, cover, tid, aid 字段)
@@ -837,7 +839,7 @@ class VideoEditor(AsyncEvent):
         self.bvid = bvid
         self.meta = meta
         self.credential = credential if credential else Credential()
-        self.cover_path = cover_path
+        self.cover_path = cover
         self.__old_configs = {}
         self.meta["aid"] = bvid2aid(bvid)
         self.__task: Union[Task, None] = None
@@ -858,21 +860,21 @@ class VideoEditor(AsyncEvent):
             raise e
         self.dispatch(VideoEditorEvents.AFTER_PRELOAD.value, {"data": self.__old_configs})
 
-    async def _change_cover(self) -> str:
+    async def _change_cover(self) -> None:
         """
         更换封面
 
         Returns:
-            str: 封面 URL
+            None
         """
         if self.cover_path == "":
-            return ""
+            return
         self.dispatch(VideoEditorEvents.PRE_COVER.value, None)
         try:
-            resp = await upload_image(open(self.cover_path, "rb"), self.credential)
+            pic = self.cover_path if isinstance(self.cover_path, Picture) else Picture().from_file(self.cover_path)
+            resp = await upload_image(pic, self.credential)
             self.dispatch(VideoEditorEvents.AFTER_COVER.value, {"url": resp["image_url"]})
             self.meta["cover"] = resp["image_url"]
-            return self.cover_path
         except Exception as e:
             self.dispatch(VideoEditorEvents.COVER_FAILED.value, {"err": e})
             raise e
