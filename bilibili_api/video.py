@@ -418,7 +418,7 @@ class Video:
 
         url = API["info"]["private_notes"]
         params = {"oid": self.get_aid(), "oid_type": 0}
-        return await request("GET", url, params=params, credential=self.credential)["data"]["noteIds"]
+        return (await request("GET", url, params=params, credential=self.credential))["data"]["noteIds"]
 
     async def get_public_notes_list(self, pn: int, ps: int) -> dict:
         """

@@ -12,7 +12,7 @@ from typing import List, overload, Union
 import httpx
 from .utils.utils import get_api
 from .utils.Credential import Credential
-from .note import Note
+from .note import Note, NoteType
 import re
 from html import unescape
 
@@ -22,6 +22,7 @@ from .exceptions.NetworkException import NetworkException, ApiException
 from bs4 import BeautifulSoup, element
 from datetime import datetime
 from urllib.parse import unquote
+from typing import TypeVar
 
 API = get_api("article")
 
@@ -69,6 +70,8 @@ class ArticleType(Enum):
     ARTICLE = 0
     NOTE = 2
     SPECIAL_ARTICLE = 3
+
+ArticleT = TypeVar('ArticleT', bound="Article")
 
 class ArticleList:
     """
@@ -148,9 +151,22 @@ class Article:
         获取专栏类型(专栏/笔记)
 
         Returns:
-            str: 专栏类型
+            ArticleType: 专栏类型
         '''
         return self.__type
+
+    def is_note(self) -> bool:
+        """
+        检查专栏是否笔记
+
+        Returns:
+            bool: 是否笔记
+        """
+        return self.__type == ArticleType.NOTE
+
+    def turn_to_note(self) -> Note:
+        assert self.__type == ArticleType.NOTE
+        return Note(cvid=self.__cvid, note_type=NoteType.PUBLIC, credential=self.credential)
 
     def markdown(self) -> str:
         """
@@ -505,11 +521,6 @@ class Article:
             "GET", api["url"], params=params, credential=self.credential
         )
         return resp
-
-        # 设置专栏类别
-        self.__type = resp["type"]
-
-        return await resp
 
     async def get_all(self) -> dict:
         """

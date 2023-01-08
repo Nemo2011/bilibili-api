@@ -82,3 +82,6 @@ fix!: 给 method() 增加了一个必需参数
 
 [Pro Git](https://progit.cn/)
 
+附 2：写得非常简略的代码贡献指南
+
+[代码贡献指南](/.github/CODING.md)
