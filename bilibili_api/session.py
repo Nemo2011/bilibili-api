@@ -7,6 +7,8 @@ from typing import Union
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
+from bilibili_api.exceptions import ApiException
+
 from .user import get_self_info
 from .utils.AsyncEvent import AsyncEvent
 from .utils.Credential import Credential
@@ -114,9 +116,10 @@ async def send_msg(credential: Credential, receiver_id: int, msg_type: str, cont
     给用户发送私聊信息。目前仅支持纯文本。
 
     Args:
-        credential  (Credential): 凭证
-        receiver_id (int)       : 接收者 UID
-        text        (str)       : 信息内容。
+        credential  (Credential)   : 凭证
+        receiver_id (int)          : 接收者 UID
+        msg_type    (str)          : 信息类型，参考 Event 类的时间类型。
+        content     (str | Picture): 信息内容。支持文字和图片。
 
     Returns:
         dict: 调用 API 返回结果
@@ -133,7 +136,10 @@ async def send_msg(credential: Credential, receiver_id: int, msg_type: str, cont
     elif msg_type == Event.WITHDRAW:
         real_content = str(content)
     elif msg_type == Event.PICTURE or msg_type == Event.GROUPS_PICTURE:
+        assert isinstance(content, Picture)
         real_content = json.dumps({"url": content.url, "height": content.height, "width": content.width, "imageType": content.imageType, "original":1, "size": content.size})
+    else:
+        raise ApiException("信息类型不支持。")
 
     data = {
         "msg[sender_uid]": sender_uid,
@@ -403,8 +409,8 @@ class Session(AsyncEvent):
         快速回复消息
 
         Args:
-            event: Event 要回复的消息
-            text:  str   要回复的文字内容
+            event  :  Event          要回复的消息
+            content:  str | Picture  要回复的文字内容
         Returns:
             dict: 调用接口返回的内容。
         """
