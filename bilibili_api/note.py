@@ -25,18 +25,18 @@ class Note:
     笔记相关
     '''
 
-    def __init__(self, cvid: int = None, oid: int = None, note_id: int = None, type_: NoteType = NoteType.PUBLIC, credential: Union[Credential, None] = None):
+    def __init__(self, cvid: int = None, oid: int = None, note_id: int = None, note_type: NoteType = NoteType.PUBLIC, credential: Union[Credential, None] = None):
         '''
         Args:
             type_       (str)                 : 笔记类型 (private, public)
-            cvid       (int)                 : 公开笔记 ID
-            oid        (int)                 : 稿件 ID（oid_type 为 0 时是 avid）
-            note_id    (int)                 : 私有笔记 ID
-            credential (Credential, optional): Credential. Defaults to None.
+            cvid       (int)                  : 公开笔记 ID
+            oid        (int)                  : 稿件 ID（oid_type 为 0 时是 avid）
+            note_id    (int)                  : 私有笔记 ID
+            credential (Credential, optional) : Credential. Defaults to None.
         '''
 
         # ID 和 type 检查
-        if type_ == NoteType.PRIVATE:
+        if note_type == NoteType.PRIVATE:
             if not oid or not note_id:
                 raise ArgsException("私有笔记需要 oid 和 note_id")
             self.set_oid(oid=oid)
@@ -48,7 +48,7 @@ class Note:
         else:
             raise ArgsException("type_ 只能是 public 或 private")
 
-        self.__type = type_
+        self.__type = note_type
 
         # 未提供 credential 时初始化该类
         # 私有笔记需要 credential
