@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from time import time
-from bilibili_api import dynamic, user
+from bilibili_api import dynamic, user, Picture
 from . import common
 
 credential = common.get_credential()
@@ -24,7 +24,7 @@ async def test_a_send_dynamic():
     print("测试立即发送图片动态")
     resp = await dynamic.send_dynamic(
         text="测试立即发送图片动态",
-        image_streams=[open("./design/logo.png", "rb")],
+        image_streams=[Picture.from_file("./design/logo.png")],
         credential=credential,
     )
     dyid.append(resp["dynamic_id"])
