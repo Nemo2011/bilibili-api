@@ -50,11 +50,9 @@
           "msg[sender_uid]": "int: 自己的 UID",
           "msg[receiver_id]": "int: 对方 UID",
           "msg[receiver_type]": "const int: 1",
-          "msg[msg_type]": "const int: 1",
+          "msg[msg_type]": "int: 消息类型",
           "msg[msg_status]": "const int: 0",
-          "msg[content]": {
-            "content": "str: 文本内容"
-          }
+          "msg[content]": "str: 消息内容"
         },
         "comment": "给用户发信息"
       }
