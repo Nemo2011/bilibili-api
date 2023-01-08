@@ -25,26 +25,33 @@ class Note:
     笔记相关
     """
 
-    def __init__(self, cvid: int = None, oid: int = None, note_id: int = None, note_type: NoteType = NoteType.PUBLIC, credential: Union[Credential, None] = None):
+    def __init__(
+        self, 
+        cvid: Union[int, None] = None, 
+        aid: Union[int, None] = None, 
+        note_id: Union[int, None] = None, 
+        note_type: NoteType = NoteType.PUBLIC, 
+        credential: Union[Credential, None] = None
+    ):
         """
         Args:
-            note_type  (str)              : 笔记类型 (private, public)
+            type_       (str)                 : 笔记类型 (private, public)
             cvid       (int)                  : 公开笔记 ID
             oid        (int)                  : 稿件 ID（oid_type 为 0 时是 avid）
             note_id    (int)                  : 私有笔记 ID
             credential (Credential, optional) : Credential. Defaults to None.
         """
-        if note_type == "public" or note_type == NoteType.PUBLIC:
-            note_type == NoteType.PUBLIC
+
+        # ID 和 type 检查
+        if note_type == NoteType.PRIVATE:
+            if not aid or not note_id:
+                raise ArgsException("私有笔记需要 oid 和 note_id")
+            self.set_aid(aid=aid)
+            self.set_note_id(note_id=note_id)
+        elif type == NoteType.PUBLIC:
             if not cvid:
                 raise ArgsException("公开笔记需要 cvid")
             self.set_cvid(cvid=cvid)
-        elif note_type == "private" or note_type == NoteType.PRIVATE:
-            note_type == NoteType.PRIVATE
-            if not oid or not note_id:
-                raise ArgsException("私有笔记需要 oid 和 note_id")
-            self.set_oid(oid=oid)
-            self.set_note_id(note_id=note_id)
         else:
             raise ArgsException("type_ 只能是 public 或 private")
 
@@ -57,7 +64,7 @@ class Note:
         # 用于存储视频信息，避免接口依赖视频信息时重复调用
         self.__info: Union[dict, None] = None
 
-    def set_oid(self, oid: int) -> None:
+    def set_aid(self, aid: int) -> None:
         """
         为私有笔记设置稿件 ID
 
@@ -65,7 +72,7 @@ class Note:
             oid (int): 稿件 ID
         """
 
-        self.__oid = oid
+        self.__oid = aid
 
     def set_note_id(self, note_id: int) -> None:
         """
@@ -88,7 +95,7 @@ class Note:
 
         self.__cvid = cvid
 
-    def get_cvid(self) -> str:
+    def get_cvid(self) -> int:
         """
         获取 cvid
 
@@ -98,7 +105,7 @@ class Note:
 
         return self.__cvid
 
-    def get_oid(self) -> str:
+    def get_aid(self) -> int:
         """
         获取 oid
 
@@ -108,7 +115,7 @@ class Note:
 
         return self.__oid
 
-    def get_note_id(self) -> str:
+    def get_note_id(self) -> int:
         """
         获取笔记 ID
 
@@ -154,7 +161,7 @@ class Note:
 
         api = API["private"]["detail"]
         # oid 为 0 时指 avid
-        params = {"oid": self.get_oid(), "note_id": self.get_note_id(), "oid_type": 0}
+        params = {"oid": self.get_aid(), "note_id": self.get_note_id(), "oid_type": 0}
         resp = await request(
             "GET", api["url"], params=params, credential=self.credential
         )
@@ -181,7 +188,7 @@ class Note:
         self.__info = resp
         return resp
 
-    async def get_content(self) -> list:
+    async def get_content(self) -> List[dict]:
         """
         获取原始内容
 
@@ -189,7 +196,7 @@ class Note:
             List[dict]: 原始内容
         """
 
-        return json.loads((await self.__get_info_cached())["content"].replace('\n', '\\n'))
+        return (await self.__get_info_cached())["content"].replace('\n', '\\n')
 
     async def get_summary(self) -> str:
         """
@@ -201,7 +208,7 @@ class Note:
 
         return (await self.__get_info_cached())["summary"]
 
-    async def get_images_raw_info(self) -> list:
+    async def get_images_raw_info(self) -> List["dict"]:
         """
         获取笔记所有图片原始信息
 
@@ -218,7 +225,7 @@ class Note:
                     result.append(img_info)
         return result
 
-    async def get_images(self) -> list:
+    async def get_images(self) -> List["Picture"]:
         """
         获取笔记所有图片并转为 Picture 类
 
@@ -227,9 +234,9 @@ class Note:
         """
 
         result = []
-        images_raw_info = self.get_images_raw_info()
+        images_raw_info = await self.get_images_raw_info()
         for image in images_raw_info:
-            result.append(await Picture().from_url(url=f'https:{image["url"]}'))
+            result.append(Picture().from_url(url=f'https:{image["url"]}'))
         return result
 
     async def get_title(self) -> str:
