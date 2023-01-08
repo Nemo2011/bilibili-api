@@ -1117,7 +1117,7 @@ async def get_self_events(ts: int = 0, credential: Union[Credential, None] = Non
 
 async def get_self_notes_info(page_num: int , page_size: int, credential: Credential) -> dict:
     """
-    获取用户笔记列表
+    获取自己的笔记列表
     
     Args:
         page_num: 页码
@@ -1139,7 +1139,7 @@ async def get_self_notes_info(page_num: int , page_size: int, credential: Creden
 
 async def get_self_public_notes_info(page_num: int , page_size: int, credential: Credential) -> dict:
     """
-    获取用户公开笔记列表
+    获取自己的公开笔记列表
 
     Args:
         page_num: 页码

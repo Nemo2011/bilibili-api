@@ -175,7 +175,7 @@ class Article:
 
         return Note(cvid=self.__cvid, credential=self.credential)
 
-    async def fetch_content(self, type: str = None):
+    async def fetch_content(self, type: ArticleType = None):
         '''
         根据 type 获取并解析内容
 

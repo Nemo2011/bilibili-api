@@ -591,3 +591,31 @@ from bilibili_api import user
 获取自己入站后每一刻的事件(可以不带 credential)
 
 **Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_notes_info()
+
+| name | type | description |
+| - | - | - |
+| page_num | int | 页码 |
+| page_size | int | 每页项数 |
+| credential | Credential | 凭据类 |
+
+获取自己的笔记列表
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_public_notes_info()
+
+| name | type | description |
+| - | - | - |
+| page_num | int | 页码 |
+| page_size | int | 每页项数 |
+| credential | Credential | 凭据类 |
+
+获取自己的公开笔记列表
+
+**Returns:** dict: 调用 API 返回的结果

@@ -174,6 +174,24 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 **Returns:** API 调用返回结果。
 
+#### async def is_forbid_note()
+
+是否禁止笔记。
+
+**Returns:** bool: 是否禁止笔记。
+
+#### async def get_private_notes_list()
+
+获取稿件私有笔记列表。
+
+**Returns:** list: 私有笔记 note_id 列表。
+
+#### async def get_public_notes_list()
+
+获取稿件公开笔记列表。
+
+**Returns:** API 调用返回结果。
+
 #### async def get_danmaku_view():
 
 | name       | type          | description                          |
