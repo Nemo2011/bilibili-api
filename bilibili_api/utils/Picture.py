@@ -4,6 +4,7 @@ from typing import Any
 import tempfile
 import os
 import httpx
+from .Credential import Credential
 
 
 @dataclass
