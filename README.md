@@ -1,4 +1,4 @@
-![bilibili-api logo](https://raw.githubusercontent.com/nemo2011/bilibili-api/main/design/logo.png)
+![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo.png)
 
 <div align="center">
 
@@ -7,7 +7,8 @@
 [![API 数量](https://img.shields.io/badge/API%20数量-200+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3+-red)][LICENSE]
 [![Python](https://img.shields.io/badge/python-3.11|3.10|3.9|3.8-blue)](https://www.python.org)
-[![PyPI](https://img.shields.io/pypi/v/bilibili-api-python)][pypi]
+[![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]
+[![Pre-release Version](https://img.shields.io/github/v/release/Nemo2011/bilibili-api?label=pre-release&include_prereleases&sort=semver)][pypi]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 [![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
 
