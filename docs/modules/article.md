@@ -12,6 +12,10 @@ from bilibili_api import article
 
 专栏颜色表
 
+## const dict ArticleType
+
+专栏类别
+
 ## class ArticleList
 
 ### Atrributes
@@ -84,11 +88,23 @@ from bilibili_api import article
 
 **Returns:** dict: JSON 数据
 
+#### async def to_note()
+
+转换为 Note 类
+
+请确保是此专栏是笔记
+
+**Returns:** Note: Note 类
+
 #### async def fetch_content()
 
-获取并解析专栏内容
+| name   | type       | description |
+| ------ | ---------- | ----------- |
+| type   | ArticleType  | 专栏类型      |
 
-该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json() `来获取你需要的值。
+根据 type 获取并解析专栏内容
+
+如果为笔记，直接返回笔记内容，否则该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json() `来获取你需要的值。
 
 **Returns:** None
 
@@ -103,6 +119,12 @@ from bilibili_api import article
 一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等		。
 
 **Returns:** API 调用返回结果。
+
+#### async def get_type()
+
+获取专栏类型	。
+
+**Returns:** str 专栏类型。
 
 #### async def set_like()
 

@@ -394,6 +394,49 @@ class Video:
         params = {"type": 2, "rid": self.get_aid(), "up_mid": info["owner"]["mid"]}
         return await request("GET", url, params=params, credential=self.credential)
 
+    async def is_forbid_note(self) -> bool:
+        """
+        是否禁止笔记。
+
+        Returns:
+            bool: 是否禁止笔记。
+        """
+        url = API["info"]["is_forbid"]
+        params = {"aid": self.get_aid()}
+        return (await request("GET", url, params=params, credential=self.credential))["data"][
+            "forbid_note_entrance"
+        ]
+    
+    async def get_private_notes_list(self) -> list:
+        """
+        获取稿件私有笔记列表。
+
+        Returns:
+            list: note_Ids。
+        """
+        self.credential.raise_for_no_sessdata()
+
+        url = API["info"]["private_notes"]
+        params = {"oid": self.get_aid(), "oid_type": 0}
+        return await request("GET", url, params=params, credential=self.credential)["data"]["noteIds"]
+
+    async def get_public_notes_list(self, pn: int, ps: int) -> dict:
+        """
+        获取稿件公开笔记列表。
+
+        Args:
+            page_num: 页码
+            page_size: 每页项数
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        self.credential.raise_for_no_sessdata()
+
+        url = API["info"]["public_notes"]
+        params = {"oid": self.get_aid(), "oid_type": 0, "pn": pn, "ps": ps}
+        return await request("GET", url, params=params, credential=self.credential)
+
     async def get_danmaku_view(
         self, 
         page_index: Union[int, None] = None, 

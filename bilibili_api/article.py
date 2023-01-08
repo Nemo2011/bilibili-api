@@ -6,9 +6,11 @@ bilibili_api.article
 
 from copy import copy
 import json
+from enum import Enum
 from typing import List, overload, Union
 from .utils.utils import get_api
 from .utils.Credential import Credential
+from .note import Note
 import re
 
 import yaml
@@ -53,6 +55,9 @@ ARTICLE_COLOR_MAP = {
     "gray-03": "5f5f5f",
 }
 
+class ArticleType(Enum):
+    ARTICLE = 0
+    NOTE = 2
 
 class ArticleList:
     """
@@ -70,6 +75,10 @@ class ArticleList:
         """
         self.__rlid = rlid
         self.credential = credential
+
+        # 用于存储视频信息，避免接口依赖视频信息时重复调用
+        self.__info: Union[dict, None] = None
+
 
     def get_rlid(self) -> int:
         return self.__rlid
@@ -109,10 +118,11 @@ class Article:
         self.__meta = None
         self.__cvid = cvid
         self.__has_parsed: bool = False
+        self.__type : ArticleType = None # 0为专栏，2为笔记
 
     def get_cvid(self) -> int:
         return self.__cvid
-
+    
     def markdown(self) -> str:
         """
         转换为 Markdown
@@ -157,13 +167,38 @@ class Article:
             "children": list(map(lambda x: x.json(), self.__children)),
         }
 
-    async def fetch_content(self) -> None:
+    async def to_note(self) -> Note:
+        '''
+        将专栏转为 Note
+        '''
+        assert self.__type == ArticleType.NOTE
+
+        return Note(cvid=self.__cvid, credential=self.credential)
+
+    async def fetch_content(self, type: ArticleType = None):
+        '''
+        根据 type 获取并解析内容
+
+        Args:
+            type (str, optional): article 为专栏，note 为笔记. Defaults to None.
+        '''
+
+        if type is None:
+            type = await self.get_type()
+        elif type not in ["article", "note"]:
+            raise ApiException("type 参数错误")
+        elif type == ArticleType.NOTE:
+            return await self.fetch_note_content()
+        else:
+            await self.fetch_article_content()
+
+    async def fetch_article_content(self) -> None:
         """
         获取并解析专栏内容
-
         该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
         """
-        resp = await self.get_all()
+        
+        resp = self.get_all()
 
         document = BeautifulSoup(f"<div>{resp['readInfo']['content']}</div>", "lxml")
 
@@ -398,6 +433,16 @@ class Article:
 
         self.__has_parsed = True
 
+    async def fetch_note_content(self) -> None:
+        '''
+        获取笔记内容
+        '''
+
+        assert self.__type == ArticleType.NOTE
+
+        note = await self.to_note()
+        return await note.get_content()
+        
     async def get_info(self) -> dict:
         """
         获取专栏信息
@@ -408,9 +453,28 @@ class Article:
 
         api = API["info"]["view"]
         params = {"id": self.__cvid}
-        return await request(
+        resp = request(
             "GET", api["url"], params=params, credential=self.credential
         )
+        # 存入 self.__info 中以备后续调用
+        self.__info = resp
+
+        # 设置专栏类别
+        self.__type = resp["type"]
+
+        return await resp
+    
+    async def __get_info_cached(self) -> dict:
+        """
+        获取专栏信息，如果已获取过则使用之前获取的信息，没有则重新获取。
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        if self.__info is None:
+            return await self.get_info()
+        return self.__info
+
 
     async def get_all(self) -> dict:
         """
@@ -431,6 +495,22 @@ class Article:
         data = json.loads(match[1])
 
         return data
+    
+    async def get_type(self) -> str:
+        '''
+        获取专栏类型
+
+        Returns:
+            str: 专栏类型
+        '''
+
+        # 无 type 则先 get_info()
+        if self.__type is None:
+            await self.get_info()
+        
+        if self.__type == ArticleType.NOTE:
+            return "note"
+        return "article"
 
     async def set_like(self, status: bool = True) -> dict:
         """
