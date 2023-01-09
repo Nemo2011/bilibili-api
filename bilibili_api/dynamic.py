@@ -117,7 +117,7 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
 
 
 async def _get_draw_data(
-    text: str, image_streams: List[Picture], credential: Credential
+    text: str, images: List[Picture], credential: Credential
 ) -> dict:
     """
     获取图片动态请求参数，将会自动上传图片
@@ -128,7 +128,7 @@ async def _get_draw_data(
     """
     new_text, at_uids, ctrl = await _parse_at(text)
     images_info = await asyncio.gather(
-        *[upload_image(stream, credential) for stream in image_streams]
+        *[upload_image(stream, credential) for stream in images]
     )
 
     def transformPicInfo(image):
@@ -171,7 +171,7 @@ async def _get_draw_data(
 
 async def send_dynamic(
     text: str,
-    image_streams: Union[List[Picture], None] = None,
+    images: Union[List[Picture], None] = None,
     send_time: Union[datetime.datetime, None] = None,
     credential: Union[Credential, None] = None,
 ):
@@ -182,7 +182,7 @@ async def send_dynamic(
 
     Args:
         text          (str)                              : 动态文本
-        image_streams (List[Picture] | None, optional)   : 图片流列表. Defaults to None.
+        images        (List[Picture] | None, optional)   : 图片列表. Defaults to None.
         send_time     (datetime.datetime | None, optional)      : 定时动态发送时间. Defaults to None.
         credential    (Credential | None, optional)             : 凭据. Defaults to None.
 
@@ -203,14 +203,14 @@ async def send_dynamic(
 
     async def instant_draw():
         api = API["send"]["instant_draw"]
-        data = await _get_draw_data(text, image_streams, credential) # type: ignore
+        data = await _get_draw_data(text, images, credential) # type: ignore
         return await request("POST", api["url"], data=data, credential=credential)
 
     async def schedule(type_: int):
         api = API["send"]["schedule"]
         if type_ == 2:
             # 画册动态
-            request_data = await _get_draw_data(text, image_streams, credential) # type: ignore
+            request_data = await _get_draw_data(text, images, credential) # type: ignore
             request_data.pop("setting")
         else:
             # 文字动态
@@ -223,10 +223,10 @@ async def send_dynamic(
         }
         return await request("POST", api["url"], data=data, credential=credential)
 
-    if image_streams is None:
-        image_streams = []
+    if images is None:
+        images = []
 
-    if len(image_streams) == 0:
+    if len(images) == 0:
         # 纯文本动态
         if send_time is None:
             ret = await instant_text()
@@ -234,7 +234,7 @@ async def send_dynamic(
             ret = await schedule(2)
     else:
         # 图片动态
-        if len(image_streams) > 9:
+        if len(images) > 9:
             raise DynamicExceedImagesException()
         if send_time is None:
             ret = await instant_draw()
@@ -287,7 +287,7 @@ async def delete_schedule(draft_id: int, credential: Credential) -> dict:
     Args:
         draft_id (int): 定时动态 ID
         credential  (Credential): 凭据
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -302,7 +302,7 @@ class Dynamic:
     """
     动态类
 
-    Attributes: 
+    Attributes:
         credential (Credential): 凭据类
     """
 
@@ -377,7 +377,7 @@ class Dynamic:
 
         Args:
             status (bool, optional): 点赞状态. Defaults to True.
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -415,7 +415,7 @@ class Dynamic:
 
         Args:
             text (str, optional): 转发动态时的文本内容. Defaults to "转发动态"
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -432,7 +432,7 @@ async def get_new_dynamic_users(credential: Union[Credential, None] = None):
     获取更新动态的关注者
 
     Args:
-        credential (Credential | None): 凭据类. Defaults to None. 
+        credential (Credential | None): 凭据类. Defaults to None.
 
     Returns:
         dict: 调用 API 返回的结果
@@ -448,8 +448,8 @@ async def get_live_users(size: int = 10, credential: Union[Credential, None] = N
     获取正在直播的关注者
 
     Args:
-        size       (int)       : 获取的数据数量. Defaults to 10. 
-        credential (Credential | None): 凭据类. Defaults to None. 
+        size       (int)       : 获取的数据数量. Defaults to 10.
+        credential (Credential | None): 凭据类. Defaults to None.
 
     Returns:
         dict: 调用 API 返回的结果

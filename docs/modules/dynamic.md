@@ -10,7 +10,7 @@ from bilibili_api import dynamic
 
 | name         | type              | description |
 | ------------ | ----------------- | ----------- |
-| image_stream | io.BufferedIOBase | 图片流      |
+| image        | Picture           | 图片流      |
 | credential   | Credential        | 凭据        |
 
 上传动态图片
@@ -24,7 +24,7 @@ from bilibili_api import dynamic
 | name         | type                              | description                         |
 | ------------ | --------------------------------- | ----------------------------------- |
 | text         | str                               | 动态文本                            |
-| image_stream | List[io.BufferedIOBase] \| None, optional | 图片流列表. Defaults to None.       |
+| images       | List[Picture] \| None, optional | 图片流列表. Defaults to None.       |
 | send_time    | datetime.datetime \| None, optional       | 定时动态发送时间. Defaults to None. |
 | credential   | Credential \| None, optional              | 凭据. Defaults to None.             |
 
