@@ -1,5 +1,5 @@
 """
-bilibili_api.bank
+bilibili_api.rank
 
 和哔哩哔哩视频排行榜相关的 API
 所有数据都会显示在热门页面

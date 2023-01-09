@@ -68,34 +68,6 @@ from bilibili_api import session
 
 ---
 
-**@dataclass**
-## class Picture
-
-图片类，包含图片链接、尺寸以及下载操作。
-
-### Functions
-
-#### def \_\_init\_\_()
-
-| name      | type | description     |
-| --------- | ---- | --------------- |
-| height    | int  | 高度            |
-| imageType | str  | 格式，例如: png |
-| original  | int  | 未知，默认为 1  |
-| size      | str  | 尺寸            |
-| url       | str  | 图片链接        |
-| width     | int  | 宽度            |  
-
-#### async def download()
-
-| name     | type          | description |
-| -------- | ------------- | ----------- |
-| filepath | str, optional | 图片保存路径 |
-
-下载图片
-
----
-
 ## class Event
 
 消息类，定义有各种消息类型，并可将 json 传换成字符串

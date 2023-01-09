@@ -1,5 +1,5 @@
 """
-bilibili_api.user
+bilibili_api.note
 
 笔记相关
 """

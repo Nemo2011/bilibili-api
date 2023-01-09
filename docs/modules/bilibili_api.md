@@ -109,6 +109,77 @@ import bilibili_api
 
 ---
 
+**@dataclasses.dataclass**
+## class Picture
+
+图片类，包含图片链接、尺寸以及下载操作。
+
+Args:
+    height    (int)  : 高度           
+    imageType (str)  : 格式，例如: png
+    size      (Any)  : 尺寸           
+    url       (str)  : 图片链接        
+    width     (int)  : 宽度           
+    content   (bytes): 图片内容   
+
+可以不实例化，用 `from_url` 或 `from_file` 加载。
+
+### Functions
+
+**@staticmethod**
+#### def from_url
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| url  | str  | 图片链接。   |
+
+加载网络图片。
+
+**Returns:** Picture: 加载后的图片对象。
+
+**@staticmethod**
+#### def from_file
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| path | str  | 图片地址。   |
+
+加载本地图片。
+
+**Returns:** Picture: 加载后的图片对象。
+
+#### async def upload_file()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据类。 |
+
+上传图片至 B 站。
+
+**Returns:** Picture: `self`
+
+#### def convert_format()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| new_format | str | 新的格式。例：`png`, `ico`, `webp`. |
+
+将图片转换为另一种格式。
+
+**Returns:** Picture: `self`
+
+#### async def download()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| path | str  | 下载地址。    |
+
+下载图片至本地。
+
+**Returns:** Picture: `self`
+
+---
+
 ## def sync()
 
 | name      | type      | description |

@@ -1,3 +1,9 @@
+"""
+bilibili_api.session
+
+消息相关
+"""
+
 import asyncio
 import datetime
 import json

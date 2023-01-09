@@ -83,7 +83,7 @@ Web 端视频上传。
 | pages        | List[VideoUploaderPage] | 分 P 列表                                                    |
 | meta         | dict                    | 视频信息                                                     |
 | credential   | VideoUploaderCredential | 凭据（注意，是 VideoUploaderCredential）                     |
-| cover_path | str          | 路径                                                      |
+| cover | str \| Picture          | 路径                                                      |
 
 **meta 参数示例：**
 
@@ -189,7 +189,7 @@ meta 保留字段：`videos`, `cover`
 | - | - | - |
 | bvid | str | 稿件 BVID |
 | meta | dict | 视频信息 |
-| cover_path | str | 封面路径. Defaults to None(不更换封面).  |
+| cover | str \| Picture | 封面路径. Defaults to None(不更换封面).  |
 | credential | Credential | 凭据类. Defaults to None.  |
 
 meta 参数示例: (保留 video, cover, tid, aid 字段)

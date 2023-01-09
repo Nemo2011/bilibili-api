@@ -3,7 +3,7 @@ bilibili_api.vote
 
 投票相关操作。
 
-需要 vote_id,获取 vote_id: 
+需要 vote_id,获取 vote_id: https://nemo2011.github.io/bilibili-api/#/vote_id
 """
 
 from .utils.utils import get_api
@@ -17,7 +17,7 @@ async def get_vote_info(vote_id: int) -> dict:
     获取投票详情
 
     Args:
-        vote_id (int): vote_id, 获取：nemo2011.github.io/bilibili-api/#/vote_id
+        vote_id (int): vote_id, 获取：https://nemo2011.github.io/bilibili-api/#/vote_id
 
     Returns:
         dict: 调用 API 返回的结果

@@ -22,7 +22,7 @@ class Picture:
         width     (int)  : 宽度           
         content   (bytes): 图片内容       
 
-    初始化可以不传入任何参数，可以用 `from_url` 或 `from_file` 加载。
+    可以不实例化，用 `from_url` 或 `from_file` 加载图片。
     """
 
     height: int = -1
@@ -45,6 +45,15 @@ class Picture:
 
     @staticmethod
     def from_url(url: str) -> "Picture":
+        """
+        加载网络图片。
+
+        Args:
+            url (str): 图片链接
+
+        Returns:
+            Picture: 加载后的图片对象
+        """
         obj = Picture()
         session = httpx.Client()
         resp = session.get(url)
@@ -55,6 +64,15 @@ class Picture:
 
     @staticmethod
     def from_file(path: str) -> "Picture":
+        """
+        加载本地图片。
+
+        Args:
+            path (str): 图片地址
+
+        Returns:
+            Picture: 加载后的图片对象
+        """
         obj = Picture()
         with open(path, "rb") as file:
             obj.content = file.read()
@@ -62,16 +80,33 @@ class Picture:
         obj.__set_picture_meta_from_bytes(os.path.basename(path).split(".")[1])
         return obj
     
-    async def upload_file(self, path: str, credential: Credential) -> "Picture":
+    async def upload_file(self, credential: Credential) -> "Picture":
+        """
+        上传图片至 B 站。
+
+        Args:
+            credential (Credential): 凭据类。
+
+        Returns:
+            Picture: `self`
+        """
         from ..dynamic import upload_image
-        self.from_file(path)
         res = await upload_image(self, credential)
         self.height = res["image_height"]
         self.width = res["image_width"]
         self.url = res["image_url"]
         return self
 
-    def convert_format(self, new_format: str) -> None:
+    def convert_format(self, new_format: str) -> "Picture":
+        """
+        将图片转换为另一种格式。
+
+        Args:
+            new_format (str): 新的格式。例：`png`, `ico`, `webp`. 
+
+        Returns:
+            Picture: `self`
+        """
         tmp_dir = tempfile.gettempdir()
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
         img = Image.open(img_path)
@@ -80,9 +115,20 @@ class Picture:
         with open(new_img_path, "rb") as file:
             self.content = file.read()
         self.__set_picture_meta_from_bytes(new_format)
+        return self
 
-    def download(self, path: str) -> None:
+    async def download(self, path: str) -> "Picture":
+        """
+        下载图片至本地。
+
+        Args:
+            path (str): 下载地址。
+
+        Returns:
+            Picture: `self`
+        """
         tmp_dir = tempfile.gettempdir()
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
         img = Image.open(img_path)
         img.save(path)
+        return self

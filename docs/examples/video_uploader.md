@@ -30,7 +30,7 @@ async def main():
         "dtime": 0
     }
     page = video_uploader.VideoUploaderPage(path = 'video.mp4', title = '标题', description = '简介')
-    uploader = video_uploader.VideoUploader([page], meta, credential, cover_path = 'cover.png')
+    uploader = video_uploader.VideoUploader([page], meta, credential, cover = 'cover.png')
 
     @uploader.on("__ALL__")
     async def ev(data):

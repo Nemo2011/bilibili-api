@@ -1,3 +1,9 @@
+"""
+bilibili_api.login_func
+
+登录功能相关
+"""
+
 import threading
 from typing import Tuple, Union
 from . import login
