@@ -1,21 +1,217 @@
 import copy
+import enum
 import json
 import os
-import platform
 import random
 import shutil
 import sys
 import time
 import zipfile
 from .ffmpeg import freeze_ffmpeg
-from typing import List
+from typing import List, Union, Tuple
 
 from PyQt6 import QtCore, QtGui, QtMultimedia, QtMultimediaWidgets, QtWidgets
 
-from bilibili_api.interactive_video import (InteractiveJumpingCommand,
-                                            InteractiveJumpingCondition,
-                                            InteractiveNodeJumpingType,
-                                            InteractiveVariable)
+
+class InteractiveVariable:
+    """
+    互动节点的变量
+    """
+
+    def __init__(
+        self, name: str, var_id: str, var_value: int, show: bool = False, random: bool = False
+    ):
+        """
+        Args:
+            name      (str)  : 变量名
+            var_id    (str)  : 变量 id
+            var_value (int)  : 变量的值
+            show      (bool) : 是否显示
+            random    (bool) : 是否为随机值(1-100)
+        """
+        self.__var_id = var_id
+        self.__var_value = var_value
+        self.__name = name
+        self.__is_show = show
+        self.__random = random
+
+    def get_id(self) -> str:
+        return self.__var_id
+
+    def refresh_value(self) -> None:
+        """
+        刷新变量数值
+        """
+        if self.is_random():
+            self.__var_value = int(rand(0, 100))
+
+    def get_value(self) -> int:
+        return self.__var_value
+
+    def is_show(self) -> bool:
+        return self.__is_show
+
+    def is_random(self) -> bool:
+        return self.__random
+
+    def get_name(self) -> str:
+        return self.__name
+
+    def __str__(self):
+        return f"{self.__name} {self.__var_value}"
+
+class InteractiveButtonAlign(enum.Enum):
+    """
+    按钮的文字在按钮中的位置
+
+
+    ``` text
+    -----
+    |xxx|----o (TEXT_LEFT)
+    -----
+
+         -----
+    o----|xxx| (TEXT_RIGHT)
+         -----
+
+    ----------
+    |XXXXXXXX| (DEFAULT)
+    ----------
+    ```
+
+    - DEFAULT
+    - TEXT_UP
+    - TEXT_RIGHT
+    - TEXT_DOWN
+    - TEXT_LEFT
+    """
+
+    DEFAULT = 0
+    TEXT_UP = 1
+    TEXT_RIGHT = 2
+    TEXT_DOWN = 3
+    TEXT_LEFT = 4
+
+class InteractiveButton:
+    """
+    互动视频节点按钮类
+    """
+
+    def __init__(
+        self, text: str, x: int, y: int, align: Union[InteractiveButtonAlign, int] = InteractiveButtonAlign.DEFAULT
+    ):
+        """
+        Args:
+            text  (str)                         : 文字
+            x     (int)                         : x 轴
+            y     (int)                         : y 轴
+            align (InteractiveButtonAlign | int): 按钮的文字在按钮中的位置
+        """
+        self.__text = text
+        self.__pos = (x, y)
+        if isinstance(align, InteractiveButtonAlign): align = align.value
+        self.__align = align
+
+    def get_text(self) -> str:
+        return self.__text
+
+    def get_align(self) -> int:
+        return self.__align # type: ignore
+
+    def get_pos(self) -> Tuple[int, int]:
+        return self.__pos
+
+    def __str__(self):
+        return f"{self.__text} {self.__pos}"
+
+
+class InteractiveJumpingCondition:
+    """
+    节点跳转的公式，只有公式成立才会跳转
+    """
+
+    def __init__(self, var: List[InteractiveVariable] = [], condition: str = "True"):
+        """
+        Args:
+            var       (List[InteractiveVariable]): 所有变量
+            condition (str)                      : 公式
+        """
+        self.__vars = var
+        self.__command = condition
+
+    def get_result(self) -> bool:
+        """
+        计算公式获得结果
+
+        Returns:
+            bool: 是否成立
+        """
+        if self.__command == "":
+            return True
+        command = copy.copy(self.__command)
+        for var in self.__vars:
+            var_name = var.get_id()
+            var_value = var.get_value()
+            command = command.replace(var_name, str(var_value))
+        command = command.replace("&&", " and ")
+        command = command.replace("||", " or ")
+        command = command.replace("!", " not ")
+        command = command.replace("===", "==")
+        command = command.replace("!==", "!=")
+        command = command.replace("true", "True")
+        command = command.replace("false", "False")
+        return eval(command)
+
+    def __str__(self):
+        return f"{self.__command}"
+
+class InteractiveJumpingCommand:
+    """
+    节点跳转对变量的操作
+    """
+    def __init__(self, var: List[InteractiveVariable] = [], command: str = ""):
+        """
+        Args:
+            var       (List[InteractiveVariable]): 所有变量
+            condition (str)                      : 公式
+        """
+        self.__vars = var
+        self.__command = command
+
+    def run_command(self) -> List["InteractiveVariable"]:
+        """
+        执行操作
+
+        Returns:
+            List[InteractiveVariable]
+        """
+        if self.__command == "":
+            return self.__vars
+        for code in self.__command.split(";"):
+            var_name_ = code.split("=")[0]
+            var_new_value = code.split("=")[1]
+            for var in self.__vars:
+                var_name = var.get_id()
+                var_value = var.get_value()
+                var_new_value = var_new_value.replace(var_name, str(var_value))
+            var_new_value_calc = eval(var_new_value)
+            for var in self.__vars:
+                if var.get_id() == var_name_:
+                    var._InteractiveVariable__var_value = var_new_value_calc # type: ignore
+        return self.__vars
+
+class InteractiveNodeJumpingType(enum.Enum):
+    """
+    对下一节点的跳转的方式
+
+    - ASK    : 选择
+    - DEFAULT: 跳转到默认节点
+    - READY  : 选择(只有一个选择)
+    """
+
+    READY = 1
+    DEFAULT = 0
+    ASK = 2
 
 FFMPEG_PATH = freeze_ffmpeg()
 
