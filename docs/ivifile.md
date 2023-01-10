@@ -39,10 +39,9 @@
 - test_ivi
   - bilivideo.json
   - ivideo.json
-  - xxxxx.video.mp4
-  - xxxxx.audio.mp4
+  - xxxxx.mp4
 
-其中，`bilivideo.json` 存放了视频的基本信息（`BVID` 和视频标题）。而 `ivideo.json` 则是剧情树。还有许多的 `mp4` 文件，这些都对应了一个个的节点，举个例子，`123.audio.mp4` 是 `cid` 为 `123` 的节点对应的视频的音频流。节点的 `cid` 可以在 `ivideo.json` 中找到。
+其中，`bilivideo.json` 存放了视频的基本信息（`BVID` 和视频标题）。而 `ivideo.json` 则是剧情树。还有许多的 `mp4` 文件，这些都对应了一个个的节点，举个例子，`123.mp4` 是 `cid` 为 `123` 的节点对应的视频。节点的 `cid` 可以在 `ivideo.json` 中找到。
 
 `ivideo.json` 存放的是一个字典，字典的 `key` 对应了节点的 `id`，而内容则是节点的信息。无论哪个视频，初始的节点的 `id` 永远都是 `1`。以下为一个节点的信息的详解: 
 

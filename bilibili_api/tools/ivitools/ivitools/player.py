@@ -7,7 +7,6 @@ import shutil
 import sys
 import time
 import zipfile
-from .ffmpeg import freeze_ffmpeg
 from typing import List, Union, Tuple
 
 from PyQt6 import QtCore, QtGui, QtMultimedia, QtMultimediaWidgets, QtWidgets
@@ -212,11 +211,6 @@ class InteractiveNodeJumpingType(enum.Enum):
     READY = 1
     DEFAULT = 0
     ASK = 2
-
-FFMPEG_PATH = freeze_ffmpeg()
-
-def get_ffmpeg_path():
-    return FFMPEG_PATH
 
 class Button:
     def __init__(self, id_, pos, text, condition, command):
@@ -650,22 +644,7 @@ class MPlayer(object):
         )
         self.stop_playing()
         self.pp.setText("Pause")
-        path1 = self.temp_dir + str(cid) + ".video.mp4"
-        path2 = self.temp_dir + str(cid) + ".audio.mp4"
         dest = self.temp_dir + str(cid) + ".mp4"
-        if not os.path.exists(path2):
-            self.mediaplayer.setSource(
-                QtCore.QUrl(path1)
-            )
-            self.mediaplayer.setPosition(0)
-            if self.mediaplayer.duration() <= 7:
-                self.mediaplayer.setPosition(self.mediaplayer.duration())
-            self.start_playing()
-            return
-        os.system(
-            f'{get_ffmpeg_path()}\
-            -y -i "{path1}" -i "{path2}" -strict -2 -acodec copy -vcodec copy -f mp4 "{dest}"'
-        )
         self.mediaplayer.setSource(QtCore.QUrl(dest))
         self.mediaplayer.setPosition(0)
         if self.mediaplayer.duration() <= 7:

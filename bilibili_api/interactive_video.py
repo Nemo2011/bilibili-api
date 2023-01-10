@@ -8,7 +8,6 @@ bilibili_api.interactive_video
 
 from asyncio import CancelledError, create_task
 import copy
-import datetime
 import enum
 import json
 import os
@@ -218,7 +217,7 @@ class InteractiveJumpingCommand:
         Returns:
             List[InteractiveVariable]
         """
-        if self.__command == "": 
+        if self.__command == "":
             return self.__vars
         for code in self.__command.split(";"):
             var_name_ = code.split("=")[0]
@@ -243,7 +242,7 @@ class InteractiveNode:
         video: "InteractiveVideo",
         node_id: int,
         cid: int,
-        vars: List[InteractiveVariable], 
+        vars: List[InteractiveVariable],
         button: Union[InteractiveButton, None] = None,
         condition: InteractiveJumpingCondition = InteractiveJumpingCondition(),
         native_command: InteractiveJumpingCommand = InteractiveJumpingCommand(),
@@ -515,7 +514,7 @@ class InteractiveVideo(Video):
             graph_version (int)                 : 剧情图版本号，可使用 get_graph_version() 获取
             edge_id       (int, optional)       : 节点 ID，为 None 时获取根节点信息. Defaults to None.
             credential    (Credential, optional): 凭据. Defaults to None.
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -646,19 +645,19 @@ class InteractiveVideoDownloader(AsyncEvent):
             edges_info[edge_id] = {
                 "title": None,
                 "cid": None,
-                "button": None, 
-                "condition": None, 
-                "jump_type": None, 
-                "is_default": None, 
-                "command": None, 
+                "button": None,
+                "condition": None,
+                "jump_type": None,
+                "is_default": None,
+                "command": None,
                 "sub": []
             }
         def var2dict(var: InteractiveVariable):
             return {
-                "name": var.get_name(), 
-                "id": var.get_id(), 
-                "value": var.get_value(), 
-                "show": var.is_show(), 
+                "name": var.get_name(),
+                "id": var.get_id(),
+                "value": var.get_value(),
+                "show": var.is_show(),
                 "random": var.is_random()
             }
 
@@ -675,8 +674,8 @@ class InteractiveVideoDownloader(AsyncEvent):
             createEdge(n.get_node_id())
         edges_info[n.get_node_id()]['cid'] = n.get_cid()
         edges_info[n.get_node_id()]['button'] = {
-            "text": n.get_self_button().get_text(), 
-            "align": n.get_self_button().get_align(), 
+            "text": n.get_self_button().get_text(),
+            "align": n.get_self_button().get_align(),
             "pos": (n.get_self_button().get_pos())
         }
         edges_info[n.get_node_id()]['vars'] = [var2dict(var) for var in (await n.get_vars())]
@@ -726,16 +725,16 @@ class InteractiveVideoDownloader(AsyncEvent):
                     createEdge(n.get_node_id())
                 edges_info[n.get_node_id()]['cid'] = n.get_cid()
                 edges_info[n.get_node_id()]['button'] = {
-                    "text": n.get_self_button().get_text(), 
-                    "align": n.get_self_button().get_align(), 
+                    "text": n.get_self_button().get_text(),
+                    "align": n.get_self_button().get_align(),
                     "pos": n.get_self_button().get_pos()
                 }
                 def var2dict(var: InteractiveVariable):
                     return {
-                        "name": var.get_name(), 
-                        "id": var.get_id(), 
-                        "value": var.get_value(), 
-                        "show": var.is_show(), 
+                        "name": var.get_name(),
+                        "id": var.get_id(),
+                        "value": var.get_value(),
+                        "show": var.is_show(),
                         "random": var.is_random()
                     }
                 edges_info[n.get_node_id()]['condition'] = n.get_jumping_condition()._InteractiveJumpingCondition__command # type: ignore
@@ -748,23 +747,20 @@ class InteractiveVideoDownloader(AsyncEvent):
 
         json.dump(edges_info, open(tmp_dir_name + "/ivideo.json", "w+", encoding = "utf-8"), indent = 2)
         json.dump({
-            "bvid": self.__video.get_bvid(), 
+            "bvid": self.__video.get_bvid(),
             "title": (await self.__video.get_info())["title"]
         }, open(tmp_dir_name + "/bilivideo.json", "w+", encoding = "utf-8"), indent = 2)
 
         for key, item in edges_info.items():
             self.dispatch("PREPARE_DOWNLOAD", {"node_id": int(key), "cid": item["cid"]})
             cid = item["cid"]
-            url = await self.__video.get_download_url(cid = cid)
-            await self.__download_func(url["dash"]["video"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".video.mp4")
-            if url["dash"]["audio"] != None:
-                await self.__download_func(url["dash"]["audio"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".audio.mp4")
+            url = await self.__video.get_download_url(cid = cid, html5 = True)
+            await self.__download_func(url["durl"][0]["url"], tmp_dir_name + "/" + str(cid) + ".mp4")
 
         self.dispatch("PREPARE_DOWNLOAD", {"node_id": 1, "cid": await self.__video.get_cid()})
         cid = await self.__video.get_cid()
-        url = await self.__video.get_download_url(cid = cid)
-        await self.__download_func(url["dash"]["video"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".video.mp4")
-        await self.__download_func(url["dash"]["audio"][0]["baseUrl"], tmp_dir_name + "/" + str(cid) + ".audio.mp4")
+        url = await self.__video.get_download_url(cid = cid, html5 = True)
+        await self.__download_func(url["durl"][0]["url"], tmp_dir_name + "/" + str(cid) + ".mp4")
 
         self.dispatch("PACKAGING")
         zip = zipfile.ZipFile(open(self.__out + ".ivi", "wb+"), mode = "w", compression = zipfile.ZIP_DEFLATED)  # outFullName为压缩文件的完整路径
