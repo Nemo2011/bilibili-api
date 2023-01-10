@@ -31,11 +31,11 @@ class Note:
     """
 
     def __init__(
-        self, 
-        cvid: Union[int, None] = None, 
-        aid: Union[int, None] = None, 
-        note_id: Union[int, None] = None, 
-        note_type: NoteType = NoteType.PUBLIC, 
+        self,
+        cvid: Union[int, None] = None,
+        aid: Union[int, None] = None,
+        note_id: Union[int, None] = None,
+        note_type: NoteType = NoteType.PUBLIC,
         credential: Union[Credential, None] = None
     ):
         """
@@ -63,7 +63,7 @@ class Note:
             raise ArgsException("type_ 只能是 public 或 private")
 
         self.__type = note_type
-        
+
         # 未提供 credential 时初始化该类
         # 私有笔记需要 credential
         self.credential: Credential = Credential() if credential is None else credential
@@ -86,7 +86,7 @@ class Note:
 
     def get_note_id(self) -> int:
         return self.__note_id
-    
+
     async def get_info(self) -> dict:
         """
         获取笔记信息
@@ -128,7 +128,7 @@ class Note:
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
-        
+
     async def get_public_note_info(self) -> dict:
         """
         获取公有笔记信息。
@@ -179,7 +179,7 @@ class Note:
             result.append(Picture().from_url(url=f'https:{image["url"]}'))
         return result
 
-    
+
     async def get_all(self) -> dict:
         """
         (仅供公开笔记)
@@ -212,7 +212,7 @@ class Note:
 
         Args:
             status (bool, optional): 点赞状态. Defaults to True
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -301,8 +301,9 @@ class Note:
                             delete.children = [node]
                             node = delete
                         if field["attributes"].get("underline") == True:
-                            # FIXME: 暂不支持下划线
-                            pass
+                            underline = UnderlineNode()
+                            underline.children = [node]
+                            node = underline
                         if field["attributes"].get("background") == True:
                             # FIXME: 暂不支持背景颜色
                             pass
@@ -326,7 +327,7 @@ class Note:
         self.__has_parsed = True
         self.__meta = await self.__get_info_cached()
         del self.__meta["content"]
-        
+
 
     def markdown(self) -> str:
         """
@@ -486,6 +487,17 @@ class DelNode(Node):
             "type": "DelNode",
             "children": list(map(lambda x: x.json(), self.children)),
         }
+
+
+class UnderlineNode(Node):
+    def __init__(self):
+        self.children = []
+
+    def markdown(self):
+        text = "".join([node.markdown() for node in self.children])
+        if len(text) == 0:
+            return ""
+        return " $\\underline{" + text + "}$ "
 
 
 class UlNode(Node):

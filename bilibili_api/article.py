@@ -85,7 +85,7 @@ class ArticleList:
         """
         Args:
             rlid       (int)                        : 文集 id
-            credential (Credential | None, optional): 凭据类. Defaults to None. 
+            credential (Credential | None, optional): 凭据类. Defaults to None.
         """
         self.__rlid = rlid
         self.credential = credential
@@ -110,7 +110,7 @@ class ArticleList:
 class Article:
     """
     专栏类
-    
+
     Attributes:
         credential (Credential): 凭据类
     """
@@ -128,7 +128,7 @@ class Article:
         self.__meta = None
         self.__cvid = cvid
         self.__has_parsed: bool = False
-        
+
         api = API["info"]["view"]
         params = {"id": self.__cvid}
         resp = httpx.request(
@@ -217,7 +217,7 @@ class Article:
         获取并解析专栏内容
         该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
         """
-        
+
         resp = await self.get_all()
 
         document = BeautifulSoup(f"<div>{resp['readInfo']['content']}</div>", "lxml")
@@ -498,8 +498,9 @@ class Article:
                             delete.children = [node]
                             node = delete
                         if field["attributes"].get("underline") == True:
-                            # FIXME: 暂不支持下划线
-                            pass
+                            underline = UnderlineNode()
+                            underline.children = [node]
+                            node = underline
                         if field["attributes"].get("background") == True:
                             # FIXME: 暂不支持背景颜色
                             pass
@@ -571,7 +572,7 @@ class Article:
 
         Args:
             status (bool, optional): 点赞状态. Defaults to True
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -721,13 +722,24 @@ class DelNode(Node):
         text = "".join([node.markdown() for node in self.children])
         if len(text) == 0:
             return ""
-        return f" ~~{text}~~"
+        return f" ~~{text}~~ "
 
     def json(self):
         return {
             "type": "DelNode",
             "children": list(map(lambda x: x.json(), self.children)),
         }
+
+
+class UnderlineNode(Node):
+    def __init__(self):
+        self.children = []
+
+    def markdown(self):
+        text = "".join([node.markdown() for node in self.children])
+        if len(text) == 0:
+            return ""
+        return " $\\underline{" + text + "}$ "
 
 
 class UlNode(Node):
