@@ -1,2 +1,0 @@
-colorama>=0.4
-tqdm>=4.0.0

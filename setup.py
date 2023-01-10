@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf8") as f:
 
 setuptools.setup(
     name="bilibili-api-python",
-    version="14.0.0.b2",
+    version="14.0.0.rc",
     license="GPLv3+",
     author="Nemo2011,Passkou",
     description="哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。",
@@ -19,8 +19,9 @@ setuptools.setup(
         "bilibili_api.utils",
         "bilibili_api.exceptions",
         "bilibili_api.errors",
-        "bilibili_api.tools", 
-        "bilibili_api.tools.opendocs", 
+        "bilibili_api.tools",
+        "bilibili_api.tools.opendocs",
+        "bilibili_api.tools.ivitools",
         "bilibili_api._pyinstaller",
     ],
     keywords=["bilibili", "api", "spider"],
@@ -43,7 +44,8 @@ setuptools.setup(
             "hook-dirs = bilibili_api._pyinstaller.entry_points:get_hook_dirs"
         ],
         "console_scripts": [
-            "bilibili-api-docs = bilibili_api.tools.opendocs.__main__:main"
+            "bilibili-api-docs = bilibili_api.tools.opendocs.__main__:main",
+            "ivitools = bilibili_api.tools.ivitools.__main__:main"
         ],
     },
 )

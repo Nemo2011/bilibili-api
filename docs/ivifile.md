@@ -6,16 +6,7 @@
 
 # 有关 `ivitools` 的说明
 
-`ivitools` 是管理 `ivi` 文件的工具，支持：拆开、播放、扫描 `ivi` 文件。因为文件大小原因，`ivitools` 需要单独下载。
-
-<details>
-<summary>下载地址</summary>
-
-- `windows`: <https://transfer.sh/UfCzif/ivitools-2.33-py3-none-win_amd64.whl>
-- `macos`: <https://transfer.sh/KRPfzg/ivitools-2.33-py3-none-macosx_10_9_universal2.whl>
-- `linux`: 
-  - `x64`: <https://transfer.sh/S3kw6L/ivitools-2.33-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.tar.gz>
-  - `arm64`: <https://transfer.sh/CjCzRx/ivitools-2.33-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.tar.gz>
+`ivitools` 是管理 `ivi` 文件的工具，支持：拆开、播放、扫描 `ivi` 文件。`ivitools` 将在 `bilibili-api>=14.0.0.rc` 的版本中自动安装完毕。
 
 </details>
 
@@ -30,8 +21,6 @@
 
 # `ivi` 文件详解
 
-**提示：所有文件请采用 `utf-8` 编码或是 `ascii` 编码打开/保存，请不要用 `gbk` 编码。**
-
 解析 `ivi` 文件首先需要拆开它，可以用 `ivitools extract` 命令，当然，`ivi` 文件的打包格式就是 `zip`。
 
 拆开后，我们可以看见许多的文件。文件树如下：
@@ -40,6 +29,8 @@
   - bilivideo.json
   - ivideo.json
   - xxxxx.mp4
+
+**提示：所有除二进制文件以外的文件请采用 `utf-8` 编码或是 `ascii` 编码打开/保存，请不要用 `gbk` 编码。建议使用 `ascii` 编码**
 
 其中，`bilivideo.json` 存放了视频的基本信息（`BVID` 和视频标题）。而 `ivideo.json` 则是剧情树。还有许多的 `mp4` 文件，这些都对应了一个个的节点，举个例子，`123.mp4` 是 `cid` 为 `123` 的节点对应的视频。节点的 `cid` 可以在 `ivideo.json` 中找到。
 
@@ -66,5 +57,15 @@
       - `value` (int: 变量数值)
       - `show` (bool: 变量是否展示，有的变量需要时刻展示给观看者，例如 `循环编号`, `分数` 等)
       - `random` (bool: 变量是否随机值。随机变量配上跳转公式是实现随机跳转的重要部分，这里说明：随机值取值范围为 `0-100`。)
+
+根据目前已知的互动视频机制，及部分互动视频的测试，可以确认目前 `ivi` 文件可以还原以下的 `features`: 
+
+  - 节点跳转
+  - 按钮位置
+  - 按钮文字位置
+  - 变量追踪
+  - 随机变量
+  - 条件跳转
+  - 随机跳转
 
 这里列出文件详解，是为了其他大佬可以把 `ivi` 文件移植到其他语言上。如果对文件有疑惑，欢迎提 `issues`!
