@@ -13,8 +13,10 @@ dist/
 *.ivi
 # Videos
 *.mp4
-# Tests
+# Test files
 test*.*
+# Tests
+!tests/*.py
 # Virtual environments
 venv/
 virtualenv/
