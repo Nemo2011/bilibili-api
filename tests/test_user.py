@@ -1,7 +1,7 @@
 # bilibili_api.user
 
 import asyncio
-from bilibili_api import user
+from bilibili_api import user, bvid2aid
 
 try:
     from . import common
@@ -196,6 +196,30 @@ async def test_zk_get_reservation():
 
 async def test_zl_name2uid():
     return await user.name2uid("田所こうじ")
+
+
+series_id = None
+
+async def test_zm_create_channel_series():
+    global series_id
+    data = await user.create_channel_series(name="什么都没有", credential=credential)
+    series_id = data["series_id"]
+    return data
+
+
+async def test_zo_add_video_to_channal_series():
+    global series_id
+    return await user.add_aids_to_series(series_id=series_id, aids=[bvid2aid("BV1fG4y1g7wE")], credential=credential)
+
+
+async def test_zp_del_video_from_channel_series():
+    global series_id
+    return await user.del_aids_from_series(series_id=series_id, aids=[bvid2aid("BV1fG4y1g7wE")], credential=credential)
+
+
+async def test_zq_del_channel_series():
+    global series_id
+    return await user.del_channel_series(series_id=series_id, credential=credential)
 
 
 async def after_all():
