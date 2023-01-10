@@ -17,7 +17,7 @@ async def reply(event: Event):
     if event.content == "/close":
         session.close()
     elif event.content == "来张涩图":
-        img = await Picture.from("test.png").upload_file(session.credential)
+        img = await Picture.from_file("test.png").upload_file(session.credential)
         await session.reply(event, img)
     else:
         await session.reply(event, "你好李鑫")
