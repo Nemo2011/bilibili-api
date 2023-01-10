@@ -15,3 +15,8 @@ dist/
 *.mp4
 # Tests
 test*.*
+# Virtual environments
+venv/
+virtualenv/
+# IDE
+.idea/

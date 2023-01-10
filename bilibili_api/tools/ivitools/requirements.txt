@@ -1,3 +1,2 @@
-bilibili-api-python>=14.0.0.b2
 colorama>=0.4
 tqdm>=4.0.0
