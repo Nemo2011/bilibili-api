@@ -16,7 +16,7 @@ import time
 from typing import Callable, List, Tuple, Union
 from .utils.Credential import Credential
 from .utils.utils import get_api
-from .utils.network_httpx import request, get_session
+from .utils.network_httpx import request
 from .video import Video
 from urllib import parse
 from random import randint as rand
@@ -141,7 +141,8 @@ class InteractiveButton:
         """
         self.__text = text
         self.__pos = (x, y)
-        if isinstance(align, InteractiveButtonAlign): align = align.value
+        if isinstance(align, InteractiveButtonAlign):
+            align = align.value
         self.__align = align
 
     def get_text(self) -> str:
@@ -205,7 +206,7 @@ class InteractiveJumpingCommand:
         """
         Args:
             var       (List[InteractiveVariable]): 所有变量
-            condition (str)                      : 公式
+            command   (str)                      : 公式
         """
         self.__vars = var
         self.__command = command
@@ -438,10 +439,6 @@ class InteractiveVideo(Video):
         """
         获取交互视频的分 P 信息。up 主需要拥有视频所有权。
 
-        Args:
-            bvid       (str)       : BV 号.
-            credential (Credential): 凭据类 类.
-
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -484,10 +481,6 @@ class InteractiveVideo(Video):
         """
         获取剧情图版本号，仅供 `get_edge_info()` 使用。
 
-        Args:
-            bvid (str): bvid
-            credential (Credential, optional): [description]. Defaults to None.
-
         Returns:
             int: 剧情图版本号
         """
@@ -510,10 +503,7 @@ class InteractiveVideo(Video):
         获取剧情图节点信息
 
         Args:
-            bvid          (str)                 : BV 号
-            graph_version (int)                 : 剧情图版本号，可使用 get_graph_version() 获取
             edge_id       (int, optional)       : 节点 ID，为 None 时获取根节点信息. Defaults to None.
-            credential    (Credential, optional): 凭据. Defaults to None.
 
         Returns:
             dict: 调用 API 返回的结果
