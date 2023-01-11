@@ -4,7 +4,7 @@ ivitools.scan
 扫描 ivi 文件相关
 """
 import os
-from bilibili_api.interactive_video import get_ivi_file_meta
+from .touch import touch_ivi
 from colorama import Fore, Cursor
 from colorama.ansi import clear_line
 import zipfile
@@ -32,7 +32,7 @@ def scan_ivi_file(path: str):
     Cursor.UP()
     clear_line()
     print(path)
-    meta = get_ivi_file_meta(path)
+    meta = touch_ivi(path)
     print(f'{meta["title"]}({meta["bvid"]})')
     graph = json.load(open(os.path.join(extract_dir, "ivideo.json"), encoding = "utf-8"))
     print(f"There're {len(graph.keys())} nodes in the file! ")
