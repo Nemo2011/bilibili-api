@@ -615,6 +615,8 @@ class Article:
         data = {"aid": self.__cvid, "multiply": 1, "upid": upid, "avtype": 2}
         return await request("POST", api["url"], data=data, credential=self.credential)
 
+    # TODO: 专栏上传/编辑/删除
+
 
 class Node:
     def __init__(self):

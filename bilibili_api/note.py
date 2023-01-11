@@ -373,6 +373,8 @@ class Note:
             "children": list(map(lambda x: x.json(), self.__children)),
         }
 
+    # TODO: 笔记上传/编辑/删除
+
 
 class Node:
     def __init__(self):

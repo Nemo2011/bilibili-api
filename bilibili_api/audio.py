@@ -15,7 +15,7 @@ API = get_api("audio")
 class Audio:
     """
     音频
-    
+
     Attributes:
         credential (Credential): 凭据类
     """
@@ -35,7 +35,7 @@ class Audio:
     async def get_info(self) -> dict:
         """
         获取音频信息
-    
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -47,7 +47,7 @@ class Audio:
     async def get_tags(self) -> dict:
         """
         获取音频 tags
-    
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -58,7 +58,7 @@ class Audio:
     async def get_download_url(self) -> dict:
         """
         获取音频下载链接
-    
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -72,7 +72,7 @@ class Audio:
 
         Args:
             num (int, optional): 投币数量。Defaults to 2.
-    
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -82,6 +82,8 @@ class Audio:
         data = {"sid": self.__auid, "multiply": num}
 
         return await request("POST", api["url"], data=data, credential=self.credential)
+
+    # TODO: 音频编辑
 
 
 class AudioList:
@@ -107,7 +109,7 @@ class AudioList:
     async def get_info(self) -> dict:
         """
         获取歌单信息
-    
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -119,7 +121,7 @@ class AudioList:
     async def get_tags(self) -> dict:
         """
         获取歌单 tags
-    
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -134,7 +136,7 @@ class AudioList:
 
         Args:
             pn (int, optional): 页码. Defaults to 1
-    
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -142,6 +144,8 @@ class AudioList:
         params = {"sid": self.__amid, "pn": pn, "ps": 100}
 
         return await request("GET", api["url"], params, credential=self.credential)
+
+    # TODO: 歌单编辑
 
 
 async def get_user_stat(uid: int, credential: Union[Credential, None] = None) -> dict:
@@ -151,7 +155,7 @@ async def get_user_stat(uid: int, credential: Union[Credential, None] = None) ->
     Args:
         uid        (int)                        : 用户 UID
         credential (Credential | None, optional): 凭据. Defaults to None
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -168,7 +172,7 @@ async def get_hot_song_list(pn: int = 1, credential: Union[Credential, None] = N
     Args:
         pn(int, optional)                       : 页数. Defaults to 1
         credential (Credential | None, optional): 凭据. Defaults to None
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
