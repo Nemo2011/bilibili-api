@@ -71,9 +71,9 @@ class Video:
     """
 
     def __init__(
-        self, 
-        bvid: Union[None, str] = None, 
-        aid: Union[None, int] = None, 
+        self,
+        bvid: Union[None, str] = None,
+        aid: Union[None, int] = None,
         credential: Union[None, Credential] = None
     ):
         """
@@ -238,9 +238,9 @@ class Video:
         return cid
 
     async def get_video_snapshot(
-        self, 
-        cid: Union[int, None] = None, 
-        json_index: bool = False, 
+        self,
+        cid: Union[int, None] = None,
+        json_index: bool = False,
         pvideo: bool = True
     ) -> dict:
         """
@@ -279,9 +279,9 @@ class Video:
         return await self.__get_page_id_by_index(page_index)
 
     async def get_download_url(
-        self, 
-        page_index: Union[int, None] = None, 
-        cid: Union[int, None] = None, 
+        self,
+        page_index: Union[int, None] = None,
+        cid: Union[int, None] = None,
         html5: bool = False
     ) -> dict:
         """
@@ -401,12 +401,12 @@ class Video:
         Returns:
             bool: 是否禁止笔记。
         """
-        url = API["info"]["is_forbid"]
+        url = API["info"]["is_forbid"]["url"]
         params = {"aid": self.get_aid()}
-        return (await request("GET", url, params=params, credential=self.credential))["data"][
+        return (await request("GET", url, params=params, credential=self.credential))[
             "forbid_note_entrance"
         ]
-    
+
     async def get_private_notes_list(self) -> list:
         """
         获取稿件私有笔记列表。
@@ -416,9 +416,9 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
 
-        url = API["info"]["private_notes"]
+        url = API["info"]["private_notes"]["url"]
         params = {"oid": self.get_aid(), "oid_type": 0}
-        return (await request("GET", url, params=params, credential=self.credential))["data"]["noteIds"]
+        return (await request("GET", url, params=params, credential=self.credential))["noteIds"]
 
     async def get_public_notes_list(self, pn: int, ps: int) -> dict:
         """
@@ -431,15 +431,14 @@ class Video:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        self.credential.raise_for_no_sessdata()
 
-        url = API["info"]["public_notes"]
+        url = API["info"]["public_notes"]["url"]
         params = {"oid": self.get_aid(), "oid_type": 0, "pn": pn, "ps": ps}
         return await request("GET", url, params=params, credential=self.credential)
 
     async def get_danmaku_view(
-        self, 
-        page_index: Union[int, None] = None, 
+        self,
+        page_index: Union[int, None] = None,
         cid: Union[int, None] = None
     ) -> dict:
         """
@@ -654,9 +653,9 @@ class Video:
         return json_data
 
     async def get_danmakus(
-        self, 
-        page_index: int = 0, 
-        date: Union[datetime.date, None] = None, 
+        self,
+        page_index: int = 0,
+        date: Union[datetime.date, None] = None,
         cid: Union[int, None] = None
     ) -> List[Danmaku]:
         """
@@ -776,17 +775,17 @@ class Video:
         return danmakus
 
     async def get_special_dms(
-        self, 
-        page_index: int = 0, 
+        self,
+        page_index: int = 0,
         cid: Union[int, None] = None
     ) -> List[SpecialDanmaku]:
         """
         获取特殊弹幕
 
         Args:
-            page_index (int, optional)       : 分 P 号. Defaults to 0. 
-            cid        (int | None, optional): 分 P id. Defaults to None. 
-        
+            page_index (int, optional)       : 分 P 号. Defaults to 0.
+            cid        (int | None, optional): 分 P id. Defaults to None.
+
         Returns:
             List[SpecialDanmaku]: 调用接口解析后的结果
         """
@@ -839,9 +838,9 @@ class Video:
         return dms
 
     async def get_history_danmaku_index(
-        self, 
-        page_index: Union[int, None] = None, 
-        date: Union[datetime.date, None] = None, 
+        self,
+        page_index: Union[int, None] = None,
+        date: Union[datetime.date, None] = None,
         cid: Union[int, None] = None
     ) -> Union[None, List[str]]:
         """
@@ -873,9 +872,9 @@ class Video:
         )
 
     async def has_liked_danmakus(
-        self, 
-        page_index: Union[int, None] = None, 
-        ids: Union[List[int], None] = None, 
+        self,
+        page_index: Union[int, None] = None,
+        ids: Union[List[int], None] = None,
         cid: Union[int, None] = None
     ) -> dict:
         """
@@ -907,9 +906,9 @@ class Video:
         )
 
     async def send_danmaku(
-        self, 
-        page_index: Union[int, None] = None, 
-        danmaku: Union[Danmaku, None] = None, 
+        self,
+        page_index: Union[int, None] = None,
+        danmaku: Union[Danmaku, None] = None,
         cid: Union[int, None] = None
     ) -> dict:
         """
@@ -960,16 +959,16 @@ class Video:
         )
 
     async def get_danmaku_xml(
-        self, 
-        page_index: Union[int, None] = None, 
+        self,
+        page_index: Union[int, None] = None,
         cid: Union[int, None] = None
     ) -> str:
         """
         获取所有弹幕的 xml 源文件（非装填）
 
         Args:
-            page_index (int, optional)       : 分 P 序号. Defaults to 0. 
-            cid        (int | None, optional): cid. Defaults to None. 
+            page_index (int, optional)       : 分 P 序号. Defaults to 0.
+            cid        (int | None, optional): cid. Defaults to None.
 
         Return:
             xml 文件源
@@ -1346,9 +1345,9 @@ class Video:
         )
 
     async def recall_danmaku(
-        self, 
-        page_index: Union[int, None] = None, 
-        dmid: int = 0, 
+        self,
+        page_index: Union[int, None] = None,
+        dmid: int = 0,
         cid: Union[int, None] = None
     ) -> dict:
         """
@@ -1378,8 +1377,8 @@ class Video:
         )
 
     async def get_pbp(
-        self, 
-        page_index: Union[int, None] = None, 
+        self,
+        page_index: Union[int, None] = None,
         cid: Union[int, None] = None
     ) -> dict:
         """
