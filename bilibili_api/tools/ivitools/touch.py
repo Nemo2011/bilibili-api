@@ -3,7 +3,10 @@ ivitools.touch
 
 获取 ivi 文件信息
 """
-from bilibili_api import interactive_video
+import zipfile
+import json
 
 def touch_ivi(path: str):
-    print(interactive_video.get_ivi_file_meta(path))
+    ivi = zipfile.ZipFile(open(path, "rb"))
+    info = ivi.open("bilivideo.json").read()
+    return json.loads(info)
