@@ -66,8 +66,6 @@ from .utils.network_httpx import get_session, set_session, HEADERS
 if "windows" in platform.system().lower():
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore
 
-del asyncio, platform
-
 # ALL
 __all__ = [
     "ApiException",
