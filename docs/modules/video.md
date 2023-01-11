@@ -188,9 +188,14 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 #### async def get_public_notes_list()
 
+| name | type | description |
+| ---- | ---- | ----------- |
+| pn   | int  | 第几页.      |
+| ps   | int  | 每页内容数量. |
+
 获取稿件公开笔记列表。
 
-**Returns:** API 调用返回结果。
+**Returns:** dict: 调用 API 返回的结果
 
 #### async def get_danmaku_view():
 
