@@ -113,13 +113,13 @@ class CategoryTypeArticle(Enum):
     """
     文章分类
     + All 全部
-    + Anime
-    + Game
-    + TV
-    + Life
-    + Hobby
-    + LightNovel
-    + Technology
+    + Anime 动画
+    + Game 游戏
+    + TV 电视
+    + Life 生活
+    + Hobby 兴趣
+    + LightNovel 轻小说
+    + Technology 科技
     """
 
     All = 0
@@ -138,7 +138,7 @@ async def search(keyword: str, page: int = 1) -> dict:
 
     Args:
         keyword (str): 搜索关键词
-        page    (int): 页码. Defaults to 1. 
+        page    (int): 页码. Defaults to 1.
 
     Returns:
         dict: 调用 API 返回的结果
