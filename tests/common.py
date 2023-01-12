@@ -13,7 +13,3 @@ def get_credential():
         raise Exception("缺少环境变量")
 
     return Credential(BILI_SESSDATA, BILI_CSRF, BILI_BUVID3, BILI_DEDEUSERID)
-
-
-async def delay():
-    await asyncio.sleep(float(os.getenv("BILI_RATELIMIT")))
