@@ -8,7 +8,7 @@ from html import unescape
 import json
 from enum import Enum
 
-from .utils.utils import get_api, join
+from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network_httpx import request, get_session
 from .exceptions import ArgsException, ApiException
@@ -40,10 +40,10 @@ class Note:
     ):
         """
         Args:
-            type_       (str)                 : 笔记类型 (private, public)
-            cvid       (int)                  : 公开笔记 ID
-            oid        (int)                  : 稿件 ID（oid_type 为 0 时是 avid）
-            note_id    (int)                  : 私有笔记 ID
+            cvid       (int)                  : 公开笔记 ID (对应专栏的 cvid) (公开笔记必要)
+            aid        (int)                  : 稿件 ID（oid_type 为 0 时是 avid） (私有笔记必要)
+            note_id    (int)                  : 私有笔记 ID (私有笔记必要)
+            note_type  (str)                  : 笔记类型 (private, public)
             credential (Credential, optional) : Credential. Defaults to None.
         """
         self.__oid = -1

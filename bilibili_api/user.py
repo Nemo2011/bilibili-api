@@ -11,8 +11,6 @@ import time
 
 from .exceptions import ResponseCodeException
 
-from .utils.sync import sync
-
 from .utils.network_httpx import get_session, request
 from .utils.utils import get_api, join
 from .utils.Credential import Credential
@@ -766,7 +764,7 @@ async def create_channel_series(
         aids (List[int]): 要加入列表的视频的 aid 列表。
         keywords (List[str]): 列表的关键词。
         description (str): 列表的描述。
-        Credential (Credential | None): 凭据类。
+        credential (Credential | None): 凭据类。
 
     Returns:
         dict: 调用 API 返回的结果

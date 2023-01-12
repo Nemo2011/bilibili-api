@@ -344,9 +344,6 @@ class LiveRoom:
         """
         获取黑名单列表
 
-        Args:
-            page (int, optional): 页码. Defaults to 1.
-
         Returns:
             dict: 调用 API 返回的结果
         """

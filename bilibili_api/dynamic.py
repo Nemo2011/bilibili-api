@@ -9,7 +9,6 @@ import json
 import datetime
 import asyncio
 from typing import Any, List, Tuple, Union
-import io
 
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 from .utils.network_httpx import request
@@ -93,7 +92,7 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
     上传动态图片
 
     Args:
-        image_stream (Picture)   : 图片流
+        image        (Picture)   : 图片流
         credential   (Credential): 凭据
 
     Returns:
@@ -123,8 +122,8 @@ async def _get_draw_data(
     获取图片动态请求参数，将会自动上传图片
 
     Args:
-        text (str): 文本内容
-        image_streams (List[Picture]): 图片流
+        text   (str)          : 文本内容
+        images (List[Picture]): 图片流
     """
     new_text, at_uids, ctrl = await _parse_at(text)
     images_info = await asyncio.gather(

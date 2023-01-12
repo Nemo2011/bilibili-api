@@ -35,7 +35,7 @@ API_video = get_api("video")
 class CheeseList:
     """
     课程类
-    
+
     Attributes:
         credential (Credential): 凭据类
     """
@@ -123,7 +123,7 @@ class CheeseVideo:
     def __init__(self, epid, credential: Union[Credential, None] = None, meta=None):
         """
         Args:
-            ep_id      (int)       : 单集 ep_id
+            epid      (int)       : 单集 ep_id
             credential (Credential): 凭据类
         """
         self.__epid = epid
@@ -537,10 +537,6 @@ class CheeseVideo:
         """
         获取高能进度条
 
-        Args:
-            page_index (int): 分 P 号
-            cid        (int): 分 P 编码
-
         Returns:
             调用 API 返回的结果
         """
@@ -565,7 +561,7 @@ class CheeseVideo:
         发送弹幕。
 
         Args:
-            danmaku (Danmaku | None): Danmaku 类。Defaults to None. 
+            danmaku (Danmaku | None): Danmaku 类。Defaults to None.
 
         Returns:
             dict: 调用 API 返回的结果。

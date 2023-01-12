@@ -11,9 +11,7 @@ from bilibili_api.bangumi import Episode
 from bilibili_api.cheese import CheeseVideo
 from .exceptions.ArgsException import ArgsException
 
-from .utils.sync import sync
 from .utils.Credential import Credential
-from .utils.Danmaku import Danmaku
 from .utils.network_httpx import get_session
 from .utils.danmaku2ass import Danmaku2ASS
 from .utils.json2srt import json2srt
@@ -93,8 +91,8 @@ async def make_ass_file_subtitle(
 
     Args:
         obj        (Union[Video,Episode]): 对象
-        out        (str, optional)       : 输出位置. Defaults to "test.ass". 
-        name       (str, optional)       : 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）". 
+        out        (str, optional)       : 输出位置. Defaults to "test.ass".
+        name       (str, optional)       : 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）".
     """
     info = await obj.get_info()
     json_files = info["subtitle"]["list"]
@@ -130,15 +128,15 @@ async def make_ass_file_danmakus_protobuf(
 
     Args:
         obj         (Union[Video,Episode,CheeseVideo])       : 对象
-        page        (int, optional)                          : 分 P 号. Defaults to 0. 
+        page        (int, optional)                          : 分 P 号. Defaults to 0.
         out         (str, optional)                          : 输出文件. Defaults to "test.ass"
-        cid         (int | None, optional)                   : cid. Defaults to None. 
-        credential  (Credential | None, optional)            : 凭据. Defaults to None. 
-        date        (datetime.date, optional)                : 获取时间. Defaults to None. 
-        font_name   (str, optional)                          : 字体. Defaults to "Simsun". 
-        font_size   (float, optional)                        : 字体大小. Defaults to 25.0. 
-        alpha       (float, optional)                        : 透明度(0-1). Defaults to 1. 
-        fly_time    (float, optional)                        : 滚动弹幕持续时间. Defaults to 7. 
+        cid         (int | None, optional)                   : cid. Defaults to None.
+        credential  (Credential | None, optional)            : 凭据. Defaults to None.
+        date        (datetime.date, optional)                : 获取时间. Defaults to None.
+        font_name   (str, optional)                          : 字体. Defaults to "Simsun".
+        font_size   (float, optional)                        : 字体大小. Defaults to 25.0.
+        alpha       (float, optional)                        : 透明度(0-1). Defaults to 1.
+        fly_time    (float, optional)                        : 滚动弹幕持续时间. Defaults to 7.
         static_time (float, optional)                        : 静态弹幕持续时间. Defaults to 5.
     """
     credential = credential if credential else Credential()
@@ -203,14 +201,14 @@ async def make_ass_file_danmakus_xml(
     来源：xml
     Args:
         obj         (Union[Video,Episode,Cheese]): 对象
-        page        (int, optional)              : 分 P 号. Defaults to 0. 
-        out         (str, optional)              : 输出文件. Defaults to "test.ass". 
-        cid         (int | None, optional)       : cid. Defaults to None. 
-        font_name   (str, optional)              : 字体. Defaults to "Simsun". 
-        font_size   (float, optional)            : 字体大小. Defaults to 25.0. 
-        alpha       (float, optional)            : 透明度(0-1). Defaults to 1. 
-        fly_time    (float, optional)            : 滚动弹幕持续时间. Defaults to 7. 
-        static_time (float, optional)            : 静态弹幕持续时间. Defaults to 5. 
+        page        (int, optional)              : 分 P 号. Defaults to 0.
+        out         (str, optional)              : 输出文件. Defaults to "test.ass".
+        cid         (int | None, optional)       : cid. Defaults to None.
+        font_name   (str, optional)              : 字体. Defaults to "Simsun".
+        font_size   (float, optional)            : 字体大小. Defaults to 25.0.
+        alpha       (float, optional)            : 透明度(0-1). Defaults to 1.
+        fly_time    (float, optional)            : 滚动弹幕持续时间. Defaults to 7.
+        static_time (float, optional)            : 静态弹幕持续时间. Defaults to 5.
     """
     if isinstance(obj, Video):
         v = obj

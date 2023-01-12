@@ -21,7 +21,6 @@ from bilibili_api.utils.Danmaku import Danmaku
 
 from . import settings
 
-from .utils.sync import sync
 from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network_httpx import get_session, request
@@ -70,8 +69,8 @@ async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0) -> d
     """
     api = API["info"]["timeline"]
     params = {
-        "types": type_.value, 
-        "before": before, 
+        "types": type_.value,
+        "before": before,
         "after": after
     }
     return await request("GET", api["url"], params = params)
@@ -79,7 +78,7 @@ async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0) -> d
 class Bangumi:
     """
     番剧类
-    
+
     Attributes:
         credential (Credential): 凭据类
     """
@@ -94,11 +93,11 @@ class Bangumi:
     ):
         """
         Args:
-            media_id   (int, optional)              : 番剧本身的 ID. Defaults to -1. 
-            ssid       (int, optional)              : 每季度的 ID. Defaults to -1. 
-            epid       (int, optional)              : 每集的 ID. Defaults to -1. 
-            oversea    (bool, optional)             : 是否要采用兼容的港澳台Api,用于仅限港澳台地区番剧的信息请求. Defaults to False. 
-            credential (Credential | None, optional): 凭据类. Defaults to None. 
+            media_id   (int, optional)              : 番剧本身的 ID. Defaults to -1.
+            ssid       (int, optional)              : 每季度的 ID. Defaults to -1.
+            epid       (int, optional)              : 每集的 ID. Defaults to -1.
+            oversea    (bool, optional)             : 是否要采用兼容的港澳台Api,用于仅限港澳台地区番剧的信息请求. Defaults to False.
+            credential (Credential | None, optional): 凭据类. Defaults to None.
         """
         if media_id == -1 and ssid == -1 and epid == -1:
             raise ValueError("需要 Media_id 或 Season_id 或 epid 中的一个 !")
@@ -189,10 +188,6 @@ class Bangumi:
         """
         获取番剧元数据信息（评分，封面 URL，标题等）
 
-        Args:
-            media_id (int): media_id
-            credential (Credential, optional): 凭据. Defaults to None.
-        
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -211,7 +206,7 @@ class Bangumi:
         Args:
             order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
             next       (str | None, optional)         : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -233,7 +228,7 @@ class Bangumi:
         Args:
             order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
             next       (str | None, optional)         : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -249,7 +244,7 @@ class Bangumi:
     async def get_episode_list(self) -> dict:
         """
         获取季度分集列表，自动转换出海Api的字段，适配部分，但是键还是有不同
-       
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -286,7 +281,7 @@ class Bangumi:
     async def get_overview(self) -> dict:
         """
         获取番剧全面概括信息，包括发布时间、剧集情况、stat 等情况
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -307,9 +302,9 @@ async def set_follow(
 
     Args:
         bangumi    (Bangumi)                    : 番剧类
-        status     (bool, optional)             : 追番状态. Defaults to True. 
-        credential (Credential | None, optional): 凭据. Defaults to None. 
-    
+        status     (bool, optional)             : 追番状态. Defaults to True.
+        credential (Credential | None, optional): 凭据. Defaults to None.
+
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -335,7 +330,7 @@ class Episode(Video):
         """
         Args:
             epid       (int)                 : 番剧 epid
-            credential (Credential, optional): 凭据. Defaults to None. 
+            credential (Credential, optional): 凭据. Defaults to None.
         """
         self.credential = credential if credential else Credential()
         self.__epid = epid
@@ -382,7 +377,7 @@ class Episode(Video):
         """
         获取稿件 cid
 
-        Returns: 
+        Returns:
             int: cid
         """
         return (await self.get_episode_info())["epInfo"]["cid"]
