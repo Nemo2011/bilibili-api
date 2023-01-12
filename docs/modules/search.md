@@ -20,12 +20,6 @@ from bilibili_api import search
 + TOPIC : 话题
 + USER : 用户
 
-## class TopicType
-
-**Extends:** enum.Enum
-
-支持了部分的[完整列表](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/video/video_zone.md)
-
 ## class CategoryTypeArticle
 
 **Extends:** enum.Enum
