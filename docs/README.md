@@ -1,4 +1,4 @@
-![bilibili-api logo](https://raw.githubusercontent.com/nemo2011/bilibili-api/main/design/logo.png)
+![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo-newYear.jpg)
 
 <div align="center">
 
