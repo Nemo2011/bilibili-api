@@ -56,8 +56,8 @@ class OrderType(Enum):
     + TIME：按发布时间倒序。
     """
 
-    LIKE = 2
-    TIME = 0
+    LIKE = 3
+    TIME = 2
 
 
 class Comment:
@@ -76,7 +76,7 @@ class Comment:
             oid        (int)         : 评论所在资源 ID。
             type_      (ResourceType): 评论所在资源类型枚举。
             rpid       (int)         : 评论 ID。
-            credential (Credential)  : 凭据类. Defaults to None. 
+            credential (Credential)  : 凭据类. Defaults to None.
         """
         self.__oid = oid
         self.__rpid = rpid
@@ -293,5 +293,7 @@ async def get_comments(
         raise ArgsException("page_index 必须大于或等于 1")
 
     api = API["comment"]["get"]
-    params = {"pn": page_index, "type": type_.value, "oid": oid, "sort": order.value}
+    params = {"next": page_index, "type": type_.value, "oid": oid, "mode": order.value, "plat": 1}
+    if page_index == 1:
+        params["seek_rpid"] = ""
     return await request("GET", api["url"], params=params, credential=credential)
