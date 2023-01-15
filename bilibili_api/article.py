@@ -446,7 +446,7 @@ class Article:
                             node.cvid = parse_link_res[0].get_cvid()
                             node_list.append(node)
                         else:
-                            # FIXME: 暂不支持其他链接
+                            # XXX: 暂不支持其他的站内链接
                             pass
                     else:
                         node = AnchorNode()
