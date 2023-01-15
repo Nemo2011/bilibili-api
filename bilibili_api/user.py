@@ -863,7 +863,7 @@ async def del_aids_from_series(
     credential: Credential
 ) -> dict:
     """
-    从视频列表(旧版合集)删除视频。
+    从视频列表(旧版合集)删除视频
 
     Args:
         series_id  (int)       : 旧版合集 id。

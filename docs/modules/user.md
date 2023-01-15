@@ -619,3 +619,60 @@ from bilibili_api import user
 获取自己的公开笔记列表
 
 **Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def create_channel_series()
+
+| name | type | description |
+| - | - | - |
+| name | str | 列表名称 |
+| aids | List[int] | 要加入列表的视频的 aid 列表 |
+| keywords | List[str] | 列表的关键词 |
+| description | str | 列表的描述 |
+| credential | Credential \| None | 凭据类 |
+
+新建一个视频列表 (旧版合集)
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def del_channel_series()
+
+| name | type | description |
+| - | - | - |
+| series_id | int | 旧版合集 id |
+| credential | Credential | 凭据类 |
+
+删除视频列表(旧版合集)
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def add_aids_to_series()
+
+| name | type | description |
+| - | - | - |
+| series_id | int | 旧版合集 id |
+| aids | List[int] | 视频 aid 列表 |
+| credential | Credential | 凭据类 |
+
+添加视频至视频列表(旧版合集)
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def del_aids_from_series()
+
+| name | type | description |
+| - | - | - |
+| series_id | int | 旧版合集 id |
+| aids | List[int] | 视频 aid 列表 |
+| credential | Credential | 凭据类 |
+
+从视频列表(旧版合集)删除视频
+
+**Returns:** dict: 调用 API 返回的结果

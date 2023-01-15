@@ -1,6 +1,6 @@
 # 示例：下载互动视频
 
-用途：下载 `ivi` 文件，可以通过 `MPlayer` 播放
+用途：下载 `ivi` 文件，可以通过 `ivitools` 播放
 
 ``` python
 from bilibili_api import interactive_video as ivideo

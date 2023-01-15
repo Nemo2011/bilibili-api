@@ -1,2 +1,3 @@
 *.py text eol=crlf
 *.json text eol=crlf
+*.md text eol=crlf

@@ -52,7 +52,7 @@ from bilibili_api import login_func
 
 检查登录状态。（建议频率 1s，这个 API 也有风控！）
 
-**returns:** List[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
+**returns:** Tuple[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
 
 ---
 
