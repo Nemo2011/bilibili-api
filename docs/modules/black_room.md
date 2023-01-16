@@ -1,6 +1,6 @@
 # Module bilibili_api.black_room
 
-```
+```python
 from bilibili_api import black_room
 ```
 

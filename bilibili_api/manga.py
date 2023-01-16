@@ -68,7 +68,7 @@ class Manga:
         **注意：episode_count 和 episode_id 中必须提供一个参数。**
 
         Returns:
-            dict: 调用 API 返回的结果
+            dict: 对应的话的详细信息
         """
         info = await self.__get_info_cached()
         for ep in info["ep_list"]:
@@ -98,7 +98,7 @@ class Manga:
         """
         获取某一话的图片链接。(未经过处理，所有的链接无法直接访问)
 
-        获取的图片 url 请传入 `manga_image_turn_to_Picture` 函数以转换为 `Picture` 类。
+        获取的图片 url 请传入 `manga.manga_image_turn_to_Picture` 函数以转换为 `Picture` 类。
 
         Args:
             episode_count (int | float | None): 第几话.
@@ -107,7 +107,7 @@ class Manga:
         **注意：episode_count 和 episode_id 中必须提供一个参数。**
 
         Returns:
-            List[Dict]: 返回一个列表，每一项为字典，字典有三个键值：`picture: Picture`, `x: int`, `y: int`
+            dict: 调用 API 返回的结果
         """
         if episode_id == None:
             if episode_count == None:
@@ -161,8 +161,8 @@ async def manga_image_turn_to_Picture(url: str, credential: Optional[Credential]
     将 Manga.get_images_url 函数获得的图片 url 转换为 Picture 类。
 
     Args:
-        url        (str)       : 未经处理的漫画图片链接。
-        credential (Credential): 凭据类。
+        url        (str)               : 未经处理的漫画图片链接。
+        credential (Credential \| None): 凭据类. Defaults to None.
 
     Returns:
         Picture: 图片类。
@@ -180,4 +180,4 @@ async def manga_image_turn_to_Picture(url: str, credential: Optional[Credential]
         )
         return token_data[0]["url"] + "?token=" + token_data[0]["token"]
     url = await get_real_image_url(url)
-    return Picture.from_content(httpx.get(url, headers=HEADERS).content, "jpg")
+    return Picture.from_url(url)
