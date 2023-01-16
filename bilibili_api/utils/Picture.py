@@ -15,14 +15,14 @@ class Picture:
     图片类，包含图片链接、尺寸以及下载操作。
 
     Args:
-        height    (int)  : 高度           
+        height    (int)  : 高度
         imageType (str)  : 格式，例如: png
-        size      (Any)  : 尺寸           
-        url       (str)  : 图片链接        
-        width     (int)  : 宽度           
-        content   (bytes): 图片内容       
+        size      (Any)  : 尺寸
+        url       (str)  : 图片链接
+        width     (int)  : 宽度
+        content   (bytes): 图片内容
 
-    可以不实例化，用 `from_url` 或 `from_file` 加载图片。
+    可以不实例化，用 `from_url`, `from_content` 或 `from_file` 加载图片。
     """
 
     height: int = -1
@@ -56,7 +56,7 @@ class Picture:
         """
         obj = Picture()
         session = httpx.Client()
-        resp = session.get(url)
+        resp = session.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"})
         obj.content = resp.read()
         obj.url = url
         obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1])
@@ -79,7 +79,25 @@ class Picture:
         obj.url = "file://" + path
         obj.__set_picture_meta_from_bytes(os.path.basename(path).split(".")[1])
         return obj
-    
+
+    @staticmethod
+    def from_content(content: bytes, format: str) -> "Picture":
+        """
+        加载字节数据
+
+        Args:
+            content (str): 图片内容
+            format  (str): 图片后缀名，如 `webp`, `jpg`, `ico`
+
+        Returns:
+            Picture: 加载后的图片对象
+        """
+        obj = Picture()
+        obj.content = content
+        obj.url = "bytes://" + content.decode("utf-8", errors="ignore")
+        obj.__set_picture_meta_from_bytes(format)
+        return obj
+
     async def upload_file(self, credential: Credential) -> "Picture":
         """
         上传图片至 B 站。
@@ -102,7 +120,7 @@ class Picture:
         将图片转换为另一种格式。
 
         Args:
-            new_format (str): 新的格式。例：`png`, `ico`, `webp`. 
+            new_format (str): 新的格式。例：`png`, `ico`, `webp`.
 
         Returns:
             Picture: `self`

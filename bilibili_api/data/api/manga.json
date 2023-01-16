@@ -2,7 +2,7 @@
   "info": {
     "detail": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ComicDetail?device=pc&platform=web",
-      "method": "GET",
+      "method": "POST",
       "verify": false,
       "params": {
         "comic_id": "int: 漫画 id"
@@ -11,7 +11,7 @@
     },
     "episode_info": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetEpisode?device=pc&platform=web",
-      "method": "GET",
+      "method": "POST",
       "verify": false,
       "params": {
         "id": "int: 章节 id"
@@ -20,12 +20,21 @@
     },
     "episode_images": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetImageIndex?device=pc&platform=web",
-      "method": "GET",
+      "method": "POST",
       "verify": false,
       "params": {
-        "id": "int: 章节 id"
+        "ep_id": "int: 章节 id"
       },
       "comment": "获取漫画某一章节/某一话的图片的链接。"
+    },
+    "image_token": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ImageToken?device=pc&platform=web",
+      "method": "POST",
+      "verify": false,
+      "params": {
+        "urls": "str: 内容如下：[\"图片链接\"]"
+      },
+      "comment": "获取漫画单张图片的 token"
     }
   },
   "operate": {
