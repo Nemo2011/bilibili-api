@@ -1,0 +1,51 @@
+{
+  "info": {
+    "detail": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ComicDetail?device=pc&platform=web",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "comic_id": "int: 漫画 id"
+      },
+      "comment": "获取漫画详情信息"
+    },
+    "episode_info": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetEpisode?device=pc&platform=web",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "id": "int: 章节 id"
+      },
+      "comment": "获取漫画某一章节/某一话的信息。"
+    },
+    "episode_images": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetImageIndex?device=pc&platform=web",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "id": "int: 章节 id"
+      },
+      "comment": "获取漫画某一章节/某一话的图片的链接。"
+    }
+  },
+  "operate": {
+    "add_favorite": {
+      "url": "https://manga.bilibili.com/twirp/bookshelf.v1.Bookshelf/AddFavorite?device=pc&platform=web",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "comic_ids": "int: 漫画 id"
+      },
+      "comment": "追漫"
+    },
+    "del_favorite": {
+      "url": "https://manga.bilibili.com/twirp/bookshelf.v1.Bookshelf/DeleteFavorite?device=pc&platform=web",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "comic_ids": "int: 漫画 id"
+      },
+      "comment": "取消追漫"
+    }
+  }
+}
