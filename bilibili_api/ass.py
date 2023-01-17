@@ -7,8 +7,8 @@ bilibili_api.ass
 import os
 from typing import Union
 
-from bilibili_api.bangumi import Episode
-from bilibili_api.cheese import CheeseVideo
+from .bangumi import Episode
+from .cheese import CheeseVideo
 from .exceptions.ArgsException import ArgsException
 
 from .utils.Credential import Credential
