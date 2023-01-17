@@ -1,4 +1,6 @@
 # https://blog.csdn.net/mondaiji/article/details/104294430
+# author: 皓空Fly
+# 此文件采用 CC 4.0 BY-SA 协议开源。
 
 import json
 import math
