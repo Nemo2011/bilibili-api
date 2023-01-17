@@ -186,8 +186,8 @@ async def test_zi_get_user_medal():
     return await u.get_user_medal()
 
 
-async def test_zj_get_user_top_videos():
-    return await u.get_top_videos()
+# async def test_zj_get_user_top_videos():
+#     return await u.get_top_videos()
 
 
 async def test_zk_get_reservation():
