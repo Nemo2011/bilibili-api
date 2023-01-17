@@ -33,12 +33,39 @@
           "mobi_app": "web"
         },
         "comment": "获取已有消息"
-      }, 
+      },
       "likes": {
         "url": "https://api.bilibili.com/x/msgfeed/like",
-        "method": "GET", 
-        "verify": true, 
+        "method": "GET",
+        "verify": true,
         "comment": "获取点赞"
+      },
+      "unread": {
+        "url": "https://api.bilibili.com/x/msgfeed/unread?build=0&mobi_app=web",
+        "method": "GET",
+        "verify": true,
+        "comment": "获取未读的信息"
+      },
+      "replies": {
+        "url": "https://api.bilibili.com/x/msgfeed/reply?platform=web&build=0&mobi_app=web",
+        "method": "GET",
+        "verify": true,
+        "comment": "获取收到的回复"
+      },
+      "system_msg": {
+        "url": "https://message.bilibili.com/x/sys-msg/query_user_notify",
+        "method": "GET",
+        "verify": true,
+        "params": {
+          "page_size": "int: 要获取的信息数量"
+        },
+        "comment": "获取系统信息"
+      },
+      "session_settings": {
+        "url": "https://api.vc.bilibili.com/link_setting/v1/link_setting/get",
+        "method": "GET",
+        "verify": true,
+        "comment": "获取消息设置"
       }
     },
     "operate": {
