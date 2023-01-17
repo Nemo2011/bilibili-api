@@ -33,6 +33,9 @@ class Manga:
         self.credential = credential
         self.__info: Optional[Dict] = None
 
+    def get_manga_id(self) -> int:
+        return self.__manga_id
+
     async def get_info(self) -> dict:
         """
         获取漫画信息
@@ -98,7 +101,7 @@ class Manga:
         """
         获取某一话的图片链接。(未经过处理，所有的链接无法直接访问)
 
-        获取的图片 url 请传入 `manga.manga_image_turn_to_Picture` 函数以转换为 `Picture` 类。
+        获取的图片 url 请传入 `manga.manga_image_url_turn_to_Picture` 函数以转换为 `Picture` 类。
 
         Args:
             episode_count (int | float | None): 第几话.
@@ -156,7 +159,8 @@ class Manga:
             })
         return pictures
 
-async def manga_image_turn_to_Picture(url: str, credential: Optional[Credential] = None) -> Picture:
+
+async def manga_image_url_turn_to_Picture(url: str, credential: Optional[Credential] = None) -> Picture:
     """
     将 Manga.get_images_url 函数获得的图片 url 转换为 Picture 类。
 
@@ -181,3 +185,28 @@ async def manga_image_turn_to_Picture(url: str, credential: Optional[Credential]
         return token_data[0]["url"] + "?token=" + token_data[0]["token"]
     url = await get_real_image_url(url)
     return Picture.from_url(url)
+
+async def set_follow_manga(manga: Manga, status: bool = True, credential: Optional[Credential] = None) -> dict:
+    """
+    设置追漫
+
+    Args:
+        manga      (Manga)     : 漫画类。
+        status     (bool)      : 设置是否追漫。是为 True，否为 False。Defaults to True.
+        credential (Credential): 凭据类。
+    """
+    if credential == None:
+        if manga.credential.has_sessdata() and manga.credential.has_bili_jct():
+            credential = manga.credential
+        else:
+            credential = Credential()
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+    if status == True:
+        api = API["operate"]["add_favorite"]
+    else:
+        api = API["operate"]["del_favorite"]
+    data = {
+        "comic_ids": str(manga.get_manga_id())
+    }
+    return await request("POST", api["url"], data=data, credential=credential)

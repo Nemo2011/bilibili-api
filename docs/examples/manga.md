@@ -13,7 +13,7 @@ async def main() -> None:
     for img in images_url["images"]:
         url = img["path"] # 不可以直接通过图片的链接下载
         # 将未经处理无法操作的图片链接转换为可操作的 Picture 类
-        pic = await manga.manga_image_turn_to_Picture(url=url)
+        pic = await manga.manga_image_url_turn_to_Picture(url=url)
         # 下载图片
         await pic.download(str(image_cnt) + ".jpg")
         # 输出进度
@@ -26,4 +26,17 @@ if __name__ == "__main__":
 
 # 示例：设置追漫
 
-啊，我还没做呢，急个什么啊？
+```python
+from bilibili_api import Credential, manga
+import asyncio
+
+async def main():
+    CREDENTIAL = Credential(
+        sessdata="无可奉告",
+        bili_jct="不能让别人偷到我的 cookies"
+    )
+    comic = manga.Manga(manga_id=27915, credential=CREDENTIAL)
+    print(await manga.set_follow_manga(manga=comic, status=False))
+
+asyncio.run(main())
+```

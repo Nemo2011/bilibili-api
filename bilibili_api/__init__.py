@@ -35,6 +35,7 @@ from . import (
     session,
     vote,
     video_uploader,
+    manga
 )
 # TODO: 新增 manga 模块
 from .errors import (
@@ -124,4 +125,5 @@ __all__ = [
     "video",
     "video_uploader",
     "vote",
+    "manga"
 ]

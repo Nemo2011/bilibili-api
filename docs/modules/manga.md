@@ -23,6 +23,12 @@ from bilibili_api import manga
 | manga_id | int | 漫画 id   |
 | credential | Credential \| None | 凭据类. Defaults to None. |
 
+#### def get_manga_id()
+
+获取漫画 id
+
+**Returns:** int: 漫画 id
+
 #### async def get_info()
 
 获取漫画信息
@@ -56,7 +62,7 @@ from bilibili_api import manga
 
 获取某一话的图片链接。(未经过处理，所有的链接无法直接访问)
 
-获取的图片 url 请传入 `manga.manga_image_turn_to_Picture` 函数以转换为 `Picture` 类。
+获取的图片 url 请传入 `manga.manga_image_url_turn_to_Picture` 函数以转换为 `Picture` 类。
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -82,7 +88,7 @@ from bilibili_api import manga
 
 ---
 
-## async def manga_image_turn_to_Picture()
+## async def manga_image_url_turn_to_Picture()
 
 将 Manga.get_images_url 函数获得的图片 url 转换为 Picture 类。
 
@@ -92,3 +98,17 @@ from bilibili_api import manga
 | credential | Credential \| None | 凭据类. Defaults to None. |
 
 **Returns:** Picture: 图片类。
+
+---
+
+## async def set_follow_manga()
+
+设置追漫
+
+| name | type | description |
+| - | - | - |
+| manga | Manga | 漫画类。 |
+| status | bool | 设置是否追漫。是为 True，否为 False。Defaults to True. |
+| credential | Credential | 凭据类。 |
+
+**Returns:** dict: 调用 API 返回的结果
