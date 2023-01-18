@@ -122,7 +122,8 @@ class Manga:
         }
         return await request(
             "POST", api["url"], params=params,
-            no_csrf=(False if (self.credential.has_sessdata() and self.credential.has_bili_jct()) else True)
+            no_csrf=(False if (self.credential.has_sessdata() and self.credential.has_bili_jct()) else True),
+            credential=self.credential
         )
 
     async def get_images(self, episode_count: Optional[Union[int, float]] = None, episode_id: Optional[int] = None) -> List[Dict]:
@@ -147,7 +148,8 @@ class Manga:
             }
             token_data = await request(
                 "POST", token_api["url"], data=datas,
-                no_csrf=(False if (self.credential.has_sessdata() and self.credential.has_bili_jct()) else True)
+                no_csrf=(False if (self.credential.has_sessdata() and self.credential.has_bili_jct()) else True),
+                credential=self.credential
             )
             return token_data[0]["url"] + "?token=" + token_data[0]["token"]
         for img in data["images"]:
