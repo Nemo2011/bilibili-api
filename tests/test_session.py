@@ -28,5 +28,22 @@ async def test_d_send_msg():
         else:
             raise e
 
+
 async def test_e_get_likes():
     return await session.get_likes(get_credential())
+
+
+async def test_f_get_replies():
+    return await session.get_replies(get_credential())
+
+
+async def test_g_get_system_messages():
+    return await session.get_system_messages(get_credential())
+
+
+async def test_h_get_unread_messages():
+    return await session.get_unread_messages(get_credential())
+
+
+async def test_i_get_session_configs():
+    return await session.get_session_settings(get_credential())
