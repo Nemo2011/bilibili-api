@@ -1,4 +1,3 @@
-import asyncio
 from bilibili_api import Credential
 import os
 
