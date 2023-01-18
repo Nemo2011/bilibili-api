@@ -38,15 +38,25 @@
       "method": "GET",
       "verify": false,
       "comment": "获取搜索建议"
-    }, 
+    },
     "game": {
-      "url": "https://line1-h5-pc-api.biligame.com/game/wiki/search", 
-      "method": "GET", 
+      "url": "https://line1-h5-pc-api.biligame.com/game/wiki/search",
+      "method": "GET",
       "params": {
         "keyword": "str: 搜索用的关键字"
       },
-      "verify": false, 
+      "verify": false,
       "comment": "搜索游戏"
+    },
+    "manga": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/Search?device=pc&platform=web",
+      "method": "POST",
+      "data": {
+        "key_word": "str: 搜索用的关键词",
+        "page_num": "int: 页码",
+        "page_size": "int: 每一页的数据大小"
+      },
+      "comment": "搜索漫画"
     }
   }
 }

@@ -149,3 +149,15 @@ from bilibili_api import search
 搜索游戏特用函数
 
 **Returns:** dict: 调用 API 返回的结果
+
+## async def search_manga()
+
+| name | type | description |
+| - | - | - |
+| keyword | str | 搜索关键词 |
+| page_num | int | 页码. Defaults to 1. |
+| page_size | int | 每一页的数据大小. Defaults to 9. |
+
+搜索漫画特用函数
+
+**Returns:** dict: 调用 API 返回的结果

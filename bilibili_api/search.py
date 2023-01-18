@@ -273,7 +273,7 @@ async def search_games(keyword: str) -> dict:
     搜索游戏特用函数
 
     Args:
-        keyword(str): 搜索关键词
+        keyword (str): 搜索关键词
 
     Returns:
         dict: 调用 API 返回的结果
@@ -281,3 +281,26 @@ async def search_games(keyword: str) -> dict:
     api = API["search"]["game"]
     params = {"keyword": keyword}
     return await request("GET", api["url"], params=params)
+
+
+async def search_manga(keyword: str, page_num: int = 1, page_size: int = 9):
+    """
+    搜索漫画特用函数
+
+    Args:
+        keyword   (str): 搜索关键词
+        page_num  (int): 页码. Defaults to 1.
+        page_size (int): 每一页的数据大小. Defaults to 9.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["search"]["manga"]
+    data = {
+        "key_word": keyword,
+        "page_num": page_num,
+        "page_size": page_size
+    }
+    return await request(
+        "POST", api["url"], data=data, no_csrf=True
+    )
