@@ -105,17 +105,90 @@ async def get_likes(credential: Credential) -> dict:
     获取收到的赞
 
     Args:
-        credential (Credential): 凭据类. 
+        credential (Credential): 凭据类.
 
     Returns:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["likes"]
     return await request(
-        "GET", 
-        api["url"], 
+        "GET",
+        api["url"],
         credential = credential
     )
+
+
+async def get_unread_messages(credential: Credential) -> dict:
+    """
+    获取未读的信息
+
+    Args:
+        credential (Credential): 凭据类.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["session"]["unread"]
+    return await request(
+        "GET",
+        api["url"],
+        credential=credential
+    )
+
+
+async def get_replies(credential: Credential) -> dict:
+    """
+    获取收到的回复
+
+    Args:
+        credential (Credential): 凭据类.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["session"]["replies"]
+    return await request(
+        "GET",
+        api["url"],
+        credential=credential
+    )
+
+
+async def get_system_messages(credential: Credential) -> dict:
+    """
+    获取系统信息
+
+    Args:
+        credential (Credential): 凭据类.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["session"]["system_msg"]
+    return await request(
+        "GET",
+        api["url"],
+        credential=credential
+    )
+
+
+async def get_session_settings(credential: Credential) -> dict:
+    """
+    获取消息设置
+
+    Args:
+        credential (Credential): 凭据类.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["session"]["session_settings"]
+    return await request(
+        "GET",
+        api["url"],
+        credential=credential
+    )
+
 
 async def send_msg(credential: Credential, receiver_id: int, msg_type: str, content: Union[str, Picture]) -> dict:
     """
