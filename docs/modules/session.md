@@ -68,6 +68,54 @@ from bilibili_api import session
 
 ---
 
+#### async def get_unread_messages()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据类 |
+
+获取未读的信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+#### async def get_replies()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据类 |
+
+获取收到的回复
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+#### async def get_system_messages()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据类 |
+
+获取系统信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+#### async def get_session_settings()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据类 |
+
+获取消息设置
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
 ## class Event
 
 消息类，定义有各种消息类型，并可将 json 传换成字符串
