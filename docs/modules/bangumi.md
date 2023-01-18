@@ -177,6 +177,18 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 **Returns:** dict: 调用 API 返回的结果
 
+## async def update_follow_status()
+
+| name       | type                 | description           |
+|------------|----------------------|-----------------------|
+| bangumi    | Bangumi              | 番剧类                   |
+| status     | int                  | 追番状态，1 想看 2 在看 3 已看 |
+| credential | Credential \| None, optional | 凭据. Defaults to None  |
+
+更新已追番状态设置
+
+**Returns:** dict: 调用 API 返回的结果
+
 ## class Episode
 
 **Extends: bilibili_api.video.Video**

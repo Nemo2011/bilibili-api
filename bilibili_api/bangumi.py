@@ -315,6 +315,25 @@ async def set_follow(
     data = {"season_id": bangumi.get_season_id()}
     return await request("POST", api["url"], data=data, credential=credential)
 
+async def update_follow_status(
+    bangumi: Bangumi, status: int, credential: Union[Credential, None] = None
+) -> dict:
+    """
+    更新追番状态
+
+    Args:
+        bangumi    (Bangumi)                    : 番剧类
+        credential (Credential | None, optional): 凭据. Defaults to None.
+        status     (int)                        : 追番状态 1 想看 2 在看 3 已看
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential = credential if credential is not None else Credential()
+    credential.raise_for_no_sessdata()
+
+    api = API["operate"]["follow_status"]
+    data = {"season_id": bangumi.get_season_id(), "status": status}
+    return await request("POST", api["url"], data=data, credential=credential)
 
 class Episode(Video):
     """
