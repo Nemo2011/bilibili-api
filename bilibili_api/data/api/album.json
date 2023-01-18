@@ -49,24 +49,22 @@
       "comment": "获取首页推荐摄影 up"
     },
     "painter_list": {
-      "url": "https://api.vc.bilibili.com/link_draw/v2/Doc/list",
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Doc/omdex",
       "method": "GET",
       "verify": false,
       "params": {
-        "type":"str: hot 最热，new 最新",
-        "category": "str: 类型。all 全部，illustration 插画，comic 漫画，draw 其他",
+        "type":"str: recommend 推荐，new 最新",
         "page_num":"int: 页码",
         "page_size":"int: 每页数据大小"
       },
       "comment": "获取画友列表"
     },
     "photos_list": {
-      "url": "https://api.vc.bilibili.com/link_draw/v2/Photo/list",
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Photo/omdex",
       "method": "GET",
       "verify": false,
       "params": {
-        "type": "str: hot 最热，new 最新",
-        "category": "cos: Cosplay，sifu: 私服",
+        "type": "str: recommend 推荐",
         "page_num": "int: 页码",
         "page_size": "int: 每页数据大小"
       },
