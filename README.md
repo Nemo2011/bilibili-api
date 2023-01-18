@@ -4,7 +4,8 @@
 
 # bilibili-api
 
-[![API 数量](https://img.shields.io/badge/API%20数量-200+-blue)][api.json]
+[![API 数量](https://img.shields.io/badge/API%20数量-200+-blue)][![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FNemo2011%2Fbilibili-api.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FNemo2011%2Fbilibili-api?ref=badge_shield)
+[api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3+-red)][LICENSE]
 [![Python](https://img.shields.io/badge/python-3.11|3.10|3.9|3.8-blue)](https://www.python.org)
 [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]
@@ -184,3 +185,7 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 [issues-new]: https://github.com/Nemo2011/bilibili-api/issues/new/choose
 [get-credential]: https://nemo2011.github.io/bilibili-api/#/get-credential
 [pypi]: https://pypi.org/project/bilibili-api-python
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FNemo2011%2Fbilibili-api.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FNemo2011%2Fbilibili-api?ref=badge_large)
