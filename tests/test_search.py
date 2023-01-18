@@ -35,7 +35,13 @@ async def test_f_search_by_order():
     )
 
 
-# from bilibili_api import sync
-#
-# res = sync(test_f_search_by_order())
-# print(res)
+async def test_g_search_game():
+    return await search.search_games(
+        "原神"
+    )
+
+
+async def test_h_search_manga():
+    return await search.search_manga(
+        "来自深渊"
+    )
