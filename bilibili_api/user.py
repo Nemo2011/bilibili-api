@@ -945,7 +945,7 @@ class ChannelSeries:
             resp = json.loads(httpx.get(api["url"], params = params).text)["data"]
             if self.is_new:
                 self.meta = resp["info"]
-                self.meta["mid"] = resp["upper"]["mid"]
+                self.meta["mid"] = resp["info"]["upper"]["mid"]
                 self.__uid = self.meta["mid"]
                 self.owner = User(self.__uid, credential=credential)
             else:
