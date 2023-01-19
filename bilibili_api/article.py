@@ -320,7 +320,18 @@ class Article:
                         if "img-box" in className:
                             img_el: BeautifulSoup = e.find("img") # type: ignore
 
-                            if "class" in img_el.attrs:
+                            if img_el == None:
+                                node = ImageNode()
+                                node_list.append(node)
+
+                                node.url = "https:" + e.find("img").attrs["data-src"] # type: ignore
+
+                                figcaption_el: BeautifulSoup = e.find("figcaption") # type: ignore
+
+                                if figcaption_el:
+                                    if figcaption_el.contents:
+                                        node.alt = figcaption_el.contents[0] # type: ignore
+                            elif "class" in img_el.attrs:
                                 className = img_el.attrs["class"]
 
                                 if "cut-off" in className:
