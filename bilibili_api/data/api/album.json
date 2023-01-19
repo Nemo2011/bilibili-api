@@ -49,7 +49,7 @@
       "comment": "获取首页推荐摄影 up"
     },
     "painter_list": {
-      "url": "https://api.vc.bilibili.com/link_draw/v2/Doc/omdex",
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Doc/index",
       "method": "GET",
       "verify": false,
       "params": {
@@ -60,7 +60,7 @@
       "comment": "获取画友列表"
     },
     "photos_list": {
-      "url": "https://api.vc.bilibili.com/link_draw/v2/Photo/omdex",
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Photo/index",
       "method": "GET",
       "verify": false,
       "params": {
