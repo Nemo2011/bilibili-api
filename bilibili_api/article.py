@@ -128,7 +128,6 @@ class Article:
         self.__meta = None
         self.__cvid = cvid
         self.__has_parsed: bool = False
-
         api = API["info"]["view"]
         params = {"id": self.__cvid}
         resp = httpx.request(
@@ -136,7 +135,9 @@ class Article:
         ).json()
 
         # 设置专栏类别
-        if resp["data"]["type"] == 0:
+        if resp["code"] != 0:
+            self.__type = ArticleType.ARTICLE
+        elif resp["data"]["type"] == 0:
             self.__type = ArticleType.ARTICLE
         elif resp["data"]["type"] == 2:
             self.__type = ArticleType.NOTE
@@ -391,8 +392,9 @@ class Article:
 
                                 figcaption_el: BeautifulSoup = e.find("figcaption") # type: ignore
 
-                                if figcaption_el.contents:
-                                    node.alt = figcaption_el.contents[0] # type: ignore
+                                if figcaption_el:
+                                    if figcaption_el.contents:
+                                        node.alt = figcaption_el.contents[0] # type: ignore
 
                         elif "code-box" in className:
                             # 代码块
