@@ -1,0 +1,85 @@
+{
+  "info": {
+    "detail": {
+      "url": "https://api.vc.bilibili.com/link_draw/v1/doc/detail",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "doc_id": "int: 相簿 id"
+      },
+      "comment": "获取相簿详细信息"
+    },
+    "homepage_painter_albums_list": {
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Doc/index",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "type": "str: recommend 推荐，hot 最热，new 最新",
+        "page_num": "int: 页码",
+        "page_size": "int: 每页数据大小"
+      },
+      "comment": "获取首页画友相簿列表"
+    },
+    "homepage_photos_albums_list": {
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Photo/index",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "type":"str: recommend 推荐",
+        "page_num": "int: 页码",
+        "page_size":"int: 每页数据大小"
+      }
+    },
+    "homepage_recommended_painters": {
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Doc/drawer",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "num": "int: 请求数量"
+      },
+      "comment": "获取首页推荐画友"
+    },
+    "homepage_recommended_photos_uppers": {
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Photo/uper",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "num": "int: 请求数量"
+      },
+      "comment": "获取首页推荐摄影 up"
+    },
+    "painter_list": {
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Doc/index",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "type":"str: recommend 推荐，new 最新",
+        "page_num":"int: 页码",
+        "page_size":"int: 每页数据大小"
+      },
+      "comment": "获取画友列表"
+    },
+    "photos_list": {
+      "url": "https://api.vc.bilibili.com/link_draw/v2/Photo/index",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "type": "str: recommend 推荐",
+        "page_num": "int: 页码",
+        "page_size": "int: 每页数据大小"
+      },
+      "comment": "获取摄影列表"
+    },
+    "user_albums": {
+      "url": "https://api.vc.bilibili.com/link_draw/v1/doc/others",
+      "method": "GET",
+      "params": {
+        "biz": "int: 分区，0 全部，1 画友，2 摄影",
+        "poster_uid": "int: uid",
+        "page_num": "int: 页码",
+        "page_size":"int: 每页数据大小"
+      },
+      "comment": "获取指定用户的投稿的相簿"
+    }
+  }
+}

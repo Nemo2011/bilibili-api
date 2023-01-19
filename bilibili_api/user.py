@@ -392,7 +392,7 @@ class User:
         self, biz: AlbumType = AlbumType.ALL, page_num: int = 1, page_size: int = 30
     ) -> dict:
         """
-        获取用户投稿音频。
+        获取用户投稿相簿。
 
         Args:
             biz (AlbumType, optional): 排序方式. Defaults to AlbumType.ALL.
