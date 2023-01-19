@@ -117,6 +117,17 @@ async def get_homepage_albums_list(
     credential: Optional[Credential] = None
 ) -> dict:
     """
+    获取相簿列表。
+
+    Args:
+        category   (AlbumCategory)       : 分区. Defaults to AlbumCategory.ALL
+        order      (AlbumOrder)          : 排序方式. Defaults to AlbumOrder.RECOMMEND
+        page_num   (int)                 : 第几页. Defaults to 1.
+        page_size  (int)                 : 每一页的数据大小. Defaults to 45.
+        credential (Optional[Credential]): 凭据类. Defaults to None.
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     async def get_painter() -> dict:
         api = API["info"]["homepage_painter_albums_list"]
@@ -165,6 +176,15 @@ async def get_homepage_recommend_uppers(
     credential: Optional[Credential] = None
 ) -> dict:
     """
+    获取首页推荐相簿 up 主。
+
+    Args:
+        category   (AlbumCategory)       : 分区. Defaults to AlbumCategory.ALL
+        numbers    (int)                 : 获取数据的大小. Defaults to 6. (分区为全部时此参数必须为偶数。)
+        credential (Optional[Credential]): 凭据类. Defaults to None.
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     async def get_painters() -> dict:
         api = API["info"]["homepage_recommended_painters"]
@@ -209,6 +229,17 @@ async def get_user_albums(
     credential: Optional[Credential] = None
 ):
     """
+    获取指定用户的相簿列表。
+
+    Args:
+        uid        (int)                 : 用户 uid
+        category   (AlbumCategory)       : 分区. Defaults to AlbumCategory.ALL
+        page_num   (int)                 : 第几页. Defaults to 1.
+        page_size  (int)                 : 每一页的数据大小. Defaults to 45.
+        credential (Optional[Credential]): 凭据类. Defaults to None.
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["user_albums"]
     params = {

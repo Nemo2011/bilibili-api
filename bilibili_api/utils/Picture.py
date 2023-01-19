@@ -127,6 +127,7 @@ class Picture:
         """
         tmp_dir = tempfile.gettempdir()
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
+        open(img_path, "wb").write(self.content)
         img = Image.open(img_path)
         new_img_path = os.path.join(tmp_dir, "test." + new_format)
         img.save(new_img_path)
@@ -147,6 +148,7 @@ class Picture:
         """
         tmp_dir = tempfile.gettempdir()
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
+        open(img_path, "wb").write(self.content)
         img = Image.open(img_path)
         img.save(path)
         return self
