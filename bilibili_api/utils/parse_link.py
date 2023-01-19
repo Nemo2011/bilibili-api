@@ -26,7 +26,6 @@ from ..video import Video
 from ..game import Game
 from .Credential import Credential
 from .short import get_real_url
-from .sync import sync
 from .utils import get_api
 from ..topic import Topic
 
@@ -74,26 +73,26 @@ class ResourceType(Enum):
 
 
 async def parse_link(
-    url: str, 
+    url: str,
     credential: Union[Credential, None] = None
 ) -> Union[
-    Tuple[Video, Literal[ResourceType.VIDEO]], 
-    Tuple[InteractiveVideo, Literal[ResourceType.INTERACTIVE_VIDEO]], 
-    Tuple[Bangumi, Literal[ResourceType.BANGUMI]], 
-    Tuple[Episode, Literal[ResourceType.EPISODE]], 
-    Tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]], 
-    Tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]], 
-    Tuple[Audio, Literal[ResourceType.AUDIO]], 
-    Tuple[AudioList, Literal[ResourceType.AUDIO_LIST]], 
-    Tuple[Article, Literal[ResourceType.ARTICLE]], 
-    Tuple[User, Literal[ResourceType.USER]], 
-    Tuple[LiveRoom, Literal[ResourceType.LIVE]], 
-    Tuple[ChannelSeries, Literal[ResourceType.CHANNEL_SERIES]], 
-    Tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]], 
-    Tuple[Dynamic, Literal[ResourceType.DYNAMIC]], 
-    Tuple[BlackRoom, Literal[ResourceType.BLACK_ROOM]], 
-    Tuple[Game, Literal[ResourceType.GAME]], 
-    Tuple[Topic, Literal[ResourceType.TOPIC]], 
+    Tuple[Video, Literal[ResourceType.VIDEO]],
+    Tuple[InteractiveVideo, Literal[ResourceType.INTERACTIVE_VIDEO]],
+    Tuple[Bangumi, Literal[ResourceType.BANGUMI]],
+    Tuple[Episode, Literal[ResourceType.EPISODE]],
+    Tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]],
+    Tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]],
+    Tuple[Audio, Literal[ResourceType.AUDIO]],
+    Tuple[AudioList, Literal[ResourceType.AUDIO_LIST]],
+    Tuple[Article, Literal[ResourceType.ARTICLE]],
+    Tuple[User, Literal[ResourceType.USER]],
+    Tuple[LiveRoom, Literal[ResourceType.LIVE]],
+    Tuple[ChannelSeries, Literal[ResourceType.CHANNEL_SERIES]],
+    Tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]],
+    Tuple[Dynamic, Literal[ResourceType.DYNAMIC]],
+    Tuple[BlackRoom, Literal[ResourceType.BLACK_ROOM]],
+    Tuple[Game, Literal[ResourceType.GAME]],
+    Tuple[Topic, Literal[ResourceType.TOPIC]],
     Tuple[Literal[-1], Literal[ResourceType.FAILED]]
 ]:
     """
@@ -142,7 +141,7 @@ async def parse_link(
         url = url.split("?")[0]
         if url == "https://space.bilibili.com":
             try:
-                info = sync(get_self_info(credential))
+                info = await get_self_info(credential)
             except:
                 return (-1, ResourceType.FAILED)
             else:
