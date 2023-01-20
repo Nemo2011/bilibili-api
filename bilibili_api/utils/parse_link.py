@@ -28,6 +28,8 @@ from .Credential import Credential
 from .short import get_real_url
 from .utils import get_api
 from ..topic import Topic
+from ..manga import Manga
+from ..album import Album
 
 
 class ResourceType(Enum):
@@ -49,6 +51,8 @@ class ResourceType(Enum):
     + BLACK_ROOM: 小黑屋
     + GAME: 游戏
     + TOPIC: 话题
+    + MANGA: 漫画
+    + ALBUM: 相簿
     + FAILED: 错误
     """
 
@@ -69,6 +73,8 @@ class ResourceType(Enum):
     BLACK_ROOM = "black_room"
     GAME = "game"
     TOPIC = "topic"
+    MANGA = "manga"
+    ALBUM = "album"
     FAILED = "failed"
 
 
@@ -93,6 +99,8 @@ async def parse_link(
     Tuple[BlackRoom, Literal[ResourceType.BLACK_ROOM]],
     Tuple[Game, Literal[ResourceType.GAME]],
     Tuple[Topic, Literal[ResourceType.TOPIC]],
+    Tuple[Manga, Literal[ResourceType.MANGA]],
+    Tuple[Album, Literal[ResourceType.ALBUM]], 
     Tuple[Literal[-1], Literal[ResourceType.FAILED]]
 ]:
     """
@@ -186,6 +194,12 @@ async def parse_link(
         dynamic = parse_dynamic(url)
         if not dynamic == -1:
             obj = (dynamic, ResourceType.DYNAMIC)
+        manga = parse_manga(url)
+        if not manga == -1:
+            obj = (manga, ResourceType.MANGA)
+        album = parse_album(url)
+        if not album == -1:
+            obj = (album, ResourceType.ALBUM)
 
         if obj == None or obj[0] == None:
             return (-1, ResourceType.FAILED)
@@ -558,6 +572,24 @@ def parse_topic(url: str):
     if url[:50] == "https://www.bilibili.com/v/topic/detail/?topic_id=":
         return Topic(
             int(url[50:].split("&")[0])
+        )
+    else:
+        return -1
+
+
+def parse_manga(url: str):
+    if url[:36] == "https://manga.bilibili.com/detail/mc":
+        return Manga(
+            int(url[36:])
+        )
+    else:
+        return -1
+
+
+def parse_album(url: str):
+    if url[:23] == "https://h.bilibili.com/":
+        return Album(
+            int(url[23:])
         )
     else:
         return -1

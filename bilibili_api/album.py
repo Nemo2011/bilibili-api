@@ -48,7 +48,7 @@ class Album:
 
     def __init__(
         self,
-        doc_id: Union[None, int] = None,
+        doc_id: int,
         credential: Union[None, Credential] = None
         ):
         """
@@ -56,10 +56,13 @@ class Album:
             doc_id (int): 相簿 ID。
             credential (Credential): 用户凭证。
         """
-        self.doc_id = doc_id
+        self.__doc_id = doc_id
         self.credential: Credential = Credential() if credential is None else credential
 
         self.__info: Union[dict, None] = None
+
+    async def get_doc_id(self) -> int:
+        return self.__doc_id
 
     async def get_info(self) -> dict:
         """
@@ -69,7 +72,7 @@ class Album:
             dict: 相簿信息。
         """
         api = API["info"]["detail"]
-        params = {"doc_id": self.doc_id}
+        params = {"doc_id": self.get_doc_id()}
         resp = await request("GET", api["url"], params=params)
         self.__info = resp
         return resp
