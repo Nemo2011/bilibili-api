@@ -61,7 +61,7 @@ class Album:
 
         self.__info: Union[dict, None] = None
 
-    async def get_doc_id(self) -> int:
+    def get_doc_id(self) -> int:
         return self.__doc_id
 
     async def get_info(self) -> dict:
