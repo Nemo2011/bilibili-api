@@ -45,6 +45,12 @@ from bilibili_api import album
 | doc_id | int | 相簿 ID |
 | credential | Credential | 凭据类 |
 
+#### def get_doc_id()
+
+获取相簿 ID
+
+**Returns:** int: 相簿 id
+
 #### async def get_info()
 
 获取相簿完整信息
