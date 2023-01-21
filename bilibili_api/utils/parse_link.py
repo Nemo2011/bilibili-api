@@ -113,6 +113,7 @@ async def parse_link(
     Returns:
         Tuple[obj, ResourceType]: (对象，类型) 或 -1,-1 表示出错
     """
+    url = url.lstrip().rstrip()
     credential = credential if credential else Credential()
     try:
         obj = None
@@ -121,6 +122,10 @@ async def parse_link(
         if sobj != -1:
             sobj[0].credential = credential
             return sobj
+
+        if url.upper().startswith("BV") or url.upper().startswith("AV"):
+            url = "https://www.bilibili.com/video/" + url
+            # 视频缩写形式直接补充为完整形式，以便后面跳转链接解析
 
         black_room = parse_black_room(url)
         if not black_room == -1:
@@ -217,8 +222,6 @@ async def parse_link(
 def check_short_name(name: str, credential: Credential):
     """
     解析:
-      - avxxxxxxxxxx
-      - bvxxxxxxxxxx
       - mlxxxxxxxxxx
       - uidxxxxxxxxx
       - cvxxxxxxxxxx
@@ -226,35 +229,7 @@ def check_short_name(name: str, credential: Credential):
       - amxxxxxxxxxx
       - rlxxxxxxxxxx
     """
-    if name[:2].upper() == "AV":
-        v = Video(aid=int(name[2:]))
-        info = json.loads(
-            httpx.get(
-                "https://api.bilibili.com/x/web-interface/view",
-                params={"bvid": v.get_bvid()},
-                cookies=credential.get_cookies(),
-            ).text
-        )
-        is_interactive = info["data"]["rights"]["is_stein_gate"]
-        if is_interactive == 1:
-            return (InteractiveVideo(v.get_bvid()), ResourceType.INTERACTIVE_VIDEO)
-        else:
-            return (v, ResourceType.VIDEO)
-    elif name[:2].upper() == "BV":
-        v = Video(bvid=name)
-        info = json.loads(
-            httpx.get(
-                "https://api.bilibili.com/x/web-interface/view",
-                params={"bvid": v.get_bvid()},
-                cookies=credential.get_cookies(),
-            ).text
-        )
-        is_interactive = info["data"]["rights"]["is_stein_gate"]
-        if is_interactive == 1:
-            return (InteractiveVideo(v.get_bvid()), ResourceType.INTERACTIVE_VIDEO)
-        else:
-            return (v, ResourceType.VIDEO)
-    elif name[:2].upper() == "ML":
+    if name[:2].upper() == "ML":
         return (
             FavoriteList(FavoriteListType.VIDEO, int(name[2:])),
             ResourceType.FAVORITE_LIST,
@@ -601,10 +576,13 @@ def parse_album(url: str):
 
 def parse_bnj(url: str):
     # https://www.bilibili.com/festival/2023bnj?bvid=BV1ZY4y1f79x&spm_id_from=333.999.0.0
-    args = url.split("?")[1].split("&")
-    for arg in args:
-        if "bvid=" in arg:
-            return Video(
-                arg.split("=")[1]
-            )
-    return -1
+    try:
+        args = url.split("?")[1].split("&")
+        for arg in args:
+            if "bvid=" in arg:
+                return Video(
+                    arg.split("=")[1]
+                )
+        return -1
+    except:
+        return -1
