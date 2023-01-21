@@ -573,6 +573,10 @@ class User:
         """
         获取用户与自己共同关注的 up 主
 
+        Args:
+            pn (int): 页码. Defaults to 1.
+            ps (int): 单页数据量. Defaults to 50.
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -1221,28 +1225,19 @@ async def get_self_whisper_followings(
 
 
 async def get_self_friends(
-    credential: Credential,
-    pn: int = 1,
-    ps: int = 50
+    credential: Credential
 ) -> dict:
     """
     获取与自己互粉的人
 
     Args:
         credential (Credential)   : 凭据类
-        pn         (int, optional): 页码. Defaults to 1.
-        ps         (int, optional): 每页数据大小. Defaults to 50.
     """
     credential.raise_for_no_sessdata()
     api = API["info"]["get_friends"]
-    params = {
-        "pn": pn,
-        "ps": ps
-    }
     return await request(
         "GET",
         api["url"],
-        params=params,
         credential=credential
     )
 
@@ -1253,7 +1248,7 @@ async def get_self_black_list(
     ps: int = 50
 ) -> dict:
     """
-    获取自己特殊关注的列表
+    获取自己的黑名单信息
 
     Args:
         credential (Credential)   : 凭据类
