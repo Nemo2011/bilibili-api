@@ -92,6 +92,19 @@ class CheeseList:
             "GET", api["url"], params=params, credential=self.credential
         )
 
+    async def get_list_raw(self):
+        """
+        获取教程所有视频 (返回原始数据)
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["list"]
+        params = {"season_id": self.__season_id, "pn": 1, "ps": 1000}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
     async def get_list(self) -> List["CheeseVideo"]:
         """
         获取教程所有视频

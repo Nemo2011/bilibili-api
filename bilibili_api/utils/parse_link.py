@@ -15,7 +15,7 @@ from ..article import Article, ArticleList
 from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
 from ..black_room import BlackRoom
-from ..cheese import CheeseVideo
+from ..cheese import CheeseVideo, CheeseList
 from ..dynamic import Dynamic
 from ..exceptions import *
 from ..favorite_list import FavoriteList, FavoriteListType
@@ -179,7 +179,7 @@ async def parse_link(
         favorite_list = parse_favorite_list(url)
         if not favorite_list == -1:
             obj = (favorite_list, ResourceType.FAVORITE_LIST)
-        cheese_video = parse_cheese_video(url)
+        cheese_video = await parse_cheese_video(url)
         if not cheese_video == -1:
             obj = (cheese_video, ResourceType.CHEESE_VIDEO)
         audio = parse_audio(url)
@@ -339,7 +339,7 @@ def parse_favorite_list(url):
         return -1
 
 
-def parse_cheese_video(url):
+async def parse_cheese_video(url):
     """
     解析课程视频,如果不是返回 -1，否则返回对应类
     """
@@ -347,6 +347,12 @@ def parse_cheese_video(url):
         if url[37:39].upper() == "EP":
             last_part = int(url[39:].replace("/", ""))
             return CheeseVideo(epid=last_part)
+        elif url[37:39].upper() == "SS":
+            last_part = int(url[39:].replace("/", ""))
+            cl = CheeseList(season_id=last_part)
+            return CheeseVideo(
+                epid=(await cl.get_list_raw())["items"][0]["id"]
+            )
     else:
         return -1
 
