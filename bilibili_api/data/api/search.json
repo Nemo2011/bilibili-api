@@ -51,12 +51,25 @@
     "manga": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/Search?device=pc&platform=web",
       "method": "POST",
+      "verify": false,
       "data": {
         "key_word": "str: 搜索用的关键词",
         "page_num": "int: 页码",
         "page_size": "int: 每一页的数据大小"
       },
       "comment": "搜索漫画"
+    },
+    "cheese": {
+      "url": "https://api.bilibili.com/pugv/app/web/seasonSeek?classification_id=-1",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "page": "int: 页码",
+        "page_size": "int: 每一页的数据大小",
+        "word": "str: 搜索关键词",
+        "sort_type": "int: 排序方式. 综合 -1；销量最高 1；最新上架 2；售价最低 3"
+      },
+      "comment": "搜索课程"
     }
   }
 }
