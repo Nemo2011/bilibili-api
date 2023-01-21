@@ -36,7 +36,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.11",
     ],
     package_data={
-        "": ["data/**/*.*", "py.typed", "requirements.txt", "data/*.*", "data/css/*.*", "data/geetest/*.*", "data/corerespond/*.*"]
+        "": ["data/**/*.*", "py.typed", "requirements.txt", "data/*.*", "data/article/*.*", "data/geetest/*.*", "data/corerespond/*.*"]
     },
     install_requires=requires.splitlines(),
     url="https://github.com/nemo2011/bilibili-api",

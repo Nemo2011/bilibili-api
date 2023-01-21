@@ -1,9 +1,9 @@
 {
   "info": {
     "name_to_uid": {
-      "url": "https://api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/name_to_uid", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/name_to_uid",
+      "method": "GET",
+      "verify": false,
       "params": {
         "names": "string: 多个名称, 用,分割"
       }
@@ -54,12 +54,12 @@
       "comment": "用户关注的 TAG / 话题,认证方式：SESSDATA"
     },
     "user_top_videos": {
-      "url": "https://api.bilibili.com/x/space/top/arc", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://api.bilibili.com/x/space/top/arc",
+      "method": "GET",
+      "verify": false,
       "params": {
         "vmid":"int: uid"
-      }, 
+      },
       "comment": "用户代表作"
     },
     "relation": {
@@ -113,12 +113,12 @@
       "comment": "搜索用户视频"
     },
     "reservation": {
-      "url": "https://api.bilibili.com/x/space/reservation", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://api.bilibili.com/x/space/reservation",
+      "method": "GET",
+      "verify": false,
       "params": {
         "vmid": "int: uid"
-      }, 
+      },
       "comment": "获取用户空间预约"
     },
     "album": {
@@ -212,14 +212,14 @@
       "comment": "获取用户所有关注（需要用户公开信息）"
     },
     "all_followings2": {
-      "url": "https://app.biliapi.net/x/v2/relation/followings", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://app.biliapi.net/x/v2/relation/followings",
+      "method": "GET",
+      "verify": false,
       "params": {
-        "vmid": "int: uid", 
-        "pn": "int: 页码", 
+        "vmid": "int: uid",
+        "pn": "int: 页码",
         "ps":"const int: 100"
-      }, 
+      },
       "comment": "获取用户关注"
     },
     "followers": {
@@ -420,25 +420,58 @@
         "tagids": "commaSeparatedList[int]: 分组的 tagids，逗号分隔"
       },
       "comment": "移动用户到关注分组"
+    },
+    "get_special_followings": {
+      "url": "https://api.bilibili.com/x/relation/tag/special",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取自己的特别关注"
+    },
+    "get_whisper_followings": {
+      "url": "https://api.bilibili.com/x/relation/whispers",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取自己的悄悄关注"
+    },
+    "get_friends": {
+      "url": "https://api.bilibili.com/x/relation/friends",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取与自己互粉的人"
+    },
+    "get_black_list": {
+      "url": "https://api.bilibili.com/x/relation/blacks",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取自己的黑名单列表"
+    },
+    "get_same_followings": {
+      "url": "https://api.bilibili.com/x/relation/same/followings",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "vmid": "int: uid"
+      },
+      "comment": "获取指定用户和自己共同关注的 up 主"
     }
-  }, 
+  },
   "channel_series": {
     "info": {
-      "url": "https://api.bilibili.com/x/series/series", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://api.bilibili.com/x/series/series",
+      "method": "GET",
+      "verify": false,
       "params": {
         "series_id": "int: series_id"
-      }, 
+      },
       "comment": "获取简介"
-    }, 
+    },
     "season_info": {
-      "url": "https://api.bilibili.com/x/space/fav/season/list", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://api.bilibili.com/x/space/fav/season/list",
+      "method": "GET",
+      "verify": false,
       "params": {
         "season_id": "int: season_id"
-      }, 
+      },
       "comment": "获取简介"
     },
     "del_channel_aids_series": {
@@ -471,16 +504,16 @@
         "aids": "list: 所有 aid 列表",
         "csrf": "string: bili_jct 的值"
       }
-    }, 
+    },
     "create": {
-      "url": "https://api.bilibili.com/x/series/series/createAndAddArchives", 
-      "method": "POST", 
-      "verify": true, 
+      "url": "https://api.bilibili.com/x/series/series/createAndAddArchives",
+      "method": "POST",
+      "verify": true,
       "params": {
         "mid": "int: uid",
-        "aids": "int: aid 列表", 
-        "name": "str", 
-        "keywords": "str,str", 
+        "aids": "int: aid 列表",
+        "name": "str",
+        "keywords": "str,str",
         "description": "str"
       }
     }
