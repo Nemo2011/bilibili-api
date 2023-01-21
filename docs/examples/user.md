@@ -8,6 +8,25 @@ u = user.User(660303135)
 print(sync(u.get_relation_info())["follower"])
 ```
 
+# 示例：康康站长认识哪些我喜欢的 up
+
+``` python
+from bilibili_api import user, Credential
+import asyncio
+
+async def main() -> None:
+    CREDENTIAL = Credential(
+        sessdata="xxxxxxxxxx"
+    )
+    bishi = user.User(uid=2, credential=CREDENTIAL)
+    lists = await bishi.get_self_same_followers()
+    for up in lists["list"]:
+        print(up["uname"], end=" ")
+
+if __name__ == '__main__':
+    asyncio.run(main())
+```
+
 # 示例：获取用户所有动态
 
 ```python

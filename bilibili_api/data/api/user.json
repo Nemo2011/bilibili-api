@@ -359,6 +359,53 @@
         "ps": "int: 每页项数"
       },
       "comment": "获取用户的笔记信息"
+    },
+    "get_special_followings": {
+      "url": "https://api.bilibili.com/x/relation/tag/special",
+      "method": "GET",
+      "params": {
+        "pn": "int: 页码",
+        "ps":"int: 每页项数"
+      },
+      "verify": true,
+      "comment": "获取自己的特别关注"
+    },
+    "get_whisper_followings": {
+      "url": "https://api.bilibili.com/x/relation/whispers",
+      "method": "GET",
+      "params": {
+        "pn": "int: 页码",
+        "ps":"int: 每页项数"
+      },
+      "verify": true,
+      "comment": "获取自己的悄悄关注"
+    },
+    "get_friends": {
+      "url": "https://api.bilibili.com/x/relation/friends",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取与自己互粉的人"
+    },
+    "get_black_list": {
+      "url": "https://api.bilibili.com/x/relation/blacks",
+      "method": "GET",
+      "params": {
+        "pn": "int: 页码",
+        "ps":"int: 每页项数"
+      },
+      "verify": true,
+      "comment": "获取自己的黑名单列表"
+    },
+    "get_same_followings": {
+      "url": "https://api.bilibili.com/x/relation/same/followings",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "vmid": "int: uid",
+        "pn": "int: 页码",
+        "ps":"int: 每页项数"
+      },
+      "comment": "获取指定用户和自己共同关注的 up 主"
     }
   },
   "operate": {
@@ -420,39 +467,6 @@
         "tagids": "commaSeparatedList[int]: 分组的 tagids，逗号分隔"
       },
       "comment": "移动用户到关注分组"
-    },
-    "get_special_followings": {
-      "url": "https://api.bilibili.com/x/relation/tag/special",
-      "method": "GET",
-      "verify": true,
-      "comment": "获取自己的特别关注"
-    },
-    "get_whisper_followings": {
-      "url": "https://api.bilibili.com/x/relation/whispers",
-      "method": "GET",
-      "verify": true,
-      "comment": "获取自己的悄悄关注"
-    },
-    "get_friends": {
-      "url": "https://api.bilibili.com/x/relation/friends",
-      "method": "GET",
-      "verify": true,
-      "comment": "获取与自己互粉的人"
-    },
-    "get_black_list": {
-      "url": "https://api.bilibili.com/x/relation/blacks",
-      "method": "GET",
-      "verify": true,
-      "comment": "获取自己的黑名单列表"
-    },
-    "get_same_followings": {
-      "url": "https://api.bilibili.com/x/relation/same/followings",
-      "method": "GET",
-      "verify": true,
-      "params": {
-        "vmid": "int: uid"
-      },
-      "comment": "获取指定用户和自己共同关注的 up 主"
     }
   },
   "channel_series": {
