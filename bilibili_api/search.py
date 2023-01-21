@@ -333,6 +333,9 @@ async def search_cheese(keyword: str, page_num: int = 1, page_size: int = 30, or
         page_num  (int)        : 页码. Defaults to 1.
         page_size (int)        : 每一页的数据大小. Defaults to 30.
         order     (OrderCheese): 排序方式. Defaults to OrderCheese.RECOMMEND
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     api = API["search"]["cheese"]
     params = {
