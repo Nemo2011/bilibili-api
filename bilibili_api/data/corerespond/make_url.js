@@ -157,7 +157,7 @@ function defaultFunc() {
 }
 exports.defaultFunc = defaultFunc;
 
-async function get_url() {
+async function raw_get_url() {
     await defaultFunc();
     const correspondPath = encrypt({
         data: convertToHex(`refresh_${Date.now()}`),
@@ -172,4 +172,6 @@ async function get_url() {
     return URL;
 }
 
-exports.get_url = get_url
+raw_get_url().then(
+    value => console.log(value)
+)

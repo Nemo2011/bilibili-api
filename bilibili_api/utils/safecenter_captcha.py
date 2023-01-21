@@ -45,7 +45,7 @@ def _geetest_urlhandler(url: str, content_type: str):
                 seccode = data[8:].replace("%7C", "|")
         with open(
             os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "..", "data", "site", "geetest", "done.html")
+                os.path.join(os.path.dirname(__file__), "..", "data", "geetest", "done.html")
             ),
             encoding="utf8",
         ) as f:
@@ -60,7 +60,7 @@ def _geetest_urlhandler(url: str, content_type: str):
         key = json_data["data"]["recaptcha_token"]
         with open(
             os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "..", "data", "site", "geetest", "captcha.html")
+                os.path.join(os.path.dirname(__file__), "..", "data", "geetest", "captcha.html")
             ),
             encoding="utf8",
         ) as f:
