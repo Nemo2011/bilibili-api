@@ -2,7 +2,7 @@
 name: 提出疑问
 about: 使用该模板进行提问
 title: "【提问】{这里填写标题}"
-labels: '提问'
+labels: 'question'
 assignees: ''
 
 ---
