@@ -37,15 +37,15 @@
     window.$docsify = {
       name: 'bilibili-api',
       repo: 'https://github.com/nemo2011/bilibili-api',
-      loadSidebar: true, 
+      loadSidebar: true,
       search: {
-        paths: 'auto', 
+        paths: 'auto',
         placeholder: '快速搜索',
         noData: '数据消失了！',
         depth: 6
       }
     }
-    
+
     window.addEventListener('load', function () {
       const $notice = document.querySelector('.notice')
       if (!window.localStorage) {
@@ -70,6 +70,8 @@
   <script src="https://lib.baomitu.com/prism/1.23.0/components/prism-json.min.js"></script>
   <script src="https://lib.baomitu.com/prism/1.23.0/components/prism-typescript.min.js"></script>
   <script src="https://lib.baomitu.com/prism/1.23.0/components/prism-javascript.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar-folder.min.css" />
   <!-- <script src="./search.js"></script> -->
 </body>
 </html>
