@@ -69,6 +69,12 @@ ep_id(int): 单集 ep_id
 
 **Returns**: 调用 API 所得的结果。
 
+#### async def get_list_raw()
+
+获取教程所有视频。（原始数据）
+
+**Returns**: dict: 调用 API 返回的结果。
+
 #### async def get_list()
 
 获取教程所有视频。
