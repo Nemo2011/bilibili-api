@@ -97,6 +97,21 @@ class OrderUser(Enum):
     LEVEL = "level"
 
 
+class OrderCheese(Enum):
+    """
+    课程搜索排序类型
+
+    + RECOMMEND: 综合
+    + SELL     : 销量最高
+    + NEW      : 最新上架
+    + CHEEP    : 售价最低
+    """
+    RECOMMEND = -1
+    SELL = 1
+    NEW = 2
+    CHEEP = 3
+
+
 class CategoryTypePhoto(Enum):
     """
     相册分类
@@ -306,4 +321,28 @@ async def search_manga(keyword: str, page_num: int = 1, page_size: int = 9):
     }
     return await request(
         "POST", api["url"], data=data, no_csrf=True
+    )
+
+
+async def search_cheese(keyword: str, page_num: int = 1, page_size: int = 30, order: OrderCheese = OrderCheese.RECOMMEND):
+    """
+    搜索课程特用函数
+
+    Args:
+        keyword   (str)        : 搜索关键词
+        page_num  (int)        : 页码. Defaults to 1.
+        page_size (int)        : 每一页的数据大小. Defaults to 30.
+        order     (OrderCheese): 排序方式. Defaults to OrderCheese.RECOMMEND
+    """
+    api = API["search"]["cheese"]
+    params = {
+        "word": keyword,
+        "page": page_num,
+        "page_size": page_size,
+        "sort_type": order.value
+    }
+    return await request(
+        "GET",
+        api["url"],
+        params=params
     )
