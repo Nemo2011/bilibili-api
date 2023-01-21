@@ -222,5 +222,25 @@ async def test_zq_del_channel_series():
     return await user.del_channel_series(series_id=series_id, credential=credential)
 
 
+async def test_zr_get_self_same_followings():
+    return await u.get_self_same_followers()
+
+
+async def test_zs_get_self_black_list():
+    return await user.get_self_black_list(credential)
+
+
+async def test_zt_get_self_friends():
+    return await user.get_self_friends(credential)
+
+
+async def test_zu_get_self_whisper_followings():
+    return await user.get_self_whisper_followings(credential)
+
+
+async def test_zv_get_self_special_followings():
+    return await user.get_self_special_followings(credential)
+
+
 async def after_all():
     await u.modify_relation(user.RelationType.UNSUBSCRIBE)
