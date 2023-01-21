@@ -29,7 +29,7 @@ jobs:
         env:
           BILI_SESSDATA: ${{ secrets.BILI_SESSDATA }}
           BILI_CSRF: ${{ secrets.BILI_CSRF }}
-          BILI_RATELIMIT: 1
+          BILI_RATELIMIT: 1.5 # WTF? 1 秒间隔每次 action 测试必须有两个函数 timeout
           BILI_BUVID3: ${{ secrets.BILI_BUVID3 }}
           BILI_PHONE: ${{ secrets.BILI_PHONE }}
           BILI_PASSWORD: ${{ secrets.BILI_PASSWORD }}
