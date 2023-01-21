@@ -100,7 +100,7 @@ async def parse_link(
     Tuple[Game, Literal[ResourceType.GAME]],
     Tuple[Topic, Literal[ResourceType.TOPIC]],
     Tuple[Manga, Literal[ResourceType.MANGA]],
-    Tuple[Album, Literal[ResourceType.ALBUM]], 
+    Tuple[Album, Literal[ResourceType.ALBUM]],
     Tuple[Literal[-1], Literal[ResourceType.FAILED]]
 ]:
     """
@@ -580,7 +580,7 @@ def parse_topic(url: str):
 def parse_manga(url: str):
     if url[:36] == "https://manga.bilibili.com/detail/mc":
         return Manga(
-            int(url[36:])
+            int(url[36:].replace("/", ""))
         )
     else:
         return -1
@@ -589,7 +589,7 @@ def parse_manga(url: str):
 def parse_album(url: str):
     if url[:23] == "https://h.bilibili.com/":
         return Album(
-            int(url[23:])
+            int(url[23:].replace("/", ""))
         )
     else:
         return -1
