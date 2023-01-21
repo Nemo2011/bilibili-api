@@ -144,6 +144,10 @@ async def parse_link(
         if topic != -1:
             topic.credential = credential
             return (topic, ResourceType.TOPIC)
+        bnj_video = parse_bnj(url)
+        if bnj_video != -1:
+            bnj_video.credential = credential
+            return (bnj_video, ResourceType.VIDEO)
 
         # 过滤参数
         url = url.split("?")[0]
@@ -593,3 +597,14 @@ def parse_album(url: str):
         )
     else:
         return -1
+
+
+def parse_bnj(url: str):
+    # https://www.bilibili.com/festival/2023bnj?bvid=BV1ZY4y1f79x&spm_id_from=333.999.0.0
+    args = url.split("?")[1].split("&")
+    for arg in args:
+        if "bvid=" in arg:
+            return Video(
+                arg.split("=")[1]
+            )
+    return -1
