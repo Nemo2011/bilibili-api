@@ -100,7 +100,7 @@ async def parse_link(
     Tuple[Game, Literal[ResourceType.GAME]],
     Tuple[Topic, Literal[ResourceType.TOPIC]],
     Tuple[Manga, Literal[ResourceType.MANGA]],
-    Tuple[Album, Literal[ResourceType.ALBUM]], 
+    Tuple[Album, Literal[ResourceType.ALBUM]],
     Tuple[Literal[-1], Literal[ResourceType.FAILED]]
 ]:
     """
@@ -489,7 +489,7 @@ def parse_space_favorite_list(url, credential):
                     oid_int = int(oid)
                 except:
                     oid_is_number = False
-                if type_ == "" and oid_is_number:
+                if (type_ == "" or type_ == 21) and oid_is_number:
                     # 我的视频收藏夹
                     oid_int = int(oid)
                     return (FavoriteList(media_id=oid_int), ResourceType.FAVORITE_LIST)
