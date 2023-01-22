@@ -137,6 +137,15 @@ async def parse_link(
         if not black_room == -1:
             obj = (black_room, ResourceType.BLACK_ROOM)
             return obj
+            
+        # 过滤 https://space.bilibili.com/
+        if url.host == "space.bilibili.com" and url.path == "/" or url.path == "":
+            try:
+                info = await get_self_info(credential)
+            except Exception as e:
+                return (-1, ResourceType.FAILED)
+            else:
+                return (User(info["mid"], credential=credential), ResourceType.USER)
 
         # 不确定是否可以修改 short.py 的代码，所以先这样
         url = URL(await get_real_url(raw_url))
@@ -157,14 +166,6 @@ async def parse_link(
             topic.credential = credential
             return (topic, ResourceType.TOPIC)
 
-        # 过滤参数
-        if url.host == "space.bilibili.com" and url.path == "/" or url.path == "":
-            try:
-                info = await get_self_info(credential)
-            except:
-                return (-1, ResourceType.FAILED)
-            else:
-                return (User(info["mid"], credential=credential), ResourceType.USER)
         obj = None
         video = parse_video(url, credential)
         if not video == -1:
@@ -241,7 +242,7 @@ def check_short_name(name: str, credential: Credential):
       - amxxxxxxxxxx
       - rlxxxxxxxxxx
     """
-
+    
     if name[:2].upper() == "AV":
         v = Video(aid=int(name[2:]))
         bvid = v.get_bvid()
@@ -280,7 +281,6 @@ def parse_video(url: URL, credential: Credential):
     解析视频,如果不是返回 -1，否则返回对应类
     """
     if url.host == "www.bilibili.com" and url.parts[1] == "video":
-        # if url[:31] == "https://www.bilibili.com/video/":
         raw_video_id = url.parts[2]
         if raw_video_id[:2].upper() == "AV":
             aid = int(raw_video_id[2:])
@@ -322,7 +322,7 @@ def parse_episode(url: URL, credential) -> Union[Episode, int]:
         elif video_short_id[:2].upper() == "SS":
             try:
                 resp = httpx.get(
-                    url,
+                    str(url),
                     cookies=credential.get_cookies(),
                     headers={"User-Agent": "Mozilla/5.0"},
                 )
@@ -349,8 +349,8 @@ def parse_favorite_list(url: URL) -> Union[FavoriteList, int]:
     """
     解析收藏夹,如果不是返回 -1，否则返回对应类
     """
-    if url.host == "www.bilibili.com" and url.parts[:3] == ("/", "medialist", "detail", "ml"):
-        media_id = int(url.parts[4])
+    if url.host == "www.bilibili.com" and url.parts[:3] == ("/", "medialist", "detail"):
+        media_id = int(url.parts[3][2:])
         return FavoriteList(media_id=media_id)
     return -1
 
@@ -360,8 +360,8 @@ def parse_cheese_video(url: URL) -> Union[CheeseVideo, int]:
     解析课程视频,如果不是返回 -1，否则返回对应类
     """
     if url.host == "www.bilibili.com" and url.parts[1] == "cheese" and url.parts[2] == "play":
-        if url[37:39].upper() == "EP":
-            epid = int(url.parts[1][2:])
+        if url.parts[3][:2].upper() == "EP":
+            epid = int(url.parts[3][2:])
             return CheeseVideo(epid=epid)
     return -1
 
@@ -371,8 +371,9 @@ def parse_audio(url: URL) -> Union[Audio, int]:
     解析音频,如果不是返回 -1，否则返回对应类
     """
     if url.host == "www.bilibili.com" and url.parts[1] == "audio":
-        auid = int(url.parts[3][2:])
-        return Audio(auid=auid)
+        if url.parts[2][:2].upper() == "AU":
+            auid = int(url.parts[2][2:])
+            return Audio(auid=auid)
     return -1
 
 
@@ -381,8 +382,9 @@ def parse_audio_list(url: URL) -> Union[AudioList, int]:
     解析歌单,如果不是返回 -1，否则返回对应类
     """
     if url.host == "www.bilibili.com" and url.parts[1] == "audio":
-        amid = int(url.parts[3][:2])
-        return AudioList(amid=amid)
+        if url.parts[2][:2].upper() == "AM":
+            amid = int(url.parts[2][2:])
+            return AudioList(amid=amid)
     return -1
 
 
@@ -390,7 +392,7 @@ def parse_article(url: URL) -> Union[Article, int]:
     """
     解析专栏，如果不是返回 -1，否则返回对应类
     """
-    if url.host == "www.bilibili.com" and url.parts[1] == "read":
+    if url.host == "www.bilibili.com" and url.parts[1] == "read" and url.parts[2][:2].upper() == "CV":
         cvid = int(url.parts[2][2:])
         return Article(cvid=cvid)
     return -1
@@ -419,7 +421,7 @@ def parse_season_series(url: URL) -> Union[ChannelSeries, int]:
                 uid = int(url.parts[1])
             except:
                 pass  # uid 无效
-        if len(url.parts) >= 3:  # path 存在 collectiondetail 或者 seriesdetail
+        if len(url.parts) >= 4:  # path 存在 collectiondetail 或者 seriesdetail
             if url.parts[3] == "collectiondetail":
                 # https://space.bilibili.com/51537052/channel/collectiondetail?sid=22780&ctype=0
                 if url.query.get("sid") is not None:
@@ -443,64 +445,65 @@ def parse_season_series(url: URL) -> Union[ChannelSeries, int]:
 def parse_space_favorite_list(url: URL, credential) -> Union[FavoriteList, int]:
     if url.host == "space.bilibili.com":
         uid = url.parts[1]  # 获取 uid
-        if url.parts[2] == "favlist":
-            if len(url.parts) == 3:  # query 中不存在 fid 则返回默认收藏夹
-                api = get_api("favorite-list")["info"]["list_list"]
-                params = {"up_mid": uid, "type": 2}
-                favorite_lists = httpx.get(
-                    api["url"], params=params, cookies=credential.get_cookies()
-                ).json()["data"]
+        if len(url.parts) >= 3:  # path 存在 favlist
+            if url.parts[2] == "favlist":
+                if len(url.parts) == 3:  # query 中不存在 fid 则返回默认收藏夹
+                    api = get_api("favorite-list")["info"]["list_list"]
+                    params = {"up_mid": uid, "type": 2}
+                    favorite_lists = httpx.get(
+                        api["url"], params=params, cookies=credential.get_cookies()
+                    ).json()["data"]
 
-                if favorite_lists == None:
-                    return -1
-                else:
-                    default_favorite_list = favorite_lists["list"][0]
-                    return FavoriteList(media_id=default_favorite_list["id"])
-            elif len(url.query) != 0:
-                fid = url.query.get("fid")  # 未知数据类型
-                ctype = url.query.get("ctype")
-                try:  # 尝试转换为 int 类型并设置 fid_is_int
-                    fid = int(fid)
-                    fid_is_int = True
-                except:
-                    fid_is_int = False
-
-                if ctype is None and fid_is_int:
-                    # 我的视频收藏夹
-                    fid = int(fid)
-                    return (FavoriteList(media_id=fid), ResourceType.FAVORITE_LIST)
-                elif ctype is not None:  # 存在 ctype
-                    ctype = int(url.query.get("ctype"))
-                    if ctype == 11:
-                        fid = int(fid)  # 转换为 int 类型
-                        fid_is_int = True
-                        return (
-                            FavoriteList(media_id=fid),
-                            ResourceType.FAVORITE_LIST,
-                        )
+                    if favorite_lists == None:
+                        return -1
                     else:
-                        return -1  # 未知收藏夹类型
-                elif fid_is_int == False:
-                    # ctype 不存在且 fid 非 int 类型
-                    if fid == FavoriteListType.ARTICLE.value:
-                        return (
-                            FavoriteList(
-                                FavoriteListType.ARTICLE, credential=credential
-                            ),
-                            ResourceType.FAVORITE_LIST,
-                        )
-                    elif fid == FavoriteListType.CHEESE.value:
-                        return (
-                            FavoriteList(
-                                FavoriteListType.CHEESE, credential=credential
-                            ),
-                            ResourceType.FAVORITE_LIST,
-                        )
+                        default_favorite_list = favorite_lists["list"][0]
+                        return (FavoriteList(media_id=default_favorite_list["id"]), ResourceType.FAVORITE_LIST)
+                elif len(url.query) != 0:
+                    fid = url.query.get("fid")  # 未知数据类型
+                    ctype = url.query.get("ctype")
+                    try:  # 尝试转换为 int 类型并设置 fid_is_int
+                        fid = int(fid)
+                        fid_is_int = True
+                    except:
+                        fid_is_int = False
+
+                    if ctype is None and fid_is_int:
+                        # 我的视频收藏夹
+                        fid = int(fid)
+                        return (FavoriteList(media_id=fid), ResourceType.FAVORITE_LIST)
+                    elif ctype is not None:  # 存在 ctype
+                        ctype = int(url.query.get("ctype"))
+                        if ctype == 11:
+                            fid = int(fid)  # 转换为 int 类型
+                            fid_is_int = True
+                            return (
+                                FavoriteList(media_id=fid),
+                                ResourceType.FAVORITE_LIST,
+                            )
+                        else:
+                            return -1  # 未知收藏夹类型
+                    elif fid_is_int == False:
+                        # ctype 不存在且 fid 非 int 类型
+                        if fid == FavoriteListType.ARTICLE.value:
+                            return (
+                                FavoriteList(
+                                    FavoriteListType.ARTICLE, credential=credential
+                                ),
+                                ResourceType.FAVORITE_LIST,
+                            )
+                        elif fid == FavoriteListType.CHEESE.value:
+                            return (
+                                FavoriteList(
+                                    FavoriteListType.CHEESE, credential=credential
+                                ),
+                                ResourceType.FAVORITE_LIST,
+                            )
     return -1
 
 
 def parse_article_list(url: URL) -> Union[ArticleList, int]:
-    if url.host == "www.bilibili.com" and url.parts[:4] == ("/", "read", "readlist"):
+    if url.host == "www.bilibili.com" and url.parts[:3] == ("/", "read", "readlist"):
         rlid = int(url.parts[3][2:])
         return ArticleList(rlid=rlid)
     return -1
@@ -523,7 +526,7 @@ def parse_black_room(url: URL) -> Union[BlackRoom, int]:
 
 
 def parse_game(url: URL) -> Union[Game, int]:
-    if url.host == "www.biligame.com" and url.path == "detail" and url.query.get("id") is not None:
+    if url.host == "www.biligame.com" and url.parts[1] == "detail" and url.query.get("id") is not None:
         return Game(int(url.query["id"]))
     return -1
 
