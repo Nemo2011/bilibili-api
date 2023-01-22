@@ -3,7 +3,6 @@ bilibili_api.ass
 
 有关 ASS 文件的操作
 """
-
 import os
 from typing import Union
 
@@ -157,6 +156,10 @@ async def make_ass_file_danmakus_protobuf(
             info = {"dimension": {"width": 1440, "height": 1080}}
         width = info["dimension"]["width"]
         height = info["dimension"]["height"]
+        if width == 0:
+            width = 1440
+        if height == 0:
+            height = 1080
         stage_size = (width, height)
         if isinstance(obj, Episode):
             danmakus = await v.get_danmakus()
@@ -225,6 +228,10 @@ async def make_ass_file_danmakus_xml(
             info = {"dimension": {"width": 1440, "height": 1080}}
         width = info["dimension"]["width"]
         height = info["dimension"]["height"]
+        if width == 0:
+            width = 1440
+        if height == 0:
+            height = 1080
         stage_size = (width, height)
         if isinstance(obj, Episode):
             xml_content = await v.get_danmaku_xml()
