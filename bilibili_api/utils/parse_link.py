@@ -227,7 +227,7 @@ async def parse_link(
         return (-1, ResourceType.FAILED)
 
 
-async def auto_convert_video(video: Video) -> Tuple[Union[Video, Episode, InteractiveVideo], ResourceType]:
+async def auto_convert_video(video: Video, credential: Credential) -> Tuple[Union[Video, Episode, InteractiveVideo], ResourceType]:
     # check interactive video
     video_info = await video.get_info()
     if video_info["rights"]["is_stein_gate"] == 1:
@@ -235,7 +235,7 @@ async def auto_convert_video(video: Video) -> Tuple[Union[Video, Episode, Intera
 
     # check episode
     if "redirect_url" in video_info:
-        reparse_link = await parse_link(await get_real_url(video_info["redirect_url"]))
+        reparse_link = await parse_link(await get_real_url(video_info["redirect_url"]), credential=credential)
         return reparse_link
 
     # return video
