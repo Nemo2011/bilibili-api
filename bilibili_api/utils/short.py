@@ -27,9 +27,9 @@ async def get_real_url(short_url: Union[str, URL]) -> Union[str, URL]:
         config["proxies"] = {"all://": settings.proxy}
     try:
         resp = await get_session().head(url=str(short_url), follow_redirects=True)
-        u = resp.url
-        if short_url is URL:
-            return URL(u)
+        u = resp.url # wtf httpx.url
+        if type(short_url) == URL:
+            return URL(str(u))
         return u
     except Exception as e:
         raise e
