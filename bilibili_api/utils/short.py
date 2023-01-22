@@ -30,7 +30,7 @@ async def get_real_url(short_url: Union[str, URL]) -> Union[str, URL]:
         u = resp.url # wtf httpx.url
         if type(short_url) == URL:
             return URL(str(u))
-        return u
+        return str(u)
     except Exception as e:
         raise e
 

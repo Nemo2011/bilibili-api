@@ -117,13 +117,13 @@ async def parse_link(
     credential = credential if credential else Credential()
     try:
         obj = None
-        
+
         # 排除 bvxxxxxxxxxx 等缩写
         sobj = await check_short_name(url, credential)
         if sobj != -1:
             sobj[0].credential = credential
             return sobj
-            
+
         # 删去首尾部空格
         url = url.strip()
         # 添加 https: 协议头
@@ -138,7 +138,7 @@ async def parse_link(
         if not black_room == -1:
             obj = (black_room, ResourceType.BLACK_ROOM)
             return obj
-            
+
         # 过滤 https://space.bilibili.com/
         if url.host == "space.bilibili.com" and url.path == "/" or url.path == "":
             try:
@@ -147,8 +147,8 @@ async def parse_link(
                 return (-1, ResourceType.FAILED)
             else:
                 return (User(info["mid"], credential=credential), ResourceType.USER)
-        
-        channel = await parse_season_series(url) # 不需要 real_url，提前处理
+
+        channel = parse_season_series(url) # 不需要 real_url，提前处理
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES)
 
@@ -223,6 +223,7 @@ async def parse_link(
             obj[0].credential = credential
             return obj  # type: ignore
     except Exception as e:
+        raise e
         return (-1, ResourceType.FAILED)
 
 
@@ -231,10 +232,10 @@ async def auto_convert_video(video: Video) -> Tuple[Union[Video, Episode, Intera
     video_info = await video.get_info()
     if video_info["rights"]["is_stein_gate"] == 1:
         return (InteractiveVideo(video.get_bvid()), ResourceType.INTERACTIVE_VIDEO)
-    
+
     # check episode
     if "redirect_url" in video_info:
-        reparse_link = await parse_link(video_info["redirect_url"])
+        reparse_link = await parse_link(await get_real_url(video_info["redirect_url"]))
         return reparse_link
 
     # return video
@@ -433,12 +434,12 @@ def parse_season_series(url: URL) -> Union[ChannelSeries, int]:
                     sid = int(url.query["sid"])
                     return ChannelSeries(uid, ChannelSeriesType.SEASON, id_=sid)
             elif url.parts[3] == "seriesdetail":
-                # https://space.bilibili.com/558830935/channel/seriesdetail?sid=2972810&ctype=0 
+                # https://space.bilibili.com/558830935/channel/seriesdetail?sid=2972810&ctype=0
                 if url.query.get("sid") is not None:
                     sid = int(url.query["sid"])
                     return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
     elif url.host == "www.bilibili.com":
-        if url.parts[1] == "list": 
+        if url.parts[1] == "list":
             # https://www.bilibili.com/list/660303135?sid=2908236 旧版合集，不需要 real_url
             if len(url.parts) >= 3 and url.query.get("sid") is not None:
                 sid = int(url.query["sid"])
