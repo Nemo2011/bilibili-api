@@ -132,7 +132,7 @@ async def parse_link(
             obj = (black_room, ResourceType.BLACK_ROOM)
             return obj
 
-        url = await get_real_url(url)
+        url = await get_real_url(url, credential=credential)
 
         # 特殊处理，因为后面会过滤参数，这几项需要参数完成
         channel = parse_season_series(url)
@@ -156,13 +156,6 @@ async def parse_link(
 
         # 过滤参数
         url = url.split("?")[0]
-        if url == "https://space.bilibili.com":
-            try:
-                info = await get_self_info(credential)
-            except:
-                return (-1, ResourceType.FAILED)
-            else:
-                return (User(info["mid"], credential=credential), ResourceType.USER)
         obj = None
         video = parse_video(url, credential)
         if not video == -1:
@@ -430,6 +423,11 @@ def parse_season_series(url):
                     if "business_id" in param:
                         sid = int(param[12:])
                         return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+    elif url[:30] == "https://www.bilibili.com/list/":
+        lists = [url[30:].split("&")[0].split("?")[1]] + url[30:].split("&")[1:]
+        for arg in lists:
+            if "sid" in arg:
+                return ChannelSeries(type_=ChannelSeriesType.SERIES, id_=int(arg[4:]))
     return -1
 
 
@@ -469,7 +467,7 @@ def parse_space_favorite_list(url, credential):
                     if "fid" in arg:
                         oid = arg[4:]
                     if "ftype" in arg:
-                        ftype = arg[5:]
+                        ftype = arg[6:]
                     if "ctype" in arg:
                         type_ = int(arg[6:])
                 oid_is_number = True
@@ -477,7 +475,7 @@ def parse_space_favorite_list(url, credential):
                     oid_int = int(oid)
                 except:
                     oid_is_number = False
-                if (type_ == "" or type_ == 21) and ftype == "create" and oid_is_number:
+                if (type_ == "" or type_ == 11) and ftype == "create" and oid_is_number:
                     # 我的视频收藏夹
                     oid_int = int(oid)
                     return (FavoriteList(media_id=oid_int), ResourceType.FAVORITE_LIST)

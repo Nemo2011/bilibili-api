@@ -221,6 +221,7 @@ BV 号转 AV 号。
 | name | type | description |
 | - | - | - |
 | short_url | str | 短链接 |
+| credential | Optional[Credential] | 凭据类. |
 
 获取短链接对应的真实链接。
 
@@ -260,22 +261,6 @@ BV 号转 AV 号。
 但是 `parse_link` 可以自动读取 `bvid` 或 `aid` 并生成对应的对象。
 
 **注意：** `parse_link` 会读取可跳转链接的目标链接！
-
-目前 `parse_link` 函数支持解析：
-
-- 视频
-- 番剧
-- 番剧剧集
-- 收藏夹
-- 课程视频
-- 音频
-- 歌单
-- 专栏
-- 用户
-- 直播间
-- 合集与列表
-- 游戏
-- 话题
 
 **Returns:** `Tuple[obj, ResourceType]`: 第一项为返回对象，第二项为对象类型。
 

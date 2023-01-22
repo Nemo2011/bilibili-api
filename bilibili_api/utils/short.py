@@ -5,17 +5,21 @@ bilibili_api.utils.short
 """
 import httpx
 from .network_httpx import get_session
+from .Credential import Credential
 from .. import settings
+from typing import Optional
 
 
-async def get_real_url(short_url: str) -> str:
+async def get_real_url(short_url: str, credential: Optional[Credential] = None) -> str:
     """
     获取短链接跳转目标，以进行操作。
     Params:
         short_url(str): 短链接。
+        credential(Credential \| None): 凭据类。
     Returns:
         目标链接（如果不是有效的链接会报错）
     """
+    credential = credential if credential else Credential()
     config = {}
     config["method"] = "GET"
     config["url"] = short_url
@@ -23,7 +27,7 @@ async def get_real_url(short_url: str) -> str:
     if settings.proxy:
         config["proxies"] = {"all://": settings.proxy}
     try:
-        resp = await get_session().head(url=short_url, follow_redirects=True)
+        resp = await get_session().head(url=short_url, follow_redirects=True, cookies=credential.get_cookies())
         u = resp.url
         return str(u)
     except Exception as e:
