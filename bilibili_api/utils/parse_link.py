@@ -119,7 +119,7 @@ async def parse_link(
         obj = None
         
         # 排除 bvxxxxxxxxxx 等缩写
-        sobj = check_short_name(url, credential)
+        sobj = await check_short_name(url, credential)
         if sobj != -1:
             sobj[0].credential = credential
             return sobj
@@ -148,12 +148,11 @@ async def parse_link(
             else:
                 return (User(info["mid"], credential=credential), ResourceType.USER)
         
-        channel = parse_season_series(url) # 不需要 real_url，提前处理
+        channel = await parse_season_series(url) # 不需要 real_url，提前处理
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES)
 
-        # 不确定是否可以修改 short.py 的代码，所以先这样
-        url = URL(await get_real_url(raw_url))
+        url = await get_real_url(url)
 
         fl_space = parse_space_favorite_list(url, credential)
         if fl_space != -1:
@@ -172,7 +171,7 @@ async def parse_link(
             return (bnj_video, ResourceType.VIDEO)
 
         obj = None
-        video = parse_video(url, credential)
+        video = await parse_video(url, credential)
         if not video == -1:
             if isinstance(video, InteractiveVideo):
                 obj = (video, ResourceType.INTERACTIVE_VIDEO)
@@ -227,15 +226,21 @@ async def parse_link(
         return (-1, ResourceType.FAILED)
 
 
-def is_interactive_video(bvid: str, credential: Credential):
-    info = httpx.get(
-        "https://api.bilibili.com/x/web-interface/view",
-        params={"bvid": bvid},
-        cookies=credential.get_cookies()).json()
-    return info["data"]["rights"]["is_stein_gate"] == 1
+async def auto_convert_video(video: Video) -> Tuple[Union[Video, Episode, InteractiveVideo], ResourceType]:
+    # check interactive video
+    video_info = await video.get_info()
+    if video_info["rights"]["is_stein_gate"] == 1:
+        return (InteractiveVideo(video.get_bvid()), ResourceType.INTERACTIVE_VIDEO)
+    
+    # check episode
+    if "redirect_url" in video_info:
+        reparse_link = await parse_link(video_info["redirect_url"])
+        return reparse_link
 
+    # return video
+    return (video, ResourceType.VIDEO)
 
-def check_short_name(name: str, credential: Credential):
+async def check_short_name(name: str, credential: Credential):
     """
     解析:
       - mlxxxxxxxxxx
@@ -246,19 +251,11 @@ def check_short_name(name: str, credential: Credential):
       - rlxxxxxxxxxx
     """
     if name[:2].upper() == "AV":
-        v = Video(aid=int(name[2:]))
-        bvid = v.get_bvid()
-        if is_interactive_video(bvid, credential):
-            return (InteractiveVideo(bvid), ResourceType.INTERACTIVE_VIDEO)
-        else:
-            return (v, ResourceType.VIDEO)
+        v = Video(aid=int(name[2:]), credential=credential)
+        return await auto_convert_video(v)
     elif name[:2].upper() == "BV":
-        v = Video(bvid=name)
-        bvid = v.get_bvid()
-        if is_interactive_video(bvid, credential):
-            return (InteractiveVideo(bvid), ResourceType.INTERACTIVE_VIDEO)
-        else:
-            return (v, ResourceType.VIDEO)
+        v = Video(bvid=name, credential=credential)
+        return await auto_convert_video(v)
     elif name[:2].upper() == "ML":
         return (
             FavoriteList(FavoriteListType.VIDEO, int(name[2:])),
@@ -278,7 +275,7 @@ def check_short_name(name: str, credential: Credential):
         return -1
 
 
-def parse_video(url: URL, credential: Credential):
+async def parse_video(url: URL, credential: Credential):
     """
     解析视频,如果不是返回 -1，否则返回对应类
     """
@@ -287,16 +284,11 @@ def parse_video(url: URL, credential: Credential):
         if raw_video_id[:2].upper() == "AV":
             aid = int(raw_video_id[2:])
             v = Video(aid=aid)
-            bvid = v.get_bvid()
         elif raw_video_id[:2].upper() == "BV":
             v = Video(bvid=raw_video_id)
-            bvid = raw_video_id
         else:
             return -1
-        if is_interactive_video(bvid=bvid, credential=credential) == 1:
-            return InteractiveVideo(bvid)
-        else:
-            return v
+        return await auto_convert_video(v, credential=credential)
     else:
         return -1
 
@@ -305,9 +297,10 @@ def parse_bangumi(url: URL) -> Union[Bangumi, int]:
     """
     解析番剧,如果不是返回 -1，否则返回对应类
     """
-    if url.host == "www.bilibili.com" and url.parts[:3] == ("/", "bangumi", "media"):
-        media_id = int(url.parts[3][2:])
-        return Bangumi(media_id=media_id)
+    if url.host == "www.bilibili.com" and len(url.parts) >= 4:
+        if url.parts[:3] == ("/", "bangumi", "media"):
+            media_id = int(url.parts[3][2:])
+            return Bangumi(media_id=media_id)
     return -1
 
 
@@ -315,35 +308,36 @@ def parse_episode(url: URL, credential) -> Union[Episode, int]:
     """
     解析番剧剧集,如果不是返回 -1，否则返回对应类
     """
-    if url.host == "www.bilibili.com" and url.parts[1] == "bangumi" and url.parts[2] == "play":
-        video_short_id = url.parts[3]
+    if url.host == "www.bilibili.com" and len(url.parts) >= 3:
+        if url.parts[1] == "bangumi" and url.parts[2] == "play":
+            video_short_id = url.parts[3]
 
-        if video_short_id[:2].upper() == "EP":
-            epid = int(video_short_id[2:])
-            return Episode(epid=epid)
-        elif video_short_id[:2].upper() == "SS":
-            try:
-                resp = httpx.get(
-                    str(url),
-                    cookies=credential.get_cookies(),
-                    headers={"User-Agent": "Mozilla/5.0"},
-                )
-            except Exception as e:
-                raise ResponseException(str(e))
-            else:
-                content = resp.text
-
-                pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
-                match = re.search(pattern, content)
-                if match is None:
-                    raise ApiException("未找到番剧信息")
+            if video_short_id[:2].upper() == "EP":
+                epid = int(video_short_id[2:])
+                return Episode(epid=epid)
+            elif video_short_id[:2].upper() == "SS":
                 try:
-                    content = json.loads(match.group(1))
-                except json.JSONDecodeError:
-                    raise ApiException("信息解析错误")
+                    resp = httpx.get(
+                        str(url),
+                        cookies=credential.get_cookies(),
+                        headers={"User-Agent": "Mozilla/5.0"},
+                    )
+                except Exception as e:
+                    raise ResponseException(str(e))
                 else:
-                    epid = content["epInfo"]["id"]
-                    return Episode(epid=epid)
+                    content = resp.text
+
+                    pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
+                    match = re.search(pattern, content)
+                    if match is None:
+                        raise ApiException("未找到番剧信息")
+                    try:
+                        content = json.loads(match.group(1))
+                    except json.JSONDecodeError:
+                        raise ApiException("信息解析错误")
+                    else:
+                        epid = content["epInfo"]["id"]
+                        return Episode(epid=epid)
     return -1
 
 
@@ -351,9 +345,10 @@ def parse_favorite_list(url: URL) -> Union[FavoriteList, int]:
     """
     解析收藏夹,如果不是返回 -1，否则返回对应类
     """
-    if url.host == "www.bilibili.com" and url.parts[:3] == ("/", "medialist", "detail"):
-        media_id = int(url.parts[3][2:])
-        return FavoriteList(media_id=media_id)
+    if url.host == "www.bilibili.com" and len(url.parts) >= 4:
+        if url.parts[:3] == ("/", "medialist", "detail"):
+            media_id = int(url.parts[3][2:])
+            return FavoriteList(media_id=media_id)
     return -1
 
 
@@ -361,15 +356,16 @@ async def parse_cheese_video(url: URL) -> Union[CheeseVideo, int]:
     """
     解析课程视频,如果不是返回 -1，否则返回对应类
     """
-    if url.host == "www.bilibili.com" and url.parts[1] == "cheese" and url.parts[2] == "play":
-        if url.parts[3][:2].upper() == "EP":
-            epid = int(url.parts[3][2:])
-            return CheeseVideo(epid=epid)
-        elif url.parts[3][:2].upper() == "SS":
-            clid = int(url.parts[3][2:])
-            cl = CheeseList(season_id=clid)
-            return CheeseVideo(
-                epid=(await cl.get_list_raw())["items"][0]["id"]
+    if url.host == "www.bilibili.com" and len(url.parts) >=4:
+        if url.parts[1] == "cheese" and url.parts[2] == "play":
+            if url.parts[3][:2].upper() == "EP":
+                epid = int(url.parts[3][2:])
+                return CheeseVideo(epid=epid)
+            elif url.parts[3][:2].upper() == "SS":
+                clid = int(url.parts[3][2:])
+                cl = CheeseList(season_id=clid)
+                return CheeseVideo(
+                    epid=(await cl.get_list_raw())["items"][0]["id"]
             )
     return -1
 
@@ -400,9 +396,10 @@ def parse_article(url: URL) -> Union[Article, int]:
     """
     解析专栏，如果不是返回 -1，否则返回对应类
     """
-    if url.host == "www.bilibili.com" and url.parts[1] == "read" and url.parts[2][:2].upper() == "CV":
-        cvid = int(url.parts[2][2:])
-        return Article(cvid=cvid)
+    if url.host == "www.bilibili.com" and len(url.parts) >= 3:
+        if url.parts[1] == "read" and url.parts[2][:2].upper() == "CV":
+            cvid = int(url.parts[2][2:])
+            return Article(cvid=cvid)
     return -1
 
 
@@ -447,7 +444,8 @@ def parse_season_series(url: URL) -> Union[ChannelSeries, int]:
                 sid = int(url.query["sid"])
                 uid = int(url.parts[2])
                 return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
-        elif url.parts[1] == "medialist" and url.parts[2] == "play": # https://www.bilibili.com/medialist/play/660303135?business=space 新版合集
+        # https://www.bilibili.com/medialist/play/660303135?business=space 新版合集
+        elif url.parts[1] == "medialist" and url.parts[2] == "play":
             if len(url.parts) >= 4:
                 uid = int(url.parts[3])
             if url.query.get("business_id") is not None:
@@ -517,9 +515,10 @@ def parse_space_favorite_list(url: URL, credential) -> Union[FavoriteList, int]:
 
 
 def parse_article_list(url: URL) -> Union[ArticleList, int]:
-    if url.host == "www.bilibili.com" and url.parts[:3] == ("/", "read", "readlist"):
-        rlid = int(url.parts[3][2:])
-        return ArticleList(rlid=rlid)
+    if url.host == "www.bilibili.com" and len(url.parts) >= 3:
+        if url.parts[:3] == ("/", "read", "readlist"):
+            rlid = int(url.parts[3][2:])
+            return ArticleList(rlid=rlid)
     return -1
 
 
@@ -546,10 +545,12 @@ def parse_game(url: URL) -> Union[Game, int]:
 
 
 def parse_topic(url: URL) -> Union[Topic, int]:
-    if url.host == "www.bilibili.com" and url.parts[:4] == ("/", "v", "topic", "detail") and url.query.get("topic_id") is not None:
-        return Topic(
-            int(url.query["topic_id"])
-        )
+    if url.host == "www.bilibili.com" and len(url.parts) >= 4:
+        if url.parts[:4] == ("/", "v", "topic", "detail") and url.query.get("topic_id") is not None:
+
+            return Topic(
+                int(url.query["topic_id"])
+            )
     return -1
 
 
