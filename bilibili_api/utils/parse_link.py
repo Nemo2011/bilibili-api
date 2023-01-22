@@ -118,17 +118,18 @@ async def parse_link(
     credential = credential if credential else Credential()
     try:
         obj = None
-
+        
         # 排除 bvxxxxxxxxxx 等缩写
         sobj = check_short_name(url, credential)
         if sobj != -1:
             sobj[0].credential = credential
             return sobj
-          
+            
+        # 删去首尾部空格
+        url = url.strip()
         # 添加 https: 协议头
         if url.lstrip("https:") == url:
             url = "https:" + url
-        
         # 转换为 yarl
         url = URL(url)
 
@@ -146,14 +147,14 @@ async def parse_link(
                 return (-1, ResourceType.FAILED)
             else:
                 return (User(info["mid"], credential=credential), ResourceType.USER)
+        
+        channel = parse_season_series(url) # 不需要 real_url，提前处理
+        if channel != -1:
+            return (channel, ResourceType.CHANNEL_SERIES)
 
         # 不确定是否可以修改 short.py 的代码，所以先这样
         url = URL(await get_real_url(raw_url))
 
-        # 特殊处理，因为后面会过滤参数，这几项需要参数完成
-        channel = parse_season_series(url)
-        if channel != -1:
-            return (channel, ResourceType.CHANNEL_SERIES)
         fl_space = parse_space_favorite_list(url, credential)
         if fl_space != -1:
             return fl_space
@@ -365,7 +366,7 @@ async def parse_cheese_video(url: URL) -> Union[CheeseVideo, int]:
             epid = int(url.parts[3][2:])
             return CheeseVideo(epid=epid)
         elif url.parts[3][:2].upper() == "SS":
-            clid = int(url.parts[4][2:])
+            clid = int(url.parts[3][2:])
             cl = CheeseList(season_id=clid)
             return CheeseVideo(
                 epid=(await cl.get_list_raw())["items"][0]["id"]
@@ -435,15 +436,21 @@ def parse_season_series(url: URL) -> Union[ChannelSeries, int]:
                     sid = int(url.query["sid"])
                     return ChannelSeries(uid, ChannelSeriesType.SEASON, id_=sid)
             elif url.parts[3] == "seriesdetail":
-                # https://space.bilibili.com/558830935/channel/seriesdetail?sid=2972810&ctype=0
+                # https://space.bilibili.com/558830935/channel/seriesdetail?sid=2972810&ctype=0 
                 if url.query.get("sid") is not None:
                     sid = int(url.query["sid"])
                     return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
     elif url.host == "www.bilibili.com":
-        if url.parts[1] == "medialist" and url.parts[2] == "play":
+        if url.parts[1] == "list": 
+            # https://www.bilibili.com/list/660303135?sid=2908236 旧版合集，不需要 real_url
+            if len(url.parts) >= 3 and url.query.get("sid") is not None:
+                sid = int(url.query["sid"])
+                uid = int(url.parts[2])
+                return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+        elif url.parts[1] == "medialist" and url.parts[2] == "play": # https://www.bilibili.com/medialist/play/660303135?business=space 新版合集
             if len(url.parts) >= 4:
                 uid = int(url.parts[3])
-            if len(url.query) != 0:
+            if url.query.get("business_id") is not None:
                 sid = int(url.query.get("business_id"))
                 return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
     return -1
