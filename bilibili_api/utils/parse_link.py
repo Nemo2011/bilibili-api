@@ -173,10 +173,7 @@ async def parse_link(
         obj = None
         video = await parse_video(url, credential)
         if not video == -1:
-            if isinstance(video, InteractiveVideo):
-                obj = (video, ResourceType.INTERACTIVE_VIDEO)
-            else:
-                obj = (video, ResourceType.VIDEO)
+            obj = video # auto_convert_video 会判断类型
         bangumi = parse_bangumi(url)
         if not bangumi == -1:
             obj = (bangumi, ResourceType.BANGUMI)
@@ -231,7 +228,7 @@ async def auto_convert_video(video: Video, credential: Credential) -> Tuple[Unio
     # check interactive video
     video_info = await video.get_info()
     if video_info["rights"]["is_stein_gate"] == 1:
-        return (InteractiveVideo(video.get_bvid()), ResourceType.INTERACTIVE_VIDEO)
+        return (InteractiveVideo(video.get_bvid(), credential=credential), ResourceType.INTERACTIVE_VIDEO)
 
     # check episode
     if "redirect_url" in video_info:
@@ -253,10 +250,10 @@ async def check_short_name(name: str, credential: Credential):
     """
     if name[:2].upper() == "AV":
         v = Video(aid=int(name[2:]), credential=credential)
-        return await auto_convert_video(v)
+        return await auto_convert_video(v, credential=credential)
     elif name[:2].upper() == "BV":
         v = Video(bvid=name, credential=credential)
-        return await auto_convert_video(v)
+        return await auto_convert_video(v, credential=credential)
     elif name[:2].upper() == "ML":
         return (
             FavoriteList(FavoriteListType.VIDEO, int(name[2:])),
