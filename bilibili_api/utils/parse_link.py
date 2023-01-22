@@ -455,7 +455,7 @@ def parse_space_favorite_list(url, credential):
                     else:
                         default_favorite_list = favorite_lists["list"][0]
                         return (
-                            FavoriteList(media_id=default_favorite_list["id"]),
+                            FavoriteList(media_id=default_favorite_list["id"], credential=credential),
                             ResourceType.FAVORITE_LIST,
                         )
                 oid = ""
@@ -478,21 +478,21 @@ def parse_space_favorite_list(url, credential):
                 if (type_ == "" or type_ == 11) and ftype == "create" and oid_is_number:
                     # 我的视频收藏夹
                     oid_int = int(oid)
-                    return (FavoriteList(media_id=oid_int), ResourceType.FAVORITE_LIST)
+                    return (FavoriteList(media_id=oid_int, credential=credential), ResourceType.FAVORITE_LIST)
                 elif type_ != "":
                     # 我的订阅
                     if type_ == 11:
                         # 收藏的收藏夹
                         oid_int = int(oid)
                         return (
-                            FavoriteList(media_id=oid_int),
+                            FavoriteList(media_id=oid_int, credential=credential),
                             ResourceType.FAVORITE_LIST,
                         )
                     elif type_ == 21:
                         # 订阅的合集
                         oid_int = int(oid)
                         return (
-                            ChannelSeries(type_ = ChannelSeriesType.SEASON, id_ = oid_int),
+                            ChannelSeries(type_ = ChannelSeriesType.SEASON, id_ = oid_int, credential=credential),
                             ResourceType.CHANNEL_SERIES
                         )
                     else:
