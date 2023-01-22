@@ -124,7 +124,7 @@ async def parse_link(
         if sobj != -1:
             sobj[0].credential = credential
             return sobj
-        
+          
         # 添加 https: 协议头
         if url.lstrip("https:") == url:
             url = "https:" + url
@@ -165,6 +165,10 @@ async def parse_link(
         if topic != -1:
             topic.credential = credential
             return (topic, ResourceType.TOPIC)
+        bnj_video = parse_bnj(url)
+        if bnj_video != -1:
+            bnj_video.credential = credential
+            return (bnj_video, ResourceType.VIDEO)
 
         obj = None
         video = parse_video(url, credential)
@@ -182,7 +186,7 @@ async def parse_link(
         favorite_list = parse_favorite_list(url)
         if not favorite_list == -1:
             obj = (favorite_list, ResourceType.FAVORITE_LIST)
-        cheese_video = parse_cheese_video(url)
+        cheese_video = await parse_cheese_video(url)
         if not cheese_video == -1:
             obj = (cheese_video, ResourceType.CHEESE_VIDEO)
         audio = parse_audio(url)
@@ -233,8 +237,6 @@ def is_interactive_video(bvid: str, credential: Credential):
 def check_short_name(name: str, credential: Credential):
     """
     解析:
-      - avxxxxxxxxxx
-      - bvxxxxxxxxxx
       - mlxxxxxxxxxx
       - uidxxxxxxxxx
       - cvxxxxxxxxxx
@@ -242,7 +244,6 @@ def check_short_name(name: str, credential: Credential):
       - amxxxxxxxxxx
       - rlxxxxxxxxxx
     """
-    
     if name[:2].upper() == "AV":
         v = Video(aid=int(name[2:]))
         bvid = v.get_bvid()
@@ -556,4 +557,12 @@ def parse_manga(url: URL) -> Union[Manga, int]:
 def parse_album(url: URL) -> Union[Album, int]:
     if url.host == "h.bilibili.com":
         return Album(int(url.parts[1]))
+    return -1
+
+
+def parse_bnj(url: URL) -> Union[Video, int]:
+    # https://www.bilibili.com/festival/2023bnj?bvid=BV1ZY4y1f79x&spm_id_from=333.999.0.0
+    bvid = url.query.get("bvid")
+    if bvid is not None:
+        return Video(bvid)
     return -1

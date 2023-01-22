@@ -358,6 +358,17 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_self_same_followers()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| pn   | int  | 页码. Defaults to 1. |
+| ps   | int  | 单页数据量. Defaults to 50. |
+
+获取用户与自己共同关注的 up 主
+
+**Returns:** dict: 调用 API 返回的结果
+
 #### async def top_followers()
 
 | name | type           | description                     |
@@ -421,6 +432,47 @@ from bilibili_api import user
 修改自己的信息
 
 **Returns:** 调用接口返回的内容。
+
+---
+
+## async def del_channel_series()
+
+| name | type | description |
+| - | - | - |
+| series_id | int | 旧版合集 id |
+| credential | Credential | 凭据类 |
+
+删除视频列表(旧版合集)
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def add_aids_to_series()
+
+| name | type | description |
+| - | - | - |
+| series_id | int | 旧版合集 id |
+| aids | List[int] | 视频 aid 列表 |
+| credential | Credential | 凭据类 |
+
+添加视频至视频列表(旧版合集)
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def del_aids_from_series()
+
+| name | type | description |
+| - | - | - |
+| series_id | int | 旧版合集 id |
+| aids | List[int] | 视频 aid 列表 |
+| credential | Credential | 凭据类 |
+
+从视频列表(旧版合集)删除视频
+
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 
@@ -594,6 +646,56 @@ from bilibili_api import user
 
 ---
 
+## async def get_self_special_followings()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+| pn | int, optional | 页码. Defaults to 1. |
+| ps | int, optional | 每页数据大小. Defaults to 50. |
+
+获取自己特殊关注的列表
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_whisper_followings()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+| pn | int, optional | 页码. Defaults to 1. |
+| ps | int, optional | 每页数据大小. Defaults to 50. |
+
+获取自己悄悄关注的列表
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_friends()
+
+获取与自己互粉的人
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_black_list()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+| pn | int, optional | 页码. Defaults to 1. |
+| ps | int, optional | 每页数据大小. Defaults to 50. |
+
+获取自己的黑名单信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
 ## async def get_self_notes_info()
 
 | name | type | description |
@@ -633,46 +735,5 @@ from bilibili_api import user
 | credential | Credential \| None | 凭据类 |
 
 新建一个视频列表 (旧版合集)
-
-**Returns:** dict: 调用 API 返回的结果
-
----
-
-## async def del_channel_series()
-
-| name | type | description |
-| - | - | - |
-| series_id | int | 旧版合集 id |
-| credential | Credential | 凭据类 |
-
-删除视频列表(旧版合集)
-
-**Returns:** dict: 调用 API 返回的结果
-
----
-
-## async def add_aids_to_series()
-
-| name | type | description |
-| - | - | - |
-| series_id | int | 旧版合集 id |
-| aids | List[int] | 视频 aid 列表 |
-| credential | Credential | 凭据类 |
-
-添加视频至视频列表(旧版合集)
-
-**Returns:** dict: 调用 API 返回的结果
-
----
-
-## async def del_aids_from_series()
-
-| name | type | description |
-| - | - | - |
-| series_id | int | 旧版合集 id |
-| aids | List[int] | 视频 aid 列表 |
-| credential | Credential | 凭据类 |
-
-从视频列表(旧版合集)删除视频
 
 **Returns:** dict: 调用 API 返回的结果

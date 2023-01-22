@@ -39,7 +39,7 @@ def _geetest_urlhandler(url: str, content_type: str):
                 seccode = data[8:].replace("%7C", "|")
         with open(
             os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "..", "html", "done.html")
+                os.path.join(os.path.dirname(__file__), "..", "data", "geetest", "done.html")
             ),
             encoding="utf8",
         ) as f:
@@ -54,7 +54,7 @@ def _geetest_urlhandler(url: str, content_type: str):
         key = json_data["data"]["token"]
         with open(
             os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "..", "html", "captcha.html")
+                os.path.join(os.path.dirname(__file__), "..", "data", "geetest", "captcha.html")
             ),
             encoding="utf8",
         ) as f:
@@ -224,7 +224,7 @@ def start_server():
     Returns:
         ServerThread: 服务进程
 
-    返回值内函数及属性: 
+    返回值内函数及属性:
         - url   (str)     : 验证码服务地址
         - start (Callable): 开启进程
         - stop  (Callable): 结束进程

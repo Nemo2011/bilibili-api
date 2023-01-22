@@ -554,7 +554,6 @@ class User:
         Returns:
             dict: 调用接口返回的内容。
         """
-
         api = API["info"]["followers"]
         params = {
             "vmid": self.__uid,
@@ -565,6 +564,36 @@ class User:
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
+
+    async def get_self_same_followers(
+        self,
+        pn: int = 1,
+        ps: int = 50
+    ) -> dict:
+        """
+        获取用户与自己共同关注的 up 主
+
+        Args:
+            pn (int): 页码. Defaults to 1.
+            ps (int): 单页数据量. Defaults to 50.
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        api = API["info"]["get_same_followings"]
+        params = {
+            "vmid": self.get_uid(),
+            "pn": pn,
+            "ps": ps
+        }
+        return await request(
+            "GET",
+            api["url"],
+            params=params,
+            credential=self.credential
+        )
+
 
     async def top_followers(self, since=None) -> dict:
         """
@@ -617,6 +646,8 @@ class User:
         return await request(
             "POST", url=api["url"], data=data, credential=self.credential
         )
+
+    # 有关合集与列表
 
     async def get_channel_videos_series(self, sid: int, pn: int = 1, ps: int = 100) -> dict:
         """
@@ -1127,7 +1158,6 @@ async def get_self_history(
 async def get_self_coins(credential: Credential):
     """
     获取自己的硬币数量。
-    如果接口返回错误代码则为身份校验失败
 
     Returns:
         int: 硬币数量
@@ -1140,12 +1170,111 @@ async def get_self_coins(credential: Credential):
     return (await request("GET", url=api["url"], credential=credential))["money"]
 
 
+async def get_self_special_followings(
+    credential: Credential,
+    pn: int = 1,
+    ps: int = 50
+) -> dict:
+    """
+    获取自己特殊关注的列表
+
+    Args:
+        credential (Credential)   : 凭据类
+        pn         (int, optional): 页码. Defaults to 1.
+        ps         (int, optional): 每页数据大小. Defaults to 50.
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["get_special_followings"]
+    params = {
+        "pn": pn,
+        "ps": ps
+    }
+    return await request(
+        "GET",
+        api["url"],
+        params=params,
+        credential=credential
+    )
+
+
+async def get_self_whisper_followings(
+    credential: Credential,
+    pn: int = 1,
+    ps: int = 50
+) -> dict:
+    """
+    获取自己悄悄关注的列表。
+
+    Args:
+        credential (Credential)   : 凭据类
+        pn         (int, optional): 页码. Defaults to 1.
+        ps         (int, optional): 每页数据大小. Defaults to 50.
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["get_whisper_followings"]
+    params = {
+        "pn": pn,
+        "ps": ps
+    }
+    return await request(
+        "GET",
+        api["url"],
+        params=params,
+        credential=credential
+    )
+
+
+async def get_self_friends(
+    credential: Credential
+) -> dict:
+    """
+    获取与自己互粉的人
+
+    Args:
+        credential (Credential)   : 凭据类
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["get_friends"]
+    return await request(
+        "GET",
+        api["url"],
+        credential=credential
+    )
+
+
+async def get_self_black_list(
+    credential: Credential,
+    pn: int = 1,
+    ps: int = 50
+) -> dict:
+    """
+    获取自己的黑名单信息
+
+    Args:
+        credential (Credential)   : 凭据类
+        pn         (int, optional): 页码. Defaults to 1.
+        ps         (int, optional): 每页数据大小. Defaults to 50.
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["get_black_list"]
+    params = {
+        "pn": pn,
+        "ps": ps
+    }
+    return await request(
+        "GET",
+        api["url"],
+        params=params,
+        credential=credential
+    )
+
+
 async def get_toview_list(credential: Credential):
     """
     获取稍后再看列表
 
     Args:
-        credential(Credential): 凭据类
+        credential (Credential): 凭据类
 
     Returns:
         dict: 调用 API 返回的结果

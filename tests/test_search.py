@@ -45,3 +45,9 @@ async def test_h_search_manga():
     return await search.search_manga(
         "来自深渊"
     )
+
+
+async def test_i_search_cheese():
+    return await search.search_cheese(
+        "Python"
+    )

@@ -89,6 +89,19 @@ from bilibili_api import search
 + SCORES : 最多评论
   Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
+
+## class OrderCheese
+
+**Extends:** enum.Enum
+
+课程搜索排序类型
+
++ RECOMMEND: 综合
++ SELL     : 销量最高
++ NEW      : 最新上架
++ CHEEP    : 售价最低
+
+
 ## async def search()
 
 只指定关键字在 web 进行搜索，返回未经处理的字典
@@ -163,5 +176,18 @@ from bilibili_api import search
 | page_size | int | 每一页的数据大小. Defaults to 9. |
 
 搜索漫画特用函数
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def search_cheese()
+
+| name | type | description |
+| - | - | - |
+| keyword | str | 搜索关键词 |
+| page_num | int | 页码. Defaults to 1. |
+| page_size | int | 每一页的数据大小. Defaults to 50. |
+| order | OrderCheese | 排序方式. Defaults to OrderCheese.RECOMMEND |
+
+搜索课程特用函数
 
 **Returns:** dict: 调用 API 返回的结果
