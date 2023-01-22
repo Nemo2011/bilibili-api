@@ -114,7 +114,6 @@ async def parse_link(
     Returns:
         Tuple[obj, ResourceType]: (对象，类型) 或 -1,-1 表示出错
     """
-    raw_url = url # 保留 yarl 解析前的原始链接 url
     credential = credential if credential else Credential()
     try:
         obj = None
@@ -130,6 +129,7 @@ async def parse_link(
         # 添加 https: 协议头
         if url.lstrip("https:") == url:
             url = "https:" + url
+        raw_url = url # 保留 yarl 解析前的原始链接 url
         # 转换为 yarl
         url = URL(url)
 
