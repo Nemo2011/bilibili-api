@@ -429,7 +429,10 @@ class Episode(Video):
             content = episode_data_cache[epid]["bangumi_meta"]
 
         bvid = content["epInfo"]["bvid"]
-        self.bangumi = episode_data_cache[epid]["bangumi_class"]
+        if not epid in episode_data_cache.keys():
+            self.bangumi = Bangumi(ssid=content["mediaInfo"]["season_id"])
+        else:
+            self.bangumi = episode_data_cache[epid]["bangumi_class"]
 
         self.video_class = Video(bvid=bvid, credential=self.credential)
         super().__init__(bvid=bvid)
