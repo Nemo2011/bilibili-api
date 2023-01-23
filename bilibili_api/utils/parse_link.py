@@ -468,12 +468,12 @@ def parse_season_series(url: URL, credential: Credential) -> Union[ChannelSeries
     return -1
 
 
-def parse_space_favorite_list(url: URL, credential: Credential) -> Union[Tuple[FavoriteList, ResourceType], Literal[-1]]:
+def parse_space_favorite_list(url: URL, credential: Credential) -> Union[Tuple[FavoriteList, ResourceType], Tuple[ChannelSeries, ResourceType], Literal[-1]]:
     if url.host == "space.bilibili.com":
         uid = url.parts[1]  # 获取 uid
         if len(url.parts) >= 3:  # path 存在 favlist
             if url.parts[2] == "favlist":
-                if len(url.parts) == 3:  # query 中不存在 fid 则返回默认收藏夹
+                if len(url.parts) == 3 and url.query.get("fid") == None:  # query 中不存在 fid 则返回默认收藏夹
                     api = get_api("favorite-list")["info"]["list_list"]
                     params = {"up_mid": uid, "type": 2}
                     favorite_lists = httpx.get(
@@ -485,6 +485,7 @@ def parse_space_favorite_list(url: URL, credential: Credential) -> Union[Tuple[F
                     else:
                         default_favorite_id = int(favorite_lists["list"][0]["id"])
                         return (FavoriteList(media_id=default_favorite_id, credential=credential), ResourceType.FAVORITE_LIST)
+
                 elif len(url.query) != 0:
                     fid = url.query.get("fid")  # 未知数据类型
                     ctype = url.query.get("ctype")
@@ -493,22 +494,25 @@ def parse_space_favorite_list(url: URL, credential: Credential) -> Union[Tuple[F
                         fid_is_int = True
                     except:
                         fid_is_int = False
-
                     if ctype is None and fid_is_int:
                         # 我的视频收藏夹
                         fid = int(fid) # type: ignore
                         return (FavoriteList(media_id=fid), ResourceType.FAVORITE_LIST)
-                    elif ctype is not None:  # 存在 ctype
-                        ctype = int(url.query.get("ctype")) # type: ignore
-                        if ctype == 11:
+                    elif fid_is_int:
+                        if int(ctype) == 11: # type: ignore
                             fid = int(fid)  # 转换为 int 类型 # type: ignore
                             fid_is_int = True
                             return (
                                 FavoriteList(media_id=fid, credential=credential),
                                 ResourceType.FAVORITE_LIST,
                             )
-                        else:
-                            return -1  # 未知收藏夹类型
+                        elif int(ctype) == 21: # type: ignore
+                            fid = int(fid) # type: ignore
+                            fid_is_int = True
+                            return (
+                                ChannelSeries(id_=fid, type_=ChannelSeriesType.SEASON, credential=credential),
+                                ResourceType.CHANNEL_SERIES
+                            )
                     elif fid_is_int == False:
                         # ctype 不存在且 fid 非 int 类型
                         if fid == FavoriteListType.ARTICLE.value:
