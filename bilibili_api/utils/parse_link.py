@@ -152,12 +152,12 @@ async def parse_link(
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES)
 
-        url = await get_real_url(url, credential)
+        url = await get_real_url(url)
 
-        fl_space = parse_space_favorite_list(url, credential, credential)
+        fl_space = parse_space_favorite_list(url, credential)
         if fl_space != -1:
             return fl_space
-        game = parse_game(url, credential, credential)
+        game = parse_game(url, credential)
         if game != -1:
             game.credential = credential
             return (game, ResourceType.GAME)
@@ -549,7 +549,7 @@ def parse_topic(url: URL, credential: Union[Credential, None] = None) -> Union[T
         if url.parts[:4] == ("/", "v", "topic", "detail") and url.query.get("topic_id") is not None:
 
             return Topic(
-                int(url.query["topic_id"], credential=credential)
+                int(url.query["topic_id"]), credential=credential
             )
     return -1
 
@@ -557,7 +557,7 @@ def parse_topic(url: URL, credential: Union[Credential, None] = None) -> Union[T
 def parse_manga(url: URL, credential: Union[Credential, None] = None) -> Union[Manga, int]:
     if url.host == "manga.bilibili.com" and url.parts[1] == "detail":
         return Manga(
-            int(url.parts[2][2:], credential=credential)
+            int(url.parts[2][2:]), credential=credential
         )
     return -1
 
