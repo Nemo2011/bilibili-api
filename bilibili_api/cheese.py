@@ -32,6 +32,9 @@ API = get_api("cheese")
 API_video = get_api("video")
 
 
+cheese_video_meta_cache = {}
+
+
 class CheeseList:
     """
     课程类
@@ -112,6 +115,7 @@ class CheeseList:
         Returns:
             List[CheeseVideo]: 课程视频列表
         """
+        global cheese_video_meta_cache
         api = API["info"]["list"]
         params = {"season_id": self.__season_id, "pn": 1, "ps": 1000}
         lists = await request(
@@ -120,7 +124,8 @@ class CheeseList:
         cheese_videos = []
         for c in lists["items"]:
             c["ssid"] = self.get_season_id()
-            cheese_videos.append(CheeseVideo(c["id"], self.credential, c))
+            cheese_video_meta_cache[c["id"]] = c
+            cheese_videos.append(CheeseVideo(c["id"], self.credential))
         return cheese_videos
 
 
@@ -134,13 +139,15 @@ class CheeseVideo:
         cheese     (CheeseList): 所属的课程
     """
 
-    def __init__(self, epid, credential: Union[Credential, None] = None, meta=None):
+    def __init__(self, epid, credential: Union[Credential, None] = None):
         """
         Args:
             epid      (int)       : 单集 ep_id
             credential (Credential): 凭据类
         """
+        global cheese_video_meta_cache
         self.__epid = epid
+        meta = cheese_video_meta_cache.get(epid)
         if meta == None:
             self.cheese = CheeseList(ep_id=self.__epid)
         else:

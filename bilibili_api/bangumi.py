@@ -34,6 +34,9 @@ import re
 API = get_api("bangumi")
 
 
+episode_data_cache = {}
+
+
 class BangumiCommentOrder(Enum):
     """
     短评 / 长评 排序方式
@@ -269,6 +272,7 @@ class Bangumi:
         """
         获取番剧所有的剧集，自动生成类。
         """
+        global episode_data_cache
         episode_list = await self.get_episode_list()
         if len(episode_list["main_section"]["episodes"]) == 0:
             return []
@@ -303,11 +307,13 @@ class Bangumi:
 
         episodes = []
         for ep in episode_list["main_section"]["episodes"]:
+            episode_data_cache[ep["id"]] = {
+                "bangumi_meta": bangumi_meta,
+                "bangumi_class": self,
+            }
             episodes.append(Episode(
                 epid=ep["id"],
-                credential=self.credential,
-                bangumi_meta=bangumi_meta,
-                bangumi_class=self
+                credential=self.credential
             ))
         return episodes
 
@@ -391,16 +397,17 @@ class Episode(Video):
         bangumi     (Bangumi)   : 所属番剧
     """
 
-    def __init__(self, epid: int, credential: Union[Credential, None] = None, bangumi_meta=None, bangumi_class=None):
+    def __init__(self, epid: int, credential: Union[Credential, None] = None):
         """
         Args:
             epid       (int)                 : 番剧 epid
             credential (Credential, optional): 凭据. Defaults to None.
         """
+        global episode_data_cache
         self.credential = credential if credential else Credential()
         self.__epid = epid
 
-        if bangumi_meta == None:
+        if not epid in episode_data_cache.keys():
             try:
                 resp = httpx.get(
                     f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
@@ -419,10 +426,10 @@ class Episode(Video):
             except json.JSONDecodeError:
                 raise ApiException("信息解析错误")
         else:
-            content = bangumi_meta
+            content = episode_data_cache[epid]["bangumi_meta"]
 
         bvid = content["epInfo"]["bvid"]
-        self.bangumi = bangumi_class
+        self.bangumi = episode_data_cache[epid]["bangumi_class"]
 
         self.video_class = Video(bvid=bvid, credential=self.credential)
         super().__init__(bvid=bvid)
