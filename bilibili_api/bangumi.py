@@ -265,6 +265,52 @@ class Bangumi:
             params = {"season_id": self.__ssid}
             return await request("GET", api["url"], params, credential=credential)
 
+    async def get_episodes(self) -> List["Episode"]:
+        """
+        获取番剧所有的剧集，自动生成类。
+        """
+        episode_list = await self.get_episode_list()
+        if len(episode_list["main_section"]["episodes"]) == 0:
+            return []
+        first_epid = episode_list["main_section"]["episodes"][0]["id"]
+        async def get_episode_info(epid: int):
+            credential = self.credential if self.credential else Credential()
+            session = get_session()
+
+            try:
+                resp = await session.get(
+                    f"https://www.bilibili.com/bangumi/play/ep{epid}",
+                    cookies=credential.get_cookies(),
+                    headers={"User-Agent": "Mozilla/5.0"},
+                )
+            except Exception as e:
+                raise ResponseException(str(e))
+            else:
+                content = resp.text
+
+                pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
+                match = re.search(pattern, content)
+                if match is None:
+                    raise ApiException("未找到番剧信息")
+                try:
+                    content = json.loads(match.group(1))
+                except json.JSONDecodeError:
+                    raise ApiException("信息解析错误")
+
+                return content
+        bangumi_meta = await get_episode_info(first_epid)
+        bangumi_meta["media_id"] = self.get_media_id()
+
+        episodes = []
+        for ep in episode_list["main_section"]["episodes"]:
+            episodes.append(Episode(
+                epid=ep["id"],
+                credential=self.credential,
+                bangumi_meta=bangumi_meta,
+                bangumi_class=self
+            ))
+        return episodes
+
     async def get_stat(self) -> dict:
         """
         获取番剧播放量，追番等信息
@@ -345,7 +391,7 @@ class Episode(Video):
         bangumi     (Bangumi)   : 所属番剧
     """
 
-    def __init__(self, epid: int, credential: Union[Credential, None] = None):
+    def __init__(self, epid: int, credential: Union[Credential, None] = None, bangumi_meta=None, bangumi_class=None):
         """
         Args:
             epid       (int)                 : 番剧 epid
@@ -353,17 +399,17 @@ class Episode(Video):
         """
         self.credential = credential if credential else Credential()
         self.__epid = epid
-        try:
-            resp = httpx.get(
-                f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
-                cookies=self.credential.get_cookies(),
-                headers={"User-Agent": "Mozilla/5.0"},
-            )
-        except Exception as e:
-            raise ResponseException(str(e))
-        else:
-            content = resp.text
 
+        if bangumi_meta == None:
+            try:
+                resp = httpx.get(
+                    f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
+                    cookies=self.credential.get_cookies(),
+                    headers={"User-Agent": "Mozilla/5.0"},
+                )
+            except Exception as e:
+                raise ResponseException(str(e))
+            content = resp.text
             pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
             match = re.search(pattern, content)
             if match is None:
@@ -372,9 +418,12 @@ class Episode(Video):
                 content = json.loads(match.group(1))
             except json.JSONDecodeError:
                 raise ApiException("信息解析错误")
-            else:
-                bvid = content["epInfo"]["bvid"]
-                self.bangumi = Bangumi(ssid=content["mediaInfo"]["season_id"])
+        else:
+            content = bangumi_meta
+
+        bvid = content["epInfo"]["bvid"]
+        self.bangumi = bangumi_class
+
         self.video_class = Video(bvid=bvid, credential=self.credential)
         super().__init__(bvid=bvid)
         self.set_aid = self.set_aid_e
@@ -408,7 +457,7 @@ class Episode(Video):
         Returns:
             Bangumi: 番剧类
         """
-        return self.bangumi
+        return self.bangumi # type: ignore
 
     def set_epid(self, epid: int) -> None:
         self.__init__(epid, self.credential)
