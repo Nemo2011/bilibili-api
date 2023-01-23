@@ -238,7 +238,21 @@ async def auto_convert_video(video: Video, credential: Union[Credential, None] =
     # return video
     return (video, ResourceType.VIDEO)
 
-async def check_short_name(name: str, credential: Credential) -> Tuple[Video | Episode | InteractiveVideo, ResourceType] | tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]] | tuple[User, Literal[ResourceType.USER]] | tuple[Article, Literal[ResourceType.ARTICLE]] | tuple[Audio, Literal[ResourceType.AUDIO]] | tuple[AudioList, Literal[ResourceType.AUDIO_LIST]] | tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]] | Literal[-1]:
+async def check_short_name(
+    name: str,
+    credential: Credential
+) -> Union[
+    Tuple[Video, Literal[ResourceType.VIDEO]],
+    Tuple[Episode, Literal[ResourceType.EPISODE]],
+    Tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]],
+    Tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]],
+    Tuple[User, Literal[ResourceType.USER]],
+    Tuple[Article, Literal[ResourceType.ARTICLE]],
+    Tuple[Audio, Literal[ResourceType.AUDIO]],
+    Tuple[AudioList, Literal[ResourceType.AUDIO_LIST]],
+    Tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]],
+    Literal[-1]
+]:
     """
     解析:
       - mlxxxxxxxxxx
@@ -250,10 +264,10 @@ async def check_short_name(name: str, credential: Credential) -> Tuple[Video | E
     """
     if name[:2].upper() == "AV":
         v = Video(aid=int(name[2:]), credential=credential)
-        return await auto_convert_video(v, credential=credential)
+        return await auto_convert_video(v, credential=credential) # type: ignore
     elif name[:2].upper() == "BV":
         v = Video(bvid=name, credential=credential)
-        return await auto_convert_video(v, credential=credential)
+        return await auto_convert_video(v, credential=credential) # type: ignore
     elif name[:2].upper() == "ML":
         return (
             FavoriteList(FavoriteListType.VIDEO, int(name[2:]), credential=credential),
@@ -273,7 +287,7 @@ async def check_short_name(name: str, credential: Credential) -> Tuple[Video | E
         return -1
 
 
-async def parse_video(url: URL, credential: Credential) -> Tuple[Union[Video, Episode, InteractiveVideo], ResourceType] | Literal[-1]:
+async def parse_video(url: URL, credential: Credential) -> Union[Tuple[Union[Video, Episode, InteractiveVideo], ResourceType], Literal[-1]]:
     """
     解析视频,如果不是返回 -1，否则返回对应类
     """
