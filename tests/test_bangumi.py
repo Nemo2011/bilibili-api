@@ -63,6 +63,10 @@ async def test_oversea_Bangumi_get_stat():
     return await e.get_stat()
 
 
+async def test_h_Bangumi_get_episodes():
+    return await e.get_episodes()
+
+
 # 特性测试
 # info2 = sync(test_oversea_gangaotai_get_item())
 # print(info2)
