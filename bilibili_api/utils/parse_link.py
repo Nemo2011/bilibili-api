@@ -129,12 +129,12 @@ async def parse_link(
         # 添加 https: 协议头
         if url.lstrip("https:") == url:
             url = "https:" + url
-        raw_url = url # 保留 yarl 解析前的原始链接 url
+
         # 转换为 yarl
         url = URL(url)
 
         # 排除小黑屋
-        black_room = parse_black_room(url)
+        black_room = parse_black_room(url, credential)
         if not black_room == -1:
             obj = (black_room, ResourceType.BLACK_ROOM)
             return obj
@@ -148,7 +148,7 @@ async def parse_link(
             else:
                 return (User(info["mid"], credential=credential), ResourceType.USER)
 
-        channel = parse_season_series(url) # 不需要 real_url，提前处理
+        channel = parse_season_series(url, credential) # 不需要 real_url，提前处理
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES)
 
@@ -157,15 +157,15 @@ async def parse_link(
         fl_space = parse_space_favorite_list(url, credential)
         if fl_space != -1:
             return fl_space
-        game = parse_game(url)
+        game = parse_game(url, credential)
         if game != -1:
             game.credential = credential
             return (game, ResourceType.GAME)
-        topic = parse_topic(url)
+        topic = parse_topic(url, credential)
         if topic != -1:
             topic.credential = credential
             return (topic, ResourceType.TOPIC)
-        bnj_video = parse_bnj(url)
+        bnj_video = parse_bnj(url, credential)
         if bnj_video != -1:
             bnj_video.credential = credential
             return (bnj_video, ResourceType.VIDEO)
@@ -174,43 +174,43 @@ async def parse_link(
         video = await parse_video(url, credential)
         if not video == -1:
             obj = video # auto_convert_video 会判断类型
-        bangumi = parse_bangumi(url)
+        bangumi = parse_bangumi(url, credential)
         if not bangumi == -1:
             obj = (bangumi, ResourceType.BANGUMI)
         episode = parse_episode(url, credential)
         if not episode == -1:
             obj = (episode, ResourceType.EPISODE)
-        favorite_list = parse_favorite_list(url)
+        favorite_list = parse_favorite_list(url, credential)
         if not favorite_list == -1:
             obj = (favorite_list, ResourceType.FAVORITE_LIST)
-        cheese_video = await parse_cheese_video(url)
+        cheese_video = await parse_cheese_video(url, credential)
         if not cheese_video == -1:
             obj = (cheese_video, ResourceType.CHEESE_VIDEO)
-        audio = parse_audio(url)
+        audio = parse_audio(url, credential)
         if not audio == -1:
             obj = (audio, ResourceType.AUDIO)
-        audio_list = parse_audio_list(url)
+        audio_list = parse_audio_list(url, credential)
         if not audio_list == -1:
             obj = (audio_list, ResourceType.AUDIO_LIST)
-        article = parse_article(url)
+        article = parse_article(url, credential)
         if not article == -1:
             obj = (article, ResourceType.ARTICLE)
-        article_list = parse_article_list(url)
+        article_list = parse_article_list(url, credential)
         if not article_list == -1:
             obj = (article_list, ResourceType.ARTICLE_LIST)
-        user = parse_user(url)
+        user = parse_user(url, credential)
         if not user == -1:
             obj = (user, ResourceType.USER)
-        live = parse_live(url)
+        live = parse_live(url, credential)
         if not live == -1:
             obj = (live, ResourceType.LIVE)
-        dynamic = parse_dynamic(url)
+        dynamic = parse_dynamic(url, credential)
         if not dynamic == -1:
             obj = (dynamic, ResourceType.DYNAMIC)
-        manga = parse_manga(url)
+        manga = parse_manga(url, credential)
         if not manga == -1:
             obj = (manga, ResourceType.MANGA)
-        album = parse_album(url)
+        album = parse_album(url, credential)
         if not album == -1:
             obj = (album, ResourceType.ALBUM)
 
@@ -224,7 +224,7 @@ async def parse_link(
         return (-1, ResourceType.FAILED)
 
 
-async def auto_convert_video(video: Video, credential: Credential) -> Tuple[Union[Video, Episode, InteractiveVideo], ResourceType]:
+async def auto_convert_video(video: Video, credential: Union[Credential, None] = None) -> Tuple[Union[Video, Episode, InteractiveVideo], ResourceType]:
     # check interactive video
     video_info = await video.get_info()
     if video_info["rights"]["is_stein_gate"] == 1:
@@ -238,7 +238,7 @@ async def auto_convert_video(video: Video, credential: Credential) -> Tuple[Unio
     # return video
     return (video, ResourceType.VIDEO)
 
-async def check_short_name(name: str, credential: Credential):
+async def check_short_name(name: str, credential: Union[Credential, None] = None) -> Tuple[Video | Episode | InteractiveVideo, ResourceType] | tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]] | tuple[User, Literal[ResourceType.USER]] | tuple[Article, Literal[ResourceType.ARTICLE]] | tuple[Audio, Literal[ResourceType.AUDIO]] | tuple[AudioList, Literal[ResourceType.AUDIO_LIST]] | tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]] | Literal[-1]:
     """
     解析:
       - mlxxxxxxxxxx
@@ -256,24 +256,24 @@ async def check_short_name(name: str, credential: Credential):
         return await auto_convert_video(v, credential=credential)
     elif name[:2].upper() == "ML":
         return (
-            FavoriteList(FavoriteListType.VIDEO, int(name[2:])),
+            FavoriteList(FavoriteListType.VIDEO, int(name[2:]), credential=credential),
             ResourceType.FAVORITE_LIST,
         )
     elif name[:3].upper() == "UID":
-        return (User(int(name[3:])), ResourceType.USER)
+        return (User(int(name[3:]), credential=credential), ResourceType.USER)
     elif name[:2].upper() == "CV":
-        return (Article(int(name[2:])), ResourceType.ARTICLE)
+        return (Article(int(name[2:]), credential=credential), ResourceType.ARTICLE)
     elif name[:2].upper() == "AU":
-        return (Audio(int(name[2:])), ResourceType.AUDIO)
+        return (Audio(int(name[2:]), credential=credential), ResourceType.AUDIO)
     elif name[:2].upper() == "AM":
-        return (AudioList(int(name[2:])), ResourceType.AUDIO_LIST)
+        return (AudioList(int(name[2:]), credential=credential), ResourceType.AUDIO_LIST)
     elif name[:2].upper() == "RL":
-        return (ArticleList(int(name[2:])), ResourceType.ARTICLE_LIST)
+        return (ArticleList(int(name[2:]), credential=credential), ResourceType.ARTICLE_LIST)
     else:
         return -1
 
 
-async def parse_video(url: URL, credential: Credential):
+async def parse_video(url: URL, credential: Union[Credential, None] = None) -> Tuple[Union[Video, Episode, InteractiveVideo], ResourceType] | Literal[-1]:
     """
     解析视频,如果不是返回 -1，否则返回对应类
     """
@@ -281,9 +281,9 @@ async def parse_video(url: URL, credential: Credential):
         raw_video_id = url.parts[2]
         if raw_video_id[:2].upper() == "AV":
             aid = int(raw_video_id[2:])
-            v = Video(aid=aid)
+            v = Video(aid=aid, credential=credential)
         elif raw_video_id[:2].upper() == "BV":
-            v = Video(bvid=raw_video_id)
+            v = Video(bvid=raw_video_id, credential=credential)
         else:
             return -1
         return await auto_convert_video(v, credential=credential)
@@ -291,18 +291,18 @@ async def parse_video(url: URL, credential: Credential):
         return -1
 
 
-def parse_bangumi(url: URL) -> Union[Bangumi, int]:
+def parse_bangumi(url: URL, credential: Union[Credential, None] = None) -> Union[Bangumi, int]:
     """
     解析番剧,如果不是返回 -1，否则返回对应类
     """
     if url.host == "www.bilibili.com" and len(url.parts) >= 4:
         if url.parts[:3] == ("/", "bangumi", "media"):
             media_id = int(url.parts[3][2:])
-            return Bangumi(media_id=media_id)
+            return Bangumi(media_id=media_id, credential=credential)
     return -1
 
 
-def parse_episode(url: URL, credential) -> Union[Episode, int]:
+def parse_episode(url: URL, credential: Union[Credential, None] = None) -> Union[Episode, int]:
     """
     解析番剧剧集,如果不是返回 -1，否则返回对应类
     """
@@ -335,22 +335,22 @@ def parse_episode(url: URL, credential) -> Union[Episode, int]:
                         raise ApiException("信息解析错误")
                     else:
                         epid = content["epInfo"]["id"]
-                        return Episode(epid=epid)
+                        return Episode(epid=epid, credential=credential)
     return -1
 
 
-def parse_favorite_list(url: URL) -> Union[FavoriteList, int]:
+def parse_favorite_list(url: URL, credential: Union[Credential, None] = None) -> Union[FavoriteList, int]:
     """
     解析收藏夹,如果不是返回 -1，否则返回对应类
     """
     if url.host == "www.bilibili.com" and len(url.parts) >= 4:
         if url.parts[:3] == ("/", "medialist", "detail"):
             media_id = int(url.parts[3][2:])
-            return FavoriteList(media_id=media_id)
+            return FavoriteList(media_id=media_id, credential=credential)
     return -1
 
 
-async def parse_cheese_video(url: URL) -> Union[CheeseVideo, int]:
+async def parse_cheese_video(url: URL, credential: Union[Credential, None] = None) -> Union[CheeseVideo, int]:
     """
     解析课程视频,如果不是返回 -1，否则返回对应类
     """
@@ -358,101 +358,103 @@ async def parse_cheese_video(url: URL) -> Union[CheeseVideo, int]:
         if url.parts[1] == "cheese" and url.parts[2] == "play":
             if url.parts[3][:2].upper() == "EP":
                 epid = int(url.parts[3][2:])
-                return CheeseVideo(epid=epid)
+                return CheeseVideo(epid=epid, credential=credential)
             elif url.parts[3][:2].upper() == "SS":
                 clid = int(url.parts[3][2:])
-                cl = CheeseList(season_id=clid)
+                cl = CheeseList(season_id=clid, credential=credential)
                 return CheeseVideo(
-                    epid=(await cl.get_list_raw())["items"][0]["id"]
+                    epid=(await cl.get_list_raw())["items"][0]["id"], credential=credential
             )
     return -1
 
 
-def parse_audio(url: URL) -> Union[Audio, int]:
+def parse_audio(url: URL, credential: Union[Credential, None] = None) -> Union[Audio, int]:
     """
     解析音频,如果不是返回 -1，否则返回对应类
     """
     if url.host == "www.bilibili.com" and url.parts[1] == "audio":
         if url.parts[2][:2].upper() == "AU":
             auid = int(url.parts[2][2:])
-            return Audio(auid=auid)
+            return Audio(auid=auid, credential=credential)
     return -1
 
 
-def parse_audio_list(url: URL) -> Union[AudioList, int]:
+def parse_audio_list(url: URL, credential: Union[Credential, None] = None) -> Union[AudioList, int]:
     """
     解析歌单,如果不是返回 -1，否则返回对应类
     """
     if url.host == "www.bilibili.com" and url.parts[1] == "audio":
         if url.parts[2][:2].upper() == "AM":
             amid = int(url.parts[2][2:])
-            return AudioList(amid=amid)
+            return AudioList(amid=amid, credential=credential)
     return -1
 
 
-def parse_article(url: URL) -> Union[Article, int]:
+def parse_article(url: URL, credential: Union[Credential, None] = None) -> Union[Article, int]:
     """
     解析专栏，如果不是返回 -1，否则返回对应类
     """
     if url.host == "www.bilibili.com" and len(url.parts) >= 3:
         if url.parts[1] == "read" and url.parts[2][:2].upper() == "CV":
             cvid = int(url.parts[2][2:])
-            return Article(cvid=cvid)
+            return Article(cvid=cvid, credential=credential)
     return -1
 
 
-def parse_user(url: URL) -> Union[User, int]:
+def parse_user(url: URL, credential: Union[Credential, None] = None) -> Union[User, int]:
     if url.host == "space.bilibili.com":
         if len(url.parts) >= 2:
             uid = url.parts[1]
-            return User(uid=uid)
+            return User(uid=int(uid), credential=credential)
     return -1
 
 
-def parse_live(url: URL) -> Union[LiveRoom, int]:
+def parse_live(url: URL, credential: Union[Credential, None] = None) -> Union[LiveRoom, int]:
     if url.host == "live.bilibili.com":
         if len(url.parts) >= 2:
-            room_display_id = url.parts[1]
-            return LiveRoom(room_display_id=room_display_id)
+            room_display_id = int(url.parts[1])
+            return LiveRoom(room_display_id=room_display_id, credential=credential)
     return -1
 
 
-def parse_season_series(url: URL) -> Union[ChannelSeries, int]:
+def parse_season_series(url: URL, credential: Union[Credential, None] = None) -> Union[ChannelSeries, int]:
     if url.host == "space.bilibili.com":
         if len(url.parts) >= 2:  # path 存在 uid
             try:
                 uid = int(url.parts[1])
             except:
                 pass  # uid 无效
-        if len(url.parts) >= 4:  # path 存在 collectiondetail 或者 seriesdetail
-            if url.parts[3] == "collectiondetail":
-                # https://space.bilibili.com/51537052/channel/collectiondetail?sid=22780&ctype=0
-                if url.query.get("sid") is not None:
-                    sid = int(url.query["sid"])
-                    return ChannelSeries(uid, ChannelSeriesType.SEASON, id_=sid)
-            elif url.parts[3] == "seriesdetail":
-                # https://space.bilibili.com/558830935/channel/seriesdetail?sid=2972810&ctype=0
-                if url.query.get("sid") is not None:
-                    sid = int(url.query["sid"])
-                    return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+            else:
+                if len(url.parts) >= 4:  # path 存在 collectiondetail 或者 seriesdetail
+                    if url.parts[3] == "collectiondetail":
+                        # https://space.bilibili.com/51537052/channel/collectiondetail?sid=22780&ctype=0
+                        if url.query.get("sid") is not None:
+                            sid = int(url.query["sid"])
+                            return ChannelSeries(uid, ChannelSeriesType.SEASON, id_=sid, credential=credential)
+                    elif url.parts[3] == "seriesdetail":
+                        # https://space.bilibili.com/558830935/channel/seriesdetail?sid=2972810&ctype=0
+                        if url.query.get("sid") is not None:
+                            sid = int(url.query["sid"])
+                            return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid, credential=credential)
     elif url.host == "www.bilibili.com":
         if url.parts[1] == "list":
             # https://www.bilibili.com/list/660303135?sid=2908236 旧版合集，不需要 real_url
-            if len(url.parts) >= 3 and url.query.get("sid") is not None:
-                sid = int(url.query["sid"])
+            if len(url.parts) >= 3:
                 uid = int(url.parts[2])
-                return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+                if "sid" in url.query:
+                    sid = int(url.query["sid"])
+                    return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid, credential=credential)
         # https://www.bilibili.com/medialist/play/660303135?business=space 新版合集
         elif url.parts[1] == "medialist" and url.parts[2] == "play":
             if len(url.parts) >= 4:
                 uid = int(url.parts[3])
-            if url.query.get("business_id") is not None:
-                sid = int(url.query.get("business_id"))
-                return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+                if "business_id" in url.query:
+                    sid = int(url.query["business_id"])
+                    return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid, credential=credential)
     return -1
 
 
-def parse_space_favorite_list(url: URL, credential) -> Union[FavoriteList, int]:
+def parse_space_favorite_list(url: URL, credential: Union[Credential, None] = None) -> Union[Tuple[FavoriteList, ResourceType], Literal[-1]]:
     if url.host == "space.bilibili.com":
         uid = url.parts[1]  # 获取 uid
         if len(url.parts) >= 3:  # path 存在 favlist
@@ -467,8 +469,8 @@ def parse_space_favorite_list(url: URL, credential) -> Union[FavoriteList, int]:
                     if favorite_lists == None:
                         return -1
                     else:
-                        default_favorite_list = favorite_lists["list"][0]
-                        return (FavoriteList(media_id=default_favorite_list["id"]), ResourceType.FAVORITE_LIST)
+                        default_favorite_id = int(favorite_lists["list"][0]["id"])
+                        return (FavoriteList(media_id=default_favorite_id, credential=credential), ResourceType.FAVORITE_LIST)
                 elif len(url.query) != 0:
                     fid = url.query.get("fid")  # 未知数据类型
                     ctype = url.query.get("ctype")
@@ -488,7 +490,7 @@ def parse_space_favorite_list(url: URL, credential) -> Union[FavoriteList, int]:
                             fid = int(fid)  # 转换为 int 类型
                             fid_is_int = True
                             return (
-                                FavoriteList(media_id=fid),
+                                FavoriteList(media_id=fid, credential=credential),
                                 ResourceType.FAVORITE_LIST,
                             )
                         else:
@@ -512,63 +514,63 @@ def parse_space_favorite_list(url: URL, credential) -> Union[FavoriteList, int]:
     return -1
 
 
-def parse_article_list(url: URL) -> Union[ArticleList, int]:
+def parse_article_list(url: URL, credential: Union[Credential, None] = None) -> Union[ArticleList, int]:
     if url.host == "www.bilibili.com" and len(url.parts) >= 3:
         if url.parts[:3] == ("/", "read", "readlist"):
             rlid = int(url.parts[3][2:])
-            return ArticleList(rlid=rlid)
+            return ArticleList(rlid=rlid, credential=credential)
     return -1
 
 
-def parse_dynamic(url: URL) -> Union[Dynamic, int]:
+def parse_dynamic(url: URL, credential: Union[Credential, None] = None) -> Union[Dynamic, int]:
     if url.host == "t.bilibili.com":
         if len(url.parts) >= 2:
             dynamic_id = int(url.parts[1])
-            return Dynamic(dynamic_id)
+            return Dynamic(dynamic_id, credential=credential)
     return -1
 
 
-def parse_black_room(url: URL) -> Union[BlackRoom, int]:
+def parse_black_room(url: URL, credential: Union[Credential, None] = None) -> Union[BlackRoom, int]:
     if len(url.parts) >= 3:
         if url.parts[:3] == ("/", "blackroom", "ban"):
             if len(url.parts) >= 4:  # 存在 id
-                return BlackRoom(int(url.parts[3]))
+                return BlackRoom(int(url.parts[3]), credential=credential)
     return -1
 
 
-def parse_game(url: URL) -> Union[Game, int]:
+def parse_game(url: URL, credential: Union[Credential, None] = None) -> Union[Game, int]:
     if url.host == "www.biligame.com" and url.parts[1] == "detail" and url.query.get("id") is not None:
-        return Game(int(url.query["id"]))
+        return Game(int(url.query["id"]), credential=credential)
     return -1
 
 
-def parse_topic(url: URL) -> Union[Topic, int]:
+def parse_topic(url: URL, credential: Union[Credential, None] = None) -> Union[Topic, int]:
     if url.host == "www.bilibili.com" and len(url.parts) >= 4:
         if url.parts[:4] == ("/", "v", "topic", "detail") and url.query.get("topic_id") is not None:
 
             return Topic(
-                int(url.query["topic_id"])
+                int(url.query["topic_id"]), credential=credential
             )
     return -1
 
 
-def parse_manga(url: URL) -> Union[Manga, int]:
+def parse_manga(url: URL, credential: Union[Credential, None] = None) -> Union[Manga, int]:
     if url.host == "manga.bilibili.com" and url.parts[1] == "detail":
         return Manga(
-            int(url.parts[2][2:])
+            int(url.parts[2][2:]), credential=credential
         )
     return -1
 
 
-def parse_album(url: URL) -> Union[Album, int]:
+def parse_album(url: URL, credential: Union[Credential, None] = None) -> Union[Album, int]:
     if url.host == "h.bilibili.com":
-        return Album(int(url.parts[1]))
+        return Album(int(url.parts[1]), credential=credential)
     return -1
 
 
-def parse_bnj(url: URL) -> Union[Video, int]:
+def parse_bnj(url: URL, credential: Union[Credential, None] = None) -> Union[Video, int]:
     # https://www.bilibili.com/festival/2023bnj?bvid=BV1ZY4y1f79x&spm_id_from=333.999.0.0
     bvid = url.query.get("bvid")
     if bvid is not None:
-        return Video(bvid)
+        return Video(bvid, credential=credential)
     return -1
