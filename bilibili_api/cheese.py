@@ -119,6 +119,7 @@ class CheeseList:
         )
         cheese_videos = []
         for c in lists["items"]:
+            c["ssid"] = self.get_season_id()
             cheese_videos.append(CheeseVideo(c["id"], self.credential, c))
         return cheese_videos
 
@@ -140,7 +141,10 @@ class CheeseVideo:
             credential (Credential): 凭据类
         """
         self.__epid = epid
-        self.cheese = CheeseList(ep_id=self.__epid)
+        if meta == None:
+            self.cheese = CheeseList(ep_id=self.__epid)
+        else:
+            self.cheese = CheeseList(season_id=meta["ssid"])
         self.credential = credential if credential else Credential()
         if meta == None:
             api = API["info"]["meta"]
