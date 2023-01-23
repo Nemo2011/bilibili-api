@@ -129,7 +129,7 @@ async def parse_link(
         # 添加 https: 协议头
         if url.lstrip("https:") == url:
             url = "https:" + url
-        raw_url = url # 保留 yarl 解析前的原始链接 url
+
         # 转换为 yarl
         url = URL(url)
 
@@ -238,7 +238,7 @@ async def auto_convert_video(video: Video, credential: Credential) -> Tuple[Unio
     # return video
     return (video, ResourceType.VIDEO)
 
-async def check_short_name(name: str, credential: Credential):
+async def check_short_name(name: str, credential: Union[Credential, None] = None) -> Tuple[Video | Episode | InteractiveVideo, ResourceType] | tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]] | tuple[User, Literal[ResourceType.USER]] | tuple[Article, Literal[ResourceType.ARTICLE]] | tuple[Audio, Literal[ResourceType.AUDIO]] | tuple[AudioList, Literal[ResourceType.AUDIO_LIST]] | tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]] | Literal[-1]:
     """
     解析:
       - mlxxxxxxxxxx
@@ -273,7 +273,7 @@ async def check_short_name(name: str, credential: Credential):
         return -1
 
 
-async def parse_video(url: URL, credential: Credential):
+async def parse_video(url: URL, credential: Credential) -> Tuple[Union[Video, Episode, InteractiveVideo], ResourceType] | Literal[-1]:
     """
     解析视频,如果不是返回 -1，否则返回对应类
     """
@@ -405,14 +405,14 @@ def parse_user(url: URL) -> Union[User, int]:
     if url.host == "space.bilibili.com":
         if len(url.parts) >= 2:
             uid = url.parts[1]
-            return User(uid=uid)
+            return User(uid=int(uid))
     return -1
 
 
 def parse_live(url: URL) -> Union[LiveRoom, int]:
     if url.host == "live.bilibili.com":
         if len(url.parts) >= 2:
-            room_display_id = url.parts[1]
+            room_display_id = int(url.parts[1])
             return LiveRoom(room_display_id=room_display_id)
     return -1
 
@@ -424,35 +424,37 @@ def parse_season_series(url: URL) -> Union[ChannelSeries, int]:
                 uid = int(url.parts[1])
             except:
                 pass  # uid 无效
-        if len(url.parts) >= 4:  # path 存在 collectiondetail 或者 seriesdetail
-            if url.parts[3] == "collectiondetail":
-                # https://space.bilibili.com/51537052/channel/collectiondetail?sid=22780&ctype=0
-                if url.query.get("sid") is not None:
-                    sid = int(url.query["sid"])
-                    return ChannelSeries(uid, ChannelSeriesType.SEASON, id_=sid)
-            elif url.parts[3] == "seriesdetail":
-                # https://space.bilibili.com/558830935/channel/seriesdetail?sid=2972810&ctype=0
-                if url.query.get("sid") is not None:
-                    sid = int(url.query["sid"])
-                    return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+            else:
+                if len(url.parts) >= 4:  # path 存在 collectiondetail 或者 seriesdetail
+                    if url.parts[3] == "collectiondetail":
+                        # https://space.bilibili.com/51537052/channel/collectiondetail?sid=22780&ctype=0
+                        if url.query.get("sid") is not None:
+                            sid = int(url.query["sid"])
+                            return ChannelSeries(uid, ChannelSeriesType.SEASON, id_=sid)
+                    elif url.parts[3] == "seriesdetail":
+                        # https://space.bilibili.com/558830935/channel/seriesdetail?sid=2972810&ctype=0
+                        if url.query.get("sid") is not None:
+                            sid = int(url.query["sid"])
+                            return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
     elif url.host == "www.bilibili.com":
         if url.parts[1] == "list":
             # https://www.bilibili.com/list/660303135?sid=2908236 旧版合集，不需要 real_url
-            if len(url.parts) >= 3 and url.query.get("sid") is not None:
-                sid = int(url.query["sid"])
+            if len(url.parts) >= 3:
                 uid = int(url.parts[2])
-                return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+                if "sid" in url.query:
+                    sid = int(url.query["sid"])
+                    return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
         # https://www.bilibili.com/medialist/play/660303135?business=space 新版合集
         elif url.parts[1] == "medialist" and url.parts[2] == "play":
             if len(url.parts) >= 4:
                 uid = int(url.parts[3])
-            if url.query.get("business_id") is not None:
-                sid = int(url.query.get("business_id"))
-                return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
+                if "business_id" in url.query:
+                    sid = int(url.query["business_id"])
+                    return ChannelSeries(uid, ChannelSeriesType.SERIES, id_=sid)
     return -1
 
 
-def parse_space_favorite_list(url: URL, credential) -> Union[FavoriteList, int]:
+def parse_space_favorite_list(url: URL, credential) -> Union[Tuple[FavoriteList, ResourceType], Literal[-1]]:
     if url.host == "space.bilibili.com":
         uid = url.parts[1]  # 获取 uid
         if len(url.parts) >= 3:  # path 存在 favlist
@@ -467,8 +469,8 @@ def parse_space_favorite_list(url: URL, credential) -> Union[FavoriteList, int]:
                     if favorite_lists == None:
                         return -1
                     else:
-                        default_favorite_list = favorite_lists["list"][0]
-                        return (FavoriteList(media_id=default_favorite_list["id"]), ResourceType.FAVORITE_LIST)
+                        default_favorite_id = int(favorite_lists["list"][0]["id"])
+                        return (FavoriteList(media_id=default_favorite_id), ResourceType.FAVORITE_LIST)
                 elif len(url.query) != 0:
                     fid = url.query.get("fid")  # 未知数据类型
                     ctype = url.query.get("ctype")
