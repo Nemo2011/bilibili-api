@@ -4,13 +4,15 @@ bilibili_api.utils.short
 一个很简单的处理短链接的模块，主要是读取跳转链接。
 """
 import httpx
+from yarl import URL
+from typing import Union
 from .network_httpx import get_session
 from .Credential import Credential
 from .. import settings
 from typing import Optional
 
 
-async def get_real_url(short_url: str, credential: Optional[Credential] = None) -> str:
+async def get_real_url(short_url: Union[str, URL], credential: Optional[Credential] = None) -> Union[str, URL]:
     """
     获取短链接跳转目标，以进行操作。
     Params:
@@ -18,6 +20,7 @@ async def get_real_url(short_url: str, credential: Optional[Credential] = None) 
         credential(Credential \| None): 凭据类。
     Returns:
         目标链接（如果不是有效的链接会报错）
+        返回值为原 url 类型
     """
     credential = credential if credential else Credential()
     config = {}
@@ -27,8 +30,10 @@ async def get_real_url(short_url: str, credential: Optional[Credential] = None) 
     if settings.proxy:
         config["proxies"] = {"all://": settings.proxy}
     try:
-        resp = await get_session().head(url=short_url, follow_redirects=True, cookies=credential.get_cookies())
-        u = resp.url
+        resp = await get_session().head(url=str(short_url), follow_redirects=True)
+        u = resp.url # wtf httpx.url
+        if type(short_url) == URL:
+            return URL(str(u))
         return str(u)
     except Exception as e:
         raise e

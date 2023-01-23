@@ -1,3 +1,5 @@
+**注意：此分支实现了使用 yarl 解析链接代替原来的字符串解析进行 `parse_link` 的函数的操作，但是鉴于目前函数仍然有部分问题，所以暂时保留此分支，不与 `dev` 分支合并。**
+
 ![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo-newYear.jpg)
 
 <div align="center">

@@ -22,3 +22,4 @@ venv/
 virtualenv/
 # IDE
 .idea/
+.vscode/settings.json
