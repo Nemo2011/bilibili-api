@@ -13,7 +13,7 @@ async def main():
     count = 0
     while True:
         # 获取评论
-        c = await comment.get_comments(418788911, comment.ResourceType.VIDEO, page)
+        c = await comment.get_comments(418788911, comment.CommentResourceType.VIDEO, page)
         # 存储评论
         comments.extend(c['replies'])
         # 增加已获取数量
