@@ -152,7 +152,8 @@ async def parse_link(
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES) # type: ignore
 
-        url = await get_real_url(url) # type: ignore
+        url = await get_real_url(str(url)) # type: ignore
+        url = URL(url) # type: ignore
 
         fl_space = parse_space_favorite_list(url, credential) # type: ignore
         if fl_space != -1:

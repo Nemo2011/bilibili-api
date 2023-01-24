@@ -10,7 +10,7 @@
       "method": "GET",
       "params": {
         "id": "int: 一级频道 id (与通用频道 id 不互通)",
-        "offset": "自行理解"
+        "offset": "str: 自行理解"
       }
     }
   },
@@ -21,14 +21,14 @@
     "subscribe": {
       "url": "https://api.bilibili.com/x/web-interface/web/channel/subscribe",
       "method": "GET",
-      "verify": true, 
+      "verify": true,
       "data": {
         "id": "int: 频道 id"
       },
       "comment": "关注频道"
     }
   },
-  "subscribe": {
+  "self_subscribes": {
     "list": {
       "url": "https://api.bilibili.com/x/web-interface/web/channel/subscribe/list",
       "method": "GET",
