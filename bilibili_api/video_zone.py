@@ -1,5 +1,5 @@
 """
-bilibili_api.channel
+bilibili_api.video_zone
 
 分区相关操作。
 """
@@ -15,12 +15,12 @@ from .utils.utils import get_api
 from .utils.network_httpx import request
 from .utils.Credential import Credential
 
-API = get_api("channel")
+API = get_api("video_zone")
 
 
 def get_channel_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
-    根据 tid 获取频道信息。
+    根据 tid 获取分区信息。
 
     Args:
         tid (int): 频道的 tid。
@@ -29,7 +29,7 @@ def get_channel_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, No
         `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(
-        os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
+        os.path.join(os.path.dirname(__file__), "data/video_zone.json"), encoding="utf8"
     ) as f:
         channel = json.loads(f.read())
 
@@ -52,7 +52,7 @@ def get_channel_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, No
 
 def get_channel_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
-    根据频道名称获取频道信息。
+    根据分区名称获取分区信息。
 
     Args:
         name (str): 频道的名称。
@@ -61,7 +61,7 @@ def get_channel_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, 
         Tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(
-        os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
+        os.path.join(os.path.dirname(__file__), "data/video_zone.json"), encoding="utf8"
     ) as f:
         channel = json.loads(f.read())
 
@@ -98,7 +98,7 @@ async def get_top10(tid: int, day: int = 7, credential: Union[Credential, None] 
     return await request("GET", url, params=params, credential=credential)
 
 
-def get_channel_list() -> List[Dict]:
+def get_zone_list() -> List[Dict]:
     """
     获取所有分区的数据
 
@@ -106,7 +106,7 @@ def get_channel_list() -> List[Dict]:
         List[dict]: 所有分区的数据
     """
     with open(
-        os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
+        os.path.join(os.path.dirname(__file__), "data/video_zone.json"), encoding="utf8"
     ) as f:
         channel = json.loads(f.read())
     channel_list = []
@@ -122,7 +122,7 @@ def get_channel_list() -> List[Dict]:
     return channel_list
 
 
-def get_channel_list_sub() -> dict:
+def get_zone_list_sub() -> dict:
     """
     获取所有分区的数据
     含父子关系（即一层次只有主分区）
@@ -131,13 +131,13 @@ def get_channel_list_sub() -> dict:
         dict: 所有分区的数据
     """
     with open(
-        os.path.join(os.path.dirname(__file__), "data/channel.json"), encoding="utf8"
+        os.path.join(os.path.dirname(__file__), "data/video_zone.json"), encoding="utf8"
     ) as f:
         channel = json.loads(f.read())
     return channel
 
 
-async def get_channel_videos_count_today(credential: Union[Credential, None] = None) -> dict:
+async def get_zone_videos_count_today(credential: Union[Credential, None] = None) -> dict:
     """
     获取每个分区当日最新投稿数量
 
@@ -151,14 +151,14 @@ async def get_channel_videos_count_today(credential: Union[Credential, None] = N
     return (await request("GET", api["url"], credential=credential))["region_count"]
 
 
-async def get_channel_new_videos(tid: int, credential: Union[Credential, None] = None) -> dict:
+async def get_zone_new_videos(tid: int, credential: Union[Credential, None] = None) -> dict:
     """
     获取分区最新投稿
 
     Args:
         tid        (int)              : 分区 id
         credential (Credential | None): 凭据类
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -168,7 +168,7 @@ async def get_channel_new_videos(tid: int, credential: Union[Credential, None] =
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-class ChannelTypes(enum.Enum):
+class ZoneTypes(enum.Enum):
     """
     所有分区枚举
 
@@ -233,7 +233,7 @@ class ChannelTypes(enum.Enum):
         - CINEPHILE_SHORTFILM: 小剧场
         - CINEPHILE_TRAILER_INFO: 预告·资讯
     - ENT: 娱乐
-        - ENT_VARIETY: 综艺 
+        - ENT_VARIETY: 综艺
         - ENT_TALKER: 娱乐杂谈
         - ENT_FANS: 粉丝创作
         - ENT_CELEBRITY: 明星综合
@@ -287,7 +287,7 @@ class ChannelTypes(enum.Enum):
         - SPORTS_BASKETBALL: 篮球
         - SPORTS_FOOTBALL: 足球
         - SPORTS_AEROBICS: 健身
-        - SPORTS_ATHLETIC: 竞技体育 
+        - SPORTS_ATHLETIC: 竞技体育
         - SPORTS_CULTURE: 运动文化
         - SPORTS_COMPREHENSIVE: 运动综合
     - ANIMAL: 动物圈
@@ -306,7 +306,7 @@ class ChannelTypes(enum.Enum):
     ANIME_FINISH = 32
     ANIME_INFORMATION = 51
     ANIME_OFFICAL = 152
-    
+
     MOVIE = 23
 
     GUOCHUANG = 167
@@ -328,7 +328,7 @@ class ChannelTypes(enum.Enum):
     DOUGA_TOKUSATSU = 86
     DOUGA_ACGNTALKS = 253
     DOUGA_OTHER = 27
-    
+
     GAME = 4
     GAME_STAND_ALONE = 17
     GAME_ESPORTS = 171
@@ -445,5 +445,5 @@ class ChannelTypes(enum.Enum):
     ANIMAL_WILD_ANIMAL = 221
     ANIMAL_REPTILES = 222
     ANIMAL_COMPOSITE = 75
-    
+
     VLOG = 19

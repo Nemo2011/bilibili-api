@@ -15,7 +15,6 @@ from . import (
     audio,
     bangumi,
     black_room,
-    channel,
     cheese,
     client,
     comment,
@@ -39,6 +38,7 @@ from . import (
     user,
     video_uploader,
     video,
+    video_zone,
     vote,
 )
 
@@ -92,7 +92,7 @@ __all__ = [
     "aid2bvid", "album", "app",
     "article", "ass", "asyncio",
     "audio", "bangumi", "black_room",
-    "bvid2aid", "channel", "cheese",
+    "bvid2aid", "video_zone", "cheese",
     "client", "comment", "dynamic",
     "emoji", "favorite_list",
     "game", "get_real_url",
