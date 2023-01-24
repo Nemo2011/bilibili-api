@@ -22,7 +22,7 @@
       "url": "https://api.vc.bilibili.com/topic_svr/v1/topic_svr/topic_new",
       "method": "GET",
       "params": {
-        "tag_id": "int: 标签 id"
+        "topic_id": "int: 标签 id"
       },
       "comment": "获取相关的动态/视频"
     }

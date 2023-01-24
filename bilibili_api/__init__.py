@@ -36,6 +36,7 @@ from . import (
     settings,
     topic,
     user,
+    video_tag,
     video_uploader,
     video,
     video_zone,
@@ -102,5 +103,5 @@ __all__ = [
     "manga", "note", "parse_link", "platform",
     "rank", "search", "session", "set_session",
     "settings", "sync", "topic", "user", "video",
-    "video_uploader", "vote",
+    "video_tag", "video_uploader", "video_zone", "vote",
 ]
