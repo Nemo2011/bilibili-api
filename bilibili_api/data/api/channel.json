@@ -1,0 +1,39 @@
+{
+  "categories": {
+    "list": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/category/list",
+      "method": "GET",
+      "comment": "获取所有的一级频道"
+    },
+    "sub_channels": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/category/channel_arc/list",
+      "method": "GET",
+      "params": {
+        "id": "int: 一级频道 id (与通用频道 id 不互通)",
+        "offset": "自行理解"
+      }
+    }
+  },
+  "channel": {
+    "info": {
+      "url": "tnnd, 这个数据放在了 html 里面！"
+    },
+    "subscribe": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/subscribe",
+      "method": "GET",
+      "verify": true, 
+      "data": {
+        "id": "int: 频道 id"
+      },
+      "comment": "关注频道"
+    }
+  },
+  "subscribe": {
+    "list": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/subscribe/list",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取关注的频道"
+    }
+  }
+}
