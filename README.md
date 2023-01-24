@@ -27,6 +27,8 @@ Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2
 这是一个用 Python 写的调用 [Bilibili](https://www.bilibili.com) 各种 API 的库，
 范围涵盖视频、音频、直播、动态、专栏、用户、番剧等[[1]](#脚注)。
 
+**注意：此模块不允许使用于商业用途，不允许做除了学习用途以外的任何事情，违规此模块许可证及此条注意事项而产生的后果自负。**
+
 ## 特色
 
 - 范围涵盖广，基本覆盖常用的爬虫，操作。

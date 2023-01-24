@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf8") as f:
 
 setuptools.setup(
     name="bilibili-api-python",
-    version="14.1.0",
+    version="14.1.1.dev",
     license="GPLv3+",
     author="Nemo2011",
     author_email="yimoxia@outlook.com",
@@ -36,7 +36,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.11",
     ],
     package_data={
-        "": ["data/**/*.*", "py.typed", "requirements.txt", "data/*.*", "html/*.*", "css/*.*"]
+        "": ["data/**/*.*", "py.typed", "requirements.txt", "data/*.*", "data/article/*.*", "data/geetest/*.*", "data/corerespond/*.*"]
     },
     install_requires=requires.splitlines(),
     url="https://github.com/nemo2011/bilibili-api",

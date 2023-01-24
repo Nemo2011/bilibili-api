@@ -368,7 +368,7 @@ class Note:
             raise ApiException("请先调用 fetch_content()")
 
         return {
-            "type": "Article",
+            "type": "Note",
             "meta": self.__meta,
             "children": list(map(lambda x: x.json(), self.__children)),
         }

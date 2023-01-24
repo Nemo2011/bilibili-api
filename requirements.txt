@@ -12,3 +12,4 @@ APScheduler~=3.9.1
 rsa~=4.9
 pillow~=9.4.0
 tqdm~=4.64.1
+yarl~=1.8.2

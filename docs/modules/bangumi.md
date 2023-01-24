@@ -151,6 +151,12 @@ media_id ，ssid ,epid 三者必须有其一，如果含有所有参数，字段
 
 **Returns:** dict: 调用 API 返回的结果
 
+#### async def get_episodes()
+
+获取番剧所有的剧集
+
+**Returns:** List[Episode]: 所有的剧集
+
 #### async def get_stat()
 
 获取番剧播放量，追番等信息

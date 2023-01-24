@@ -1,1 +1,0 @@
-https://github.com/kuresaru/geetest-validator
