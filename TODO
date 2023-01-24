@@ -1,4 +1,0 @@
-[x] 1. 将原来的 `channel.py` 整理到 `video_zone.py` <br>
-[x] 2. 收集 API <br>
-[ ] 3. 重写 `channel.py` <br>
-[ ] 4. 完善 `channel.py` 和 `video_zone.py` 文档 <br>

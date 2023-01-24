@@ -18,6 +18,28 @@
     "info": {
       "url": "tnnd, 这个数据放在了 html 里面！"
     },
+    "list_filter": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/featured/list",
+      "method": "GET",
+      "params": {
+        "channel_id": "int: 频道 id",
+        "filter_type": "int: 年份，可以为空",
+        "offset": "str: 自行理解",
+        "page_size": "int: 数据大小"
+      },
+      "comment": "获取频道中的视频"
+    },
+    "list_multiple": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/multiple/list",
+      "method": "GET",
+      "params": {
+        "channel_id": "int: 频道 id",
+        "sort_type": "str: 排序方式。new 最新, hot 最火, view 播放量最高",
+        "offset": "str: 自行理解",
+        "page_size": "int: 数据大小"
+      },
+      "comment": "获取频道中的视频"
+    },
     "subscribe": {
       "url": "https://api.bilibili.com/x/web-interface/web/channel/subscribe",
       "method": "GET",
