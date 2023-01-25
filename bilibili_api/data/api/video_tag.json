@@ -1,0 +1,30 @@
+{
+  "info": {
+    "tag_info": {
+      "url": "https://api.bilibili.com/x/tag/info",
+      "method": "GET",
+      "params": {
+        "tag_name": "str: 标签名",
+        "tag_id": "int: 标签 id",
+        "#": "上面两个参数任选一个即可"
+      },
+      "comment": "获取标签详情"
+    },
+    "get_similar": {
+      "url": "https://api.bilibili.com/x/tag/change/similar",
+      "method": "GET",
+      "params": {
+        "tag_id": "int: 标签 id"
+      },
+      "comment": "获取相关的标签"
+    },
+    "get_list": {
+      "url": "https://api.vc.bilibili.com/topic_svr/v1/topic_svr/topic_new",
+      "method": "GET",
+      "params": {
+        "topic_id": "int: 标签 id"
+      },
+      "comment": "获取相关的动态/视频"
+    }
+  }
+}

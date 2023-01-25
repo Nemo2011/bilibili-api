@@ -1,26 +1,61 @@
 {
-  "ranking": {
-    "get_top10": {
-      "url": "https://api.bilibili.com/x/web-interface/ranking/region",
+  "categories": {
+    "list": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/category/list",
       "method": "GET",
-      "verify": false,
+      "comment": "获取所有的一级频道"
+    },
+    "sub_channels": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/category/channel_arc/list",
+      "method": "GET",
       "params": {
-        "rid": "int: tid，分区 id",
-        "day": "int: 3，7"
-      },
-      "comment": "获取分区前十排行榜"
+        "id": "int: 一级频道 id (与通用频道 id 不互通)",
+        "offset": "str: 自行理解"
+      }
     }
-  }, 
-  "count": {
-    "url": "https://api.bilibili.com/x/web-interface/online", 
-    "method": "GET", 
-    "verify": false, 
-    "comment": "获取每个分区当日最新投稿数量"
-  }, 
-  "new": {
-    "url": "https://api.bilibili.com/x/web-interface/dynamic/region", 
-    "method": "GET", 
-    "verify": false, 
-    "comment": "获取分区最新投稿视频"
+  },
+  "channel": {
+    "info": {
+      "url": "tnnd, 这个数据放在了 html 里面！"
+    },
+    "list_filter": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/featured/list",
+      "method": "GET",
+      "params": {
+        "channel_id": "int: 频道 id",
+        "filter_type": "int: 年份，可以为空",
+        "offset": "str: 自行理解",
+        "page_size": "int: 数据大小"
+      },
+      "comment": "获取频道中的视频"
+    },
+    "list_multiple": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/multiple/list",
+      "method": "GET",
+      "params": {
+        "channel_id": "int: 频道 id",
+        "sort_type": "str: 排序方式。new 最新, hot 最火, view 播放量最高",
+        "offset": "str: 自行理解",
+        "page_size": "int: 数据大小"
+      },
+      "comment": "获取频道中的视频"
+    },
+    "subscribe": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/subscribe",
+      "method": "GET",
+      "verify": true,
+      "data": {
+        "id": "int: 频道 id"
+      },
+      "comment": "关注频道"
+    }
+  },
+  "self_subscribes": {
+    "list": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/subscribe/list",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取关注的频道"
+    }
   }
 }

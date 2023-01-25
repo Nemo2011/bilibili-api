@@ -31,7 +31,7 @@ async def get_user_real_name(self, uid: int, credential: Union[Credential, None]
 然后就是函数的主体了，你可以按照下面的写法来写：
 
 ``` python
-async def ...(...):
+async def ...(...) -> dict:
     """
     ...
     """

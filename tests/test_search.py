@@ -1,6 +1,6 @@
 # bilibili_api.search
 
-from bilibili_api import search, channel
+from bilibili_api import search, video_zone
 
 
 async def test_a_search():
@@ -29,7 +29,7 @@ async def test_f_search_by_order():
         search_type = search.SearchObjectType.VIDEO,
         order_type = search.OrderVideo.SCORES,
         time_range = 10,
-        topic_type = channel.ChannelTypes.DOUGA_MMD,
+        topic_type = video_zone.VideoZoneTypes.DOUGA_MMD,
         page = 1,
         debug_param_func = print,
     )

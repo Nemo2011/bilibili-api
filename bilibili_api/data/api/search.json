@@ -70,6 +70,17 @@
         "sort_type": "int: 排序方式. 综合 -1；销量最高 1；最新上架 2；售价最低 3"
       },
       "comment": "搜索课程"
+    },
+    "channel": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/search",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "page": "int: 页码",
+        "page_size": "int: 每一页的数据大小",
+        "keyword": "str: 搜索关键词"
+      },
+      "comment": "搜索频道"
     }
   }
 }

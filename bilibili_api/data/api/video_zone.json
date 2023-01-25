@@ -1,0 +1,26 @@
+{
+  "ranking": {
+    "get_top10": {
+      "url": "https://api.bilibili.com/x/web-interface/ranking/region",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "rid": "int: tid，分区 id",
+        "day": "int: 3，7"
+      },
+      "comment": "获取分区前十排行榜"
+    }
+  }, 
+  "count": {
+    "url": "https://api.bilibili.com/x/web-interface/online", 
+    "method": "GET", 
+    "verify": false, 
+    "comment": "获取每个分区当日最新投稿数量"
+  }, 
+  "new": {
+    "url": "https://api.bilibili.com/x/web-interface/dynamic/region", 
+    "method": "GET", 
+    "verify": false, 
+    "comment": "获取分区最新投稿视频"
+  }
+}

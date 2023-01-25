@@ -12,7 +12,7 @@ from .. import settings
 from typing import Optional
 
 
-async def get_real_url(short_url: Union[str, URL], credential: Optional[Credential] = None) -> Union[str, URL]:
+async def get_real_url(short_url: str, credential: Optional[Credential] = None) -> str:
     """
     获取短链接跳转目标，以进行操作。
     Params:
@@ -31,9 +31,7 @@ async def get_real_url(short_url: Union[str, URL], credential: Optional[Credenti
         config["proxies"] = {"all://": settings.proxy}
     try:
         resp = await get_session().head(url=str(short_url), follow_redirects=True)
-        u = resp.url # wtf httpx.url
-        if type(short_url) == URL:
-            return URL(str(u))
+        u = resp.url
         return str(u)
     except Exception as e:
         raise e
