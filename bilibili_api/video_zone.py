@@ -1,7 +1,7 @@
 """
 bilibili_api.video_zone
 
-分区相关操作。
+分区相关操作，与频道不互通。
 """
 
 import json

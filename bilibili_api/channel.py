@@ -1,7 +1,7 @@
 """
 bilibili_api.channel
 
-频道相关。
+频道相关，与视频分区不互通。
 """
 from bilibili_api.utils.short import get_real_url
 from bilibili_api.utils.network_httpx import request, get_session
