@@ -78,11 +78,23 @@ from bilibili_api import channel
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| order_or_filter | ChannelVideosOrder \| ChannelVideosFilter \| None | 获取视频的相关选项 |
+| order | ChannelVideosOrder | 获取视频的相关选项 |
 | offset | str | 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "" |
 | page_size | int | 每页的数据大小. Defaults to 30.  |
 
 获取频道的所有视频
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_featured_list()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| filter | ChannelVideosFilter | 获取视频的相关选项 |
+| offset | str | 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "" |
+| page_size | int | 每页的数据大小. Defaults to 30.  |
+
+获取频道的所有精选视频
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -119,6 +131,19 @@ from bilibili_api import channel
 | name | type | description |
 | ---- | ---- | ----------- |
 | channel | Channel | 要订阅的频道 |
+| credential | Credential | 凭据类 |
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def unsubscribe_channel()
+
+取关频道
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| channel | Channel | 要取关的频道 |
 | credential | Credential | 凭据类 |
 
 **Returns:** dict: 调用 API 返回的结果
