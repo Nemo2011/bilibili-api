@@ -26,7 +26,7 @@ class Tag:
             tag_name (str | None): 标签名. Defaults to None.
             tag_id   (int | None): 标签 id. Defaults to None.
 
-        注意：tag_name 和 tag_id 任选一个即可。tag_id 优先。
+        注意：tag_name 和 tag_id 任选一个传入即可。tag_id 优先使用。
         """
         if tag_id == None:
             if tag_name == None:
@@ -76,7 +76,7 @@ class Tag:
 
     async def get_cards(self) -> dict:
         """
-        获取标签下的视频
+        获取标签下的视频/动态
 
         Returns:
             dict: 调用 API 返回的结果

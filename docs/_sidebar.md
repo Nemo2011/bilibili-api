@@ -13,7 +13,7 @@
     + [排行榜](/examples/rank.md)
     + [视频分区](/examples/video_zone.md)
     + [频道](/examples/channel.md)
-    + [视频标签]（/examples/video_tag.md)
+    + [视频标签](/examples/video_tag.md)
     + [登录](/examples/login.md)
     + [登录功能](/examples/login_func.md)
     + [直播](/examples/live.md)
