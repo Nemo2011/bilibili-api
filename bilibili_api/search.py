@@ -8,7 +8,7 @@ from typing import Callable, Union, List
 import json
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
-from .video_zone import ZoneTypes
+from .video_zone import VideoZoneTypes
 
 API = get_api("search")
 
@@ -169,7 +169,7 @@ async def search_by_type(
     search_type: Union[SearchObjectType, None] = None,
     order_type: Union[OrderUser, OrderLiveRoom, OrderArticle, OrderVideo, None] = None,
     time_range: int = -1,
-    zone_type: Union[int, ZoneTypes, None] = None,
+    zone_type: Union[int, VideoZoneTypes, None] = None,
     order_sort: Union[int, None] = None,
     category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int, None] = None,
     page: int = 1,
@@ -226,7 +226,7 @@ async def search_by_type(
     if zone_type:
         if isinstance(zone_type, int):
             params["tids"] = zone_type
-        elif isinstance(zone_type, ZoneTypes):
+        elif isinstance(zone_type, VideoZoneTypes):
             params["tids"] = zone_type.value
         else:
             params["tids"] = zone_type.value

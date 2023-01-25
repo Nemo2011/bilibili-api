@@ -33,7 +33,7 @@ from bilibili_api import video_tag
 
 **Returns:** dict: 调用 API 返回的结果
 
-#### async def get_simular_tags()
+#### async def get_simulir_tags()
 
 获取相关的标签
 

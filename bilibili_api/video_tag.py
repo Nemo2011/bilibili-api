@@ -57,14 +57,14 @@ class Tag:
             params=params
         )
 
-    async def get_simular_tags(self) -> dict:
+    async def get_similar_tags(self) -> dict:
         """
         获取相关的标签
 
         Returns:
             dict: 调用 API 返回的结果
         """
-        api = API["info"]["get_simular"]
+        api = API["info"]["get_similar"]
         params = {
             "tag_id": self.get_tag_id()
         }
