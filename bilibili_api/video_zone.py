@@ -18,7 +18,7 @@ from .utils.Credential import Credential
 API = get_api("video_zone")
 
 
-def get_channel_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, None]]:
+def get_zone_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
     根据 tid 获取分区信息。
 
@@ -50,7 +50,7 @@ def get_channel_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, No
         return None, None
 
 
-def get_channel_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, None]]:
+def get_zone_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
     根据分区名称获取分区信息。
 
@@ -76,7 +76,7 @@ def get_channel_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, 
         return None, None
 
 
-async def get_top10(tid: int, day: int = 7, credential: Union[Credential, None] = None) -> dict:
+async def get_zone_top10(tid: int, day: int = 7, credential: Union[Credential, None] = None) -> dict:
     """
     获取分区前十排行榜。
 
@@ -168,7 +168,7 @@ async def get_zone_new_videos(tid: int, credential: Union[Credential, None] = No
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-class ZoneTypes(enum.Enum):
+class VideoZoneTypes(enum.Enum):
     """
     所有分区枚举
 

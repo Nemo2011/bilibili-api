@@ -1,4 +1,4 @@
-**注意：此分支为重构分区/频道功能而产生的新分支，暂不稳定**
+**注意：此分支为重构分区/频道功能而产生的新分支，代码已完工，正在完善文档中……**
 
 ![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo-newYear.jpg)
 
@@ -14,7 +14,7 @@
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 [![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
 
-</div>
+</div>……
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])([Gitee][docs-gitee])
 
