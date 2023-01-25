@@ -713,6 +713,13 @@
         "url": "//www.bilibili.com/v/life/funny"
       },
       {
+        "subChannelId": 160008,
+        "name": "亲子",
+        "route": "parenting",
+        "tid": 254,
+        "url": "//www.bilibili.com/v/life/parenting"
+      },
+      {
         "subChannelId": 160006,
         "name": "出行",
         "route": "travel",
@@ -924,11 +931,11 @@
         "url": "//www.bilibili.com/v/animal/dog"
       },
       {
-        "subChannelId": 180003,
-        "name": "大熊猫",
-        "route": "panda",
-        "tid": 220,
-        "url": "//www.bilibili.com/v/animal/panda"
+        "subChannelId": 180007,
+        "name": "小宠异宠",
+        "route": "reptiles",
+        "tid": 222,
+        "url": "//www.bilibili.com/v/animal/reptiles"
       },
       {
         "subChannelId": 180004,
@@ -938,11 +945,11 @@
         "url": "//www.bilibili.com/v/animal/wild_animal"
       },
       {
-        "subChannelId": 180005,
-        "name": "爬宠",
-        "route": "reptiles",
-        "tid": 222,
-        "url": "//www.bilibili.com/v/animal/reptiles"
+        "subChannelId": 180008,
+        "name": "动物二创",
+        "route": "second_edition",
+        "tid": 220,
+        "url": "//www.bilibili.com/v/animal/second_edition"
       },
       {
         "subChannelId": 180006,
