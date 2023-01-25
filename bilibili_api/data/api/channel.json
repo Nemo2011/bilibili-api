@@ -18,7 +18,7 @@
     "info": {
       "url": "tnnd, 这个数据放在了 html 里面！"
     },
-    "list_filter": {
+    "list_featured": {
       "url": "https://api.bilibili.com/x/web-interface/web/channel/featured/list",
       "method": "GET",
       "params": {
@@ -27,7 +27,7 @@
         "offset": "str: 自行理解",
         "page_size": "int: 数据大小"
       },
-      "comment": "获取频道中的视频"
+      "comment": "获取频道中的精选视频"
     },
     "list_multiple": {
       "url": "https://api.bilibili.com/x/web-interface/web/channel/multiple/list",
@@ -38,11 +38,11 @@
         "offset": "str: 自行理解",
         "page_size": "int: 数据大小"
       },
-      "comment": "获取频道中的视频"
+      "comment": "获取频道中的综合视频"
     },
     "subscribe": {
       "url": "https://api.bilibili.com/x/web-interface/web/channel/subscribe",
-      "method": "GET",
+      "method": "POST",
       "verify": true,
       "data": {
         "id": "int: 频道 id"

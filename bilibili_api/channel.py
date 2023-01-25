@@ -86,9 +86,9 @@ class ChannelVideosOrder(Enum):
     - HOT: 最火
     - VIEW: 播放量最高
     """
-    NEW = "?sort_type=new"
-    HOT = "?sort_type=hot"
-    VIEW = "?sort_type=view"
+    NEW = "new"
+    HOT = "hot"
+    VIEW = "view"
 
 
 class ChannelVideosFilter(Enum):
@@ -98,20 +98,20 @@ class ChannelVideosFilter(Enum):
     - ALL     : 全部
     - YEAR_年份: 指定年份筛选
     """
-    ALL = "?filter_type="
-    YEAR_2023 = "?filter_type=2023"
-    YEAR_2022 = "?filter_type=2022"
-    YEAR_2021 = "?filter_type=2021"
-    YEAR_2020 = "?filter_type=2020"
-    YEAR_2019 = "?filter_type=2019"
-    YEAR_2018 = "?filter_type=2018"
-    YEAR_2017 = "?filter_type=2017"
-    YEAR_2016 = "?filter_type=2016"
-    YEAR_2015 = "?filter_type=2015"
-    YEAR_2014 = "?filter_type=2014"
-    YEAR_2013 = "?filter_type=2013"
-    YEAR_2012 = "?filter_type=2012"
-    YEAR_2011 = "?filter_type=2011"
+    ALL = 0
+    YEAR_2023 = 2023
+    YEAR_2022 = 2022
+    YEAR_2021 = 2021
+    YEAR_2020 = 2020
+    YEAR_2019 = 2019
+    YEAR_2018 = 2018
+    YEAR_2017 = 2017
+    YEAR_2016 = 2016
+    YEAR_2015 = 2015
+    YEAR_2014 = 2014
+    YEAR_2013 = 2013
+    YEAR_2012 = 2012
+    YEAR_2011 = 2011
 
 
 class Channel:
@@ -148,35 +148,96 @@ class Channel:
         """
         return (await self.get_info())["channelDetailBanner"]["data"]["tag_channels"]
 
-    async def get_list(
-        self,
-        order_or_filter: Union[ChannelVideosOrder, ChannelVideosFilter, None] = None,
-        offset: str = "",
-        page_size: int = 30
-    ) -> dict:
-        """
-        获取频道的所有视频
+    def only_achieve(self, info: list) -> List[dict]:
+        '''
+        只返回 card_type=achieve 的数据
 
         Args:
-            order_or_filter (ChannelVideosOrder | ChannelVideosFilter | None): 获取视频的相关选项
-            offset          (str)                                            : 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0"
-            page_size       (int)                                            : 每页的数据大小
+            info (list): 待筛选的数据
+        Returns:
+            list: card_type=achieve 的数据
+        '''
+        results = []
+        for obj in info:
+            if obj.get("card_type") == "archive":
+                results.append(obj)
+        return results
+
+    async def get_featured_list(self, filter: ChannelVideosFilter = ChannelVideosFilter.ALL, offset: str = None, page_size: int = 30) -> dict:
+        """
+        获取频道精选视频
+
+        Args:
+            filter          (ChannelVideosFilter)       : 获取视频的相关选项. Defaults to ALL
+            offset          (str)                       : 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None
+            page_size       (int)                       : 每页的数据大小. Defaults to 30
 
         Returns:
             dict: 调用 API 返回的结果
         """
-        api = API["channel"]["list_filter"]
-        if isinstance(order_or_filter, ChannelVideosOrder):
-            api = API["channel"]["list_multiple"]
-        if isinstance(order_or_filter, Enum):
-            api["url"] += order_or_filter.value
+        # page_size 默认设置为网页端的 30
+        api = API["channel"]["list_featured"]
         params = {
             "channel_id": self.get_channel_id()
         }
+        if isinstance(filter, ChannelVideosFilter):
+            params["filter_type"] = filter.value
+        if offset is not None:
+            params["offset"] = offset
+        params["page_size"] = page_size
+        info = await request(
+            "GET", api["url"], params=params
+        )
+
+        # 如果频道与番剧有关，会有番剧信息，需要排除掉 card_type=season 的数据
+        info["list"] = self.only_achieve(info["list"])
+        return info
+
+    async def get_raw_list(self, order: ChannelVideosOrder = ChannelVideosOrder.HOT, offset: str = None, page_size: int = 30) -> dict:
+        """
+        获取频道视频列表原数据
+
+        Args:
+            order          (ChannelVideosOrder)         : 排序方式. Defaults to HOT
+            offset         (str)                        : 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表
+            page_size      (int)                        : 每页的数据大小
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        # page_size 默认设置为网页端的 30
+        api = API["channel"]["list_multiple"]
+        params = {
+            "channel_id": self.get_channel_id()
+        }
+        if isinstance(order, ChannelVideosOrder):
+            params["sort_type"] = order.value
+        if offset is not None:
+            params["offset"] = offset
+        params["page_size"] = page_size
+
         return await request(
             "GET", api["url"], params=params
         )
 
+    async def get_list(self, order: ChannelVideosOrder = ChannelVideosOrder.HOT, offset: str = None, page_size: int = 30) -> dict:
+        """
+        获取频道视频列表
+
+        Args:
+            order          (ChannelVideosOrder)         : 排序方式. Defaults to HOT
+            offset         (str)                        : 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表
+            page_size      (int)                        : 每页的数据大小
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+
+        info = await self.get_raw_list(order, offset, page_size)
+
+        # 如果频道与番剧有关，会有番剧信息，需要排除掉 card_type=rank 的数据
+        info["list"] = self.only_achieve(info["list"])
+        return info
 
 
 async def get_channels_in_category(category_id: int) -> List["Channel"]:
