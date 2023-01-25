@@ -239,6 +239,19 @@ class Channel:
         info["list"] = self.only_achieve(info["list"])
         return info
 
+    async def get_channel_video_rank(self) -> List[dict]:
+        """
+        获取频道热门视频排行榜
+
+        Returns:
+            List[dict]: 热门视频排行榜
+        """
+
+        info = await self.get_raw_list(order=ChannelVideosOrder.HOT)
+        rank = info["list"][0]
+        if rank["card_type"] == "rank":
+            return rank["items"]
+
 
 async def get_channels_in_category(category_id: int) -> List["Channel"]:
     """
@@ -297,6 +310,28 @@ async def subscribe_channel(channel: Channel, credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["channel"]["subscribe"]
+    params = {
+        "id": channel.get_channel_id()
+    }
+    return await request(
+        "POST",
+        api["url"],
+        data=params,
+        credential=credential
+    )
+
+async def unsubscribe_channel(channel: Channel, credential: Credential) -> dict:
+    """
+    取关频道
+
+    Args:
+        channel    (Channel)   : 要订阅的频道
+        credential (Credential): 凭据类
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["channel"]["unsubscribe"]
     params = {
         "id": channel.get_channel_id()
     }

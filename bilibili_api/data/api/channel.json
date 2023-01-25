@@ -48,6 +48,15 @@
         "id": "int: 频道 id"
       },
       "comment": "关注频道"
+    },
+    "unsubscribe": {
+      "url": "https://api.bilibili.com/x/web-interface/web/channel/unsubscribe",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "id": "int: 频道 id"
+      },
+      "comment": "取关频道"
     }
   },
   "self_subscribes": {
