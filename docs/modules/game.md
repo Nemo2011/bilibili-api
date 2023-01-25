@@ -58,3 +58,15 @@ from bilibili_api import game
 获取游戏介绍视频
 
 **Returns:** dict: 调用 API 返回的结果
+
+#### async def get_score()
+
+获取游戏评分
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_comments()
+
+获取游戏的评论
+
+**Returns:** dict: 调用 API 返回的结果

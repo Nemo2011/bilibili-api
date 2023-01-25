@@ -23,6 +23,7 @@ from ..favorite_list import FavoriteList, FavoriteListType
 from ..interactive_video import InteractiveVideo
 from ..live import LiveRoom
 from ..user import ChannelSeries, ChannelSeriesType, User, get_self_info
+from ..note import Note, NoteType
 from ..video import Video
 from ..game import Game
 from .Credential import Credential
@@ -54,6 +55,7 @@ class ResourceType(Enum):
     + TOPIC: 话题
     + MANGA: 漫画
     + ALBUM: 相簿
+    + NOTE: 笔记
     + FAILED: 错误
     """
 
@@ -76,6 +78,7 @@ class ResourceType(Enum):
     TOPIC = "topic"
     MANGA = "manga"
     ALBUM = "album"
+    NOTE = "note"
     FAILED = "failed"
 
 
@@ -102,6 +105,7 @@ async def parse_link(
     Tuple[Topic, Literal[ResourceType.TOPIC]],
     Tuple[Manga, Literal[ResourceType.MANGA]],
     Tuple[Album, Literal[ResourceType.ALBUM]],
+    Tuple[Note, Literal[ResourceType.NOTE]],
     Tuple[Literal[-1], Literal[ResourceType.FAILED]]
 ]:
     """
@@ -170,6 +174,10 @@ async def parse_link(
         if bnj_video != -1:
             bnj_video.credential = credential # type: ignore
             return (bnj_video, ResourceType.VIDEO) # type: ignore
+        note = parse_note(url, credential) # type: ignore
+        if note != -1:
+            return (note, ResourceType.NOTE) # type: ignore
+
 
         obj = None
         video = await parse_video(url, credential) # type: ignore
@@ -592,4 +600,13 @@ def parse_bnj(url: URL, credential: Credential) -> Union[Video, int]:
     bvid = url.query.get("bvid")
     if bvid is not None:
         return Video(bvid, credential=credential)
+    return -1
+
+
+def parse_note(url: URL, credential: Credential) -> Union[Note, int]:
+    # https://www.bilibili.com/h5/note-app/view?cvid=21385583
+    if url.host == "www.bilibili.com" and url.parts[1:4] == ("h5", "note-app", "view"):
+        if url.query.get("cvid") == None:
+            return -1
+        return Note(cvid=int(url.query.get("cvid")), note_type=NoteType.PUBLIC, credential=credential) # type: ignore
     return -1

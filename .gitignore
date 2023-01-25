@@ -13,8 +13,9 @@ dist/
 *.ivi
 # Videos
 *.mp4
-# Test files
+# Test files / Scratch files
 test*.*
+scratch/
 # Tests
 !tests/*.py
 # Virtual environments
