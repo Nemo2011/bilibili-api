@@ -31,7 +31,9 @@ class Ui_Geetest(object):
         Geetest.setWindowTitle(_translate("Geetest", "极验验证"))
 ```
 
-# 示例：二维码登陆（PyQt5）
+# ~~示例：二维码登陆（PyQt5）~~
+
+!> 因函数接口进行了优化，发生了改变，此示例在 `v15+` 中已失效
 
 ``` python
 import json
