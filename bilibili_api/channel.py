@@ -44,7 +44,7 @@ async def pick_window_INITIAL_STATE(url: str, credential: Optional[Credential] =
 
 async def get_channel_categories() -> dict:
     """
-    获取所有的一级频道。
+    获取所有的频道分类（如游戏、鬼畜等）。
 
     Returns:
         dict: 调用 API 返回的结果
@@ -159,8 +159,8 @@ class Channel:
 
         Args:
             order_or_filter (ChannelVideosOrder | ChannelVideosFilter | None): 获取视频的相关选项
-            offset          (str)                                            : 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0"
-            page_size       (int)                                            : 每页的数据大小
+            offset          (str)                                            : 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to ""
+            page_size       (int)                                            : 每页的数据大小. Defaults to 30.
 
         Returns:
             dict: 调用 API 返回的结果
@@ -171,7 +171,9 @@ class Channel:
         if isinstance(order_or_filter, Enum):
             api["url"] += order_or_filter.value
         params = {
-            "channel_id": self.get_channel_id()
+            "channel_id": self.get_channel_id(),
+            "offset": offset,
+            "page_size": page_size
         }
         return await request(
             "GET", api["url"], params=params

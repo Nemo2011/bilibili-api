@@ -14,7 +14,7 @@
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 [![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
 
-</div>……
+</div>
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])([Gitee][docs-gitee])
 
@@ -29,7 +29,7 @@ Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2
 这是一个用 Python 写的调用 [Bilibili](https://www.bilibili.com) 各种 API 的库，
 范围涵盖视频、音频、直播、动态、专栏、用户、番剧等[[1]](#脚注)。
 
-**注意：此模块不允许使用于商业用途，不允许做除了学习用途以外的任何事情，违规此模块许可证及此条注意事项而产生的后果自负。**
+**注意：此模块不允许使用于商业用途，仅用于学习和测试，违规此模块许可证及此条注意事项而产生的后果自负。**
 
 ## 特色
 
