@@ -10,7 +10,7 @@
       },
       "comment": "获取标签详情"
     },
-    "get_simular": {
+    "get_similar": {
       "url": "https://api.bilibili.com/x/tag/change/similar",
       "method": "GET",
       "params": {

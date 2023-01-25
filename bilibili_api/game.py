@@ -24,7 +24,7 @@ class Game:
         """
         Args:
             game_id    (int)       : 游戏 id
-            credential (Credential): 凭据类. Defaults to None. 
+            credential (Credential): 凭据类. Defaults to None.
         """
         self.__game_id = game_id
         self.credential = credential if credential else Credential()
@@ -92,6 +92,32 @@ class Game:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["videos"]
+        params = {"game_base_id": self.__game_id}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
+    async def get_score(self) -> dict:
+        """
+        获取游戏评分
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["score"]
+        params = {"game_base_id": self.__game_id}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
+    async def get_comments(self) -> dict:
+        """
+        获取游戏的评论
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["comment"]
         params = {"game_base_id": self.__game_id}
         return await request(
             "GET", api["url"], params=params, credential=self.credential

@@ -9,6 +9,7 @@ from typing import Tuple, Union
 from . import login
 from .utils.Credential import Credential
 from .utils.utils import get_api
+from .utils.Picture import Picture
 import json
 import requests
 import uuid
@@ -32,7 +33,7 @@ class QrCodeLoginEvents(enum.Enum):
     DONE = "done"
 
 
-def get_qrcode() -> Tuple[str, str]:
+def get_qrcode() -> Tuple[Picture, str]:
     """
     获取二维码及登录密钥（后面有用）
 
@@ -41,7 +42,7 @@ def get_qrcode() -> Tuple[str, str]:
     """
     img = login.update_qrcode()
     login_key = login.login_key
-    return (img, login_key)
+    return (Picture.from_file(img), login_key)
 
 
 def check_qrcode_events(login_key) -> Tuple[QrCodeLoginEvents, Union[str, Credential]]:
@@ -95,12 +96,12 @@ def start_geetest_server() -> "ServerThreadModel":
     Returns:
         ServerThread: 服务进程，将自动开启
 
-    返回值内函数及属性: 
+    返回值内函数及属性:
         (继承：threading.Thread)
         - url   (str)     : 验证码服务地址
         - start (Callable): 开启进程
         - stop  (Callable): 结束进程
-    
+
     ``` python
     print(start_geetest_server().url)
     ```
@@ -118,7 +119,7 @@ def close_geetest_server() -> None:
 def done_geetest() -> bool:
     """
     检查是否完成了极验验证。
-    
+
     如果没有完成极验验证码就开始短信登录发送短信，那么可能会让你的项目卡住。
 
     Returns:
@@ -138,12 +139,12 @@ def safecenter_start_geetest_server() -> "ServerThreadModel":
     Returns:
         ServerThread: 服务进程，将自动开启
 
-    返回值内函数及属性: 
+    返回值内函数及属性:
         (继承：threading.Thread)
         - url   (str)     : 验证码服务地址
         - start (Callable): 开启进程
         - stop  (Callable): 结束进程
-    
+
     ``` python
     print(start_geetest_server().url)
     ```
@@ -161,7 +162,7 @@ def safecenter_close_geetest_server() -> None:
 def safecenter_done_geetest() -> bool:
     """
     登录验证专用函数：检查是否完成了极验验证。
-    
+
     如果没有完成极验验证码就开始短信登录发送短信，那么可能会让你的项目卡住。
 
     Returns:
@@ -180,9 +181,9 @@ countries_list = COUNTRIES_LIST
 
 class ServerThreadModel(threading.Thread):
     """
-    A simple model for bilibili_api.utils.captcha._start_server.ServerThread. 
+    A simple model for bilibili_api.utils.captcha._start_server.ServerThread.
     """
     url: str
     def __init__(self, *args, **kwargs): ...
-    def stop(self): 
+    def stop(self):
         """Stop the server and this thread nicely"""

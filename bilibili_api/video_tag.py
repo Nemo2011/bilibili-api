@@ -1,7 +1,7 @@
 """
 bilibili_api.video_tag
 
-视频标签相关
+视频标签相关，部分的标签的 id 与同名的频道的 id 一模一样。
 """
 
 from .utils.network_httpx import request
@@ -26,7 +26,7 @@ class Tag:
             tag_name (str | None): 标签名. Defaults to None.
             tag_id   (int | None): 标签 id. Defaults to None.
 
-        注意：tag_name 和 tag_id 任选一个即可。tag_id 优先。
+        注意：tag_name 和 tag_id 任选一个传入即可。tag_id 优先使用。
         """
         if tag_id == None:
             if tag_name == None:
@@ -57,14 +57,14 @@ class Tag:
             params=params
         )
 
-    async def get_simular_tags(self) -> dict:
+    async def get_similar_tags(self) -> dict:
         """
         获取相关的标签
 
         Returns:
             dict: 调用 API 返回的结果
         """
-        api = API["info"]["get_simular"]
+        api = API["info"]["get_similar"]
         params = {
             "tag_id": self.get_tag_id()
         }
@@ -76,7 +76,7 @@ class Tag:
 
     async def get_cards(self) -> dict:
         """
-        获取标签下的视频
+        获取标签下的视频/动态
 
         Returns:
             dict: 调用 API 返回的结果

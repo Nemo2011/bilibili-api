@@ -29,7 +29,7 @@ async def test_f_search_by_order():
         search_type = search.SearchObjectType.VIDEO,
         order_type = search.OrderVideo.SCORES,
         time_range = 10,
-        topic_type = video_zone.ZoneTypes.DOUGA_MMD,
+        topic_type = video_zone.VideoZoneTypes.DOUGA_MMD,
         page = 1,
         debug_param_func = print,
     )

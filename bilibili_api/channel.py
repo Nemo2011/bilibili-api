@@ -1,7 +1,7 @@
 """
 bilibili_api.channel
 
-频道相关。
+频道相关，与视频分区不互通。
 """
 from bilibili_api.utils.short import get_real_url
 from bilibili_api.utils.network_httpx import request, get_session
@@ -44,7 +44,7 @@ async def pick_window_INITIAL_STATE(url: str, credential: Optional[Credential] =
 
 async def get_channel_categories() -> dict:
     """
-    获取所有的一级频道。
+    获取所有的频道分类（如游戏、鬼畜等）。
 
     Returns:
         dict: 调用 API 返回的结果
@@ -208,7 +208,9 @@ class Channel:
         # page_size 默认设置为网页端的 30
         api = API["channel"]["list_multiple"]
         params = {
-            "channel_id": self.get_channel_id()
+            "channel_id": self.get_channel_id(),
+            "offset": offset,
+            "page_size": page_size
         }
         if isinstance(order, ChannelVideosOrder):
             params["sort_type"] = order.value
