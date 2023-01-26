@@ -151,22 +151,34 @@ async def get_zone_videos_count_today(credential: Union[Credential, None] = None
     return (await request("GET", api["url"], credential=credential))["region_count"]
 
 
-async def get_zone_new_videos(tid: int, credential: Union[Credential, None] = None) -> dict:
+async def get_zone_new_videos(tid: int) -> dict:
     """
     获取分区最新投稿
 
     Args:
         tid        (int)              : 分区 id
-        credential (Credential | None): 凭据类
 
     Returns:
         dict: 调用 API 返回的结果
     """
-    credential = credential if credential else Credential()
     api = API["new"]
     params = {"rid": tid}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await request("GET", api["url"], params=params)
 
+async def get_zone_hot_tags(tid) -> List[dict]:
+    """
+    获取分区热门标签
+
+    Args:
+        tid        (int)              : 分区 id
+    
+    Returns:
+        List[dict]: 热门标签
+    """
+
+    api = API["get_hot_tags"]
+    params={"rid": tid}
+    return (await request("GET", api["url"], params=params))[0]
 
 class VideoZoneTypes(enum.Enum):
     """

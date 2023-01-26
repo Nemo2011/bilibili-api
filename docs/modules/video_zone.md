@@ -81,6 +81,16 @@ from bilibili_api import video_zone
 
 获取分区最新投稿
 
+#### async def get_zone_hot_tags()
+
+| name | type | description |
+| - | - | - |
+| tid | int | 分区 id |
+
+获取频道的所有热门标签
+
+**Returns:** dict: 调用 API 返回的结果
+
 ---
 
 ## class VideoZoneTypes
