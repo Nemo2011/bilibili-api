@@ -167,6 +167,20 @@ async def get_zone_new_videos(tid: int, credential: Union[Credential, None] = No
     params = {"rid": tid}
     return await request("GET", api["url"], params=params, credential=credential)
 
+async def get_zone_hot_tags(tid) -> List[dict]:
+    """
+    获取分区热门标签
+
+    Args:
+        tid        (int)              : 分区 id
+    
+    Returns:
+        List[dict]: 热门标签
+    """
+
+    api = API["get_hot_tags"]
+    params={"rid": tid}
+    return (await request("GET", api["url"], params=params))[0]
 
 class VideoZoneTypes(enum.Enum):
     """

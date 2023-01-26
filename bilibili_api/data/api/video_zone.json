@@ -22,5 +22,15 @@
     "method": "GET", 
     "verify": false, 
     "comment": "获取分区最新投稿视频"
+  },
+  "get_hot_tags":
+  {
+    "url": "https://api.bilibili.com/x/tag/hots",
+    "method": "GET",
+    "params":{
+      "rid": "int: tid，分区 id"
+    },
+    "verify": false,
+    "comment": "获取热门标签"
   }
 }
