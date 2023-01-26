@@ -11,51 +11,112 @@ from .utils.utils import get_api
 from .utils.network_httpx import request
 from .utils.Credential import Credential
 
-# 违规类型代码
-BLACK_TYPE = {
-    0: "全部",
-    1: "刷屏",
-    2: "抢楼",
-    3: "发布色情低俗信息",
-    4: "发布赌博诈骗信息",
-    5: "发布违禁相关信息",
-    6: "发布垃圾广告信息",
-    7: "发布人身攻击言论",
-    8: "发布侵犯他人隐私信息",
-    9: "发布引战言论",
-    10: "发布剧透信息",
-    11: "恶意添加无关标签",
-    12: "恶意删除他人标签",
-    13: "发布色情信息",
-    14: "发布低俗信息",
-    15: "发布暴力血腥信息",
-    16: "涉及恶意投稿行为",
-    17: "发布非法网站信息",
-    18: "发布传播不实信息",
-    19: "发布怂恿教唆信息",
-    20: "恶意刷屏",
-    21: "账号违规",
-    22: "恶意抄袭",
-    23: "冒充自制原创",
-    24: "发布青少年不良内容",
-    25: "破坏网络安全",
-    26: "发布虚假误导信息",
-    27: "仿冒官方认证账号",
-    28: "发布不适宜内容",
-    29: "违反运营规则",
-    30: "恶意创建话题",
-    31: "发布违规抽奖",
-    32: "恶意冒充他人",
-}
+
+class BlackReasonType(Enum):
+    """
+    违规原因类型枚举 (英语翻译错误请忽略/提 issue/发起 PR)
+
+    - ALL: 全部
+    - FLOOD_SCREEN: 刷屏
+    - SOFA: 抢沙发
+    - PRON_VULGAR: 色情低俗内容
+    - GAMBLED_SCAMS: 赌博诈骗内容
+    - ILLEGAL: 违禁信息
+    - ADS: 垃圾广告信息
+    - PERSONAL_ATTACK: 人身攻击
+    - INVASION_OF_PRIVACY: 侵犯隐私
+    - LEAD_WAR: 引战
+    - SPOILER: 剧透
+    - ADD_MALICIOUS_TAG: 恶意为他人添加标签
+    - DEL_OTHERS_TAG: 恶意删除他人标签
+    - PRON: 色情
+    - VULGAR: 低俗
+    - VIOLENT: 暴力血腥内容
+    - MALICIOUS_ARCHIVES: 恶意投稿行为
+    - ILLEGAL_STATION: 发布非法网站信息
+    - SEND_UNREAL_EVENT: 发布不实信息
+    - ABETMENT: 发布教唆怂恿信息
+    - MALICIOUS_SPAMMING: 恶意刷屏
+    - ILLEGAL_ACCOUNT: 账号违规
+    - PLAGIARISM: 抄袭
+    - PRETEND_ORIGINAL: 冒充官号
+    - BAD_FOR_YOUNGS: 青少年不宜
+    - BREAK_INTERNET_SECURITY: 破坏网络安全
+    - SEND_UNREAL_MISLEADING_EVENT: 发布不实舞蹈信息
+    - VIOLATE_SITE_OPERATING_RULES: 违规网站运营规则
+    - MALICIOUS_TOPICS: 恶意创建话题
+    - CREATE_ILLEGAL_LUCKY_DRAW: 发布违规抽奖
+    - PRETEND_OTHER: 冒充他人
+    """
+    ALL = 0
+    FLOOD_SCREEN = 1
+    SOFA = 2
+    PRON_VULGAR = 3
+    GAMBLED_SCAMS = 4
+    ILLEGAL = 5
+    ADS = 6
+    PERSONAL_ATTACK = 7
+    INVASION_OF_PRIVACY = 8
+    LEAD_WAR = 9
+    SPOILER = 10
+    ADD_MALICIOUS_TAG = 11
+    DEL_OTHERS_TAG = 12
+    PRON = 13
+    VULGAR = 14
+    VIOLENT = 15
+    MALICIOUS_ARCHIVES = 16
+    ILLEGAL_STATION = 17
+    SEND_UNREAL_EVENT = 18
+    ABETMENT = 19
+    MALICIOUS_SPAMMING = 20
+    ILLEGAL_ACCOUNT = 21
+    PLAGIARISM = 22
+    PRETEND_ORIGINAL = 23
+    BAD_FOR_YOUNGS = 24
+    BREAK_INTERNET_SECURITY = 25
+    SEND_UNREAL_MISLEADING_EVENT = 26
+    PRETEND_ORIGINAL_ACCOUNT = 27
+    SEND_BAD_EVENT = 28
+    VIOLATE_SITE_OPERATING_RULES = 29
+    MALICIOUS_TOPICS = 30
+    CREATE_ILLEGAL_LUCKY_DRAW = 31
+    PRETEND_OTHER = 32
+
+
+class BlackType(Enum):
+    """
+    违规类型枚举
+
+    - ALL: 全部
+    - COMMENT: 评论
+    - DANMAKU: 弹幕
+    - PRIVATE_MESSAGE: 私信
+    - TAG: 标签
+    - PERSONAL_INFORMATION: 个人信息
+    - VIDEO: 视频
+    - ARTICLE: 专栏
+    - DYNAMIC: 动态
+    - ALBUM: 相簿
+    """
+    ALL = 0
+    COMMENT = 1
+    DANMAKU = 2
+    PRIVATE_MESSAGE = 3
+    TAG = 4
+    PERSONAL_INFORMATION = 5
+    VIDEO = 6
+    ARTICLE = 8
+    DYNAMIC = 10
+    ALBUM = 11
 
 
 class BlackFrom(Enum):
     """
     违规来源
 
-    SYSTEM: 系统封禁
-    ADMIN: 风纪仲裁
-    ALL: 全部
+    - SYSTEM: 系统封禁
+    - ADMIN: 风纪仲裁
+    - ALL: 全部
     """
 
     SYSTEM = 0
@@ -68,7 +129,7 @@ API = get_api("black-room")
 
 async def get_blocked_list(
     from_: BlackFrom = BlackFrom.ALL,
-    type_: int = 0,
+    type_: BlackType = BlackType.ALL,
     pn: int = 1,
     credential: Union[Credential, None] = None,
 ) -> dict:
@@ -77,13 +138,13 @@ async def get_blocked_list(
 
     Args:
         from_      (BlackFrom)        : 违规来源. Defaults to BlackFrom.ALL.
-        type_      (int)              : 违规类型. 查看 black_room.BLACK_TYPE。Defaults to 0 (ALL).
+        type_      (int)              : 违规类型. Defaults to BlackType.ALL. 
         pn         (int)              : 页数. Defaults to 1.
         credential (Credential | None): 凭据. Defaults to None.
     """
     credential = credential if credential else Credential()
     api = API["info"]
-    params = {"pn": pn, "otype": type_}
+    params = {"pn": pn, "otype": type_.value}
     if from_.value != None:
         params["btype"] = from_.value
     return await request("GET", api["url"], params=params, credential=credential)
@@ -101,7 +162,7 @@ class BlackRoom:
         """
         Args:
             black_room_id (int)                        : 小黑屋 id
-            credential    (Credential | None, optional): 凭据类. Defaults to None. 
+            credential    (Credential | None, optional): 凭据类. Defaults to None.
         """
         self.__id = black_room_id
         self.credential = credential if credential else Credential()
@@ -118,6 +179,15 @@ class BlackRoom:
         return await request(
             "GET", api["url"], params=params, credential=self.credential
         )
+
+    async def get_reason(self) -> BlackReasonType:
+        """
+        获取小黑屋的封禁原因
+
+        Returns:
+            BlackReasonType: 封禁原因枚举类
+        """
+        return BlackReasonType((await self.get_details())["reasonType"])
 
     async def get_id(self) -> int:
         return self.__id
