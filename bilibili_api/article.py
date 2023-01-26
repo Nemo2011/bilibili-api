@@ -17,6 +17,7 @@ import re
 from html import unescape
 
 import yaml
+from yarl import URL
 from .utils.network_httpx import get_session, request
 from .exceptions.NetworkException import NetworkException, ApiException
 from bs4 import BeautifulSoup, element
@@ -844,10 +845,12 @@ class ImageNode(Node):
         self.alt = ""
 
     def markdown(self):
+        self.url = str(URL(self.url).with_scheme("https"))
         alt = self.alt.replace("[", "\\[")
         return f"![{alt}]({self.url})\n\n"
 
     def json(self):
+        self.url = str(URL(self.url).with_scheme("https"))
         return {"type": "ImageNode", "url": self.url, "alt": self.alt}
 
 

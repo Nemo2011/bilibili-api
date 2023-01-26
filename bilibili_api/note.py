@@ -8,6 +8,7 @@ from html import unescape
 import json
 from enum import Enum
 
+from yarl import URL
 from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network_httpx import request, get_session
@@ -346,8 +347,8 @@ class Note:
         for node in self.__children:
             try:
                 markdown_text = node.markdown()
-            except:
-                continue
+            except Exception as e:
+                pass
             else:
                 content += markdown_text
 
@@ -599,10 +600,12 @@ class ImageNode(Node):
         self.alt = ""
 
     def markdown(self):
+        self.url = str(URL(self.url).with_scheme("https"))
         alt = self.alt.replace("[", "\\[")
         return f"![{alt}]({self.url})\n\n"
 
     def json(self):
+        self.url = str(URL(self.url).with_scheme("https"))
         return {"type": "ImageNode", "url": self.url, "alt": self.alt}
 
 

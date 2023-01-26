@@ -4,6 +4,7 @@ from typing import Any
 import tempfile
 import os
 import httpx
+from yarl import URL
 from .Credential import Credential
 
 
@@ -54,6 +55,7 @@ class Picture:
         Returns:
             Picture: 加载后的图片对象
         """
+        url = str(URL(url).with_scheme("https"))
         obj = Picture()
         session = httpx.Client()
         resp = session.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"})
