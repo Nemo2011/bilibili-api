@@ -81,21 +81,324 @@ async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0) -> d
     return await request("GET", api["url"], params=params)
 
 
-class BANGUMI_INDEX:
+class INDEX_FILTER:
     '''
-    番剧索引相关固定参数
+    番剧索引相关固定参数以及值
     '''
-    class SEASON_TYPE(Enum):
+    class Style:
         '''
-        番剧类型
-        
-        番剧 1、电影 2、纪录片 3、国创 4、电视剧 5
+        Style 请手动传值
         '''
-        ANIME = "anime"
-        Movie = "movie"
-        DOCUMENTARY = "documentary"
-        GUOCHUANG = "guochuang"
-        TV = "tv"
+        Anime = [
+            {"value": -1, "name": "全部"},
+            {"value": 10010, "name": "原创"},
+            {"value": 10011, "name": "漫画改"},
+            {"value": 10012, "name": "小说改"},
+            {"value": 10013, "name": "游戏改"},
+            {"value": 10102, "name": "特摄"},
+            {"value": 10015, "name": "布袋戏"},
+            {"value": 10016, "name": "热血"},
+            {"value": 10017, "name": "穿越"},
+            {"value": 10018, "name": "奇幻"},
+            {"value": 10020, "name": "战斗"},
+            {"value": 10021, "name": "搞笑"},
+            {"value": 10022, "name": "日常"},
+            {"value": 10023, "name": "科幻"},
+            {"value": 10024, "name": "萌系"},
+            {"value": 10025, "name": "治愈"},
+            {"value": 10026, "name": "校园"},
+            {"value": 10027, "name": "少儿"},
+            {"value": 10028, "name": "泡面"},
+            {"value": 10029, "name": "恋爱"},
+            {"value": 10030, "name": "少女"},
+            {"value": 10031, "name": "魔法"},
+            {"value": 10032, "name": "冒险"},
+            {"value": 10033, "name": "历史"},
+            {"value": 10034, "name": "架空"},
+            {"value": 10035, "name": "机战"},
+            {"value": 10036, "name": "神魔"},
+            {"value": 10037, "name": "声控"},
+            {"value": 10038, "name": "运动"},
+            {"value": 10039, "name": "励志"},
+            {"value": 10040, "name": "音乐"},
+            {"value": 10041, "name": "推理"},
+            {"value": 10042, "name": "社团"},
+            {"value": 10043, "name": "智斗"},
+            {"value": 10044, "name": "催泪"},
+            {"value": 10045, "name": "美食"},
+            {"value": 10046, "name": "偶像"},
+            {"value": 10047, "name": "乙女"},
+            {"value": 10048, "name": "职场"}
+        ]
+        Movie = [
+            {"value": -1, "name": "全部"},
+            {"value": 10104, "name": "短片"},
+            {"value": 10050, "name": "剧情"},
+            {"value": 10051, "name": "喜剧"},
+            {"value": 10052, "name": "爱情"},
+            {"value": 10053, "name": "动作"},
+            {"value": 10054, "name": "恐怖"},
+            {"value": 10023, "name": "科幻"},
+            {"value": 10055, "name": "犯罪"},
+            {"value": 10056, "name": "惊悚"},
+            {"value": 10057, "name": "悬疑"},
+            {"value": 10018, "name": "奇幻"},
+            {"value": 10058, "name": "战争"},
+            {"value": 10059, "name": "动画"},
+            {"value": 10060, "name": "传记"},
+            {"value": 10061, "name": "家庭"},
+            {"value": 10062, "name": "歌舞"},
+            {"value": 10033, "name": "历史"},
+            {"value": 10032, "name": "冒险"},
+            {"value": 10063, "name": "纪实"},
+            {"value": 10064, "name": "灾难"},
+            {"value": 10011, "name": "漫画改"},
+            {"value": 10012, "name": "小说改"}
+        ]
+        Documentary = [
+            {"value": -1, "name": "全部"},
+            {"value": 10033, "name": "历史"},
+            {"value": 10045, "name": "美食"},
+            {"value": 10065, "name": "人文"},
+            {"value": 10066, "name": "科技"},
+            {"value": 10067, "name": "探险"},
+            {"value": 10068, "name": "宇宙"},
+            {"value": 10069, "name": "萌宠"},
+            {"value": 10070, "name": "社会"},
+            {"value": 10071, "name": "动物"},
+            {"value": 10072, "name": "自然"},
+            {"value": 10073, "name": "医疗"},
+            {"value": 10074, "name": "军事"},
+            {"value": 10064, "name": "灾难"},
+            {"value": 10075, "name": "罪案"},
+            {"value": 10076, "name": "神秘"},
+            {"value": 10077, "name": "旅行"},
+            {"value": 10038, "name": "运动"},
+            {"value": -10, "name": "电影"}
+        ]
+        Guochuang = [
+            {"value": -1, "name": "全部"},
+            {"value": 10010, "name": "原创"},
+            {"value": 10011, "name": "漫画改"},
+            {"value": 10012, "name": "小说改"},
+            {"value": 10013, "name": "游戏改"},
+            {"value": 10014, "name": "动态漫"},
+            {"value": 10015, "name": "布袋戏"},
+            {"value": 10016, "name": "热血"},
+            {"value": 10018, "name": "奇幻"},
+            {"value": 10019, "name": "玄幻"},
+            {"value": 10020, "name": "战斗"},
+            {"value": 10021, "name": "搞笑"},
+            {"value": 10078, "name": "武侠"},
+            {"value": 10022, "name": "日常"},
+            {"value": 10023, "name": "科幻"},
+            {"value": 10024, "name": "萌系"},
+            {"value": 10025, "name": "治愈"},
+            {"value": 10057, "name": "悬疑"},
+            {"value": 10026, "name": "校园"},
+            {"value": 10027, "name": "少儿"},
+            {"value": 10028, "name": "泡面"},
+            {"value": 10029, "name": "恋爱"},
+            {"value": 10030, "name": "少女"},
+            {"value": 10031, "name": "魔法"},
+            {"value": 10033, "name": "历史"},
+            {"value": 10035, "name": "机战"},
+            {"value": 10036, "name": "神魔"},
+            {"value": 10037, "name": "声控"},
+            {"value": 10038, "name": "运动"},
+            {"value": 10039, "name": "励志"},
+            {"value": 10040, "name": "音乐"},
+            {"value": 10041, "name": "推理"},
+            {"value": 10042, "name": "社团"},
+            {"value": 10043, "name": "智斗"},
+            {"value": 10044, "name": "催泪"},
+            {"value": 10045, "name": "美食"},
+            {"value": 10046, "name": "偶像"},
+            {"value": 10047, "name": "乙女"},
+            {"value": 10048, "name": "职场"},
+            {"value": 10049, "name": "古风"}
+        ]
+        TV = [
+            {"value": -1, "name": "全部"},
+            {"value": 10010, "name": "原创"},
+            {"value": 10011, "name": "漫画改"},
+            {"value": 10012, "name": "小说改"},
+            {"value": 10013, "name": "游戏改"},
+            {"value": 10014, "name": "动态漫"},
+            {"value": 10015, "name": "布袋戏"},
+            {"value": 10016, "name": "热血"},
+            {"value": 10018, "name": "奇幻"},
+            {"value": 10019, "name": "玄幻"},
+            {"value": 10020, "name": "战斗"},
+            {"value": 10021, "name": "搞笑"},
+            {"value": 10078, "name": "武侠"},
+            {"value": 10022, "name": "日常"},
+            {"value": 10023, "name": "科幻"},
+            {"value": 10024, "name": "萌系"},
+            {"value": 10025, "name": "治愈"},
+            {"value": 10057, "name": "悬疑"},
+            {"value": 10026, "name": "校园"},
+            {"value": 10027, "name": "少儿"},
+            {"value": 10028, "name": "泡面"},
+            {"value": 10029, "name": "恋爱"},
+            {"value": 10030, "name": "少女"},
+            {"value": 10031, "name": "魔法"},
+            {"value": 10033, "name": "历史"},
+            {"value": 10035, "name": "机战"},
+            {"value": 10036, "name": "神魔"},
+            {"value": 10037, "name": "声控"},
+            {"value": 10038, "name": "运动"},
+            {"value": 10039, "name": "励志"},
+            {"value": 10040, "name": "音乐"},
+            {"value": 10041, "name": "推理"},
+            {"value": 10042, "name": "社团"},
+            {"value": 10043, "name": "智斗"},
+            {"value": 10044, "name": "催泪"},
+            {"value": 10045, "name": "美食"},
+            {"value": 10046, "name": "偶像"},
+            {"value": 10047, "name": "乙女"},
+            {"value": 10048, "name": "职场"},
+            {"value": 10049, "name": "古风"}
+        ]
+
+    class Type(Enum):
+        ANIME = 1
+        MOVIE = 2
+        DOCUMENTARY = 3
+        GUOCHUANG = 4
+        TV = 5
+
+    class VERSION(Enum):
+        '''
+        番剧版本
+        '''
+        ALL = -1
+        MAIN = 1
+        FILM = 2
+        OTHER = 3
+
+    class SPOKEN_LANGUAGE_TYPE(Enum):
+        '''
+        配音
+        '''
+        ALL = -1
+        ORIGINAL = 1
+        CHINESE = 2
+
+    class FINISH_STATUS(Enum):
+        '''
+        番剧状态
+        '''
+        ALL = -1
+        FINISHED = 1
+        UNFINISHED = 0
+
+    class COPYRIGHT(Enum):
+        '''
+        版权方
+        '''
+        ALL = -1
+        EXCLUSIVE = 3
+        OTHER = "1,2,4"
+
+    class SEASON(Enum):
+        '''
+        季度
+        '''
+        ALL = -1
+        SUMMER = 7
+        AUTUMN = 10
+        WINTER = 1
+        SPRING = 4
+
+    class YEAR(Enum):
+        '''
+        年份
+        '''
+        ALL = -1
+        YEAR_2023 = "[2023,2024)"
+        YEAR_2022 = "[2022,2023)"
+        YEAR_2021 = "[2021,2022)"
+        YEAR_2020 = "[2020,2021)"
+        YEAR_2019 = "[2019,2020)"
+        YEAR_2018 = "[2018,2019)"
+        YEAR_2017 = "[2017,2018)"
+        YEAR_2016 = "[2016,2017)"
+        YEAR_2015 = "[2015,2016)"
+        YEAR_FROM_2014_TO_2010 = "[2010,2015)"
+        YEAR_FROM_2009_TO_2005 = "[2005,2010)"
+        YEAR_FROM_2004_TO_2000 = "[2000,2005)"
+        YEAR_1990S = "[1990,2000)"
+        YEAR_1980S = "[1980,1990)"
+        YEAR_BEFORE_1980 = "[,1980)"
+
+    class RELEASE_DATE(Enum):
+        '''
+        发布日期
+        '''
+        ALL = -1
+        YEAR_2023 = "[2023-01-01 00:00:00,2024-01-01 00:00:00)"
+        YEAR_2022 = "[2022-01-01 00:00:00,2023-01-01 00:00:00)"
+        YEAR_2021 = "[2021-01-01 00:00:00,2022-01-01 00:00:00)"
+        YEAR_2020 = "[2020-01-01 00:00:00,2021-01-01 00:00:00)"
+        YEAR_2019 = "[2019-01-01 00:00:00,2020-01-01 00:00:00)"
+        YEAR_2018 = "[2018-01-01 00:00:00,2019-01-01 00:00:00)"
+        YEAR_2017 = "[2017-01-01 00:00:00,2018-01-01 00:00:00)"
+        YEAR_2016 = "[2016-01-01 00:00:00,2017-01-01 00:00:00)"
+        YEAR_FROM_2015_TO_2010 = "[2010-01-01 00:00:00,2016-01-01 00:00:00)"
+        YEAR_FROM_2009_TO_2005 = "[2005-01-01 00:00:00,2010-01-01 00:00:00)"
+        YEAR_FROM_2004_TO_2000 = "[2000-01-01 00:00:00,2005-01-01 00:00:00)"
+        YEAR_1990S = "[1990-01-01 00:00:00,2000-01-01 00:00:00)"
+        YEAR_1980S = "[1980-01-01 00:00:00,1990-01-01 00:00:00)"
+        YEAR_BEFORE_1980 = "[,1980-01-01 00:00:00)"
+
+    class PRODUCER(Enum):
+        '''
+        制作方
+        '''
+        ALL = -1
+        CCTV = 4
+        BBC = 1
+        DISCOVERY = 7
+        NATIONAL_GEOGRAPHIC = 14
+        NHK = 2
+        HISTORY = 6
+        SATELLITE = 8
+        SELF = 9
+        ITV = 5
+        SKY = 3
+        ZDF = 10
+        PARTNER = 11
+        DOMESTIC_OTHER = 12
+        FOREIGN_OTHER = 13
+
+    class PAYMENT(Enum):
+        '''
+        观看条件
+        '''
+        ALL = -1
+        FREE = 1
+        PAID = "2,6"
+        VIP = "4,6"
+
+    class AREA(Enum):
+        '''
+        地区
+        '''
+        ALL = "-1"
+        CHINA = "1,6,7"
+        CHINESE_MAINLAND = "1"
+        CHINESE_HONGKONG_AND_MACAO = "6,7"
+        JAPAN = "2"
+        AMERICA = "3"
+        UK = "4"
+        KOREA = "8"
+        FRANCE = "9"
+        THAILAND = "10"
+        GERMANY = "15"
+        ITALY = "35"
+        SPAIN = "13"
+        OTHER = "5,11,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70"
 
     class SORT(Enum):
         '''
@@ -123,63 +426,197 @@ class BANGUMI_INDEX:
         RELEASE = "5"
         Movie_RELEASE = "6"
 
-def get_index_filters(index_type: BANGUMI_INDEX.SEASON_TYPE = BANGUMI_INDEX.SEASON_TYPE.ANIME) -> dict:
-    if isinstance(index_type, BANGUMI_INDEX.SEASON_TYPE):
-        index_type = index_type.value
-        with open(os.path.join(os.path.dirname(__file__), "data/season_index_info.json"), encoding="utf8") as f:
-            index_info = json.load(f)
-            return index_info[index_type]
 
-async def get_index(season_type: BANGUMI_INDEX.SEASON_TYPE = BANGUMI_INDEX.SEASON_TYPE.ANIME,
-                    order: BANGUMI_INDEX.ORDER = BANGUMI_INDEX.ORDER.FOLLOWER,
-                    sort: BANGUMI_INDEX.SORT = BANGUMI_INDEX.SORT.DESC,
-                    pn: int = 1,
-                    ps: int = 20,
-                    **kwargs
-                    ) -> dict:
+def get_style_list(index_type: INDEX_FILTER.Type) -> list:
+    if index_type == INDEX_FILTER.Type.ANIME:
+        return INDEX_FILTER.Style.Anime
+    elif index_type == INDEX_FILTER.Type.MOVIE:
+        return INDEX_FILTER.Style.Movie
+    elif index_type == INDEX_FILTER.Type.TV:
+        return INDEX_FILTER.Style.TV
+    elif index_type == INDEX_FILTER.Type.DOCUMENTARY:
+        return INDEX_FILTER.Style.Documentary
+    elif index_type == INDEX_FILTER.Type.GUOCHUANG:
+        return INDEX_FILTER.Style.Guochuang
+    else:
+        raise ValueError("index_type 参数错误")
+
+
+def get_style(index_type: INDEX_FILTER.Type, style: Union[int, str]) -> int:
     '''
-    获取番剧索引
+    检查 style 是否存在或通过 style 获取 style_id
+    '''
+    style_list = get_style_list(index_type)
+    if isinstance(style, int):
+        for style in style_list:
+            if style["value"] == style:
+                return style["value"]
+    elif isinstance(style, str) is not None:
+        for style in style_list:
+            if style["name"] == style:
+                return style["value"]
+    else:
+        raise ValueError("style 不存在")
+
+
+class Index_Filter_Meta:
+    '''
+    Index Filter 元数据
+    用于补全有哪些参数可传入
+    '''
+    class Anime:
+        def __init__(self,
+                     season_version: INDEX_FILTER.VERSION = INDEX_FILTER.VERSION.ALL,
+                     spoken_language_type: INDEX_FILTER.SPOKEN_LANGUAGE_TYPE = INDEX_FILTER.SPOKEN_LANGUAGE_TYPE.ALL,
+                     area: INDEX_FILTER.AREA = INDEX_FILTER.AREA.ALL,
+                     is_finish: INDEX_FILTER.FINISH_STATUS = INDEX_FILTER.FINISH_STATUS.ALL,
+                     copyright: INDEX_FILTER.COPYRIGHT = INDEX_FILTER.COPYRIGHT.ALL,
+                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
+                     season_month: INDEX_FILTER.SEASON = INDEX_FILTER.SEASON.ALL,
+                     year: INDEX_FILTER.YEAR = INDEX_FILTER.YEAR.ALL,
+                     style_id: Union[int, str] = -1
+                     ) -> None:
+            '''
+            Anime Meta
+            Args:
+                style_id (int, str): 为 style 的 name 或 value
+            '''
+            self.season_version = season_version
+            self.spoken_language_type = spoken_language_type
+            self.area = area
+            self.is_finish = is_finish
+            self.copyright = copyright
+            self.season_status = payment
+            self.season_month = season_month
+            self.year = year
+            self.style_id = get_style(
+                index_type=INDEX_FILTER.Type.ANIME, style=style_id)
+
+    class Movie:
+        def __init__(self,
+                     area: INDEX_FILTER.AREA = INDEX_FILTER.AREA.ALL,
+                     release_date: INDEX_FILTER.RELEASE_DATE = INDEX_FILTER.RELEASE_DATE.ALL,
+                     style_id: Union[int, str] = -1,
+                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL
+                     ) -> None:
+            '''
+            Movie Meta
+            Args:
+                style_id (int, str): 为 style 的 name 或 value
+            '''
+            self.area = area
+            self.release_date = release_date
+            self.style_id = get_style(
+                index_type=INDEX_FILTER.Type.MOVIE, style=style_id)
+            self.season_status = payment
+
+    class Documentary:
+        def __init__(self,
+                     release_date: INDEX_FILTER.RELEASE_DATE = INDEX_FILTER.RELEASE_DATE.ALL,
+                     style_id: Union[int, str] = -1,
+                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
+                     producer_id: INDEX_FILTER.PRODUCER = INDEX_FILTER.PRODUCER.ALL
+                     ) -> None:
+            '''
+            Documentary Meta
+            Args:
+                style_id (int, str): 为 style 的 name 或 value
+            '''
+            self.release_date = release_date
+            self.style_id = get_style(
+                index_type=INDEX_FILTER.Type.DOCUMENTARY, style=style_id)
+            self.season_status = payment
+            self.producer_id = producer_id
+
+    class TV:
+        def __init__(self,
+                     area: INDEX_FILTER.AREA = INDEX_FILTER.AREA.ALL,
+                     release_date: INDEX_FILTER.RELEASE_DATE = INDEX_FILTER.RELEASE_DATE.ALL,
+                     style_id: Union[int, str] = -1,
+                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL
+                     ) -> None:
+            '''
+            TV Meta
+            Args:
+                style_id (int, str): 为 style 的 name 或 value
+            '''
+            self.area = area
+            self.release_date = release_date
+            self.style_id = get_style(
+                index_type=INDEX_FILTER.Type.TV, style=style_id)
+            self.season_status = payment
+
+    class Guochuang:
+        def __init__(self,
+                     season_version: INDEX_FILTER.VERSION = INDEX_FILTER.VERSION.ALL,
+                     is_finish: INDEX_FILTER.FINISH_STATUS = INDEX_FILTER.FINISH_STATUS.ALL,
+                     copyright: INDEX_FILTER.COPYRIGHT = INDEX_FILTER.COPYRIGHT.ALL,
+                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
+                     year: INDEX_FILTER.YEAR = INDEX_FILTER.YEAR.ALL,
+                     style_id: Union[int, str] = -1,
+                     ) -> None:
+            '''
+            Guochuang Meta
+            Args:
+                style_id (int, str): 为 style 的 name 或 value
+            '''
+            self.season_version = season_version
+            self.is_finish = is_finish
+            self.copyright = copyright
+            self.season_status = payment
+            self.year = year
+            self.style_id = get_style(
+                index_type=INDEX_FILTER.Type.GUOCHUANG, style=style_id)
+
+
+async def get_index_by_filters(filters: Index_Filter_Meta = Index_Filter_Meta.Anime(),
+                               order: INDEX_FILTER.ORDER = INDEX_FILTER.ORDER.FOLLOWER,
+                               sort: INDEX_FILTER.SORT = INDEX_FILTER.SORT.DESC,
+                               pn: int = 1,
+                               ps: int = 20,
+                               ) -> dict:
+    '''
+    查询番剧索引
+    请先通过 Index_Filter_Meta 选择需要的索引，构造 filters
 
     Args:
-        season_type (BANGUMI_INDEX.SEASON_TYPE, optional): 番剧类型. Defaults to BANGUMI_INDEX.SEASON_TYPE.ANIME.
+        filters (Index_Filter_Meta, optional): 筛选条件. Defaults to Index_Filter_Meta.Anime().
         order (BANGUMI_INDEX.ORDER, optional): 排序字段. Defaults to Follower.
         sort (BANGUMI_INDEX.SORT, optional): 排序方式. Defaults to DESC.
         pn (int, optional): 页数. Defaults to 1.
         ps (int, optional): 每页数量. Defaults to 20.
-        **kwargs: 可选参数，具体可选参数请参考 `get_index_filters` 函数的返回值或者见文档
-    
+
     Returns:
         dict: 调用 API 返回的结果
     '''
     api = API["info"]["index"]
 
-    # filters
-    season_index_info = get_index_filters(index_type=season_type)
     # 必要参数 season_type、type
     params = {}
-    params["season_type"] = season_index_info["ssType"]
-    for filter in season_index_info["filters"]:
-        if filter["key"] in kwargs.keys():
-            for able_filter in filter["list"]:
-                if able_filter["value"] == kwargs[filter["key"]]:
-                    params[filter["key"]] = kwargs[filter["key"]]
-                    break
-            else:
-                raise ValueError("参数 %s 的值不在可选范围内" % filter["key"])
+    if isinstance(filters, Index_Filter_Meta.Anime):
+        params["season_type"] = INDEX_FILTER.Type.ANIME.value
+    elif isinstance(filters, Index_Filter_Meta.Movie):
+        params["season_type"] = INDEX_FILTER.Type.MOVIE.value
+    elif isinstance(filters, Index_Filter_Meta.Documentary):
+        params["season_type"] = INDEX_FILTER.Type.DOCUMENTARY.value
+    elif isinstance(filters, Index_Filter_Meta.TV):
+        params["season_type"] = INDEX_FILTER.Type.TV.value
+    elif isinstance(filters, Index_Filter_Meta.Guochuang):
+        params["season_type"] = INDEX_FILTER.Type.GUOCHUANG.value
+    else:
+        raise ValueError("参数 season_type 的值不在 INDEX_FILTER.Type 内")
 
-    # orders
-    for able_order in season_index_info["orders"]:
-        if able_order["key"] == order.value:
-            params["order"] = order.value
-            break
-    else:
-        raise ValueError("参数 order 的值不在可选范围内")
-    
+    for key, value in filters.__dict__.items():
+        if value is not None:
+            params[key] = value.value
+
+    if order in params:
+        if order == INDEX_FILTER.ORDER.SCORE.value and sort == INDEX_FILTER.SORT.ASC.value:
+            raise ValueError(
+                "order 为 INDEX_FILTER.ORDER.SCORE 时，sort 不能为 INDEX_FILTER.SORT.ASC")
     # 常规参数
-    if sort.value in able_order["sort"].split(","):
-        params["sort"] = sort.value
-    else:
-        raise ValueError("参数 sort 的值不在可选范围内，可能因为 order 为最高评分时 sort 不存在升序")
+    params["order"] = order.value
+    params["sort"] = sort.value
     params["page"] = pn
     params["pagesize"] = ps
 
