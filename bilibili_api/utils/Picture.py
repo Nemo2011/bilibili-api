@@ -55,8 +55,8 @@ class Picture:
         Returns:
             Picture: 加载后的图片对象
         """
-        if URL(self.url).scheme == "":
-            self.url = "https:" + self.url
+        if URL(url).scheme == "":
+            url = "https:" + url
         obj = Picture()
         session = httpx.Client()
         resp = session.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"})
