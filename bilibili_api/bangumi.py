@@ -11,6 +11,7 @@ bilibili_api.bangumi
 """
 
 import datetime
+import os
 from enum import Enum
 from typing import Any, Tuple, Union, List
 import httpx
@@ -61,6 +62,7 @@ class BangumiType(Enum):
     FT = 3
     GUOCHUANG = 4
 
+
 async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0) -> dict:
     """
     获取番剧时间线
@@ -76,7 +78,117 @@ async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0) -> d
         "before": before,
         "after": after
     }
-    return await request("GET", api["url"], params = params)
+    return await request("GET", api["url"], params=params)
+
+
+class BANGUMI_INDEX:
+    '''
+    番剧索引相关固定参数
+    '''
+    class SEASON_TYPE(Enum):
+        '''
+        番剧类型
+        
+        番剧 1、电影 2、纪录片 3、国创 4、电视剧 5
+        '''
+        ANIME = "anime"
+        Movie = "movie"
+        DOCUMENTARY = "documentary"
+        GUOCHUANG = "guochuang"
+        TV = "tv"
+
+    class SORT(Enum):
+        '''
+        排序方式
+        '''
+        DESC = "0"
+        ASC = "1"
+
+    class ORDER(Enum):
+        '''
+        更新时间 0
+        排序字段
+        弹幕数量 1
+        播放数量 2
+        追番人数 3
+        最高评分 4
+        开播时间 5
+        上映日期 6
+        '''
+        UPDATE = "0"
+        DANMAKU = "1"
+        PLAY = "2"
+        FOLLOWER = "3"
+        SCORE = "4"
+        RELEASE = "5"
+        Movie_RELEASE = "6"
+
+def get_index_filters(index_type: BANGUMI_INDEX.SEASON_TYPE = BANGUMI_INDEX.SEASON_TYPE.ANIME) -> dict:
+    if isinstance(index_type, BANGUMI_INDEX.SEASON_TYPE):
+        index_type = index_type.value
+        with open(os.path.join(os.path.dirname(__file__), "data/season_index_info.json"), encoding="utf8") as f:
+            index_info = json.load(f)
+            return index_info[index_type]
+
+async def get_index(season_type: BANGUMI_INDEX.SEASON_TYPE = BANGUMI_INDEX.SEASON_TYPE.ANIME,
+                    order: BANGUMI_INDEX.ORDER = BANGUMI_INDEX.ORDER.FOLLOWER,
+                    sort: BANGUMI_INDEX.SORT = BANGUMI_INDEX.SORT.DESC,
+                    pn: int = 1,
+                    ps: int = 20,
+                    **kwargs
+                    ) -> dict:
+    '''
+    获取番剧索引
+
+    Args:
+        season_type (BANGUMI_INDEX.SEASON_TYPE, optional): 番剧类型. Defaults to BANGUMI_INDEX.SEASON_TYPE.ANIME.
+        order (BANGUMI_INDEX.ORDER, optional): 排序字段. Defaults to Follower.
+        sort (BANGUMI_INDEX.SORT, optional): 排序方式. Defaults to DESC.
+        pn (int, optional): 页数. Defaults to 1.
+        ps (int, optional): 每页数量. Defaults to 20.
+        **kwargs: 可选参数，具体可选参数请参考 `get_index_filters` 函数的返回值或者见文档
+    
+    Returns:
+        dict: 调用 API 返回的结果
+    '''
+    api = API["info"]["index"]
+
+    # filters
+    season_index_info = get_index_filters(index_type=season_type)
+    # 必要参数 season_type、type
+    params = {}
+    params["season_type"] = season_index_info["ssType"]
+    for filter in season_index_info["filters"]:
+        if filter["key"] in kwargs.keys():
+            for able_filter in filter["list"]:
+                if able_filter["value"] == kwargs[filter["key"]]:
+                    params[filter["key"]] = kwargs[filter["key"]]
+                    break
+            else:
+                raise ValueError("参数 %s 的值不在可选范围内" % filter["key"])
+
+    # orders
+    for able_order in season_index_info["orders"]:
+        if able_order["key"] == order.value:
+            params["order"] = order.value
+            break
+    else:
+        raise ValueError("参数 order 的值不在可选范围内")
+    
+    # 常规参数
+    if sort.value in able_order["sort"].split(","):
+        params["sort"] = sort.value
+    else:
+        raise ValueError("参数 sort 的值不在可选范围内，可能因为 order 为最高评分时 sort 不存在升序")
+    params["page"] = pn
+    params["pagesize"] = ps
+
+    # params["st"] 未知参数，暂时不传
+    # params["type"] 未知参数，为 1
+    params["type"] = 1
+
+    return await request("GET", api["url"], params=params)
+
 
 class Bangumi:
     """
@@ -277,6 +389,7 @@ class Bangumi:
         if len(episode_list["main_section"]["episodes"]) == 0:
             return []
         first_epid = episode_list["main_section"]["episodes"][0]["id"]
+
         async def get_episode_info(epid: int):
             credential = self.credential if self.credential else Credential()
             session = get_session()
@@ -367,6 +480,7 @@ async def set_follow(
     data = {"season_id": bangumi.get_season_id()}
     return await request("POST", api["url"], data=data, credential=credential)
 
+
 async def update_follow_status(
     bangumi: Bangumi, status: int, credential: Union[Credential, None] = None
 ) -> dict:
@@ -386,6 +500,7 @@ async def update_follow_status(
     api = API["operate"]["follow_status"]
     data = {"season_id": bangumi.get_season_id(), "status": status}
     return await request("POST", api["url"], data=data, credential=credential)
+
 
 class Episode(Video):
     """
@@ -467,7 +582,7 @@ class Episode(Video):
         Returns:
             Bangumi: 番剧类
         """
-        return self.bangumi # type: ignore
+        return self.bangumi  # type: ignore
 
     def set_epid(self, epid: int) -> None:
         self.__init__(epid, self.credential)
