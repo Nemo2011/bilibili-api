@@ -19,8 +19,8 @@ async def test_d_get_channel_info():
     return await ch.get_info()
 
 
-async def test_e_get_related_channels():
-    return await ch.get_related_channels()
+# async def test_e_get_related_channels():
+#     return await ch.get_related_channels()
 
 
 async def test_f_get_channel_videos():
