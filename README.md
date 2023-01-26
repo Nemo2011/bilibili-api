@@ -1,5 +1,3 @@
-**注意：此分支为重构分区/频道功能而产生的新分支，代码已完工，正在完善文档中……**
-
 ![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo-newYear.jpg)
 
 <div align="center">
