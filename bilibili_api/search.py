@@ -223,13 +223,13 @@ async def search_by_type(
             time_code = 0
         params["duration"] = time_code
     # zone_type
-    if zone_type:
-        if isinstance(zone_type, int):
-            params["tids"] = zone_type
-        elif isinstance(zone_type, VideoZoneTypes):
-            params["tids"] = zone_type.value
+    if video_zone_type:
+        if isinstance(video_zone_type, int):
+            params["tids"] = video_zone_type
+        elif isinstance(video_zone_type, VideoZoneTypes):
+            params["tids"] = video_zone_type.value
         else:
-            params["tids"] = zone_type.value
+            params["tids"] = video_zone_type
     # order_type
     if order_type:
         params["order"] = order_type.value
