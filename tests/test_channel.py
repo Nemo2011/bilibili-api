@@ -28,8 +28,8 @@ async def test_f_get_channel_videos():
 
 
 async def test_g_get_channel_videos_by_filter():
-    return await ch.get_list(order_or_filter=channel.ChannelVideosFilter.YEAR_2023)
+    return await ch.get_featured_list(filter=channel.ChannelVideosFilter.YEAR_2023)
 
 
 async def test_h_get_channel_videos_by_order():
-    return await ch.get_list(order_or_filter=channel.ChannelVideosOrder.VIEW)
+    return await ch.get_list(order=channel.ChannelVideosOrder.VIEW)
