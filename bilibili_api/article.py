@@ -845,12 +845,14 @@ class ImageNode(Node):
         self.alt = ""
 
     def markdown(self):
-        self.url = str(URL(self.url).with_scheme("https"))
+        if URL(self.url).scheme == "":
+            self.url = "https:" + self.url
         alt = self.alt.replace("[", "\\[")
         return f"![{alt}]({self.url})\n\n"
 
     def json(self):
-        self.url = str(URL(self.url).with_scheme("https"))
+        if URL(self.url).scheme == "":
+            self.url = "https:" + self.url
         return {"type": "ImageNode", "url": self.url, "alt": self.alt}
 
 
