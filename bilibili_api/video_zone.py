@@ -165,13 +165,14 @@ async def get_zone_new_videos(tid: int) -> dict:
     params = {"rid": tid}
     return await request("GET", api["url"], params=params)
 
-async def get_zone_hot_tags(tid) -> List[dict]:
+
+async def get_zone_hot_tags(tid: int) -> List[dict]:
     """
     获取分区热门标签
 
     Args:
         tid        (int)              : 分区 id
-    
+
     Returns:
         List[dict]: 热门标签
     """
@@ -179,6 +180,7 @@ async def get_zone_hot_tags(tid) -> List[dict]:
     api = API["get_hot_tags"]
     params={"rid": tid}
     return (await request("GET", api["url"], params=params))[0]
+
 
 class VideoZoneTypes(enum.Enum):
     """
