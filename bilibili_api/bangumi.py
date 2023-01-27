@@ -701,7 +701,7 @@ class IndexFilter:
 
 class IndexFilterMeta:
     """
-    Index Filter 元数据
+    IndexFilter 元数据
     用于传入 get_index_info 方法
     """
     class Anime:

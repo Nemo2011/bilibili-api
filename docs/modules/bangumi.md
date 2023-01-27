@@ -47,7 +47,7 @@ from bilibili_api import bangumi
 
 **Returns:** 调用 API 返回的结果
 
-## class Index_Filter
+## class IndexFilter
 
 **Extends: enum.Enum**
 
@@ -118,18 +118,173 @@ from bilibili_api import bangumi
 + + THAILAND: 泰国
 + + OTHER: 其他
 + **class Style**: 风格
-+ + **class ANIME**: 番剧
-+ + + 参数见源码
-+ + **class MOVIE**: 电影
-+ + + 参数见源码
-+ + **class GUOCHUANG**: 国创番剧
-+ + + 参数见源码
++ + **class Anime**: 番剧
++ + + ALL: 全部
++ + + ORIGINAL: 原创
++ + + COMIC: 漫画改
++ + + NOVEL: 小说改
++ + + GAME: 游戏改
++ + + TOKUSATSU: 特摄
++ + + BUDAIXI: 布袋戏
++ + + WARM: 热血
++ + + TIMEBACK: 穿越
++ + + IMAGING: 奇幻
++ + + WAR: 战斗
++ + + FUNNY: 搞笑
++ + + DAILY: 日常
++ + + SCIENCE_FICTION: 科幻
++ + + MOE: 萌系
++ + + HEAL: 治愈
++ + + SCHOOL: 校园
++ + + CHILDREN: 儿童
++ + + NOODLES: 泡面
++ + + LOVE: 恋爱
++ + + GIRLISH: 少女
++ + + MAGIC: 魔法
++ + + ADVENTURE: 冒险
++ + + HISTORY: 历史
++ + + ALTERNATE: 架空
++ + + MACHINE_BATTLE: 机战
++ + + GODS_DEM: 神魔
++ + + VOICE: 声控
++ + + SPORT: 运动
++ + + INSPIRATION: 励志
++ + + MUSIC: 音乐
++ + + ILLATION: 推理
++ + + SOCIEITES: 社团
++ + + OUTWIT: 智斗
++ + + TEAR: 催泪
++ + + FOOD: 美食
++ + + IDOL: 偶像
++ + + OTOME: 乙女
++ + + WORK: 职场
++ + **class Movie**: 电影
++ + + ALL: 全部
++ + + SKETCH: 短片
++ + + PLOT: 剧情
++ + + COMEDY: 喜剧
++ + + ROMANTIC: 爱情
++ + + ACTION: 动作
++ + + SCAIRIER: 恐怖
++ + + SCIENCE_FICTION: 科幻
++ + + CRIME: 犯罪
++ + + TIRILLER: 惊悚
++ + + SUSPENSE: 悬疑
++ + + IMAGING: 奇幻
++ + + WAR: 战争
++ + + ANIME: 动画
++ + + BIOAGRAPHY: 传记
++ + + FAMILY: 家庭
++ + + SING_DANCE: 歌舞
++ + + HISTORY: 历史
++ + + DISCOVER: 探险
++ + + DOCUMENTARY: 纪录片
++ + + DISATER: 灾难
++ + + COMIC: 漫画改
++ + + NOVEL: 小说改
++ + **class GuoChuang**: 国创番剧
++ + + ALL: 全部
++ + + ORIGINAL: 原创
++ + + COMIC: 漫画改
++ + + NOVEL: 小说改
++ + + GAME: 游戏改
++ + + DYNAMIC: 动态漫
++ + + BUDAIXI: 布袋戏
++ + + WARM: 热血
++ + + IMAGING: 奇幻
++ + + FANTASY: 玄幻
++ + + WAR: 战斗
++ + + FUNNY: 搞笑
++ + + WUXIA: 武侠
++ + + DAILY: 日常
++ + + SCIENCE_FICTION: 科幻
++ + + MOE: 萌系
++ + + HEAL: 治愈
++ + + SUSPENSE: 悬疑
++ + + SCHOOL: 校园
++ + + CHILDREN: 少儿
++ + + NOODLES: 泡面
++ + + LOVE: 恋爱
++ + + GIRLISH: 少女
++ + + MAGIC: 魔法
++ + + HISTORY: 历史
++ + + MACHINE_BATTLE: 机战
++ + + GODS_DEMONS: 神魔
++ + + VOICE: 声控
++ + + SPORT: 运动
++ + + INSPIRATION: 励志
++ + + MUSIC: 音乐
++ + + ILLATION: 推理
++ + + SOCIEITES: 社团
++ + + OUTWIT: 智斗
++ + + TEAR: 催泪
++ + + FOOD: 美食
++ + + IDOL: 偶像
++ + + OTOME: 乙女
++ + + WORK: 职场
++ + + ANCIENT: 古风
 + + **class TV**: 电视剧
-+ + + 参数见源码
-+ + **class DOCUMENTARY**: 纪录片
-+ +  + 参数见源码
++ + + ALL: 全部
++ + + FUNNY: 搞笑
++ + + IMAGING: 奇幻
++ + + WAR: 战争
++ + + WUXIA: 武侠
++ + + YOUTH: 青春
++ + + SKETCH: 短剧
++ + + CITY: 都市
++ + + ANCIENT: 古装
++ + + SPY: 谍战
++ + + CLASSIC: 经典
++ + + EMOTION: 情感
++ + + SUSPENSE: 悬疑
++ + + INSPIRATION: 励志
++ + + MYTH: 神话
++ + + TIMEBACK: 穿越
++ + + YEAR: 年代
++ + + COUNTRYSIDE: 乡村
++ + + INVESTIGATION: 刑侦
++ + + PLOT: 剧情
++ + + FAMILY: 家庭
++ + + HISTORY: 历史
++ + + ARMY: 军旅
++ + **class Dcoumentary**: 纪录片
++ + + ALL: 全部
++ + + HISTORY: 历史
++ + + FOODS: 美食
++ + + HUMANITIES: 人文
++ + + TECHNOLOGY: 科技
++ + + DISCOVER: 探险
++ + + UNIVERSE: 宇宙
++ + + PETS: 萌宠
++ + + SOCIAL: 社会
++ + + ANIMALS: 动物
++ + + NATURE: 自然
++ + + MEDICAL: 医疗
++ + + WAR: 战争
++ + + DISATER: 灾难
++ + + INVESTIGATIONS: 罪案
++ + + MYSTERIOUS: 神秘
++ + + TRAVEL: 旅行
++ + + SPORTS: 运动
++ + + MOVIES: 电影
 + + **class Variety**: 综艺
-+ + + 参数见源码
++ + + ALL: 全部
++ + + MUSIC: 音乐
++ + + TALK: 访谈
++ + + TALK_SHOW: 脱口秀
++ + + REALITY_SHOW: 真人秀
++ + + TALENT_SHOW: 选秀
++ + + FOOD: 美食
++ + + TRAVEL: 旅行
++ + + SOIREE: 晚会
++ + + CONCERT: 演唱会
++ + + EMOTION: 情感
++ + + COMEDY: 喜剧
++ + + PARENT_CHILD: 亲子
++ + + CULTURE: 文化
++ + + OFFICE: 职场
++ + + PET: 萌宠
++ + + CULTIVATE: 养成
 + **class Order**: 排序字段
 + + UPDATE: 更新时间
 + + DANMAKU: 弹幕数
@@ -154,19 +309,20 @@ from bilibili_api import bangumi
 | include_start | bool | 是否包含开始时间，默认为 True |
 | include_end | bool | 是否包含结束时间，默认为 False |
 
-生成日期区间  
-番剧、国创传入年份 (str, int)  
-电影、电视剧、纪录片传入日期 (datetime.datetime)
+生成番剧索引所需的时间条件
+番剧、国创直接传入年份，为 int 或者 str 类型，如 make_time_filter(start=2019, end=2020)
+影视、纪录片、电视剧传入 datetime.datetime，如 make_time_filter(start=datetime.datetime(2019, 1, 1), end=datetime.datetime(2020, 1, 1))
+start 或 end 为 None 时则表示不设置开始或结尾
 
 **Returns:** str 时间区间
 
 
-## class Index_Filter_Meta
+## class IndexFilterMeta
 
-Index Filter 元数据
+IndexFilter 元数据
 用于传入 get_index_info 方法
 
-子类有 Anime, Movie, Guochuang, TV, Documentary，GuoChuang
+子类有 Anime, Movie, Guochuang, TV, Documentary，GuoChuang，Variety
 
 <details>
 <summary> 详细子类 </summary>
@@ -308,9 +464,9 @@ Index Filter 元数据
 
 | name       | type       | description                    |
 |------------|------------|--------------------------------|
-| season_type | Index_Filter.Type.TV | 索引类型 |
+| season_type | Index_Filter.Type.Variety | 索引类型 |
 | season_status | Index_Filter.Payment | 付费条件 |
-| style_id | Index_Filter.Style.TV | 风格 |
+| style_id | Index_Filter.Style.Variety | 风格 |
 
 #### Functions.
 
@@ -318,7 +474,7 @@ Index Filter 元数据
 
 | name | type | description |
 |------|------|-------------|
-| style | Index_Filter.Style.TV | 风格 |
+| style | Index_Filter.Style.Variety | 风格 |
 | payment | Index_Filter.Payment | 付费条件 |
 
 </details>
