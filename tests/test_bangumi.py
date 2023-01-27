@@ -72,7 +72,7 @@ async def test_get_bangumi_index():
         year=IF.make_time_filter(start=2019, end=2022, include_end=True),
         season=IF.Season.SPRING,
         style=IF.Style.Anime.NOVEL)
-    return await bangumi.get_index_by_filters(filters=filters, order=IF.Order.FOLLOWER, sort=IF.Sort.ASC, pn=2, ps=20)
+    return await bangumi.get_index_info(filters=filters, order=IF.Order.FOLLOWER, sort=IF.Sort.ASC, pn=2, ps=20)
 
 # 特性测试
 # info2 = sync(test_oversea_gangaotai_get_item())
