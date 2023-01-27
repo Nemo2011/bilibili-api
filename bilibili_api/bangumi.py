@@ -81,13 +81,13 @@ async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0) -> d
 
 
 class Index_Filter:
-    '''
+    """
     番剧索引相关固定参数以及值
-    '''
+    """
     class Type(Enum):
-        '''
+        """
         索引类型
-        '''
+        """
         ANIME = 1
         MOVIE = 2
         DOCUMENTARY = 3
@@ -95,42 +95,42 @@ class Index_Filter:
         TV = 5
 
     class Version(Enum):
-        '''
+        """
         番剧版本
-        '''
+        """
         ALL = -1
         MAIN = 1
         FILM = 2
         OTHER = 3
 
     class Spoken_Language(Enum):
-        '''
+        """
         配音
-        '''
+        """
         ALL = -1
         ORIGINAL = 1
         CHINESE = 2
 
     class Finish_Status(Enum):
-        '''
-        番剧状态
-        '''
+        """
+        完结状态
+        """
         ALL = -1
         FINISHED = 1
         UNFINISHED = 0
 
     class Copyright(Enum):
-        '''
+        """
         版权方
-        '''
+        """
         ALL = -1
         EXCLUSIVE = 3
         OTHER = "1,2,4"
 
     class Season(Enum):
-        '''
+        """
         季度
-        '''
+        """
         ALL = -1
         SUMMER = 7
         AUTUMN = 10
@@ -184,9 +184,9 @@ class Index_Filter:
         return f"{start_str},{end_str}"
 
     class Producer(Enum):
-        '''
+        """
         制作方
-        '''
+        """
         ALL = -1
         CCTV = 4
         BBC = 1
@@ -204,26 +204,26 @@ class Index_Filter:
         FOREIGN_OTHER = 13
 
     class Payment(Enum):
-        '''
+        """
         观看条件
-        '''
+        """
         ALL = -1
         FREE = 1
         PAID = "2,6"
         VIP = "4,6"
 
     class Area(Enum):
-        '''
+        """
         地区
-        '''
+        """
         ALL = "-1"
         CHINA = "1,6,7"
-        CHINESE_MAINLAND = "1"
-        CHINESE_HONGKONG_AND_MACAO = "6,7"
+        CHINA_MAINLAND = "1"
+        CHINA_HONGKONG_AND_TAIWAN = "6,7"
         JAPAN = "2"
-        AMERICA = "3"
+        USA = "3"
         UK = "4"
-        KOREA = "8"
+        SOUTH_KOREA = "8"
         FRANCE = "9"
         THAILAND = "10"
         GERMANY = "15"
@@ -232,13 +232,13 @@ class Index_Filter:
         OTHER = "5,11,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70"
 
     class Style:
-        '''
+        """
         风格
-        '''
+        """
         class Anime(Enum):
-            '''
+            """
             番剧
-            '''
+            """
             ALL = -1
             ORIGINAL = 10010
             COMIC = 10011
@@ -280,9 +280,9 @@ class Index_Filter:
             WORK = 10048
 
         class Movie(Enum):
-            '''
+            """
             电影
-            '''
+            """
             ALL = -1
             SKETCH = 10104
             PLOT = 10050
@@ -308,9 +308,9 @@ class Index_Filter:
             MOVEL = 10012
 
         class GuoChuang(Enum):
-            '''
+            """
             国创
-            '''
+            """
             ALL = -1
             ORIGINAL = 10010
             COMIC = 10011
@@ -353,9 +353,9 @@ class Index_Filter:
             ANCIENT = 10049
 
         class TV(Enum):
-            '''
+            """
             电视剧
-            '''
+            """
             ALL = -1
             FUNNY = 10021
             IMAGING = 10018
@@ -381,9 +381,9 @@ class Index_Filter:
             ARMY = 10089
 
         class Documentary(Enum):
-            '''
+            """
             纪录片
-            '''
+            """
             ALL = -1
             HISTORY = 10033
             FOODS = 10045
@@ -405,14 +405,14 @@ class Index_Filter:
             MOVIES = -10
 
     class Sort(Enum):
-        '''
+        """
         排序方式
-        '''
+        """
         DESC = "0"
         ASC = "1"
 
     class Order(Enum):
-        '''
+        """
         更新时间 0
         排序字段
         弹幕数量 1
@@ -421,7 +421,7 @@ class Index_Filter:
         最高评分 4
         开播时间 5
         上映日期 6
-        '''
+        """
         UPDATE = "0"
         DANMAKU = "1"
         PLAY = "2"
@@ -432,10 +432,10 @@ class Index_Filter:
 
 
 class Index_Filter_Meta:
-    '''
+    """
     Index Filter 元数据
     用于传入 get_index_by_filters 方法
-    '''
+    """
     class Anime:
         def __init__(self,
                      version: Index_Filter.Version = Index_Filter.Version.ALL,
@@ -448,7 +448,7 @@ class Index_Filter_Meta:
                      year: str = -1,
                      style: Index_Filter.Style.Anime = Index_Filter.Style.Anime.ALL
                      ) -> None:
-            '''
+            """
             Anime Meta
             Args:
                 version (INDEX_FILTER.VERSION): 类型，如正片、电影等
@@ -460,7 +460,7 @@ class Index_Filter_Meta:
                 season (INDEX_FILTER.SEASON): 季度
                 year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
                 style (INDEX_FILTER.STYLE.ANIME): 风格
-            '''
+            """
             self.season_type = Index_Filter.Type.ANIME
             self.season_version = version
             self.spoken_language_type = spoken_language
@@ -479,7 +479,7 @@ class Index_Filter_Meta:
                      style: Index_Filter.Style.Movie = Index_Filter.Style.Movie.ALL,
                      payment: Index_Filter.Payment = Index_Filter.Payment.ALL
                      ) -> None:
-            '''
+            """
             Movie Meta
             Args:
                 area (INDEX_FILTER.AREA): 地区
@@ -487,7 +487,7 @@ class Index_Filter_Meta:
                 season (INDEX_FILTER.SEASON): 季度
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
                 style (INDEX_FILTER.STYLE.ANIME): 风格
-            '''
+            """
             self.season_type = Index_Filter.Type.MOVIE
             self.area = area
             self.release_date = release_date
@@ -501,7 +501,7 @@ class Index_Filter_Meta:
                      payment: Index_Filter.Payment = Index_Filter.Payment.ALL,
                      producer: Index_Filter.Producer = Index_Filter.Producer.ALL
                      ) -> None:
-            '''
+            """
             Documentary Meta
             Args:
                 area (INDEX_FILTER.AREA): 地区
@@ -509,7 +509,7 @@ class Index_Filter_Meta:
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
                 style (INDEX_FILTER.STYLE.ANIME): 风格
                 producer (INDEX_FILTER.PRODUCER): 制作方
-            '''
+            """
             self.season_type = Index_Filter.Type.DOCUMENTARY
             self.release_date = release_date
             self.style_id = style
@@ -523,14 +523,14 @@ class Index_Filter_Meta:
                      style: Index_Filter.Style.TV = Index_Filter.Style.TV.ALL,
                      payment: Index_Filter.Payment = Index_Filter.Payment.ALL
                      ) -> None:
-            '''
+            """
             TV Meta
             Args:
                 area (INDEX_FILTER.AREA): 地区
                 payment (INDEX_FILTER.PAYMENT): 付费门槛
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
                 style (INDEX_FILTER.STYLE.ANIME): 风格
-            '''
+            """
             self.season_type = Index_Filter.Type.TV
             self.area = area
             self.release_date = release_date
@@ -546,7 +546,7 @@ class Index_Filter_Meta:
                      year: str = -1,
                      style: Index_Filter.Style.GuoChuang = Index_Filter.Style.GuoChuang.ALL
                      ) -> None:
-            '''
+            """
             Guochuang Meta
             Args:
                 version (INDEX_FILTER.VERSION): 类型，如正片、电影等
@@ -555,7 +555,7 @@ class Index_Filter_Meta:
                 payment (INDEX_FILTER.PAYMENT): 付费门槛
                 year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
                 style (INDEX_FILTER.STYLE.ANIME): 风格
-            '''
+            """
             self.season_type = Index_Filter.Type.GUOCHUANG
             self.season_version = version
             self.is_finish = is_finish
@@ -571,7 +571,7 @@ async def get_index_by_filters(filters: Index_Filter_Meta = Index_Filter_Meta.An
                                pn: int = 1,
                                ps: int = 20,
                                ) -> dict:
-    '''
+    """
     查询番剧索引，索引的详细参数信息见 Index_Filter_Meta
     请先通过 Index_Filter_Meta 构造 filters
 
@@ -584,7 +584,7 @@ async def get_index_by_filters(filters: Index_Filter_Meta = Index_Filter_Meta.An
 
     Returns:
         dict: 调用 API 返回的结果
-    '''
+    """
     api = API["info"]["index"]
     params = {}
 
