@@ -565,7 +565,7 @@ class Index_Filter_Meta:
             self.style_id = style
 
 
-async def get_index_by_filters(filters: Index_Filter_Meta = Index_Filter_Meta.Anime(),
+async def get_index_info(filters: Index_Filter_Meta = Index_Filter_Meta.Anime(),
                                order: Index_Filter.Order = Index_Filter.Order.FOLLOWER,
                                sort: Index_Filter.Sort = Index_Filter.Sort.DESC,
                                pn: int = 1,
