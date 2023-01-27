@@ -87,6 +87,13 @@ class IndexFilter:
     class Type(Enum):
         """
         索引类型
+
+        + ANIME: 番剧
+        + MOVIE: 电影
+        + DOCUMENTARY: 纪录片
+        + GUOCHUANG: 国创
+        + TV: 电视剧
+        + VARIETY: 综艺
         """
         ANIME = 1
         MOVIE = 2
@@ -98,6 +105,11 @@ class IndexFilter:
     class Version(Enum):
         """
         番剧版本
+
+        + ALL: 全部
+        + MAIN: 正片
+        + FILM: 电影
+        + OTHER: 其他
         """
         ALL = -1
         MAIN = 1
@@ -107,6 +119,10 @@ class IndexFilter:
     class Spoken_Language(Enum):
         """
         配音
+
+        + ALL: 全部
+        + ORIGINAL: 原声
+        + CHINESE: 中配
         """
         ALL = -1
         ORIGINAL = 1
@@ -115,6 +131,10 @@ class IndexFilter:
     class Finish_Status(Enum):
         """
         完结状态
+
+        + ALL: 全部
+        + FINISHED: 完结
+        + UNFINISHED: 连载
         """
         ALL = -1
         FINISHED = 1
@@ -123,6 +143,10 @@ class IndexFilter:
     class Copyright(Enum):
         """
         版权方
+
+        + ALL: 全部
+        + EXCLUSIVE: 独家
+        + OTHER: 其他
         """
         ALL = -1
         EXCLUSIVE = 3
@@ -131,12 +155,18 @@ class IndexFilter:
     class Season(Enum):
         """
         季度
+
+        + ALL: 全部
+        + SPRING: 春季
+        + SUMMER: 夏季
+        + AUTUMN: 秋季
+        + WINTER: 冬季
         """
         ALL = -1
-        SUMMER = 7
-        AUTUMN = 10
         WINTER = 1
         SPRING = 4
+        SUMMER = 7
+        AUTUMN = 10
 
     @staticmethod
     def make_time_filter(
@@ -147,8 +177,9 @@ class IndexFilter:
     ) -> str:
         """
         生成番剧索引所需的时间条件
-        番剧、国创直接传入年份
-        影视、纪录片、电视剧传入 datetime.datetime
+        番剧、国创直接传入年份，为 int 或者 str 类型，如 make_time_filter(start=2019, end=2020)
+        影视、纪录片、电视剧传入 datetime.datetime，如 make_time_filter(start=datetime.datetime(2019, 1, 1), end=datetime.datetime(2020, 1, 1))
+        start 或 end 为 None 时则表示不设置开始或结尾
         Args:
             start (datetime, str, int): 开始时间. 如果是 None 则不设置开头.
             end   (datetime, str, int): 结束时间. 如果是 None 则不设置结尾.
@@ -187,6 +218,22 @@ class IndexFilter:
     class Producer(Enum):
         """
         制作方
+
+        + ALL: 全部
+        + CCTV: CCTV
+        + BBC: BBC
+        + DISCOVERY: 探索频道
+        + NATIONAL_GEOGRAPHIC: 国家地理
+        + NHK: NHK
+        + HISTORY: 历史频道
+        + SATELLITE: 卫视
+        + SELF: 自制
+        + ITV: ITV
+        + SKY: SKY
+        + ZDF: ZDF
+        + PARTNER: 合作机构
+        + DOMESTIC_OTHER: 国内其他
+        + FOREIGN_OTHER: 国外其他
         """
         ALL = -1
         CCTV = 4
@@ -207,6 +254,11 @@ class IndexFilter:
     class Payment(Enum):
         """
         观看条件
+
+        + ALL: 全部
+        + FREE: 免费
+        + PAID: 付费
+        + VIP: 大会员
         """
         ALL = -1
         FREE = 1
@@ -216,6 +268,25 @@ class IndexFilter:
     class Area(Enum):
         """
         地区
+
+        + ALL: 全部
+        + CHINA: 中国
+        + CHINA_MAINLAND: 中国大陆
+        + CHINA_HONGKONG_AND_TAIWAN: 中国港台
+        + JAPAN: 日本
+        + USA: 美国
+        + UK: 英国
+        + SOUTH_KOREA: 韩国
+        + FRANCE: 法国
+        + THAILAND: 泰国
+        + GERMANY: 德国
+        + ITALY: 意大利
+        + SPAIN: 西班牙
+        + ANIME_OTHER: 番剧其他
+        + MOVIE_OTHER: 影视其他
+        + DOCUMENTARY_OTHER: 纪录片其他
+
+        注意：各索引的 其他 表示的地区都不同
         """
         ALL = "-1"
         CHINA = "1,6,7"
@@ -230,19 +301,57 @@ class IndexFilter:
         GERMANY = "15"
         ITALY = "35"
         SPAIN = "13"
-
-        # 各索引的其他地区都不同，不单开枚举类了
         ANIME_OTHER = "1,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70"
         TV_OTHER = "5,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70"
         MOVIE_OTHER = "5,11,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70"
 
     class Style:
         """
-        风格
+        风格，根据索引不同，可选的风格也不同
         """
         class Anime(Enum):
             """
-            番剧
+            番剧风格
+
+            + ALL: 全部
+            + ORIGINAL: 原创
+            + COMIC: 漫画改
+            + NOVEL: 小说改
+            + GAME: 游戏改
+            + TOKUSATSU: 特摄
+            + BUDAIXI: 布袋戏
+            + WARM: 热血
+            + TIMEBACK: 穿越
+            + IMAGING: 奇幻
+            + WAR: 战斗
+            + FUNNY: 搞笑
+            + DAILY: 日常
+            + SCIENCE_FICTION: 科幻
+            + MOE: 萌系
+            + HEAL: 治愈
+            + SCHOOL: 校园
+            + CHILDREN: 儿童
+            + NOODLES: 泡面
+            + LOVE: 恋爱
+            + GIRLISH: 少女
+            + MAGIC: 魔法
+            + ADVENTURE: 冒险
+            + HISTORY: 历史
+            + ALTERNATE: 架空
+            + MACHINE_BATTLE: 机战
+            + GODS_DEM: 神魔
+            + VOICE: 声控
+            + SPORT: 运动
+            + INSPIRATION: 励志
+            + MUSIC: 音乐
+            + ILLATION: 推理
+            + SOCIEITES: 社团
+            + OUTWIT: 智斗
+            + TEAR: 催泪
+            + FOOD: 美食
+            + IDOL: 偶像
+            + OTOME: 乙女
+            + WORK: 职场
             """
             ALL = -1
             ORIGINAL = 10010
@@ -266,7 +375,7 @@ class IndexFilter:
             LOVE = 10029
             GIRLISH = 10030
             MAGIC = 10031
-            DISCOVER = 10032
+            ADVENTURE = 10032
             HISTORY = 10033
             ALTERNATE = 10034
             MACHINE_BATTLE = 10035
@@ -286,7 +395,31 @@ class IndexFilter:
 
         class Movie(Enum):
             """
-            电影
+            电影风格
+
+            + ALL: 全部
+            + SKETCH: 短片
+            + PLOT: 剧情
+            + COMEDY: 喜剧
+            + ROMANTIC: 爱情
+            + ACTION: 动作
+            + SCAIRIER: 恐怖
+            + SCIENCE_FICTION: 科幻
+            + CRIME: 犯罪
+            + TIRILLER: 惊悚
+            + SUSPENSE: 悬疑
+            + IMAGING: 奇幻
+            + WAR: 战争
+            + ANIME: 动画
+            + BIOAGRAPHY: 传记
+            + FAMILY: 家庭
+            + SING_DANCE: 歌舞
+            + HISTORY: 历史
+            + DISCOVER: 探险
+            + DOCUMENTARY: 纪录片
+            + DISATER: 灾难
+            + COMIC: 漫画改
+            + NOVEL: 小说改
             """
             ALL = -1
             SKETCH = 10104
@@ -310,11 +443,52 @@ class IndexFilter:
             DOCUMENTARY = 10063
             DISATER = 10064
             COMIC = 10011
-            MOVEL = 10012
+            NOVEL = 10012
 
         class GuoChuang(Enum):
             """
-            国创
+            国创风格
+
+            + ALL: 全部
+            + ORIGINAL: 原创
+            + COMIC: 漫画改
+            + NOVEL: 小说改
+            + GAME: 游戏改
+            + DYNAMIC: 动态漫
+            + BUDAIXI: 布袋戏
+            + WARM: 热血
+            + IMAGING: 奇幻
+            + FANTASY: 玄幻
+            + WAR: 战斗
+            + FUNNY: 搞笑
+            + WUXIA: 武侠
+            + DAILY: 日常
+            + SCIENCE_FICTION: 科幻
+            + MOE: 萌系
+            + HEAL: 治愈
+            + SUSPENSE: 悬疑
+            + SCHOOL: 校园
+            + CHILDREN: 少儿
+            + NOODLES: 泡面
+            + LOVE: 恋爱
+            + GIRLISH: 少女
+            + MAGIC: 魔法
+            + HISTORY: 历史
+            + MACHINE_BATTLE: 机战
+            + GODS_DEMONS: 神魔
+            + VOICE: 声控
+            + SPORT: 运动
+            + INSPIRATION: 励志
+            + MUSIC: 音乐
+            + ILLATION: 推理
+            + SOCIEITES: 社团
+            + OUTWIT: 智斗
+            + TEAR: 催泪
+            + FOOD: 美食
+            + IDOL: 偶像
+            + OTOME: 乙女
+            + WORK: 职场
+            + ANCIENT: 古风
             """
             ALL = -1
             ORIGINAL = 10010
@@ -359,7 +533,31 @@ class IndexFilter:
 
         class TV(Enum):
             """
-            电视剧
+            电视剧风格
+
+            + ALL: 全部
+            + FUNNY: 搞笑
+            + IMAGING: 奇幻
+            + WAR: 战争
+            + WUXIA: 武侠
+            + YOUTH: 青春
+            + SKETCH: 短剧
+            + CITY: 都市
+            + ANCIENT: 古装
+            + SPY: 谍战
+            + CLASSIC: 经典
+            + EMOTION: 情感
+            + SUSPENSE: 悬疑
+            + INSPIRATION: 励志
+            + MYTH: 神话
+            + TIMEBACK: 穿越
+            + YEAR: 年代
+            + COUNTRYSIDE: 乡村
+            + INVESTIGATION: 刑侦
+            + PLOT: 剧情
+            + FAMILY: 家庭
+            + HISTORY: 历史
+            + ARMY: 军旅
             """
             ALL = -1
             FUNNY = 10021
@@ -387,7 +585,27 @@ class IndexFilter:
 
         class Documentary(Enum):
             """
-            纪录片
+            纪录片风格
+
+            + ALL: 全部
+            + HISTORY: 历史
+            + FOODS: 美食
+            + HUMANITIES: 人文
+            + TECHNOLOGY: 科技
+            + DISCOVER: 探险
+            + UNIVERSE: 宇宙
+            + PETS: 萌宠
+            + SOCIAL: 社会
+            + ANIMALS: 动物
+            + NATURE: 自然
+            + MEDICAL: 医疗
+            + WAR: 战争
+            + DISATER: 灾难
+            + INVESTIGATIONS: 罪案
+            + MYSTERIOUS: 神秘
+            + TRAVEL: 旅行
+            + SPORTS: 运动
+            + MOVIES: 电影
             """
             ALL = -1
             HISTORY = 10033
@@ -410,9 +628,28 @@ class IndexFilter:
             MOVIES = -10
 
         class Variety(Enum):
-            '''
-            综艺
-            '''
+            """
+            综艺风格
+
+            + ALL: 全部
+            + MUSIC: 音乐
+            + TALK: 访谈
+            + TALK_SHOW: 脱口秀
+            + REALITY_SHOW: 真人秀
+            + TALENT_SHOW: 选秀
+            + FOOD: 美食
+            + TRAVEL: 旅行
+            + SOIREE: 晚会
+            + CONCERT: 演唱会
+            + EMOTION: 情感
+            + COMEDY: 喜剧
+            + PARENT_CHILD: 亲子
+            + CULTURE: 文化
+            + OFFICE: 职场
+            + PET: 萌宠
+            + CULTIVATE: 养成
+
+            """
             ALL = -1
             MUSIC = 10040
             TALK = 10091
@@ -434,6 +671,9 @@ class IndexFilter:
     class Sort(Enum):
         """
         排序方式
+
+        + DESC: 降序
+        + ASC: 升序
         """
         DESC = "0"
         ASC = "1"
@@ -441,13 +681,14 @@ class IndexFilter:
     class Order(Enum):
         """
         排序字段
-        更新时间 0
-        弹幕数量 1
-        播放数量 2
-        追番人数 3
-        最高评分 4
-        番剧开播日期 5
-        电影上映日期 6
+        
+        + UPDATE: 更新时间
+        + DANMAKU: 弹幕数量
+        + PLAY: 播放数量
+        + FOLLOWER: 追番人数
+        + SOCRE: 最高评分
+        + ANIME_RELEASE: 番剧开播日期
+        + MOVIE_RELEASE: 电影上映日期
         """
         UPDATE = "0"
         DANMAKU = "1"
