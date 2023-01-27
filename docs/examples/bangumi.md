@@ -20,7 +20,6 @@ sync(main())
 
 ```python
 from bilibili_api import bangumi, sync
-from bilibili_api import settings
 
 async def main():
     b = bangumi.Bangumi(28231846)
@@ -35,4 +34,21 @@ async def main():
         print(cmt)
 
 sync(main())
+```
+
+# 示例：获取番剧索引
+
+```python
+from bilibili_api import bangumi, sync
+from bilibili_api.bangumi import INDEX_FILTER as IF
+async def main():
+    filters = bangumi.Index_Filter_Meta.Anime(area=IF.AREA.JAPAN,
+        year=IF.make_time_filter(start=2019, end=2022, include_end=True),
+        season=IF.SEASON.SPRING,
+        style=IF.STYLE.ANIME.NOVEL)
+    index = await bangumi.get_index_by_filters(filters=filters, order=IF.ORDER.FOLLOWER, sort=IF.SORT.ASC, pn=2, ps=20)
+    print(index)
+
+sync(main())
+
 ```
