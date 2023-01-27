@@ -434,12 +434,12 @@ class INDEX_FILTER:
 class Index_Filter_Meta:
     '''
     Index Filter 元数据
-    用于补全有哪些参数可传入
+    用于传入 get_index_by_filters 方法
     '''
     class Anime:
         def __init__(self,
-                     season_version: INDEX_FILTER.VERSION = INDEX_FILTER.VERSION.ALL,
-                     spoken_language_type: INDEX_FILTER.SPOKEN_LANGUAGE_TYPE = INDEX_FILTER.SPOKEN_LANGUAGE_TYPE.ALL,
+                     version: INDEX_FILTER.VERSION = INDEX_FILTER.VERSION.ALL,
+                     spoken_language: INDEX_FILTER.SPOKEN_LANGUAGE_TYPE = INDEX_FILTER.SPOKEN_LANGUAGE_TYPE.ALL,
                      area: INDEX_FILTER.AREA = INDEX_FILTER.AREA.ALL,
                      is_finish: INDEX_FILTER.FINISH_STATUS = INDEX_FILTER.FINISH_STATUS.ALL,
                      copyright: INDEX_FILTER.COPYRIGHT = INDEX_FILTER.COPYRIGHT.ALL,
@@ -451,11 +451,19 @@ class Index_Filter_Meta:
             '''
             Anime Meta
             Args:
-                style_id (int, str): 为 style 的 name 或 value
+                version (INDEX_FILTER.VERSION): 类型，如正片、电影等
+                spoken_language (INDEX_FILTER.SPOKEN_LANGUAGE_TYPE): 配音
+                area (INDEX_FILTER.AREA): 地区
+                is_finish (INDEX_FILTER.FINISH_STATUS): 是否完结
+                copyright (INDEX_FILTER.COPYRIGHT): 版权
+                payment (INDEX_FILTER.PAYMENT): 付费门槛
+                season (INDEX_FILTER.SEASON): 季度
+                year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
+                style (INDEX_FILTER.STYLE.ANIME): 风格
             '''
             self.season_type = INDEX_FILTER.TYPE.ANIME
-            self.season_version = season_version
-            self.spoken_language_type = spoken_language_type
+            self.season_version = version
+            self.spoken_language_type = spoken_language
             self.area = area
             self.is_finish = is_finish
             self.copyright = copyright
@@ -474,7 +482,11 @@ class Index_Filter_Meta:
             '''
             Movie Meta
             Args:
-                style_id (int, str): 为 style 的 name 或 value
+                area (INDEX_FILTER.AREA): 地区
+                payment (INDEX_FILTER.PAYMENT): 付费门槛
+                season (INDEX_FILTER.SEASON): 季度
+                release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
+                style (INDEX_FILTER.STYLE.ANIME): 风格
             '''
             self.season_type = INDEX_FILTER.TYPE.MOVIE
             self.area = area
@@ -487,18 +499,22 @@ class Index_Filter_Meta:
                      release_date: str = -1,
                      style: INDEX_FILTER.STYLE.DOCTUMENTARY = INDEX_FILTER.STYLE.DOCTUMENTARY.ALL,
                      payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
-                     producer_id: INDEX_FILTER.PRODUCER = INDEX_FILTER.PRODUCER.ALL
+                     producer: INDEX_FILTER.PRODUCER = INDEX_FILTER.PRODUCER.ALL
                      ) -> None:
             '''
             Documentary Meta
             Args:
-                style_id (int, str): 为 style 的 name 或 value
+                area (INDEX_FILTER.AREA): 地区
+                is_finish (INDEX_FILTER.FINISH_STATUS): 是否完结
+                release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
+                style (INDEX_FILTER.STYLE.ANIME): 风格
+                producer (INDEX_FILTER.PRODUCER): 制作方
             '''
             self.season_type = INDEX_FILTER.TYPE.DOCUMENTARY
             self.release_date = release_date
             self.style_id = style
             self.season_status = payment
-            self.producer_id = producer_id
+            self.producer_id = producer
 
     class TV:
         def __init__(self,
@@ -510,7 +526,10 @@ class Index_Filter_Meta:
             '''
             TV Meta
             Args:
-                style_id (int, str): 为 style 的 name 或 value
+                area (INDEX_FILTER.AREA): 地区
+                payment (INDEX_FILTER.PAYMENT): 付费门槛
+                release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
+                style (INDEX_FILTER.STYLE.ANIME): 风格
             '''
             self.season_type = INDEX_FILTER.TYPE.TV
             self.area = area
@@ -520,7 +539,7 @@ class Index_Filter_Meta:
 
     class Guochuang:
         def __init__(self,
-                     season_version: INDEX_FILTER.VERSION = INDEX_FILTER.VERSION.ALL,
+                     version: INDEX_FILTER.VERSION = INDEX_FILTER.VERSION.ALL,
                      is_finish: INDEX_FILTER.FINISH_STATUS = INDEX_FILTER.FINISH_STATUS.ALL,
                      copyright: INDEX_FILTER.COPYRIGHT = INDEX_FILTER.COPYRIGHT.ALL,
                      payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
@@ -530,10 +549,15 @@ class Index_Filter_Meta:
             '''
             Guochuang Meta
             Args:
-                style_id (int, str): 为 style 的 name 或 value
+                version (INDEX_FILTER.VERSION): 类型，如正片、电影等
+                is_finish (INDEX_FILTER.FINISH_STATUS): 是否完结
+                copyright (INDEX_FILTER.COPYRIGHT): 版权
+                payment (INDEX_FILTER.PAYMENT): 付费门槛
+                year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
+                style (INDEX_FILTER.STYLE.ANIME): 风格
             '''
             self.season_type = INDEX_FILTER.TYPE.GUOCHUANG
-            self.season_version = season_version
+            self.season_version = version
             self.is_finish = is_finish
             self.copyright = copyright
             self.season_status = payment
@@ -548,11 +572,11 @@ async def get_index_by_filters(filters: Index_Filter_Meta = Index_Filter_Meta.An
                                ps: int = 20,
                                ) -> dict:
     '''
-    查询番剧索引
-    请先通过 Index_Filter_Meta 选择需要的索引，构造 filters
+    查询番剧索引，索引的详细参数信息见 Index_Filter_Meta
+    请先通过 Index_Filter_Meta 构造 filters
 
     Args:
-        filters (Index_Filter_Meta, optional): 筛选条件. Defaults to Index_Filter_Meta.Anime().
+        filters (Index_Filter_Meta, optional): 筛选条件. Defaults to Anime.
         order (BANGUMI_INDEX.ORDER, optional): 排序字段. Defaults to Follower.
         sort (BANGUMI_INDEX.SORT, optional): 排序方式. Defaults to DESC.
         pn (int, optional): 页数. Defaults to 1.
@@ -605,7 +629,7 @@ class Bangumi:
         epid: int = -1,
         oversea: bool = False,
         credential: Union[Credential, None] = None,
-    ):
+    ) -> None:
         """
         Args:
             media_id   (int, optional)              : 番剧本身的 ID. Defaults to -1.
