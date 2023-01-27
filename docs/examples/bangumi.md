@@ -40,9 +40,9 @@ sync(main())
 
 ```python
 from bilibili_api import bangumi, sync
-from bilibili_api.bangumi import Index_Filter as IF
+from bilibili_api.bangumi import IndexFilter as IF
 async def main():
-    filters = bangumi.Index_Filter_Meta.Anime(area=IF.Area.JAPAN,
+    filters = bangumi.IndexFilterMeta.Anime(area=IF.Area.JAPAN,
         year=IF.make_time_filter(start=2019, end=2022, include_end=True),
         season=IF.Season.SPRING,
         style=IF.Style.Anime.NOVEL)
