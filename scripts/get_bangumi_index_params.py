@@ -4,7 +4,7 @@ from bilibili_api.exceptions import *
 
 import json
 async def main() -> None:
-    with open("index_params.json", "w", encoding="UTF-8") as f:
+    with open("bangumi_index_params.json", "w", encoding="UTF-8") as f:
         content = {}
         content["anime"] = await get_initial_state("https://www.bilibili.com/anime/index/")
         content["movie"] = await get_initial_state("https://www.bilibili.com/movie/index/")
