@@ -128,6 +128,8 @@ from bilibili_api import bangumi
 + + + 参数见源码
 + + **class DOCUMENTARY**: 纪录片
 + +  + 参数见源码
++ + **class Variety**: 综艺
++ + + 参数见源码
 + **class Order**: 排序字段
 + + UPDATE: 更新时间
 + + DANMAKU: 弹幕数
@@ -299,6 +301,25 @@ Index Filter 元数据
 | style | Index_Filter.Style.ANIME | 风格 |
 | year | str | 调用 Index_Filter.make_time_filter 传入年份 (int, str) 获取 |
 ---
+
+### class Variety
+
+#### Atrributes
+
+| name       | type       | description                    |
+|------------|------------|--------------------------------|
+| season_type | Index_Filter.Type.TV | 索引类型 |
+| season_status | Index_Filter.Payment | 付费条件 |
+| style_id | Index_Filter.Style.TV | 风格 |
+
+#### Functions.
+
+##### def \_\_init\_\_()
+
+| name | type | description |
+|------|------|-------------|
+| style | Index_Filter.Style.TV | 风格 |
+| payment | Index_Filter.Payment | 付费条件 |
 
 </details>
 

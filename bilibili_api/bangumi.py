@@ -589,6 +589,7 @@ class Index_Filter_Meta:
             self.season_status = payment
             self.year = year
             self.style_id = style
+            
     class Variety:
         def __init__(self,
             style: Index_Filter.Style.Variety = Index_Filter.Style.Variety.ALL,
