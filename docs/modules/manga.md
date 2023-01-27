@@ -75,7 +75,7 @@ from bilibili_api import manga
 
 #### async def get_images()
 
-获取某一话的所有图片
+获取某一话的所有图片 (速度根据漫画章节图片数量而定)
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -84,7 +84,7 @@ from bilibili_api import manga
 
 **注意：episode_count 和 episode_id 中必须提供一个参数。**
 
-**Returns:** List[Dict]: 返回一个列表，每一项为字典，字典有三个键值：`picture: Picture`, `x: int`, `y: int`
+**Returns:** List[Picture] 所有图片
 
 ---
 

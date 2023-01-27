@@ -137,7 +137,7 @@ class Manga:
         **注意：episode_count 和 episode_id 中必须提供一个参数。**
 
         Returns:
-            List[Dict]: 返回一个列表，每一项为字典，字典有三个键值：`picture: Picture`, `x: int`, `y: int`
+            List[Picture]: 所有的图片
         """
         data = await self.get_images_url(episode_count=episode_count, episode_id=episode_id)
         pictures: List[Dict] = []
