@@ -93,6 +93,7 @@ class Index_Filter:
         DOCUMENTARY = 3
         GUOCHUANG = 4
         TV = 5
+        VARIETY = 7
 
     class Version(Enum):
         """
@@ -408,6 +409,28 @@ class Index_Filter:
             SPORTS = 10038
             MOVIES = -10
 
+        class Variety(Enum):
+            '''
+            综艺
+            '''
+            ALL = -1
+            MUSIC = 10040
+            TALK = 10091
+            TALK_SHOW = 10081
+            REALITY_SHOW = 10092
+            TALENT_SHOW = 10094
+            FOOD = 10045
+            TRAVEL = 10095
+            SOIREE = 10098
+            CONCERT = 10096
+            EMOTION = 10084
+            COMEDY = 10051
+            PARENT_CHILD = 10097
+            CULTURE = 10100
+            OFFICE = 10048
+            PET = 10069
+            CULTIVATE = 10099
+
     class Sort(Enum):
         """
         排序方式
@@ -566,7 +589,20 @@ class Index_Filter_Meta:
             self.season_status = payment
             self.year = year
             self.style_id = style
-
+    class Variety:
+        def __init__(self,
+            style: Index_Filter.Style.Variety = Index_Filter.Style.Variety.ALL,
+            payment: Index_Filter.Payment = Index_Filter.Payment.ALL,
+        ) -> None:
+            """
+            Variety Meta
+            Args:
+                payment (Index_Filter.Payment): 付费门槛
+                style (Index_Filter.Style.Variety): 风格
+            """
+            self.season_type = Index_Filter.Type.VARIETY
+            self.season_status = payment
+            self.style_id = style
 
 async def get_index_info(filters: Index_Filter_Meta = Index_Filter_Meta.Anime(),
                                order: Index_Filter.Order = Index_Filter.Order.SCORE,
