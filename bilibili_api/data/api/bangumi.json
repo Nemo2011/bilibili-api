@@ -10,6 +10,19 @@
         "after": "几天后结束, 0~7"
       }
     },
+    "index": {
+      "url": "https://api.bilibili.com/pgc/season/index/result",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "order": "int: 排序字段",
+        "sort": "int: 排序方式",
+        "page": "int: 页数",
+        "season_type": "番剧类型",
+        "pagesize": "int: 每页数量",
+        "type": "int: unknown"
+      }
+    },
     "meta": {
       "url": "https://api.bilibili.com/pgc/review/user",
       "method": "GET",
