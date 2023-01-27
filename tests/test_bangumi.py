@@ -1,6 +1,7 @@
 # bilibili_api.bangumi
 
 from bilibili_api import bangumi
+from bilibili_api.bangumi import INDEX_FILTER as IF
 
 # from .common import get_credential
 
@@ -66,6 +67,12 @@ async def test_oversea_Bangumi_get_stat():
 async def test_h_Bangumi_get_episodes():
     return await e.get_episodes()
 
+async def test_get_bangumi_index():
+    filters = bangumi.Index_Filter_Meta.Anime(area=IF.AREA.JAPAN,
+        year=IF.make_time_filter(start=2019, end=2022, include_end=True),
+        season=IF.SEASON.SPRING,
+        style=IF.STYLE.ANIME.NOVEL)
+    return await bangumi.get_index_by_filters(filters=filters, order=IF.ORDER.FOLLOWER, sort=IF.SORT.ASC, pn=2, ps=20)
 
 # 特性测试
 # info2 = sync(test_oversea_gangaotai_get_item())
