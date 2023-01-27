@@ -64,7 +64,7 @@ async def test_oversea_Bangumi_get_stat():
 
 
 async def test_h_Bangumi_get_episodes():
-    return await e.get_episodes()
+    return await b.get_episodes()
 
 
 # 特性测试
