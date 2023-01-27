@@ -103,7 +103,7 @@ class Index_Filter:
         FILM = 2
         OTHER = 3
 
-    class Spoken_Language_Type(Enum):
+    class Spoken_Language(Enum):
         '''
         配音
         '''
@@ -439,7 +439,7 @@ class Index_Filter_Meta:
     class Anime:
         def __init__(self,
                      version: Index_Filter.Version = Index_Filter.Version.ALL,
-                     spoken_language: Index_Filter.Spoken_Language_Type = Index_Filter.Spoken_Language_Type.ALL,
+                     spoken_language: Index_Filter.Spoken_Language = Index_Filter.Spoken_Language.ALL,
                      area: Index_Filter.Area = Index_Filter.Area.ALL,
                      is_finish: Index_Filter.Finish_Status = Index_Filter.Finish_Status.ALL,
                      copyright: Index_Filter.Copyright = Index_Filter.Copyright.ALL,
@@ -452,7 +452,7 @@ class Index_Filter_Meta:
             Anime Meta
             Args:
                 version (INDEX_FILTER.VERSION): 类型，如正片、电影等
-                spoken_language (INDEX_FILTER.SPOKEN_LANGUAGE_TYPE): 配音
+                spoken_language (INDEX_FILTER.SPOKEN_LANGUAGE): 配音
                 area (INDEX_FILTER.AREA): 地区
                 is_finish (INDEX_FILTER.FINISH_STATUS): 是否完结
                 copyright (INDEX_FILTER.COPYRIGHT): 版权

@@ -47,6 +47,20 @@ from bilibili_api import bangumi
 
 **Returns:** 调用 API 返回的结果
 
+## class Index_Filter
+
+**Extends: enum.Enum**
+
+番剧索引筛选器
+
++ class Type: 类型
++ class Version: 版本
++ class Spoken_Language: 语言
++ class Area: 地区
++ class 
+**Extends: enum.Enum**
+
+
 ---
 
 ## class Bangumi
