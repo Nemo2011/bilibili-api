@@ -11,7 +11,6 @@ bilibili_api.bangumi
 """
 
 import datetime
-import os
 from enum import Enum
 from typing import Any, Tuple, Union, List
 import httpx
@@ -85,183 +84,10 @@ class INDEX_FILTER:
     '''
     番剧索引相关固定参数以及值
     '''
-    class Style:
+    class TYPE(Enum):
         '''
-        Style 请手动传值
+        索引类型
         '''
-        Anime = [
-            {"value": -1, "name": "全部"},
-            {"value": 10010, "name": "原创"},
-            {"value": 10011, "name": "漫画改"},
-            {"value": 10012, "name": "小说改"},
-            {"value": 10013, "name": "游戏改"},
-            {"value": 10102, "name": "特摄"},
-            {"value": 10015, "name": "布袋戏"},
-            {"value": 10016, "name": "热血"},
-            {"value": 10017, "name": "穿越"},
-            {"value": 10018, "name": "奇幻"},
-            {"value": 10020, "name": "战斗"},
-            {"value": 10021, "name": "搞笑"},
-            {"value": 10022, "name": "日常"},
-            {"value": 10023, "name": "科幻"},
-            {"value": 10024, "name": "萌系"},
-            {"value": 10025, "name": "治愈"},
-            {"value": 10026, "name": "校园"},
-            {"value": 10027, "name": "少儿"},
-            {"value": 10028, "name": "泡面"},
-            {"value": 10029, "name": "恋爱"},
-            {"value": 10030, "name": "少女"},
-            {"value": 10031, "name": "魔法"},
-            {"value": 10032, "name": "冒险"},
-            {"value": 10033, "name": "历史"},
-            {"value": 10034, "name": "架空"},
-            {"value": 10035, "name": "机战"},
-            {"value": 10036, "name": "神魔"},
-            {"value": 10037, "name": "声控"},
-            {"value": 10038, "name": "运动"},
-            {"value": 10039, "name": "励志"},
-            {"value": 10040, "name": "音乐"},
-            {"value": 10041, "name": "推理"},
-            {"value": 10042, "name": "社团"},
-            {"value": 10043, "name": "智斗"},
-            {"value": 10044, "name": "催泪"},
-            {"value": 10045, "name": "美食"},
-            {"value": 10046, "name": "偶像"},
-            {"value": 10047, "name": "乙女"},
-            {"value": 10048, "name": "职场"}
-        ]
-        Movie = [
-            {"value": -1, "name": "全部"},
-            {"value": 10104, "name": "短片"},
-            {"value": 10050, "name": "剧情"},
-            {"value": 10051, "name": "喜剧"},
-            {"value": 10052, "name": "爱情"},
-            {"value": 10053, "name": "动作"},
-            {"value": 10054, "name": "恐怖"},
-            {"value": 10023, "name": "科幻"},
-            {"value": 10055, "name": "犯罪"},
-            {"value": 10056, "name": "惊悚"},
-            {"value": 10057, "name": "悬疑"},
-            {"value": 10018, "name": "奇幻"},
-            {"value": 10058, "name": "战争"},
-            {"value": 10059, "name": "动画"},
-            {"value": 10060, "name": "传记"},
-            {"value": 10061, "name": "家庭"},
-            {"value": 10062, "name": "歌舞"},
-            {"value": 10033, "name": "历史"},
-            {"value": 10032, "name": "冒险"},
-            {"value": 10063, "name": "纪实"},
-            {"value": 10064, "name": "灾难"},
-            {"value": 10011, "name": "漫画改"},
-            {"value": 10012, "name": "小说改"}
-        ]
-        Documentary = [
-            {"value": -1, "name": "全部"},
-            {"value": 10033, "name": "历史"},
-            {"value": 10045, "name": "美食"},
-            {"value": 10065, "name": "人文"},
-            {"value": 10066, "name": "科技"},
-            {"value": 10067, "name": "探险"},
-            {"value": 10068, "name": "宇宙"},
-            {"value": 10069, "name": "萌宠"},
-            {"value": 10070, "name": "社会"},
-            {"value": 10071, "name": "动物"},
-            {"value": 10072, "name": "自然"},
-            {"value": 10073, "name": "医疗"},
-            {"value": 10074, "name": "军事"},
-            {"value": 10064, "name": "灾难"},
-            {"value": 10075, "name": "罪案"},
-            {"value": 10076, "name": "神秘"},
-            {"value": 10077, "name": "旅行"},
-            {"value": 10038, "name": "运动"},
-            {"value": -10, "name": "电影"}
-        ]
-        Guochuang = [
-            {"value": -1, "name": "全部"},
-            {"value": 10010, "name": "原创"},
-            {"value": 10011, "name": "漫画改"},
-            {"value": 10012, "name": "小说改"},
-            {"value": 10013, "name": "游戏改"},
-            {"value": 10014, "name": "动态漫"},
-            {"value": 10015, "name": "布袋戏"},
-            {"value": 10016, "name": "热血"},
-            {"value": 10018, "name": "奇幻"},
-            {"value": 10019, "name": "玄幻"},
-            {"value": 10020, "name": "战斗"},
-            {"value": 10021, "name": "搞笑"},
-            {"value": 10078, "name": "武侠"},
-            {"value": 10022, "name": "日常"},
-            {"value": 10023, "name": "科幻"},
-            {"value": 10024, "name": "萌系"},
-            {"value": 10025, "name": "治愈"},
-            {"value": 10057, "name": "悬疑"},
-            {"value": 10026, "name": "校园"},
-            {"value": 10027, "name": "少儿"},
-            {"value": 10028, "name": "泡面"},
-            {"value": 10029, "name": "恋爱"},
-            {"value": 10030, "name": "少女"},
-            {"value": 10031, "name": "魔法"},
-            {"value": 10033, "name": "历史"},
-            {"value": 10035, "name": "机战"},
-            {"value": 10036, "name": "神魔"},
-            {"value": 10037, "name": "声控"},
-            {"value": 10038, "name": "运动"},
-            {"value": 10039, "name": "励志"},
-            {"value": 10040, "name": "音乐"},
-            {"value": 10041, "name": "推理"},
-            {"value": 10042, "name": "社团"},
-            {"value": 10043, "name": "智斗"},
-            {"value": 10044, "name": "催泪"},
-            {"value": 10045, "name": "美食"},
-            {"value": 10046, "name": "偶像"},
-            {"value": 10047, "name": "乙女"},
-            {"value": 10048, "name": "职场"},
-            {"value": 10049, "name": "古风"}
-        ]
-        TV = [
-            {"value": -1, "name": "全部"},
-            {"value": 10010, "name": "原创"},
-            {"value": 10011, "name": "漫画改"},
-            {"value": 10012, "name": "小说改"},
-            {"value": 10013, "name": "游戏改"},
-            {"value": 10014, "name": "动态漫"},
-            {"value": 10015, "name": "布袋戏"},
-            {"value": 10016, "name": "热血"},
-            {"value": 10018, "name": "奇幻"},
-            {"value": 10019, "name": "玄幻"},
-            {"value": 10020, "name": "战斗"},
-            {"value": 10021, "name": "搞笑"},
-            {"value": 10078, "name": "武侠"},
-            {"value": 10022, "name": "日常"},
-            {"value": 10023, "name": "科幻"},
-            {"value": 10024, "name": "萌系"},
-            {"value": 10025, "name": "治愈"},
-            {"value": 10057, "name": "悬疑"},
-            {"value": 10026, "name": "校园"},
-            {"value": 10027, "name": "少儿"},
-            {"value": 10028, "name": "泡面"},
-            {"value": 10029, "name": "恋爱"},
-            {"value": 10030, "name": "少女"},
-            {"value": 10031, "name": "魔法"},
-            {"value": 10033, "name": "历史"},
-            {"value": 10035, "name": "机战"},
-            {"value": 10036, "name": "神魔"},
-            {"value": 10037, "name": "声控"},
-            {"value": 10038, "name": "运动"},
-            {"value": 10039, "name": "励志"},
-            {"value": 10040, "name": "音乐"},
-            {"value": 10041, "name": "推理"},
-            {"value": 10042, "name": "社团"},
-            {"value": 10043, "name": "智斗"},
-            {"value": 10044, "name": "催泪"},
-            {"value": 10045, "name": "美食"},
-            {"value": 10046, "name": "偶像"},
-            {"value": 10047, "name": "乙女"},
-            {"value": 10048, "name": "职场"},
-            {"value": 10049, "name": "古风"}
-        ]
-
-    class Type(Enum):
         ANIME = 1
         MOVIE = 2
         DOCUMENTARY = 3
@@ -311,46 +137,51 @@ class INDEX_FILTER:
         WINTER = 1
         SPRING = 4
 
-    class YEAR(Enum):
-        '''
-        年份
-        '''
-        ALL = -1
-        YEAR_2023 = "[2023,2024)"
-        YEAR_2022 = "[2022,2023)"
-        YEAR_2021 = "[2021,2022)"
-        YEAR_2020 = "[2020,2021)"
-        YEAR_2019 = "[2019,2020)"
-        YEAR_2018 = "[2018,2019)"
-        YEAR_2017 = "[2017,2018)"
-        YEAR_2016 = "[2016,2017)"
-        YEAR_2015 = "[2015,2016)"
-        YEAR_FROM_2014_TO_2010 = "[2010,2015)"
-        YEAR_FROM_2009_TO_2005 = "[2005,2010)"
-        YEAR_FROM_2004_TO_2000 = "[2000,2005)"
-        YEAR_1990S = "[1990,2000)"
-        YEAR_1980S = "[1980,1990)"
-        YEAR_BEFORE_1980 = "[,1980)"
+    @staticmethod
+    def make_time_filter(
+        start: Union[datetime.datetime, str, int] = None,
+        end: Union[datetime.datetime, str, int] = None,
+        include_start: bool = True,
+        include_end: bool = False
+    ) -> str:
+        """
+        生成番剧索引所需的时间条件
+        番剧、国创直接传入年份
+        影视、纪录片、电视剧传入 datetime.datetime
+        Args:
+            start (datetime, str, int): 开始时间. 如果是 None 则不设置开头.
+            end   (datetime, str, int): 结束时间. 如果是 None 则不设置结尾.
+            include_start (bool): 是否包含开始时间. 默认为 True.
+            include_end   (bool): 是否包含结束时间. 默认为 False.
 
-    class RELEASE_DATE(Enum):
-        '''
-        发布日期
-        '''
-        ALL = -1
-        YEAR_2023 = "[2023-01-01 00:00:00,2024-01-01 00:00:00)"
-        YEAR_2022 = "[2022-01-01 00:00:00,2023-01-01 00:00:00)"
-        YEAR_2021 = "[2021-01-01 00:00:00,2022-01-01 00:00:00)"
-        YEAR_2020 = "[2020-01-01 00:00:00,2021-01-01 00:00:00)"
-        YEAR_2019 = "[2019-01-01 00:00:00,2020-01-01 00:00:00)"
-        YEAR_2018 = "[2018-01-01 00:00:00,2019-01-01 00:00:00)"
-        YEAR_2017 = "[2017-01-01 00:00:00,2018-01-01 00:00:00)"
-        YEAR_2016 = "[2016-01-01 00:00:00,2017-01-01 00:00:00)"
-        YEAR_FROM_2015_TO_2010 = "[2010-01-01 00:00:00,2016-01-01 00:00:00)"
-        YEAR_FROM_2009_TO_2005 = "[2005-01-01 00:00:00,2010-01-01 00:00:00)"
-        YEAR_FROM_2004_TO_2000 = "[2000-01-01 00:00:00,2005-01-01 00:00:00)"
-        YEAR_1990S = "[1990-01-01 00:00:00,2000-01-01 00:00:00)"
-        YEAR_1980S = "[1980-01-01 00:00:00,1990-01-01 00:00:00)"
-        YEAR_BEFORE_1980 = "[,1980-01-01 00:00:00)"
+        Returns:
+            str: 年代条件
+        """
+        start_str = ""
+        end_str = ""
+
+        if start != None:
+            if isinstance(start, datetime.datetime):
+                start_str = start.strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                start_str = start
+        if end != None:
+            if isinstance(end, datetime.datetime):
+                end_str = end.strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                end_str = end
+
+        # 是否包含边界
+        if include_start:
+            start_str = f"[{start_str}"
+        else:
+            start_str = f"({start_str}"
+        if include_end:
+            end_str = f"{end_str}]"
+        else:
+            end_str = f"{end_str})"
+
+        return f"{start_str},{end_str}"
 
     class PRODUCER(Enum):
         '''
@@ -400,6 +231,179 @@ class INDEX_FILTER:
         SPAIN = "13"
         OTHER = "5,11,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70"
 
+    class STYLE:
+        '''
+        风格
+        '''
+        class ANIME(Enum):
+            '''
+            番剧
+            '''
+            ALL = -1
+            ORIGINAL = 10010
+            COMIC = 10011
+            NOVEL = 10012
+            GAME = 10013
+            TOKUSATSU = 10102
+            BUDAIXI = 10015
+            WARM = 10016
+            TIMEBACK = 10017
+            IMAGING = 10018
+            WAR = 10020
+            FUNNY = 10021
+            DAILY = 10022
+            SCIENCE_FICTION = 10023
+            MOE = 10024
+            HEAL = 10025
+            SCHOOL = 10026
+            CHILDREN = 10027
+            NOODLES = 10028
+            LOVE = 10029
+            GIRLISH = 10030
+            MAGIC = 10031
+            DISCOVER = 10032
+            HISTORY = 10033
+            ALTERNATE = 10034
+            MACHINE_BATTLE = 10035
+            GODS_DEMONS = 10036
+            VOICE = 10037
+            SPORTS = 10038
+            INSPIRATIONAL = 10039
+            MUSIC = 10040
+            ILLATION = 10041
+            SOCIETIES = 10042
+            OUTWIT = 10043
+            TEAR = 10044
+            FOODS = 10045
+            IDOL = 10046
+            OTOME = 10047
+            WORK = 10048
+
+        class MOVIE(Enum):
+            '''
+            电影
+            '''
+            ALL = -1
+            SKETCH = 10104
+            PLOT = 10050
+            COMEDY = 10051
+            ROMANTIC = 10052
+            ACTION = 10053
+            SCAIRIER = 10054
+            SCIENCE_FICTION = 10023
+            CRIME = 10055
+            TIRILLER = 10056
+            SUSPENSE = 10057
+            IMAGING = 10018
+            WAR = 10058
+            ANIME = 10059
+            BIOAGRAPHY = 10060
+            FAMILY = 10061
+            SING_DANCE = 10062
+            HISTORY = 10033
+            DISCOVER = 10032
+            DOCUMENTARY = 10063
+            DISATER = 10064
+            COMIC = 10011
+            MOVEL = 10012
+
+        class GUOCHUANG(Enum):
+            '''
+            国创
+            '''
+            ALL = -1
+            ORIGINAL = 10010
+            COMIC = 10011
+            NOVEL = 10012
+            GAME = 10013
+            DYNAMIC = 10014
+            BUDAIXI = 10015
+            WARM = 10016
+            IMAGING = 10018
+            FANTASY = 10019
+            WAR = 10020
+            FUNNY = 10021
+            WUXIA = 10078
+            DAILY = 10022
+            SCIENCE_FICTION = 10023
+            MOE = 10024
+            HEAL = 10025
+            SUSPENSE = 10057
+            SCHOOL = 10026
+            CHILDREN = 10027
+            NOODLES = 10028
+            LOVE = 10029
+            GIRLISH = 10030
+            MAGIC = 10031
+            HISTORY = 10033
+            MACHINE_BATTLE = 10035
+            GODS_DEMONS = 10036
+            VOICE = 10037
+            SPORTS = 10038
+            INSPIRATIONAL = 10039
+            MUSIC = 10040
+            ILLATION = 10041
+            SOCIETIES = 10042
+            OUTWIT = 10043
+            TEAR = 10044
+            FOODS = 10045
+            IDOL = 10046
+            OTOME = 10047
+            WORK = 10048
+            ANCIENT = 10049
+
+        class TV(Enum):
+            '''
+            电视剧
+            '''
+            ALL = -1
+            FUNNY = 10021
+            IMAGING = 10018
+            WAR = 10058
+            WUXIA = 10078
+            YOUTH = 10079
+            SKETCH = 10103
+            CITY = 10080
+            COSTUME = 10081
+            SPY = 10082
+            CLASSIC = 10083
+            EMOTION = 10084
+            SUSPENSE = 10057
+            INSPIRATIONAL = 10039
+            MYTH = 10085
+            TIMEBACK = 10017
+            YEAR = 10086
+            COUNTRYSIDE = 10087
+            INVESTIGATION = 10088
+            PLOT = 10050
+            FAMILY = 10061
+            HISTORY = 10033
+            ARMY = 10089
+
+        class DOCTUMENTARY(Enum):
+            '''
+            纪录片
+            '''
+            ALL = -1
+            HISTORY = 10033
+            FOODS = 10045
+            HUMANITIES = 10065
+            TECHNOLOGY = 10066
+            DISCOVER = 10067
+            UNIVERSE = 10068
+            PETS = 10069
+            SOCIAL = 10070
+            ANIMALS = 10071
+            NATURE = 10072
+            MEDICAL = 10073
+            WAR = 10074
+            DISATER = 10064
+            INVESTIGATIONS = 10075
+            MYSTERIOUS = 10076
+            TRAVEL = 10077
+            SPORTS = 10038
+            MOVIES = -10
+
     class SORT(Enum):
         '''
         排序方式
@@ -427,38 +431,6 @@ class INDEX_FILTER:
         Movie_RELEASE = "6"
 
 
-def get_style_list(index_type: INDEX_FILTER.Type) -> list:
-    if index_type == INDEX_FILTER.Type.ANIME:
-        return INDEX_FILTER.Style.Anime
-    elif index_type == INDEX_FILTER.Type.MOVIE:
-        return INDEX_FILTER.Style.Movie
-    elif index_type == INDEX_FILTER.Type.TV:
-        return INDEX_FILTER.Style.TV
-    elif index_type == INDEX_FILTER.Type.DOCUMENTARY:
-        return INDEX_FILTER.Style.Documentary
-    elif index_type == INDEX_FILTER.Type.GUOCHUANG:
-        return INDEX_FILTER.Style.Guochuang
-    else:
-        raise ValueError("index_type 参数错误")
-
-
-def get_style(index_type: INDEX_FILTER.Type, style: Union[int, str]) -> int:
-    '''
-    检查 style 是否存在或通过 style 获取 style_id
-    '''
-    style_list = get_style_list(index_type)
-    if isinstance(style, int):
-        for style in style_list:
-            if style["value"] == style:
-                return style["value"]
-    elif isinstance(style, str) is not None:
-        for style in style_list:
-            if style["name"] == style:
-                return style["value"]
-    else:
-        raise ValueError("style 不存在")
-
-
 class Index_Filter_Meta:
     '''
     Index Filter 元数据
@@ -472,31 +444,31 @@ class Index_Filter_Meta:
                      is_finish: INDEX_FILTER.FINISH_STATUS = INDEX_FILTER.FINISH_STATUS.ALL,
                      copyright: INDEX_FILTER.COPYRIGHT = INDEX_FILTER.COPYRIGHT.ALL,
                      payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
-                     season_month: INDEX_FILTER.SEASON = INDEX_FILTER.SEASON.ALL,
-                     year: INDEX_FILTER.YEAR = INDEX_FILTER.YEAR.ALL,
-                     style_id: Union[int, str] = -1
+                     season: INDEX_FILTER.SEASON = INDEX_FILTER.SEASON.ALL,
+                     year: str = -1,
+                     style: INDEX_FILTER.STYLE.ANIME = INDEX_FILTER.STYLE.ANIME.ALL
                      ) -> None:
             '''
             Anime Meta
             Args:
                 style_id (int, str): 为 style 的 name 或 value
             '''
+            self.season_type = INDEX_FILTER.TYPE.ANIME
             self.season_version = season_version
             self.spoken_language_type = spoken_language_type
             self.area = area
             self.is_finish = is_finish
             self.copyright = copyright
             self.season_status = payment
-            self.season_month = season_month
+            self.season_month = season
             self.year = year
-            self.style_id = get_style(
-                index_type=INDEX_FILTER.Type.ANIME, style=style_id)
+            self.style_id = style
 
     class Movie:
         def __init__(self,
                      area: INDEX_FILTER.AREA = INDEX_FILTER.AREA.ALL,
-                     release_date: INDEX_FILTER.RELEASE_DATE = INDEX_FILTER.RELEASE_DATE.ALL,
-                     style_id: Union[int, str] = -1,
+                     release_date: str = -1,
+                     style: INDEX_FILTER.STYLE.MOVIE = INDEX_FILTER.STYLE.MOVIE.ALL,
                      payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL
                      ) -> None:
             '''
@@ -504,16 +476,16 @@ class Index_Filter_Meta:
             Args:
                 style_id (int, str): 为 style 的 name 或 value
             '''
+            self.season_type = INDEX_FILTER.TYPE.MOVIE
             self.area = area
             self.release_date = release_date
-            self.style_id = get_style(
-                index_type=INDEX_FILTER.Type.MOVIE, style=style_id)
+            self.style_id = style
             self.season_status = payment
 
     class Documentary:
         def __init__(self,
-                     release_date: INDEX_FILTER.RELEASE_DATE = INDEX_FILTER.RELEASE_DATE.ALL,
-                     style_id: Union[int, str] = -1,
+                     release_date: str = -1,
+                     style: INDEX_FILTER.STYLE.DOCTUMENTARY = INDEX_FILTER.STYLE.DOCTUMENTARY.ALL,
                      payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
                      producer_id: INDEX_FILTER.PRODUCER = INDEX_FILTER.PRODUCER.ALL
                      ) -> None:
@@ -522,17 +494,17 @@ class Index_Filter_Meta:
             Args:
                 style_id (int, str): 为 style 的 name 或 value
             '''
+            self.season_type = INDEX_FILTER.TYPE.DOCUMENTARY
             self.release_date = release_date
-            self.style_id = get_style(
-                index_type=INDEX_FILTER.Type.DOCUMENTARY, style=style_id)
+            self.style_id = style
             self.season_status = payment
             self.producer_id = producer_id
 
     class TV:
         def __init__(self,
                      area: INDEX_FILTER.AREA = INDEX_FILTER.AREA.ALL,
-                     release_date: INDEX_FILTER.RELEASE_DATE = INDEX_FILTER.RELEASE_DATE.ALL,
-                     style_id: Union[int, str] = -1,
+                     release_date: str = -1,
+                     style: INDEX_FILTER.STYLE.TV = INDEX_FILTER.STYLE.TV.ALL,
                      payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL
                      ) -> None:
             '''
@@ -540,10 +512,10 @@ class Index_Filter_Meta:
             Args:
                 style_id (int, str): 为 style 的 name 或 value
             '''
+            self.season_type = INDEX_FILTER.TYPE.TV
             self.area = area
             self.release_date = release_date
-            self.style_id = get_style(
-                index_type=INDEX_FILTER.Type.TV, style=style_id)
+            self.style_id = style
             self.season_status = payment
 
     class Guochuang:
@@ -552,21 +524,21 @@ class Index_Filter_Meta:
                      is_finish: INDEX_FILTER.FINISH_STATUS = INDEX_FILTER.FINISH_STATUS.ALL,
                      copyright: INDEX_FILTER.COPYRIGHT = INDEX_FILTER.COPYRIGHT.ALL,
                      payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
-                     year: INDEX_FILTER.YEAR = INDEX_FILTER.YEAR.ALL,
-                     style_id: Union[int, str] = -1,
+                     year: str = -1,
+                     style: INDEX_FILTER.STYLE.GUOCHUANG = INDEX_FILTER.STYLE.GUOCHUANG.ALL
                      ) -> None:
             '''
             Guochuang Meta
             Args:
                 style_id (int, str): 为 style 的 name 或 value
             '''
+            self.season_type = INDEX_FILTER.TYPE.GUOCHUANG
             self.season_version = season_version
             self.is_finish = is_finish
             self.copyright = copyright
             self.season_status = payment
             self.year = year
-            self.style_id = get_style(
-                index_type=INDEX_FILTER.Type.GUOCHUANG, style=style_id)
+            self.style_id = style
 
 
 async def get_index_by_filters(filters: Index_Filter_Meta = Index_Filter_Meta.Anime(),
@@ -590,30 +562,21 @@ async def get_index_by_filters(filters: Index_Filter_Meta = Index_Filter_Meta.An
         dict: 调用 API 返回的结果
     '''
     api = API["info"]["index"]
-
-    # 必要参数 season_type、type
     params = {}
-    if isinstance(filters, Index_Filter_Meta.Anime):
-        params["season_type"] = INDEX_FILTER.Type.ANIME.value
-    elif isinstance(filters, Index_Filter_Meta.Movie):
-        params["season_type"] = INDEX_FILTER.Type.MOVIE.value
-    elif isinstance(filters, Index_Filter_Meta.Documentary):
-        params["season_type"] = INDEX_FILTER.Type.DOCUMENTARY.value
-    elif isinstance(filters, Index_Filter_Meta.TV):
-        params["season_type"] = INDEX_FILTER.Type.TV.value
-    elif isinstance(filters, Index_Filter_Meta.Guochuang):
-        params["season_type"] = INDEX_FILTER.Type.GUOCHUANG.value
-    else:
-        raise ValueError("参数 season_type 的值不在 INDEX_FILTER.Type 内")
 
     for key, value in filters.__dict__.items():
         if value is not None:
-            params[key] = value.value
+            if isinstance(value, Enum):
+                params[key] = value.value
+            else:
+                params[key] = value
 
     if order in params:
         if order == INDEX_FILTER.ORDER.SCORE.value and sort == INDEX_FILTER.SORT.ASC.value:
             raise ValueError(
                 "order 为 INDEX_FILTER.ORDER.SCORE 时，sort 不能为 INDEX_FILTER.SORT.ASC")
+    
+    # 必要参数 season_type、type
     # 常规参数
     params["order"] = order.value
     params["sort"] = sort.value
