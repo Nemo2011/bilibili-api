@@ -53,15 +53,269 @@ from bilibili_api import bangumi
 
 番剧索引筛选器
 
-+ class Type: 类型
-+ class Version: 版本
-+ class Spoken_Language: 语言
-+ class Area: 地区
-+ class 
-**Extends: enum.Enum**
+<details>
+<summary> 详细参数 </summary>
+
++ **class Type**: 类型
++ + ANIME: 番剧
++ + MOVIE: 电影
++ + DOCUMENTARY: 纪录片
++ + GUOCHUANG: 国创番剧
++ + TV: 电视剧
++ **class Version**: 版本
++ + ALL: 全部
++ + MAIN: 正片
++ + FILM: 电影
++ + OTHER: 其他
++ **class Spoken_Language**: 配音
++ + ALL: 全部
++ + ORIGINAL: 原声
++ + CHINESE: 中配
++ **class Finish_Status**: 完结状态
++ + ALL: 全部
++ + FINISHED: 已完结
++ + UNFINISHED: 未完结
++ **class Season**: 季度
++ + ALL: 全部
++ + SPRING: 春季
++ + SUMMER: 夏季
++ + AUTUMN: 秋季
++ + WINTER: 冬季 
++ **class Producter**: 制作方
++ + ALL: 全部
++ + CCTV: 央视
++ + BBC: BBC
++ + DISCOVERY: 探索频道
++ + NATIONAL_GEOGRAPHIC: 国家地理
++ + NHK: NHK
++ + HISTORY: 历史频道
++ + STATLLITE: 卫视
++ + SELF: 自制
++ + ITV: ITV
++ + SKY: SKY
++ + ZDF: ZDF
++ + Partner: 合作机构
++ + DOMESTIC_OTHER: 国内其他
++ + FOREIGN_OTHER: 国外其他
++ **class Payment**: 付费条件
++ + ALL: 全部
++ + FREE: 免费
++ + PAID: 付费
++ + VIP: 大会员
++ **class Area**: 地区
++ + ALL: 全部
++ + CHINA: 中国
++ + CHINA_MAINLAND: 中国大陆
++ + CHINA_HONGKONG_AND_TAIWAN: 中国港台
++ + JAPAN: 日本
++ + USA: 美国
++ + UK: 英国
++ + SOUTH_KOREA: 韩国
++ + FRANCE: 法国
++ + GERMANY: 德国
++ + ITALY: 意大利
++ + SPAIN: 西班牙
++ + THAILAND: 泰国
++ + OTHER: 其他
++ **class Style**: 风格
++ + **class ANIME**: 番剧
++ + + 参数见源码
++ + **class MOVIE**: 电影
++ + + 参数见源码
++ + **class GUOCHUANG**: 国创番剧
++ + + 参数见源码
++ + **class TV**: 电视剧
++ + + 参数见源码
++ + **class DOCUMENTARY**: 纪录片
++ +  + 参数见源码
++ **class Order**: 排序字段
++ + UPDATE: 更新时间
++ + DANMAKU: 弹幕数
++ + PLAY: 播放量
++ + FOLLOWER: 追番人数
++ + SCORE: 评分
++ + ANIME_RELEASE: 番剧开播日期
++ + MOVIE_RELEASE: 电影上映日期
++ **class Sort**: 排序方式
++ + ASC: 升序
++ + DESC: 降序
+
+</details>
+
+### Functions
+
+#### def make_time_filter()
+| name | type | description |
+|------|------|-------------|
+| start | datetime.datetime, str, int | 开始时间 |
+| end | datetime.datetime, str, int | 结束时间 |
+| include_start | bool | 是否包含开始时间，默认为 True |
+| include_end | bool | 是否包含结束时间，默认为 False |
+
+生成日期区间  
+番剧、国创传入年份 (str, int)  
+电影、电视剧、纪录片传入日期 (datetime.datetime)
+
+**Returns:** str 时间区间
 
 
+## class Index_Filter_Meta
+
+Index Filter 元数据
+用于传入 get_index_info 方法
+
+子类有 Anime, Movie, Guochuang, TV, Documentary，GuoChuang
+
+<details>
+<summary> 详细子类 </summary>
+
+### class Anime
+
+#### Atrributes
+
+| name       | type       | description                    |
+|------------|------------|--------------------------------|
+| season_type | Index_Filter.Type.ANIME | 索引类型 |
+| season_version | Index_Filter.Version | 类型 |
+| spoken_language_type | Index_Filter.Spoken_Language | 配音 |
+| is_finish | Index_Filter.Finish_Status | 完结状态 |
+| copyright | Index_Filter.Copyright | 版权方 |
+| season_status | Index_Filter.Payment | 付费条件 |
+| season_month | Index_Filter.Season | 季度 |
+| area | Index_Filter.Area | 地区 |
+| style_id | Index_Filter.Style.ANIME | 风格 |
+| year | str | 年份区间 |
+
+#### Functions
+
+##### def \_\_init\_\_()
+
+| name | type | description |
+|------|------|-------------|
+| version | Index_Filter.Version | 类型 |
+| spoken_language | Index_Filter.Spoken_Language | 配音 |
+| finish_status | Index_Filter.Finish_Status | 完结状态 |
+| copyright | Index_Filter.Copyright | 版权方 |
+| payment | Index_Filter.Payment | 付费条件 |
+| season | Index_Filter.Season | 季度 |
+| area | Index_Filter.Area | 地区 |
+| style | Index_Filter.Style.ANIME | 风格 |
+| year | str | 调用 Index_Filter.make_time_filter 传入年份 (int, str) 获取 |
+
+### class Movie
+
+#### Atrributes
+
+| name       | type       | description                    |
+|------------|------------|--------------------------------|
+| season_type | Index_Filter.Type.MOVIE | 索引类型 |
+| release_date | str | 上映日期区间 |
+| season_status | Index_Filter.Payment | 付费条件 |
+| area | Index_Filter.Area | 地区 |
+| style_id | Index_Filter.Style.Movie | 风格 |
+
+#### Functions
+
+##### def \_\_init\_\_()
+
+| name | type | description |
+|------|------|-------------|
+| area | Index_Filter.Area | 地区 |
+| style | Index_Filter.Style.MOVIE | 风格 |
+| release_date | str | 调用 Index_Filter.make_time_filter 传入时间 (datetime_datetime) 获取 |
+| payment | Index_Filter.Payment | 付费条件 |
+
+### class Documentary
+
+#### Atrributes
+
+| name       | type       | description                    |
+|------------|------------|--------------------------------|
+| season_type | Index_Filter.Type.DOCUMENTARY | 索引类型 |
+| release_date | str | 上映日期区间 |
+| producer_id | Index_Filter.Producer | 制片方 |
+| season_status | Index_Filter.Payment | 付费条件 |
+| style_id | Index_Filter.Style.Documentary | 风格 |
+
+#### Functions
+
+##### def \_\_init\_\_()
+
+| name | type | description |
+|------|------|-------------|
+| payment | Index_Filter.Payment | 付费条件 |
+| style | Index_Filter.Style.DOCUMENTARY | 风格 |
+| release_date | str | 调用 Index_Filter.make_time_filter 传入时间 (datetime_datetime) 获取 |
+| prodcuer | Index_Filter.Producer | 制作方 |
+
+### class TV
+
+#### Atrributes
+
+| name       | type       | description                    |
+|------------|------------|--------------------------------|
+| season_type | Index_Filter.Type.TV | 索引类型 |
+| release_date | str | 上映日期区间 |
+| season_status | Index_Filter.Payment | 付费条件 |
+| area | Index_Filter.Area | 地区 |
+| style_id | Index_Filter.Style.TV | 风格 |
+
+#### Functions.
+
+##### def \_\_init\_\_()
+
+| name | type | description |
+|------|------|-------------|
+| area | Index_Filter.Area | 地区 |
+| style | Index_Filter.Style.TV | 风格 |
+| release_date | str | 调用 Index_Filter.make_time_filter 传入时间 (datetime_datetime) 获取 |
+| payment | Index_Filter.Payment | 付费条件 |
+
+### class GuoChuang
+
+#### Atrributes
+
+| name       | type       | description                    |
+|------------|------------|--------------------------------|
+| season_type | Index_Filter.Type.ANIME | 索引类型 |
+| season_version | Index_Filter.Version | 类型 |
+| is_finish | Index_Filter.Finish_Status | 完结状态 |
+| copyright | Index_Filter.Copyright | 版权方 |
+| season_status | Index_Filter.Payment | 付费条件 |
+| season_month | Index_Filter.Season | 季度 |
+| style_id | Index_Filter.Style.ANIME | 风格 |
+| year | str | 年份区间 |
+
+#### Functions
+
+##### def \_\_init\_\_()
+
+| name | type | description |
+|------|------|-------------|
+| version | Index_Filter.Version | 类型 |
+| finish_status | Index_Filter.Finish_Status | 完结状态 |
+| copyright | Index_Filter.Copyright | 版权方 |
+| payment | Index_Filter.Payment | 付费条件 |
+| style | Index_Filter.Style.ANIME | 风格 |
+| year | str | 调用 Index_Filter.make_time_filter 传入年份 (int, str) 获取 |
 ---
+
+</details>
+
+## async def get_index_info
+
+| name | type | description |
+|------|------|-------------|
+| filters | Index_Filter_Meta | 筛选条件元数据，默认为番剧 |
+| order | Index_Filter.Order | 排序方式 默认为最高评分 |
+| sort | Index_Filter.Sort | 排序方式，默认为降序 |
+| pn | int | 页数，默认为 1 |
+| ps | int | 每页数量，默认为 20 |
+
+查询番剧索引，索引的详细参数信息见 Index_Filter_Meta
+请先通过 Index_Filter_Meta 构造 filters
+
+**Returns:** dict: 调用 API 返回的结果
 
 ## class Bangumi
 

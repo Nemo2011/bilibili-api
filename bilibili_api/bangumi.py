@@ -417,35 +417,35 @@ class Index_Filter:
 
     class Order(Enum):
         """
-        更新时间 0
         排序字段
+        更新时间 0
         弹幕数量 1
         播放数量 2
         追番人数 3
         最高评分 4
-        开播时间 5
-        上映日期 6
+        番剧开播日期 5
+        电影上映日期 6
         """
         UPDATE = "0"
         DANMAKU = "1"
         PLAY = "2"
         FOLLOWER = "3"
         SCORE = "4"
-        RELEASE = "5"
-        Movie_RELEASE = "6"
+        ANIME_RELEASE = "5"
+        MOVIE_RELEASE = "6"
 
 
 class Index_Filter_Meta:
     """
     Index Filter 元数据
-    用于传入 get_index_by_filters 方法
+    用于传入 get_index_info 方法
     """
     class Anime:
         def __init__(self,
                      version: Index_Filter.Version = Index_Filter.Version.ALL,
                      spoken_language: Index_Filter.Spoken_Language = Index_Filter.Spoken_Language.ALL,
                      area: Index_Filter.Area = Index_Filter.Area.ALL,
-                     is_finish: Index_Filter.Finish_Status = Index_Filter.Finish_Status.ALL,
+                     finish_status: Index_Filter.Finish_Status = Index_Filter.Finish_Status.ALL,
                      copyright: Index_Filter.Copyright = Index_Filter.Copyright.ALL,
                      payment: Index_Filter.Payment = Index_Filter.Payment.ALL,
                      season: Index_Filter.Season = Index_Filter.Season.ALL,
@@ -455,21 +455,21 @@ class Index_Filter_Meta:
             """
             Anime Meta
             Args:
-                version (INDEX_FILTER.VERSION): 类型，如正片、电影等
-                spoken_language (INDEX_FILTER.SPOKEN_LANGUAGE): 配音
-                area (INDEX_FILTER.AREA): 地区
-                is_finish (INDEX_FILTER.FINISH_STATUS): 是否完结
-                copyright (INDEX_FILTER.COPYRIGHT): 版权
-                payment (INDEX_FILTER.PAYMENT): 付费门槛
-                season (INDEX_FILTER.SEASON): 季度
+                version (Index_Filter.Version): 类型，如正片、电影等
+                spoken_language (Index_Filter.Spoken_Language): 配音
+                area (Index_Filter.Area): 地区
+                finish_status (Index_Filter.Finish_Status): 是否完结
+                copyright (Index_Filter.Copryright): 版权
+                payment (Index_Filter.Payment): 付费门槛
+                season (Index_Filter.Season): 季度
                 year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
-                style (INDEX_FILTER.STYLE.ANIME): 风格
+                style (Index_Filter.Style.Anime): 风格
             """
             self.season_type = Index_Filter.Type.ANIME
             self.season_version = version
             self.spoken_language_type = spoken_language
             self.area = area
-            self.is_finish = is_finish
+            self.is_finish = finish_status
             self.copyright = copyright
             self.season_status = payment
             self.season_month = season
@@ -486,11 +486,11 @@ class Index_Filter_Meta:
             """
             Movie Meta
             Args:
-                area (INDEX_FILTER.AREA): 地区
-                payment (INDEX_FILTER.PAYMENT): 付费门槛
-                season (INDEX_FILTER.SEASON): 季度
+                area (Index_Filter.Area): 地区
+                payment (Index_Filter.Payment): 付费门槛
+                season (Index_Filter.Season): 季度
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
-                style (INDEX_FILTER.STYLE.ANIME): 风格
+                style (Index_Filter.Style.Movie): 风格
             """
             self.season_type = Index_Filter.Type.MOVIE
             self.area = area
@@ -508,11 +508,10 @@ class Index_Filter_Meta:
             """
             Documentary Meta
             Args:
-                area (INDEX_FILTER.AREA): 地区
-                is_finish (INDEX_FILTER.FINISH_STATUS): 是否完结
+                area (Index_Filter.Area): 地区
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
-                style (INDEX_FILTER.STYLE.ANIME): 风格
-                producer (INDEX_FILTER.PRODUCER): 制作方
+                style (Index_Filter.Style.Documentary): 风格
+                producer (Index_Filter.Producer): 制作方
             """
             self.season_type = Index_Filter.Type.DOCUMENTARY
             self.release_date = release_date
@@ -530,10 +529,10 @@ class Index_Filter_Meta:
             """
             TV Meta
             Args:
-                area (INDEX_FILTER.AREA): 地区
-                payment (INDEX_FILTER.PAYMENT): 付费门槛
+                area (Index_Filter.Area): 地区
+                payment (Index_Filter.Payment): 付费门槛
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
-                style (INDEX_FILTER.STYLE.ANIME): 风格
+                style (Index_Filter.Style.TV): 风格
             """
             self.season_type = Index_Filter.Type.TV
             self.area = area
@@ -544,7 +543,7 @@ class Index_Filter_Meta:
     class GuoChuang:
         def __init__(self,
                      version: Index_Filter.Version = Index_Filter.Version.ALL,
-                     is_finish: Index_Filter.Finish_Status = Index_Filter.Finish_Status.ALL,
+                     finish_status: Index_Filter.Finish_Status = Index_Filter.Finish_Status.ALL,
                      copyright: Index_Filter.Copyright = Index_Filter.Copyright.ALL,
                      payment: Index_Filter.Payment = Index_Filter.Payment.ALL,
                      year: str = -1,
@@ -553,16 +552,16 @@ class Index_Filter_Meta:
             """
             Guochuang Meta
             Args:
-                version (INDEX_FILTER.VERSION): 类型，如正片、电影等
-                is_finish (INDEX_FILTER.FINISH_STATUS): 是否完结
-                copyright (INDEX_FILTER.COPYRIGHT): 版权
-                payment (INDEX_FILTER.PAYMENT): 付费门槛
+                version (Index_Filter.VERSION): 类型，如正片、电影等
+                finish_status (Index_Filter.Finish_Status): 是否完结
+                copyright (Index_Filter.Copyright): 版权
+                payment (Index_Filter.Payment): 付费门槛
                 year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
-                style (INDEX_FILTER.STYLE.ANIME): 风格
+                style (Index_Filter.Style.GuoChuang): 风格
             """
             self.season_type = Index_Filter.Type.GUOCHUANG
             self.season_version = version
-            self.is_finish = is_finish
+            self.is_finish = finish_status
             self.copyright = copyright
             self.season_status = payment
             self.year = year
@@ -570,7 +569,7 @@ class Index_Filter_Meta:
 
 
 async def get_index_info(filters: Index_Filter_Meta = Index_Filter_Meta.Anime(),
-                               order: Index_Filter.Order = Index_Filter.Order.FOLLOWER,
+                               order: Index_Filter.Order = Index_Filter.Order.SCORE,
                                sort: Index_Filter.Sort = Index_Filter.Sort.DESC,
                                pn: int = 1,
                                ps: int = 20,
@@ -580,8 +579,8 @@ async def get_index_info(filters: Index_Filter_Meta = Index_Filter_Meta.Anime(),
     请先通过 Index_Filter_Meta 构造 filters
 
     Args:
-        filters (Index_Filter_Meta, optional): 筛选条件. Defaults to Anime.
-        order (BANGUMI_INDEX.ORDER, optional): 排序字段. Defaults to Follower.
+        filters (Index_Filter_Meta, optional): 筛选条件元数据. Defaults to Anime.
+        order (BANGUMI_INDEX.ORDER, optional): 排序字段. Defaults to SCORE.
         sort (BANGUMI_INDEX.SORT, optional): 排序方式. Defaults to DESC.
         pn (int, optional): 页数. Defaults to 1.
         ps (int, optional): 每页数量. Defaults to 20.
@@ -602,7 +601,7 @@ async def get_index_info(filters: Index_Filter_Meta = Index_Filter_Meta.Anime(),
     if order in params:
         if order == Index_Filter.Order.SCORE.value and sort == Index_Filter.Sort.ASC.value:
             raise ValueError(
-                "order 为 INDEX_FILTER.ORDER.SCORE 时，sort 不能为 INDEX_FILTER.SORT.ASC")
+                "order 为 Index_Filter.ORDER.SCORE 时，sort 不能为 Index_Filter.SORT.ASC")
     
     # 必要参数 season_type、type
     # 常规参数
