@@ -80,11 +80,11 @@ async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0) -> d
     return await request("GET", api["url"], params=params)
 
 
-class INDEX_FILTER:
+class Index_Filter:
     '''
     番剧索引相关固定参数以及值
     '''
-    class TYPE(Enum):
+    class Type(Enum):
         '''
         索引类型
         '''
@@ -94,7 +94,7 @@ class INDEX_FILTER:
         GUOCHUANG = 4
         TV = 5
 
-    class VERSION(Enum):
+    class Version(Enum):
         '''
         番剧版本
         '''
@@ -103,7 +103,7 @@ class INDEX_FILTER:
         FILM = 2
         OTHER = 3
 
-    class SPOKEN_LANGUAGE_TYPE(Enum):
+    class Spoken_Language_Type(Enum):
         '''
         配音
         '''
@@ -111,7 +111,7 @@ class INDEX_FILTER:
         ORIGINAL = 1
         CHINESE = 2
 
-    class FINISH_STATUS(Enum):
+    class Finish_Status(Enum):
         '''
         番剧状态
         '''
@@ -119,7 +119,7 @@ class INDEX_FILTER:
         FINISHED = 1
         UNFINISHED = 0
 
-    class COPYRIGHT(Enum):
+    class Copyright(Enum):
         '''
         版权方
         '''
@@ -127,7 +127,7 @@ class INDEX_FILTER:
         EXCLUSIVE = 3
         OTHER = "1,2,4"
 
-    class SEASON(Enum):
+    class Season(Enum):
         '''
         季度
         '''
@@ -183,7 +183,7 @@ class INDEX_FILTER:
 
         return f"{start_str},{end_str}"
 
-    class PRODUCER(Enum):
+    class Producer(Enum):
         '''
         制作方
         '''
@@ -203,7 +203,7 @@ class INDEX_FILTER:
         DOMESTIC_OTHER = 12
         FOREIGN_OTHER = 13
 
-    class PAYMENT(Enum):
+    class Payment(Enum):
         '''
         观看条件
         '''
@@ -212,7 +212,7 @@ class INDEX_FILTER:
         PAID = "2,6"
         VIP = "4,6"
 
-    class AREA(Enum):
+    class Area(Enum):
         '''
         地区
         '''
@@ -231,11 +231,11 @@ class INDEX_FILTER:
         SPAIN = "13"
         OTHER = "5,11,12,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70"
 
-    class STYLE:
+    class Style:
         '''
         风格
         '''
-        class ANIME(Enum):
+        class Anime(Enum):
             '''
             番剧
             '''
@@ -279,7 +279,7 @@ class INDEX_FILTER:
             OTOME = 10047
             WORK = 10048
 
-        class MOVIE(Enum):
+        class Movie(Enum):
             '''
             电影
             '''
@@ -307,7 +307,7 @@ class INDEX_FILTER:
             COMIC = 10011
             MOVEL = 10012
 
-        class GUOCHUANG(Enum):
+        class GuoChuang(Enum):
             '''
             国创
             '''
@@ -380,7 +380,7 @@ class INDEX_FILTER:
             HISTORY = 10033
             ARMY = 10089
 
-        class DOCTUMENTARY(Enum):
+        class Documentary(Enum):
             '''
             纪录片
             '''
@@ -404,14 +404,14 @@ class INDEX_FILTER:
             SPORTS = 10038
             MOVIES = -10
 
-    class SORT(Enum):
+    class Sort(Enum):
         '''
         排序方式
         '''
         DESC = "0"
         ASC = "1"
 
-    class ORDER(Enum):
+    class Order(Enum):
         '''
         更新时间 0
         排序字段
@@ -438,15 +438,15 @@ class Index_Filter_Meta:
     '''
     class Anime:
         def __init__(self,
-                     version: INDEX_FILTER.VERSION = INDEX_FILTER.VERSION.ALL,
-                     spoken_language: INDEX_FILTER.SPOKEN_LANGUAGE_TYPE = INDEX_FILTER.SPOKEN_LANGUAGE_TYPE.ALL,
-                     area: INDEX_FILTER.AREA = INDEX_FILTER.AREA.ALL,
-                     is_finish: INDEX_FILTER.FINISH_STATUS = INDEX_FILTER.FINISH_STATUS.ALL,
-                     copyright: INDEX_FILTER.COPYRIGHT = INDEX_FILTER.COPYRIGHT.ALL,
-                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
-                     season: INDEX_FILTER.SEASON = INDEX_FILTER.SEASON.ALL,
+                     version: Index_Filter.Version = Index_Filter.Version.ALL,
+                     spoken_language: Index_Filter.Spoken_Language_Type = Index_Filter.Spoken_Language_Type.ALL,
+                     area: Index_Filter.Area = Index_Filter.Area.ALL,
+                     is_finish: Index_Filter.Finish_Status = Index_Filter.Finish_Status.ALL,
+                     copyright: Index_Filter.Copyright = Index_Filter.Copyright.ALL,
+                     payment: Index_Filter.Payment = Index_Filter.Payment.ALL,
+                     season: Index_Filter.Season = Index_Filter.Season.ALL,
                      year: str = -1,
-                     style: INDEX_FILTER.STYLE.ANIME = INDEX_FILTER.STYLE.ANIME.ALL
+                     style: Index_Filter.Style.Anime = Index_Filter.Style.Anime.ALL
                      ) -> None:
             '''
             Anime Meta
@@ -461,7 +461,7 @@ class Index_Filter_Meta:
                 year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
                 style (INDEX_FILTER.STYLE.ANIME): 风格
             '''
-            self.season_type = INDEX_FILTER.TYPE.ANIME
+            self.season_type = Index_Filter.Type.ANIME
             self.season_version = version
             self.spoken_language_type = spoken_language
             self.area = area
@@ -474,10 +474,10 @@ class Index_Filter_Meta:
 
     class Movie:
         def __init__(self,
-                     area: INDEX_FILTER.AREA = INDEX_FILTER.AREA.ALL,
+                     area: Index_Filter.Area = Index_Filter.Area.ALL,
                      release_date: str = -1,
-                     style: INDEX_FILTER.STYLE.MOVIE = INDEX_FILTER.STYLE.MOVIE.ALL,
-                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL
+                     style: Index_Filter.Style.Movie = Index_Filter.Style.Movie.ALL,
+                     payment: Index_Filter.Payment = Index_Filter.Payment.ALL
                      ) -> None:
             '''
             Movie Meta
@@ -488,7 +488,7 @@ class Index_Filter_Meta:
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
                 style (INDEX_FILTER.STYLE.ANIME): 风格
             '''
-            self.season_type = INDEX_FILTER.TYPE.MOVIE
+            self.season_type = Index_Filter.Type.MOVIE
             self.area = area
             self.release_date = release_date
             self.style_id = style
@@ -497,9 +497,9 @@ class Index_Filter_Meta:
     class Documentary:
         def __init__(self,
                      release_date: str = -1,
-                     style: INDEX_FILTER.STYLE.DOCTUMENTARY = INDEX_FILTER.STYLE.DOCTUMENTARY.ALL,
-                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
-                     producer: INDEX_FILTER.PRODUCER = INDEX_FILTER.PRODUCER.ALL
+                     style: Index_Filter.Style.Documentary = Index_Filter.Style.Documentary.ALL,
+                     payment: Index_Filter.Payment = Index_Filter.Payment.ALL,
+                     producer: Index_Filter.Producer = Index_Filter.Producer.ALL
                      ) -> None:
             '''
             Documentary Meta
@@ -510,7 +510,7 @@ class Index_Filter_Meta:
                 style (INDEX_FILTER.STYLE.ANIME): 风格
                 producer (INDEX_FILTER.PRODUCER): 制作方
             '''
-            self.season_type = INDEX_FILTER.TYPE.DOCUMENTARY
+            self.season_type = Index_Filter.Type.DOCUMENTARY
             self.release_date = release_date
             self.style_id = style
             self.season_status = payment
@@ -518,10 +518,10 @@ class Index_Filter_Meta:
 
     class TV:
         def __init__(self,
-                     area: INDEX_FILTER.AREA = INDEX_FILTER.AREA.ALL,
+                     area: Index_Filter.Area = Index_Filter.Area.ALL,
                      release_date: str = -1,
-                     style: INDEX_FILTER.STYLE.TV = INDEX_FILTER.STYLE.TV.ALL,
-                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL
+                     style: Index_Filter.Style.TV = Index_Filter.Style.TV.ALL,
+                     payment: Index_Filter.Payment = Index_Filter.Payment.ALL
                      ) -> None:
             '''
             TV Meta
@@ -531,20 +531,20 @@ class Index_Filter_Meta:
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
                 style (INDEX_FILTER.STYLE.ANIME): 风格
             '''
-            self.season_type = INDEX_FILTER.TYPE.TV
+            self.season_type = Index_Filter.Type.TV
             self.area = area
             self.release_date = release_date
             self.style_id = style
             self.season_status = payment
 
-    class Guochuang:
+    class GuoChuang:
         def __init__(self,
-                     version: INDEX_FILTER.VERSION = INDEX_FILTER.VERSION.ALL,
-                     is_finish: INDEX_FILTER.FINISH_STATUS = INDEX_FILTER.FINISH_STATUS.ALL,
-                     copyright: INDEX_FILTER.COPYRIGHT = INDEX_FILTER.COPYRIGHT.ALL,
-                     payment: INDEX_FILTER.PAYMENT = INDEX_FILTER.PAYMENT.ALL,
+                     version: Index_Filter.Version = Index_Filter.Version.ALL,
+                     is_finish: Index_Filter.Finish_Status = Index_Filter.Finish_Status.ALL,
+                     copyright: Index_Filter.Copyright = Index_Filter.Copyright.ALL,
+                     payment: Index_Filter.Payment = Index_Filter.Payment.ALL,
                      year: str = -1,
-                     style: INDEX_FILTER.STYLE.GUOCHUANG = INDEX_FILTER.STYLE.GUOCHUANG.ALL
+                     style: Index_Filter.Style.GuoChuang = Index_Filter.Style.GuoChuang.ALL
                      ) -> None:
             '''
             Guochuang Meta
@@ -556,7 +556,7 @@ class Index_Filter_Meta:
                 year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
                 style (INDEX_FILTER.STYLE.ANIME): 风格
             '''
-            self.season_type = INDEX_FILTER.TYPE.GUOCHUANG
+            self.season_type = Index_Filter.Type.GUOCHUANG
             self.season_version = version
             self.is_finish = is_finish
             self.copyright = copyright
@@ -566,8 +566,8 @@ class Index_Filter_Meta:
 
 
 async def get_index_by_filters(filters: Index_Filter_Meta = Index_Filter_Meta.Anime(),
-                               order: INDEX_FILTER.ORDER = INDEX_FILTER.ORDER.FOLLOWER,
-                               sort: INDEX_FILTER.SORT = INDEX_FILTER.SORT.DESC,
+                               order: Index_Filter.Order = Index_Filter.Order.FOLLOWER,
+                               sort: Index_Filter.Sort = Index_Filter.Sort.DESC,
                                pn: int = 1,
                                ps: int = 20,
                                ) -> dict:
@@ -596,7 +596,7 @@ async def get_index_by_filters(filters: Index_Filter_Meta = Index_Filter_Meta.An
                 params[key] = value
 
     if order in params:
-        if order == INDEX_FILTER.ORDER.SCORE.value and sort == INDEX_FILTER.SORT.ASC.value:
+        if order == Index_Filter.Order.SCORE.value and sort == Index_Filter.Sort.ASC.value:
             raise ValueError(
                 "order 为 INDEX_FILTER.ORDER.SCORE 时，sort 不能为 INDEX_FILTER.SORT.ASC")
     
