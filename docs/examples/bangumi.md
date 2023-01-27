@@ -40,13 +40,13 @@ sync(main())
 
 ```python
 from bilibili_api import bangumi, sync
-from bilibili_api.bangumi import INDEX_FILTER as IF
+from bilibili_api.bangumi import Index_Filter as IF
 async def main():
-    filters = bangumi.Index_Filter_Meta.Anime(area=IF.AREA.JAPAN,
+    filters = bangumi.Index_Filter_Meta.Anime(area=IF.Area.JAPAN,
         year=IF.make_time_filter(start=2019, end=2022, include_end=True),
-        season=IF.SEASON.SPRING,
-        style=IF.STYLE.ANIME.NOVEL)
-    index = await bangumi.get_index_by_filters(filters=filters, order=IF.ORDER.FOLLOWER, sort=IF.SORT.ASC, pn=2, ps=20)
+        season=IF.Season.SPRING,
+        style=IF.Style.Anime.NOVEL)
+    index = await bangumi.get_index_info(filters=filters, order=IF.Order.SCORE, sort=IF.Sort.DESC, pn=2, ps=20)
     print(index)
 
 sync(main())
