@@ -469,7 +469,6 @@ async def get_dynamic_page_info(credential: Credential):
     Args:
         credential (Credential): 凭据类.
 
-
     Returns:
         dict: 调用 API 返回的结果
     """

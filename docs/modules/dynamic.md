@@ -174,3 +174,15 @@ from bilibili_api import dynamic
 获取正在直播的关注者
 
 **Returns:** dict: 调用 API 返回的结果
+
+---
+
+#### async def get_dynamic_page_info()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类. |
+
+获取自己的动态页的信息
+
+**Returns:** dict: 调用 API 返回的结果
