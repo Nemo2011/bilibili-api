@@ -42,3 +42,23 @@ from bilibili_api import topic
 获取话题下的内容
 
 **Returns:** dict: 调用 API 返回的结果
+
+#### async def like()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| status | bool | 状态. Defaults to True. |
+
+设置点赞话题
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def set_favorite()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| status | bool | 状态. Defaults to True. |
+
+设置收藏话题
+
+**Returns:** dict: 调用 API 返回的结果

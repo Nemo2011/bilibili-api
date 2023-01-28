@@ -8,6 +8,7 @@ from typing import Union
 from .utils.network_httpx import request
 from .utils.utils import get_api
 from .utils.Credential import Credential
+from .user import get_self_info
 
 API = get_api("topic")
 
@@ -39,7 +40,7 @@ class Topic:
     async def get_info(self) -> dict:
         """
         获取话题简介
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -54,14 +55,59 @@ class Topic:
         获取话题下的内容
 
         Args:
-            size (int): 数据数量. Defaults to 100. 
+            size (int): 数据数量. Defaults to 100.
 
         Returns:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["cards"]
         params = {
-            "topic_id": self.get_topic_id(), 
+            "topic_id": self.get_topic_id(),
             "page_size": size
         }
         return await request("GET", api["url"], params = params, credential = self.credential)
+
+    async def like(self, status: bool = True) -> dict:
+        """
+        设置点赞话题
+
+        Args:
+            status (bool): 是否设置点赞. Defaults to True.
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["operate"]["like"]
+        data = {
+            "topic_id": self.get_topic_id(),
+            "action": "like" if status else "cancel_like",
+            "business": "topic",
+            "up_mid": (await get_self_info(self.credential))["mid"]
+        }
+        return await request(
+            "POST",
+            api["url"],
+            data=data,
+            credential=self.credential
+        )
+
+    async def set_favorite(self, status: bool = True) -> dict:
+        """
+        设置收藏话题
+
+        Args:
+            status (bool): 是否设置收藏. Defaults to True.
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["operate"]["add_favorite" if status else "cancel_favorite"]
+        data = {
+            "topic_id": self.get_topic_id()
+        }
+        return await request(
+            "POST",
+            api["url"],
+            data=data,
+            credential=self.credential
+        )
