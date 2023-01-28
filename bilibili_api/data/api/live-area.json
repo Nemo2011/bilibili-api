@@ -1,0 +1,15 @@
+{
+  "info": {
+    "list": {
+      "url": "https://api.live.bilibili.com/xlive/web-interface/v1/second/getList",
+      "method": "GET",
+      "params": {
+        "platform": "str: web",
+        "parent_area_id": "int: 主分区 id",
+        "area_id": "int: 分区 id，如果要获取主分区所有数据则为 0",
+        "page": "int: 第几页",
+        "sort_type": "str: 排序方式，live_time 最新, 不填写则为综合"
+      }
+    }
+  }
+}
