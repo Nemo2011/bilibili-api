@@ -27,12 +27,12 @@
       "comment": "获取收藏夹列表内容。"
     },
     "list_topics": {
-      "url": "https://api.bilibili.com/x/v2/fav/topic",
+      "url": "https://app.bilibili.com/x/topic/web/fav/list",
       "method": "GET",
       "verify": true,
       "params": {
-        "pn": "int: 页码。",
-        "ps": "int: 每页数量，固定 16。"
+        "page_num": "int: 页码。",
+        "page_size": "int: 每页数量，固定 16。"
       },
       "comment": "获取自己的话题收藏夹内容。"
     },
@@ -77,6 +77,18 @@
         "ps": "int: 每页数量，固定 10。"
       },
       "comment": "获取自己的笔记收藏夹内容。"
+    },
+    "collected": {
+      "url": "https://api.bilibili.com/x/v3/fav/folder/collected/list",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "pn":"int: 页码。",
+        "ps":"int: 每页数量",
+        "up_mid":"int: 用户 UID"
+      },
+      "#": "jsonp",
+      "comment": "获取自己的收藏/订阅的收藏夹/合集"
     }
   },
   "operate": {

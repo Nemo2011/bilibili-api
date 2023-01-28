@@ -28,5 +28,34 @@
           },
           "comment": "获取动态页话题"
         }
+    },
+    "operate": {
+      "like": {
+        "url": "https://app.bilibili.com/x/topic/like",
+        "method": "POST",
+        "params": {
+          "topic_id":"int: 话题 id",
+          "action": "str: like / cancel_like",
+          "business": "str: topic",
+          "up_mid": "int: 自己的 uid"
+        },
+        "comment": "设置点赞话题"
+      },
+      "add_favorite": {
+        "url": "https://app.bilibili.com/x/topic/fav/sub/add",
+        "method": "POST",
+        "params": {
+          "topic_id": "int: 话题 id"
+        },
+        "comment": "收藏话题"
+      },
+      "cancel_favorite": {
+        "url": "https://app.bilibili.com/x/topic/fav/sub/cancel",
+        "method": "POST",
+        "params": {
+          "topic_id": "int: 话题 id"
+        },
+        "comment": "取消收藏话题"
+      }
     }
 }
