@@ -168,12 +168,6 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 **Returns:** bool: 视频是否已收藏。
 
-#### async def get_media_list()
-
-获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
-
-**Returns:** API 调用返回结果。
-
 #### async def is_forbid_note()
 
 是否禁止笔记。

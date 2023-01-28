@@ -108,11 +108,6 @@ async def test_l_Video_has_favoured():
     return data
 
 
-async def test_m_Video_get_media_list():
-    data = await video.get_media_list()
-    return data
-
-
 async def test_n_Video_get_danmaku_view():
     data = await video.get_danmaku_view(0)
     return data

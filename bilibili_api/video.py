@@ -379,21 +379,6 @@ class Video:
             "favoured"
         ]
 
-    async def get_media_list(self) -> dict:
-        """
-        获取收藏夹列表信息，用于收藏操作，含各收藏夹对该视频的收藏状态。
-
-        Returns:
-            dict: 调用 API 返回的结果。
-        """
-        self.credential.raise_for_no_sessdata()
-
-        info = await self.__get_info_cached()
-
-        url = API["info"]["media_list"]["url"]
-        params = {"type": 2, "rid": self.get_aid(), "up_mid": info["owner"]["mid"]}
-        return await request("GET", url, params=params, credential=self.credential)
-
     async def is_forbid_note(self) -> bool:
         """
         是否禁止笔记。
