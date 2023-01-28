@@ -21,6 +21,11 @@
     "url": "https://api.bilibili.com/x/web-interface/dynamic/region", 
     "method": "GET", 
     "verify": false, 
+    "params": {
+      "ps": "int: 每页项数",
+      "pn": "int: 页码",
+      "rid": "int: tid，分区 id"
+    },
     "comment": "获取分区最新投稿视频"
   },
   "get_hot_tags":
