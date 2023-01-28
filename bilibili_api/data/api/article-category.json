@@ -1,0 +1,15 @@
+{
+  "info": {
+    "recommends": {
+      "url": "https://api.bilibili.com/x/article/recommends",
+      "method": "GET",
+      "params": {
+        "cid": "int: 专栏分类 id",
+        "sort": "int: 排序方式. 默认 0, 投稿时间 1, 点赞数 2, 评论数 3, 收藏数 4",
+        "pn": "不想解释了",
+        "ps": "翻译下其他的 json 文件就知道这个参数是什么意思了"
+      },
+      "comment": "获取推荐文章"
+    }
+  }
+}
