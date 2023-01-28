@@ -7,9 +7,24 @@ bilibili_api.audio
 from .utils.utils import get_api
 from .utils.Credential import Credential
 from .utils.network_httpx import request
-from typing import Union
+from typing import Union, Optional
 
 API = get_api("audio")
+
+
+async def get_homepage_recommend(credential: Optional[Credential] = None):
+    """
+    获取音频首页推荐
+
+    Args:
+        credential (Credential | None): 凭据类. Defaults to None.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential = credential if credential else Credential()
+    api = API["audio_info"]["homepage_recommend"]
+    return await request("GET", api["url"], credential = credential)
 
 
 class Audio:

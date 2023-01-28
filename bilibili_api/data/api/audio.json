@@ -1,5 +1,10 @@
 {
   "audio_info": {
+    "homepage_recommend": {
+      "url": "https://api.bilibili.com/x/web-show/res/locs?pf=0&ids=3715,3721,3727,3729,3737,3739,3745,3747,3749,3751,3756",
+      "method": "GET",
+      "comment": "获取首页推荐"
+    },
     "info": {
       "url": "https://www.bilibili.com/audio/music-service-c/web/song/info",
       "method": "GET",
@@ -80,15 +85,15 @@
         "ps": "const int: 100"
       },
       "comment": "获取歌单歌曲列表"
-    }, 
+    },
     "hot": {
-      "url": "https://www.bilibili.com/audio/music-service-c/web/menu/hit", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://www.bilibili.com/audio/music-service-c/web/menu/hit",
+      "method": "GET",
+      "verify": false,
       "params": {
-        "pn": "int: 页码", 
+        "pn": "int: 页码",
         "ps": "const int: 100"
-      }, 
+      },
       "comment": "获取热门歌曲列表"
     }
   },

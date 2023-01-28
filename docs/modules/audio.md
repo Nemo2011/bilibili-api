@@ -6,6 +6,21 @@ from bilibili_api import audio
 
 音频相关
 
+---
+
+## async def get_homepage_recommend()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+
+获取音频首页推荐
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+
 ## class Audio
 
 音频类。

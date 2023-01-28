@@ -1,6 +1,6 @@
 # bilibili_api.audio
 
-from bilibili_api.audio import Audio, AudioList, get_user_stat
+from bilibili_api.audio import Audio, AudioList, get_user_stat, get_homepage_recommend, get_hot_song_list
 from .common import get_credential
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 
@@ -47,3 +47,11 @@ async def test_g_AudioList_get_song_list():
 
 async def test_h_AudioList_get_tags():
     return await audio_list.get_tags()
+
+
+async def test_i_get_homepage_recommend():
+    return await get_homepage_recommend()
+
+
+async def test_j_get_hot_song_list():
+    return await get_hot_song_list()
