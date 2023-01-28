@@ -132,6 +132,9 @@ async def get_list_by_area(area_id: int, page: int = 1, order: LiveRoomOrder = L
         area_id (int)          : 分区 id
         page    (int)          : 第几页. Defaults to 1.
         order   (LiveRoomOrder): 直播间排序方式. Defaults to LiveRoomOrder.RECOMMEND.
+
+    Returns:
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["list"]
     params = {
