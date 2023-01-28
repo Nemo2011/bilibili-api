@@ -49,6 +49,10 @@ async def test_g_ArticleList_get_article_list():
     return await al.get_content()
 
 
+async def test_h_get_article_rank():
+    return await article.get_article_rank()
+
+
 async def after_all():
     await ar.set_like(False)
     await ar.set_favorite(False)

@@ -17,6 +17,14 @@
         "id": "int: id"
       },
       "comment": "获取文集文章列表"
+    },
+    "rank": {
+      "url": "https://api.bilibili.com/x/article/rank/list",
+      "method": "GET",
+      "params": {
+        "cid": "int: 取值时间. 1 一个月, 2 一周, 3 前天, 4 昨天"
+      },
+      "comment": "获取全站专栏排行榜"
     }
   },
   "operate": {

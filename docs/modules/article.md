@@ -12,6 +12,33 @@ from bilibili_api import article
 
 专栏颜色表
 
+---
+
+## class ArticleRankingType
+
+**Extends:** enum.Enum
+
+专栏排行榜类型枚举。
+
++ MONTH: 月榜
++ WEEK: 周榜
++ DAY_BEFORE_YESTERDAY: 前日榜
++ YESTERDAY: 昨日榜
+
+---
+
+## async def get_article_rank()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| rank_type | ArticleRankingType | 排行榜类别. Defaults to ArticleRankingType.YESTERDAY. |
+
+获取专栏排行榜
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
 ## class ArticleType
 
 **Extends:** enum.Enum

@@ -72,7 +72,45 @@ class ArticleType(Enum):
     NOTE = 2
     SPECIAL_ARTICLE = 3
 
+
+class ArticleRankingType(Enum):
+    """
+    专栏排行榜类型枚举。
+
+    + MONTH: 月榜
+    + WEEK: 周榜
+    + DAY_BEFORE_YESTERDAY: 前日榜
+    + YESTERDAY: 昨日榜
+    """
+    MONTH = 1
+    WEEK = 2
+    DAY_BEFORE_YESTERDAY = 4
+    YESTERDAY = 3
+
+
 ArticleT = TypeVar('ArticleT', bound="Article")
+
+
+async def get_article_rank(rank_type: ArticleRankingType = ArticleRankingType.YESTERDAY):
+    """
+    获取专栏排行榜
+
+    Args:
+        rank_type (ArticleRankingType): 排行榜类别. Defaults to ArticleRankingType.YESTERDAY.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["rank"]
+    params = {
+        "cid": rank_type.value
+    }
+    return await request(
+        "GET",
+        api["url"],
+        params=params
+    )
+
 
 class ArticleList:
     """
