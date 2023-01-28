@@ -1,23 +1,32 @@
 {
     "info": {
         "info": {
-            "url": "https://app.bilibili.com/x/topic/web/details/top", 
-            "method": "GET", 
+            "url": "https://app.bilibili.com/x/topic/web/details/top",
+            "method": "GET",
             "params": {
                 "topic_id": "int: 话题 id"
-            }, 
-            "verify": false, 
+            },
+            "verify": false,
             "comment": "获取话题简介"
-        }, 
+        },
         "cards": {
-            "url": "https://app.bilibili.com/x/topic/web/details/cards", 
-            "method": "GET", 
+            "url": "https://app.bilibili.com/x/topic/web/details/cards",
+            "method": "GET",
             "params": {
-                "topic_id": "int: 话题 id", 
+                "topic_id": "int: 话题 id",
                 "page_size": "int: 数据数量"
-            }, 
-            "verify": false, 
+            },
+            "verify": false,
             "comment": "获取话题详情"
+        },
+        "dynamic_page_topics": {
+          "url": "https://app.bilibili.com/x/topic/web/dynamic/rcmd",
+          "method": "GET",
+          "verify": false,
+          "params": {
+            "page_size": "int: 数据数量"
+          },
+          "comment": "获取动态页话题"
         }
     }
 }

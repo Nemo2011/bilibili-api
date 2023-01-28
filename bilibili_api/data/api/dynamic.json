@@ -119,18 +119,18 @@
   },
   "info": {
     "attention_new_dynamic": {
-      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/w_dyn_uplist", 
-      "method": "GET", 
-      "verify": true, 
+      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/w_dyn_uplist",
+      "method": "GET",
+      "verify": true,
       "comment": "获取发布新动态的关注者"
-    }, 
+    },
     "attention_live": {
-      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/w_live_users", 
-      "method": "GET", 
+      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/w_live_users",
+      "method": "GET",
       "params": {
         "size": "int: 用户数量"
-      }, 
-      "verify": true, 
+      },
+      "verify": true,
       "comment": "获取正在直播的关注者"
     },
     "repost": {
@@ -162,6 +162,12 @@
         "dynamic_id": "int: 动态 ID"
       },
       "comment": "动态详细信息"
+    },
+    "dynamic_page_info": {
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/portal",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取动态页信息"
     }
   },
   "schedule": {

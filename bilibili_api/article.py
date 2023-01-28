@@ -460,9 +460,15 @@ class Article:
                         node.text = e.contents[0] # type: ignore
 
                 elif e.name == "img":
-                    className = e.attrs["class"]
+                    className = e.attrs.get("class")
 
-                    if "latex" in className:
+                    if not className:
+                        # 图片
+                        node = ImageNode()
+                        node.url = e.attrs.get("data-src")
+                        node_list.append(node)
+
+                    elif "latex" in className:
                         # 公式
                         node = LatexNode()
                         node_list.append(node)
