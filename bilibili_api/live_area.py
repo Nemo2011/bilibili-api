@@ -9,7 +9,7 @@ import os
 import copy
 from typing import Tuple, Union, List, Dict
 
-def get_channel_info_by_tid(id: int) -> Tuple[Union[dict, None], Union[dict, None]]:
+def get_area_info_by_tid(id: int) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
     根据 id 获取分区信息。
 
@@ -35,13 +35,13 @@ def get_channel_info_by_tid(id: int) -> Tuple[Union[dict, None], Union[dict, Non
             for sub_ch in main_ch["list"]:
                 if "id" not in sub_ch:
                     continue
-                if id == sub_ch["id"]:
+                if str(id) == sub_ch["id"]:
                     return main_ch, sub_ch
     else:
         return None, None
 
 
-def get_channel_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, None]]:
+def get_area_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, None]]:
     """
     根据频道名称获取频道信息。
 
@@ -67,7 +67,7 @@ def get_channel_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, 
         return None, None
 
 
-def get_channel_list() -> List[Dict]:
+def get_area_list() -> List[Dict]:
     """
     获取所有分区的数据
 
@@ -91,7 +91,7 @@ def get_channel_list() -> List[Dict]:
     return channel_list
 
 
-def get_channel_list_sub() -> dict:
+def get_area_list_sub() -> dict:
     """
     获取所有分区的数据
     含父子关系（即一层次只有主分区）
