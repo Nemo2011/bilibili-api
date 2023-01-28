@@ -109,6 +109,9 @@ def get_categories_list_sub() -> dict:
     获取所有分区的数据
 
     含父子关系（即一层次只有主分区）
+
+    Returns:
+        dict: 所有分区的数据
     """
     with open(
         os.path.join(os.path.dirname(__file__), "data/article_category.json"), encoding="utf-8"
