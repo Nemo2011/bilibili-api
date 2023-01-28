@@ -177,9 +177,13 @@ class IndexFilter:
     ) -> str:
         """
         生成番剧索引所需的时间条件
-        番剧、国创直接传入年份，为 int 或者 str 类型，如 make_time_filter(start=2019, end=2020)
-        影视、纪录片、电视剧传入 datetime.datetime，如 make_time_filter(start=datetime.datetime(2019, 1, 1), end=datetime.datetime(2020, 1, 1))
+
+        番剧、国创直接传入年份，为 int 或者 str 类型，如 `make_time_filter(start=2019, end=2020)`
+
+        影视、纪录片、电视剧传入 datetime.datetime，如 `make_time_filter(start=datetime.datetime(2019, 1, 1), end=datetime.datetime(2020, 1, 1))`
+
         start 或 end 为 None 时则表示不设置开始或结尾
+
         Args:
             start (datetime, str, int): 开始时间. 如果是 None 则不设置开头.
             end   (datetime, str, int): 结束时间. 如果是 None 则不设置结尾.
@@ -681,7 +685,7 @@ class IndexFilter:
     class Order(Enum):
         """
         排序字段
-        
+
         + UPDATE: 更新时间
         + DANMAKU: 弹幕数量
         + PLAY: 播放数量
@@ -702,6 +706,7 @@ class IndexFilter:
 class IndexFilterMeta:
     """
     IndexFilter 元数据
+
     用于传入 get_index_info 方法
     """
     class Anime:
@@ -830,7 +835,7 @@ class IndexFilterMeta:
             self.season_status = payment
             self.year = year
             self.style_id = style
-            
+
     class Variety:
         def __init__(self,
             style: IndexFilter.Style.Variety = IndexFilter.Style.Variety.ALL,
@@ -853,8 +858,9 @@ async def get_index_info(filters: IndexFilterMeta = IndexFilterMeta.Anime(),
                                ps: int = 20,
                                ) -> dict:
     """
-    查询番剧索引，索引的详细参数信息见 Index_Filter_Meta
-    请先通过 Index_Filter_Meta 构造 filters
+    查询番剧索引，索引的详细参数信息见 `IndexFilterMeta`
+
+    请先通过 `IndexFilterMeta` 构造 filters
 
     Args:
         filters (Index_Filter_Meta, optional): 筛选条件元数据. Defaults to Anime.
@@ -880,7 +886,7 @@ async def get_index_info(filters: IndexFilterMeta = IndexFilterMeta.Anime(),
         if order == IndexFilter.Order.SCORE.value and sort == IndexFilter.Sort.ASC.value:
             raise ValueError(
                 "order 为 Index_Filter.ORDER.SCORE 时，sort 不能为 Index_Filter.SORT.ASC")
-    
+
     # 必要参数 season_type、type
     # 常规参数
     params["order"] = order.value
