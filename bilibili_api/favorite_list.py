@@ -115,7 +115,7 @@ class FavoriteList:
         获取收藏夹内容。
 
         Args:
-            page (int, optional): 页码. Defaults to 1. 
+            page (int, optional): 页码. Defaults to 1.
 
         Returns:
             dict: 调用 API 返回的结果
@@ -200,7 +200,7 @@ async def get_topic_favorite_list(page: int = 1, credential: Union[None, Credent
     Args:
         page       (int, optional)              : 页码. Defaults to 1.
         credential (Credential | None, optional): Credential
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -210,7 +210,7 @@ async def get_topic_favorite_list(page: int = 1, credential: Union[None, Credent
     credential.raise_for_no_sessdata()
 
     api = API["info"]["list_topics"]
-    params = {"pn": page, "ps": 16}
+    params = {"page_num": page, "page_size": 16}
 
     return await request("GET", api["url"], params=params, credential=credential)
 
@@ -222,7 +222,7 @@ async def get_article_favorite_list(page: int = 1, credential: Union[None, Crede
     Args:
         page       (int, optional)              : 页码. Defaults to 1.
         credential (Credential | None, optional): Credential. Defaults to None.
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -244,7 +244,7 @@ async def get_album_favorite_list(page: int = 1, credential: Union[None, Credent
     Args:
         page       (int, optional)              : 页码. Defaults to 1.
         credential (Credential | None, optional): Credential. Defaults to None.
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -266,7 +266,7 @@ async def get_course_favorite_list(page: int = 1, credential: Union[None, Creden
     Args:
         page       (int, optional)       : 页码. Defaults to 1.
         credential (Credential | None, optional): Credential. Defaults to None.
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -289,7 +289,7 @@ async def get_note_favorite_list(page: int = 1, credential: Union[None, Credenti
     Args:
         page       (int, optional)       : 页码. Defaults to 1.
         credential (Credential | None, optional): Credential. Defaults to None.
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
