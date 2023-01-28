@@ -460,3 +460,22 @@ async def get_live_users(size: int = 10, credential: Union[Credential, None] = N
         "size": size
     }
     return await request("GET", api["url"], params = params, credential = credential)
+
+
+async def get_dynamic_page_info(credential: Credential):
+    """
+    获取动态页信息
+
+    Args:
+        credential (Credential): 凭据类.
+
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["dynamic_page_info"]
+    return await request(
+        "GET",
+        api["url"],
+        credential = credential
+    )
