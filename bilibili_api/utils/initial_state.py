@@ -6,15 +6,17 @@ bilibili_api.utils.initial_state
 from .. import Credential
 from ..exceptions import *
 from .network_httpx import get_session
+from .short import get_real_url
 import re
 import json
 
-async def get_initial_state(url: str, credentil: Credential = Credential()) -> dict:
+async def get_initial_state(url: str, credential: Credential = Credential()) -> dict:
+    url = await get_real_url(url, credential=credential)
     try:
         session = get_session()
         resp = await session.get(
             url,
-            cookies=credentil.get_cookies(),
+            cookies=credential.get_cookies(),
             headers={"User-Agent": "Mozilla/5.0"},
         )
     except Exception as e:
