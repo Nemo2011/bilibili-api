@@ -77,7 +77,8 @@ from bilibili_api import video_zone
 | name | type | description |
 | - | - | - |
 | tid | int | 分区 id |
-| credential | Credential | 凭据类 |
+| page_num | int | 第几页. Defaults to 1. |
+| page_size | int | 每一页的数据大小. Defaults to 10. |
 
 获取分区最新投稿
 

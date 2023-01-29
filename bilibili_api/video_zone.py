@@ -151,18 +151,20 @@ async def get_zone_videos_count_today(credential: Union[Credential, None] = None
     return (await request("GET", api["url"], credential=credential))["region_count"]
 
 
-async def get_zone_new_videos(tid: int) -> dict:
+async def get_zone_new_videos(tid: int, page_num: int = 1, page_size: int = 10) -> dict:
     """
     获取分区最新投稿
 
     Args:
         tid        (int)              : 分区 id
+        page_num   (int)              : 第几页. Defaults to 1.
+        page_size  (int)              : 每页的数据大小. Defaults to 10.
 
     Returns:
         dict: 调用 API 返回的结果
     """
     api = API["new"]
-    params = {"rid": tid}
+    params = {"rid": tid, "pn": page_num, "ps": page_size}
     return await request("GET", api["url"], params=params)
 
 
