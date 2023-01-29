@@ -10,7 +10,7 @@
         "lang": "语言, 见 https://api.bilibili.com/x/mv/tag",
         "keyword": "关键字",
         "pn": "int: 页码",
-        "ps":"const int: 114514"
+        "ps":"const int: 每页项数"
       }
     },
     "homepage_recommend": {
