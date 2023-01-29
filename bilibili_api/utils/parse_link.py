@@ -32,7 +32,7 @@ from .utils import get_api
 from ..topic import Topic
 from ..manga import Manga
 from ..album import Album
-
+from .initial_state import get_initial_state
 
 class ResourceType(Enum):
     """
@@ -186,7 +186,7 @@ async def parse_link(
         bangumi = parse_bangumi(url, credential) # type: ignore
         if not bangumi == -1:
             obj = (bangumi, ResourceType.BANGUMI)
-        episode = parse_episode(url, credential) # type: ignore
+        episode = await parse_episode(url, credential) # type: ignore
         if not episode == -1:
             obj = (episode, ResourceType.EPISODE)
         favorite_list = parse_favorite_list(url, credential) # type: ignore
@@ -325,7 +325,7 @@ def parse_bangumi(url: URL, credential: Credential) -> Union[Bangumi, int]:
     return -1
 
 
-def parse_episode(url: URL, credential: Credential) -> Union[Episode, int]:
+async def parse_episode(url: URL, credential: Credential) -> Union[Episode, int]:
     """
     解析番剧剧集,如果不是返回 -1，否则返回对应类
     """
@@ -337,28 +337,9 @@ def parse_episode(url: URL, credential: Credential) -> Union[Episode, int]:
                 epid = int(video_short_id[2:])
                 return Episode(epid=epid)
             elif video_short_id[:2].upper() == "SS":
-                try:
-                    resp = httpx.get(
-                        str(url),
-                        cookies=credential.get_cookies(),
-                        headers={"User-Agent": "Mozilla/5.0"},
-                    )
-                except Exception as e:
-                    raise ResponseException(str(e))
-                else:
-                    content = resp.text
-
-                    pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
-                    match = re.search(pattern, content)
-                    if match is None:
-                        raise ApiException("未找到番剧信息")
-                    try:
-                        content = json.loads(match.group(1))
-                    except json.JSONDecodeError:
-                        raise ApiException("信息解析错误")
-                    else:
-                        epid = content["epInfo"]["id"]
-                        return Episode(epid=epid, credential=credential)
+                content = await get_initial_state(str(url), credential=credential)
+                epid = content["epInfo"]["id"]
+                return Episode(epid=epid, credential=credential)
     return -1
 
 
