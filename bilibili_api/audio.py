@@ -287,7 +287,7 @@ async def get_hot_song_list(pn: int = 1, credential: Union[Credential, None] = N
     return await request("GET", api["url"], params, credential=credential)
 
 
-async def get_homepage_audios_by_args(
+async def get_homepage_audio_list(
     keyword: str = "",
     lang: TagsAudio.Lang = TagsAudio.Lang.ALL,
     genre: TagsAudio.Genre = TagsAudio.Genre.ALL,
@@ -306,7 +306,7 @@ async def get_homepage_audios_by_args(
         page_num  (int)            : 页码. Defaults to 1.
         page_size (int)            : 每页的数据大小. Defaults to 10.
     """
-    api = API["audio_info"]["audio_ist"]
+    api = API["audio_info"]["audio_list"]
     params = {
         "type": order.value,
         "lang": lang.value,
