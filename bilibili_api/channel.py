@@ -3,7 +3,7 @@ bilibili_api.channel
 
 频道相关，与视频分区不互通。
 """
-from bilibili_api.utils.short import get_real_url
+from bilibili_api.utils.initial_state import get_initial_state
 from bilibili_api.utils.network_httpx import request, get_session
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.Credential import Credential
@@ -14,32 +14,6 @@ from enum import Enum
 from typing import Optional, List, Union
 
 API = get_api("channel")
-
-
-async def pick_window_INITIAL_STATE(url: str, credential: Optional[Credential] = None) -> dict:
-    credential = credential if credential else Credential()
-    session = get_session()
-
-    try:
-        resp = await session.get(
-            url,
-            cookies=credential.get_cookies(),
-            headers={"User-Agent": "Mozilla/5.0"}
-        )
-    except Exception as e:
-        raise ResponseException(str(e))
-    else:
-        content = resp.text
-
-        pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
-        match = re.search(pattern, content)
-        if match is None:
-            raise ApiException("未找到相关信息")
-        try:
-            content = json.loads(match.group(1))
-        except json.JSONDecodeError:
-            raise ApiException("信息解析错误")
-        return content
 
 
 async def get_channel_categories() -> dict:
@@ -135,9 +109,7 @@ class Channel:
         Returns:
             dict: HTML 中 window.__INITIAL_STATE__ 中的信息
         """
-        return await pick_window_INITIAL_STATE(
-            await get_real_url(f"https://www.bilibili.com/v/channel/{self.get_channel_id()}") # type: ignore
-        )
+        return await get_initial_state(f"https://www.bilibili.com/v/channel/{self.get_channel_id()}")
 
     async def get_related_channels(self) -> List[dict]:
         """
