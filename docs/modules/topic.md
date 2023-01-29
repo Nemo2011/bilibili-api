@@ -4,6 +4,18 @@
 from bilibili_api import topic
 ```
 
+## async def get_hot_topics()
+
+| name | type | description |
+| - | - | - |
+| numbers | int | 话题数量. Defaults to 33. |
+
+获取动态页的火热话题
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
 ## class Topic
 
 ### Attributes

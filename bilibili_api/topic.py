@@ -12,6 +12,28 @@ from .user import get_self_info
 
 API = get_api("topic")
 
+
+async def get_hot_topics(numbers: int = 33) -> dict:
+    """
+    获取动态页的火热话题
+
+    Args:
+        numbers (int): 话题数量. Defaults to 33.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["dynamic_page_topics"]
+    params = {
+        "page_size": numbers
+    }
+    return await request(
+        "GET",
+        api["url"],
+        params=params
+    )
+
+
 class Topic:
     """
     话题类
