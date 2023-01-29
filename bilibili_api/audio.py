@@ -287,7 +287,7 @@ async def get_hot_song_list(pn: int = 1, credential: Union[Credential, None] = N
     return await request("GET", api["url"], params, credential=credential)
 
 
-async def get_homepage_audio_list(
+async def get_homepage_music_video_list(
     keyword: str = "",
     lang: TagsAudio.Lang = TagsAudio.Lang.ALL,
     genre: TagsAudio.Genre = TagsAudio.Genre.ALL,
@@ -296,7 +296,7 @@ async def get_homepage_audio_list(
     page_size: int = 10
 ) -> dict:
     """
-    获取首页的音频列表
+    获取首页的音乐视频列表
 
     Args:
         keyword   (str)            : 关键词. Defaults to None.

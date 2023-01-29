@@ -1,6 +1,6 @@
 # bilibili_api.audio
 
-from bilibili_api.audio import Audio, AudioList, get_user_stat, get_homepage_recommend, get_hot_song_list, get_homepage_audio_list
+from bilibili_api.audio import Audio, AudioList, get_user_stat, get_homepage_recommend, get_hot_song_list, get_homepage_music_video_list
 from .common import get_credential
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 
@@ -57,5 +57,5 @@ async def test_j_get_hot_song_list():
     return await get_hot_song_list()
 
 
-async def test_h_get_homepage_audio_list():
-    return await get_homepage_audio_list()
+async def test_h_get_homepage_music_video_list():
+    return await get_homepage_music_video_list()
