@@ -12,7 +12,7 @@ async def main() -> None:
         content["documentary"] = await get_initial_state("https://www.bilibili.com/documentary/index/")
         content["variety"] = await get_initial_state("https://www.bilibili.com/variety/index/")
         content["guochuang"] = await get_initial_state("https://www.bilibili.com/guochuang/index/")
-        json.dump(content, f, ensure_ascii=False)
+        json.dump(content, f, ensure_ascii=False, indent=4)
 
 if __name__ == "__main__":
     sync(main())

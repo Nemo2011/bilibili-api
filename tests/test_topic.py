@@ -19,6 +19,10 @@ async def test_d_Topic_set_favorite():
     return await t.set_favorite(status=True)
 
 
+async def test_e_get_hot_topics():
+    return await topic.get_hot_topics()
+
+
 async def after_all():
     await t.like(status=False)
     await t.set_favorite(status=False)

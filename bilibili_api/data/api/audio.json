@@ -1,5 +1,18 @@
 {
   "audio_info": {
+    "audio_list": {
+      "url": "https://api.bilibili.com/x/mv/list?type=1&genre=&lang=&keyword=2&pn=1&ps=30",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "type": "排序方式. 1 最新, 2 最火",
+        "genre": "类型, 见 https://api.bilibili.com/x/mv/tag",
+        "lang": "语言, 见 https://api.bilibili.com/x/mv/tag",
+        "keyword": "关键字",
+        "pn": "int: 页码",
+        "ps":"const int: 每页项数"
+      }
+    },
     "homepage_recommend": {
       "url": "https://api.bilibili.com/x/web-show/res/locs?pf=0&ids=3715,3721,3727,3729,3737,3739,3745,3747,3749,3751,3756",
       "method": "GET",

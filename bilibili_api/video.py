@@ -29,34 +29,194 @@ from .utils.network import get_session as get_session_aiohttp
 from .utils.Danmaku import Danmaku, SpecialDanmaku
 from .utils.BytesReader import BytesReader
 from .utils.AsyncEvent import AsyncEvent
+from dataclasses import dataclass
 from . import settings
 
 API = get_api("video")
 
-# 视频分辨率
-VIDEO_QUALITY = {
-    126: "杜比视界",
-    125: "真彩 HDR",
-    120: "超清 4K",
-    116: "高清 1080P60",
-    112: "高清 1080P+",
-    80: "高清 1080P",
-    64: "高清 720P60",
-    32: "清晰 480P",
-    16: "流畅 360P",
-}
 
-# 视频编码 | if "hev" in codecs: HEVC(H.265) |
-VIDEO_CODECS = {"hev": "HEVC(H.265)", "avc": "AVC(H.264)", "av01": "AV1"}
+class VideoQuality(Enum):
+    """
+    视频的视频流分辨率枚举
 
-# 音频编码
-AUDIO_QUALITY = {
-    30216: "64 K",
-    30232: "132 K",
-    30250: "杜比全景声",
-    30251: "Hi-Res 无损",
-    30280: "192 K",
-}
+    - _360P: 流畅 360P
+    - _480P: 清晰 480P
+    - _720P: 高清 720P60
+    - _1080P: 高清 1080P
+    - _1080P_PLUS: 高清 1080P 高码率
+    - _1080P_60: 高清 1080P 60 帧码率
+    - _4K: 超清 4K
+    - HDR: 真彩 HDR
+    - DOLBY: 杜比视界
+    - _8K: 超高清 8K
+    """
+    _360P = 16
+    _480P = 32
+    _720P = 64
+    _1080P = 80
+    _1080P_PLUS = 112
+    _1080P_60 = 116
+    _4K = 120
+    HDR = 125
+    DOLBY = 126
+    _8K = 127
+
+
+
+class VideoCodecs(Enum):
+    """
+    视频的视频流编码枚举
+
+    - HEV: HEVC(H.265)
+    - AVC: AVC(H.264)
+    - AV1: AV1
+    """
+    HEV = "hev"
+    AVC = "avc"
+    AV1 = "av01"
+
+
+class AudioQuality(Enum):
+    """
+    视频的音频流清晰度枚举
+
+    - _64K: 64K
+    - _132K: 132K
+    - _192K: 192K
+    - HI_RES: Hi-Res 无损
+    - DOLBY: 杜比全景声
+    """
+    _64K = 30216
+    _132K = 30232
+    DOLBY = 30250
+    HI_RES = 30251
+    _192K = 30280
+
+
+@dataclass
+class VideoStreamDownloadURL:
+    """
+    (@dataclass)
+
+    视频流 URL 类
+
+    Attributes:
+        url           (str)         : 视频流 url
+        video_quality (VideoQuality): 视频流清晰度
+        video_codecs  (VideoCodecs) : 视频流编码
+    """
+    url: str
+    video_quality: VideoQuality
+    video_codecs: VideoCodecs
+
+
+@dataclass
+class AudioStreamDownloadURL:
+    """
+    (@dataclass)
+
+    音频流 URL 类
+
+    Attributes:
+        url           (str)         : 音频流 url
+        audio_quality (AudioQuality): 音频流清晰度
+    """
+    url: str
+    audio_quality: AudioQuality
+
+
+@dataclass
+class FLVStreamDownloadURL:
+    """
+    (@dataclass)
+
+    FLV 视频流
+
+    Attributes:
+        url           (str): FLV 流 url
+    """
+    url: str
+
+
+class VideoDownloadURLDataDetecter:
+    """
+    `Video.get_download_url` 返回结果解析类。
+
+    在调用 `Video.get_download_url` 之后可以将代入 `VideoDownloadURLDataDetecter`，此类将一键解析。
+
+    目前支持:
+      - 视频清晰度: 360P, 480P, 720P, 1080P, 1080P 高码率, 1080P 60 帧, 4K, HDR, 杜比视界, 8K
+      - 视频编码: HEVC(H.265), AVC(H.264), AV1
+      - 音频清晰度: 64K, 132K, Hi-Res 无损音效, 杜比全景声, 192K
+      - FLV 视频流
+    """
+    def __init__(self, data: dict):
+        """
+        Args:
+            data (dict): `Video.get_download_url` 返回的结果
+        """
+        self.__data = data
+
+    def detect_all(self) -> \
+        List[
+            Union[
+                VideoStreamDownloadURL,
+                AudioStreamDownloadURL,
+                FLVStreamDownloadURL
+            ]
+        ]:
+        if "durl" in self.__data.keys():
+            # FLV 视频流
+            return [FLVStreamDownloadURL(url = self.__data["durl"][0]["url"])]
+        else:
+            # 正常情况
+            streams = []
+            videos_data = self.__data["dash"]["video"]
+            audios_data = self.__data["dash"]["audio"]
+            flac_data = self.__data["dash"]["flac"]
+            dolby_data = self.__data["dash"]["dolby"]
+            for video_data in videos_data:
+                video_stream_url = video_data["baseUrl"]
+                video_stream_quality = VideoQuality(video_data["id"])
+                video_stream_codecs = None
+                for val in VideoCodecs:
+                    if val.value in video_data["codecs"]:
+                        video_stream_codecs = val
+                video_stream = VideoStreamDownloadURL(
+                    url=video_stream_url,
+                    video_quality=video_stream_quality,
+                    video_codecs=video_stream_codecs
+                )
+                streams.append(video_stream)
+            for audio_data in audios_data:
+                audio_stream_url = audio_data["baseUrl"]
+                audio_stream_quality = AudioQuality(audio_data["id"])
+                audio_stream = AudioStreamDownloadURL(
+                    url=audio_stream_url,
+                    audio_quality=audio_stream_quality
+                )
+                streams.append(audio_stream)
+            if flac_data:
+                if flac_data["audio"]:
+                    for flac in flac_data["audio"]:
+                        flac_stream_url = flac["baseUrl"]
+                        flac_stream_quality = AudioQuality(flac["id"])
+                        flac_stream = AudioStreamDownloadURL(
+                            url=flac_stream_url,
+                            audio_quality=flac_stream_quality
+                        )
+                        streams.append(flac_stream)
+            if dolby_data:
+                if dolby_data["audio"]:
+                    for dolby in dolby_data["audio"]:
+                        dolby_stream_url = flac["baseUrl"]
+                        dolby_stream_quality = AudioQuality(dolby["id"])
+                        dolby_stream = AudioStreamDownloadURL(
+                            url=dolby_stream_url,
+                            audio_quality=dolby_stream_quality
+                        )
+                        streams.append(dolby_stream)
+            return streams
 
 
 class DanmakuOperatorType(Enum):
@@ -286,6 +446,8 @@ class Video:
     ) -> dict:
         """
         获取视频下载信息。
+
+        返回结果可以传入 `VideoDownloadURLDataDetecter` 进行解析。
 
         page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
