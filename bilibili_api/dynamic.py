@@ -87,7 +87,7 @@ async def _get_text_data(text: str) -> dict:
     return data
 
 
-async def upload_image(image: Picture, credential: Credential) -> dict:
+async def upload_image(image: Picture, credential: Credential) -> Picture:
     """
     上传动态图片
 
@@ -96,7 +96,7 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
         credential   (Credential): 凭据
 
     Returns:
-        dict: 调用 API 返回的结果
+        Picture: 图片类
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -105,14 +105,18 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
     data = {"biz": "new_dyn", "category": "daily"}
 
     raw = image.content
-
-    return await request(
+    
+    return_info = await request(
         "POST",
         url=api["url"],
         data=data,
         files={"file_up": raw},
         credential=credential,
     )
+
+    # set image.url
+    image.url = return_info["image_url"]
+    return image
 
 
 async def _get_draw_data(
