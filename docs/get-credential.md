@@ -8,7 +8,7 @@ from bilibili_api import Credential
 credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct", buvid3="你的 buvid3", dedeuserid="你的 DedeUserID")
 ```
 
-`sessdata` `bili_jct` `buvid3` 和 `dedeuserid` 这三个参数的值均在浏览器的 Cookies 里头，下面说明获取方法。
+`sessdata` `bili_jct` `buvid3` 和 `dedeuserid` 这四个参数的值均在浏览器的 Cookies 里头，下面说明获取方法。
 
 ## 火狐浏览器（Firefox）
 
