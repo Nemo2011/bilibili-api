@@ -134,20 +134,20 @@ async def _get_draw_data(
         *[upload_image(stream, credential) for stream in images]
     )
 
-    def transformPicInfo(image):
+    def transformPicInfo(image: Picture):
         """
         转换图片信息
 
         Args:
-            image ([type]): [description]
+            image (Picture): 图片类
 
         Returns:
-            [type]: [description]
+            dict: 图片信息
         """
         return {
-            "img_src": image["image_url"],
-            "img_width": image["image_width"],
-            "img_height": image["image_height"],
+            "img_src": image.url,
+            "img_width": image.width,
+            "img_height": image.height,
         }
 
     pictures = list(map(transformPicInfo, images_info))
