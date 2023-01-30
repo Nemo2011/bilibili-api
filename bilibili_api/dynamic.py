@@ -102,7 +102,7 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
     credential.raise_for_no_bili_jct()
 
     api = API["send"]["upload_img"]
-    data = {"biz": "draw", "category": "daily"}
+    data = {"biz": "new_dyn", "category": "daily"}
 
     raw = image.content
 
