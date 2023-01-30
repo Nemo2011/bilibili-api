@@ -113,7 +113,7 @@ class ChannelSeries:
         """
         获取合集视频
         Args:
-            sort(ChannelOrder): 排序方式，在旧版列表此参数不起效果。
+            sort(ChannelOrder): 排序方式
             pn(int)           : 页数，默认为 1
             ps(int)           : 每一页显示的视频数量
 
