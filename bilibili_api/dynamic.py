@@ -92,7 +92,7 @@ async def upload_image(image: Picture, credential: Credential) -> Picture:
     上传动态图片
 
     Args:
-        image        (Picture)   : 图片流
+        image        (Picture)   : 图片流. 有格式要求.
         credential   (Credential): 凭据
 
     Returns:
@@ -102,21 +102,22 @@ async def upload_image(image: Picture, credential: Credential) -> Picture:
     credential.raise_for_no_bili_jct()
 
     api = API["send"]["upload_img"]
+    raw = image.content
+
     data = {"biz": "new_dyn", "category": "daily"}
 
-    raw = image.content
-    
+
     return_info = await request(
         "POST",
         url=api["url"],
         data=data,
-        files={"file_up": raw},
+        files={
+            "file_up": raw
+        },
         credential=credential,
     )
 
-    # set image.url
-    image.url = return_info["image_url"]
-    return image
+    return return_info
 
 
 async def _get_draw_data(
