@@ -4,7 +4,7 @@ bilibili_api.channel_series
 用户合集与列表相关
 """
 from enum import Enum
-from typing import Union, List
+from typing import Union, List, Optional
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request
@@ -12,8 +12,7 @@ import json
 import httpx
 
 API_USER = get_api("user")
-
-# 1704
+API = get_api("channel-series")
 
 channel_meta_cache = {}
 
@@ -193,8 +192,8 @@ async def del_channel_series(
         page_info = \
             await User(self_uid, credential).get_channel_videos_series(
                 series_id,
-                page,
-                20
+                pn = page,
+                ps = 20
             )
         for aid in page_info["aids"]:
             aids.append(aid)
@@ -269,3 +268,22 @@ async def del_aids_from_series(
     return await request(
         "POST", api["url"], data=data, credential=credential
     )
+
+
+async def set_follow_channel_season(
+    season_id: int,
+    status: bool = True,
+    credential: Optional[Credential] = None
+) -> dict:
+    """
+    设置是否订阅合集(新版)
+
+    Args:
+        season_id (int) : 合集 id
+        status    (bool): 是否订阅状态. Defaults to True.
+    """
+    api = API["operate"]["fav"] if status else API["operate"]["unfav"]
+    data = {
+        "season_id": season_id
+    }
+    return await request("POST", api["url"], data=data, credential=credential)

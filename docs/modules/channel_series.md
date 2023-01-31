@@ -89,3 +89,16 @@ from bilibili_api import channel_series
 获取合集视频
 
 **Returns:** 调用接口返回的内容。
+
+---
+
+## async def set_follow_channel_season()
+
+设置是否订阅合集(新版)
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| season_id | int | 合集 id  |
+| status | bool | 是否订阅状态. Defaults to True. |
+
+**Returns:** dict: 调用 API 返回的结果
