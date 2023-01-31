@@ -119,6 +119,7 @@ async def parse_link(
         Tuple[obj, ResourceType]: (对象，类型) 或 -1,-1 表示出错
     """
     credential = credential if credential else Credential()
+    url = url.replace("\\", "/") # 说多了都是泪
     try:
         obj = None
 
