@@ -87,7 +87,7 @@ async def _get_text_data(text: str) -> dict:
     return data
 
 
-async def upload_image(image: Picture, credential: Credential) -> dict:
+async def upload_image(image: Picture, credential: Credential) -> Picture:
     """
     上传动态图片
 
@@ -96,23 +96,27 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
         credential   (Credential): 凭据
 
     Returns:
-        dict: 调用 API 返回的结果
+        Picture: 图片类
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
 
     api = API["send"]["upload_img"]
-    data = {"biz": "draw", "category": "daily"}
+    data = {"biz": "new_dyn", "category": "daily"}
 
     raw = image.content
-
-    return await request(
+    
+    return_info = await request(
         "POST",
         url=api["url"],
         data=data,
         files={"file_up": raw},
         credential=credential,
     )
+
+    # set image.url
+    image.url = return_info["image_url"]
+    return image
 
 
 async def _get_draw_data(
@@ -130,20 +134,20 @@ async def _get_draw_data(
         *[upload_image(stream, credential) for stream in images]
     )
 
-    def transformPicInfo(image):
+    def transformPicInfo(image: Picture):
         """
         转换图片信息
 
         Args:
-            image ([type]): [description]
+            image (Picture): 图片类
 
         Returns:
-            [type]: [description]
+            dict: 图片信息
         """
         return {
-            "img_src": image["image_url"],
-            "img_width": image["image_width"],
-            "img_height": image["image_height"],
+            "img_src": image.url,
+            "img_width": image.width,
+            "img_height": image.height,
         }
 
     pictures = list(map(transformPicInfo, images_info))

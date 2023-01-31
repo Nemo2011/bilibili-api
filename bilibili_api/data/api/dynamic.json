@@ -1,7 +1,7 @@
 {
   "send": {
     "upload_img": {
-      "url": "https://api.vc.bilibili.com/api/v1/drawImage/upload",
+      "url": "https://api.bilibili.com/x/dynamic/feed/draw/upload_bfs",
       "method": "POST",
       "verify": true,
       "data": {

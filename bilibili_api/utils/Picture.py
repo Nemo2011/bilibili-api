@@ -33,6 +33,10 @@ class Picture:
     width: int = -1
     content: bytes = b''
 
+    def __str__(self) -> str:
+        # no content...
+        return f"Picture(height='{self.height}', width='{self.width}', imageType='{self.imageType}', size={self.size}, url='{self.url}')"
+
     def __set_picture_meta_from_bytes(self, imgtype: str) -> None:
         tmp_dir = tempfile.gettempdir()
         img_path = os.path.join(tmp_dir, "test." + imgtype)
