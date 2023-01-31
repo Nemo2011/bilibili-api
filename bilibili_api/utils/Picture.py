@@ -33,7 +33,7 @@ class Picture:
     width: int = -1
     content: bytes = b''
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         # no content...
         return f"Picture(height='{self.height}', width='{self.width}', imageType='{self.imageType}', size={self.size}, url='{self.url}')"
 
