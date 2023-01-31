@@ -146,9 +146,9 @@ async def _get_draw_data(
             dict: 图片信息
         """
         return {
-            "img_src": image.url,
-            "img_width": image.width,
-            "img_height": image.height,
+            "img_src": image["image_url"],
+            "img_width": image["image_width"],
+            "img_height": image["image_height"],
         }
 
     pictures = list(map(transformPicInfo, images_info))
