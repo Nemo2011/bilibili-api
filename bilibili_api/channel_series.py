@@ -74,7 +74,7 @@ class ChannelSeries:
         self.owner = User(self.__uid, credential=credential)
         self.credential = credential
         self.meta = None
-        if channel_meta_cache[f"{type_.value}-{id_}"] is None:
+        if not f"{type_.value}-{id_}" in channel_meta_cache.keys():
             if self.is_new:
                 api = API_USER["channel_series"]["season_info"]
                 params = {
