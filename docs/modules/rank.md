@@ -4,6 +4,36 @@
 from bilibili_api import rank
 ```
 
+## class RankType
+
+排行榜类型
+
+- ALL: 全部
+- BANGUMI: 番剧
+- GUOCHUAN_ANIME: 国产动画
+- GUOCHUANG: 国创番剧
+- DOCUMENTARY: 纪录片
+- DOUGA: 动画
+- MUSIC: 音乐
+- DANCE: 舞蹈
+- GAME: 游戏
+- KNOWLEDGE: 知识
+- TECHNOLOGY: 科技
+- SPORTS: 运动
+- CAR: 汽车
+- LIVE: 直播
+- FOOD: 美食
+- ANIMAL: 动物圈
+- KICHIKU: 鬼畜
+- FASHION: 时尚
+- ENT: 娱乐
+- CINEPHILE: 影视
+- MOVIE: 电影
+- TV: 电视剧
+- VARIETY: 综艺
+- ORIGINAL: 原创
+- ROOKIE: 新人
+
 ## async def get_hot_videos()
 
 获取热门视频
@@ -38,6 +68,10 @@ from bilibili_api import rank
 **Returns:** dict: 调用 API 返回的结果
 
 ## async def get_rank()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| type_ | RankType | 排行榜类型. Defaults to RankType.ALL |
 
 获取视频排行榜
 
