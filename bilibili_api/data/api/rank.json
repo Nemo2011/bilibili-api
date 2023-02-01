@@ -31,7 +31,7 @@
             },
             "comment": "获取入站必刷 85 个视频"
         },
-        "ranking": {
+        "v2-ranking": {
             "url": "https://api.bilibili.com/x/web-interface/ranking/v2",
             "verify": false,
             "params": {
@@ -39,7 +39,16 @@
                 "type": "string: all"
             },
             "comment": "获取各个分区的排行榜"
-        }, 
+        },
+        "pgc-ranking": {
+            "url": "https://api.bilibili.com/pgc/web/rank/list",
+            "verify": false,
+            "params": {
+                "day": "int: 天数 3/7",
+                "season_type": "int: 类型"
+            },
+            "comment": "获取番剧等排行榜"
+        },
         "music_weakly_series": {
             "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/all_period", 
             "verify": false, 

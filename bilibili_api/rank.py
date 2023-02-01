@@ -9,10 +9,28 @@ https://www.bilibili.com/v/popular/all
 
 from .utils.network_httpx import request
 from .utils.utils import get_api
-from .utils.initial_state import get_initial_state
 from enum import Enum
 
 API = get_api("rank")
+
+
+class RankAPIType(Enum):
+    """
+    排行榜 API 接口类型判断
+
+    - PGC: https://api.bilibili.com/pgc/web/rank/list
+    - V2: https://api.bilibili.com/x/web-interface/ranking/v2
+    """
+    PGC = "pgc"
+    V2 = "x"
+
+
+class RankDayType(Enum):
+    """
+    RankAPIType.PGC 排行榜时间类型
+    """
+    THREE_DAY = 3
+    WEEK = 7
 
 
 class RankType(Enum):
@@ -32,7 +50,6 @@ class RankType(Enum):
     - TECHNOLOGY: 科技
     - SPORTS: 运动
     - CAR: 汽车
-    - LIVE: 直播
     - FOOD: 美食
     - ANIMAL: 动物圈
     - KICHIKU: 鬼畜
@@ -45,32 +62,30 @@ class RankType(Enum):
     - ORIGINAL: 原创
     - ROOKIE: 新人
     """
-    ALL = None
-    BANGUMI = "https://www.bilibili.com/v/popular/rank/bangumi"
-    GUOCHUAN_ANIME = "https://www.bilibili.com/v/popular/rank/guochan"
-    GUOCHUANG = "https://www.bilibili.com/v/popular/rank/guochuang"
-    DOCUMENTARY = "https://www.bilibili.com/v/popular/rank/documentary"
-    DOUGA = "https://www.bilibili.com/v/popular/rank/douga"
-    MUSIC = "https://www.bilibili.com/v/popular/rank/music"
-    DANCE = "https://www.bilibili.com/v/popular/rank/dance"
-    GAME = "https://www.bilibili.com/v/popular/rank/game"
-    KNOWLEDGE = "https://www.bilibili.com/v/popular/rank/knowledge"
-    TECHNOLOGY = "https://www.bilibili.com/v/popular/rank/tech"
-    SPORTS = "https://www.bilibili.com/v/popular/rank/sports"
-    CAR = "https://www.bilibili.com/v/popular/rank/car"
-    LIVE = "https://www.bilibili.com/v/popular/rank/life"
-    FOOD = "https://www.bilibili.com/v/popular/rank/food"
-    ANIMAL = "https://www.bilibili.com/v/popular/rank/animal"
-    KICHIKU = "https://www.bilibili.com/v/popular/rank/kichiku"
-    FASHION = "https://www.bilibili.com/v/popular/rank/fashion"
-    ENT = "https://www.bilibili.com/v/popular/rank/ent"
-    CINEPHILE = "https://www.bilibili.com/v/popular/rank/cinephile"
-    MOVIE = "https://www.bilibili.com/v/popular/rank/movie"
-    TV = "https://www.bilibili.com/v/popular/rank/tv"
-    VARIETY = "https://www.bilibili.com/v/popular/rank/variety"
-    ORIGINAL = "https://www.bilibili.com/v/popular/rank/origin"
-    ROOKIE = "https://www.bilibili.com/v/popular/rank/rookie"
-
+    ALL = {"api_type": RankAPIType.V2, "rid": 0, "type": "all"}
+    BANGUMI = {"api_type": RankAPIType.PGC, "season_type": 1}
+    GUOCHUAN_ANIME = {"api_type": RankAPIType.PGC, "season_type": 4}
+    GUOCHUANG = {"api_type": RankAPIType.V2, "rid": 168}
+    DOCUMENTARY = {"api_type": RankAPIType.V2, "rid": 177}
+    DOUGA = {"api_type": RankAPIType.V2, "rid": 1}
+    MUSIC = {"api_type": RankAPIType.V2, "rid": 3}
+    DANCE = {"api_type": RankAPIType.V2, "rid": 129}
+    GAME = {"api_type": RankAPIType.V2, "rid": 4}
+    KNOWLEDGE = {"api_type": RankAPIType.V2, "rid": 36}
+    TECHNOLOGY = {"api_type": RankAPIType.V2, "rid": 188}
+    SPORTS = {"api_type": RankAPIType.V2, "rid": 234}
+    CAR = {"api_type": RankAPIType.V2, "rid": 223}
+    FOOD = {"api_type": RankAPIType.V2, "rid": 211}
+    ANIMAL = {"api_type": RankAPIType.V2, "rid": 217}
+    KICHIKU = {"api_type": RankAPIType.V2, "rid": 119}
+    FASHION = {"api_type": RankAPIType.V2, "rid": 155}
+    ENT = {"api_type": RankAPIType.V2, "rid": 5}
+    CINEPHILE = {"api_type": RankAPIType.V2, "rid": 181}
+    MOVIE = {"api_type": RankAPIType.PGC, "season_type": 2}
+    TV = {"api_type": RankAPIType.PGC, "season_type": 3}
+    VARIETY = {"api_type": RankAPIType.PGC, "season_type": 7}
+    ORIGINAL = {"api_type": RankAPIType.V2, "rid": 0, "type": "origin"}
+    ROOKIE = {"api_type": RankAPIType.V2, "rid": 0, "type": "rookie"}
 
 
 async def get_hot_videos(pn: int = 1, ps: int = 20) -> dict:
@@ -127,20 +142,29 @@ async def get_history_popular_videos() -> dict:
     return await request("GET", url=api["url"], params=params)
 
 
-async def get_rank(type_: RankType = RankType.ALL) -> dict:
+async def get_rank(type_: RankType = RankType.ALL, day: RankDayType = RankDayType.THREE_DAY) -> dict:
     """
     获取视频排行榜
 
     Args:
         type_ (RankType): 排行榜类型. Defaults to RankType.ALL
+        day (RankDayType): 排行榜时间. Defaults to RankDayType.THREE_DAY 
+                           仅对 api_type 为 RankAPIType.PGC 有效
 
     Returns:
         dict: 调用 API 返回的结果
     """
-    if type_ != RankType.ALL:
-        return await get_initial_state(type_.value)
-    api = API["info"]["ranking"]
-    params = {"type": "all", "rid": 0}
+    params = type_.value
+
+    # 确定 API 接口类型
+
+    if type_.value["api_type"] == RankAPIType.V2:
+        api = API["info"]["v2-ranking"]
+    elif type_.value["api_type"] == RankAPIType.PGC:
+        api = API["info"]["pgc-ranking"]
+        params["day"] = day.value
+    del params["api_type"]
+
     return await request("GET", api["url"], params=params)
 
 
