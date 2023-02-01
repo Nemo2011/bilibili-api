@@ -185,7 +185,7 @@ class VideoDownloadURLDataDetecter:
                 video_stream = VideoStreamDownloadURL(
                     url=video_stream_url,
                     video_quality=video_stream_quality,
-                    video_codecs=video_stream_codecs
+                    video_codecs=video_stream_codecs # type: ignore
                 )
                 streams.append(video_stream)
             for audio_data in audios_data:
@@ -209,7 +209,7 @@ class VideoDownloadURLDataDetecter:
             if dolby_data:
                 if dolby_data["audio"]:
                     for dolby in dolby_data["audio"]:
-                        dolby_stream_url = flac["baseUrl"]
+                        dolby_stream_url = dolby["baseUrl"]
                         dolby_stream_quality = AudioQuality(dolby["id"])
                         dolby_stream = AudioStreamDownloadURL(
                             url=dolby_stream_url,
