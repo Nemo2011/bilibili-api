@@ -12,6 +12,7 @@
         },
         "list": {
             "url": "https://api.bilibili.com/pugv/view/web/ep/list",
+            "method": "GET", 
             "verify": false,
             "params": {
                 "season_id": "int: 季度 id，不与 bangumi 互通",
@@ -22,6 +23,7 @@
         },
         "playurl": {
             "url": "https://api.bilibili.com/pugv/player/web/playurl",
+            "method": "GET", 
             "verify": false,
             "params": {
                 "avid": "int: aid",

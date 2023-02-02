@@ -1,6 +1,7 @@
 {
     "info": {
         "url": "https://api.bilibili.com/x/credit/blocked/list",
+        "method": "GET", 
         "verify": false,
         "params": {
             "btype": "int: 违规来源",
@@ -11,6 +12,7 @@
     },
     "detail": {
         "url": "https://api.bilibili.com/x/credit/blocked/info",
+        "method": "GET", 
         "verify": false,
         "params": {
             "id": "小黑屋 id"

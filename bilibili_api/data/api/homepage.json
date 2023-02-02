@@ -2,6 +2,7 @@
     "info": {
         "top_photo": {
             "url": "https://api.bilibili.com/x/web-show/page/header",
+            "method": "GET",
             "params": {
                 "resource_id": "int: 142"
             },
@@ -10,6 +11,7 @@
         },
         "links": {
             "url": "https://api.bilibili.com/x/web-show/res/locs",
+            "method": "GET",
             "params": {
                 "pf": "int: 0",
                 "ids": "int: 4694"
@@ -19,6 +21,7 @@
         },
         "popularize": {
             "url": "https://api.bilibili.com/x/web-show/res/locs",
+            "method": "GET",
             "params": {
                 "pf": "int: 0",
                 "ids": "int: 34"
@@ -28,6 +31,7 @@
         },
         "videos": {
             "url": "https://api.bilibili.com/x/web-interface/index/top/rcmd",
+            "method": "GET",
             "verify": false,
             "comment": "获取主页推荐的视频"
         }
