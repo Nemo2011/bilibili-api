@@ -278,6 +278,35 @@ class VideoDownloadURLDataDetecter:
                         streams.append(dolby_stream)
             return streams
 
+    def detect_best_streams(self) -> \
+        Union[
+            List[FLVStreamDownloadURL],
+            List[HTML5MP4DownloadURL],
+            List[Union[VideoStreamDownloadURL, AudioStreamDownloadURL]]
+        ]:
+        """
+        提取出分辨率、音质等信息最好的音视频流
+
+        Returns:
+            List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: 所有的视频/音频流
+        """
+        if self.check_flv_stream():
+            return self.detect_all() # type: ignore
+        elif self.check_html5_mp4_stream():
+            return self.detect_all() # type: ignore
+        else:
+            data = self.detect_all()
+            video_streams = []
+            audio_streams = []
+            for stream in data:
+                if isinstance(stream, VideoStreamDownloadURL):
+                    video_streams.append(stream)
+                if isinstance(stream, AudioStreamDownloadURL):
+                    audio_streams.append(stream)
+            video_streams.sort(key=lambda s: s.video_quality.value, reverse=True)
+            audio_streams.sort(key=lambda s: s.audio_quality.value, reverse=True)
+            return [video_streams[0], audio_streams[0]]
+
 
 class DanmakuOperatorType(Enum):
     DELETE = 1
