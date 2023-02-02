@@ -4,35 +4,53 @@
 from bilibili_api import rank
 ```
 
+## class RankAPIType
+
+**Extends:enum.Enum**
+
+排行榜 API 接口类型
+
+- PGC: https://api.bilibili.com/pgc/web/rank/list
+- V2: https://api.bilibili.com/x/web-interface/ranking/v2
+
+## class RankDayType
+
+**Extends:enum.Enum**
+
+排行榜时间类型
+
+- THREE_DAY: 三日排行
+- WEEK: 周排行
+
 ## class RankType
 
 排行榜类型
 
-- ALL: 全部
-- BANGUMI: 番剧
-- GUOCHUAN_ANIME: 国产动画
-- GUOCHUANG: 国创番剧
-- DOCUMENTARY: 纪录片
-- DOUGA: 动画
-- MUSIC: 音乐
-- DANCE: 舞蹈
-- GAME: 游戏
-- KNOWLEDGE: 知识
-- TECHNOLOGY: 科技
-- SPORTS: 运动
-- CAR: 汽车
-- LIVE: 直播
-- FOOD: 美食
-- ANIMAL: 动物圈
-- KICHIKU: 鬼畜
-- FASHION: 时尚
-- ENT: 娱乐
-- CINEPHILE: 影视
-- MOVIE: 电影
+- All: 全部
+- Bangumi: 番剧
+- GuochuanAnime: 国产动画
+- Guochuang: 国创相关
+- Documentary: 纪录片
+- Douga: 动画
+- Music: 音乐
+- Dance: 舞蹈
+- Game: 游戏
+- Knowledge: 知识
+- Technology: 科技
+- Sports: 运动
+- Car: 汽车
+- Life: 生活
+- Food: 美食
+- Animal: 动物圈
+- Kitchen: 鬼畜
+- Fashion: 时尚
+- Ent: 娱乐
+- Cinephile: 影视
+- Movie: 电影
 - TV: 电视剧
-- VARIETY: 综艺
-- ORIGINAL: 原创
-- ROOKIE: 新人
+- Variety: 综艺
+- Original: 原创
+- Rookie: 新人
 
 ## async def get_hot_videos()
 
@@ -72,6 +90,7 @@ from bilibili_api import rank
 | name | type | description |
 | ---- | ---- | ----------- |
 | type_ | RankType | 排行榜类型. Defaults to RankType.ALL |
+| day | RankDayType | 时间类型. Defaults to RankDayType.THREE_DAY |
 
 获取视频排行榜
 

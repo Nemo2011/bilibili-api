@@ -16,7 +16,7 @@ API = get_api("rank")
 
 class RankAPIType(Enum):
     """
-    排行榜 API 接口类型判断
+    排行榜 API 接口类型
 
     - PGC: https://api.bilibili.com/pgc/web/rank/list
     - V2: https://api.bilibili.com/x/web-interface/ranking/v2
@@ -28,6 +28,9 @@ class RankAPIType(Enum):
 class RankDayType(Enum):
     """
     RankAPIType.PGC 排行榜时间类型
+
+    - THREE_DAY: 三日排行
+    - WEEK: 周排行
     """
     THREE_DAY = 3
     WEEK = 7
