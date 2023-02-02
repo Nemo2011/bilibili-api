@@ -1,4 +1,4 @@
-+ [主页](/)
++ [主页](/homepage.md)
 + [获取 Credential 类所需信息](/get-credential.md)
 + [`.ivi` 文件和 `ivitools` 相关](/ivifile.md)
 + [获取 vote_id](/vote_id.md)
