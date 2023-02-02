@@ -72,6 +72,14 @@
                 "list_id": "int: 第几周"
             }, 
             "comment": "获取全站音乐榜一周的音频列表"
+        },
+        "VIP_rank":{
+            "url": "https://api.bilibili.com/x/vip/vip_center/hotlist?=279",
+            "verify": false,
+            "params":{
+                "rank_id": "int: 排行榜 rank_id"
+            },
+            "comment":"获取大会员中心的新热榜单"
         }
     }
 }

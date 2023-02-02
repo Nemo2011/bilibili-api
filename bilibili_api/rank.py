@@ -244,6 +244,26 @@ class RankType:
         rid = 0
         type = "rookie"
 
+class VIPRankType(Enum):
+    """
+    大会员中心热播榜单类型，即 rank_id
+
+    - VIP: 会员
+    - BANGUMI: 番剧
+    - GUOCHUANG: 国创
+    - MOVIE: 电影
+    - DOCUMENTARY: 纪录片
+    - TV: 电视剧
+    - VARIETY: 综艺
+    """
+    VIP = 279
+    BANGUMI = 118
+    GUOCHUANG = 119
+    MOVIE = 174
+    DOCUMENTARY = 175
+    TV = 176
+    VARIETY = 177
+
 async def get_hot_videos(pn: int = 1, ps: int = 20) -> dict:
     """
     获取热门视频
@@ -363,4 +383,18 @@ async def get_music_rank_weakly_musics(week: int = 1) -> dict:
     """
     api = API["info"]["music_weakly_content"]
     params = {"list_id": week}
+    return await request("GET", api["url"], params=params)
+
+async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
+    """
+    获取大会员中心的排行榜
+
+    Args:
+        type_ (VIPRankType): 排行榜类型. Defaults to VIPRankType.VIP
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["VIP_rank"]
+    params = {"rank_id": type_.value}
     return await request("GET", api["url"], params=params)

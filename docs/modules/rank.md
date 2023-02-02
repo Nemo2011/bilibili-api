@@ -52,6 +52,18 @@ from bilibili_api import rank
 - Original: 原创
 - Rookie: 新人
 
+## class VIPRankType
+
+大会员中心热播榜单类型，即 rank_id
+
+- VIP: 会员
+- BANGUMI: 番剧
+- GUOCHUANG: 国创
+- MOVIE: 电影
+- DOCUMENTARY: 纪录片
+- TV: 电视剧
+- VARIETY: 综艺
+
 ## async def get_hot_videos()
 
 获取热门视频
@@ -119,5 +131,15 @@ from bilibili_api import rank
 | week | int | 第几周 |
 
 获取全站音乐榜一周的音频列表
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_vip_rank()
+
+| name | type | description |
+| - | - | - |
+| type_ | RankType | 排行榜类型. Defaults to RankType.VIP |
+
+获取大会员中心的排行榜
 
 **Returns:** dict: 调用 API 返回的结果
