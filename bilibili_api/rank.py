@@ -314,10 +314,10 @@ async def get_rank(type_: RankType = RankType.All, day: RankDayType = RankDayTyp
 
     # 确定 API 接口类型
     if type_.api_type == RankAPIType.V2:
-        api = API["info"]["v2-ranking"]
+        api = API["info"]["v2_ranking"]
         params["rid"] = type_.rid
     elif type_.api_type == RankAPIType.PGC:
-        api = API["info"]["pgc-ranking"]
+        api = API["info"]["pgc_ranking"]
         params["season_type"] = type_.season_type
         params["day"] = day.value
 

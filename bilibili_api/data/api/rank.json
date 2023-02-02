@@ -31,7 +31,7 @@
             },
             "comment": "获取入站必刷 85 个视频"
         },
-        "v2-ranking": {
+        "v2_ranking": {
             "url": "https://api.bilibili.com/x/web-interface/ranking/v2",
             "verify": false,
             "params": {
@@ -40,7 +40,7 @@
             },
             "comment": "获取各个分区的排行榜"
         },
-        "pgc-ranking": {
+        "pgc_ranking": {
             "url": "https://api.bilibili.com/pgc/web/rank/list",
             "verify": false,
             "params": {
