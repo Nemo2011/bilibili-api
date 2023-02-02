@@ -16,6 +16,7 @@
     "check_nickname": {
       "url": "https://passport.bilibili.com/web/generic/check/nickname",
       "method": "GET",
+      "verify": false,
       "params": {
         "nickName": "string: 昵称"
       },

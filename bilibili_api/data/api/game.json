@@ -3,6 +3,7 @@
     "info": {
       "url": "https://line1-h5-pc-api.biligame.com/game/detail/gameinfo",
       "method": "GET",
+      "verify": false,
       "params": {
         "game_base_id": "游戏 id"
       },
@@ -11,6 +12,7 @@
     "UP": {
       "url": "https://line1-h5-pc-api.biligame.com/game/detail/account",
       "method": "GET",
+      "verify": false,
       "params": {
         "game_base_id": "游戏 id"
       },
@@ -19,6 +21,7 @@
     "detail": {
       "url": "https://line1-h5-pc-api.biligame.com/game/detail/content",
       "method": "GET",
+      "verify": false,
       "params": {
         "game_base_id": "游戏 id"
       },
@@ -27,6 +30,7 @@
     "wiki": {
       "url": "https://line1-h5-pc-api.biligame.com/game/detail/wiki",
       "method": "GET",
+      "verify": false,
       "params": {
         "game_base_id": "游戏 id"
       },

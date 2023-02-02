@@ -1,6 +1,8 @@
 {
     "list": {
         "url": "https://api.bilibili.com/x/emote/user/panel/web", 
+        "method": "GET",
+        "verify": false,
         "params": {
             "business": "使用场景 reply/dynamic"
         }, 
