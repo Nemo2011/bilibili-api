@@ -1,4 +1,4 @@
-# 示例：新建验证码窗口 (pyqt5)
+# 示例：新建验证码窗口 (PyQt5)
 
 ``` python
 
@@ -31,9 +31,7 @@ class Ui_Geetest(object):
         Geetest.setWindowTitle(_translate("Geetest", "极验验证"))
 ```
 
-# ~~示例：二维码登陆（PyQt5）~~
-
-!> 因函数接口进行了优化，发生了改变，此示例在 `v15+` 中已失效
+# 示例：二维码登陆窗口 (PyQt5)
 
 ``` python
 import json
@@ -63,7 +61,9 @@ class Ui_Login(object):
         self.retranslateUi(Login)
 
         qrcode_data = login_func.get_qrcode()
-        self.label_5.setPixmap(QtGui.QPixmap(qrcode_data[0]))
+        self.pixmap = QtGui.QPixmap()
+        self.pixmap.loadFromData(qrcode_data[0].content, qrcode_data[0].imageType)
+        self.label_5.setPixmap(self.pixmap)
         self.label_5.setScaledContents(True)
         self.qrcode_sec = qrcode_data[1]
 
@@ -94,11 +94,11 @@ class Ui_Login(object):
                 elif events[0] == login_func.QrCodeLoginEvents.DONE:
                     self.label_2.setText(_translate("Login", "🟢二维码登录"))
                     credential = events[1]
-                    self_info = sync(user.get_self_info(credential))
+                    self_info = sync(user.get_self_info(credential)) # type: ignore
                     reply = QtWidgets.QMessageBox.information(
                         Login,
-                        "已成功登录到你的帐号",  
-                        "欢迎：" + self_info['name'],  
+                        "已成功登录到你的帐号",
+                        "欢迎：" + self_info['name'],
                         QtWidgets.QMessageBox.Ok
                     )
                     Login.close()

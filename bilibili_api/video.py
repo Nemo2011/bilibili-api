@@ -138,6 +138,20 @@ class FLVStreamDownloadURL:
     url: str
 
 
+@dataclass
+class HTML5MP4DownloadURL:
+    """
+    (@dataclass)
+
+    可供 HTML5 播放的 mp4 视频流
+
+    Attributes:
+        url           (str): HTML5 mp4 视频流
+    """
+    url: str
+
+
+
 class VideoDownloadURLDataDetecter:
     """
     `Video.get_download_url` 返回结果解析类。
@@ -157,17 +171,63 @@ class VideoDownloadURLDataDetecter:
         """
         self.__data = data
 
+    def check_video_and_audio_stream(self) -> bool:
+        """
+        判断是否为音视频分离流
+
+        Returns:
+            bool: 是否为音视频分离流
+        """
+        if "dash" in self.__data.keys():
+            return True
+        return False
+
+    def check_flv_stream(self) -> bool:
+        """
+        判断是否为 FLV 视频流
+
+        Returns:
+            bool: 是否为 FLV 视频流
+        """
+        if "durl" in self.__data.keys():
+            if self.__data["format"].startswith("flv"):
+                return True
+        return False
+
+    def check_html5_mp4_stream(self) -> bool:
+        """
+        判断是否为 HTML5 可播放的 mp4 视频流
+
+        Returns:
+            bool: 是否为 HTML5 可播放的 mp4 视频流
+        """
+        if "durl" in self.__data.keys():
+            if self.__data["format"].startswith("mp4"):
+                return True
+        return False
+
     def detect_all(self) -> \
         List[
             Union[
                 VideoStreamDownloadURL,
                 AudioStreamDownloadURL,
-                FLVStreamDownloadURL
+                FLVStreamDownloadURL,
+                HTML5MP4DownloadURL
             ]
         ]:
+        """
+        解析数据
+
+        Returns:
+            List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: 所有的视频/音频流
+        """
         if "durl" in self.__data.keys():
-            # FLV 视频流
-            return [FLVStreamDownloadURL(url = self.__data["durl"][0]["url"])]
+            if self.__data["format"].startswith("flv"):
+                # FLV 视频流
+                return [FLVStreamDownloadURL(url = self.__data["durl"][0]["url"])]
+            else:
+                # HTML5 MP4 视频流
+                return [HTML5MP4DownloadURL(url = self.__data["durl"][0]["url"])]
         else:
             # 正常情况
             streams = []
