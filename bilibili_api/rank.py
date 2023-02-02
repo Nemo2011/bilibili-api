@@ -9,69 +9,260 @@ https://www.bilibili.com/v/popular/all
 
 from .utils.network_httpx import request
 from .utils.utils import get_api
-from .utils.initial_state import get_initial_state
 from enum import Enum
 
 API = get_api("rank")
 
 
-class RankType(Enum):
+class RankAPIType(Enum):
+    """
+    排行榜 API 接口类型
+
+    - PGC: https://api.bilibili.com/pgc/web/rank/list
+    - V2: https://api.bilibili.com/x/web-interface/ranking/v2
+    """
+    PGC = "pgc"
+    V2 = "x"
+
+
+class RankDayType(Enum):
+    """
+    RankAPIType.PGC 排行榜时间类型
+
+    - THREE_DAY: 三日排行
+    - WEEK: 周排行
+    """
+    THREE_DAY = 3
+    WEEK = 7
+
+
+class RankType:
     """
     排行榜类型
 
-    - ALL: 全部
+    - All: 全部
+    - Bangumi: 番剧
+    - GuochuanAnime: 国产动画
+    - Guochuang: 国创相关
+    - Documentary: 纪录片
+    - Douga: 动画
+    - Music: 音乐
+    - Dance: 舞蹈
+    - Game: 游戏
+    - Knowledge: 知识
+    - Technology: 科技
+    - Sports: 运动
+    - Car: 汽车
+    - Life: 生活
+    - Food: 美食
+    - Animal: 动物圈
+    - Kitchen: 鬼畜
+    - Fashion: 时尚
+    - Ent: 娱乐
+    - Cinephile: 影视
+    - Movie: 电影
+    - TV: 电视剧
+    - Variety: 综艺
+    - Original: 原创
+    - Rookie: 新人
+    """
+    class All:
+        """
+        全部
+        """
+        api_type = RankAPIType.V2
+        rid = 0
+        type = "all"
+
+    class Bangumi:
+        """
+        番剧
+        """
+        api_type = RankAPIType.PGC
+        season_type = 1
+
+    class GuochuanAnime:
+        """
+        国产动画
+        """
+        api_type = RankAPIType.PGC
+        season_type = 4
+
+    class Guochuang:
+        """
+        国创相关
+        """
+        api_type = RankAPIType.V2
+        rid = 168
+
+    class Documentary:
+        """
+        纪录片
+        """
+        api_type = RankAPIType.PGC
+        season_type = 3
+
+    class Douga:
+        """
+        动画
+        """
+        api_type = RankAPIType.V2
+        rid = 1
+
+    class Music:
+        """
+        音乐
+        """
+        api_type = RankAPIType.V2
+        rid = 3
+
+    class Dance:
+        """
+        舞蹈
+        """
+        api_type = RankAPIType.V2
+        rid = 129
+
+    class Game:
+        """
+        游戏
+        """
+        api_type = RankAPIType.V2
+        rid = 4
+
+    class Knowledge:
+        """
+        知识
+        """
+        api_type = RankAPIType.V2
+        rid = 36
+
+    class Technology:
+        """
+        科技
+        """
+        api_type = RankAPIType.V2
+        rid = 188
+
+    class Sports:
+        """
+        运动
+        """
+        api_type = RankAPIType.V2
+        rid = 234
+
+    class Car:
+        """
+        汽车
+        """
+        api_type = RankAPIType.V2
+        rid = 223
+    
+    class Life:
+        """
+        生活
+        """
+        api_type = RankAPIType.V2
+        rid = 160
+
+    class Food:
+        """
+        美食
+        """
+        api_type = RankAPIType.V2
+        rid = 211
+
+    class Animal:
+        """
+        动物圈
+        """
+        api_type = RankAPIType.V2
+        rid = 217
+
+    class Kitchen:
+        """
+        鬼畜
+        """
+        api_type = RankAPIType.V2
+        rid = 119
+
+    class Fashion:
+        """
+        时尚
+        """
+        api_type = RankAPIType.V2
+        rid = 155
+
+    class Ent:
+        """
+        娱乐
+        """
+        api_type = RankAPIType.V2
+        rid = 5
+
+    class Cinephile:
+        """
+        影视
+        """
+        api_type = RankAPIType.V2
+        rid = 181
+    
+    class Movie:
+        """
+        电影
+        """
+        api_type = RankAPIType.PGC
+        season_type = 2
+
+    class TV:
+        """
+        电视剧
+        """
+        api_type = RankAPIType.PGC
+        season_type = 5
+
+    class Variety:
+        """
+        综艺
+        """
+        api_type = RankAPIType.PGC
+        season_type = 7
+
+    class Original:
+        """
+        原创
+        """
+        api_type = RankAPIType.V2
+        rid = 0
+        type = "origin"
+    
+    class Rookie:
+        """
+        新人
+        """
+        api_type = RankAPIType.V2
+        rid = 0
+        type = "rookie"
+
+class VIPRankType(Enum):
+    """
+    大会员中心热播榜单类型，即 rank_id
+
+    - VIP: 会员
     - BANGUMI: 番剧
-    - GUOCHUAN_ANIME: 国产动画
-    - GUOCHUANG: 国创番剧
-    - DOCUMENTARY: 纪录片
-    - DOUGA: 动画
-    - MUSIC: 音乐
-    - DANCE: 舞蹈
-    - GAME: 游戏
-    - KNOWLEDGE: 知识
-    - TECHNOLOGY: 科技
-    - SPORTS: 运动
-    - CAR: 汽车
-    - LIVE: 直播
-    - FOOD: 美食
-    - ANIMAL: 动物圈
-    - KICHIKU: 鬼畜
-    - FASHION: 时尚
-    - ENT: 娱乐
-    - CINEPHILE: 影视
+    - GUOCHUANG: 国创
     - MOVIE: 电影
+    - DOCUMENTARY: 纪录片
     - TV: 电视剧
     - VARIETY: 综艺
-    - ORIGINAL: 原创
-    - ROOKIE: 新人
     """
-    ALL = None
-    BANGUMI = "https://www.bilibili.com/v/popular/rank/bangumi"
-    GUOCHUAN_ANIME = "https://www.bilibili.com/v/popular/rank/guochan"
-    GUOCHUANG = "https://www.bilibili.com/v/popular/rank/guochuang"
-    DOCUMENTARY = "https://www.bilibili.com/v/popular/rank/documentary"
-    DOUGA = "https://www.bilibili.com/v/popular/rank/douga"
-    MUSIC = "https://www.bilibili.com/v/popular/rank/music"
-    DANCE = "https://www.bilibili.com/v/popular/rank/dance"
-    GAME = "https://www.bilibili.com/v/popular/rank/game"
-    KNOWLEDGE = "https://www.bilibili.com/v/popular/rank/knowledge"
-    TECHNOLOGY = "https://www.bilibili.com/v/popular/rank/tech"
-    SPORTS = "https://www.bilibili.com/v/popular/rank/sports"
-    CAR = "https://www.bilibili.com/v/popular/rank/car"
-    LIVE = "https://www.bilibili.com/v/popular/rank/life"
-    FOOD = "https://www.bilibili.com/v/popular/rank/food"
-    ANIMAL = "https://www.bilibili.com/v/popular/rank/animal"
-    KICHIKU = "https://www.bilibili.com/v/popular/rank/kichiku"
-    FASHION = "https://www.bilibili.com/v/popular/rank/fashion"
-    ENT = "https://www.bilibili.com/v/popular/rank/ent"
-    CINEPHILE = "https://www.bilibili.com/v/popular/rank/cinephile"
-    MOVIE = "https://www.bilibili.com/v/popular/rank/movie"
-    TV = "https://www.bilibili.com/v/popular/rank/tv"
-    VARIETY = "https://www.bilibili.com/v/popular/rank/variety"
-    ORIGINAL = "https://www.bilibili.com/v/popular/rank/origin"
-    ROOKIE = "https://www.bilibili.com/v/popular/rank/rookie"
-
-
+    VIP = 279
+    BANGUMI = 118
+    GUOCHUANG = 119
+    MOVIE = 174
+    DOCUMENTARY = 175
+    TV = 176
+    VARIETY = 177
 
 async def get_hot_videos(pn: int = 1, ps: int = 20) -> dict:
     """
@@ -127,20 +318,29 @@ async def get_history_popular_videos() -> dict:
     return await request("GET", url=api["url"], params=params)
 
 
-async def get_rank(type_: RankType = RankType.ALL) -> dict:
+async def get_rank(type_: RankType = RankType.All, day: RankDayType = RankDayType.THREE_DAY) -> dict:
     """
     获取视频排行榜
 
     Args:
         type_ (RankType): 排行榜类型. Defaults to RankType.ALL
+        day (RankDayType): 排行榜时间. Defaults to RankDayType.THREE_DAY 
+                           仅对 api_type 为 RankAPIType.PGC 有效
 
     Returns:
         dict: 调用 API 返回的结果
     """
-    if type_ != RankType.ALL:
-        return await get_initial_state(type_.value)
-    api = API["info"]["ranking"]
-    params = {"type": "all", "rid": 0}
+    params = {}
+
+    # 确定 API 接口类型
+    if type_.api_type == RankAPIType.V2:
+        api = API["info"]["v2_ranking"]
+        params["rid"] = type_.rid
+    elif type_.api_type == RankAPIType.PGC:
+        api = API["info"]["pgc_ranking"]
+        params["season_type"] = type_.season_type
+        params["day"] = day.value
+
     return await request("GET", api["url"], params=params)
 
 
@@ -183,4 +383,18 @@ async def get_music_rank_weakly_musics(week: int = 1) -> dict:
     """
     api = API["info"]["music_weakly_content"]
     params = {"list_id": week}
+    return await request("GET", api["url"], params=params)
+
+async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
+    """
+    获取大会员中心的排行榜
+
+    Args:
+        type_ (VIPRankType): 排行榜类型. Defaults to VIPRankType.VIP
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["VIP_rank"]
+    params = {"rank_id": type_.value}
     return await request("GET", api["url"], params=params)
