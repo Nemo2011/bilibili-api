@@ -1,7 +1,7 @@
 # bilibili_api.rank
 
 from bilibili_api import rank
-from bilibili_api.rank import RankType, RankDayType
+from bilibili_api.rank import RankType, RankDayType, VIPRankType
 
 
 async def test_a_get_rank():
@@ -62,3 +62,15 @@ async def test_g_music_rank_weakly_details():
 
 async def test_h_music_rank_weakly_contents():
     return await rank.get_music_rank_weakly_musics(1)
+
+async def test_i_get_vip_rank():
+    need_test_ranks = [VIPRankType.VIP,
+                    VIPRankType.MOVIE,
+                    VIPRankType.TV,
+                    VIPRankType.VARIETY,
+                    VIPRankType.BANGUMI,
+                    VIPRankType.GUOCHUANG,
+                    VIPRankType.DOCUMENTARY
+                ]
+    for rank_type in need_test_ranks:
+        await rank.get_vip_rank(rank_type)
