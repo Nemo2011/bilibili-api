@@ -90,6 +90,30 @@
                 "rank_id": "int: 排行榜 rank_id"
             },
             "comment":"获取大会员中心的新热榜单"
+        },
+        "manga_rank_type": {
+            "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ListRank",
+            "method": "POST",
+            "verify": false,
+            "params": {
+                "device": "str: 设备",
+                "platform": "str: 平台"
+            },
+            "data": {},
+            "comment": "获取漫画排行榜类型，data 字段为空字典"
+        },
+        "manga_rank":{
+            "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetRankInfo",
+            "method": "POST", 
+            "verify": false,
+            "params":{
+                "device": "str: 设备",
+                "platform": "str: 平台"
+            },
+            "data":{
+                "id": "int: 排行榜 id"
+            },
+            "comment":"获取漫画排行榜"
         }
     }
 }
