@@ -64,6 +64,22 @@ from bilibili_api import rank
 - TV: 电视剧
 - VARIETY: 综艺
 
+## class MangaRankType
+
+**Extends:enum.Enum**
+
+漫画排行榜类型
+
+- NEW: 新作
+- BOY: 男生
+- GRIL: 女生
+- GUOCHUANG: 国漫
+- JAPAN: 日漫
+- SOUTHKOREA: 韩漫
+- OFFICAL: 宝藏
+- FREE: 免费
+- FINISH: 完结
+
 ## async def get_hot_videos()
 
 获取热门视频
@@ -141,5 +157,15 @@ from bilibili_api import rank
 | type_ | RankType | 排行榜类型. Defaults to RankType.VIP |
 
 获取大会员中心的排行榜
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_manga_rank()
+
+| name | type | description |
+| - | - | - |
+| type_ | MangaRankType | 漫画排行榜类型. Defaults to MangaRankType.NEW |
+
+获取漫画专属排行榜
 
 **Returns:** dict: 调用 API 返回的结果

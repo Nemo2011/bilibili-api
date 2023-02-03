@@ -264,6 +264,30 @@ class VIPRankType(Enum):
     TV = 176
     VARIETY = 177
 
+class MangeRankType(Enum):
+    """
+    漫画排行榜类型
+
+    - NEW: 新作
+    - BOY: 男生
+    - GRIL: 女生
+    - GUOCHUANG: 国漫
+    - JAPAN: 日漫
+    - SOUTHKOREA: 韩漫
+    - OFFICAL: 宝藏
+    - FREE: 免费
+    - FINISH: 完结
+    """
+    NEW = 7
+    BOY = 11
+    GRIL = 12
+    GUOCHUANG = 1
+    JAPAN = 0
+    SOUTHKOREA = 2
+    OFFICAL = 5
+    FREE = 8
+    FINISH = 13
+
 async def get_hot_videos(pn: int = 1, ps: int = 20) -> dict:
     """
     获取热门视频
@@ -398,3 +422,15 @@ async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
     api = API["info"]["VIP_rank"]
     params = {"rank_id": type_.value}
     return await request("GET", api["url"], params=params)
+
+async def get_manga_rank(type_ : MangeRankType = MangeRankType.NEW) -> dict:
+    """
+    获取漫画专属排行榜
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["manga_rank"]
+    params = {"device": "pc","platform": "web"}
+    data = {"id": type_.value}
+    return await request("POST", api["url"], params=params, data=data, no_csrf=True)

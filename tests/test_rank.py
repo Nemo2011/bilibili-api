@@ -1,7 +1,7 @@
 # bilibili_api.rank
 
 from bilibili_api import rank
-from bilibili_api.rank import RankType, RankDayType, VIPRankType
+from bilibili_api.rank import RankType, RankDayType, VIPRankType, MangeRankType
 
 
 async def test_a_get_rank():
@@ -73,3 +73,6 @@ async def test_i_get_vip_rank():
                        VIPRankType.DOCUMENTARY
                        ]
     return [await rank.get_vip_rank(rank_type) for rank_type in need_test_ranks]
+
+async def test_j_get_manga_rank():
+    return [await rank.get_manga_rank(rank_type) for rank_type in MangeRankType]
