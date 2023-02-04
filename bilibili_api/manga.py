@@ -335,8 +335,17 @@ async def get_raw_manga_index(area: MangaIndexFilter.Area = MangaIndexFilter.Are
     """
     获取漫画索引
 
+    Args:
+        area    (MangaIndexFilter.Area)   : 地区。Defaults to MangaIndexFilter.Area.ALL.
+        order   (MangaIndexFilter.Order)  : 排序。Defaults to MangaIndexFilter.Order.HOT.
+        status  (MangaIndexFilter.Status) : 状态。Defaults to MangaIndexFilter.Status.ALL.
+        payment (MangaIndexFilter.Payment): 支付。Defaults to MangaIndexFilter.Payment.ALL.
+        style   (MangaIndexFilter.Style)  : 风格。Defaults to MangaIndexFilter.Style.ALL.
+        pn      (int)                     : 页码。Defaults to 1.
+        ps      (int)                     : 每页数量。Defaults to 18.
+
     Returns:
-        dict: 调用 API 返回的结果
+        list: 调用 API 返回的结果
     """
     api = API["info"]["index"]
     params = {"device": "pc", "platform": "web"}
