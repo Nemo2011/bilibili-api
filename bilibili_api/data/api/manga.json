@@ -35,6 +35,31 @@
         "urls": "str: 内容如下：[\"图片链接\"]"
       },
       "comment": "获取漫画单张图片的 token"
+    },
+    "index": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ClassPage",
+      "method": "POST",
+      "verify": false,
+      "params": {
+        "device": "str: 设备",
+        "platform": "str: 平台"
+      },
+      "data": {
+        "area_id": "int: 地区 id",
+        "style_id": "int: 风格 id",
+        "is_finish": "int: 是否完结",
+        "order": "int: 排序方式",
+        "page_num": "int: 页码",
+        "page_size": "int: 每页数量",
+        "is_free": "int: 是否免费"
+      },
+      "comment": "获取漫画索引"
+    },
+    "index_params": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/AllLabel?device=pc&platform=web",
+      "method": "POST",
+      "verify": false,
+      "comment": "获取漫画索引的参数"
     }
   },
   "operate": {
