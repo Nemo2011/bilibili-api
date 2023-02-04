@@ -35,14 +35,13 @@ class RankDayType(Enum):
     THREE_DAY = 3
     WEEK = 7
 
-
-class RankType:
+class RankType(Enum):
     """
     排行榜类型
 
     - All: 全部
     - Bangumi: 番剧
-    - GuochuanAnime: 国产动画
+    - GuochuangAnime: 国产动画
     - Guochuang: 国创相关
     - Documentary: 纪录片
     - Douga: 动画
@@ -66,183 +65,32 @@ class RankType:
     - Original: 原创
     - Rookie: 新人
     """
-    class All:
-        """
-        全部
-        """
-        api_type = RankAPIType.V2
-        rid = 0
-        type = "all"
+    All = {"api_type": "x", "rid": 0, "type": "all"}
+    Bangumi = {"api_type": "pgc", "season_type": 1}
+    GuochuangAnime = {"api_type": "pgc", "season_type": 4}
+    Guochuang = {"api_type": "x", "rid": 168, "type": "all"}
+    Documentary = {"api_type": "pgc", "season_type": 3}
+    Douga = {"api_type": "x", "rid": 1, "type": "all"}
+    Music = {"api_type": "x", "rid": 3, "type": "all"}
+    Dance = {"api_type": "x", "rid": 129, "type": "all"}
+    Game = {"api_type": "x", "rid": 4, "type": "all"}
+    Knowledge = {"api_type": "x", "rid": 36, "type": "all"}
+    Technology = {"api_type": "x", "rid": 188, "type": "all"}
+    Sports = {"api_type": "x", "rid": 234, "type": "all"}
+    Car = {"api_type": "x", "rid": 223, "type": "all"}
+    Life = {"api_type": "x", "rid": 160, "type": "all"}
+    Food = {"api_type": "x", "rid": 211, "type": "all"}
+    Animal = {"api_type": "x", "rid": 217, "type": "all"}
+    Kichiku = {"api_type": "x", "rid": 119, "type": "all"}
+    Fashion = {"api_type": "x", "rid": 155, "type": "all"}
+    Ent = {"api_type": "x", "rid": 5, "type": "all"}
+    Cinephile = {"api_type": "x", "rid": 181, "type": "all"}
+    Movie = {"api_type": "pgc", "season_type": 2}
+    TV = {"api_type": "pgc", "season_type": 5}
+    Variety = {"api_type": "pgc", "season_type": 7}
+    Original = {"api_type": "x", "rid": 0, "type": "origin"}
+    Rookie = {"api_type": "x", "rid": 0, "type": "rookie"}
 
-    class Bangumi:
-        """
-        番剧
-        """
-        api_type = RankAPIType.PGC
-        season_type = 1
-
-    class GuochuanAnime:
-        """
-        国产动画
-        """
-        api_type = RankAPIType.PGC
-        season_type = 4
-
-    class Guochuang:
-        """
-        国创相关
-        """
-        api_type = RankAPIType.V2
-        rid = 168
-
-    class Documentary:
-        """
-        纪录片
-        """
-        api_type = RankAPIType.PGC
-        season_type = 3
-
-    class Douga:
-        """
-        动画
-        """
-        api_type = RankAPIType.V2
-        rid = 1
-
-    class Music:
-        """
-        音乐
-        """
-        api_type = RankAPIType.V2
-        rid = 3
-
-    class Dance:
-        """
-        舞蹈
-        """
-        api_type = RankAPIType.V2
-        rid = 129
-
-    class Game:
-        """
-        游戏
-        """
-        api_type = RankAPIType.V2
-        rid = 4
-
-    class Knowledge:
-        """
-        知识
-        """
-        api_type = RankAPIType.V2
-        rid = 36
-
-    class Technology:
-        """
-        科技
-        """
-        api_type = RankAPIType.V2
-        rid = 188
-
-    class Sports:
-        """
-        运动
-        """
-        api_type = RankAPIType.V2
-        rid = 234
-
-    class Car:
-        """
-        汽车
-        """
-        api_type = RankAPIType.V2
-        rid = 223
-    
-    class Life:
-        """
-        生活
-        """
-        api_type = RankAPIType.V2
-        rid = 160
-
-    class Food:
-        """
-        美食
-        """
-        api_type = RankAPIType.V2
-        rid = 211
-
-    class Animal:
-        """
-        动物圈
-        """
-        api_type = RankAPIType.V2
-        rid = 217
-
-    class Kitchen:
-        """
-        鬼畜
-        """
-        api_type = RankAPIType.V2
-        rid = 119
-
-    class Fashion:
-        """
-        时尚
-        """
-        api_type = RankAPIType.V2
-        rid = 155
-
-    class Ent:
-        """
-        娱乐
-        """
-        api_type = RankAPIType.V2
-        rid = 5
-
-    class Cinephile:
-        """
-        影视
-        """
-        api_type = RankAPIType.V2
-        rid = 181
-    
-    class Movie:
-        """
-        电影
-        """
-        api_type = RankAPIType.PGC
-        season_type = 2
-
-    class TV:
-        """
-        电视剧
-        """
-        api_type = RankAPIType.PGC
-        season_type = 5
-
-    class Variety:
-        """
-        综艺
-        """
-        api_type = RankAPIType.PGC
-        season_type = 7
-
-    class Original:
-        """
-        原创
-        """
-        api_type = RankAPIType.V2
-        rid = 0
-        type = "origin"
-    
-    class Rookie:
-        """
-        新人
-        """
-        api_type = RankAPIType.V2
-        rid = 0
-        type = "rookie"
 
 class VIPRankType(Enum):
     """
@@ -347,8 +195,8 @@ async def get_rank(type_: RankType = RankType.All, day: RankDayType = RankDayTyp
     获取视频排行榜
 
     Args:
-        type_ (RankType): 排行榜类型. Defaults to RankType.ALL
-        day (RankDayType): 排行榜时间. Defaults to RankDayType.THREE_DAY 
+        type_ (RankType): 排行榜类型. Defaults to RankType.All
+        day (RankDayType): 排行榜时间. Defaults to RankDayType.THREE_DAY
                            仅对 api_type 为 RankAPIType.PGC 有效
 
     Returns:
@@ -357,13 +205,15 @@ async def get_rank(type_: RankType = RankType.All, day: RankDayType = RankDayTyp
     params = {}
 
     # 确定 API 接口类型
-    if type_.api_type == RankAPIType.V2:
+    if type_.value["api_type"] == RankAPIType.V2.value:
         api = API["info"]["v2_ranking"]
-        params["rid"] = type_.rid
-    elif type_.api_type == RankAPIType.PGC:
+        params["rid"] = type_.value["rid"]
+    elif type_.value["api_type"] == RankAPIType.PGC.value:
         api = API["info"]["pgc_ranking"]
-        params["season_type"] = type_.season_type
+        params["season_type"] = type_.value["season_type"]
         params["day"] = day.value
+    else:
+        raise Exception("114514 error")
 
     return await request("GET", api["url"], params=params)
 
