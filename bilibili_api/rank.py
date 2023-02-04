@@ -203,7 +203,7 @@ async def get_rank(type_: RankType = RankType.All, day: RankDayType = RankDayTyp
         dict: 调用 API 返回的结果
     """
     params = {}
-
+    
     # 确定 API 接口类型
     if type_.value["api_type"] == RankAPIType.V2.value:
         api = API["info"]["v2_ranking"]
@@ -213,7 +213,7 @@ async def get_rank(type_: RankType = RankType.All, day: RankDayType = RankDayTyp
         params["season_type"] = type_.value["season_type"]
         params["day"] = day.value
     else:
-        raise Exception("114514 error")
+        raise Exception("Unknown RankType")
 
     return await request("GET", api["url"], params=params)
 
