@@ -3,6 +3,76 @@
 ```python
 from bilibili_api import manga
 ```
+## class MangaIndexFilter
+
+漫画索引筛选器
+
+### class Area
+
+**Extends:** enum.Enum
+
+漫画索引筛选器的地区枚举类。
+
+- ALL: 全部
+- CHINA: 大陆
+- JAPAN: 日本
+- SOUTHKOREA: 韩国
+- OTHER: 其他
+
+### class Order
+
+**Extends:** enum.Enum
+
+漫画索引筛选器的排序枚举类。
+
+- HOT: 人气推荐
+- UPDATE: 更新时间
+- RELEASE_DATE: 上架时间
+
+### class Status
+
+**Extends:** enum.Enum
+
+漫画索引筛选器的状态枚举类。
+
+- ALL: 全部
+- FINISHED: 完结
+- UNFINISHED: 连载
+
+### class Payment
+
+**Extends:** enum.Enum
+
+漫画索引筛选器的付费枚举类。
+
+- ALL: 全部
+- FREE: 免费
+- PAID: 付费
+- WILL_BE_FREE: 等就免费
+
+### class Style
+
+**Extends:** enum.Enum
+
+漫画索引筛选器的风格枚举类。
+
+- ALL: 全部
+- WARM: 热血
+- ANCIENT: 古风
+- FANTASY: 玄幻
+- IMAGING: 奇幻
+- SUSPENSE: 悬疑
+- CITY: 都市
+- HISTORY: 历史
+- WUXIA: 武侠仙侠
+- GAME: 游戏竞技
+- PARANORMAL: 悬疑灵异
+- ALTERNATE: 架空
+- YOUTH: 青春
+- WEST_MAGIC: 西幻
+- MORDEN: 现代
+- POSITIVE: 正能量
+- SCIENCE_FICTION: 科幻
 
 ## class Manga
 
@@ -110,5 +180,21 @@ from bilibili_api import manga
 | manga | Manga | 漫画类。 |
 | status | bool | 设置是否追漫。是为 True，否为 False。Defaults to True. |
 | credential | Credential | 凭据类。 |
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_raw_manga_index()
+
+获取漫画索引原始数据
+
+| name | type | description |
+| - | - | - |
+| area | MangaIndexFilter.Area | 地区。Defaults to MangaIndexFilter.Area.ALL. |
+| status | MangaIndexFilter.Status | 状态。Defaults to MangaIndexFilter.Status.ALL. |
+| payment | MangaIndexFilter.Payment | 付费。Defaults to MangaIndexFilter.Payment.ALL. |
+| order | MangaIndexFilter.Order | 排序。Defaults to MangaIndexFilter.Order.HOT. |
+| style | MangaIndexFilter.Style | 风格。Defaults to MangaIndexFilter.Style.ALL. |
+| pn | int | 页数。Defaults to 1. |
+| ps | int | 每页数量。Defaults to 18. |
 
 **Returns:** dict: 调用 API 返回的结果
