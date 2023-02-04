@@ -23,3 +23,7 @@ async def test_d_set_follow_manga():
     await manga.set_follow_manga(manga=comic, status=True)
     print("正在取消追漫...")
     await manga.set_follow_manga(manga=comic, status=False)
+
+
+async def test_e_get_manga_index():
+    return await manga.get_manga_index()
