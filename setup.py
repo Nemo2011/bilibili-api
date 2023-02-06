@@ -24,6 +24,7 @@ setuptools.setup(
         "bilibili_api.tools",
         "bilibili_api.tools.opendocs",
         "bilibili_api.tools.ivitools",
+        "bilibili_api.tools.parser",
         "bilibili_api._pyinstaller",
     ],
     keywords=["bilibili", "api", "spider"],

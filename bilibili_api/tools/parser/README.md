@@ -1,6 +1,8 @@
 ### 这是一个解析器
 
 ```python
+# 需要单独安装 fastapi 和 uvicorn
+
 from bilibili_api.tools.parser import get_fastapi
 
 import uvicorn
