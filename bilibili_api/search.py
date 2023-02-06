@@ -262,7 +262,7 @@ async def get_hot_search_keywords() -> dict:
     """
     api = API["search"]["hot_search_keywords"]
     sess = get_session()
-    return json.loads((await sess.request("GET", api["url"])).text)["cost"]
+    return json.loads((await sess.request("GET", api["url"])).text)
 
 
 async def get_suggest_keywords(keyword: str) -> List[str]:
