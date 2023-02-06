@@ -21,7 +21,7 @@
       "comment": "视频详细信息"
     },
     "tags": {
-      "url": "https://api.bilibili.com/x/tag/archive/tags",
+      "url": "https://api.bilibili.com/x/web-interface/view/detail/tag",
       "method": "GET",
       "verify": true,
       "params": {

@@ -428,15 +428,21 @@ class Video:
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_tags(self) -> dict:
+    async def get_tags(self, page_index: int = 0, cid: int = None) -> dict:
         """
         获取视频标签。
+
+        Args:
+            page_index (int): 分 P 序号. Defaults to 0.
+            cid        (int): 分 P 编码. Defaults to None.
 
         Returns:
             dict: 调用 API 返回的结果。
         """
+        if cid == None:
+            cid = await self.get_cid(page_index = page_index)
         url = API["info"]["tags"]["url"]
-        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+        params = {"bvid": self.get_bvid(), "aid": self.get_aid(), "cid": cid}
         return await request("GET", url, params=params, credential=self.credential)
 
     async def get_chargers(self) -> dict:
