@@ -1,0 +1,11 @@
+{
+  "buzzwords": {
+    "url": "https://api.bilibili.com/x/v2/dm/buzzword/list",
+    "method": "GET",
+    "params": {
+      "type_id": "int: 4",
+      "pn": "int: 页码. Defaults to 1. ",
+      "ps": "int: 每页的数据大小. Defaults to 20. "
+    }
+  }
+}

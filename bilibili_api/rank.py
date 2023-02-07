@@ -2,9 +2,6 @@
 bilibili_api.rank
 
 和哔哩哔哩视频排行榜相关的 API
-所有数据都会显示在热门页面
-（点击主页“热门”按钮进入）
-https://www.bilibili.com/v/popular/all
 """
 
 from .utils.network_httpx import request
@@ -136,59 +133,6 @@ class MangeRankType(Enum):
     FREE = 8
     FINISH = 13
 
-async def get_hot_videos(pn: int = 1, ps: int = 20) -> dict:
-    """
-    获取热门视频
-
-    Args:
-        pn (int): 第几页. Default to 1.
-        ps (int): 每页视频数. Default to 20.
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    api = API["info"]["hot"]
-    params = {"ps": ps, "pn": pn}
-    return await request("GET", url=api["url"], params=params)
-
-
-async def get_weakly_hot_videos_list() -> dict:
-    """
-    获取每周必看列表(仅概述)
-
-    Returns:
-        调用 API 返回的结果
-    """
-    api = API["info"]["weakly_series"]
-    return await request("GET", url=api["url"])
-
-
-async def get_weakly_hot_videos(week: int = 1) -> dict:
-    """
-    获取一周的每周必看视频列表
-
-    Args:
-        week(int): 第几周. Default to 1.
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    api = API["info"]["weakly_details"]
-    params = {"number": week}
-    return await request("GET", url=api["url"], params=params)
-
-
-async def get_history_popular_videos() -> dict:
-    """
-    获取入站必刷 85 个视频
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    api = API["info"]["history_popular"]
-    params = {"page_size": 85, "page": 1}
-    return await request("GET", url=api["url"], params=params)
-
 
 async def get_rank(type_: RankType = RankType.All, day: RankDayType = RankDayType.THREE_DAY) -> dict:
     """
@@ -203,7 +147,7 @@ async def get_rank(type_: RankType = RankType.All, day: RankDayType = RankDayTyp
         dict: 调用 API 返回的结果
     """
     params = {}
-    
+
     # 确定 API 接口类型
     if type_.value["api_type"] == RankAPIType.V2.value:
         api = API["info"]["v2_ranking"]
