@@ -6,6 +6,7 @@ import os
 import httpx
 from yarl import URL
 from .Credential import Credential
+from .utils import get_api
 
 
 @dataclass
@@ -122,6 +123,65 @@ class Picture:
         self.url = res["image_url"]
         return self
 
+    def upload_file_sync(self, credential: Credential) -> "Picture":
+        """
+        上传图片至 B 站。(同步函数)
+
+        Args:
+            credential (Credential): 凭据类。
+
+        Returns:
+            Picture: `self`
+        """
+        credential.raise_for_no_sessdata()
+        credential.raise_for_no_bili_jct()
+        api = get_api("dynamic")["send"]["upload_img"]
+        raw = self.content
+        data = {
+            "biz": "new_dyn",
+            "category": "daily",
+            "csrf": credential.bili_jct,
+            "csrf_token": credential.bili_jct
+        }
+        sess = httpx.Client()
+        upload_info = sess.request(
+            "POST",
+            url=api["url"],
+            data=data,
+            files={
+                "file_up": raw
+            },
+            headers={
+                "Referer": "https://www.bilibili.com",
+                "User-Agent": "Mozilla/5.0",
+            },
+            cookies=credential.get_cookies()
+        ).json()["data"]
+        self.url = upload_info["image_url"]
+        self.height = upload_info["image_height"]
+        self.width = upload_info["image_width"]
+        return self
+
+
+    def download_sync(self, path: str) -> "Picture":
+        """
+        下载图片至本地。(同步函数)
+
+        Args:
+            path (str): 下载地址。
+
+        Returns:
+            Picture: `self`
+        """
+        tmp_dir = tempfile.gettempdir()
+        img_path = os.path.join(tmp_dir, "test." + self.imageType)
+        open(img_path, "wb").write(self.content)
+        img = Image.open(img_path)
+        img.save(path)
+        self.url = "file://" + path
+        return self
+
+
     def convert_format(self, new_format: str) -> "Picture":
         """
         将图片转换为另一种格式。
@@ -158,4 +218,5 @@ class Picture:
         open(img_path, "wb").write(self.content)
         img = Image.open(img_path)
         img.save(path)
+        self.url = "file://" + path
         return self
