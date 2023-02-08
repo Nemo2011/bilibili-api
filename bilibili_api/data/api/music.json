@@ -1,0 +1,20 @@
+{
+  "info": {
+    "detail": {
+      "url": "https://api.bilibili.com/x/copyright-music-publicity/bgm/detail",
+      "method": "GET",
+      "params": {
+        "music_id": "str: 音乐 id"
+      },
+      "comment": "获取音乐信息"
+    },
+    "video_recommend_list": {
+      "url": "https://api.bilibili.com/x/copyright-music-publicity/bgm/recommend_list",
+      "method": "GET",
+      "params": {
+        "music_id": "str: 音乐 id"
+      },
+      "comment": "获取音乐推荐视频"
+    }
+  }
+}

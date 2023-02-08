@@ -11,23 +11,22 @@ import re
 import json
 
 async def get_initial_state(url: str, credential: Credential = Credential()) -> dict:
-    url = await get_real_url(url, credential=credential)
     try:
         session = get_session()
         resp = await session.get(
             url,
             cookies=credential.get_cookies(),
             headers={"User-Agent": "Mozilla/5.0"},
+            follow_redirects=True
         )
     except Exception as e:
-        raise ResponseException(str(e))
+        raise e
     else:
         content = resp.text
-
         pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
         match = re.search(pattern, content)
         if match is None:
-            raise ApiException("未找到番剧信息")
+            raise ApiException("未找到相关信息")
         try:
             content = json.loads(match.group(1))
         except json.JSONDecodeError:
