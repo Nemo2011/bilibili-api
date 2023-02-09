@@ -7,9 +7,8 @@ from bilibili_api import music
 
 音乐相关 API
 
-音乐主页: https://www.bilibili.com/v/musicplus
+注意: 目前 B 站的音频并不和 B 站的音乐相关信息互通。音乐相关信息目前仅存在于视频下面的标签以及 https://www.bilibili.com/v/musicplus 。这个模块将这些部分的 API 整合了起来。
 
-音乐信息解释: 部分视频的标签中有里面出现过的音乐的标签, 查询视频标签信息时可以读取到那个音乐标签的音乐 id (`music_id`), 然后即可传入函数查看信息
 
 ## async def get_homepage_recommend()
 
@@ -95,5 +94,36 @@ from bilibili_api import music
 | order     | MusicOrder           |       排序方式. Defaults to OrderAudio.NEW | 
 | page_num  | int                  |              页码. Defaults to 1. | 
 | page_size | int                  |             每页的数据大小. Defaults to 10. | 
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## class Music
+
+
+音乐类。
+
+此处的“音乐”定义：部分视频的标签中有里面出现过的音乐的标签, 可以点击音乐标签查看音乐信息。此类将提供查询音乐信息的接口。
+
+其中音乐的 ID 为 `video.get_tags` 返回值数据中的 `music_id` 键值
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| music_id | str | 音乐 id，例如 MA436038343856245020 |
+
+#### async def get_info()
+
+获取音乐信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_music_videos()
+
+获取音乐的音乐视频
 
 **Returns:** dict: 调用 API 返回的结果
