@@ -28,4 +28,4 @@ async def test_g_get_zone_list_sub():
     return video_zone.get_zone_list_sub()
 
 async def test_g_get_zone_hot_tags():
-    return video_zone.get_zone_hot_tags(tid=33)
+    return await video_zone.get_zone_hot_tags(tid=33)
