@@ -53,7 +53,7 @@ class Album:
         ):
         """
         Args:
-            doc_id (int): 相簿 ID。
+            doc_id (int): 相簿 ID。如 https://h.bilibili.com/1919 的 doc_id 为 1919
             credential (Credential): 用户凭证。
         """
         self.__doc_id = doc_id

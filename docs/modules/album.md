@@ -4,7 +4,7 @@
 from bilibili_api import album
 ```
 
-## class AlbumCategory
+## class AlbumCategory 
 
 **Extends: enum.Enum**
 
@@ -42,7 +42,7 @@ from bilibili_api import album
 
 | name | type | description |
 | - | - | - |
-| doc_id | int | 相簿 ID |
+| doc_id | int | 相簿 ID。如 https://h.bilibili.com/1919 的 doc_id 为 1919 |
 | credential | Credential | 凭据类 |
 
 #### def get_doc_id()
