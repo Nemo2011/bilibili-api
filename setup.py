@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf8") as f:
 
 setuptools.setup(
     name="bilibili-api-python",
-    version="15.0.0.dev",
+    version="15.0.0",
     license="GPLv3+",
     author="Nemo2011",
     author_email="yimoxia@outlook.com",
