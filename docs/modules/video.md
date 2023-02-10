@@ -8,18 +8,6 @@ from bilibili_api import video
 
 ?> 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 
-## const dict VIDEO_QUALITIES
-
-视频清晰度枚举
-
-## const dict AUDIO_QUALITIES
-
-音频音质枚举
-
-## const dict VIDEO_CODECS
-
-视频编码枚举
-
 ## class DanmakuOperatorType(Enum)
 
 弹幕操作枚举
@@ -532,3 +520,150 @@ asyncio.get_event_loop().run_until_complete(r.connect())
 断开服务器。
 
 **Returns:** None
+
+---
+
+## class VideoQuality()
+
+**Extends:enum.Enum**
+
+- _360P: 流畅 360P
+- _480P: 清晰 480P
+- _720P: 高清 720P60
+- _1080P: 高清 1080P
+- _1080P_PLUS: 高清 1080P 高码率
+- _1080P_60: 高清 1080P 60 帧码率
+- _4K: 超清 4K
+- HDR: 真彩 HDR
+- DOLBY: 杜比视界
+- _8K: 超高清 8K
+
+---
+
+## class VideoCodecs()
+
+**Extends:enum.Enum**
+
+- HEV: HEVC(H.265)
+- AVC: AVC(H.264)
+- AV1: AV1
+
+---
+
+## class AudioQuality()
+
+**Extends:enum.Enum**
+
+- _64K: 64K
+- _132K: 132K
+- _192K: 192K
+- HI_RES: Hi-Res 无损
+- DOLBY: 杜比全景声
+
+---
+
+**@dataclass.dataclass**
+## class VideoStreamDownloadURL
+
+视频流 URL 类
+
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| url  | str  | 视频流 url |
+| video_quality | VideoQuality | 视频流清晰度 |
+| video_codecs | VideoCodecs | 视频流编码 |
+
+---
+
+**@dataclass.dataclass**
+## class AudioStreamDownloadURL
+
+音频流 URL 类
+
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| url  | str  | 音频流 url |
+| audio_quality | AudioQuality | 音频流清晰度 |
+
+---
+
+**@dataclass.dataclass**
+## class FLVStreamDownloadURL
+
+FLV 视频流
+
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| url  | str  | FLV 流 url |
+
+---
+
+**@dataclass.dataclass**
+## class HTML5MP4DownloadURL
+
+可供 HTML5 播放的 mp4 视频流
+
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| url  | str  | HTML5 mp4 视频流 |
+
+---
+
+## class VideoDownloadURLDataDetecter
+
+`Video.get_download_url` 返回结果解析类。
+
+在调用 `Video.get_download_url` 之后可以将代入 `VideoDownloadURLDataDetecter`，此类将一键解析。
+
+目前支持:
+
+- 视频清晰度: 360P, 480P, 720P, 1080P, 1080P 高码率, 1080P 60 帧, 4K, HDR, 杜比视界, 8K
+- 视频编码: HEVC(H.265), AVC(H.264), AV1
+- 音频清晰度: 64K, 132K, Hi-Res 无损音效, 杜比全景声, 192K
+- FLV 视频流
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| data | dict | `Video.get_download_url` 返回的结果 |
+
+#### def check_video_and_audio_stream()
+
+判断是否为音视频分离流
+
+**Returns:** bool: 是否为音视频分离流
+
+#### def flv_stream()
+
+判断是否为 FLV 视频流
+
+**Returns:** bool: 是否为 FLV 视频流
+
+#### def check_html5_mp4_stream()
+
+判断是否为 HTML5 可播放的 mp4 视频流
+
+**Returns:** bool: 是否为 HTML5 可播放的 mp4 视频流
+
+#### def detect_all()
+
+解析数据
+
+**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: 所有的视频/音频流
+
+#### def detect_best_streams()
+
+提取出分辨率、音质等信息最好的音视频流
+
+**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`
