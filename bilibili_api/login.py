@@ -24,8 +24,8 @@ from .utils.sync import sync
 from .utils.network_httpx import get_session, to_form_urlencoded
 from .utils.captcha import start_server, close_server, get_result
 from .utils.safecenter_captcha import (
-    start_server as safecenter_start_server, 
-    close_server as safecenter_close_server, 
+    start_server as safecenter_start_server,
+    close_server as safecenter_close_server,
     get_result as safecenter_get_result
 )
 from . import settings
@@ -67,7 +67,7 @@ def login_with_qrcode(root = None) -> Credential:
     扫描二维码登录
 
     Args:
-        root (tkinter.Tk | tkinter.Toplevel, optional): 根窗口，默认为 tkinter.Tk()，如果有需要可以换成 tkinter.Toplevel(). Defaults to None. 
+        root (tkinter.Tk | tkinter.Toplevel, optional): 根窗口，默认为 tkinter.Tk()，如果有需要可以换成 tkinter.Toplevel(). Defaults to None.
 
     Returns:
         Credential: 凭据
@@ -492,6 +492,8 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
                 dede = cookie[11:]
         c = Credential(sessdata, bili_jct, dedeuserid=dede)
         return c
+    elif return_data["data"]["status"] == 5:
+        return Check(return_data["data"]["url"])
     else:
         raise LoginError(return_data["message"])
 
@@ -559,7 +561,7 @@ class Check:
             geetest_data = get_safecenter_geetest()
             data = {
                 "sms_type": "loginTelCheck",
-                "tmp_code": self.tmp_token, 
+                "tmp_code": self.tmp_token,
                 "recaptcha_token": geetest_data["token"],   # type: ignore
                 "gee_challenge": geetest_data["challenge"], # type: ignore
                 "gee_gt": geetest_data["gt"],               # type: ignore
@@ -577,22 +579,22 @@ class Check:
 
         Args:
             code (str): 验证码
-        
+
         Returns:
             Credential: 凭据类
         """
         try:
             api = API["safecenter"]["get_exchange"]
             data = {
-                "type": "loginTelCheck", 
-                "code": code, 
-                "tmp_code": self.tmp_token, 
-                "request_id": self.check_url.split("?")[1].split("&")[1][11:], 
+                "type": "loginTelCheck",
+                "code": code,
+                "tmp_code": self.tmp_token,
+                "request_id": self.check_url.split("?")[1].split("&")[1][11:],
                 "captcha_key": self.captcha_key
             }
             exchange_code = json.loads(
                 httpx.post(
-                    api["url"], 
+                    api["url"],
                     data = data
                 ).text
             )["data"]["code"]
@@ -601,9 +603,9 @@ class Check:
                 "code": exchange_code
             })
             credential = Credential(
-                sessdata = resp.cookies.get("SESSDATA"), 
-                bili_jct = resp.cookies.get("bili_jct"), 
-                buvid3 = None, 
+                sessdata = resp.cookies.get("SESSDATA"),
+                bili_jct = resp.cookies.get("bili_jct"),
+                buvid3 = None,
                 dedeuserid = resp.cookies.get("DedeUserID")
             )
             return credential
