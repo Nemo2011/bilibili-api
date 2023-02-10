@@ -23,6 +23,7 @@ class AlbumCategory(enum.Enum):
     - PAINTS: 画友
     - PHOTOS: 摄影
     """
+
     ALL = 0
     PAINTS = 1
     PHOTOS = 2
@@ -36,6 +37,7 @@ class AlbumOrder(enum.Enum):
     - HOT      : 最火（并非所有函数的所有分区均对此项支持）
     - NEW      : 最新（并非所有函数的所有分区均对此项支持）
     """
+
     RECOMMEND = "recommend"
     HOT = "hot"
     NEW = "new"
@@ -46,11 +48,7 @@ class Album:
     相簿类，各种对相簿的操作均在其中。
     """
 
-    def __init__(
-        self,
-        doc_id: int,
-        credential: Union[None, Credential] = None
-        ):
+    def __init__(self, doc_id: int, credential: Union[None, Credential] = None):
         """
         Args:
             doc_id (int): 相簿 ID。如 https://h.bilibili.com/1919 的 doc_id 为 1919
@@ -117,7 +115,7 @@ async def get_homepage_albums_list(
     order: AlbumOrder = AlbumOrder.RECOMMEND,
     page_num: int = 1,
     page_size: int = 45,
-    credential: Optional[Credential] = None
+    credential: Optional[Credential] = None,
 ) -> dict:
     """
     获取相簿列表。
@@ -132,51 +130,36 @@ async def get_homepage_albums_list(
     Returns:
         dict: 调用 API 返回的结果
     """
+
     async def get_painter() -> dict:
         api = API["info"]["homepage_painter_albums_list"]
         if order != AlbumOrder.RECOMMEND:
             raise ArgsException("摄影相簿暂不支持以热度/以时间排序。")
-        params = {
-            "type": order.value,
-            "page_num": page_num,
-            "page_size": page_size
-        }
-        return await request(
-            "GET",
-            api["url"],
-            params=params,
-            credential=credential
-        )
+        params = {"type": order.value, "page_num": page_num, "page_size": page_size}
+        return await request("GET", api["url"], params=params, credential=credential)
+
     async def get_photos() -> dict:
         api = API["info"]["homepage_photos_albums_list"]
         if order != AlbumOrder.RECOMMEND:
             raise ArgsException("摄影相簿暂不支持以热度/以时间排序。")
-        params = {
-            "type": order.value,
-            "page_num": page_num,
-            "page_size": page_size
-        }
-        return await request(
-            "GET",
-            api["url"],
-            params=params,
-            credential=credential
-        )
+        params = {"type": order.value, "page_num": page_num, "page_size": page_size}
+        return await request("GET", api["url"], params=params, credential=credential)
+
     if category == AlbumCategory.PAINTS:
         return await get_painter()
     elif category == AlbumCategory.PHOTOS:
         return await get_photos()
     else:
         result = await get_painter()
-        result["items"] += (await get_photos())["items"] # type: ignore
-        result["total_count"] += (await get_photos())["total_count"] # type: ignore
+        result["items"] += (await get_photos())["items"]  # type: ignore
+        result["total_count"] += (await get_photos())["total_count"]  # type: ignore
         return result
 
 
 async def get_homepage_recommend_uppers(
     category: AlbumCategory = AlbumCategory.ALL,
     numbers: int = 6,
-    credential: Optional[Credential] = None
+    credential: Optional[Credential] = None,
 ) -> dict:
     """
     获取首页推荐相簿 up 主。
@@ -189,28 +172,17 @@ async def get_homepage_recommend_uppers(
     Returns:
         dict: 调用 API 返回的结果
     """
+
     async def get_painters() -> dict:
         api = API["info"]["homepage_recommended_painters"]
-        params = {
-            "num": numbers
-        }
-        return await request(
-            "GET",
-            api["url"],
-            params=params,
-            credential=credential
-        )
+        params = {"num": numbers}
+        return await request("GET", api["url"], params=params, credential=credential)
+
     async def get_photos_uppers() -> dict:
         api = API["info"]["homepage_recommended_photos_uppers"]
-        params = {
-            "num": numbers
-        }
-        return await request(
-            "GET",
-            api["url"],
-            params=params,
-            credential=credential
-        )
+        params = {"num": numbers}
+        return await request("GET", api["url"], params=params, credential=credential)
+
     if category == AlbumCategory.PAINTS:
         return await get_painters()
     elif category == AlbumCategory.PHOTOS:
@@ -220,7 +192,7 @@ async def get_homepage_recommend_uppers(
             raise ArgsException("全部分区的推荐 up 的请求数量需为偶数。")
         numbers //= 2
         items = await get_painters()
-        items += (await get_photos_uppers()) # type: ignore
+        items += await get_photos_uppers()  # type: ignore
         return items
 
 
@@ -229,7 +201,7 @@ async def get_user_albums(
     category: AlbumCategory = AlbumCategory.ALL,
     page_num: int = 1,
     page_size: int = 45,
-    credential: Optional[Credential] = None
+    credential: Optional[Credential] = None,
 ):
     """
     获取指定用户的相簿列表。
@@ -249,11 +221,6 @@ async def get_user_albums(
         "biz": category.value,
         "poster_uid": uid,
         "page_num": page_num,
-        "page_size": page_size
+        "page_size": page_size,
     }
-    return await request(
-        "GET",
-        api["url"],
-        params=params,
-        credential=credential
-    )
+    return await request("GET", api["url"], params=params, credential=credential)

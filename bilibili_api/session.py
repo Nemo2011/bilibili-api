@@ -111,11 +111,7 @@ async def get_likes(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["likes"]
-    return await request(
-        "GET",
-        api["url"],
-        credential = credential
-    )
+    return await request("GET", api["url"], credential=credential)
 
 
 async def get_unread_messages(credential: Credential) -> dict:
@@ -129,11 +125,7 @@ async def get_unread_messages(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["unread"]
-    return await request(
-        "GET",
-        api["url"],
-        credential=credential
-    )
+    return await request("GET", api["url"], credential=credential)
 
 
 async def get_replies(credential: Credential) -> dict:
@@ -147,11 +139,7 @@ async def get_replies(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["replies"]
-    return await request(
-        "GET",
-        api["url"],
-        credential=credential
-    )
+    return await request("GET", api["url"], credential=credential)
 
 
 async def get_system_messages(credential: Credential) -> dict:
@@ -165,11 +153,7 @@ async def get_system_messages(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["system_msg"]
-    return await request(
-        "GET",
-        api["url"],
-        credential=credential
-    )
+    return await request("GET", api["url"], credential=credential)
 
 
 async def get_session_settings(credential: Credential) -> dict:
@@ -183,14 +167,15 @@ async def get_session_settings(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["session_settings"]
-    return await request(
-        "GET",
-        api["url"],
-        credential=credential
-    )
+    return await request("GET", api["url"], credential=credential)
 
 
-async def send_msg(credential: Credential, receiver_id: int, msg_type: str, content: Union[str, Picture]) -> dict:
+async def send_msg(
+    credential: Credential,
+    receiver_id: int,
+    msg_type: str,
+    content: Union[str, Picture],
+) -> dict:
     """
     给用户发送私聊信息。目前仅支持纯文本。
 
@@ -216,7 +201,16 @@ async def send_msg(credential: Credential, receiver_id: int, msg_type: str, cont
         real_content = str(content)
     elif msg_type == Event.PICTURE or msg_type == Event.GROUPS_PICTURE:
         assert isinstance(content, Picture)
-        real_content = json.dumps({"url": content.url, "height": content.height, "width": content.width, "imageType": content.imageType, "original":1, "size": content.size})
+        real_content = json.dumps(
+            {
+                "url": content.url,
+                "height": content.height,
+                "width": content.width,
+                "imageType": content.imageType,
+                "original": 1,
+                "size": content.size,
+            }
+        )
     else:
         raise ApiException("信息类型不支持。")
 
@@ -312,19 +306,19 @@ class Event:
             else:
                 msg_type = "收到应援团"
 
-        return f"{msg_type} {user_id} 信息 {self.content}({self.timestamp})" # type: ignore
+        return f"{msg_type} {user_id} 信息 {self.content}({self.timestamp})"  # type: ignore
 
     def __content(self) -> None:
         """更新消息内容"""
 
-        content: dict = json.loads(self.content) # type: ignore
+        content: dict = json.loads(self.content)  # type: ignore
         mt = str(self.msg_type)
 
         if mt == Event.TEXT:
-            self.content = content.get("content") # type: ignore
+            self.content = content.get("content")  # type: ignore
 
         elif mt == Event.WELCOME:
-            self.content = content.get("content") + str(content.get("group_id")) # type: ignore
+            self.content = content.get("content") + str(content.get("group_id"))  # type: ignore
 
         elif mt == Event.WITHDRAW:
             self.content = str(content)
@@ -430,7 +424,7 @@ class Session(AsyncEvent):
                             session["talker_id"],
                             self.credential,
                             session["session_type"],
-                            self.maxSeqno.get(session["talker_id"]), # type: ignore
+                            self.maxSeqno.get(session["talker_id"]),  # type: ignore
                         )
                     )
                 )
@@ -483,7 +477,7 @@ class Session(AsyncEvent):
         if self.get_status() == 2:
             self.__status = 3
 
-    async def reply(self, event: Event, content: Union[str, Picture]) -> dict: # type: ignore
+    async def reply(self, event: Event, content: Union[str, Picture]) -> dict:  # type: ignore
         """
         快速回复消息
 

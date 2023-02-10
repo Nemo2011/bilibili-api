@@ -24,14 +24,8 @@ async def get_hot_topics(numbers: int = 33) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["info"]["dynamic_page_topics"]
-    params = {
-        "page_size": numbers
-    }
-    return await request(
-        "GET",
-        api["url"],
-        params=params
-    )
+    params = {"page_size": numbers}
+    return await request("GET", api["url"], params=params)
 
 
 class Topic:
@@ -41,6 +35,7 @@ class Topic:
     Attributes:
         credential (Credential): 凭据类
     """
+
     def __init__(self, topic_id: int, credential: Union[Credential, None] = None):
         """
         Args:
@@ -67,10 +62,10 @@ class Topic:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["info"]
-        params = {
-            "topic_id": self.get_topic_id()
-        }
-        return await request("GET", api["url"], params = params, credential = self.credential)
+        params = {"topic_id": self.get_topic_id()}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
     async def get_cards(self, size: int = 100) -> dict:
         """
@@ -83,11 +78,10 @@ class Topic:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["cards"]
-        params = {
-            "topic_id": self.get_topic_id(),
-            "page_size": size
-        }
-        return await request("GET", api["url"], params = params, credential = self.credential)
+        params = {"topic_id": self.get_topic_id(), "page_size": size}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
 
     async def like(self, status: bool = True) -> dict:
         """
@@ -104,14 +98,9 @@ class Topic:
             "topic_id": self.get_topic_id(),
             "action": "like" if status else "cancel_like",
             "business": "topic",
-            "up_mid": (await get_self_info(self.credential))["mid"]
+            "up_mid": (await get_self_info(self.credential))["mid"],
         }
-        return await request(
-            "POST",
-            api["url"],
-            data=data,
-            credential=self.credential
-        )
+        return await request("POST", api["url"], data=data, credential=self.credential)
 
     async def set_favorite(self, status: bool = True) -> dict:
         """
@@ -124,12 +113,5 @@ class Topic:
             dict: 调用 API 返回的结果
         """
         api = API["operate"]["add_favorite" if status else "cancel_favorite"]
-        data = {
-            "topic_id": self.get_topic_id()
-        }
-        return await request(
-            "POST",
-            api["url"],
-            data=data,
-            credential=self.credential
-        )
+        data = {"topic_id": self.get_topic_id()}
+        return await request("POST", api["url"], data=data, credential=self.credential)

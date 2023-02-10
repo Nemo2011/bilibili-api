@@ -69,7 +69,7 @@ class AsyncEvent:
                 self.__handlers[name].remove(handler)
                 return True
         return False
-    
+
     def ignore_event(self, name: str) -> None:
         """
         忽略指定事件
@@ -79,7 +79,7 @@ class AsyncEvent:
         """
         name = name.upper()
         self.__ignore_events.append(name)
-    
+
     def remove_ignore_events(self) -> None:
         """
         移除所有忽略事件

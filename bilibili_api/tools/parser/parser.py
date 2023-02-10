@@ -5,7 +5,8 @@ from typing import List, Tuple
 
 import bilibili_api
 
-pattern = re.compile(r'(?:([:\$\w]+(?:=\w+)?),?)')
+pattern = re.compile(r"(?:([:\$\w]+(?:=\w+)?),?)")
+
 
 class Parser:
     def __init__(self, var: str):
@@ -21,7 +22,8 @@ class Parser:
                 self.varDict[key] = obj
         return self
 
-    async def __aexit__(self, type, value, trace): ...
+    async def __aexit__(self, type, value, trace):
+        ...
 
     async def parse(self, path: str) -> Tuple[str, any]:
         "分析指令"
@@ -68,7 +70,7 @@ class Parser:
                 position = position(*args, **kwargs)
             elif isclass(position) and not issubclass(position, Enum):
                 position = position(*args, **kwargs)
-            
+
             # 为空返回出错语句
             # 否则检查是否分析完全部语句
             # 是则返回空字符 否继续递归
@@ -76,4 +78,4 @@ class Parser:
                 return sentence
             return "" if len(sentences) == 0 else await inner()
 
-        return await inner(), position 
+        return await inner(), position

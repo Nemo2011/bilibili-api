@@ -106,14 +106,11 @@ async def upload_image(image: Picture, credential: Credential) -> Picture:
 
     data = {"biz": "new_dyn", "category": "daily"}
 
-
     return_info = await request(
         "POST",
         url=api["url"],
         data=data,
-        files={
-            "file_up": raw
-        },
+        files={"file_up": raw},
         credential=credential,
     )
 
@@ -207,14 +204,14 @@ async def send_dynamic(
 
     async def instant_draw():
         api = API["send"]["instant_draw"]
-        data = await _get_draw_data(text, images, credential) # type: ignore
+        data = await _get_draw_data(text, images, credential)  # type: ignore
         return await request("POST", api["url"], data=data, credential=credential)
 
     async def schedule(type_: int):
         api = API["send"]["schedule"]
         if type_ == 2:
             # 画册动态
-            request_data = await _get_draw_data(text, images, credential) # type: ignore
+            request_data = await _get_draw_data(text, images, credential)  # type: ignore
             request_data.pop("setting")
         else:
             # 文字动态
@@ -222,7 +219,7 @@ async def send_dynamic(
 
         data = {
             "type": type_,
-            "publish_time": int(send_time.timestamp()), # type: ignore
+            "publish_time": int(send_time.timestamp()),  # type: ignore
             "request": json.dumps(request_data, ensure_ascii=False),
         }
         return await request("POST", api["url"], data=data, credential=credential)
@@ -444,7 +441,7 @@ async def get_new_dynamic_users(credential: Union[Credential, None] = None):
     credential = credential if credential else Credential()
     credential.raise_for_no_sessdata()
     api = API["info"]["attention_new_dynamic"]
-    return await request("GET", api["url"], credential = credential)
+    return await request("GET", api["url"], credential=credential)
 
 
 async def get_live_users(size: int = 10, credential: Union[Credential, None] = None):
@@ -461,10 +458,8 @@ async def get_live_users(size: int = 10, credential: Union[Credential, None] = N
     credential = credential if credential else Credential()
     credential.raise_for_no_sessdata()
     api = API["info"]["attention_live"]
-    params = {
-        "size": size
-    }
-    return await request("GET", api["url"], params = params, credential = credential)
+    params = {"size": size}
+    return await request("GET", api["url"], params=params, credential=credential)
 
 
 async def get_dynamic_page_info(credential: Credential):
@@ -478,8 +473,4 @@ async def get_dynamic_page_info(credential: Credential):
         dict: 调用 API 返回的结果
     """
     api = API["info"]["dynamic_page_info"]
-    return await request(
-        "GET",
-        api["url"],
-        credential = credential
-    )
+    return await request("GET", api["url"], credential=credential)

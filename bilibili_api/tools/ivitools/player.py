@@ -18,7 +18,12 @@ class InteractiveVariable:
     """
 
     def __init__(
-        self, name: str, var_id: str, var_value: int, show: bool = False, random: bool = False
+        self,
+        name: str,
+        var_id: str,
+        var_value: int,
+        show: bool = False,
+        random: bool = False,
     ):
         """
         Args:
@@ -59,6 +64,7 @@ class InteractiveVariable:
     def __str__(self):
         return f"{self.__name} {self.__var_value}"
 
+
 class InteractiveButtonAlign(enum.Enum):
     """
     按钮的文字在按钮中的位置
@@ -91,13 +97,18 @@ class InteractiveButtonAlign(enum.Enum):
     TEXT_DOWN = 3
     TEXT_LEFT = 4
 
+
 class InteractiveButton:
     """
     互动视频节点按钮类
     """
 
     def __init__(
-        self, text: str, x: int, y: int, align: Union[InteractiveButtonAlign, int] = InteractiveButtonAlign.DEFAULT
+        self,
+        text: str,
+        x: int,
+        y: int,
+        align: Union[InteractiveButtonAlign, int] = InteractiveButtonAlign.DEFAULT,
     ):
         """
         Args:
@@ -108,14 +119,15 @@ class InteractiveButton:
         """
         self.__text = text
         self.__pos = (x, y)
-        if isinstance(align, InteractiveButtonAlign): align = align.value
+        if isinstance(align, InteractiveButtonAlign):
+            align = align.value
         self.__align = align
 
     def get_text(self) -> str:
         return self.__text
 
     def get_align(self) -> int:
-        return self.__align # type: ignore
+        return self.__align  # type: ignore
 
     def get_pos(self) -> Tuple[int, int]:
         return self.__pos
@@ -164,10 +176,12 @@ class InteractiveJumpingCondition:
     def __str__(self):
         return f"{self.__command}"
 
+
 class InteractiveJumpingCommand:
     """
     节点跳转对变量的操作
     """
+
     def __init__(self, var: List[InteractiveVariable] = [], command: str = ""):
         """
         Args:
@@ -196,8 +210,9 @@ class InteractiveJumpingCommand:
             var_new_value_calc = eval(var_new_value)
             for var in self.__vars:
                 if var.get_id() == var_name_:
-                    var._InteractiveVariable__var_value = var_new_value_calc # type: ignore
+                    var._InteractiveVariable__var_value = var_new_value_calc  # type: ignore
         return self.__vars
+
 
 class InteractiveNodeJumpingType(enum.Enum):
     """
@@ -211,6 +226,7 @@ class InteractiveNodeJumpingType(enum.Enum):
     READY = 1
     DEFAULT = 0
     ASK = 2
+
 
 class Button:
     def __init__(self, id_, pos, text, condition, command):
@@ -664,16 +680,18 @@ class MPlayer(object):
         bilivideo_parser = json.JSONDecoder()
         self.node.setText("(当前节点: 视频主节点)")
         self.info.setText(
-            bilivideo_parser.decode(open(self.temp_dir + "bilivideo.json", "r", encoding = "utf-8").read())[
-                "title"
-            ]
+            bilivideo_parser.decode(
+                open(self.temp_dir + "bilivideo.json", "r", encoding="utf-8").read()
+            )["title"]
             + "("
-            + bilivideo_parser.decode(open(self.temp_dir + "bilivideo.json", "r", encoding = "utf-8").read())[
-                "bvid"
-            ]
+            + bilivideo_parser.decode(
+                open(self.temp_dir + "bilivideo.json", "r", encoding="utf-8").read()
+            )["bvid"]
             + ")"
         )
-        self.graph = json.load(open(self.temp_dir + "ivideo.json", "r", encoding = "utf-8"))
+        self.graph = json.load(
+            open(self.temp_dir + "ivideo.json", "r", encoding="utf-8")
+        )
         self.current_node = 1
         variables = self.graph["1"]["vars"]
         for var in variables:
@@ -874,6 +892,7 @@ def prepopen(path: str):
     ui.open_ivi()
     win.show()
     sys.exit(app.exec())
+
 
 if __name__ == "__main__":
     main()

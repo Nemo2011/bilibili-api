@@ -16,6 +16,7 @@ API = get_api("channel-series")
 
 channel_meta_cache = {}
 
+
 class ChannelOrder(Enum):
     """
     合集视频排序顺序。
@@ -54,7 +55,7 @@ class ChannelSeries:
         uid: int = -1,
         type_: ChannelSeriesType = ChannelSeriesType.SERIES,
         id_: int = -1,
-        credential: Union[Credential, None] = None
+        credential: Union[Credential, None] = None,
     ):
         """
         Args:
@@ -67,6 +68,7 @@ class ChannelSeries:
         assert id_ != -1
         assert type_ != None
         from .user import User
+
         self.__uid = uid
         self.is_new = type_.value
         self.id_ = id_
@@ -76,15 +78,11 @@ class ChannelSeries:
         if not f"{type_.value}-{id_}" in channel_meta_cache.keys():
             if self.is_new:
                 api = API_USER["channel_series"]["season_info"]
-                params = {
-                    "season_id": self.id_
-                }
+                params = {"season_id": self.id_}
             else:
                 api = API_USER["channel_series"]["info"]
-                params = {
-                    "series_id": self.id_
-                }
-            resp = json.loads(httpx.get(api["url"], params = params).text)["data"]
+                params = {"series_id": self.id_}
+            resp = json.loads(httpx.get(api["url"], params=params).text)["data"]
             if self.is_new:
                 self.meta = resp["info"]
                 self.meta["mid"] = resp["info"]["upper"]["mid"]
@@ -104,7 +102,7 @@ class ChannelSeries:
         Returns:
             调用 API 返回的结果
         """
-        return self.meta # type: ignore
+        return self.meta  # type: ignore
 
     async def get_videos(
         self, sort: ChannelOrder = ChannelOrder.DEFAULT, pn: int = 1, ps: int = 100
@@ -130,7 +128,7 @@ async def create_channel_series(
     aids: List[int] = [],
     keywords: List[str] = [],
     description: str = "",
-    credential: Union[Credential, None] = None
+    credential: Union[Credential, None] = None,
 ) -> dict:
     """
     新建一个视频列表 (旧版合集)
@@ -146,6 +144,7 @@ async def create_channel_series(
         dict: 调用 API 返回的结果
     """
     from .user import get_self_info
+
     credential = credential if credential else Credential()
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -156,17 +155,12 @@ async def create_channel_series(
         "aids": ",".join(map(lambda x: str(x), aids)),
         "name": name,
         "keywords": ",".join(keywords),
-        "description": description
+        "description": description,
     }
-    return await request(
-        "POST", api["url"], data=data, credential=credential
-    )
+    return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def del_channel_series(
-    series_id: int,
-    credential: Credential
-) -> dict:
+async def del_channel_series(series_id: int, credential: Credential) -> dict:
     """
     删除视频列表(旧版合集)
 
@@ -178,40 +172,32 @@ async def del_channel_series(
         dict: 调用 API 返回的结果
     """
     from .user import get_self_info, User
+
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
     series_total = ChannelSeries(
-        type_=ChannelSeriesType.SERIES,
-        id_=series_id,
-        credential=credential
+        type_=ChannelSeriesType.SERIES, id_=series_id, credential=credential
     ).get_meta()["total"]
     self_uid = (await get_self_info(credential))["mid"]
     aids = []
     pages = series_total // 20 + (1 if (series_total % 20 != 0) else 0)
     for page in range(1, pages + 1, 1):
-        page_info = \
-            await User(self_uid, credential).get_channel_videos_series(
-                series_id,
-                pn = page,
-                ps = 20
-            )
+        page_info = await User(self_uid, credential).get_channel_videos_series(
+            series_id, pn=page, ps=20
+        )
         for aid in page_info["aids"]:
             aids.append(aid)
     api = API_USER["channel_series"]["del_channel_series"]
     data = {
         "mid": self_uid,
         "series_id": series_id,
-        "aids": ",".join(map(lambda x: str(x), aids))
+        "aids": ",".join(map(lambda x: str(x), aids)),
     }
-    return await request(
-        "POST", api["url"], data=data, credential=credential
-    )
+    return await request("POST", api["url"], data=data, credential=credential)
 
 
 async def add_aids_to_series(
-    series_id: int,
-    aids: List[int],
-    credential: Credential
+    series_id: int, aids: List[int], credential: Credential
 ) -> dict:
     """
     添加视频至视频列表(旧版合集)
@@ -225,6 +211,7 @@ async def add_aids_to_series(
         dict: 调用 API 返回的结果
     """
     from .user import get_self_info
+
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
     self_info = await get_self_info(credential)
@@ -232,17 +219,13 @@ async def add_aids_to_series(
     data = {
         "mid": self_info["mid"],
         "series_id": series_id,
-        "aids": ",".join(map(lambda x: str(x), aids))
+        "aids": ",".join(map(lambda x: str(x), aids)),
     }
-    return await request(
-        "POST", api["url"], data=data, credential=credential
-    )
+    return await request("POST", api["url"], data=data, credential=credential)
 
 
 async def del_aids_from_series(
-    series_id: int,
-    aids: List[int],
-    credential: Credential
+    series_id: int, aids: List[int], credential: Credential
 ) -> dict:
     """
     从视频列表(旧版合集)删除视频
@@ -256,6 +239,7 @@ async def del_aids_from_series(
         dict: 调用 API 返回的结果
     """
     from .user import get_self_info
+
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
     self_info = await get_self_info(credential)
@@ -263,17 +247,13 @@ async def del_aids_from_series(
     data = {
         "mid": self_info["mid"],
         "series_id": series_id,
-        "aids": ",".join(map(lambda x: str(x), aids))
+        "aids": ",".join(map(lambda x: str(x), aids)),
     }
-    return await request(
-        "POST", api["url"], data=data, credential=credential
-    )
+    return await request("POST", api["url"], data=data, credential=credential)
 
 
 async def set_follow_channel_season(
-    season_id: int,
-    status: bool = True,
-    credential: Optional[Credential] = None
+    season_id: int, status: bool = True, credential: Optional[Credential] = None
 ) -> dict:
     """
     设置是否订阅合集(新版)
@@ -283,7 +263,5 @@ async def set_follow_channel_season(
         status    (bool): 是否订阅状态. Defaults to True.
     """
     api = API["operate"]["fav"] if status else API["operate"]["unfav"]
-    data = {
-        "season_id": season_id
-    }
+    data = {"season_id": season_id}
     return await request("POST", api["url"], data=data, credential=credential)

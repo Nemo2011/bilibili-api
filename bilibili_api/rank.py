@@ -18,6 +18,7 @@ class RankAPIType(Enum):
     - PGC: https://api.bilibili.com/pgc/web/rank/list
     - V2: https://api.bilibili.com/x/web-interface/ranking/v2
     """
+
     PGC = "pgc"
     V2 = "x"
 
@@ -29,8 +30,10 @@ class RankDayType(Enum):
     - THREE_DAY: 三日排行
     - WEEK: 周排行
     """
+
     THREE_DAY = 3
     WEEK = 7
+
 
 class RankType(Enum):
     """
@@ -62,6 +65,7 @@ class RankType(Enum):
     - Original: 原创
     - Rookie: 新人
     """
+
     All = {"api_type": "x", "rid": 0, "type": "all"}
     Bangumi = {"api_type": "pgc", "season_type": 1}
     GuochuangAnime = {"api_type": "pgc", "season_type": 4}
@@ -101,6 +105,7 @@ class VIPRankType(Enum):
     - TV: 电视剧
     - VARIETY: 综艺
     """
+
     VIP = 279
     BANGUMI = 118
     GUOCHUANG = 119
@@ -108,6 +113,7 @@ class VIPRankType(Enum):
     DOCUMENTARY = 175
     TV = 176
     VARIETY = 177
+
 
 class MangeRankType(Enum):
     """
@@ -123,6 +129,7 @@ class MangeRankType(Enum):
     - FREE: 免费
     - FINISH: 完结
     """
+
     NEW = 7
     BOY = 11
     GRIL = 12
@@ -134,7 +141,9 @@ class MangeRankType(Enum):
     FINISH = 13
 
 
-async def get_rank(type_: RankType = RankType.All, day: RankDayType = RankDayType.THREE_DAY) -> dict:
+async def get_rank(
+    type_: RankType = RankType.All, day: RankDayType = RankDayType.THREE_DAY
+) -> dict:
     """
     获取视频排行榜
 
@@ -203,6 +212,7 @@ async def get_music_rank_weakly_musics(week: int = 1) -> dict:
     params = {"list_id": week}
     return await request("GET", api["url"], params=params)
 
+
 async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
     """
     获取大会员中心的排行榜
@@ -217,7 +227,8 @@ async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
     params = {"rank_id": type_.value}
     return await request("GET", api["url"], params=params)
 
-async def get_manga_rank(type_ : MangeRankType = MangeRankType.NEW) -> dict:
+
+async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW) -> dict:
     """
     获取漫画专属排行榜
 
@@ -225,6 +236,6 @@ async def get_manga_rank(type_ : MangeRankType = MangeRankType.NEW) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["info"]["manga_rank"]
-    params = {"device": "pc","platform": "web"}
+    params = {"device": "pc", "platform": "web"}
     data = {"id": type_.value}
     return await request("POST", api["url"], params=params, data=data, no_csrf=True)

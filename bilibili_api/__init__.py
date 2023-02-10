@@ -7,13 +7,22 @@ bilibili_api
 import asyncio
 import platform
 
-from .errors import (ApiException, ArgsException, CredentialNoBiliJctException,
-                     CredentialNoBuvid3Exception,
-                     CredentialNoDedeUserIDException,
-                     CredentialNoSessdataException, DanmakuClosedException,
-                     DynamicExceedImagesException, LiveException, LoginError,
-                     NetworkException, ResponseCodeException,
-                     ResponseException, VideoUploadException)
+from .errors import (
+    ApiException,
+    ArgsException,
+    CredentialNoBiliJctException,
+    CredentialNoBuvid3Exception,
+    CredentialNoDedeUserIDException,
+    CredentialNoSessdataException,
+    DanmakuClosedException,
+    DynamicExceedImagesException,
+    LiveException,
+    LoginError,
+    NetworkException,
+    ResponseCodeException,
+    ResponseException,
+    VideoUploadException,
+)
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
@@ -31,22 +40,36 @@ if "windows" in platform.system().lower():
 
 __all__ = [
     # Exceptions
-    "ApiException", "ArgsException",
+    "ApiException",
+    "ArgsException",
     "CredentialNoBiliJctException",
     "CredentialNoBuvid3Exception",
     "CredentialNoDedeUserIDException",
     "CredentialNoSessdataException",
     "DanmakuClosedException",
     "DynamicExceedImagesException",
-    "LiveException", "LoginError",
-    "NetworkException", "ResponseCodeException",
-    "ResponseException", "VideoUploadException",
+    "LiveException",
+    "LoginError",
+    "NetworkException",
+    "ResponseCodeException",
+    "ResponseException",
+    "VideoUploadException",
     # Functions
-    "aid2bvid", "bvid2aid", "get_session", "set_session",
-    "parse_link", "ResourceType", "get_real_url", "sync",
+    "aid2bvid",
+    "bvid2aid",
+    "get_session",
+    "set_session",
+    "parse_link",
+    "ResourceType",
+    "get_real_url",
+    "sync",
     # Models
-    "Credential", "Danmaku", "DmFontSize", "DmMode",
-    "SpecialDanmaku", "Picture",
+    "Credential",
+    "Danmaku",
+    "DmFontSize",
+    "DmMode",
+    "SpecialDanmaku",
+    "Picture",
     # Constants
-    "HEADERS"
+    "HEADERS",
 ]

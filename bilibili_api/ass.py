@@ -83,7 +83,7 @@ def export_ass_from_json(file_local, output_local) -> None:
 
 
 async def make_ass_file_subtitle(
-    obj: Union[Video, Episode], out = "test.ass", name = "中文（自动生成）"
+    obj: Union[Video, Episode], out="test.ass", name="中文（自动生成）"
 ) -> None:
     """
     生成视频字幕文件
@@ -110,15 +110,15 @@ async def make_ass_file_subtitle(
 async def make_ass_file_danmakus_protobuf(
     obj: Union[Video, Episode, CheeseVideo],
     page: int = 0,
-    out = "test.ass",
+    out="test.ass",
     cid: Union[int, None] = None,
     credential: Union[Credential, None] = None,
-    date = None,
-    font_name = "Simsun",
-    font_size = 25.0,
-    alpha = 1,
-    fly_time = 7,
-    static_time = 5,
+    date=None,
+    font_name="Simsun",
+    font_size=25.0,
+    alpha=1,
+    fly_time=7,
+    static_time=5,
 ) -> None:
     """
     生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
@@ -149,7 +149,7 @@ async def make_ass_file_danmakus_protobuf(
             if cid is None:
                 if page is None:
                     raise ArgsException("page_index 和 cid 至少提供一个。")
-                cid = await v._Video__get_page_id_by_index(page) # type: ignore
+                cid = await v._Video__get_page_id_by_index(page)  # type: ignore
         try:
             info = await v.get_info()
         except:
@@ -164,7 +164,7 @@ async def make_ass_file_danmakus_protobuf(
         if isinstance(obj, Episode):
             danmakus = await v.get_danmakus()
         else:
-            danmakus = await v.get_danmakus(cid=cid, date=date) # type: ignore
+            danmakus = await v.get_danmakus(cid=cid, date=date)  # type: ignore
     elif isinstance(obj, CheeseVideo):
         stage_size = (1440, 1080)
         danmakus = await obj.get_danmakus()
@@ -190,13 +190,13 @@ async def make_ass_file_danmakus_protobuf(
 async def make_ass_file_danmakus_xml(
     obj: Union[Video, Episode, CheeseVideo],
     page: int = 0,
-    out = "test.ass",
+    out="test.ass",
     cid: Union[int, None] = None,
-    font_name = "Simsun",
-    font_size = 25.0,
-    alpha = 1,
-    fly_time = 7,
-    static_time = 5,
+    font_name="Simsun",
+    font_size=25.0,
+    alpha=1,
+    fly_time=7,
+    static_time=5,
 ) -> None:
     """
     生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
@@ -221,7 +221,7 @@ async def make_ass_file_danmakus_xml(
             if cid is None:
                 if page is None:
                     raise ArgsException("page_index 和 cid 至少提供一个。")
-                cid = await v._Video__get_page_id_by_index(page) # type: ignore
+                cid = await v._Video__get_page_id_by_index(page)  # type: ignore
         try:
             info = await v.get_info()
         except:
@@ -236,7 +236,7 @@ async def make_ass_file_danmakus_xml(
         if isinstance(obj, Episode):
             xml_content = await v.get_danmaku_xml()
         else:
-            xml_content = await v.get_danmaku_xml(cid=cid) # type: ignore
+            xml_content = await v.get_danmaku_xml(cid=cid)  # type: ignore
     elif isinstance(obj, CheeseVideo):
         stage_size = (1440, 1080)
         xml_content = await obj.get_danmaku_xml()

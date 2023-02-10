@@ -24,13 +24,12 @@ async def get_channel_categories() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["categories"]["list"]
-    return await request(
-        "GET",
-        api["url"]
-    )
+    return await request("GET", api["url"])
 
 
-async def get_channel_category_detail(category_id: int, offset: str = "0", credential: Optional[Credential] = None) -> dict:
+async def get_channel_category_detail(
+    category_id: int, offset: str = "0", credential: Optional[Credential] = None
+) -> dict:
     """
     获取频道分类的频道列表及其详细信息
 
@@ -40,16 +39,8 @@ async def get_channel_category_detail(category_id: int, offset: str = "0", crede
     """
     credential = credential if credential else Credential()
     api = API["categories"]["sub_channels"]
-    params = {
-        "id": category_id,
-        "offset": offset
-    }
-    return await request(
-        "GET",
-        api["url"],
-        params=params,
-        credential=credential
-    )
+    params = {"id": category_id, "offset": offset}
+    return await request("GET", api["url"], params=params, credential=credential)
 
 
 class ChannelVideosOrder(Enum):
@@ -60,6 +51,7 @@ class ChannelVideosOrder(Enum):
     - HOT: 最火
     - VIEW: 播放量最高
     """
+
     NEW = "new"
     HOT = "hot"
     VIEW = "view"
@@ -72,6 +64,7 @@ class ChannelVideosFilter(Enum):
     - ALL     : 全部
     - YEAR_年份: 指定年份筛选
     """
+
     ALL = 0
     YEAR_2023 = 2023
     YEAR_2022 = 2022
@@ -92,6 +85,7 @@ class Channel:
     """
     频道类。
     """
+
     def __init__(self, channel_id: int):
         """
         Args:
@@ -109,7 +103,9 @@ class Channel:
         Returns:
             dict: HTML 中 window.__INITIAL_STATE__ 中的信息
         """
-        return await get_initial_state(f"https://www.bilibili.com/v/channel/{self.get_channel_id()}")
+        return await get_initial_state(
+            f"https://www.bilibili.com/v/channel/{self.get_channel_id()}"
+        )
 
     async def get_related_channels(self) -> List[dict]:
         """
@@ -121,21 +117,26 @@ class Channel:
         return (await self.get_info())["channelDetailBanner"]["data"]["tag_channels"]
 
     def only_achieve(self, info: list) -> List[dict]:
-        '''
+        """
         只返回 card_type=achieve 的数据
 
         Args:
             info (list): 待筛选的数据
         Returns:
             list: card_type=achieve 的数据
-        '''
+        """
         results = []
         for obj in info:
             if obj.get("card_type") == "archive":
                 results.append(obj)
         return results
 
-    async def get_featured_list(self, filter: ChannelVideosFilter = ChannelVideosFilter.ALL, offset: str = None, page_size: int = 30) -> dict:
+    async def get_featured_list(
+        self,
+        filter: ChannelVideosFilter = ChannelVideosFilter.ALL,
+        offset: str = None,
+        page_size: int = 30,
+    ) -> dict:
         """
         获取频道精选视频
 
@@ -149,23 +150,24 @@ class Channel:
         """
         # page_size 默认设置为网页端的 30
         api = API["channel"]["list_featured"]
-        params = {
-            "channel_id": self.get_channel_id()
-        }
+        params = {"channel_id": self.get_channel_id()}
         if isinstance(filter, ChannelVideosFilter):
             params["filter_type"] = filter.value
         if offset is not None:
             params["offset"] = offset
         params["page_size"] = page_size
-        info = await request(
-            "GET", api["url"], params=params
-        )
+        info = await request("GET", api["url"], params=params)
 
         # 如果频道与番剧有关，会有番剧信息，需要排除掉 card_type=season 的数据
         info["list"] = self.only_achieve(info["list"])
         return info
 
-    async def get_raw_list(self, order: ChannelVideosOrder = ChannelVideosOrder.HOT, offset: str = None, page_size: int = 30) -> dict:
+    async def get_raw_list(
+        self,
+        order: ChannelVideosOrder = ChannelVideosOrder.HOT,
+        offset: str = None,
+        page_size: int = 30,
+    ) -> dict:
         """
         获取频道视频列表原数据
 
@@ -182,7 +184,7 @@ class Channel:
         params = {
             "channel_id": self.get_channel_id(),
             "offset": offset,
-            "page_size": page_size
+            "page_size": page_size,
         }
         if isinstance(order, ChannelVideosOrder):
             params["sort_type"] = order.value
@@ -190,11 +192,14 @@ class Channel:
             params["offset"] = offset
         params["page_size"] = page_size
 
-        return await request(
-            "GET", api["url"], params=params
-        )
+        return await request("GET", api["url"], params=params)
 
-    async def get_list(self, order: ChannelVideosOrder = ChannelVideosOrder.HOT, offset: str = None, page_size: int = 30) -> dict:
+    async def get_list(
+        self,
+        order: ChannelVideosOrder = ChannelVideosOrder.HOT,
+        offset: str = None,
+        page_size: int = 30,
+    ) -> dict:
         """
         获取频道视频列表
 
@@ -240,7 +245,9 @@ async def get_channels_in_category(category_id: int) -> List["Channel"]:
     channel_list = []
     offset = "0"
     while True:
-        raw_data = await get_channel_category_detail(category_id=category_id, offset=offset)
+        raw_data = await get_channel_category_detail(
+            category_id=category_id, offset=offset
+        )
         channel_list += raw_data["archive_channels"]
         if not raw_data["has_more"]:
             break
@@ -248,9 +255,7 @@ async def get_channels_in_category(category_id: int) -> List["Channel"]:
             offset = raw_data["offset"]
     channel_objects = []
     for channel in channel_list:
-        channel_objects.append(
-            Channel(channel["id"])
-        )
+        channel_objects.append(Channel(channel["id"]))
     return channel_objects
 
 
@@ -265,11 +270,7 @@ async def get_self_subscribe_channels(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["self_subscribes"]["list"]
-    return await request(
-        "GET",
-        api["url"],
-        credential=credential
-    )
+    return await request("GET", api["url"], credential=credential)
 
 
 async def subscribe_channel(channel: Channel, credential: Credential) -> dict:
@@ -284,15 +285,9 @@ async def subscribe_channel(channel: Channel, credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["channel"]["subscribe"]
-    params = {
-        "id": channel.get_channel_id()
-    }
-    return await request(
-        "POST",
-        api["url"],
-        data=params,
-        credential=credential
-    )
+    params = {"id": channel.get_channel_id()}
+    return await request("POST", api["url"], data=params, credential=credential)
+
 
 async def unsubscribe_channel(channel: Channel, credential: Credential) -> dict:
     """
@@ -306,12 +301,5 @@ async def unsubscribe_channel(channel: Channel, credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["channel"]["unsubscribe"]
-    params = {
-        "id": channel.get_channel_id()
-    }
-    return await request(
-        "POST",
-        api["url"],
-        data=params,
-        credential=credential
-    )
+    params = {"id": channel.get_channel_id()}
+    return await request("POST", api["url"], data=params, credential=credential)

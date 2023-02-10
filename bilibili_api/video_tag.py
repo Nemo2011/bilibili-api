@@ -12,15 +12,13 @@ from typing import Optional
 
 API = get_api("video_tag")
 
+
 class Tag:
     """
     标签类
     """
-    def __init__(
-        self,
-        tag_name: Optional[str] = None,
-        tag_id: Optional[int] = None
-    ):
+
+    def __init__(self, tag_name: Optional[str] = None, tag_id: Optional[int] = None):
         """
         Args:
             tag_name (str | None): 标签名. Defaults to None.
@@ -31,11 +29,13 @@ class Tag:
         if tag_id == None:
             if tag_name == None:
                 raise ArgsException("tag_name 和 tag_id 需要提供一个。")
-            resp = httpx.get(f"https://api.bilibili.com/x/tag/info?tag_name={tag_name}").json()
+            resp = httpx.get(
+                f"https://api.bilibili.com/x/tag/info?tag_name={tag_name}"
+            ).json()
             self.__tag_id = resp["data"]["tag_id"]
         else:
             self.__tag_id = tag_id
-        self.credential = None # 不做 Credential 接入
+        self.credential = None  # 不做 Credential 接入
 
     def get_tag_id(self) -> int:
         return self.__tag_id
@@ -48,14 +48,8 @@ class Tag:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["tag_info"]
-        params = {
-            "tag_id": self.get_tag_id()
-        }
-        return await request(
-            "GET",
-            api["url"],
-            params=params
-        )
+        params = {"tag_id": self.get_tag_id()}
+        return await request("GET", api["url"], params=params)
 
     async def get_similar_tags(self) -> dict:
         """
@@ -65,14 +59,8 @@ class Tag:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["get_similar"]
-        params = {
-            "tag_id": self.get_tag_id()
-        }
-        return await request(
-            "GET",
-            api["url"],
-            params=params
-        )
+        params = {"tag_id": self.get_tag_id()}
+        return await request("GET", api["url"], params=params)
 
     async def get_cards(self) -> dict:
         """
@@ -82,11 +70,5 @@ class Tag:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["get_list"]
-        params = {
-            "topic_id": self.get_tag_id()
-        }
-        return await request(
-            "GET",
-            api["url"],
-            params=params
-        )
+        params = {"topic_id": self.get_tag_id()}
+        return await request("GET", api["url"], params=params)

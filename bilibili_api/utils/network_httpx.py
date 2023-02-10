@@ -23,6 +23,7 @@ last_proxy = ""
 
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
 
+
 @atexit.register
 def __clean() -> None:
     """
@@ -145,7 +146,7 @@ async def request(
 
     if "callback" in params:
         # JSONP 请求
-        resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1)) # type: ignore
+        resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1))  # type: ignore
     else:
         # JSON
         resp_data = json.loads(raw_data)
@@ -183,7 +184,7 @@ def get_session() -> httpx.AsyncClient:
         if settings.proxy != "":
             last_proxy = settings.proxy
             proxies = {"all://": settings.proxy}
-            session = httpx.AsyncClient(proxies=proxies, timeout=settings.timeout) # type: ignore
+            session = httpx.AsyncClient(proxies=proxies, timeout=settings.timeout)  # type: ignore
         else:
             last_proxy = ""
             session = httpx.AsyncClient()

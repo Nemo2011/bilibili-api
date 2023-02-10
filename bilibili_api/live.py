@@ -106,7 +106,9 @@ class LiveRoom:
         room_display_id (int)       : 房间展示 id
     """
 
-    def __init__(self, room_display_id: int, credential: Union[Credential, None] = None):
+    def __init__(
+        self, room_display_id: int, credential: Union[Credential, None] = None
+    ):
         """
         Args:
             room_display_id (int)                 : 房间展示 ID（即 URL 中的 ID）
@@ -187,7 +189,7 @@ class LiveRoom:
         if self.__ruid is None:
             await self.get_room_play_info()
 
-        return self.__ruid # type: ignore
+        return self.__ruid  # type: ignore
 
     async def get_ruid(self) -> int:
         return await self.__get_ruid()
@@ -222,7 +224,7 @@ class LiveRoom:
         self,
         page_num: int = 1,
         target_id: Union[int, None] = None,
-        roomId: Union[int, None] = None
+        roomId: Union[int, None] = None,
     ) -> dict:
         """
         获取自己的粉丝勋章信息
@@ -886,7 +888,7 @@ class LiveDanmaku(AsyncEvent):
             self.__tasks.pop().cancel()
 
         self.__status = self.STATUS_CLOSED
-        await self.__ws.close() # type: ignore
+        await self.__ws.close()  # type: ignore
 
         self.logger.info("连接已关闭")
 
@@ -919,7 +921,7 @@ class LiveDanmaku(AsyncEvent):
         async def on_timeout(ev):
             # 连接超时
             self.err_reason = "心跳响应超时"
-            await self.__ws.close() # type: ignore
+            await self.__ws.close()  # type: ignore
 
         while True:
             self.err_reason = ""
@@ -1070,15 +1072,12 @@ class LiveDanmaku(AsyncEvent):
                 self.logger.debug("发送心跳包")
                 await ws.send_bytes(HEARTBEAT)
                 heartbeat_url = "https://live-trace.bilibili.com/xlive/rdata-interface/v1/heartbeat/webHeartBeat?pf=web&hb="
-                hb = str(base64.b64encode(f"60|{self.room_display_id}|1|0".encode("utf-8")), "utf-8")
+                hb = str(
+                    base64.b64encode(f"60|{self.room_display_id}|1|0".encode("utf-8")),
+                    "utf-8",
+                )
                 await request(
-                    "GET",
-                    heartbeat_url,
-                    params = {
-                        "hb": hb,
-                        "pf": "web"
-                    },
-                    json_body = True
+                    "GET", heartbeat_url, params={"hb": hb, "pf": "web"}, json_body=True
                 )
             elif self.__heartbeat_timer <= -30:
                 # 视为已异常断开连接，发布 TIMEOUT 事件
@@ -1196,9 +1195,7 @@ async def get_self_live_info(credential: Credential) -> dict:
 
 
 async def get_self_dahanghai_info(
-    page: int = 1,
-    page_size: int = 10,
-    credential: Union[Credential, None] = None
+    page: int = 1, page_size: int = 10, credential: Union[Credential, None] = None
 ) -> dict:
     """
     获取自己开通的大航海信息
@@ -1248,7 +1245,7 @@ async def get_self_bag(credential: Credential) -> dict:
 async def get_gift_config(
     room_id: Union[int, None] = None,
     area_id: Union[int, None] = None,
-    area_parent_id: Union[int, None] = None
+    area_parent_id: Union[int, None] = None,
 ):
     """
     获取所有礼物的信息，包括礼物 id、名称、价格、等级等。
@@ -1286,8 +1283,7 @@ async def get_area_info() -> dict:
 
 
 async def get_live_followers_info(
-    need_recommend: bool = True,
-    credential: Union[Credential, None] = None
+    need_recommend: bool = True, credential: Union[Credential, None] = None
 ) -> dict:
     """
     获取关注列表中正在直播的直播间信息，包括房间直播热度，房间名称及标题，清晰度，是否官方认证等信息。
@@ -1311,9 +1307,7 @@ async def get_live_followers_info(
 
 
 async def get_unlive_followers_info(
-    page: int = 1,
-    page_size: int = 30,
-    credential: Union[Credential, None] = None
+    page: int = 1, page_size: int = 30, credential: Union[Credential, None] = None
 ) -> dict:
     """
     获取关注列表中未在直播的直播间信息，包括上次开播时间，上次开播的类别，直播间公告，是否有录播等。

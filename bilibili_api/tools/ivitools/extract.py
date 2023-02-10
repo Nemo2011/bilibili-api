@@ -6,6 +6,7 @@ ivitools.extract
 import zipfile
 import os
 
+
 def extract_ivi(path: str, dest: str):
     print("Extracting...")
     if not os.path.exists(dest):

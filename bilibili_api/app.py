@@ -33,7 +33,7 @@ async def get_loading_images(
         height     (int, optional)              : 屏幕高度
         width      (int, optional)              : 屏幕宽度
         birth      (str, optional)              : 生日日期(四位数，例 0101)
-        credential (Credential | None, optional): 凭据. Defaults to None. 
+        credential (Credential | None, optional): 凭据. Defaults to None.
 
     Returns:
         dict: 调用 API 返回的结果
@@ -67,7 +67,7 @@ async def get_loading_images_special(
         platform   (str, optional)              : android / ios    / ios
         height     (str, optional)              : 屏幕高度
         width      (str, optional)              : 屏幕宽度
-        credential (Credential | None, optional): 凭据. Defaults to None. 
+        credential (Credential | None, optional): 凭据. Defaults to None.
 
     Returns:
         dict: 调用 API 返回的结果

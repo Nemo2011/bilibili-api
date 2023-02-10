@@ -23,6 +23,7 @@ class LiveRoomOrder(Enum):
     - RECOMMEND: 综合
     - NEW: 最新
     """
+
     RECOMMEND = ""
     NEW = "live_time"
 
@@ -124,7 +125,9 @@ def get_area_list_sub() -> dict:
     return channel
 
 
-async def get_list_by_area(area_id: int, page: int = 1, order: LiveRoomOrder = LiveRoomOrder.RECOMMEND) -> dict:
+async def get_list_by_area(
+    area_id: int, page: int = 1, order: LiveRoomOrder = LiveRoomOrder.RECOMMEND
+) -> dict:
     """
     根据分区获取直播间列表
 
@@ -142,10 +145,6 @@ async def get_list_by_area(area_id: int, page: int = 1, order: LiveRoomOrder = L
         "parent_area_id": get_area_info_by_id(area_id)[0]["id"],
         "area_id": 0 if (get_area_info_by_id(area_id)[1] == None) else area_id,
         "page": page,
-        "sort_type": order.value
+        "sort_type": order.value,
     }
-    return await request(
-        "GET",
-        api["url"],
-        params = params
-    )
+    return await request("GET", api["url"], params=params)

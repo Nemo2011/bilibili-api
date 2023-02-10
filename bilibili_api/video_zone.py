@@ -76,7 +76,9 @@ def get_zone_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, Non
         return None, None
 
 
-async def get_zone_top10(tid: int, day: int = 7, credential: Union[Credential, None] = None) -> dict:
+async def get_zone_top10(
+    tid: int, day: int = 7, credential: Union[Credential, None] = None
+) -> dict:
     """
     获取分区前十排行榜。
 
@@ -137,7 +139,9 @@ def get_zone_list_sub() -> dict:
     return channel
 
 
-async def get_zone_videos_count_today(credential: Union[Credential, None] = None) -> dict:
+async def get_zone_videos_count_today(
+    credential: Union[Credential, None] = None
+) -> dict:
     """
     获取每个分区当日最新投稿数量
 
@@ -180,7 +184,7 @@ async def get_zone_hot_tags(tid: int) -> List[dict]:
     """
 
     api = API["get_hot_tags"]
-    params={"rid": tid}
+    params = {"rid": tid}
     return (await request("GET", api["url"], params=params))[0]
 
 
@@ -315,6 +319,7 @@ class VideoZoneTypes(enum.Enum):
         - ANIMAL_COMPOSITE: 动物综合
     - VLOG: VLOG
     """
+
     MAINPAGE = 0
 
     ANIME = 13

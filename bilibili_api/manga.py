@@ -32,6 +32,7 @@ class MangaIndexFilter:
         - SOUTHKOREA: 韩国
         - OTHER: 其他
         """
+
         ALL = -1
         CHINA = 1
         JAPAN = 2
@@ -46,6 +47,7 @@ class MangaIndexFilter:
         - UPDATE: 更新时间
         - RELEASE_DATE: 上架时间
         """
+
         HOT = 0
         UPDATE = 1
         RELEASE_DATE = 3
@@ -58,6 +60,7 @@ class MangaIndexFilter:
         - FINISHED: 完结
         - UNFINISHED: 连载
         """
+
         ALL = -1
         FINISHED = 1
         UNFINISHED = 0
@@ -71,6 +74,7 @@ class MangaIndexFilter:
         - PAID: 付费
         - WILL_BE_FREE: 等就免费
         """
+
         ALL = -1
         FREE = 1
         PAID = 2
@@ -98,6 +102,7 @@ class MangaIndexFilter:
         - POSITIVE: 正能量
         - SCIENCE_FICTION: 科幻
         """
+
         ALL = -1
         WARM = 999
         ANCIENT = 997
@@ -147,13 +152,17 @@ class Manga:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["detail"]
-        params = {
-            "comic_id": self.__manga_id
-        }
+        params = {"comic_id": self.__manga_id}
         return await request(
-            "POST", api["url"], params=params, credential=self.credential,
-            no_csrf=(False if (self.credential.has_sessdata()
-                     and self.credential.has_bili_jct()) else True)
+            "POST",
+            api["url"],
+            params=params,
+            credential=self.credential,
+            no_csrf=(
+                False
+                if (self.credential.has_sessdata() and self.credential.has_bili_jct())
+                else True
+            ),
         )
 
     async def __get_info_cached(self) -> dict:
@@ -164,7 +173,11 @@ class Manga:
             self.__info = await self.get_info()
         return self.__info
 
-    async def get_episode_info(self, episode_count: Optional[Union[int, float]] = None, episode_id: Optional[int] = None) -> dict:
+    async def get_episode_info(
+        self,
+        episode_count: Optional[Union[int, float]] = None,
+        episode_id: Optional[int] = None,
+    ) -> dict:
         """
         获取某一话的详细信息
 
@@ -189,7 +202,9 @@ class Manga:
                 raise ArgsException("episode_count 和 episode_id 中必须提供一个参数。")
         raise ArgsException("未找到对应的话")
 
-    async def get_episode_id(self, episode_count: Optional[Union[int, float]] = None) -> int:
+    async def get_episode_id(
+        self, episode_count: Optional[Union[int, float]] = None
+    ) -> int:
         """
         获取某一话的 id
 
@@ -201,7 +216,11 @@ class Manga:
         """
         return (await self.get_episode_info(episode_count=episode_count))["id"]
 
-    async def get_images_url(self, episode_count: Optional[Union[int, float]] = None, episode_id: Optional[int] = None) -> dict:
+    async def get_images_url(
+        self,
+        episode_count: Optional[Union[int, float]] = None,
+        episode_id: Optional[int] = None,
+    ) -> dict:
         """
         获取某一话的图片链接。(未经过处理，所有的链接无法直接访问)
 
@@ -221,17 +240,24 @@ class Manga:
                 raise ArgsException("episode_count 和 episode_id 中必须提供一个参数。")
             episode_id = await self.get_episode_id(episode_count)
         api = API["info"]["episode_images"]
-        params = {
-            "ep_id": episode_id
-        }
+        params = {"ep_id": episode_id}
         return await request(
-            "POST", api["url"], params=params,
-            no_csrf=(False if (self.credential.has_sessdata()
-                     and self.credential.has_bili_jct()) else True),
-            credential=self.credential
+            "POST",
+            api["url"],
+            params=params,
+            no_csrf=(
+                False
+                if (self.credential.has_sessdata() and self.credential.has_bili_jct())
+                else True
+            ),
+            credential=self.credential,
         )
 
-    async def get_images(self, episode_count: Optional[Union[int, float]] = None, episode_id: Optional[int] = None) -> List[Dict]:
+    async def get_images(
+        self,
+        episode_count: Optional[Union[int, float]] = None,
+        episode_id: Optional[int] = None,
+    ) -> List[Dict]:
         """
         获取某一话的所有图片
 
@@ -244,32 +270,47 @@ class Manga:
         Returns:
             List[Picture]: 所有的图片
         """
-        data = await self.get_images_url(episode_count=episode_count, episode_id=episode_id)
+        data = await self.get_images_url(
+            episode_count=episode_count, episode_id=episode_id
+        )
         pictures: List[Dict] = []
 
         async def get_real_image_url(url: str) -> str:
             token_api = API["info"]["image_token"]
-            datas = {
-                "urls": f"[\"{url}\"]"
-            }
+            datas = {"urls": f'["{url}"]'}
             token_data = await request(
-                "POST", token_api["url"], data=datas,
-                no_csrf=(False if (self.credential.has_sessdata()
-                         and self.credential.has_bili_jct()) else True),
-                credential=self.credential
+                "POST",
+                token_api["url"],
+                data=datas,
+                no_csrf=(
+                    False
+                    if (
+                        self.credential.has_sessdata()
+                        and self.credential.has_bili_jct()
+                    )
+                    else True
+                ),
+                credential=self.credential,
             )
             return token_data[0]["url"] + "?token=" + token_data[0]["token"]
+
         for img in data["images"]:
             url = await get_real_image_url(img["path"])
-            pictures.append({
-                "x": img["x"],
-                "y": img["y"],
-                "picture": Picture.from_content(httpx.get(url, headers=HEADERS).content, "jpg")
-            })
+            pictures.append(
+                {
+                    "x": img["x"],
+                    "y": img["y"],
+                    "picture": Picture.from_content(
+                        httpx.get(url, headers=HEADERS).content, "jpg"
+                    ),
+                }
+            )
         return pictures
 
 
-async def manga_image_url_turn_to_Picture(url: str, credential: Optional[Credential] = None) -> Picture:
+async def manga_image_url_turn_to_Picture(
+    url: str, credential: Optional[Credential] = None
+) -> Picture:
     """
     将 Manga.get_images_url 函数获得的图片 url 转换为 Picture 类。
 
@@ -285,20 +326,26 @@ async def manga_image_url_turn_to_Picture(url: str, credential: Optional[Credent
 
     async def get_real_image_url(url: str) -> str:
         token_api = API["info"]["image_token"]
-        datas = {
-            "urls": f"[\"{url}\"]"
-        }
+        datas = {"urls": f'["{url}"]'}
         token_data = await request(
-            "POST", token_api["url"], data=datas,
-            no_csrf=(False if (credential.has_sessdata()
-                     and credential.has_bili_jct()) else True)
+            "POST",
+            token_api["url"],
+            data=datas,
+            no_csrf=(
+                False
+                if (credential.has_sessdata() and credential.has_bili_jct())
+                else True
+            ),
         )
         return f'{token_data[0]["url"]}?token={token_data[0]["token"]}'
+
     url = await get_real_image_url(url)
     return Picture.from_url(url)
 
 
-async def set_follow_manga(manga: Manga, status: bool = True, credential: Optional[Credential] = None) -> dict:
+async def set_follow_manga(
+    manga: Manga, status: bool = True, credential: Optional[Credential] = None
+) -> dict:
     """
     设置追漫
 
@@ -318,20 +365,19 @@ async def set_follow_manga(manga: Manga, status: bool = True, credential: Option
         api = API["operate"]["add_favorite"]
     else:
         api = API["operate"]["del_favorite"]
-    data = {
-        "comic_ids": str(manga.get_manga_id())
-    }
+    data = {"comic_ids": str(manga.get_manga_id())}
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def get_raw_manga_index(area: MangaIndexFilter.Area = MangaIndexFilter.Area.ALL,
-                        order: MangaIndexFilter.Order = MangaIndexFilter.Order.HOT,
-                        status: MangaIndexFilter.Status = MangaIndexFilter.Status.ALL,
-                        payment: MangaIndexFilter.Payment = MangaIndexFilter.Payment.ALL,
-                        style: MangaIndexFilter.Style = MangaIndexFilter.Style.ALL,
-                        pn: int = 1,
-                        ps: int = 18,
-                        ) -> list:
+async def get_raw_manga_index(
+    area: MangaIndexFilter.Area = MangaIndexFilter.Area.ALL,
+    order: MangaIndexFilter.Order = MangaIndexFilter.Order.HOT,
+    status: MangaIndexFilter.Status = MangaIndexFilter.Status.ALL,
+    payment: MangaIndexFilter.Payment = MangaIndexFilter.Payment.ALL,
+    style: MangaIndexFilter.Style = MangaIndexFilter.Style.ALL,
+    pn: int = 1,
+    ps: int = 18,
+) -> list:
     """
     获取漫画索引
 
@@ -356,19 +402,20 @@ async def get_raw_manga_index(area: MangaIndexFilter.Area = MangaIndexFilter.Are
         "is_free": payment.value,
         "style_id": style.value,
         "page_num": pn,
-        "page_size": ps
+        "page_size": ps,
     }
     return await request("POST", api["url"], data=data, params=params, no_csrf=True)
 
 
-async def get_manga_index(area: MangaIndexFilter.Area = MangaIndexFilter.Area.ALL,
-                    order: MangaIndexFilter.Order = MangaIndexFilter.Order.HOT,
-                    status: MangaIndexFilter.Status = MangaIndexFilter.Status.ALL,
-                    payment: MangaIndexFilter.Payment = MangaIndexFilter.Payment.ALL,
-                    style: MangaIndexFilter.Style = MangaIndexFilter.Style.ALL,
-                    pn: int = 1,
-                    ps: int = 18,
-                    ) -> List[Manga]:
+async def get_manga_index(
+    area: MangaIndexFilter.Area = MangaIndexFilter.Area.ALL,
+    order: MangaIndexFilter.Order = MangaIndexFilter.Order.HOT,
+    status: MangaIndexFilter.Status = MangaIndexFilter.Status.ALL,
+    payment: MangaIndexFilter.Payment = MangaIndexFilter.Payment.ALL,
+    style: MangaIndexFilter.Style = MangaIndexFilter.Style.ALL,
+    pn: int = 1,
+    ps: int = 18,
+) -> List[Manga]:
     """
     获取漫画索引
 

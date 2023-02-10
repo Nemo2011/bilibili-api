@@ -13,7 +13,7 @@ API = get_api("client")
 async def get_zone() -> dict:
     """
     通过 IP 获取地理位置
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """

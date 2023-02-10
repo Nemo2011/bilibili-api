@@ -166,7 +166,9 @@ async def get_user_stat(uid: int, credential: Union[Credential, None] = None) ->
     return await request("GET", api["url"], params, credential=credential)
 
 
-async def get_hot_song_list(pn: int = 1, credential: Union[Credential, None] = None) -> dict:
+async def get_hot_song_list(
+    pn: int = 1, credential: Union[Credential, None] = None
+) -> dict:
     """
     获取热门歌单
 

@@ -23,6 +23,7 @@ class MusicOrder(Enum):
     + NEW: 最新
     + HOT: 最热
     """
+
     NEW = 1
     HOT = 2
 
@@ -34,6 +35,7 @@ class MusicIndexTags:
     - Lang: 语言标签枚举类
     - Genre: 类型标签枚举类
     """
+
     class Lang(Enum):
         """
         - ALL: 全部
@@ -43,6 +45,7 @@ class MusicIndexTags:
         - KOREA: 韩语
         - OTHER: 其他
         """
+
         ALL = ""
         CHINESE = 3
         EUROPE_AMERICA = 6
@@ -76,6 +79,7 @@ class MusicIndexTags:
         - AMUSEMENT: 娱乐/舞台
         - OTHER: 其他
         """
+
         ALL = ""
         POPULAR = 1
         ROCK = 2
@@ -122,7 +126,7 @@ async def get_music_index_info(
     genre: MusicIndexTags.Genre = MusicIndexTags.Genre.ALL,
     order: MusicOrder = MusicOrder.NEW,
     page_num: int = 1,
-    page_size: int = 10
+    page_size: int = 10,
 ) -> dict:
     """
     获取首页的音乐视频列表
@@ -142,13 +146,9 @@ async def get_music_index_info(
         "genre": genre.value,
         "keyword": keyword,
         "pn": page_num,
-        "ps": page_size
+        "ps": page_size,
     }
-    return await request(
-        "GET",
-        api["url"],
-        params = params
-    )
+    return await request("GET", api["url"], params=params)
 
 
 class Music:
@@ -159,6 +159,7 @@ class Music:
 
     其中音乐的 ID 为 `video.get_tags` 返回值数据中的 `music_id` 键值
     """
+
     def __init__(self, music_id: str):
         """
         Args:
@@ -177,9 +178,7 @@ class Music:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["detail"]
-        params = {
-            "music_id": self.__music_id
-        }
+        params = {"music_id": self.__music_id}
         return await request("GET", api["url"], params=params)
 
     async def get_music_videos(self):
@@ -190,7 +189,5 @@ class Music:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["video_recommend_list"]
-        params = {
-            "music_id": self.__music_id
-        }
+        params = {"music_id": self.__music_id}
         return await request("GET", api["url"], params=params)

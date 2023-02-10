@@ -106,6 +106,7 @@ class OrderCheese(Enum):
     + NEW      : 最新上架
     + CHEEP    : 售价最低
     """
+
     RECOMMEND = -1
     SELL = 1
     NEW = 2
@@ -173,7 +174,7 @@ async def search_by_type(
     order_sort: Union[int, None] = None,
     category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int, None] = None,
     page: int = 1,
-    debug_param_func: Union[Callable, None]=None,
+    debug_param_func: Union[Callable, None] = None,
 ) -> dict:
     """
     指定分区，类型，视频长度等参数进行搜索，返回未经处理的字典
@@ -314,17 +315,16 @@ async def search_manga(keyword: str, page_num: int = 1, page_size: int = 9):
         dict: 调用 API 返回的结果
     """
     api = API["search"]["manga"]
-    data = {
-        "key_word": keyword,
-        "page_num": page_num,
-        "page_size": page_size
-    }
-    return await request(
-        "POST", api["url"], data=data, no_csrf=True
-    )
+    data = {"key_word": keyword, "page_num": page_num, "page_size": page_size}
+    return await request("POST", api["url"], data=data, no_csrf=True)
 
 
-async def search_cheese(keyword: str, page_num: int = 1, page_size: int = 30, order: OrderCheese = OrderCheese.RECOMMEND):
+async def search_cheese(
+    keyword: str,
+    page_num: int = 1,
+    page_size: int = 30,
+    order: OrderCheese = OrderCheese.RECOMMEND,
+):
     """
     搜索课程特用函数
 
@@ -342,10 +342,6 @@ async def search_cheese(keyword: str, page_num: int = 1, page_size: int = 30, or
         "word": keyword,
         "page": page_num,
         "page_size": page_size,
-        "sort_type": order.value
+        "sort_type": order.value,
     }
-    return await request(
-        "GET",
-        api["url"],
-        params=params
-    )
+    return await request("GET", api["url"], params=params)

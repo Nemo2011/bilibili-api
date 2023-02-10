@@ -146,7 +146,7 @@ async def request(
 
         if "callback" in params:
             # JSONP 请求
-            resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1)) # type: ignore
+            resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1))  # type: ignore
         else:
             # JSON
             resp_data = json.loads(raw_data)

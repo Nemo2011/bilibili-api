@@ -138,10 +138,9 @@ async def name2uid(names: Union[str, List[str]]):
         n = names
     else:
         n = ",".join(names)
-    params = {
-        "names": n
-    }
-    return await request("GET", api["url"], params = params)
+    params = {"names": n}
+    return await request("GET", api["url"], params=params)
+
 
 class User:
     """
@@ -423,7 +422,9 @@ class User:
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
-    async def get_article_list(self, order: ArticleListOrder = ArticleListOrder.LATEST) -> dict:
+    async def get_article_list(
+        self, order: ArticleListOrder = ArticleListOrder.LATEST
+    ) -> dict:
         """
         获取用户专栏文集。
 
@@ -490,7 +491,9 @@ class User:
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
-    async def get_followings(self, pn: int = 1, ps: int = 100, attention: bool = False) -> dict:
+    async def get_followings(
+        self, pn: int = 1, ps: int = 100, attention: bool = False
+    ) -> dict:
         """
         获取用户关注列表（不是自己只能访问前 5 页）
 
@@ -532,7 +535,9 @@ class User:
         )
         return data["card"]["attentions"]
 
-    async def get_followers(self, pn: int = 1, ps: int = 100, desc: bool = True) -> dict:
+    async def get_followers(
+        self, pn: int = 1, ps: int = 100, desc: bool = True
+    ) -> dict:
         """
         获取用户粉丝列表（不是自己只能访问前 5 页，是自己也不能获取全部的样子）
 
@@ -555,11 +560,7 @@ class User:
             "GET", url=api["url"], params=params, credential=self.credential
         )
 
-    async def get_self_same_followers(
-        self,
-        pn: int = 1,
-        ps: int = 50
-    ) -> dict:
+    async def get_self_same_followers(self, pn: int = 1, ps: int = 50) -> dict:
         """
         获取用户与自己共同关注的 up 主
 
@@ -572,18 +573,10 @@ class User:
         """
         self.credential.raise_for_no_sessdata()
         api = API["info"]["get_same_followings"]
-        params = {
-            "vmid": self.get_uid(),
-            "pn": pn,
-            "ps": ps
-        }
+        params = {"vmid": self.get_uid(), "pn": pn, "ps": ps}
         return await request(
-            "GET",
-            api["url"],
-            params=params,
-            credential=self.credential
+            "GET", api["url"], params=params, credential=self.credential
         )
-
 
     async def top_followers(self, since=None) -> dict:
         """
@@ -639,7 +632,13 @@ class User:
 
     # 有关合集与列表
 
-    async def get_channel_videos_series(self, sid: int, sort: ChannelOrder = ChannelOrder.DEFAULT, pn: int = 1, ps: int = 100) -> dict:
+    async def get_channel_videos_series(
+        self,
+        sid: int,
+        sort: ChannelOrder = ChannelOrder.DEFAULT,
+        pn: int = 1,
+        ps: int = 100,
+    ) -> dict:
         """
         查看频道内所有视频。仅供 series_list。
 
@@ -652,7 +651,13 @@ class User:
             dict: 调用接口返回的内容
         """
         api = API["info"]["channel_video_series"]
-        param = {"mid": self.__uid, "series_id": sid, "pn": pn, "ps": ps, "sort": "asc" if ChannelOrder.CHANGE else "desc"}
+        param = {
+            "mid": self.__uid,
+            "series_id": sid,
+            "pn": pn,
+            "ps": ps,
+            "sort": "asc" if ChannelOrder.CHANGE else "desc",
+        }
         return await request(
             "GET", url=api["url"], params=param, credential=self.credential
         )
@@ -719,30 +724,29 @@ class User:
             List[ChannelSeries]: 合集与列表类的列表
         """
         from . import channel_series
+
         channel_data = await self.get_channel_list()
         channels = []
         for item in channel_data["items_lists"]["seasons_list"]:
             id_ = item["meta"]["season_id"]
             meta = item["meta"]
-            channel_series.channel_meta_cache[str(ChannelSeriesType.SEASON.value) + "-" + str(id_)] = meta
+            channel_series.channel_meta_cache[
+                str(ChannelSeriesType.SEASON.value) + "-" + str(id_)
+            ] = meta
             channels.append(
                 ChannelSeries(
-                    self.__uid,
-                    ChannelSeriesType.SEASON,
-                    id_,
-                    self.credential
+                    self.__uid, ChannelSeriesType.SEASON, id_, self.credential
                 )
             )
         for item in channel_data["items_lists"]["series_list"]:
             id_ = item["meta"]["series_id"]
             meta = item["meta"]
-            channel_series.channel_meta_cache[str(ChannelSeriesType.SERIES.value) + "-" + str(id_)] = meta
+            channel_series.channel_meta_cache[
+                str(ChannelSeriesType.SERIES.value) + "-" + str(id_)
+            ] = meta
             channels.append(
                 ChannelSeries(
-                    self.__uid,
-                    ChannelSeriesType.SERIES,
-                    id_,
-                    self.credential
+                    self.__uid, ChannelSeriesType.SERIES, id_, self.credential
                 )
             )
         return channels
@@ -784,7 +788,10 @@ async def get_self_info(credential: Credential) -> dict:
 
     return await request("GET", api["url"], credential=credential)
 
-async def edit_self_info(birthday: str, sex: str, uname: str, usersign: str, credential: Credential) -> dict:
+
+async def edit_self_info(
+    birthday: str, sex: str, uname: str, usersign: str, credential: Credential
+) -> dict:
     """
     修改自己的信息 (Web)
 
@@ -803,6 +810,7 @@ async def edit_self_info(birthday: str, sex: str, uname: str, usersign: str, cre
     data = {"birthday": birthday, "sex": sex, "uname": uname, "usersign": usersign}
 
     return await request("POST", api["url"], data=data, credential=credential)
+
 
 async def create_subscribe_group(name: str, credential: Credential) -> dict:
     """
@@ -844,7 +852,9 @@ async def delete_subscribe_group(group_id: int, credential: Credential) -> dict:
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def rename_subscribe_group(group_id: int, new_name: str, credential: Credential) -> dict:
+async def rename_subscribe_group(
+    group_id: int, new_name: str, credential: Credential
+) -> dict:
     """
     重命名关注分组
 
@@ -889,7 +899,9 @@ async def set_subscribe_group(
 
 
 async def get_self_history(
-    page_num: int = 1, per_page_item: int = 100, credential: Union[Credential, None] = None
+    page_num: int = 1,
+    per_page_item: int = 100,
+    credential: Union[Credential, None] = None,
 ) -> dict:
     """
     获取用户浏览历史记录
@@ -929,9 +941,7 @@ async def get_self_coins(credential: Credential):
 
 
 async def get_self_special_followings(
-    credential: Credential,
-    pn: int = 1,
-    ps: int = 50
+    credential: Credential, pn: int = 1, ps: int = 50
 ) -> dict:
     """
     获取自己特殊关注的列表
@@ -943,22 +953,12 @@ async def get_self_special_followings(
     """
     credential.raise_for_no_sessdata()
     api = API["info"]["get_special_followings"]
-    params = {
-        "pn": pn,
-        "ps": ps
-    }
-    return await request(
-        "GET",
-        api["url"],
-        params=params,
-        credential=credential
-    )
+    params = {"pn": pn, "ps": ps}
+    return await request("GET", api["url"], params=params, credential=credential)
 
 
 async def get_self_whisper_followings(
-    credential: Credential,
-    pn: int = 1,
-    ps: int = 50
+    credential: Credential, pn: int = 1, ps: int = 50
 ) -> dict:
     """
     获取自己悄悄关注的列表。
@@ -970,21 +970,11 @@ async def get_self_whisper_followings(
     """
     credential.raise_for_no_sessdata()
     api = API["info"]["get_whisper_followings"]
-    params = {
-        "pn": pn,
-        "ps": ps
-    }
-    return await request(
-        "GET",
-        api["url"],
-        params=params,
-        credential=credential
-    )
+    params = {"pn": pn, "ps": ps}
+    return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_self_friends(
-    credential: Credential
-) -> dict:
+async def get_self_friends(credential: Credential) -> dict:
     """
     获取与自己互粉的人
 
@@ -993,17 +983,11 @@ async def get_self_friends(
     """
     credential.raise_for_no_sessdata()
     api = API["info"]["get_friends"]
-    return await request(
-        "GET",
-        api["url"],
-        credential=credential
-    )
+    return await request("GET", api["url"], credential=credential)
 
 
 async def get_self_black_list(
-    credential: Credential,
-    pn: int = 1,
-    ps: int = 50
+    credential: Credential, pn: int = 1, ps: int = 50
 ) -> dict:
     """
     获取自己的黑名单信息
@@ -1015,16 +999,8 @@ async def get_self_black_list(
     """
     credential.raise_for_no_sessdata()
     api = API["info"]["get_black_list"]
-    params = {
-        "pn": pn,
-        "ps": ps
-    }
-    return await request(
-        "GET",
-        api["url"],
-        params=params,
-        credential=credential
-    )
+    params = {"pn": pn, "ps": ps}
+    return await request("GET", api["url"], params=params, credential=credential)
 
 
 async def get_toview_list(credential: Credential):
@@ -1111,7 +1087,10 @@ async def get_self_events(ts: int = 0, credential: Union[Credential, None] = Non
     params = {"ts": ts}
     return await request("GET", api["url"], params=params, credential=credential)
 
-async def get_self_notes_info(page_num: int , page_size: int, credential: Credential) -> dict:
+
+async def get_self_notes_info(
+    page_num: int, page_size: int, credential: Credential
+) -> dict:
     """
     获取自己的笔记列表
 
@@ -1133,7 +1112,10 @@ async def get_self_notes_info(page_num: int , page_size: int, credential: Creden
     params = {"pn": page_num, "ps": page_size}
     return await request("GET", api["url"], params=params, credential=credential)
 
-async def get_self_public_notes_info(page_num: int , page_size: int, credential: Credential) -> dict:
+
+async def get_self_public_notes_info(
+    page_num: int, page_size: int, credential: Credential
+) -> dict:
     """
     获取自己的公开笔记列表
 

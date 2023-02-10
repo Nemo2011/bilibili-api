@@ -6,6 +6,7 @@ bilibili_api.utils.varint
 
 from typing import Tuple
 
+
 def read_varint(stream: bytes) -> Tuple[int, int]:
     """
     读取 varint。

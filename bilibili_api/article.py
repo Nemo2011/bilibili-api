@@ -60,6 +60,7 @@ ARTICLE_COLOR_MAP = {
     "gray-03": "5f5f5f",
 }
 
+
 class ArticleType(Enum):
     """
     专栏类型
@@ -68,6 +69,7 @@ class ArticleType(Enum):
     - NOTE           : 笔记专栏
     - SPECIAL_ARTICLE: 特殊专栏，采用笔记格式
     """
+
     ARTICLE = 0
     NOTE = 2
     SPECIAL_ARTICLE = 3
@@ -82,16 +84,19 @@ class ArticleRankingType(Enum):
     + DAY_BEFORE_YESTERDAY: 前日榜
     + YESTERDAY: 昨日榜
     """
+
     MONTH = 1
     WEEK = 2
     DAY_BEFORE_YESTERDAY = 4
     YESTERDAY = 3
 
 
-ArticleT = TypeVar('ArticleT', bound="Article")
+ArticleT = TypeVar("ArticleT", bound="Article")
 
 
-async def get_article_rank(rank_type: ArticleRankingType = ArticleRankingType.YESTERDAY):
+async def get_article_rank(
+    rank_type: ArticleRankingType = ArticleRankingType.YESTERDAY,
+):
     """
     获取专栏排行榜
 
@@ -102,14 +107,8 @@ async def get_article_rank(rank_type: ArticleRankingType = ArticleRankingType.YE
         dict: 调用 API 返回的结果
     """
     api = API["info"]["rank"]
-    params = {
-        "cid": rank_type.value
-    }
-    return await request(
-        "GET",
-        api["url"],
-        params=params
-    )
+    params = {"cid": rank_type.value}
+    return await request("GET", api["url"], params=params)
 
 
 class ArticleList:
@@ -206,7 +205,9 @@ class Article:
 
     def turn_to_note(self) -> Note:
         assert self.__type == ArticleType.NOTE
-        return Note(cvid=self.__cvid, note_type=NoteType.PUBLIC, credential=self.credential)
+        return Note(
+            cvid=self.__cvid, note_type=NoteType.PUBLIC, credential=self.credential
+        )
 
     def markdown(self) -> str:
         """
@@ -265,10 +266,10 @@ class Article:
         async def parse(el: BeautifulSoup):
             node_list = []
 
-            for e in el.contents: # type: ignore
+            for e in el.contents:  # type: ignore
                 if type(e) == element.NavigableString:
                     # 文本节点
-                    node = TextNode(e) # type: ignore
+                    node = TextNode(e)  # type: ignore
                     node_list.append(node)
                     continue
 
@@ -324,7 +325,7 @@ class Article:
                             node = FontSizeNode()
                             node_list.append(node)
 
-                            node.size = int(re.search("font-size-(\d\d)", className)[1]) # type: ignore
+                            node.size = int(re.search("font-size-(\d\d)", className)[1])  # type: ignore
                             node.children = await parse(e)
 
                         elif "color" in className:
@@ -332,7 +333,7 @@ class Article:
                             node = ColorNode()
                             node_list.append(node)
 
-                            color_text = re.search("color-(.*);?", className)[1] # type: ignore
+                            color_text = re.search("color-(.*);?", className)[1]  # type: ignore
                             node.color = ARTICLE_COLOR_MAP[color_text]
 
                             node.children = await parse(e)
@@ -343,7 +344,7 @@ class Article:
                                 node = TextNode(e.text)
                                 # print("Add a text node: ", e.text)
                                 node_list.append(node)
-                                node.children = parse(e) # type: ignore
+                                node.children = parse(e)  # type: ignore
 
                 elif e.name == "blockquote":
                     # 引用块
@@ -357,7 +358,7 @@ class Article:
                         className = e.attrs["class"]
 
                         if "img-box" in className:
-                            img_el: BeautifulSoup = e.find("img") # type: ignore
+                            img_el: BeautifulSoup = e.find("img")  # type: ignore
                             if img_el == None:
                                 pass
                             elif "class" in img_el.attrs:
@@ -428,20 +429,20 @@ class Article:
                                 node = ImageNode()
                                 node_list.append(node)
 
-                                node.url = "https:" + e.find("img").attrs["data-src"] # type: ignore
+                                node.url = "https:" + e.find("img").attrs["data-src"]  # type: ignore
 
-                                figcaption_el: BeautifulSoup = e.find("figcaption") # type: ignore
+                                figcaption_el: BeautifulSoup = e.find("figcaption")  # type: ignore
 
                                 if figcaption_el:
                                     if figcaption_el.contents:
-                                        node.alt = figcaption_el.contents[0] # type: ignore
+                                        node.alt = figcaption_el.contents[0]  # type: ignore
 
                         elif "code-box" in className:
                             # 代码块
                             node = CodeNode()
                             node_list.append(node)
 
-                            pre_el: BeautifulSoup = e.find("pre") # type: ignore
+                            pre_el: BeautifulSoup = e.find("pre")  # type: ignore
                             node.lang = pre_el.attrs["data-lang"].split("@")[0].lower()
                             node.code = unquote(pre_el.attrs["codecontent"])
 
@@ -470,6 +471,7 @@ class Article:
                     # 超链接
                     if len(e.contents) == 0:
                         from .utils.parse_link import parse_link, ResourceType
+
                         parse_link_res = await parse_link(e.attrs["href"])
                         if parse_link_res[1] == ResourceType.VIDEO:
                             node = VideoCardNode()
@@ -495,7 +497,7 @@ class Article:
                         node_list.append(node)
 
                         node.url = e.attrs["href"]
-                        node.text = e.contents[0] # type: ignore
+                        node.text = e.contents[0]  # type: ignore
 
                 elif e.name == "img":
                     className = e.attrs.get("class")
@@ -511,7 +513,7 @@ class Article:
                         node = LatexNode()
                         node_list.append(node)
 
-                        node.code = unquote(e["alt"]) # type: ignore
+                        node.code = unquote(e["alt"])  # type: ignore
 
             return node_list
 
@@ -521,7 +523,10 @@ class Article:
                     if "tag" in field["insert"].keys():
                         node = VideoCardNode()
                         node.aid = json.loads(
-                            httpx.get("https://hd.biliplus.com/api/cidinfo?cid=" + str(field["insert"]["tag"]["cid"])).text
+                            httpx.get(
+                                "https://hd.biliplus.com/api/cidinfo?cid="
+                                + str(field["insert"]["tag"]["cid"])
+                            ).text
                         )["data"]["cid"]
                         self.__children.append(node)
                     elif "imageUpload" in field["insert"].keys():
@@ -565,13 +570,14 @@ class Article:
                     else:
                         pass
                     self.__children.append(node)
+
         # 文章元数据
         self.__meta = copy(resp["readInfo"])
         del self.__meta["content"]
 
         # 解析正文
         if self.__type != ArticleType.SPECIAL_ARTICLE:
-            self.__children = await parse(document.find("div")) # type: ignore
+            self.__children = await parse(document.find("div"))  # type: ignore
         else:
             s = resp["readInfo"]["content"]
             s = unescape(s)
@@ -605,7 +611,7 @@ class Article:
         resp = await sess.get(f"https://www.bilibili.com/read/cv{self.__cvid}")
         html = resp.text
 
-        match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", html, re.I) # type: ignore
+        match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", html, re.I)  # type: ignore
 
         if not match:
             raise ApiException("找不到信息")
@@ -671,11 +677,11 @@ class Node:
         pass
 
     @overload
-    def markdown(self) -> str: # type: ignore
+    def markdown(self) -> str:  # type: ignore
         pass
 
     @overload
-    def json(self) -> dict: # type: ignore
+    def json(self) -> dict:  # type: ignore
         pass
 
 

@@ -77,9 +77,5 @@ async def get_hot_buzzwords(page_num: int = 1, page_size: int = 20) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["buzzwords"]
-    params = {
-        "pn": page_num,
-        "ps": page_size,
-        "type_id": 4
-    }
-    return await request("GET", api["url"], params = params)
+    params = {"pn": page_num, "ps": page_size, "type_id": 4}
+    return await request("GET", api["url"], params=params)

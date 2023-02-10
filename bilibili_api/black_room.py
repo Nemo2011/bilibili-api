@@ -48,6 +48,7 @@ class BlackReasonType(Enum):
     - CREATE_ILLEGAL_LUCKY_DRAW: 发布违规抽奖
     - PRETEND_OTHER: 冒充他人
     """
+
     ALL = 0
     FLOOD_SCREEN = 1
     SOFA = 2
@@ -98,6 +99,7 @@ class BlackType(Enum):
     - DYNAMIC: 动态
     - ALBUM: 相簿
     """
+
     ALL = 0
     COMMENT = 1
     DANMAKU = 2
@@ -138,7 +140,7 @@ async def get_blocked_list(
 
     Args:
         from_      (BlackFrom)        : 违规来源. Defaults to BlackFrom.ALL.
-        type_      (int)              : 违规类型. Defaults to BlackType.ALL. 
+        type_      (int)              : 违规类型. Defaults to BlackType.ALL.
         pn         (int)              : 页数. Defaults to 1.
         credential (Credential | None): 凭据. Defaults to None.
     """

@@ -106,7 +106,7 @@ def start_geetest_server() -> "ServerThreadModel":
     print(start_geetest_server().url)
     ```
     """
-    return login.start_server() # type: ignore
+    return login.start_server()  # type: ignore
 
 
 def close_geetest_server() -> None:
@@ -149,7 +149,7 @@ def safecenter_start_geetest_server() -> "ServerThreadModel":
     print(start_geetest_server().url)
     ```
     """
-    return login.safecenter_start_server() # type: ignore
+    return login.safecenter_start_server()  # type: ignore
 
 
 def safecenter_close_geetest_server() -> None:
@@ -183,7 +183,11 @@ class ServerThreadModel(threading.Thread):
     """
     A simple model for bilibili_api.utils.captcha._start_server.ServerThread.
     """
+
     url: str
-    def __init__(self, *args, **kwargs): ...
+
+    def __init__(self, *args, **kwargs):
+        ...
+
     def stop(self):
         """Stop the server and this thread nicely"""

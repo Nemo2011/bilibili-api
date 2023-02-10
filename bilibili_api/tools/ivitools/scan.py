@@ -13,20 +13,21 @@ import time
 import json
 from tqdm import tqdm
 
+
 def scan_ivi_file(path: str):
     print(Fore.RESET + f"Scanning {path} ...")
     # First, make a temp folder.
     tmp_dir = tempfile.gettempdir()
     if not os.path.exists(os.path.join(tmp_dir, "ivitools")):
         os.mkdir(os.path.join(tmp_dir, "ivitools"))
-    for root, dirs, files in os.walk(os.path.join(tmp_dir, "ivitools"), topdown = False):
+    for root, dirs, files in os.walk(os.path.join(tmp_dir, "ivitools"), topdown=False):
         for name in files:
             os.remove(os.path.join(root, name))
         for name in dirs:
             os.rmdir(os.path.join(root, name))
     # Then, extract the ivi file.
     extract_dir = os.path.join(tmp_dir, "ivitools", str(time.time()))
-                                                    # Use the time to make folders different
+    # Use the time to make folders different
     zipfile.ZipFile(open(path, "rb")).extractall(extract_dir)
     # Finally, display the result.
     Cursor.UP()
@@ -34,7 +35,7 @@ def scan_ivi_file(path: str):
     print(path)
     meta = touch_ivi(path)
     print(f'{meta["title"]}({meta["bvid"]})')
-    graph = json.load(open(os.path.join(extract_dir, "ivideo.json"), encoding = "utf-8"))
+    graph = json.load(open(os.path.join(extract_dir, "ivideo.json"), encoding="utf-8"))
     print(f"There're {len(graph.keys())} nodes in the file! ")
     bar = tqdm(graph.keys())
     for item in bar:

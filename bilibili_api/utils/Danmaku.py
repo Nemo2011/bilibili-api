@@ -135,10 +135,10 @@ class SpecialDanmaku:
         """
         Args:
             (self.)content (str)               : 弹幕内容
-            (self.)id_     (int)               : 弹幕 id. Defaults to -1. 
-            (self.)id_str  (str)               : 弹幕 id (string 类型). Defaults to "". 
-            (self.)mode    (Union[DmMode, int]): 弹幕类型. Defaults to DmMode.SPECIAL. 
-            (self.)pool    (int)               : 弹幕池. Defaults to 2. 
+            (self.)id_     (int)               : 弹幕 id. Defaults to -1.
+            (self.)id_str  (str)               : 弹幕 id (string 类型). Defaults to "".
+            (self.)mode    (Union[DmMode, int]): 弹幕类型. Defaults to DmMode.SPECIAL.
+            (self.)pool    (int)               : 弹幕池. Defaults to 2.
         """
         self.content = content
         self.id_ = id_

@@ -69,7 +69,11 @@ class Comment:
     """
 
     def __init__(
-        self, oid: int, type_: CommentResourceType, rpid: int, credential: Union[Credential, None] = None
+        self,
+        oid: int,
+        type_: CommentResourceType,
+        rpid: int,
+        credential: Union[Credential, None] = None,
     ):
         """
         Args:

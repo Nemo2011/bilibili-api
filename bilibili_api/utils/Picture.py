@@ -32,7 +32,7 @@ class Picture:
     size: Any = ""
     url: str = ""
     width: int = -1
-    content: bytes = b''
+    content: bytes = b""
 
     def __repr__(self) -> str:
         # no content...
@@ -64,7 +64,13 @@ class Picture:
             url = "https:" + url
         obj = Picture()
         session = httpx.Client()
-        resp = session.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"})
+        resp = session.get(
+            url,
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://www.bilibili.com",
+            },
+        )
         obj.content = resp.read()
         obj.url = url
         obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1])
@@ -117,6 +123,7 @@ class Picture:
             Picture: `self`
         """
         from ..dynamic import upload_image
+
         res = await upload_image(self, credential)
         self.height = res["image_height"]
         self.width = res["image_width"]
@@ -141,27 +148,24 @@ class Picture:
             "biz": "new_dyn",
             "category": "daily",
             "csrf": credential.bili_jct,
-            "csrf_token": credential.bili_jct
+            "csrf_token": credential.bili_jct,
         }
         sess = httpx.Client()
         upload_info = sess.request(
             "POST",
             url=api["url"],
             data=data,
-            files={
-                "file_up": raw
-            },
+            files={"file_up": raw},
             headers={
                 "Referer": "https://www.bilibili.com",
                 "User-Agent": "Mozilla/5.0",
             },
-            cookies=credential.get_cookies()
+            cookies=credential.get_cookies(),
         ).json()["data"]
         self.url = upload_info["image_url"]
         self.height = upload_info["image_height"]
         self.width = upload_info["image_width"]
         return self
-
 
     def download_sync(self, path: str) -> "Picture":
         """
@@ -180,7 +184,6 @@ class Picture:
         img.save(path)
         self.url = "file://" + path
         return self
-
 
     def convert_format(self, new_format: str) -> "Picture":
         """

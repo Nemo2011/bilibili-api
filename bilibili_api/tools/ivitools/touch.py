@@ -6,6 +6,7 @@ ivitools.touch
 import zipfile
 import json
 
+
 def touch_ivi(path: str):
     ivi = zipfile.ZipFile(open(path, "rb"))
     info = ivi.open("bilivideo.json").read()

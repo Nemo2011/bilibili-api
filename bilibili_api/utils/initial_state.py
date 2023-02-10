@@ -10,6 +10,7 @@ from .short import get_real_url
 import re
 import json
 
+
 async def get_initial_state(url: str, credential: Credential = Credential()) -> dict:
     try:
         session = get_session()
@@ -17,7 +18,7 @@ async def get_initial_state(url: str, credential: Credential = Credential()) -> 
             url,
             cookies=credential.get_cookies(),
             headers={"User-Agent": "Mozilla/5.0"},
-            follow_redirects=True
+            follow_redirects=True,
         )
     except Exception as e:
         raise e

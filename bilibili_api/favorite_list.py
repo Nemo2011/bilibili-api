@@ -89,7 +89,7 @@ class FavoriteList:
         page: int = 1,
         keyword: Union[str, None] = None,
         order: FavoriteListContentOrder = FavoriteListContentOrder.MTIME,
-        tid = 0,
+        tid=0,
     ) -> dict:
         """
         获取视频收藏夹内容。
@@ -134,7 +134,9 @@ class FavoriteList:
 
 
 async def get_video_favorite_list(
-    uid: int, video: Union[Video, None] = None, credential: Union[Credential, None] = None
+    uid: int,
+    video: Union[Video, None] = None,
+    credential: Union[Credential, None] = None,
 ) -> dict:
     """
     获取视频收藏夹列表。
@@ -193,7 +195,9 @@ async def get_video_favorite_list_content(
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_topic_favorite_list(page: int = 1, credential: Union[None, Credential] = None) -> dict:
+async def get_topic_favorite_list(
+    page: int = 1, credential: Union[None, Credential] = None
+) -> dict:
     """
     获取自己的话题收藏夹内容。
 
@@ -215,7 +219,9 @@ async def get_topic_favorite_list(page: int = 1, credential: Union[None, Credent
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_article_favorite_list(page: int = 1, credential: Union[None, Credential] = None) -> dict:
+async def get_article_favorite_list(
+    page: int = 1, credential: Union[None, Credential] = None
+) -> dict:
     """
     获取自己的专栏收藏夹内容。
 
@@ -237,7 +243,9 @@ async def get_article_favorite_list(page: int = 1, credential: Union[None, Crede
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_album_favorite_list(page: int = 1, credential: Union[None, Credential] = None) -> dict:
+async def get_album_favorite_list(
+    page: int = 1, credential: Union[None, Credential] = None
+) -> dict:
     """
     获取自己的相簿收藏夹内容。
 
@@ -259,7 +267,9 @@ async def get_album_favorite_list(page: int = 1, credential: Union[None, Credent
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_course_favorite_list(page: int = 1, credential: Union[None, Credential] = None) -> dict:
+async def get_course_favorite_list(
+    page: int = 1, credential: Union[None, Credential] = None
+) -> dict:
     """
     获取自己的课程收藏夹内容。
 
@@ -282,7 +292,9 @@ async def get_course_favorite_list(page: int = 1, credential: Union[None, Creden
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_note_favorite_list(page: int = 1, credential: Union[None, Credential] = None) -> dict:
+async def get_note_favorite_list(
+    page: int = 1, credential: Union[None, Credential] = None
+) -> dict:
     """
     获取自己的笔记收藏夹内容。
 
@@ -378,7 +390,9 @@ async def modify_video_favorite_list(
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def delete_video_favorite_list(media_ids: List[int], credential: Credential) -> dict:
+async def delete_video_favorite_list(
+    media_ids: List[int], credential: Credential
+) -> dict:
     """
     删除视频收藏夹，可批量删除。
 
@@ -484,7 +498,9 @@ async def delete_video_favorite_list_content(
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-async def clean_video_favorite_list_content(media_id: int, credential: Credential) -> dict:
+async def clean_video_favorite_list_content(
+    media_id: int, credential: Credential
+) -> dict:
     """
     清除视频收藏夹失效内容
 

@@ -26,7 +26,7 @@ from .utils.captcha import start_server, close_server, get_result
 from .utils.safecenter_captcha import (
     start_server as safecenter_start_server,
     close_server as safecenter_close_server,
-    get_result as safecenter_get_result
+    get_result as safecenter_get_result,
 )
 from . import settings
 import qrcode
@@ -62,7 +62,7 @@ def make_qrcode(url) -> str:
     return os.path.join(tempfile.gettempdir(), "qrcode.png")
 
 
-def login_with_qrcode(root = None) -> Credential:
+def login_with_qrcode(root=None) -> Credential:
     """
     扫描二维码登录
 
@@ -140,12 +140,12 @@ def login_with_qrcode(root = None) -> Credential:
 
     def destroy():
         global id_
-        root.after_cancel(id_) # type: ignore
+        root.after_cancel(id_)  # type: ignore
         root.destroy()
 
     root.after(500, update_events)
     root.mainloop()
-    root.after_cancel(id_) # type: ignore
+    root.after_cancel(id_)  # type: ignore
     return credential
 
 
@@ -178,7 +178,7 @@ def get_geetest() -> object:
         return get_result()
     thread = start_server()
     if settings.geetest_auto_open:
-        webbrowser.open(thread.url) # type: ignore
+        webbrowser.open(thread.url)  # type: ignore
     try:
         while True:
             result = get_result()
@@ -385,6 +385,7 @@ class PhoneNumber:
     """
     手机号类
     """
+
     def __init__(self, number: str, country: Union[str, int] = "+86"):
         """
         Args:
@@ -392,13 +393,13 @@ class PhoneNumber:
             country(str): 地区/地区码，如 +86
         """
         number = number.replace("-", "")
-        if not have_country(country): # type: ignore
+        if not have_country(country):  # type: ignore
             if not have_code(country):
                 raise ValueError("地区代码或地区名错误")
             else:
                 code = country if isinstance(country, int) else int(country.lstrip("+"))
         else:
-            code = get_code_by_country(country) # type: ignore
+            code = get_code_by_country(country)  # type: ignore
         self.number = number
         self.code = code
         self.id_ = get_id_by_code(self.code)
@@ -428,10 +429,10 @@ def send_sms(phonenumber: PhoneNumber) -> None:
                     "tel": tell,
                     "cid": code,
                     "source": "main_web",
-                    "token": geetest_data["token"],         # type: ignore
-                    "challenge": geetest_data["challenge"], # type: ignore
-                    "validate": geetest_data["validate"],   # type: ignore
-                    "seccode": geetest_data["seccode"],     # type: ignore
+                    "token": geetest_data["token"],  # type: ignore
+                    "challenge": geetest_data["challenge"],  # type: ignore
+                    "validate": geetest_data["validate"],  # type: ignore
+                    "seccode": geetest_data["seccode"],  # type: ignore
                 },
             )
         ).text
@@ -506,7 +507,7 @@ def get_safecenter_geetest() -> object:
         return safecenter_get_result()
     thread = safecenter_start_server()
     if settings.geetest_auto_open:
-        webbrowser.open(thread.url) # type: ignore
+        webbrowser.open(thread.url)  # type: ignore
     try:
         while True:
             result = safecenter_get_result()
@@ -516,6 +517,7 @@ def get_safecenter_geetest() -> object:
     except KeyboardInterrupt:
         safecenter_close_server()
         exit()
+
 
 class Check:
     """
@@ -541,14 +543,8 @@ class Check:
         """
         api = API["safecenter"]["check_info"]
         self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
-        params = {
-            "tmp_code": self.tmp_token
-        }
-        return json.loads(
-            httpx.get(
-                api["url"], params = params
-            ).text
-        )["data"]
+        params = {"tmp_code": self.tmp_token}
+        return json.loads(httpx.get(api["url"], params=params).text)["data"]
 
     def send_sms(self) -> None:
         """
@@ -562,13 +558,13 @@ class Check:
             data = {
                 "sms_type": "loginTelCheck",
                 "tmp_code": self.tmp_token,
-                "recaptcha_token": geetest_data["token"],   # type: ignore
-                "gee_challenge": geetest_data["challenge"], # type: ignore
-                "gee_gt": geetest_data["gt"],               # type: ignore
-                "gee_validate": geetest_data["validate"],   # type: ignore
-                "gee_seccode": geetest_data["seccode"],     # type: ignore
+                "recaptcha_token": geetest_data["token"],  # type: ignore
+                "gee_challenge": geetest_data["challenge"],  # type: ignore
+                "gee_gt": geetest_data["gt"],  # type: ignore
+                "gee_validate": geetest_data["validate"],  # type: ignore
+                "gee_seccode": geetest_data["seccode"],  # type: ignore
             }
-            res = json.loads(httpx.post(api["url"], data = data).text)
+            res = json.loads(httpx.post(api["url"], data=data).text)
             self.captcha_key = res["data"]["captcha_key"]
         except Exception as e:
             raise LoginError(str(e))
@@ -590,23 +586,18 @@ class Check:
                 "code": code,
                 "tmp_code": self.tmp_token,
                 "request_id": self.check_url.split("?")[1].split("&")[1][11:],
-                "captcha_key": self.captcha_key
+                "captcha_key": self.captcha_key,
             }
-            exchange_code = json.loads(
-                httpx.post(
-                    api["url"],
-                    data = data
-                ).text
-            )["data"]["code"]
+            exchange_code = json.loads(httpx.post(api["url"], data=data).text)["data"][
+                "code"
+            ]
             exchange_url = API["safecenter"]["get_cookies"]["url"]
-            resp = httpx.post(exchange_url, data = {
-                "code": exchange_code
-            })
+            resp = httpx.post(exchange_url, data={"code": exchange_code})
             credential = Credential(
-                sessdata = resp.cookies.get("SESSDATA"),
-                bili_jct = resp.cookies.get("bili_jct"),
-                buvid3 = None,
-                dedeuserid = resp.cookies.get("DedeUserID")
+                sessdata=resp.cookies.get("SESSDATA"),
+                bili_jct=resp.cookies.get("bili_jct"),
+                buvid3=None,
+                dedeuserid=resp.cookies.get("DedeUserID"),
             )
             return credential
         except Exception as e:

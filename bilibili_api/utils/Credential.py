@@ -35,10 +35,10 @@ class Credential:
         各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
         Args:
-            sessdata   (str | None, optional): 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None. 
-            bili_jct   (str | None, optional): 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None. 
-            buvid3     (str | None, optional): 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None. 
-            dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None. 
+            sessdata   (str | None, optional): 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None.
+            bili_jct   (str | None, optional): 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None.
+            buvid3     (str | None, optional): 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None.
+            dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
         """
         self.sessdata = sessdata
         self.bili_jct = bili_jct

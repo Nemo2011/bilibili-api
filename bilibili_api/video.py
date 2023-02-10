@@ -50,6 +50,7 @@ class VideoQuality(Enum):
     - DOLBY: 杜比视界
     - _8K: 超高清 8K
     """
+
     _360P = 16
     _480P = 32
     _720P = 64
@@ -62,7 +63,6 @@ class VideoQuality(Enum):
     _8K = 127
 
 
-
 class VideoCodecs(Enum):
     """
     视频的视频流编码枚举
@@ -71,6 +71,7 @@ class VideoCodecs(Enum):
     - AVC: AVC(H.264)
     - AV1: AV1
     """
+
     HEV = "hev"
     AVC = "avc"
     AV1 = "av01"
@@ -86,6 +87,7 @@ class AudioQuality(Enum):
     - HI_RES: Hi-Res 无损
     - DOLBY: 杜比全景声
     """
+
     _64K = 30216
     _132K = 30232
     DOLBY = 30250
@@ -105,6 +107,7 @@ class VideoStreamDownloadURL:
         video_quality (VideoQuality): 视频流清晰度
         video_codecs  (VideoCodecs) : 视频流编码
     """
+
     url: str
     video_quality: VideoQuality
     video_codecs: VideoCodecs
@@ -121,6 +124,7 @@ class AudioStreamDownloadURL:
         url           (str)         : 音频流 url
         audio_quality (AudioQuality): 音频流清晰度
     """
+
     url: str
     audio_quality: AudioQuality
 
@@ -135,6 +139,7 @@ class FLVStreamDownloadURL:
     Attributes:
         url           (str): FLV 流 url
     """
+
     url: str
 
 
@@ -148,8 +153,8 @@ class HTML5MP4DownloadURL:
     Attributes:
         url           (str): HTML5 mp4 视频流
     """
-    url: str
 
+    url: str
 
 
 class VideoDownloadURLDataDetecter:
@@ -164,6 +169,7 @@ class VideoDownloadURLDataDetecter:
       - 音频清晰度: 64K, 132K, Hi-Res 无损音效, 杜比全景声, 192K
       - FLV 视频流
     """
+
     def __init__(self, data: dict):
         """
         Args:
@@ -206,15 +212,16 @@ class VideoDownloadURLDataDetecter:
                 return True
         return False
 
-    def detect_all(self) -> \
-        List[
-            Union[
-                VideoStreamDownloadURL,
-                AudioStreamDownloadURL,
-                FLVStreamDownloadURL,
-                HTML5MP4DownloadURL
-            ]
-        ]:
+    def detect_all(
+        self,
+    ) -> List[
+        Union[
+            VideoStreamDownloadURL,
+            AudioStreamDownloadURL,
+            FLVStreamDownloadURL,
+            HTML5MP4DownloadURL,
+        ]
+    ]:
         """
         解析数据
 
@@ -224,10 +231,10 @@ class VideoDownloadURLDataDetecter:
         if "durl" in self.__data.keys():
             if self.__data["format"].startswith("flv"):
                 # FLV 视频流
-                return [FLVStreamDownloadURL(url = self.__data["durl"][0]["url"])]
+                return [FLVStreamDownloadURL(url=self.__data["durl"][0]["url"])]
             else:
                 # HTML5 MP4 视频流
-                return [HTML5MP4DownloadURL(url = self.__data["durl"][0]["url"])]
+                return [HTML5MP4DownloadURL(url=self.__data["durl"][0]["url"])]
         else:
             # 正常情况
             streams = []
@@ -245,15 +252,14 @@ class VideoDownloadURLDataDetecter:
                 video_stream = VideoStreamDownloadURL(
                     url=video_stream_url,
                     video_quality=video_stream_quality,
-                    video_codecs=video_stream_codecs # type: ignore
+                    video_codecs=video_stream_codecs,  # type: ignore
                 )
                 streams.append(video_stream)
             for audio_data in audios_data:
                 audio_stream_url = audio_data["baseUrl"]
                 audio_stream_quality = AudioQuality(audio_data["id"])
                 audio_stream = AudioStreamDownloadURL(
-                    url=audio_stream_url,
-                    audio_quality=audio_stream_quality
+                    url=audio_stream_url, audio_quality=audio_stream_quality
                 )
                 streams.append(audio_stream)
             if flac_data:
@@ -262,8 +268,7 @@ class VideoDownloadURLDataDetecter:
                         flac_stream_url = flac["baseUrl"]
                         flac_stream_quality = AudioQuality(flac["id"])
                         flac_stream = AudioStreamDownloadURL(
-                            url=flac_stream_url,
-                            audio_quality=flac_stream_quality
+                            url=flac_stream_url, audio_quality=flac_stream_quality
                         )
                         streams.append(flac_stream)
             if dolby_data:
@@ -272,18 +277,18 @@ class VideoDownloadURLDataDetecter:
                         dolby_stream_url = dolby["baseUrl"]
                         dolby_stream_quality = AudioQuality(dolby["id"])
                         dolby_stream = AudioStreamDownloadURL(
-                            url=dolby_stream_url,
-                            audio_quality=dolby_stream_quality
+                            url=dolby_stream_url, audio_quality=dolby_stream_quality
                         )
                         streams.append(dolby_stream)
             return streams
 
-    def detect_best_streams(self) -> \
-        Union[
-            List[FLVStreamDownloadURL],
-            List[HTML5MP4DownloadURL],
-            List[Union[VideoStreamDownloadURL, AudioStreamDownloadURL]]
-        ]:
+    def detect_best_streams(
+        self,
+    ) -> Union[
+        List[FLVStreamDownloadURL],
+        List[HTML5MP4DownloadURL],
+        List[Union[VideoStreamDownloadURL, AudioStreamDownloadURL]],
+    ]:
         """
         提取出分辨率、音质等信息最好的音视频流
 
@@ -291,9 +296,9 @@ class VideoDownloadURLDataDetecter:
             List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`
         """
         if self.check_flv_stream():
-            return self.detect_all() # type: ignore
+            return self.detect_all()  # type: ignore
         elif self.check_html5_mp4_stream():
-            return self.detect_all() # type: ignore
+            return self.detect_all()  # type: ignore
         else:
             data = self.detect_all()
             video_streams = []
@@ -323,7 +328,7 @@ class Video:
         self,
         bvid: Union[None, str] = None,
         aid: Union[None, int] = None,
-        credential: Union[None, Credential] = None
+        credential: Union[None, Credential] = None,
     ):
         """
         Args:
@@ -440,7 +445,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         if cid == None:
-            cid = await self.get_cid(page_index = page_index)
+            cid = await self.get_cid(page_index=page_index)
         url = API["info"]["tags"]["url"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid(), "cid": cid}
         return await request("GET", url, params=params, credential=self.credential)
@@ -496,7 +501,7 @@ class Video:
         self,
         cid: Union[int, None] = None,
         json_index: bool = False,
-        pvideo: bool = True
+        pvideo: bool = True,
     ) -> dict:
         """
         获取视频快照(视频各个时间段的截图拼图)
@@ -537,7 +542,7 @@ class Video:
         self,
         page_index: Union[int, None] = None,
         cid: Union[int, None] = None,
-        html5: bool = False
+        html5: bool = False,
     ) -> dict:
         """
         获取视频下载信息。
@@ -660,7 +665,9 @@ class Video:
 
         url = API["info"]["private_notes"]["url"]
         params = {"oid": self.get_aid(), "oid_type": 0}
-        return (await request("GET", url, params=params, credential=self.credential))["noteIds"]
+        return (await request("GET", url, params=params, credential=self.credential))[
+            "noteIds"
+        ]
 
     async def get_public_notes_list(self, pn: int, ps: int) -> dict:
         """
@@ -679,9 +686,7 @@ class Video:
         return await request("GET", url, params=params, credential=self.credential)
 
     async def get_danmaku_view(
-        self,
-        page_index: Union[int, None] = None,
-        cid: Union[int, None] = None
+        self, page_index: Union[int, None] = None, cid: Union[int, None] = None
     ) -> dict:
         """
         获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
@@ -898,7 +903,7 @@ class Video:
         self,
         page_index: int = 0,
         date: Union[datetime.date, None] = None,
-        cid: Union[int, None] = None
+        cid: Union[int, None] = None,
     ) -> List[Danmaku]:
         """
         获取弹幕。
@@ -1017,9 +1022,7 @@ class Video:
         return danmakus
 
     async def get_special_dms(
-        self,
-        page_index: int = 0,
-        cid: Union[int, None] = None
+        self, page_index: int = 0, cid: Union[int, None] = None
     ) -> List[SpecialDanmaku]:
         """
         获取特殊弹幕
@@ -1083,7 +1086,7 @@ class Video:
         self,
         page_index: Union[int, None] = None,
         date: Union[datetime.date, None] = None,
-        cid: Union[int, None] = None
+        cid: Union[int, None] = None,
     ) -> Union[None, List[str]]:
         """
         获取特定月份存在历史弹幕的日期。
@@ -1117,7 +1120,7 @@ class Video:
         self,
         page_index: Union[int, None] = None,
         ids: Union[List[int], None] = None,
-        cid: Union[int, None] = None
+        cid: Union[int, None] = None,
     ) -> dict:
         """
         是否已点赞弹幕。
@@ -1142,7 +1145,7 @@ class Video:
             cid = await self.__get_page_id_by_index(page_index)
 
         api = API["danmaku"]["has_liked_danmaku"]
-        params = {"oid": cid, "ids": ",".join(ids)} # type: ignore
+        params = {"oid": cid, "ids": ",".join(ids)}  # type: ignore
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -1151,7 +1154,7 @@ class Video:
         self,
         page_index: Union[int, None] = None,
         danmaku: Union[Danmaku, None] = None,
-        cid: Union[int, None] = None
+        cid: Union[int, None] = None,
     ) -> dict:
         """
         发送弹幕。
@@ -1201,9 +1204,7 @@ class Video:
         )
 
     async def get_danmaku_xml(
-        self,
-        page_index: Union[int, None] = None,
-        cid: Union[int, None] = None
+        self, page_index: Union[int, None] = None, cid: Union[int, None] = None
     ) -> str:
         """
         获取所有弹幕的 xml 源文件（非装填）
@@ -1590,7 +1591,7 @@ class Video:
         self,
         page_index: Union[int, None] = None,
         dmid: int = 0,
-        cid: Union[int, None] = None
+        cid: Union[int, None] = None,
     ) -> dict:
         """
         撤回弹幕
@@ -1619,9 +1620,7 @@ class Video:
         )
 
     async def get_pbp(
-        self,
-        page_index: Union[int, None] = None,
-        cid: Union[int, None] = None
+        self, page_index: Union[int, None] = None, cid: Union[int, None] = None
     ) -> dict:
         """
         获取高能进度条
@@ -1842,7 +1841,7 @@ class VideoOnlineMonitor(AsyncEvent):
                 if msg.type == aiohttp.WSMsgType.BINARY:
                     data = self.__unpack(msg.data)
                     self.logger.debug(f"收到消息：{data}")
-                    await self.__handle_data(data) # type: ignore
+                    await self.__handle_data(data)  # type: ignore
 
                 elif msg.type == aiohttp.WSMsgType.ERROR:
                     self.logger.warning("连接被异常断开")
