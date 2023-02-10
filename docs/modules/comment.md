@@ -25,6 +25,9 @@ from bilibili_api import comment
 + DYNAMIC: 动态（画册也属于动态的一种，只不过画册还有一个专门的 ID）。
 + AUDIO：音频。
 + AUDIO_LIST：歌单。
++ CHEESE: 课程
++ BLACK_ROOM: 小黑屋
++ MANGA: 漫画
 
 ---
 
