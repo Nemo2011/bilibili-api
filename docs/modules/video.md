@@ -629,6 +629,7 @@ FLV 视频流
 - 视频编码: HEVC(H.265), AVC(H.264), AV1
 - 音频清晰度: 64K, 132K, Hi-Res 无损音效, 杜比全景声, 192K
 - FLV 视频流
+- 番剧/课程试看视频流
 
 ### Functions
 
@@ -656,14 +657,20 @@ FLV 视频流
 
 **Returns:** bool: 是否为 HTML5 可播放的 mp4 视频流
 
+#### def check_episode_try_mp4_stream()
+
+判断是否为番剧/课程试看的 mp4 视频流
+
+**Returns:**bool: 是否为番剧试看的 mp4 视频流
+
 #### def detect_all()
 
 解析数据
 
-**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: 所有的视频/音频流
+**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 所有的视频/音频流
 
 #### def detect_best_streams()
 
 提取出分辨率、音质等信息最好的音视频流
 
-**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`
+**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流 / 番剧或课程试看 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL | EpisodeTryMP4DownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`

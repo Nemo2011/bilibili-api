@@ -157,6 +157,20 @@ class HTML5MP4DownloadURL:
     url: str
 
 
+@dataclass
+class EpisodeTryMP4DownloadURL:
+    """
+    (@dataclass)
+
+    番剧/课程试看的 mp4 播放流
+
+    Attributes:
+        url           (str): 番剧试看的 mp4 播放流
+    """
+
+    url: str
+
+
 class VideoDownloadURLDataDetecter:
     """
     `Video.get_download_url` 返回结果解析类。
@@ -168,6 +182,7 @@ class VideoDownloadURLDataDetecter:
       - 视频编码: HEVC(H.265), AVC(H.264), AV1
       - 音频清晰度: 64K, 132K, Hi-Res 无损音效, 杜比全景声, 192K
       - FLV 视频流
+      - 番剧/课程试看视频流
     """
 
     def __init__(self, data: dict):
@@ -209,7 +224,21 @@ class VideoDownloadURLDataDetecter:
         """
         if "durl" in self.__data.keys():
             if self.__data["format"].startswith("mp4"):
-                return True
+                if self.__data.get("is_html5") == True:
+                    return True
+        return False
+
+    def check_episode_try_mp4_stream(self):
+        """
+        判断是否为番剧/课程试看的 mp4 视频流
+
+        Returns:
+            bool: 是否为番剧试看的 mp4 视频流
+        """
+        if "durl" in self.__data.keys():
+            if self.__data["format"].startswith("mp4"):
+                if self.__data.get("is_html5") != True:
+                    return True
         return False
 
     def detect_all(
@@ -220,21 +249,26 @@ class VideoDownloadURLDataDetecter:
             AudioStreamDownloadURL,
             FLVStreamDownloadURL,
             HTML5MP4DownloadURL,
+            EpisodeTryMP4DownloadURL
         ]
     ]:
         """
         解析数据
 
         Returns:
-            List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: 所有的视频/音频流
+            List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 所有的视频/音频流
         """
         if "durl" in self.__data.keys():
             if self.__data["format"].startswith("flv"):
                 # FLV 视频流
                 return [FLVStreamDownloadURL(url=self.__data["durl"][0]["url"])]
             else:
-                # HTML5 MP4 视频流
-                return [HTML5MP4DownloadURL(url=self.__data["durl"][0]["url"])]
+                if self.check_html5_mp4_stream():
+                    # HTML5 MP4 视频流
+                    return [HTML5MP4DownloadURL(url=self.__data["durl"][0]["url"])]
+                else:
+                    # 会员番剧试看 MP4 流
+                    return [EpisodeTryMP4DownloadURL(url=self.__data["durl"][0]["url"])]
         else:
             # 正常情况
             streams = []
@@ -287,17 +321,20 @@ class VideoDownloadURLDataDetecter:
     ) -> Union[
         List[FLVStreamDownloadURL],
         List[HTML5MP4DownloadURL],
+        List[EpisodeTryMP4DownloadURL],
         List[Union[VideoStreamDownloadURL, AudioStreamDownloadURL]],
     ]:
         """
         提取出分辨率、音质等信息最好的音视频流
 
         Returns:
-            List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`
+            List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流 / 番剧或课程试看 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL | EpisodeTryMP4DownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`
         """
         if self.check_flv_stream():
             return self.detect_all()  # type: ignore
         elif self.check_html5_mp4_stream():
+            return self.detect_all()  # type: ignore
+        elif self.check_episode_try_mp4_stream():
             return self.detect_all()  # type: ignore
         else:
             data = self.detect_all()
@@ -585,7 +622,9 @@ class Video:
                 "fnval": 4048,
                 "fourk": 1,
             }
-        return await request("GET", url, params=params, credential=self.credential)
+        result = await request("GET", url, params=params, credential=self.credential)
+        result.update({"is_html5": True} if html5 else {})
+        return result
 
     async def get_related(self) -> dict:
         """
