@@ -16,6 +16,51 @@ from bilibili_api import video
 + PROTECT - 保护弹幕
 + UNPROTECT - 取消保护弹幕
 
+---
+
+
+
+---
+
+## class VideoQuality()
+
+**Extends:enum.Enum**
+
+- _360P: 流畅 360P
+- _480P: 清晰 480P
+- _720P: 高清 720P60
+- _1080P: 高清 1080P
+- _1080P_PLUS: 高清 1080P 高码率
+- _1080P_60: 高清 1080P 60 帧码率
+- _4K: 超清 4K
+- HDR: 真彩 HDR
+- DOLBY: 杜比视界
+- _8K: 超高清 8K
+
+---
+
+## class VideoCodecs()
+
+**Extends:enum.Enum**
+
+- HEV: HEVC(H.265)
+- AVC: AVC(H.264)
+- AV1: AV1
+
+---
+
+## class AudioQuality()
+
+**Extends:enum.Enum**
+
+- _64K: 64K
+- _132K: 132K
+- _192K: 192K
+- HI_RES: Hi-Res 无损
+- DOLBY: 杜比全景声
+
+---
+
 ## class Video
 
 视频类，各种对视频的操作均在里面。
@@ -520,45 +565,6 @@ asyncio.get_event_loop().run_until_complete(r.connect())
 断开服务器。
 
 **Returns:** None
-
----
-
-## class VideoQuality()
-
-**Extends:enum.Enum**
-
-- _360P: 流畅 360P
-- _480P: 清晰 480P
-- _720P: 高清 720P60
-- _1080P: 高清 1080P
-- _1080P_PLUS: 高清 1080P 高码率
-- _1080P_60: 高清 1080P 60 帧码率
-- _4K: 超清 4K
-- HDR: 真彩 HDR
-- DOLBY: 杜比视界
-- _8K: 超高清 8K
-
----
-
-## class VideoCodecs()
-
-**Extends:enum.Enum**
-
-- HEV: HEVC(H.265)
-- AVC: AVC(H.264)
-- AV1: AV1
-
----
-
-## class AudioQuality()
-
-**Extends:enum.Enum**
-
-- _64K: 64K
-- _132K: 132K
-- _192K: 192K
-- HI_RES: Hi-Res 无损
-- DOLBY: 杜比全景声
 
 ---
 
