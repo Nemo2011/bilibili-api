@@ -60,6 +60,35 @@
       "method": "POST",
       "verify": false,
       "comment": "获取漫画索引的参数"
+    },
+    "update": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetDailyPush",
+      "method": "POST",
+      "verify": false,
+      "params": {
+        "device": "str: 设备",
+        "platform": "str: 平台"
+      },
+      "data": {
+        "date": "str: 日期，格式为 YYYY-MM-DD",
+        "page_num": "int: 页码",
+        "page_size": "int: 每页数量"
+      },
+      "comment": "获取漫画更新推荐"
+    },
+    "home_recommend": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/HomeRecommend",
+      "method": "POST",
+      "verify": false,
+      "params": {
+        "device": "str: 设备",
+        "platform": "str: 平台"
+      },
+      "data": {
+        "seed": "str: unknown param",
+        "page_num": "int: 页码"
+      },
+      "comment": "获取漫画首页推荐"
     }
   },
   "operate": {
