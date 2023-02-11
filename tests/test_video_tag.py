@@ -1,6 +1,7 @@
 from bilibili_api import video_tag
+from .common import get_credential
 
-tag = video_tag.Tag(tag_name="真白花音")
+tag = video_tag.Tag(tag_name="真白花音", credential=get_credential())
 
 async def test_a_get_tag_info():
     return await tag.get_tag_info()
