@@ -36,6 +36,7 @@ class CommentResourceType(Enum):
     + AUDIO_LIST：歌单。
     + CHEESE: 课程
     + BLACK_ROOM: 小黑屋
+    + MANGA: 漫画
     """
 
     VIDEO = 1
@@ -46,6 +47,7 @@ class CommentResourceType(Enum):
     AUDIO_LIST = 19
     CHEESE = 33
     BLACK_ROOM = 6
+    MANGA = 22
 
 
 class OrderType(Enum):
