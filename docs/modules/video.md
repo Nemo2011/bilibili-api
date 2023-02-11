@@ -18,7 +18,29 @@ from bilibili_api import video
 
 ---
 
+## class VideoAppealReasonType
 
+视频投诉原因枚举
+
+注意: 每一项均为函数，部分项有参数，没有参数的函数无需调用函数，直接传入即可，有参数的函数请调用结果之后传入。
+
+- ILLEGAL(): 违法违禁
+- PRON(): 色情
+- VULGAR(): 低俗
+- GAMBLED_SCAMS(): 赌博诈骗
+- VIOLENT(): 血腥暴力
+- PERSONAL_ATTACK(): 人身攻击
+- PLAGIARISM(bvid: str): 与站内其他视频撞车
+- BAD_FOR_YOUNGS(): 青少年不良信息
+- CLICKBAIT(): 不良封面/标题
+- POLITICAL_RUMORS(): 涉政谣言
+- SOCIAL_RUMORS(): 涉社会事件谣言
+- COVID_RUMORS(): 疫情谣言
+- UNREAL_EVENT(): 虚假不实消息
+- OTHER(): 有其他问题
+- LEAD_WAR(): 引战
+- CANNOT_CHARGE(): 不能参加充电
+- UNREAL_COPYRIGHT(source: str): 转载/自制类型错误
 
 ---
 
@@ -396,6 +418,17 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 | tag_id | int  | 标签 ID。   |
 
 删除标签。
+
+**Returns:** API 调用返回结果。
+
+#### async def appeal()
+
+| name   | type | description |
+| ------ | ---- | ----------- |
+| reason | Any | 投诉类型。传入 VideoAppealReasonType 中的项目即可。|
+| detail | str | 详情信息。|
+
+投诉稿件
 
 **Returns:** API 调用返回结果。
 

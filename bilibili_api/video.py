@@ -53,25 +53,25 @@ class VideoAppealReasonType:
     """
     视频投诉原因枚举
 
-    注意: 每一项均为函数，部分项有参数，这里无需调用函数，直接传入即可。
+    注意: 每一项均为函数，部分项有参数，没有参数的函数无需调用函数，直接传入即可，有参数的函数请调用结果之后传入。
 
-    - ILLEGAL: 违法违禁
-    - PRON: 色情
-    - VULGAR: 低俗
-    - GAMBLED_SCAMS: 赌博诈骗
-    - VIOLENT: 血腥暴力
-    - PERSONAL_ATTACK: 人身攻击
-    - PLAGIARISM: 与站内其他视频撞车
-    - BAD_FOR_YOUNGS: 青少年不良信息
-    - CLICKBAIT: 不良封面/标题
-    - POLITICAL_RUMORS: 涉政谣言
-    - SOCIAL_RUMORS: 涉社会事件谣言
-    - COVID_RUMORS: 疫情谣言
-    - UNREAL_EVENT: 虚假不实消息
-    - OTHER: 有其他问题
-    - LEAD_WAR: 引战
-    - CANNOT_CHARGE: 不能参加充电
-    - UNREAL_COPYRIGHT: 转载/自制类型错误
+    - ILLEGAL(): 违法违禁
+    - PRON(): 色情
+    - VULGAR(): 低俗
+    - GAMBLED_SCAMS(): 赌博诈骗
+    - VIOLENT(): 血腥暴力
+    - PERSONAL_ATTACK(): 人身攻击
+    - PLAGIARISM(bvid: str): 与站内其他视频撞车
+    - BAD_FOR_YOUNGS(): 青少年不良信息
+    - CLICKBAIT(): 不良封面/标题
+    - POLITICAL_RUMORS(): 涉政谣言
+    - SOCIAL_RUMORS(): 涉社会事件谣言
+    - COVID_RUMORS(): 疫情谣言
+    - UNREAL_EVENT(): 虚假不实消息
+    - OTHER(): 有其他问题
+    - LEAD_WAR(): 引战
+    - CANNOT_CHARGE(): 不能参加充电
+    - UNREAL_COPYRIGHT(source: str): 转载/自制类型错误
     """
     ILLEGAL = lambda: 2
     PRON = lambda: 3
