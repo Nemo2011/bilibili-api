@@ -1198,45 +1198,6 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-    async def subscribe_tag(self, tag_id: int) -> dict:
-        """
-        关注标签。
-
-        Args:
-            tag_id (int): 标签 ID。
-
-        Returns:
-            dict: 调用 API 返回的结果。
-        """
-        self.credential.raise_for_no_sessdata()
-        self.credential.raise_for_no_bili_jct()
-
-        api = API["operate"]["subscribe_tag"]
-
-        data = {"tag_id": tag_id}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
-
-    async def unsubscribe_tag(self, tag_id: int) -> dict:
-        """
-        取关标签。
-
-        Args:
-            tag_id (int): 标签 ID。
-
-        Returns:
-            dict: 调用 API 返回的结果。
-        """
-        self.credential.raise_for_no_sessdata()
-        self.credential.raise_for_no_bili_jct()
-
-        api = API["operate"]["unsubscribe_tag"]
-
-        data = {"tag_id": tag_id}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
 
     async def appeal(self, reason: Any, detail: str):
         """

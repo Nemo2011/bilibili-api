@@ -399,26 +399,6 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 **Returns:** API 调用返回结果。
 
-#### async def subscribe_tag()
-
-| name   | type | description |
-| ------ | ---- | ----------- |
-| tag_id | int  | 标签 ID。   |
-
-关注标签。
-
-**Returns:** API 调用返回结果。
-
-#### async def unsubscribe_tag()
-
-| name   | type | description |
-| ------ | ---- | ----------- |
-| tag_id | int  | 标签 ID。   |
-
-取关标签。
-
-**Returns:** API 调用返回结果。
-
 #### async def set_favorite()
 
 | name          | type                | description                         |

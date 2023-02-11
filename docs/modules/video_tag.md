@@ -10,6 +10,12 @@ from bilibili_api import video_tag
 
 标签类
 
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据类 |
+
 ### Functions
 
 #### def \_\_init\_\_()
@@ -18,6 +24,7 @@ from bilibili_api import video_tag
 | ---- | ---- | ----------- |
 | tag_name | str \| None | 标签名. Defaults to None. |
 | tag_id | int \| None | 标签 id. Defaults to None. |
+| credential | Credential \| None | 凭据类. Defaults to None. |
 
 **注意：tag_name 和 tag_id 任选一个传入即可。tag_id 优先使用。**
 
@@ -44,3 +51,16 @@ from bilibili_api import video_tag
 获取标签下的视频/动态
 
 **Returns:** dict: 调用 API 返回的结果
+
+
+#### async def subscribe_tag()
+
+关注标签。
+
+**Returns:** API 调用返回结果。
+
+#### async def unsubscribe_tag()
+
+取关标签。
+
+**Returns:** API 调用返回结果。
