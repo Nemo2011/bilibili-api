@@ -30,3 +30,6 @@ async def test_e_get_manga_index():
 
 async def test_f_get_manga_update():
     return await manga.get_manga_update()
+
+async def test_g_get_manga_home_recommend():
+    return await manga.get_manga_home_recommend()

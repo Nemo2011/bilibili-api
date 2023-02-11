@@ -454,3 +454,20 @@ async def get_manga_update(date: Union[str, datetime.datetime] = datetime.dateti
     data = {"date": date, "page_num": pn, "page_size": ps}
     manga_data = await request("POST", api["url"], no_csrf=True, params=params, data=data)
     return [Manga(manga["comic_id"]) for manga in manga_data["list"]]
+
+async def get_manga_home_recommend(pn: int = 1, seed: Optional[str] = "0") -> List[Manga]:
+    """
+    获取首页推荐的漫画
+
+    Args:
+        pn   (int)                          : 页码。Defaults to 1.
+        seed (Optional[str])                : Unknown param，无需传入.
+        
+    Returns:
+        List[Manga]: 漫画列表
+    """
+    api = API["info"]["home_recommend"]
+    params = {"device": "pc", "platform": "web"}
+    data = {"page_num": pn, "seed": seed}
+    manga_data = await request("POST", api["url"], no_csrf=True, params=params, data=data)
+    return [Manga(manga["comic_id"]) for manga in manga_data["list"]]
