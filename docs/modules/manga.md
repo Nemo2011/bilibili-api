@@ -198,3 +198,13 @@ from bilibili_api import manga
 | ps | int | 每页数量。Defaults to 18. |
 
 **Returns:** dict: 调用 API 返回的结果
+
+## async def get_manga_update()
+
+获取漫画更新推荐
+
+| name | type | description |
+| - | - | - |
+| date | str, datetime.datetime | 日期，默认为今日。|
+| pn | int | 页数。Defaults to 1. |
+| ps | int | 每页数量。Defaults to 8. |

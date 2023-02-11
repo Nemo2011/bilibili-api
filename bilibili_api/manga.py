@@ -13,6 +13,7 @@ from typing import Optional, List, Dict, Union
 from urllib.parse import urlparse
 import httpx
 from enum import Enum
+import datetime
 
 API = get_api("manga")
 
@@ -433,3 +434,23 @@ async def get_manga_index(
     """
     data = await get_raw_manga_index(area, order, status, payment, style, pn, ps)
     return [Manga(manga_data["season_id"]) for manga_data in data]
+
+
+async def get_manga_update(date: Union[str, datetime.datetime] = datetime.datetime.now(), pn: int = 1, ps: int = 8) -> List[Manga]:
+    """
+    获取更新推荐的漫画
+
+    Args:
+        date (Union[str, datetime.datetime]): 日期，默认为今日。
+        pn   (int)                          : 页码。Defaults to 1.
+        ps   (int)                          : 每页数量。Defaults to 8.
+    Returns:
+        List[Manga]: 漫画列表
+    """
+    api = API["info"]["update"]
+    params = {"device": "pc", "platform": "web"}
+    if isinstance(date, datetime.datetime):
+        date = date.strftime("%Y-%m-%d")
+    data = {"date": date, "page_num": pn, "page_size": ps}
+    manga_data = await request("POST", api["url"], no_csrf=True, params=params, data=data)
+    return [Manga(manga["comic_id"]) for manga in manga_data["list"]]
