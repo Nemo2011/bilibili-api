@@ -729,6 +729,7 @@ class InteractiveVideoDownloader(AsyncEvent):
             while True:
                 try:
                     node = await now_node.get_info()
+                    subs = await now_node.get_children()
                     self.dispatch(
                         "GET",
                         {"title": node["title"], "node_id": now_node.get_node_id()},
@@ -738,8 +739,6 @@ class InteractiveVideoDownloader(AsyncEvent):
                     retry -= 1
                     if retry < 0:
                         raise e
-
-            # 下载节点
 
             # 检查节顶点是否在 edges_info 中，本次步骤得到 title 信息
             if node["edge_id"] not in edges_info:
@@ -754,7 +753,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                 continue
 
             # 遍历所有可达顶点
-            for n in await now_node.get_children():
+            for n in subs:
                 # 该步骤获取顶点的 cid（视频分 P 的 ID）
                 if n.get_node_id() not in edges_info:
                     createEdge(n.get_node_id())
@@ -781,7 +780,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                 edges_info[n.get_node_id()]["is_default"] = n.is_default()
                 edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
                 edges_info[now_node.get_node_id()]["sub"] = [
-                    n.get_node_id() for n in await now_node.get_children()
+                    n.get_node_id() for n in subs
                 ]
                 # 所有可达顶点 ID 入队
                 queue.insert(0, n)
