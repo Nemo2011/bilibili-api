@@ -82,7 +82,7 @@ async def get_graph(credential: Credential, period: GraphPeriod = GraphPeriod.WE
         credentials (Credential): Credential 凭据。
         period      (GraphPeriod): 时间段。
         graph_type  (GraphType):   图表类型。
-        
+
     Returns:
         dict: 视频统计数据。
     """
@@ -106,7 +106,7 @@ async def get_video_overview(credential: Credential, period: GraphPeriod = Graph
     Returns:
         dict: 视频概览数据。
     """
-    api = API["overview"]["overview"]
+    api = API["overview"]["num"]
     # 不知道 tab 的作用是什么，但是不传会报错
     params = {"period": period.value, "s_locale": "zh_CN", "tab": 0}
     return await request("GET", api["url"], params=params, credential=credential)
