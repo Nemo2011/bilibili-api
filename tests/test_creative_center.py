@@ -26,3 +26,15 @@ async def test_g_get_fan_overview():
 
 async def test_h_get_fan_graph():
     return await creative_center.get_fan_graph(credential)
+
+async def test_i_get_article_overview():
+    return await creative_center.get_article_overview(credential)
+
+async def test_j_get_article_graph():
+    return await creative_center.get_article_graph(credential)
+
+async def test_k_get_article_source():
+    return await creative_center.get_article_source(credential)
+
+async def test_l_get_article_rank():
+    return await creative_center.get_article_rank(credential)
