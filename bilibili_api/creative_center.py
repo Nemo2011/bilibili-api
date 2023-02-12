@@ -59,10 +59,21 @@ class GraphType(Enum):
     COIN = "coin"
     ELEC = "elec"
 
-
-async def get_video_compare(credential: Credential) -> dict:
+class Copyright(Enum):
     """
-    获取视频对比数据。
+    稿件播放完成率对比的版权类型。
+
+    + ALL: 全部
+    + ORIGINAL: 原创
+    + REPRINT: 转载
+    """
+    ALL = 0
+    ORIGINAL = 1
+    REPRINT = 2
+
+async def get_compare(credential: Credential) -> dict:
+    """
+    获取对比数据。
 
     Args:
         credentials (Credential): Credential 凭据。
@@ -95,7 +106,7 @@ async def get_graph(credential: Credential, period: GraphPeriod = GraphPeriod.WE
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_video_overview(credential: Credential, period: GraphPeriod = GraphPeriod.WEEK) -> dict:
+async def get_overview(credential: Credential, period: GraphPeriod = GraphPeriod.WEEK) -> dict:
     """
     获取概览数据。
 
@@ -124,4 +135,33 @@ async def get_video_survey(credential: Credential) -> dict:
     """
     api = API["survey"]
     params = {"type": 1}
+    return await request("GET", api["url"], params=params, credential=credential)
+
+async def get_video_playanalysis(credential: Credential, copyright: Copyright = Copyright.ALL) -> dict:
+    """
+    获取稿件播放完成率对比。
+
+    Args:
+        credentials (Credential): Credential 凭据。
+        copyright   (Copyright):   版权类型。
+
+    Returns:
+        dict: 稿件播放完成率对比数据。
+    """
+    api = API["video"]["playanalysis"]
+    params = {"copyright": copyright}
+    return await request("GET", api["url"], params=params, credential=credential)
+
+async def get_video_source(credential: Credential) -> dict:
+    """
+    获取稿件播放来源分布。
+
+    Args:
+        credentials (Credential): Credential 凭据。
+
+    Returns:
+        dict: 视频来源分布数据。
+    """
+    api = API["video"]["source"]
+    params = {"s_locale": "zh_CN"}
     return await request("GET", api["url"], params=params, credential=credential)

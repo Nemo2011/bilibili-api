@@ -29,13 +29,33 @@
             "comment": "获取统计数据"
         }
     },
-    "survey": {
-        "url": "https://member.bilibili.com/x/web/data/survey",
-        "method": "GET",
-        "verify": true,
-        "params": {
-            "type": "int: 统计类型"
+    "video": {
+        "survey": {
+            "url": "https://member.bilibili.com/x/web/data/survey",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "type": "int: 统计类型"
+            },
+            "comment": "获取各分区中占比排行"
         },
-        "comment": "获取各分区中占比排行"
+        "playanalysis": {
+            "url": "https://member.bilibili.com/x/web/data/playanalysis?copyright=0&t=1676161628464",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "copyright": "int: 版权"
+            },
+            "comment": "获取稿件播放完成率对比数据"
+        },
+        "source": {
+            "url": "https://member.bilibili.com/x/web/data/v2/overview/source",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "s_locale": "str: zh_CN"
+            },
+            "comment": "获取稿件播放来源分布数据"
+        }
     }
 }
