@@ -16,6 +16,51 @@ from bilibili_api import video
 + PROTECT - 保护弹幕
 + UNPROTECT - 取消保护弹幕
 
+---
+
+
+
+---
+
+## class VideoQuality()
+
+**Extends:enum.Enum**
+
+- _360P: 流畅 360P
+- _480P: 清晰 480P
+- _720P: 高清 720P60
+- _1080P: 高清 1080P
+- _1080P_PLUS: 高清 1080P 高码率
+- _1080P_60: 高清 1080P 60 帧码率
+- _4K: 超清 4K
+- HDR: 真彩 HDR
+- DOLBY: 杜比视界
+- _8K: 超高清 8K
+
+---
+
+## class VideoCodecs()
+
+**Extends:enum.Enum**
+
+- HEV: HEVC(H.265)
+- AVC: AVC(H.264)
+- AV1: AV1
+
+---
+
+## class AudioQuality()
+
+**Extends:enum.Enum**
+
+- _64K: 64K
+- _132K: 132K
+- _192K: 192K
+- HI_RES: Hi-Res 无损
+- DOLBY: 杜比全景声
+
+---
+
 ## class Video
 
 视频类，各种对视频的操作均在里面。
@@ -354,26 +399,6 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 **Returns:** API 调用返回结果。
 
-#### async def subscribe_tag()
-
-| name   | type | description |
-| ------ | ---- | ----------- |
-| tag_id | int  | 标签 ID。   |
-
-关注标签。
-
-**Returns:** API 调用返回结果。
-
-#### async def unsubscribe_tag()
-
-| name   | type | description |
-| ------ | ---- | ----------- |
-| tag_id | int  | 标签 ID。   |
-
-取关标签。
-
-**Returns:** API 调用返回结果。
-
 #### async def set_favorite()
 
 | name          | type                | description                         |
@@ -523,45 +548,6 @@ asyncio.get_event_loop().run_until_complete(r.connect())
 
 ---
 
-## class VideoQuality()
-
-**Extends:enum.Enum**
-
-- _360P: 流畅 360P
-- _480P: 清晰 480P
-- _720P: 高清 720P60
-- _1080P: 高清 1080P
-- _1080P_PLUS: 高清 1080P 高码率
-- _1080P_60: 高清 1080P 60 帧码率
-- _4K: 超清 4K
-- HDR: 真彩 HDR
-- DOLBY: 杜比视界
-- _8K: 超高清 8K
-
----
-
-## class VideoCodecs()
-
-**Extends:enum.Enum**
-
-- HEV: HEVC(H.265)
-- AVC: AVC(H.264)
-- AV1: AV1
-
----
-
-## class AudioQuality()
-
-**Extends:enum.Enum**
-
-- _64K: 64K
-- _132K: 132K
-- _192K: 192K
-- HI_RES: Hi-Res 无损
-- DOLBY: 杜比全景声
-
----
-
 **@dataclass.dataclass**
 ## class VideoStreamDownloadURL
 
@@ -629,6 +615,7 @@ FLV 视频流
 - 视频编码: HEVC(H.265), AVC(H.264), AV1
 - 音频清晰度: 64K, 132K, Hi-Res 无损音效, 杜比全景声, 192K
 - FLV 视频流
+- 番剧/课程试看视频流
 
 ### Functions
 
@@ -656,14 +643,20 @@ FLV 视频流
 
 **Returns:** bool: 是否为 HTML5 可播放的 mp4 视频流
 
+#### def check_episode_try_mp4_stream()
+
+判断是否为番剧/课程试看的 mp4 视频流
+
+**Returns:**bool: 是否为番剧试看的 mp4 视频流
+
 #### def detect_all()
 
 解析数据
 
-**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: 所有的视频/音频流
+**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 所有的视频/音频流
 
 #### def detect_best_streams()
 
 提取出分辨率、音质等信息最好的音视频流
 
-**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`
+**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流 / 番剧或课程试看 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL | EpisodeTryMP4DownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`

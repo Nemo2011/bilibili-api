@@ -198,10 +198,10 @@ async def test_y_Video_del_tag():
             return e.raw
 
 
-async def test_z_Video_subscribe_and_unsubscribe_tag():
-    data = await video.subscribe_tag(8583026)
-    await video.unsubscribe_tag(8583026)
-    return data
+# async def test_z_Video_subscribe_and_unsubscribe_tag():
+#     data = await video.subscribe_tag(8583026)
+#     await video.unsubscribe_tag(8583026)
+#     return data
 
 
 async def test_za_Video_set_favorite():

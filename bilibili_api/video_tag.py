@@ -4,6 +4,7 @@ bilibili_api.video_tag
 视频标签相关，部分的标签的 id 与同名的频道的 id 一模一样。
 """
 
+from .utils.Credential import Credential
 from .utils.network_httpx import request
 from .utils.utils import get_api
 from .errors import *
@@ -11,6 +12,7 @@ import httpx
 from typing import Optional
 
 API = get_api("video_tag")
+API_video = get_api("video")
 
 
 class Tag:
@@ -18,11 +20,12 @@ class Tag:
     标签类
     """
 
-    def __init__(self, tag_name: Optional[str] = None, tag_id: Optional[int] = None):
+    def __init__(self, tag_name: Optional[str] = None, tag_id: Optional[int] = None, credential: Optional[Credential] = None):
         """
         Args:
-            tag_name (str | None): 标签名. Defaults to None.
-            tag_id   (int | None): 标签 id. Defaults to None.
+            tag_name   (str | None): 标签名. Defaults to None.
+            tag_id     (int | None): 标签 id. Defaults to None.
+            credential (Credential): 凭据类. Defaults to None.
 
         注意：tag_name 和 tag_id 任选一个传入即可。tag_id 优先使用。
         """
@@ -35,7 +38,8 @@ class Tag:
             self.__tag_id = resp["data"]["tag_id"]
         else:
             self.__tag_id = tag_id
-        self.credential = None  # 不做 Credential 接入
+        credential = credential if credential else Credential()
+        self.credential = credential
 
     def get_tag_id(self) -> int:
         return self.__tag_id
@@ -72,3 +76,37 @@ class Tag:
         api = API["info"]["get_list"]
         params = {"topic_id": self.get_tag_id()}
         return await request("GET", api["url"], params=params)
+
+    async def subscribe_tag(self) -> dict:
+        """
+        关注标签。
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API_video["operate"]["subscribe_tag"]
+
+        data = {"tag_id": self.__tag_id}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )
+
+    async def unsubscribe_tag(self) -> dict:
+        """
+        取关标签。
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API_video["operate"]["unsubscribe_tag"]
+
+        data = {"tag_id": self.__tag_id}
+        return await request(
+            "POST", url=api["url"], data=data, credential=self.credential
+        )

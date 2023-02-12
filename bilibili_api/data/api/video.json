@@ -251,6 +251,19 @@
       },
       "comment": "取消订阅标签"
     },
+    "appeal": {
+      "url": "https://api.bilibili.com/x/web-interface/archive/appeal",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号",
+        "tid": "int: 投诉理由 tid, 见 https://api.bilibili.com/x/web-interface/archive/appeal/tags",
+        "desc": "str: 理由详细描述",
+        "attach": "str: 附件路径",
+        "#一些 kwargs": "翻源代码理解吧"
+      },
+      "comment": "投诉稿件"
+    },
     "favorite": {
       "url": "https://api.bilibili.com/x/v3/fav/resource/deal",
       "method": "POST",
