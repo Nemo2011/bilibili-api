@@ -233,6 +233,16 @@
       },
       "comment": "删除标签"
     },
+    "yjsl": {
+      "url": "https://api.bilibili.com/x/web-interface/archive/like/triple",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "aid": "int: av 号",
+        "bvid": "string: BV 号"
+      },
+      "comment": "阿婆最爱的一键三连欧"
+    },
     "subscribe_tag": {
       "url": "https://api.bilibili.com/x/tag/subscribe/add",
       "method": "POST",

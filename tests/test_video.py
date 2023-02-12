@@ -232,3 +232,6 @@ async def test_zf_get_subtitle():
 #
 # res = sync(test_zf_get_subtitle())
 # print(res)
+
+async def test_zg_triple():
+    return await video.triple()

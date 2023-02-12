@@ -401,6 +401,12 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 **Returns:** API 调用返回结果。
 
+#### async def triple()
+
+一键三连
+
+**Returns:** dict: 调用 API 返回的结果
+
 #### async def add_tag()
 
 | name | type | description |

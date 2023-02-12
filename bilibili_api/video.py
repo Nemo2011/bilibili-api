@@ -1159,6 +1159,20 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
+    async def triple(self) -> dict:
+        """
+        给阿婆主送上一键三连
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["operate"]["yjsl"]
+        data = {
+            "bvid": self.get_bvid(),
+            "aid": self.get_aid()
+        }
+        return await request("POST", api["url"], data=data, credential=self.credential)
+
     async def add_tag(self, name: str) -> dict:
         """
         添加标签。
