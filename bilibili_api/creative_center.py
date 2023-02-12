@@ -33,6 +33,21 @@ class GraphPeriod(Enum):
     TOTAL = 3
 
 
+class FanGraphPeriod(Enum):
+    """
+    粉丝统计图表的时间段。
+
+    + YESTERDAY: 昨天
+    + WEEK: 近一周
+    + MONTH: 近一月
+    + THREE_MONTH: 近三月
+    """
+    YESTERDAY = -1
+    WEEK = 0
+    MONTH = 1
+    THREE_MONTH = 2
+
+
 class GraphType(Enum):
     """
     统计图表的类型。
@@ -59,6 +74,7 @@ class GraphType(Enum):
     COIN = "coin"
     ELEC = "elec"
 
+
 class Copyright(Enum):
     """
     稿件播放完成率对比的版权类型。
@@ -70,6 +86,22 @@ class Copyright(Enum):
     ALL = 0
     ORIGINAL = 1
     REPRINT = 2
+
+
+class FanGraphType(Enum):
+    """
+    粉丝统计图表的类型。
+
+    + ALL_FANS: 粉丝总量
+    + FAN: 新增粉丝
+    + FOLLOW: 新增关注
+    + UNFOLLOW: 取消关注
+    """
+    ALL_FANS = "all_fans"
+    NEW_FANS = "fan"
+    FOLLOW = "follow"
+    UNFOLLOW = "unfollow"
+
 
 async def get_compare(credential: Credential) -> dict:
     """
@@ -137,6 +169,7 @@ async def get_video_survey(credential: Credential) -> dict:
     params = {"type": 1}
     return await request("GET", api["url"], params=params, credential=credential)
 
+
 async def get_video_playanalysis(credential: Credential, copyright: Copyright = Copyright.ALL) -> dict:
     """
     获取稿件播放完成率对比。
@@ -152,6 +185,7 @@ async def get_video_playanalysis(credential: Credential, copyright: Copyright = 
     params = {"copyright": copyright.value}
     return await request("GET", api["url"], params=params, credential=credential)
 
+
 async def get_video_source(credential: Credential) -> dict:
     """
     获取稿件播放来源分布。
@@ -164,4 +198,36 @@ async def get_video_source(credential: Credential) -> dict:
     """
     api = API["video"]["source"]
     params = {"s_locale": "zh_CN"}
+    return await request("GET", api["url"], params=params, credential=credential)
+
+async def get_fan_overview(credential: Credential, period: FanGraphPeriod = FanGraphPeriod.WEEK) -> dict:
+    """
+    获取粉丝概览数据。
+
+    Args:
+        credentials (Credential): Credential 凭据。
+        period      (FanGraphPeriod): 时间段。
+
+    Returns:
+        dict: 粉丝概览数据。
+    """
+    api = API["fan"]["overview"]
+    params = {"period": period.value}
+    return await request("GET", api["url"], params=params, credential=credential)
+
+
+async def get_fan_graph(credential: Credential, period: FanGraphPeriod = FanGraphPeriod.WEEK, graph_type: FanGraphType = FanGraphType.ALL_FANS) -> dict:
+    """
+    获取粉丝图表数据。
+
+    Args:
+        credentials (Credential): Credential 凭据。
+        period      (FanGraphPeriod): 时间段。
+        graph_type  (FanGraphType):   图表类型。
+
+    Returns:
+        dict: 粉丝图表数据。
+    """
+    api = API["fan"]["graph"]
+    params = {"period": period.value, "type": graph_type.value}
     return await request("GET", api["url"], params=params, credential=credential)

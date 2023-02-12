@@ -57,5 +57,26 @@
             },
             "comment": "获取稿件播放来源分布数据"
         }
+    },
+    "fan": {
+        "overview": {
+            "url": "https://member.bilibili.com/x/web/data/v2/fans/stat/num",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "period": "int: 统计周期"
+            },
+            "comment": "获取粉丝数据"
+        },
+        "graph": {
+            "url": "https://member.bilibili.com/x/web/data/v2/fans/stat/graph?type=all_fans&period=2",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "period": "int: 统计周期",
+                "type": "str: 统计类型"
+            },
+            "comment": "获取粉丝数据图表."
+        }
     }
 }
