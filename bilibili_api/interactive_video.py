@@ -300,6 +300,8 @@ class InteractiveNode:
         """
         edge_info = await self.__parent.get_edge_info(self.__id)
         nodes = []
+        if edge_info["edges"].get("questions") == None:
+            return []
         for node in edge_info["edges"]["questions"][0]["choices"]:
             node_id = node["id"]
             node_cid = node["cid"]
@@ -555,18 +557,18 @@ class InteractiveVideoDownloaderEvents(enum.Enum):
     """
     互动视频下载器事件枚举
 
-    + START           : 开始下载
-    + GET             : 获取到节点信息
-    + PREPARE_DOWNLOAD: 准备下载节点
-    (以下为内建下载函数发布事件)
-    + DOWNLOAD_START  : 开始下载单个文件
-    + DOWNLOAD_PART   : 文件分块部分完成
-    + DOWNLOAD_SUCCESS: 完成下载
-    (END)
-    + PACKAGING       : 打包文件
-    + SUCCESS         : 完成下载
-    + ABORTED         : 终止下载
-    + FAILED          : 下载失败
+    | event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode | Is Built-In downloader event |
+    | ----- | ------- | -------- | ---------------- | -------------- | ----------------- | ------------------------- |
+    | START | 开始下载 | [x] | [x] | [x] | [x] | [ ] |
+    | GET | 获取到节点信息 | [x] | [x] | [x] | [x] | [ ] |
+    | PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] | [ ] |
+    | DOWNLOAD_START | 开始下载单个文件 | Unknown | Unknown | [ ] | Unknown | [x] |
+    | DOWNLOAD_PART | 文件分块部分完成 | Unknown | Unknown | [ ] | Unknown | [x] |
+    | DOWNLOAD_SUCCESS | 完成下载 | Unknown | Unknown | [ ] | Unknown | [x] |
+    | PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] | [ ] |
+    | SUCCESS | 下载成功 | [x] | [x] | [x] | [x] | [x] |
+    | ABORTED | 用户暂停 | [x] | [x] | [x] | [x] | [x] |
+    | FAILED | 下载失败 | [x] | [x] | [x] | [x] | [x] |
     """
 
     START = "START"
@@ -580,9 +582,24 @@ class InteractiveVideoDownloaderEvents(enum.Enum):
     FAILED = "FAILED"
 
 
+class InteractiveVideoDownloaderMode(enum.Enum):
+    """
+    互动视频下载模式
+
+    - IVI: 下载可播放的 ivi 文件
+    - NODE_VIDEOS: 下载所有节点的所有视频并存放在某个文件夹，每一个节点的视频命名为 `{节点 id} {节点标题 (自动去除敏感字符)}.mp4`
+    - DOT_GRAPH: 下载 dot 格式的情节树图表
+    - NO_PACKAGING: 前面按照 ivi 文件下载步骤进行下载，但是最终不会打包成为 ivi 文件。互动视频数据将存放在一个文件夹中，里面的文件命名/含义与拆包后的 ivi 文件完全相同。
+    """
+    IVI = "ivi"
+    NODE_VIDEOS = "videos"
+    DOT_GRAPH = "dot"
+    NO_PACKAGING = "no_pack"
+
+
 class InteractiveVideoDownloader(AsyncEvent):
     """
-    互动视频下载类(下载格式：ivi)
+    互动视频下载类
     """
 
     def __init__(
@@ -590,11 +607,12 @@ class InteractiveVideoDownloader(AsyncEvent):
         video: InteractiveVideo,
         out: str = "",
         self_download_func: Union[Callable, None] = None,
+        downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI
     ):
         """
         Args:
             video (InteractiveVideo)             : 互动视频类
-            out   (str)                          : 输出文件地址
+            out   (str)                          : 输出文件地址 (如果模式为 NODE_VIDEOS 则此参数表示所有节点视频的存放目录)
             self_download_func (Coroutine | None): 自定义下载函数（需 async 函数）
 
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
@@ -607,6 +625,7 @@ class InteractiveVideoDownloader(AsyncEvent):
             self.__download_func = self_download_func
         self.__task = None
         self.__out = out
+        self.__mode = downloader_mode
 
     async def __download(self, url: str, out: str) -> None:
         resp = requests.get(
@@ -830,11 +849,163 @@ class InteractiveVideoDownloader(AsyncEvent):
         shutil.rmtree(tmp_dir_name)
         self.dispatch("SUCCESS")
 
+    async def __node_videos_main(self) -> None:
+        # 初始化
+        self.dispatch("START")
+        tmp_dir_name = self.__out
+        if not os.path.exists(tmp_dir_name):
+            os.mkdir(tmp_dir_name)
+
+        def createEdge(edge_id: int):
+            """
+            创建节点信息到 edges_info
+            """
+            edges_info[edge_id] = {
+                "title": None,
+                "cid": None,
+                "button": None,
+                "condition": None,
+                "jump_type": None,
+                "is_default": None,
+                "command": None,
+                "sub": [],
+            }
+
+        def var2dict(var: InteractiveVariable):
+            return {
+                "name": var.get_name(),
+                "id": var.get_id(),
+                "value": var.get_value(),
+                "show": var.is_show(),
+                "random": var.is_random(),
+            }
+
+        # 存储顶点信息
+        edges_info = {}
+
+        # 使用队列来遍历剧情图，初始为 None 是为了从初始顶点开始
+        queue: List[InteractiveNode] = [
+            await (await self.__video.get_graph()).get_root_node()
+        ]
+
+        # 设置初始顶点
+        n = await (await self.__video.get_graph()).get_root_node()
+        if n.get_node_id() not in edges_info:
+            createEdge(n.get_node_id())
+        edges_info[n.get_node_id()]["cid"] = n.get_cid()
+        edges_info[n.get_node_id()]["button"] = {
+            "text": n.get_self_button().get_text(),
+            "align": n.get_self_button().get_align(),
+            "pos": (n.get_self_button().get_pos()),
+        }
+        edges_info[n.get_node_id()]["vars"] = [
+            var2dict(var) for var in (await n.get_vars())
+        ]
+        edges_info[n.get_node_id()]["condition"] = (n.get_jumping_condition()._InteractiveJumpingCondition__command,)  # type: ignore
+        edges_info[n.get_node_id()]["jump_type"] = 0
+        edges_info[n.get_node_id()]["is_default"] = True
+        edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
+
+        while queue:
+            # 出队
+            now_node = queue.pop()
+
+            if (
+                now_node.get_node_id() in edges_info
+                and edges_info[now_node.get_node_id()]["title"] is not None
+                and edges_info[now_node.get_node_id()]["cid"] is not None
+            ):
+                # 该情况为已获取到所有信息，说明是跳转到之前已处理的顶点，不作处理
+                continue
+
+            # 获取顶点信息，最大重试 3 次
+            retry = 3
+            while True:
+                try:
+                    node = await now_node.get_info()
+                    subs = await now_node.get_children()
+                    self.dispatch(
+                        "GET",
+                        {"title": node["title"], "node_id": now_node.get_node_id()},
+                    )
+                    break
+                except Exception as e:
+                    retry -= 1
+                    if retry < 0:
+                        raise e
+
+            # 检查节顶点是否在 edges_info 中，本次步骤得到 title 信息
+            if node["edge_id"] not in edges_info:
+                # 不在，新建
+                createEdge(node["edge_id"])
+
+            # 设置 title
+            edges_info[node["edge_id"]]["title"] = node["title"]
+
+            # 无可达顶点，即不能再往下走了，类似树的叶子节点
+            if "questions" not in node["edges"]:
+                continue
+
+            # 遍历所有可达顶点
+            for n in subs:
+                # 该步骤获取顶点的 cid（视频分 P 的 ID）
+                if n.get_node_id() not in edges_info:
+                    createEdge(n.get_node_id())
+                edges_info[n.get_node_id()]["cid"] = n.get_cid()
+                edges_info[n.get_node_id()]["button"] = {
+                    "text": n.get_self_button().get_text(),
+                    "align": n.get_self_button().get_align(),
+                    "pos": n.get_self_button().get_pos(),
+                }
+
+                def var2dict(var: InteractiveVariable):
+                    return {
+                        "name": var.get_name(),
+                        "id": var.get_id(),
+                        "value": var.get_value(),
+                        "show": var.is_show(),
+                        "random": var.is_random(),
+                    }
+
+                edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
+                edges_info[n.get_node_id()][
+                    "jump_type"
+                ] = await now_node.get_jumping_type()
+                edges_info[n.get_node_id()]["is_default"] = n.is_default()
+                edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
+                edges_info[now_node.get_node_id()]["sub"] = [
+                    n.get_node_id() for n in subs
+                ]
+                # 所有可达顶点 ID 入队
+                queue.insert(0, n)
+
+        for key, item in edges_info.items():
+            self.dispatch("PREPARE_DOWNLOAD", {"node_id": int(key), "cid": item["cid"]})
+            cid = item["cid"]
+            url = await self.__video.get_download_url(cid=cid, html5=True)
+            await self.__download_func(
+                url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
+            )
+
+        self.dispatch(
+            "PREPARE_DOWNLOAD", {"node_id": 1, "cid": await self.__video.get_cid()}
+        )
+        cid = await self.__video.get_cid()
+        url = await self.__video.get_download_url(cid=cid, html5=True)
+        title = (await self.__video.get_info())["title"]
+        await self.__download_func(
+            url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
+        )
+        self.dispatch("SUCCESS")
+
     async def start(self) -> None:
         """
         开始下载
         """
-        task = create_task(self.__main())
+        if self.__mode.value == "ivi":
+            task = create_task(self.__main())
+        else:
+            task = create_task(self.__node_videos_main())
         self.__task = task
 
         try:
