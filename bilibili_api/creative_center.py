@@ -75,19 +75,6 @@ class GraphType(Enum):
     ELEC = "elec"
 
 
-class Copyright(Enum):
-    """
-    稿件播放完成率对比的版权类型。
-
-    + ALL: 全部
-    + ORIGINAL: 原创
-    + REPRINT: 转载
-    """
-    ALL = 0
-    ORIGINAL = 1
-    REPRINT = 2
-
-
 class FanGraphType(Enum):
     """
     粉丝统计图表的类型。
@@ -101,6 +88,19 @@ class FanGraphType(Enum):
     NEW_FANS = "fan"
     FOLLOW = "follow"
     UNFOLLOW = "unfollow"
+
+
+class Copyright(Enum):
+    """
+    稿件播放完成率对比的版权类型。
+
+    + ALL: 全部
+    + ORIGINAL: 原创
+    + REPRINT: 转载
+    """
+    ALL = 0
+    ORIGINAL = 1
+    REPRINT = 2
 
 
 async def get_compare(credential: Credential) -> dict:
