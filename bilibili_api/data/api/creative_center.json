@@ -1,0 +1,41 @@
+{
+    "overview": {
+        "compare": {
+            "url": "https://member.bilibili.com/x/web/data/v2/overview/compare",
+            "method": "GET",
+            "verify": true,
+            "comment": "获取对比数据"
+        },
+        "graph": {
+            "url": "https://member.bilibili.com/x/web/data/v2/overview/stat/graph",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "period": "int: 统计周期",
+                "s_locale": "str: zh_CN",
+                "type": "str: 统计类型"
+            },
+            "comment": "获取统计图表数据"
+        },
+        "num": {
+            "url": "https://member.bilibili.com/x/web/data/v2/overview/stat/num?period=1&s_locale=zh_CN&tab=3&t=1676160967661",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "period": "int: 统计周期",
+                "s_locale": "str: zh_CN",
+                "tab": "int: Unknown"
+            },
+            "comment": "获取统计数据"
+        }
+    },
+    "survey": {
+        "url": "https://member.bilibili.com/x/web/data/survey",
+        "method": "GET",
+        "verify": true,
+        "params": {
+            "type": "int: 统计类型"
+        },
+        "comment": "获取各分区中占比排行"
+    }
+}
