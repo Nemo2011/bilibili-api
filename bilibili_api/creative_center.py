@@ -149,7 +149,7 @@ async def get_video_playanalysis(credential: Credential, copyright: Copyright = 
         dict: 稿件播放完成率对比数据。
     """
     api = API["video"]["playanalysis"]
-    params = {"copyright": copyright}
+    params = {"copyright": copyright.value}
     return await request("GET", api["url"], params=params, credential=credential)
 
 async def get_video_source(credential: Credential) -> dict:
