@@ -183,7 +183,7 @@ async def get_video_survey(credential: Credential) -> dict:
     Returns:
         dict: 视频分区排行数据。
     """
-    api = API["survey"]
+    api = API["video"]["survey"]
     params = {"type": 1}
     return await request("GET", api["url"], params=params, credential=credential)
 
