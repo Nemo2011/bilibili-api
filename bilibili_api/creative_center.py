@@ -89,6 +89,24 @@ class FanGraphType(Enum):
     FOLLOW = "follow"
     UNFOLLOW = "unfollow"
 
+class ArticleInfoType(Enum):
+    """
+    文章统计信息的类型。
+
+    + READ: 阅读
+    + COMMENT: 评论
+    + SHARE: 分享
+    + COIN: 投币
+    + FAV: 收藏
+    + LIKE: 点赞
+    """
+    READ = 1
+    COMMENT = 2
+    SHARE = 3
+    COIN = 4
+    FAV = 5
+    LIKE = 6
+
 
 class Copyright(Enum):
     """
@@ -127,7 +145,7 @@ async def get_graph(credential: Credential, period: GraphPeriod = GraphPeriod.WE
         graph_type  (GraphType):   图表类型。
 
     Returns:
-        dict: 视频统计数据。
+        dict: 视频统计图表数据。
     """
     api = API["overview"]["graph"]
     params = {
@@ -163,7 +181,7 @@ async def get_video_survey(credential: Credential) -> dict:
         credentials (Credential): Credential 凭据。
 
     Returns:
-        dict: 视频问卷数据。
+        dict: 视频分区排行数据。
     """
     api = API["survey"]
     params = {"type": 1}
@@ -232,3 +250,62 @@ async def get_fan_graph(credential: Credential, period: FanGraphPeriod = FanGrap
     api = API["fan"]["graph"]
     params = {"period": period.value, "type": graph_type.value}
     return await request("GET", api["url"], params=params, credential=credential)
+
+async def get_article_overview(credential: Credential) -> dict:
+    """
+    获取文章概览数据。
+
+    Args:
+        credentials (Credential): Credential 凭据。
+
+    Returns:
+        dict: 文章概览数据。
+    """
+    api = API["article"]["overview"]
+    return await request("GET", api["url"], credential=credential)
+
+async def get_article_graph(credential: Credential, graph_type: ArticleInfoType = ArticleInfoType.READ) -> dict:
+    """
+    获取文章图表数据。
+
+    Args:
+        credentials (Credential): Credential 凭据。
+        graph_type  (ArticleInfoType):   图表类型。
+
+    Returns:
+        dict: 文章图表数据。
+    """
+
+    api = API["article"]["graph"]
+    params = {"type": graph_type.value}
+    return await request("GET", api["url"], params=params, credential=credential)
+
+async def get_article_rank(credential: Credential, rank_type: ArticleInfoType = ArticleInfoType.READ) -> dict:
+    """
+    获取文章排行数据。
+
+    Args:
+        credentials (Credential): Credential 凭据。
+        rank_type  (ArticleInfoType):   排行依据。
+
+    Returns:
+        dict: 文章排行数据。
+    """
+
+    api = API["article"]["rank"]
+    params = {"type": rank_type.value}
+    return await request("GET", api["url"], params=params, credential=credential)
+
+async def get_article_source(credential: Credential) -> dict:
+    """
+    获取文章阅读终端数据
+
+    Args:
+        credentials (Credential): Credential 凭据。
+
+    Returns:
+        dict: 文章阅读终端数据。
+    """
+
+    api = API["article"]["source"]
+    return await request("GET", api["url"], credential=credential)
