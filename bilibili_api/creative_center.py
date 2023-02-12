@@ -200,6 +200,7 @@ async def get_video_source(credential: Credential) -> dict:
     params = {"s_locale": "zh_CN"}
     return await request("GET", api["url"], params=params, credential=credential)
 
+
 async def get_fan_overview(credential: Credential, period: FanGraphPeriod = FanGraphPeriod.WEEK) -> dict:
     """
     获取粉丝概览数据。
