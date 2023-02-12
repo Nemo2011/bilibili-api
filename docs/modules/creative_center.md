@@ -77,6 +77,21 @@ from bilibili_api import creative_center
 
 ---
 
+## class ArticleInfoType
+
+**Extends:** enum.Enum
+
+文章统计信息的类型。
+
++ READ: 阅读
++ COMMENT: 评论
++ SHARE: 分享
++ COIN: 投币
++ FAV: 收藏
++ LIKE: 点赞
+
+---
+
 ## async def get_compare()
 
 | name | type | description |
@@ -161,5 +176,47 @@ from bilibili_api import creative_center
 | graph_type | FanGraphType | 粉丝统计图表的类型 |
 
 获取粉丝统计图表。
+
+**Returns:** 调用接口返回的内容。
+
+## async def get_article_overview()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+
+获取文章概览数据。
+
+**Returns:** 调用接口返回的内容。
+
+## async def get_article_graph()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+| graph_type | ArticleInfoType | 文章统计信息的类型 |
+
+获取文章统计图表。
+
+**Returns:** 调用接口返回的内容。
+
+## async def get_article_survey()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+| rank_type | ArticleInfoType | 文章统计信息的类型 |
+
+获取文章排行数据。
+
+**Returns:** 调用接口返回的内容。
+
+## async def get_article_source()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据 |
+
+获取文章来源分布。
 
 **Returns:** 调用接口返回的内容。
