@@ -999,6 +999,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.dispatch("SUCCESS")
 
     async def __dot_graph_main(self) -> None:
+        self.dispatch("START")
         if not self.__out.endswith(".dot"):
             self.__out += ".dot"
         class node_info:
@@ -1083,6 +1084,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         graph_content += "}"
         with open(self.__out, "w+", encoding="utf-8") as dot_file:
             dot_file.write(graph_content)
+        self.dispatch("SUCCESS")
 
 
     async def start(self) -> None:
