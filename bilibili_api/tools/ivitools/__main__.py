@@ -1,11 +1,11 @@
 """
 IVITools
 
-A Simple IVI file manager & toolbox. 
+A Simple IVI file manager & toolbox.
 
 BY Nemo2011 <yimoxia@outlook.com>
 
-Licensed under the GNU General Public License v3+. 
+Licensed under the GNU General Public License v3+.
 """
 __author__ = "Nemo2011 <yimoxia@outlook.com>"
 __license__ = "GPLv3+"
@@ -22,10 +22,9 @@ from colorama import Fore
 
 
 def run_args(command: str, args: List[str]):
-    match command:
-        case "help":
-            print(
-                "IVITools - A Simple IVI file manager & toolbox. \n\
+    if command == "help":
+        print(
+            "IVITools - A Simple IVI file manager & toolbox. \n\
 BY Nemo2011<yimoxia@outlook.com>\n\
 \n\
 Commands: download, extract, help, play, scan, touch\n\
@@ -36,31 +35,31 @@ ivitools help\n\
 ivitools play [IVI] (PyQT6 require)\n\
 ivitools scan [IVI]\n\
 ivitools touch [IVI]"
+        )
+    if command == "scan":
+        scan_ivi_file(args[0])
+    if command == "extract":
+        extract_ivi(args[0], args[1])
+    if command == "touch":
+        touch_ivi(args[0])
+    if command == "download":
+        download_interactive_video(args[0], args[1])
+    if command == "play":
+        try:
+            import PyQt6
+        except ImportError:
+            warnings.warn(
+                "IVITools Built-in Player require PyQt6 but IVITools can't find it. \nYou can install it by `pip3 install PyQt6`. "
             )
-        case "scan":
-            scan_ivi_file(args[0])
-        case "extract":
-            extract_ivi(args[0], args[1])
-        case "touch":
-            touch_ivi(args[0])
-        case "download":
-            download_interactive_video(args[0], args[1])
-        case "play":
-            try:
-                import PyQt6
-            except ImportError:
-                warnings.warn(
-                    "IVITools Built-in Player require PyQt6 but IVITools can't find it. \nYou can install it by `pip3 install PyQt6`. "
-                )
-                return
-            from .player import main, prepopen
+            return
+        from .player import main, prepopen
 
-            if len(args) == 0:
-                main()
-            else:
-                prepopen(args[0])
-        case _:
-            raise ValueError("Command not found. Use `ivitools help` for helps. ")
+        if len(args) == 0:
+            main()
+        else:
+            prepopen(args[0])
+    else:
+        raise ValueError("Command not found. Use `ivitools help` for helps. ")
 
 
 def main():
