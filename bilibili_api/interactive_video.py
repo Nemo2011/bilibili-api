@@ -998,12 +998,101 @@ class InteractiveVideoDownloader(AsyncEvent):
         )
         self.dispatch("SUCCESS")
 
+    async def __dot_graph_main(self) -> None:
+        if not self.__out.endswith(".dot"):
+            self.__out += ".dot"
+        class node_info:
+            node_id: int
+            subs: List[int]
+            cid: int
+            title: str
+            def __eq__(self, info: "node_info"):
+                self.subs.sort()
+                info.subs.sort()
+                return (info.subs == self.subs) and (info.title == self.title) and (info.cid == self.cid)
+            def __lt__(self, info: "node_info"):
+                return self.cid < info.cid
+            def __gt__(self, info: "node_info"):
+                return self.cid > info.cid
+        fetched_nodes_info: List[node_info] = []
+        node_info_dict = {}
+        scripts = []
+        graph = await self.__video.get_graph()
+        queue: List[InteractiveNode] = [await graph.get_root_node()]
+        while queue:
+            queue_backup = copy.copy(queue)
+            queue = []
+            for cur_node in queue_backup:
+                cur_node_info = await cur_node.get_info()
+                cur_node_children = await cur_node.get_children()
+                self.dispatch("GET", {"title": cur_node_info["title"], "node_id": cur_node.get_node_id()})
+                cur_node_info_class = node_info()
+                cur_node_info_class.node_id = cur_node.get_node_id()
+                cur_node_info_class.cid = cur_node.get_cid()
+                cur_node_info_class.subs = [n.get_node_id() for n in cur_node_children]
+                cur_node_info_class.title = cur_node_info["title"]
+                back_to_pre = False
+                back_to_node_title = -1
+                for fetched_info in fetched_nodes_info:
+                    if fetched_info == cur_node_info_class:
+                        back_to_pre = True
+                        back_to_node_title = fetched_info.title
+                if not back_to_pre:
+                    node_info_dict[cur_node.get_node_id()] = cur_node_info_class
+                    for cur_node_child in cur_node_children:
+                        script_label = ""
+                        if cur_node_child.get_jumping_condition()._InteractiveJumpingCondition__command != "": # type: ignore
+                            script_label = script_label + "Condition: [" + cur_node_child.get_jumping_condition()._InteractiveJumpingCondition__command + "]" # type: ignore
+                            if cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command != "": # type: ignore
+                                script_label = script_label + "\nNative Command: [" + cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command + "]" # type: ignore
+                        elif cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command != "": # type: ignore
+                            script_label = script_label + "\nNative Command: [" + cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command + "]" # type: ignore
+                        scripts.append({
+                            "from": cur_node.get_node_id(),
+                            "to": cur_node_child.get_node_id(),
+                            "label": script_label
+                        })
+                        queue.append(cur_node_child)
+                    fetched_nodes_info.append(cur_node_info_class)
+                else:
+                    node_info_dict[cur_node.get_node_id()] = f"跳转至 {back_to_node_title}"
+        graph_content = "digraph {\n"
+        for script in scripts:
+            graph_content += f'\t{script["from"]} -> {script["to"]}'
+            if script["label"] != "":
+                graph_content += f' [label="{script["label"]}"]\n'
+            else:
+                graph_content += "\n"
+        for node_info_key, node_info_item in node_info_dict.items():
+            if isinstance(node_info_item, node_info):
+                graph_content += f'\t{node_info_key} [label="{node_info_item.title}"]\n'
+            else:
+                graph_content += f'\t{node_info_key} [label="{node_info_item}"]\n'
+        vars_string = "Variables: "
+        for var in await (await graph.get_root_node()).get_vars():
+            var_attribute = ""
+            if var.is_random():
+                var_attribute = "Random"
+            else:
+                if var.is_show():
+                    var_attribute = "Normal"
+                else:
+                    var_attribute = "Hide"
+            vars_string += f'[{var.get_id()} -> {var.get_name()} = {var.get_value()}, {var_attribute}]\n'
+        graph_content += f'\tlabel="{vars_string}"'
+        graph_content += "}"
+        with open(self.__out, "w+", encoding="utf-8") as dot_file:
+            dot_file.write(graph_content)
+
+
     async def start(self) -> None:
         """
         开始下载
         """
         if self.__mode.value == "ivi":
             task = create_task(self.__main())
+        elif self.__mode.value == "dot":
+            task = create_task(self.__dot_graph_main())
         else:
             task = create_task(self.__node_videos_main())
         self.__task = task
