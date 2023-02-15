@@ -606,14 +606,15 @@ class InteractiveVideoDownloader(AsyncEvent):
         self,
         video: InteractiveVideo,
         out: str = "",
-        self_download_func: Union[Callable, None] = None,
+        self_download_func: Union[Coroutine, None] = None,
         downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI
     ):
         """
         Args:
-            video (InteractiveVideo)             : 互动视频类
-            out   (str)                          : 输出文件地址 (如果模式为 NODE_VIDEOS/NO_PACKAGING 则此参数表示所有节点视频的存放目录)
-            self_download_func (Coroutine | None): 自定义下载函数（需 async 函数）
+            video              (InteractiveVideo)              : 互动视频类
+            out                (str)                           : 输出文件地址 (如果模式为 NODE_VIDEOS/NO_PACKAGING 则此参数表示所有节点视频的存放目录)
+            self_download_func (Coroutine | None)              : 自定义下载函数（需 async 函数）
+            downloader_mode    (InteractiveVideoDownloaderMode): 下载模式
 
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
         """

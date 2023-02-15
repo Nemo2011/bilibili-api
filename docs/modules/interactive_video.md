@@ -356,27 +356,35 @@ o----|xxx| (TEXT_RIGHT)
 
 ---
 
+## class InteractiveVideoDownloaderMode
+
+**Extends: enum.Enum**
+
+互动视频下载模式
+
+- IVI: 下载可播放的 ivi 文件
+- NODE_VIDEOS: 下载所有节点的所有视频并存放在某个文件夹，每一个节点的视频命名为 `{节点 id} {节点标题 (自动去除敏感字符)}.mp4`
+- DOT_GRAPH: 下载 dot 格式的情节树图表
+- NO_PACKAGING: 前面按照 ivi 文件下载步骤进行下载，但是最终不会打包成为 ivi 文件，所有文件将存放于一个文件夹中。互动视频数据将存放在一个文件夹中，里面的文件命名/含义与拆包后的 ivi 文件完全相同。
+
+---
 
 ## class InteractiveVideoDownloaderEvents
 
 **Extends: enum.Enum**
 
-+ START           : 开始下载
-+ GET             : 获取到节点信息
-+ PREPARE_DOWNLOAD: 准备下载节点
-
-**(以下为内建下载函数发布事件)**
-
-+ DOWNLOAD_START  : 开始下载单个文件
-+ DOWNLOAD_PART   : 文件分块部分完成
-+ DOWNLOAD_SUCCESS: 完成下载
-
-**(END)**
-
-+ PACKAGING       : 打包文件
-+ SUCCESS         : 完成下载
-+ ABORTED         : 终止下载
-+ FAILED          : 下载失败
+| event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode | Is Built-In downloader event |
+| ----- | ------- | -------- | ---------------- | -------------- | ----------------- | ------------------------- |
+| START | 开始下载 | [x] | [x] | [x] | [x] | [ ] |
+| GET | 获取到节点信息 | [x] | [x] | [x] | [x] | [ ] |
+| PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] | [ ] |
+| DOWNLOAD_START | 开始下载单个文件 | Unknown | Unknown | [ ] | Unknown | [x] |
+| DOWNLOAD_PART | 文件分块部分完成 | Unknown | Unknown | [ ] | Unknown | [x] |
+| DOWNLOAD_SUCCESS | 完成下载 | Unknown | Unknown | [ ] | Unknown | [x] |
+| PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] | [ ] |
+| SUCCESS | 下载成功 | [x] | [x] | [x] | [x] | [ ] |
+| ABORTED | 用户暂停 | [x] | [x] | [x] | [x] | [ ] |
+| FAILED | 下载失败 | [x] | [x] | [x] | [x] | [ ] |
 
 ---
 
@@ -384,7 +392,7 @@ o----|xxx| (TEXT_RIGHT)
 
 **Extends: AsyncEvent**
 
-互动视频下载类(下载格式：ivi)
+互动视频下载类
 
 ### Functions
 
@@ -395,6 +403,7 @@ o----|xxx| (TEXT_RIGHT)
 | video              | InteractiveVideo | 互动视频类                   |
 | out                | str              | 输出文件地址                  |
 | self_download_func | Coroutine \| None        | 自定义下载函数（需 async 函数） |
+| downloader_mode | InteractiveVideoDownloaderMode | 下载模式 |
 
 `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
 

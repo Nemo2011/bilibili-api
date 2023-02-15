@@ -38,13 +38,13 @@ ivitools touch [IVI]"
         )
     if command == "scan":
         scan_ivi_file(args[0])
-    if command == "extract":
+    elif command == "extract":
         extract_ivi(args[0], args[1])
-    if command == "touch":
+    elif command == "touch":
         touch_ivi(args[0])
-    if command == "download":
+    elif command == "download":
         download_interactive_video(args[0], args[1])
-    if command == "play":
+    elif command == "play":
         try:
             import PyQt6
         except ImportError:
