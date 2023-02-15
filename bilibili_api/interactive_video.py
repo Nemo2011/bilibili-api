@@ -1068,7 +1068,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                     fetched_nodes_info.append(cur_node_info_class)
                 else:
                     node_info_dict[cur_node.get_node_id()] = f"跳转至 {back_to_node_title}"
-        graph_content = "digraph {\n"
+        graph_content = "digraph {\nfontname=FangSong\nnode [fontname=FangSong]\n"
         for script in scripts:
             graph_content += f'\t{script["from"]} -> {script["to"]}'
             if script["label"] != "":
