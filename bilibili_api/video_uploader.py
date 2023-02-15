@@ -16,6 +16,7 @@ from .utils.Picture import Picture
 from copy import copy, deepcopy
 from .exceptions.ResponseCodeException import ResponseCodeException
 import json
+import base64
 from enum import Enum
 
 from .exceptions.ApiException import ApiException
@@ -31,6 +32,17 @@ from .dynamic import upload_image
 # import ffmpeg
 
 _API = get_api("video_uploader")
+
+
+async def _upload_cover(cover: Picture, credential: Credential):
+    api = _API["cover_up"]
+    cover = cover.convert_format("jpg")
+    data = {
+        "cover": f'data:image/jpeg;base64,{base64.b64encode(cover.content).decode("utf-8")}'
+    }
+    return await request(
+        "POST", api["url"], data=data, credential=credential
+    )
 
 
 class VideoUploaderPage:
@@ -455,9 +467,9 @@ class VideoUploader(AsyncEvent):
                 if isinstance(self.cover_path, Picture)
                 else Picture().from_file(self.cover_path)
             )
-            resp = await upload_image(pic, self.credential)
+            resp = await _upload_cover(pic, self.credential)
             self.dispatch(
-                VideoUploaderEvents.AFTER_COVER.value, {"url": resp["image_url"]}
+                VideoUploaderEvents.AFTER_COVER.value, {"url": resp["url"]}
             )
             return resp["image_url"]
         except Exception as e:
@@ -894,9 +906,9 @@ class VideoEditor(AsyncEvent):
                 if isinstance(self.cover_path, Picture)
                 else Picture().from_file(self.cover_path)
             )
-            resp = await upload_image(pic, self.credential)
+            resp = await _upload_cover(pic, self.credential)
             self.dispatch(
-                VideoEditorEvents.AFTER_COVER.value, {"url": resp["image_url"]}
+                VideoEditorEvents.AFTER_COVER.value, {"url": resp["url"]}
             )
             self.meta["cover"] = resp["image_url"]
         except Exception as e:

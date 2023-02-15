@@ -21,7 +21,8 @@
     "method": "POST",
     "verify": true,
     "data": {
-      "cover": "str: 封面 dataURI"
+      "cover": "str: 封面 dataURI. ",
+      "#": "cover 字段格式为: data:image/jpeg;base64,${图片 base64 信息}"
     },
     "comment": "上传封面"
   },
@@ -69,19 +70,19 @@
       "tid": "int: 分区 ID"
     },
     "comment": "获取活动列表"
-  }, 
+  },
   "upload_args": {
-    "url": "https://member.bilibili.com/x/vupre/web/archive/view?topic_grey=1", 
-    "method": "GET", 
-    "verify": false, 
+    "url": "https://member.bilibili.com/x/vupre/web/archive/view?topic_grey=1",
+    "method": "GET",
+    "verify": false,
     "params": {
       "bvid": "str: BVID"
-    }, 
+    },
     "comment": "获取已上传视频的配置"
-  }, 
+  },
   "edit": {
-    "url": "https://member.bilibili.com/x/vu/web/edit", 
-    "method": "POST", 
+    "url": "https://member.bilibili.com/x/vu/web/edit",
+    "method": "POST",
     "verify": true,
     "data": {
       "act_reserve_create": "const int: 0",
