@@ -818,22 +818,28 @@ class InteractiveVideoDownloader(AsyncEvent):
             indent=2,
         )
 
+        cid_set = set()
         for key, item in edges_info.items():
-            self.dispatch("PREPARE_DOWNLOAD", {"node_id": int(key), "cid": item["cid"]})
             cid = item["cid"]
-            url = await self.__video.get_download_url(cid=cid, html5=True)
-            await self.__download_func(
-                url["durl"][0]["url"], tmp_dir_name + "/" + str(cid) + ".mp4"
-            )
+            if not cid in cid_set:
+                self.dispatch("PREPARE_DOWNLOAD", {"cid": item["cid"]})
+                cid_set.add(cid)
+                url = await self.__video.get_download_url(cid=cid, html5=True)
+                await self.__download_func(
+                    url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
+                )
 
-        self.dispatch(
-            "PREPARE_DOWNLOAD", {"node_id": 1, "cid": await self.__video.get_cid()}
-        )
-        cid = await self.__video.get_cid()
-        url = await self.__video.get_download_url(cid=cid, html5=True)
-        await self.__download_func(
-            url["durl"][0]["url"], tmp_dir_name + "/" + str(cid) + ".mp4"
-        )
+        root_cid = await self.__video.get_cid()
+        if not root_cid in cid_set:
+            self.dispatch(
+                "PREPARE_DOWNLOAD", {"cid": root_cid}
+            )
+            cid = await self.__video.get_cid()
+            url = await self.__video.get_download_url(cid=cid, html5=True)
+            title = (await self.__video.get_info())["title"]
+            await self.__download_func(
+                url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
+            )
 
         self.dispatch("PACKAGING")
         zip = zipfile.ZipFile(
@@ -979,23 +985,28 @@ class InteractiveVideoDownloader(AsyncEvent):
                 # 所有可达顶点 ID 入队
                 queue.insert(0, n)
 
+        cid_set = set()
         for key, item in edges_info.items():
-            self.dispatch("PREPARE_DOWNLOAD", {"node_id": int(key), "cid": item["cid"]})
             cid = item["cid"]
-            url = await self.__video.get_download_url(cid=cid, html5=True)
-            await self.__download_func(
-                url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
-            )
+            if not cid in cid_set:
+                self.dispatch("PREPARE_DOWNLOAD", {"cid": item["cid"]})
+                cid_set.add(cid)
+                url = await self.__video.get_download_url(cid=cid, html5=True)
+                await self.__download_func(
+                    url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
+                )
 
-        self.dispatch(
-            "PREPARE_DOWNLOAD", {"node_id": 1, "cid": await self.__video.get_cid()}
-        )
-        cid = await self.__video.get_cid()
-        url = await self.__video.get_download_url(cid=cid, html5=True)
-        title = (await self.__video.get_info())["title"]
-        await self.__download_func(
-            url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
-        )
+        root_cid = await self.__video.get_cid()
+        if not root_cid in cid_set:
+            self.dispatch(
+                "PREPARE_DOWNLOAD", {"cid": root_cid}
+            )
+            cid = await self.__video.get_cid()
+            url = await self.__video.get_download_url(cid=cid, html5=True)
+            title = (await self.__video.get_info())["title"]
+            await self.__download_func(
+                url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
+            )
         self.dispatch("SUCCESS")
 
     async def __dot_graph_main(self) -> None:
@@ -1231,22 +1242,29 @@ class InteractiveVideoDownloader(AsyncEvent):
             indent=2,
         )
 
+        cid_set = set()
         for key, item in edges_info.items():
-            self.dispatch("PREPARE_DOWNLOAD", {"node_id": int(key), "cid": item["cid"]})
             cid = item["cid"]
+            if not cid in cid_set:
+                self.dispatch("PREPARE_DOWNLOAD", {"cid": item["cid"]})
+                cid_set.add(cid)
+                url = await self.__video.get_download_url(cid=cid, html5=True)
+                await self.__download_func(
+                    url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
+                )
+
+        root_cid = await self.__video.get_cid()
+        if not root_cid in cid_set:
+            self.dispatch(
+                "PREPARE_DOWNLOAD", {"cid": root_cid}
+            )
+            cid = await self.__video.get_cid()
             url = await self.__video.get_download_url(cid=cid, html5=True)
+            title = (await self.__video.get_info())["title"]
             await self.__download_func(
-                url["durl"][0]["url"], tmp_dir_name + "/" + str(cid) + ".mp4"
+                url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
             )
 
-        self.dispatch(
-            "PREPARE_DOWNLOAD", {"node_id": 1, "cid": await self.__video.get_cid()}
-        )
-        cid = await self.__video.get_cid()
-        url = await self.__video.get_download_url(cid=cid, html5=True)
-        await self.__download_func(
-            url["durl"][0]["url"], tmp_dir_name + "/" + str(cid) + ".mp4"
-        )
         self.dispatch("SUCCESS")
 
 
