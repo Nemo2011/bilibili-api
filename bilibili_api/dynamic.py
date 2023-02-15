@@ -87,7 +87,7 @@ async def _get_text_data(text: str) -> dict:
     return data
 
 
-async def upload_image(image: Picture, credential: Credential) -> Picture:
+async def upload_image(image: Picture, credential: Credential) -> dict:
     """
     上传动态图片
 
@@ -96,7 +96,7 @@ async def upload_image(image: Picture, credential: Credential) -> Picture:
         credential   (Credential): 凭据
 
     Returns:
-        Picture: 图片类
+        dict: 调用 API 返回的结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -132,16 +132,7 @@ async def _get_draw_data(
         *[upload_image(stream, credential) for stream in images]
     )
 
-    def transformPicInfo(image: Picture):
-        """
-        转换图片信息
-
-        Args:
-            image (Picture): 图片类
-
-        Returns:
-            dict: 图片信息
-        """
+    def transformPicInfo(image: dict):
         return {
             "img_src": image["image_url"],
             "img_width": image["image_width"],

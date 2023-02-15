@@ -128,6 +128,7 @@ class Picture:
         self.height = res["image_height"]
         self.width = res["image_width"]
         self.url = res["image_url"]
+        self.content = self.from_url(self.url).content
         return self
 
     def upload_file_sync(self, credential: Credential) -> "Picture":
@@ -165,6 +166,7 @@ class Picture:
         self.url = upload_info["image_url"]
         self.height = upload_info["image_height"]
         self.width = upload_info["image_width"]
+        self.content = self.from_url(self.url).content
         return self
 
     def download_sync(self, path: str) -> "Picture":
