@@ -48,7 +48,7 @@ def download_interactive_video(bvid: str, out: str):
     @downloader.on("PREPARE_DOWNLOAD")
     async def on_prepare_download(data):
         print(
-            f'Start download the node {data["node_id"]} (cid {data["cid"]})(Video & Audio)'
+            f'Start download the video for cid {data["cid"]}'
         )
 
     @downloader.on("PACKAGING")
@@ -68,7 +68,7 @@ def download_interactive_video(bvid: str, out: str):
     try:
         sync(downloader.start())
     except KeyboardInterrupt:
-        downloader.abort()
+        sync(downloader.abort())
         print(Fore.YELLOW + "[WRN]: Aborted by user. " + Fore.RESET)
     except Exception as e:
         raise e
