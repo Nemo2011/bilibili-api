@@ -149,6 +149,11 @@ from bilibili_api import video
 
 #### async def get_tags()
 
+| name | type | description |
+| ---- | ---- | ----------- |
+| page_index | int \| None | 分 P 序号 |
+| cid | int \| None | 分 P 编码 |
+
 获取视频标签。
 
 **Returns:** API 调用返回结果。

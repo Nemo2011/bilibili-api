@@ -222,13 +222,13 @@ class Video:
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_tags(self, page_index: int = 0, cid: int = None) -> dict:
+    async def get_tags(self, page_index: Union[int, None] = 0, cid: Union[int, None] = None) -> dict:
         """
         获取视频标签。
 
         Args:
-            page_index (int): 分 P 序号. Defaults to 0.
-            cid        (int): 分 P 编码. Defaults to None.
+            page_index (int | None): 分 P 序号. Defaults to 0.
+            cid        (int | None): 分 P 编码. Defaults to None.
 
         Returns:
             dict: 调用 API 返回的结果。
