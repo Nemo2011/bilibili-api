@@ -20,6 +20,15 @@
       },
       "comment": "视频详细信息"
     },
+    "cid_info": {
+      "url": "https://hd.biliplus.com/api/cidinfo",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "cid": "int:分 P CID"
+      },
+      "comment": "获取 cid 对应的视频"
+    },
     "tags": {
       "url": "https://api.bilibili.com/x/web-interface/view/detail/tag",
       "method": "GET",

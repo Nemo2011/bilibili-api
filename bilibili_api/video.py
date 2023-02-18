@@ -16,6 +16,7 @@ import struct
 import aiohttp
 import httpx
 from typing import Any, List, Union
+from functools import cmp_to_key
 
 from .exceptions import ResponseException
 from .exceptions import NetworkException
@@ -34,6 +35,23 @@ from . import settings
 from inspect import isfunction
 
 API = get_api("video")
+
+
+async def get_cid_info(cid: int):
+    """
+    获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
+
+    Returns:
+        dict: 调用 https://hd.biliplus.com 的 API 返回的结果
+    """
+    api = API["info"]["cid_info"]
+    params = {
+        "cid": cid
+    }
+    return await request(
+        "GET", api["url"], params=params
+    )
+
 
 
 class DanmakuOperatorType(Enum):
@@ -234,6 +252,9 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         if cid == None:
+            if page_index == None:
+                raise ArgsException("page_index 和 cid 至少提供一个。")
+
             cid = await self.get_cid(page_index=page_index)
         url = API["info"]["tags"]["url"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid(), "cid": cid}
@@ -2093,6 +2114,20 @@ class VideoDownloadURLDataDetecter:
                     video_streams.append(stream)
                 if isinstance(stream, AudioStreamDownloadURL):
                     audio_streams.append(stream)
-            video_streams.sort(key=lambda s: s.video_quality.value, reverse=True)
+            def video_stream_cmp(s1: VideoStreamDownloadURL, s2: VideoStreamDownloadURL):
+                if s1.video_quality.value != s2.video_quality.value:
+                    return s1.video_quality.value - s2.video_quality.value
+                    # Detect the high quality stream to the end.
+                elif s1.video_codecs.value == None:
+                    # s1 is dolby
+                    return 1
+                elif s2.video_codecs.value == None:
+                    # s2 is dolby
+                    return -1
+                elif s1.video_codecs.value < s2.video_codecs.value:
+                    return 1 # Detect AV1 stream to the end
+                    # 不同编码优先度: av1 > avc > hev
+                return -1
+            video_streams.sort(key=cmp_to_key(video_stream_cmp), reverse=True)
             audio_streams.sort(key=lambda s: s.audio_quality.value, reverse=True)
             return [video_streams[0], audio_streams[0]]
