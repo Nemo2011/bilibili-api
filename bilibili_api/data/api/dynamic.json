@@ -163,10 +163,24 @@
       },
       "comment": "动态详细信息"
     },
-    "dynamic_page_info": {
+    "dynamic_page_UPs_info": {
       "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/portal",
       "method": "GET",
       "verify": true,
+      "comment": "获取动态页 UP 主信息列表"
+    },
+    "dynamic_page_info": {
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/all?timezone_offset=-480&type=all&page=1&features=itemOpusStyle",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "timezone_offset": "int: 时区偏移量",
+        "type": "str: 动态分类类型",
+        "page": "int: 页码",
+        "features": "str: 默认 itemOpusStyle",
+        "offset": "int: 每页最后一条动态 ID",
+        "host_mid": "int: UP 主 UID"
+      },
       "comment": "获取动态页信息"
     }
   },
