@@ -3,7 +3,7 @@ bilibili_api.utils.initial_state
 
 用于获取页码的初始化信息
 """
-from .. import Credential
+from .Credential import Credential
 from ..exceptions import *
 from .network_httpx import get_session
 from .short import get_real_url
