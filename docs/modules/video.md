@@ -83,6 +83,18 @@ from bilibili_api import video
 
 ---
 
+## async def get_cid_info()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| cid | int | 分 P 编码 |
+
+获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
+
+**Returns:** dict: 调用 https://hd.biliplus.com 的 API 返回的结果
+
+---
+
 ## class Video
 
 视频类，各种对视频的操作均在里面。

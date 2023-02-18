@@ -235,3 +235,7 @@ async def test_zf_get_subtitle():
 
 async def test_zg_triple():
     return await video.triple()
+
+
+async def test_zh_get_cid_info():
+    return await video_m.get_cid_info(62131)
