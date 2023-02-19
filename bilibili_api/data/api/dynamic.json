@@ -81,6 +81,34 @@
             "data": "int: 用户 UID"
           }
         ]
+      },
+      "instant": {
+        "url": "https://api.bilibili.com/x/dynamic/feed/create/dyn",
+        "method": "POST",
+        "verify": true,
+        "data": {
+          "content": {
+            "contents": [
+              "#: 动态信息",
+              {"raw_text": "纯文本", "biz_id": "", "type": 1},
+              {"raw_text": "表情包", "biz_id": "", "type": 9},
+              {"raw_text": "@人", "biz_id": "UID", "type": 2},
+              {"raw_text": "投票", "biz_id": "投票 id", "type": 4}
+            ]
+          },
+          "scene": "int: 1 纯文本, 2 带图",
+          "pics": [
+            {
+              "img_src":"str: 图片地址",
+              "img_height":"int: 图片高度",
+              "img_width":"int: 图片宽度",
+              "img_size":"int: 图片大小 (kb)"
+            }
+          ],
+          "topic": {
+            "id": "int: 话题 id"
+          }
+        }
       }
     }
   },
@@ -168,6 +196,15 @@
       "method": "GET",
       "verify": true,
       "comment": "获取动态页信息"
+    },
+    "hot_dynamics": {
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/hot",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "page": "int: 页码. Defaults to 1. "
+      },
+      "comment": "获取热门动态"
     }
   },
   "schedule": {
