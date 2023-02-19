@@ -76,7 +76,7 @@ print(sync(main()))
 
 这个变量是另一个需要被解析的文本，为什么不直接放在网址里呢？因为放前面会被当做字符串传进去。
 
-同时为了不让所有参数都以字符串传入，还加了类型标注，在变量后使用类似 `:int` 的方式来强制转换，目前只写了 `int` 的。
+同时为了不让所有参数都以字符串传入，还加了类型标注，在变量后使用类似 `:int` 的方式来强制转换，目前支持 `:int` `:float` `:bool`。
 
 ---
 
@@ -88,4 +88,7 @@ print(sync(main()))
 
 [https://aliyun.nana7mi.link/user.User(2).get_user_info().face?max_age=86400](https://aliyun.nana7mi.link/user.User(2).get_user_info().face?max_age=86400)
 
+对于列表结果可以使用 `.index` 的方式获取列表中对应元素，例如：
+
+[https://aliyun.nana7mi.link/user.User(660303135).get_dynamics(0:int).cards.3.card](https://aliyun.nana7mi.link/user.User(660303135).get_dynamics(0:int).cards.3.card)
 

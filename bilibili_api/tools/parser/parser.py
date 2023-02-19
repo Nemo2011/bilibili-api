@@ -9,6 +9,13 @@ pattern = re.compile(r"(?:([:\$\w]+(?:=\w+)?),?)")
 
 
 class Parser:
+
+    Types = {
+        ":int": int,
+        ":float": float,
+        ":bool": lambda s: s == "True",
+    }
+
     def __init__(self, var: str):
         self.valid = True
         self.varDict = dict(v.split("<-") for v in var.split(";")) if var else dict()
@@ -35,9 +42,9 @@ class Parser:
             "递归取值"
 
             nonlocal position
-
-            sentence = sentences.pop(0)
+            
             # 分解执行的函数名、参数、指名参数
+            sentence = sentences.pop(0)
             flags: List[str] = pattern.findall(sentence)
             func = flags.pop(0)
             args, kwargs = list(), dict()
@@ -47,8 +54,10 @@ class Parser:
                 # 即使没有键也能读到值
                 arg = flag.split("=")
                 # 类型装换
-                if arg[-1].endswith(":int"):
-                    arg[-1] = int(arg[-1][:-4])
+                for key, fn in self.Types.items():
+                    if arg[-1].endswith(key):
+                        arg[-1] = fn(arg[-1].replace(key, ""))
+                        break
                 # 将值与储存的变量替换
                 arg[-1] = self.varDict.get(arg[-1], arg[-1])
                 # 存入对应的参数、指名参数
@@ -60,6 +69,8 @@ class Parser:
             # 开始转移
             if isinstance(position, dict):
                 position = position.get(func, None)
+            elif isinstance(position, list):
+                position = position[int(func)]
             else:
                 position = getattr(position, func, None)
 
