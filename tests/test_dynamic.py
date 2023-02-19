@@ -69,11 +69,17 @@ async def test_j_get_new_dynamic_users():
 async def test_k_get_live_users():
     return await dynamic.get_live_users(credential = common.get_credential())
 
-async def test_l_get_dynamic_page_info():
-    return await dynamic.get_dynamic_page_info(credential = common.get_credential())
+async def test_l_get_dynamic_page_UPs_info():
+    return await dynamic.get_dynamic_page_UPs_info(credential = common.get_credential())
 
 async def after_all():
     print("删除所有动态")
     for i in dyid:
         d = dynamic.Dynamic(i, credential)
         await d.delete()
+
+async def test_m_get_dynamic_page_info_by_type():
+    return await dynamic.get_dynamic_page_info(credential = common.get_credential(), _type=dynamic.DynamicType.ALL)
+
+async def test_m_get_dynamic_page_info_by_mid():
+    return await dynamic.get_dynamic_page_info(credential = common.get_credential(), host_mid=12434430)

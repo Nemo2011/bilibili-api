@@ -14,7 +14,8 @@
             "method": "GET",
             "params": {
                 "topic_id": "int: 话题 id",
-                "page_size": "int: 数据数量"
+                "page_size": "int: 数据数量",
+                "sort_by": "int: 排序方式 1推荐 2热门 3最新"
             },
             "verify": false,
             "comment": "获取话题详情"
@@ -27,6 +28,19 @@
             "page_size": "int: 数据数量"
           },
           "comment": "获取动态页话题"
+        },
+        "search": {
+          "url": "https://app.bilibili.com/x/topic/pub/search",
+          "method": "GET",
+          "params": {
+            "keyword": "str: 搜索关键词",
+            "page_num": "int: 页码",
+            "page_size": "int: 数据数量",
+            "content": "Unknown",
+            "upload_id": "Unknown"
+          },
+          "verify": false,
+          "comment": "搜索话题"
         }
     },
     "operate": {
