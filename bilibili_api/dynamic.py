@@ -485,14 +485,12 @@ async def get_dynamic_page_UPs_info(credential: Credential) -> dict:
     return await request("GET", api["url"], credential=credential)
 
 
-async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicType] = None, host_mid: Optional[int] = None, pn: int = 1, offset: Optional[int] = None) -> dict[bool, list[Dynamic]]:
+async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicType] = None, host_mid: Optional[int] = None, pn: int = 1, offset: Optional[int] = None) -> list[Dynamic]:
     """
     获取动态页动态信息
 
     获取全部动态或者相应类型需传入 _type
     获取指定 UP 主动态需传入 host_mid
-
-    返回值中 has_more 表示是否有下一页
 
     Args:
         credential (Credential): 凭据类.
@@ -503,7 +501,7 @@ async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicT
 
 
     Returns:
-        dict: 动态类列表
+        list[Dynamic]: 动态类列表
     """
 
     api = API["info"]["dynamic_page_info"]
@@ -519,6 +517,4 @@ async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicT
         params["host_mid"] = host_mid
 
     dynmaic_data = await request("GET", api["url"], credential=credential, params=params)
-    return {"has_more": dynmaic_data["has_more"], 
-        "dynamics": [Dynamic(dynamic_id=int(dynamic["id_str"]), credential=credential) for dynamic in dynmaic_data["items"]]
-        } # type: ignore
+    return [Dynamic(dynamic_id=int(dynamic["id_str"]), credential=credential) for dynamic in dynmaic_data["items"]]
