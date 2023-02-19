@@ -14,6 +14,20 @@ from bilibili_api import topic
 
 **Returns:** dict: 调用 API 返回的结果
 
+## async def search_topic()
+
+| name | type | description |
+| - | - | - |
+| keyword | str | 关键词 |
+| pn | int | 页数. Defaults to 1. |
+| ps | int | 数据数量. Defaults to 10. |
+
+搜索话题
+
+从动态页发布动态处的话题搜索框搜索话题
+
+**Returns:** dict: 调用 API 返回的结果
+
 ---
 
 ## class Topic
