@@ -14,6 +14,7 @@ from . import dynamic
 
 API = get_api("topic")
 
+
 class TopicCardsSortBy(Enum):
     """
     话题下内容排序方式
@@ -25,6 +26,7 @@ class TopicCardsSortBy(Enum):
     NEW = 3
     HOT = 2
     RECOMMEND = 1
+
 
 async def get_hot_topics(numbers: int = 33) -> dict:
     """
@@ -114,11 +116,12 @@ class Topic:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["cards"]
-        params = {"topic_id": self.get_topic_id(), "page_size": ps, "sort_by": sort_by.value, "offset": offset}
+        params = {"topic_id": self.get_topic_id(), "page_size": ps,
+                  "sort_by": sort_by.value, "offset": offset}
         return await request(
             "GET", api["url"], params=params, credential=self.credential
         )
-    
+
     async def get_cards(self, ps: int = 100, offset: Optional[str] = None, sort_by: TopicCardsSortBy = TopicCardsSortBy.HOT) -> list:
         """
         获取话题下的内容，返回列表
@@ -137,8 +140,9 @@ class Topic:
         """
         topic_cards, cards = await self.get_raw_cards(ps=ps, offset=offset, sort_by=sort_by), []
         for card in topic_cards["topic_card_list"]["items"]:
-            if card["topic_type"] == "DYNAMIC": # 我只看到这一个类型...没找到其他的
-                cards.append(dynamic.Dynamic(dynamic_id=int(card["dynamic_card_item"]["id_str"])))
+            if card["topic_type"] == "DYNAMIC":  # 我只看到这一个类型...没找到其他的
+                cards.append(dynamic.Dynamic(dynamic_id=int(
+                    card["dynamic_card_item"]["id_str"])))
             else:
                 cards.append(card)
         return cards
