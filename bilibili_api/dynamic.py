@@ -54,17 +54,14 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
     new_text = text
     for match in match_result:
         uname = match.group()
-        uid = (await user.name2uid(uname))["uid_list"][0]["uid"]
-
         try:
-            u = user.User(int(uid))
-            user_info = await u.get_user_info()
-        except exceptions.ResponseCodeException as e:
-            if e.code == -404:
-                raise exceptions.ResponseCodeException(
-                    -404, f"用户 uid={uid} 不存在")
-            else:
-                raise e
+            uid = (await user.name2uid(uname))["uid_list"][0]["uid"]
+        except KeyError:
+            # 没有此用户
+            continue
+
+        u = user.User(int(uid))
+        user_info = await u.get_user_info()
 
         name = user_info["name"]
         uid_list.append(str(uid))
@@ -220,7 +217,7 @@ async def send_dynamic(
         api = API["send"]["schedule"]
         if type_ == 2:
             # 画册动态
-            request_data = await _get_draw_data(text, images, credential) # type: ignore            
+            request_data = await _get_draw_data(text, images, credential) # type: ignore
             request_data.pop("setting")
         else:
             # 文字动态
