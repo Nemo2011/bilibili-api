@@ -22,7 +22,7 @@ API = utils.get_api("dynamic")
 
 async def _parse_at(text: str) -> Tuple[str, str, str]:
     """
-    @人格式：“@UID ”(注意最后有空格）
+    @人格式：“@用户名 ”(注意最后有空格）
 
     Args:
         text (str): 原始文本
@@ -30,17 +30,19 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
     Returns:
         tuple(str, str(int[]), str(dict)): 替换后文本，解析出艾特的 UID 列表，AT 数据
     """
-    pattern = re.compile(r"(?<=@)\d*?(?=\s)")
+    text += " "
+    pattern = re.compile(r"(?<=@).*?(?=\s)")
     match_result = re.finditer(pattern, text)
     uid_list = []
     names = []
     new_text = text
     for match in match_result:
-        uid = match.group()
+        uname = match.group()
+        uid = (await user.name2uid(uname))["uid_list"][0]["uid"]
+
         try:
             u = user.User(int(uid))
             user_info = await u.get_user_info()
-
         except exceptions.ResponseCodeException as e:
             if e.code == -404:
                 raise exceptions.ResponseCodeException(-404, f"用户 uid={uid} 不存在")
@@ -48,7 +50,7 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
                 raise e
 
         name = user_info["name"]
-        uid_list.append(uid)
+        uid_list.append(str(uid))
         names.append(name)
         new_text = new_text.replace(f"@{uid} ", f"@{name} ")
     at_uids = ",".join(uid_list)
@@ -169,8 +171,6 @@ async def send_dynamic(
 ):
     """
     自动判断动态类型选择合适的 API 并发送动态
-
-    如需 @ 人，请使用格式 "@UID "，注意最后有一个空格
 
     Args:
         text          (str)                              : 动态文本
