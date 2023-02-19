@@ -485,7 +485,7 @@ async def get_dynamic_page_UPs_info(credential: Credential) -> dict:
     return await request("GET", api["url"], credential=credential)
 
 
-async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicType] = None, host_mid: Optional[int] = None, pn: int = 1, offset: Optional[int] = None) -> list[Dynamic]:
+async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicType] = None, host_mid: Optional[int] = None, pn: int = 1, offset: Optional[int] = None) -> List[Dynamic]:
     """
     获取动态页动态信息
 
