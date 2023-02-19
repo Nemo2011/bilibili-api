@@ -27,6 +27,19 @@
             "page_size": "int: 数据数量"
           },
           "comment": "获取动态页话题"
+        },
+        "search": {
+          "url": "https://app.bilibili.com/x/topic/pub/search",
+          "method": "GET",
+          "params": {
+            "keyword": "str: 搜索关键词",
+            "page_num": "int: 页码",
+            "page_size": "int: 数据数量",
+            "content": "Unknown",
+            "upload_id": "Unknown"
+          },
+          "verify": false,
+          "comment": "搜索话题"
         }
     },
     "operate": {

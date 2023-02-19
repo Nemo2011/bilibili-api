@@ -28,6 +28,25 @@ async def get_hot_topics(numbers: int = 33) -> dict:
     return await request("GET", api["url"], params=params)
 
 
+async def search_topic(keyword: str, ps: int = 20, pn: int = 1) -> dict:
+    """
+    搜索话题
+    
+    从动态页发布动态处的话题搜索框搜索话题
+
+    Args:
+        keyword (str): 搜索关键词
+        ps      (int): 每页数量. Defaults to 20.
+        pn      (int): 页数. Defaults to 1.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["search"]
+    params = {"keyword": keyword, "page_size": ps, "page_num": pn}
+    return await request("GET", api["url"], params=params)
+
+
 class Topic:
     """
     话题类
