@@ -177,12 +177,32 @@ from bilibili_api import dynamic
 
 ---
 
-#### async def get_dynamic_page_info()
+#### async def get_dynamic_page_UPs_info()
 
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类. |
 
-获取自己的动态页的信息
+获取动态页 UP 主列表
 
 **Returns:** dict: 调用 API 返回的结果
+
+---
+
+#### async def get_dynamic_page_info()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类. |
+| _type | DynamicType, optional | 动态类型. Defaults to None. |
+| host_mid | int, optional | UP 主 UID. Defaults to None. |
+| offset | int, optional | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None. |
+| pn | int | 页码. Defaults to 1. |
+
+获取动态页动态列表
+
+获取全部动态或者相应类型需传入 _type
+
+获取指定 UP 主动态需传入 host_mid
+
+**Returns:** list[Dynamic]: 动态类列表

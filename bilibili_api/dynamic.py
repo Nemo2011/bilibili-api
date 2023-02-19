@@ -473,7 +473,7 @@ async def get_live_users(size: int = 10, credential: Union[Credential, None] = N
 
 async def get_dynamic_page_UPs_info(credential: Credential) -> dict:
     """
-    获取动态页 UP 主信息列表
+    获取动态页 UP 主列表
 
     Args:
         credential (Credential): 凭据类.
