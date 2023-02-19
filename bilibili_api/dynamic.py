@@ -8,7 +8,8 @@ import re
 import json
 import datetime
 import asyncio
-from typing import Any, List, Tuple, Union
+from typing import Any, List, Tuple, Union, Optional
+from enum import Enum
 
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 from .utils.network_httpx import request
@@ -18,6 +19,21 @@ from .utils import utils
 from .utils.Picture import Picture
 
 API = utils.get_api("dynamic")
+
+
+class DynamicType(Enum):
+    """
+    动态类型
+
+    + ALL: 所有动态
+    + ANIME: 追番追剧
+    + ARTICLE: 文章
+    + VIDEO: 视频投稿
+    """
+    ALL = "all"
+    ANIME = "pgc"
+    ARTICLE = "article"
+    VIDEO = "video"
 
 
 async def _parse_at(text: str) -> Tuple[str, str, str]:
@@ -45,7 +61,8 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
             user_info = await u.get_user_info()
         except exceptions.ResponseCodeException as e:
             if e.code == -404:
-                raise exceptions.ResponseCodeException(-404, f"用户 uid={uid} 不存在")
+                raise exceptions.ResponseCodeException(
+                    -404, f"用户 uid={uid} 不存在")
             else:
                 raise e
 
@@ -60,7 +77,8 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
         index = new_text.index(f"@{name}")
         length = 2 + len(name)
         ctrl.append(
-            {"location": index, "type": 1, "length": length, "data": int(uid_list[i])}
+            {"location": index, "type": 1,
+                "length": length, "data": int(uid_list[i])}
         )
 
     return new_text, at_uids, json.dumps(ctrl, ensure_ascii=False)
@@ -202,7 +220,7 @@ async def send_dynamic(
         api = API["send"]["schedule"]
         if type_ == 2:
             # 画册动态
-            request_data = await _get_draw_data(text, images, credential)  # type: ignore
+            request_data = await _get_draw_data(text, images, credential) # type: ignore            
             request_data.pop("setting")
         else:
             # 文字动态
@@ -298,7 +316,7 @@ class Dynamic:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, dynamic_id: int, credential: Union[Credential, None] = None):
+    def __init__(self, dynamic_id: int, credential: Union[Credential, None] = None) -> None:
         """
         Args:
             dynamic_id (int)                        : 动态 ID
@@ -419,7 +437,7 @@ class Dynamic:
         return await request("POST", api["url"], data=data, credential=self.credential)
 
 
-async def get_new_dynamic_users(credential: Union[Credential, None] = None):
+async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> dict:
     """
     获取更新动态的关注者
 
@@ -435,7 +453,7 @@ async def get_new_dynamic_users(credential: Union[Credential, None] = None):
     return await request("GET", api["url"], credential=credential)
 
 
-async def get_live_users(size: int = 10, credential: Union[Credential, None] = None):
+async def get_live_users(size: int = 10, credential: Union[Credential, None] = None) -> dict:
     """
     获取正在直播的关注者
 
@@ -453,9 +471,9 @@ async def get_live_users(size: int = 10, credential: Union[Credential, None] = N
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_dynamic_page_info(credential: Credential):
+async def get_dynamic_page_UPs_info(credential: Credential) -> dict:
     """
-    获取动态页信息
+    获取动态页 UP 主列表
 
     Args:
         credential (Credential): 凭据类.
@@ -463,5 +481,40 @@ async def get_dynamic_page_info(credential: Credential):
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API["info"]["dynamic_page_info"]
+    api = API["info"]["dynamic_page_UPs_info"]
     return await request("GET", api["url"], credential=credential)
+
+
+async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicType] = None, host_mid: Optional[int] = None, pn: int = 1, offset: Optional[int] = None) -> list[Dynamic]:
+    """
+    获取动态页动态信息
+
+    获取全部动态或者相应类型需传入 _type
+    获取指定 UP 主动态需传入 host_mid
+
+    Args:
+        credential (Credential): 凭据类.
+        _type      (DynamicType, optional): 动态类型. Defaults to DynamicType.ALL.
+        host_mid   (int, optional): 获取对应 UP 主动态的 mid. Defaults to None.
+        pn         (int, optional): 页码. Defaults to 1.
+        offset     (int, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None.
+
+
+    Returns:
+        list[Dynamic]: 动态类列表
+    """
+
+    api = API["info"]["dynamic_page_info"]
+    params = {
+        "timezone_offset": -480,
+        "features": "itemOpusStyle",
+        "offset": offset,
+        "page": pn,
+    }
+    if _type: # 全部动态
+        params["type"] = _type.value
+    elif host_mid: # 指定 UP 主动态
+        params["host_mid"] = host_mid
+
+    dynmaic_data = await request("GET", api["url"], credential=credential, params=params)
+    return [Dynamic(dynamic_id=int(dynamic["id_str"]), credential=credential) for dynamic in dynmaic_data["items"]]
