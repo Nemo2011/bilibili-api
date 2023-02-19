@@ -31,7 +31,7 @@ async def get_hot_topics(numbers: int = 33) -> dict:
 async def search_topic(keyword: str, ps: int = 20, pn: int = 1) -> dict:
     """
     搜索话题
-    
+
     从动态页发布动态处的话题搜索框搜索话题
 
     Args:
@@ -43,7 +43,7 @@ async def search_topic(keyword: str, ps: int = 20, pn: int = 1) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["info"]["search"]
-    params = {"keyword": keyword, "page_size": ps, "page_num": pn}
+    params = {"keywords": keyword, "page_size": ps, "page_num": pn}
     return await request("GET", api["url"], params=params)
 
 
