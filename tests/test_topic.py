@@ -22,6 +22,8 @@ async def test_d_Topic_set_favorite():
 async def test_e_get_hot_topics():
     return await topic.get_hot_topics()
 
+async def test_f_search_topic():
+    return await topic.search_topic("bilibili-api")
 
 async def after_all():
     await t.like(status=False)
