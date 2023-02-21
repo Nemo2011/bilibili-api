@@ -2012,6 +2012,13 @@ class VideoDownloadURLDataDetecter:
 
     def detect_all(
         self,
+        video_max_quality: VideoQuality = VideoQuality._8K,
+        audio_max_quality: AudioQuality = AudioQuality._192K,
+        codecs: List[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
+        no_dolby_video: bool = False,
+        no_dolby_audio: bool = False,
+        no_hdr: bool = False,
+        no_hires: bool = False
     ) -> List[
         Union[
             VideoStreamDownloadURL,
@@ -2023,6 +2030,17 @@ class VideoDownloadURLDataDetecter:
     ]:
         """
         解析数据
+
+        Args:
+            **以下参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
+
+            video_max_quality(VideoQuality)      : 设置提取的视频流清晰度最大值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._8K.
+            audio_max_quality(AudioQuality)      : 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K.
+            codecs           (List[VideoCodecs]) : 设置所有允许提取出来的视频编码. 此项不会忽略 HDR/杜比. Defaults to ALL codecs.
+            no_dolby_video   (bool)              : 是否禁止提取杜比视界视频流. Defaults to False.
+            no_dolby_audio   (bool)              : 是否禁止提取杜比全景声音频流. Defaults to False.
+            no_hdr           (bool)              : 是否禁止提取 HDR 视频流. Defaults to False.
+            no_hires         (bool)              : 是否禁止提取 Hi-Res 音频流. Defaults to False.
 
         Returns:
             List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 所有的视频/音频流
@@ -2048,10 +2066,20 @@ class VideoDownloadURLDataDetecter:
             for video_data in videos_data:
                 video_stream_url = video_data["baseUrl"]
                 video_stream_quality = VideoQuality(video_data["id"])
+                if video_stream_quality == VideoQuality.HDR and no_hdr:
+                    continue
+                if video_stream_quality == VideoQuality.DOLBY and no_dolby_video:
+                    continue
+                if video_stream_quality != VideoQuality.DOLBY and \
+                    video_stream_quality != VideoQuality.HDR and \
+                        video_stream_quality.value > video_max_quality.value:
+                    continue
                 video_stream_codecs = None
                 for val in VideoCodecs:
                     if val.value in video_data["codecs"]:
                         video_stream_codecs = val
+                if (not video_stream_codecs in codecs) and (video_stream_codecs != None):
+                    continue
                 video_stream = VideoStreamDownloadURL(
                     url=video_stream_url,
                     video_quality=video_stream_quality,
@@ -2061,11 +2089,13 @@ class VideoDownloadURLDataDetecter:
             for audio_data in audios_data:
                 audio_stream_url = audio_data["baseUrl"]
                 audio_stream_quality = AudioQuality(audio_data["id"])
+                if audio_stream_quality.value > audio_max_quality.value:
+                    continue
                 audio_stream = AudioStreamDownloadURL(
                     url=audio_stream_url, audio_quality=audio_stream_quality
                 )
                 streams.append(audio_stream)
-            if flac_data:
+            if flac_data and (not no_hires):
                 if flac_data["audio"]:
                     flac_stream_url = flac_data["audio"]["baseUrl"]
                     flac_stream_quality = AudioQuality(flac_data["audio"]["id"])
@@ -2073,7 +2103,7 @@ class VideoDownloadURLDataDetecter:
                         url=flac_stream_url, audio_quality=flac_stream_quality
                     )
                     streams.append(flac_stream)
-            if dolby_data:
+            if dolby_data and (not no_dolby_audio):
                 if dolby_data["audio"]:
                     dolby_stream_url = dolby_data["audio"]["baseUrl"]
                     dolby_stream_quality = AudioQuality(dolby_data["audio"]["id"])
@@ -2085,6 +2115,9 @@ class VideoDownloadURLDataDetecter:
 
     def detect_best_streams(
         self,
+        video_max_quality: VideoQuality = VideoQuality._8K,
+        audio_max_quality: AudioQuality = AudioQuality._192K,
+        codecs: List[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
         no_dolby_video: bool = False,
         no_dolby_audio: bool = False,
         no_hdr: bool = False,
@@ -2099,10 +2132,16 @@ class VideoDownloadURLDataDetecter:
         提取出分辨率、音质等信息最好的音视频流。
 
         Args:
-            no_dolby_video (bool): 是否禁止提取杜比视界视频流. Defaults to False.
-            no_dolby_audio (bool): 是否禁止提取杜比全景声音频流. Defaults to False.
-            no_hdr         (bool): 是否禁止提取 HDR 视频流. Defaults to False.
-            no_hires       (bool): 是否禁止提取 Hi-Res 音频流. Defaults to False.
+            **以下参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
+
+            video_max_quality(VideoQuality)      : 设置提取的视频流清晰度最大值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._8K.
+            audio_max_quality(AudioQuality)      : 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K.
+            codecs           (List[VideoCodecs]) : 设置所有允许提取出来的视频编码. 在数组中越靠前的编码选择优先级越高. 此项不会忽略 HDR/杜比. Defaults to [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV].
+            no_dolby_video   (bool)              : 是否禁止提取杜比视界视频流. Defaults to False.
+            no_dolby_audio   (bool)              : 是否禁止提取杜比全景声音频流. Defaults to False.
+            no_hdr           (bool)              : 是否禁止提取 HDR 视频流. Defaults to False.
+            no_hires         (bool)              : 是否禁止提取 Hi-Res 音频流. Defaults to False.
+
         Returns:
             List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流 / 番剧或课程试看 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL | EpisodeTryMP4DownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`
         """
@@ -2113,7 +2152,7 @@ class VideoDownloadURLDataDetecter:
         elif self.check_episode_try_mp4_stream():
             return self.detect_all()  # type: ignore
         else:
-            data = self.detect_all()
+            data = self.detect_all(video_max_quality=video_max_quality, audio_max_quality=audio_max_quality, codecs=codecs)
             video_streams = []
             audio_streams = []
             for stream in data:
@@ -2134,9 +2173,8 @@ class VideoDownloadURLDataDetecter:
                 if s1.video_quality.value != s2.video_quality.value:
                     return s1.video_quality.value - s2.video_quality.value
                     # Detect the high quality stream to the end.
-                elif s1.video_codecs.value < s2.video_codecs.value:
-                    return 1 # Detect AV1 stream to the end
-                    # 不同编码优先度: av1 > avc > hev
+                elif s1.video_codecs.value != s2.video_codecs.value:
+                    return codecs.index(s2.video_codecs) - codecs.index(s1.video_codecs)
                 return -1
             def audio_stream_cmp(s1: AudioStreamDownloadURL, s2: AudioStreamDownloadURL):
                 # 杜比/Hi-Res 优先
