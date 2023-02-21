@@ -2067,26 +2067,28 @@ class VideoDownloadURLDataDetecter:
                 streams.append(audio_stream)
             if flac_data:
                 if flac_data["audio"]:
-                    for flac in flac_data["audio"]:
-                        flac_stream_url = flac["baseUrl"]
-                        flac_stream_quality = AudioQuality(flac["id"])
-                        flac_stream = AudioStreamDownloadURL(
-                            url=flac_stream_url, audio_quality=flac_stream_quality
-                        )
-                        streams.append(flac_stream)
+                    flac_stream_url = flac_data["audio"]["baseUrl"]
+                    flac_stream_quality = AudioQuality(flac_data["audio"]["id"])
+                    flac_stream = AudioStreamDownloadURL(
+                        url=flac_stream_url, audio_quality=flac_stream_quality
+                    )
+                    streams.append(flac_stream)
             if dolby_data:
                 if dolby_data["audio"]:
-                    for dolby in dolby_data["audio"]:
-                        dolby_stream_url = dolby["baseUrl"]
-                        dolby_stream_quality = AudioQuality(dolby["id"])
-                        dolby_stream = AudioStreamDownloadURL(
-                            url=dolby_stream_url, audio_quality=dolby_stream_quality
-                        )
-                        streams.append(dolby_stream)
+                    dolby_stream_url = dolby_data["audio"]["baseUrl"]
+                    dolby_stream_quality = AudioQuality(dolby_data["audio"]["id"])
+                    dolby_stream = AudioStreamDownloadURL(
+                        url=dolby_stream_url, audio_quality=dolby_stream_quality
+                    )
+                    streams.append(dolby_stream)
             return streams
 
     def detect_best_streams(
         self,
+        no_dolby_video: bool = False,
+        no_dolby_audio: bool = False,
+        no_hdr: bool = False,
+        no_hires: bool = False
     ) -> Union[
         List[FLVStreamDownloadURL],
         List[HTML5MP4DownloadURL],
@@ -2094,8 +2096,13 @@ class VideoDownloadURLDataDetecter:
         List[Union[VideoStreamDownloadURL, AudioStreamDownloadURL]],
     ]:
         """
-        提取出分辨率、音质等信息最好的音视频流
+        提取出分辨率、音质等信息最好的音视频流。
 
+        Args:
+            no_dolby_video (bool): 是否禁止提取杜比视界视频流. Defaults to False.
+            no_dolby_audio (bool): 是否禁止提取杜比全景声音频流. Defaults to False.
+            no_hdr         (bool): 是否禁止提取 HDR 视频流. Defaults to False.
+            no_hires       (bool): 是否禁止提取 Hi-Res 音频流. Defaults to False.
         Returns:
             List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流 / 番剧或课程试看 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL | EpisodeTryMP4DownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`
         """
@@ -2115,19 +2122,33 @@ class VideoDownloadURLDataDetecter:
                 if isinstance(stream, AudioStreamDownloadURL):
                     audio_streams.append(stream)
             def video_stream_cmp(s1: VideoStreamDownloadURL, s2: VideoStreamDownloadURL):
+                # 杜比/HDR 优先
+                if s1.video_quality == VideoQuality.DOLBY and (not no_dolby_video):
+                    return 1
+                elif s2.video_quality == VideoQuality.DOLBY and (not no_dolby_video):
+                    return -1
+                elif s1.video_quality == VideoQuality.HDR and (not no_hdr):
+                    return 1
+                elif s2.video_quality == VideoQuality.HDR and (not no_hdr):
+                    return -1
                 if s1.video_quality.value != s2.video_quality.value:
                     return s1.video_quality.value - s2.video_quality.value
                     # Detect the high quality stream to the end.
-                elif s1.video_codecs.value == None:
-                    # s1 is dolby
-                    return 1
-                elif s2.video_codecs.value == None:
-                    # s2 is dolby
-                    return -1
                 elif s1.video_codecs.value < s2.video_codecs.value:
                     return 1 # Detect AV1 stream to the end
                     # 不同编码优先度: av1 > avc > hev
                 return -1
+            def audio_stream_cmp(s1: AudioStreamDownloadURL, s2: AudioStreamDownloadURL):
+                # 杜比/Hi-Res 优先
+                if s1.audio_quality == AudioQuality.DOLBY and (not no_dolby_audio):
+                    return 1
+                if s2.audio_quality == AudioQuality.DOLBY and (not no_dolby_audio):
+                    return -1
+                if s1.audio_quality == AudioQuality.HI_RES and (not no_hires):
+                    return 1
+                if s2.audio_quality == AudioQuality.HI_RES and (not no_hires):
+                    return -1
+                return s1.audio_quality.value - s2.audio_quality.value
             video_streams.sort(key=cmp_to_key(video_stream_cmp), reverse=True)
-            audio_streams.sort(key=lambda s: s.audio_quality.value, reverse=True)
+            audio_streams.sort(key=cmp_to_key(audio_stream_cmp), reverse=True)
             return [video_streams[0], audio_streams[0]]
