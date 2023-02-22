@@ -12,7 +12,7 @@ import json
 import httpx
 from typing import Union
 import uuid
-import hashlib
+from yarl import URL
 import webbrowser
 
 import requests
@@ -517,7 +517,8 @@ class Check:
 
     def __init__(self, check_url):
         self.check_url = check_url
-        self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
+        self.yarl_url = URL(self.check_url)
+        self.tmp_token = self.yarl_url.query.get("tmp_token")
         self.geetest_result = None
         self.captcha_key = None
 
@@ -544,6 +545,7 @@ class Check:
             geetest_data = get_safecenter_geetest()
             data = {
                 "sms_type": "loginTelCheck",
+                "type": 11,
                 "tmp_code": self.tmp_token,
                 "recaptcha_token": geetest_data["token"],  # type: ignore
                 "gee_challenge": geetest_data["challenge"],  # type: ignore
@@ -556,36 +558,14 @@ class Check:
         except Exception as e:
             raise LoginError(str(e))
 
-    def complete_check(self, code: str) -> Credential:
+    def complete_check(self, code: Union[int, str]) -> Credential:
         """
         完成验证
 
         Args:
-            code (str): 验证码
+            code (int | str): 验证码
 
         Returns:
             Credential: 凭据类
         """
-        try:
-            api = API["safecenter"]["get_exchange"]
-            data = {
-                "type": "loginTelCheck",
-                "code": code,
-                "tmp_code": self.tmp_token,
-                "request_id": self.check_url.split("?")[1].split("&")[1][11:],
-                "captcha_key": self.captcha_key,
-            }
-            exchange_code = json.loads(httpx.post(api["url"], data=data).text)["data"][
-                "code"
-            ]
-            exchange_url = API["safecenter"]["get_cookies"]["url"]
-            resp = httpx.post(exchange_url, data={"code": exchange_code})
-            credential = Credential(
-                sessdata=resp.cookies.get("SESSDATA"),
-                bili_jct=resp.cookies.get("bili_jct"),
-                buvid3=None,
-                dedeuserid=resp.cookies.get("DedeUserID"),
-            )
-            return credential
-        except Exception as e:
-            raise LoginError(str(e))
+        # XXX: 已经失效力

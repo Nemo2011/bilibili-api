@@ -79,7 +79,6 @@
         }
     },
     "safecenter": {
-        "#": "https://ivan.hanloth.cn/index.php/archives/530/",
         "check_info": {
             "url": "https://api.bilibili.com/x/safecenter/user/info",
             "method": "GET",
@@ -107,7 +106,7 @@
             }
         },
         "get_exchange": {
-            "url": "https://passport.bilibili.com/x/safecenter/login/tel/verify",
+            "url": "https://api.bilibili.com/x/safecenter/sec/verify",
             "method": "POST",
             "params": [
                 "type: (str)loginTelCheck",
@@ -119,7 +118,7 @@
             "comment": "获取交换验证码"
         },
         "get_cookies": {
-            "url": "https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
+            "url": "https://passport.bilibili.com/web/sso/exchange_cookie",
             "method": "POST",
             "params": {
                 "code": "str: 交换代码"
