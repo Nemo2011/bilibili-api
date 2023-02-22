@@ -2010,7 +2010,16 @@ class VideoDownloadURLDataDetecter:
                     return True
         return False
 
-    def detect_all(
+    def detect_all(self):
+        """
+        解析并返回所有数据
+
+        Returns:
+            List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 所有的视频/音频流
+        """
+        return self.detect()
+
+    def detect(
         self,
         video_max_quality: VideoQuality = VideoQuality._8K,
         audio_max_quality: AudioQuality = AudioQuality._192K,
@@ -2152,7 +2161,7 @@ class VideoDownloadURLDataDetecter:
         elif self.check_episode_try_mp4_stream():
             return self.detect_all()  # type: ignore
         else:
-            data = self.detect_all(video_max_quality=video_max_quality, audio_max_quality=audio_max_quality, codecs=codecs)
+            data = self.detect(video_max_quality=video_max_quality, audio_max_quality=audio_max_quality, codecs=codecs)
             video_streams = []
             audio_streams = []
             for stream in data:
