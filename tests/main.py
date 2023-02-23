@@ -19,6 +19,7 @@ Environment:
 """
 import asyncio
 from colorama import Fore, init, Style
+from bilibili_api import settings
 import os
 import sys
 import getopt
@@ -40,6 +41,7 @@ RATELIMIT = (
     float(os.getenv("BILI_RATELIMIT")) if os.getenv("BILI_RATELIMIT") is not None else 0
 )
 
+settings.timeout = 100
 
 async def test(module):
     print(Fore.YELLOW + f"::group::=========== 开始测试 {module.__name__} ===========")

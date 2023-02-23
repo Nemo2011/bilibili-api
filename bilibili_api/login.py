@@ -12,7 +12,7 @@ import json
 import httpx
 from typing import Union
 import uuid
-import hashlib
+from yarl import URL
 import webbrowser
 
 import requests
@@ -199,60 +199,47 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
         password (str): 密码
 
     Returns:
-        Union[Credential, Check]: 如果需要验证，会返回 [`Check`](#check) 类，否则返回 `Credential` 类。
+        Union[Credential, Check]: 如果需要验证，会返回 `Check` 类，否则返回 `Credential` 类。
     """
     api_token = API["password"]["get_token"]
+    geetest_data = get_geetest()
     sess = httpx.Client()
     token_data = json.loads(sess.get(api_token["url"]).text)
     hash_ = token_data["data"]["hash"]
     key = token_data["data"]["key"]
     final_password = encrypt(hash_, key, password)
     login_api = API["password"]["login"]
-    appkey = "bca7e84c2d947ac6"
-    appsec = "60698ba2f68e01ce44738920a0ffe768"
-    datas = {
-        "actionKey": "appkey",
-        "appkey": appkey,
-        "build": 6270200,
-        "captcha": "",
-        "challenge": "",
-        "channel": "bili",
-        "device": "phone",
-        "mobi_app": "android",
-        "password": final_password,
-        "permission": "ALL",
-        "platform": "android",
-        "seccode": "",
-        "subid": 1,
-        "ts": int(time.time()),
+    data = {
         "username": username,
-        "validate": "",
+        "password": final_password,
+        "keep": True,
+        "token": geetest_data["token"], # type: ignore
+        "challenge": geetest_data["challenge"], # type: ignore
+        "validate": geetest_data["validate"], # type: ignore
+        "seccode": geetest_data["seccode"] # type: ignore
     }
-    form_urlencoded = to_form_urlencoded(datas)
-    md5_string = form_urlencoded + appsec
-    hasher = hashlib.md5(md5_string.encode(encoding="utf-8"))
-    datas["sign"] = hasher.hexdigest()
+    resp = sess.request(
+        "POST",
+        login_api["url"],
+        data=data,
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "Mozilla/5.0",
+            "Referer": "https://passport.bilibili.com/login",
+        },
+        cookies={"buvid3": str(uuid.uuid1())},
+    )
     login_data = json.loads(
-        sess.request(
-            "POST",
-            login_api["url"],
-            data=datas,
-            headers={
-                "Content-Type": "application/x-www-form-urlencoded",
-                "User-Agent": "Mozilla/5.0",
-                "Referer": "https://passport.bilibili.com/login",
-            },
-            cookies={"buvid3": str(uuid.uuid1())},
-        ).text
+        resp.text
     )
     if login_data["code"] == 0:
-        if login_data["data"]["status"] == 2:
+        if login_data["data"]["status"] == 1:
             return Check(login_data["data"]["url"])
-        sessdata = login_data["data"]["cookie_info"]["cookies"][0]["value"]
-        bili_jct = login_data["data"]["cookie_info"]["cookies"][1]["value"]
-        dede = login_data["data"]["cookie_info"]["cookies"][2]["value"]
-        c = Credential(sessdata, bili_jct, dedeuserid=dede)
-        return c
+        return Credential(
+            sessdata=resp.cookies.get("SESSDATA"),
+            bili_jct=resp.cookies.get("bili_jct"),
+            dedeuserid=resp.cookies.get("DedeUserID")
+        )
     else:
         raise LoginError(login_data["message"])
 
@@ -494,7 +481,7 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
         c = Credential(sessdata, bili_jct, dedeuserid=dede)
         return c
     elif return_data["data"]["status"] == 5:
-        return Check(return_data["data"]["url"])
+        return Check(return_data["data"]["url"]) # type: ignore
     else:
         raise LoginError(return_data["message"])
 
@@ -530,7 +517,8 @@ class Check:
 
     def __init__(self, check_url):
         self.check_url = check_url
-        self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
+        self.yarl_url = URL(self.check_url)
+        self.tmp_token = self.yarl_url.query.get("tmp_token")
         self.geetest_result = None
         self.captcha_key = None
 
@@ -557,6 +545,7 @@ class Check:
             geetest_data = get_safecenter_geetest()
             data = {
                 "sms_type": "loginTelCheck",
+                "type": 11,
                 "tmp_code": self.tmp_token,
                 "recaptcha_token": geetest_data["token"],  # type: ignore
                 "gee_challenge": geetest_data["challenge"],  # type: ignore
@@ -569,36 +558,14 @@ class Check:
         except Exception as e:
             raise LoginError(str(e))
 
-    def complete_check(self, code: str) -> Credential:
+    def complete_check(self, code: Union[int, str]) -> Credential:
         """
         完成验证
 
         Args:
-            code (str): 验证码
+            code (int | str): 验证码
 
         Returns:
             Credential: 凭据类
         """
-        try:
-            api = API["safecenter"]["get_exchange"]
-            data = {
-                "type": "loginTelCheck",
-                "code": code,
-                "tmp_code": self.tmp_token,
-                "request_id": self.check_url.split("?")[1].split("&")[1][11:],
-                "captcha_key": self.captcha_key,
-            }
-            exchange_code = json.loads(httpx.post(api["url"], data=data).text)["data"][
-                "code"
-            ]
-            exchange_url = API["safecenter"]["get_cookies"]["url"]
-            resp = httpx.post(exchange_url, data={"code": exchange_code})
-            credential = Credential(
-                sessdata=resp.cookies.get("SESSDATA"),
-                bili_jct=resp.cookies.get("bili_jct"),
-                buvid3=None,
-                dedeuserid=resp.cookies.get("DedeUserID"),
-            )
-            return credential
-        except Exception as e:
-            raise LoginError(str(e))
+        # XXX: 已经失效力

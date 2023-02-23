@@ -16,11 +16,13 @@
 
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])([Gitee][docs-gitee])
 
-原项目地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
+原仓库地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
 Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/nemo2011/bilibili-api)
 
 Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2011/bilibili-api)
+
+> 此仓库是对原仓库 `bilibili-api` 的继续的维护。更多相关的信息请前往原仓库地址进行查看。
 
 # 简介
 

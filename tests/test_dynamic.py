@@ -16,7 +16,7 @@ async def test_a_send_dynamic():
     # 测试发送动态
     print("测试立即发送纯文本动态")
     resp = await dynamic.send_dynamic(
-        text="测试立即发送纯文本动态 @1882430995 ", credential=credential
+        text="测试立即发送纯文本动态 @这只鸽子不太冷静 ", credential=credential
     )
     print(resp)
     dyid.append(resp["dynamic_id"])

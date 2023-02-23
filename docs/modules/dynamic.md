@@ -30,8 +30,6 @@ from bilibili_api import dynamic
 
 自动判断动态类型选择合适的 API 并发送动态。
 
-如需 @ 人，请使用格式 "@UID "，注意最后有一个空格
-
 **Returns:** dict: 调用 API 返回的结果
 
 ---

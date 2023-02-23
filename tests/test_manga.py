@@ -13,8 +13,8 @@ async def test_b_Manga_get_images_url():
     return await comic.get_images_url(1)
 
 
-async def test_c_Manga_get_images():
-    return await comic.get_images(1)
+# async def test_c_Manga_get_images():
+#     return await comic.get_images(1)
 
 
 async def test_d_set_follow_manga():

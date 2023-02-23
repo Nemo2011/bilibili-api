@@ -262,6 +262,8 @@ class Manga:
         """
         获取某一话的所有图片
 
+        # 注意事项：此函数速度非常慢并且失败率高
+
         Args:
             episode_count (int | float | None): 第几话.
             episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
@@ -317,7 +319,7 @@ async def manga_image_url_turn_to_Picture(
 
     Args:
         url        (str)               : 未经处理的漫画图片链接。
-        credential (Credential \| None): 凭据类. Defaults to None.
+        credential (Credential | None): 凭据类. Defaults to None.
 
     Returns:
         Picture: 图片类。
@@ -462,7 +464,7 @@ async def get_manga_home_recommend(pn: int = 1, seed: Optional[str] = "0") -> Li
     Args:
         pn   (int)                          : 页码。Defaults to 1.
         seed (Optional[str])                : Unknown param，无需传入.
-        
+
     Returns:
         List[Manga]: 漫画列表
     """
