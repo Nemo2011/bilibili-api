@@ -1,17 +1,4 @@
 {
-  "vote": {
-    "info": {
-      "get_info": {
-        "url": "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info",
-        "method": "GET",
-        "verify": false,
-        "params": {
-          "vote_id": "int: 投票 ID"
-        },
-        "comment": "获取投票信息"
-      }
-    }
-  },
   "nickname": {
     "check_nickname": {
       "url": "https://passport.bilibili.com/web/generic/check/nickname",
