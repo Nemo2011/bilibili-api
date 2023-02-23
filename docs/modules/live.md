@@ -469,3 +469,17 @@ Websocket 实时获取直播弹幕
 
 
 **Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def create_live_reserve()
+
+| name       | type       | description |
+| ---------- | ---------- | ----------- |
+| credential | Credential | 凭据        |
+| title      | str        | 直播标题    |
+| start_time | int        | 开播时间    |
+
+创建直播预约
+
+**Returns:** dict: 调用 API 返回的结果

@@ -392,6 +392,19 @@
         "csrf,csrf_token": "要给两个"
       },
       "comment": "领取航海日志奖励"
+    },
+    "create_reserve": {
+      "url": "https://api.bilibili.com/x/activity/up/reserve/create",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "type": "int: 2",
+        "title": "str: 预约标题",
+        "live_plan_start_time": "int: 预约开始时间，时间戳",
+        "stime": "int: 预约结束时间，时间戳",
+        "from": "int: 1"
+      },
+      "comment": "创建预约"
     }
   }
 }
