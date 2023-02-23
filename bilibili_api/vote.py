@@ -5,8 +5,9 @@ bilibili_api.vote
 
 需要 vote_id,获取 vote_id: https://nemo2011.github.io/bilibili-api/#/vote_id
 """
-from typing import Optional
+from typing import Optional, Union
 from enum import Enum
+from .utils.Picture import Picture
 from .utils.utils import get_api
 from .utils.network_httpx import request
 from .utils.Credential import Credential
@@ -15,7 +16,7 @@ API = get_api("vote")
 
 class VoteType(Enum):
     """
-    投票类型类
+    投票类型枚举类
 
     + TEXT: 文字投票
     + IMAGE: 图片投票
@@ -30,15 +31,17 @@ class VoteChoices:
     def __init__(self) -> None:
         self.choices = []
     
-    def add_choice(self, desc: str, img_url: Optional[str] = None) -> "VoteChoices":
+    def add_choice(self, desc: str, image: Optional[Union[str, Picture]] = None) -> "VoteChoices":
         """
         往 VoteChoices 添加选项
 
         Args:
             desc (str): 选项描述
-            img_url (Optional[str], optional): 选项的图片链接，如果是图片投票. Defaults to None.
+            image (str, Picture, optional): 选项的图片链接，用于图片投票。支持 Picture 类. Defaults to None.
         """
-        self.choices.append({"desc": desc, "img_url": img_url})
+        if isinstance(image, Picture):
+            image = image.url
+        self.choices.append({"desc": desc, "img_url": image})
         return self
 
     def remove_choice(self, index: int) -> "VoteChoices":
@@ -77,12 +80,12 @@ class Vote:
         """
         Args:
             vote_id (int): vote_id, 获取：https://nemo2011.github.io/bilibili-api/#/vote_id
-            credential (Credential): 凭据类.
+            credential (Credential): 凭据类，非必要.
         """
         self.vote_id = vote_id
         self.credential = credential
 
-    async def get_vote_info(self) -> dict:
+    async def get_info(self) -> dict:
         """
         获取投票详情
 
@@ -111,7 +114,7 @@ class Vote:
             choice_cnt (int): 最多几项
             duration (int): 投票持续秒数 常用: 三天:259200 七天:604800 三十天:2592000
             choices (VoteChoices): 投票选项
-            credential (Credential): Credential
+            credential (Credential): Credential 枚举类
             desc (Optional[str], optional): 投票描述. Defaults to None.
 
         Returns:
