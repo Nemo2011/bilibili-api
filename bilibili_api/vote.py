@@ -89,7 +89,7 @@ class Vote:
         Returns:
             dict: 调用 API 返回的结果
         """
-        api = API["info"]
+        api = API["info"]["vote_info"]
         params = {"vote_id": self.vote_id}
         return await request("GET", api["url"], params=params)
 
@@ -118,7 +118,7 @@ class Vote:
             dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
-        api = API["create"]
+        api = API["operate"]["update"]
         data = {
             "info[title]": title,
             "info[desc]": desc,
@@ -157,7 +157,7 @@ async def create_vote(
     Returns:
         Vote: Vote 类
     """
-    api = API["create"]
+    api = API["operate"]["create"]
     data = {"info[title]": title,
     "info[desc]": desc,
     "info[type]": _type.value,

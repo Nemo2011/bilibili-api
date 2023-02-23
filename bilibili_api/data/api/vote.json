@@ -1,42 +1,46 @@
 {
     "info": {
-        "url": "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info",
-        "method": "GET",
-        "verify": false,
-        "params": {
-        "vote_id": "int: 投票 ID"
-        },
-        "comment": "获取投票信息"
+        "vote_info": {
+            "url": "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info",
+            "method": "GET",
+            "verify": false,
+            "params": {
+            "vote_id": "int: 投票 ID"
+            },
+            "comment": "获取投票信息"
+        }
     },
-    "create": {
-        "url": "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/create_vote",
-        "method": "POST",
-        "verify": true,
-        "data": {
-            "info[title]": "string: 投票标题",
-            "info[desc]": "string: 投票描述",
-            "info[type]": "int: 投票类型 0:文字投票 1:图片投票",
-            "info[choice_cnt]": "int: 最多选几项",
-            "info[duration]": "int: 投票持续时间",
-            "info[options][n][desc]": "string: 选项n描述",
-            "info[options][n][img_url]": "string: 选项n图片"
+    "operate": {
+        "create": {
+            "url": "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/create_vote",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "info[title]": "string: 投票标题",
+                "info[desc]": "string: 投票描述",
+                "info[type]": "int: 投票类型 0:文字投票 1:图片投票",
+                "info[choice_cnt]": "int: 最多选几项",
+                "info[duration]": "int: 投票持续时间",
+                "info[options][n][desc]": "string: 选项n描述",
+                "info[options][n][img_url]": "string: 选项n图片"
+            },
+            "comment": "创建投票"
         },
-        "comment": "创建投票"
-    },
-    "update": {
-        "url": "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/update_vote",
-        "method": "POST",
-        "verify": true,
-        "data": {
-            "info[title]": "string: 投票标题",
-            "info[desc]": "string: 投票描述",
-            "info[type]": "int: 投票类型 0:文字投票 1:图片投票",
-            "info[choice_cnt]": "int: 最多选几项",
-            "info[duration]": "int: 投票持续时间",
-            "info[options][n][desc]": "string: 选项n描述",
-            "info[options][n][img_url]": "string: 选项n图片",
-            "info[vote_id]": "int: vote_id"
-        },
-        "comment": "更新投票内容"
+        "update": {
+            "url": "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/update_vote",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "info[title]": "string: 投票标题",
+                "info[desc]": "string: 投票描述",
+                "info[type]": "int: 投票类型 0:文字投票 1:图片投票",
+                "info[choice_cnt]": "int: 最多选几项",
+                "info[duration]": "int: 投票持续时间",
+                "info[options][n][desc]": "string: 选项n描述",
+                "info[options][n][img_url]": "string: 选项n图片",
+                "info[vote_id]": "int: vote_id"
+            },
+            "comment": "更新投票内容"
+        }
     }
 }
