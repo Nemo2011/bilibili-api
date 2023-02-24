@@ -30,12 +30,11 @@ async def test_b_create_vote():
     return cr_vote
 
 async def test_c_update_vote():
-    return await vote.Vote(vote_id=vote_id).update_vote(
+    return await vote.Vote(vote_id=vote_id, credential=credential).update_vote(
         title="测试投票2",
         _type=vote.VoteType.TEXT,
         choice_cnt=2,
         duration=259200,
         choices=vote.VoteChoices().add_choice("选项1C").add_choice("选项2c"),
-        desc="测试投票2",
-        credential=credential, # type: ignore
+        desc="测试投票2"
     )
