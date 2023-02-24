@@ -103,9 +103,6 @@ from bilibili_api import dynamic
 
 ---
 
-其余内置函数见 [dynamic.py](https://github.com/Nemo2011/bilibili-api/blob/dev/bilibili_api/dynamic.py)
-
----
 ## async def send_dynamic()
 
 | name         | type         | description |
@@ -115,7 +112,7 @@ from bilibili_api import dynamic
 
 发送动态（Web端）
 
-**Returns:** Dynamic: 动态类
+**Returns:** dict: 调用 API 返回的结果
 
 ---
 

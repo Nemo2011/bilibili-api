@@ -17,7 +17,7 @@ async def test_a_send_dynamic():
     print("测试立即发送纯文本动态")
     text_dynamic_build = dynamic.BuildDynmaic().add_text("测试立即发送纯文本动态").add_image(Picture.from_file("./design/logo.png").upload_file_sync(credential=credential))
     global dy
-    dy = await dynamic.send_dynamic(text_dynamic_build, credential=credential)
+    dy = dynamic.Dynamic((await dynamic.send_dynamic(text_dynamic_build, credential=credential))["dyn_id"])
 
 
 async def test_b_get_schedules_list():

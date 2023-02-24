@@ -370,7 +370,7 @@ async def send_dynamic(
         credential (Credential): 凭据
 
     Returns:
-        Dynamic: 动态类
+        dict: 调用 API 返回的结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -429,7 +429,7 @@ async def send_dynamic(
     else:
         data["dyn_req"]["attach_card"] = None
     send_result = await request("POST", api["url"], data=data, credential=credential, params={"csrf": credential.bili_jct}, json_body=True)
-    return Dynamic(dynamic_id=send_result["dynamic_id"], credential=credential)
+    return send_result
 
 
 # 定时动态操作
