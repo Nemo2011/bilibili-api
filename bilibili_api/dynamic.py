@@ -10,6 +10,8 @@ import os
 from typing import Any, List, Tuple, Union, Optional
 from enum import Enum
 
+import httpx
+
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 from .utils.network_httpx import request
 from .utils.Credential import Credential
@@ -17,9 +19,9 @@ from .utils.sync import sync
 from . import user, exceptions
 from .utils import utils
 from .utils.Picture import Picture
-from .vote import Vote
-from .user import User
-from .topic import Topic
+from . import vote
+from datetime import datetime
+import asyncio
 
 API = utils.get_api("dynamic")
 
@@ -134,6 +136,50 @@ async def _get_text_data(text: str) -> dict:
     return data
 
 
+async def _get_draw_data(
+    text: str, images: List[Picture], credential: Credential
+) -> dict:
+    """
+    获取图片动态请求参数，将会自动上传图片
+
+    Args:
+        text   (str)          : 文本内容
+        images (List[Picture]): 图片流
+    """
+    new_text, at_uids, ctrl = await _parse_at(text)
+    images_info = await asyncio.gather(
+        *[upload_image(stream, credential) for stream in images]
+    )
+
+    def transformPicInfo(image: dict):
+        return {
+            "img_src": image["image_url"],
+            "img_width": image["image_width"],
+            "img_height": image["image_height"],
+        }
+
+    pictures = list(map(transformPicInfo, images_info))
+    data = {
+        "biz": 3,
+        "category": 3,
+        "type": 0,
+        "pictures": json.dumps(pictures),
+        "title": "",
+        "tags": "",
+        "description": new_text,
+        "content": new_text,
+        "from": "create.dynamic.web",
+        "up_choose_comment": 0,
+        "extension": json.dumps(
+            {"emoji_type": 1, "from": {"emoji_type": 1}, "flag_cfg": {}}
+        ),
+        "at_uids": at_uids,
+        "at_control": ctrl,
+        "setting": json.dumps({"copy_forbidden": 0, "cachedTime": 0}),
+    }
+    return data
+
+
 async def upload_image(image: Picture, credential: Credential) -> dict:
     """
     上传动态图片
@@ -162,6 +208,284 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
     )
 
     return return_info
+
+
+
+class BuildDynmaic:
+    def __init__(self) -> None:
+        """
+        构建动态内容
+        """
+        self.contents: list = []
+        self.pic: List[Picture] = []
+        self.attach_card: Optional[dict] = None
+        self.topic: Optional[dict] = None
+        self.options: dict = {}
+        self.time: Optional[datetime] = None
+
+    def add_text(self, text: str) -> "BuildDynmaic":
+        """
+        添加文本
+
+        Args:
+            text (str): 文本内容
+        """
+        self.contents.append(
+            {"biz_id": "", "type": DynmaicContentType.TEXT.value, "raw_text": text})
+        return self
+
+    def add_at(self, uid: Union[int, user.User]) -> "BuildDynmaic":
+        """
+        添加@用户，支持传入 User 类或 UID
+
+        Args:
+            uid (Union[int, user.User]): 用户ID
+        """
+        if isinstance(uid, user.User):
+            uid = uid.__uid
+        name = httpx.get("https://api.bilibili.com/x/space/acc/info", params={"mid": uid}, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}).json()["data"]["name"]
+        self.contents.append(
+            {"biz_id": uid, "type": DynmaicContentType.EMOJI.value, "raw_text": f"@{name}"})
+        return self
+
+    def add_emoji(self, emoji_id: int) -> "BuildDynmaic":
+        """
+        添加表情
+
+        Args:
+            emoji_id (int): 表情ID
+        """
+        with open(os.path.join(os.path.dirname(__file__), "data/emote.json"), encoding="UTF-8") as f:
+            emote_info = json.load(f)
+        if str(emoji_id) not in emote_info:
+            raise ValueError("不存在此表情")
+        self.contents.append({
+            "biz_id": "",
+            "type": DynmaicContentType.EMOJI.value,
+            "raw_text": emote_info[str(emoji_id)]
+        }
+        )
+        return self
+
+    def add_vote(self, vote: vote.Vote) -> "BuildDynmaic":
+        self.add_text("我发起了一个投票")  # 按照Web端的逻辑，投票动态会自动添加一段文本
+        self.contents.append(
+            {"biz_id": str(vote.vote_id), "type": DynmaicContentType.VOTE.value, "raw_text": sync(vote.get_title())})
+        return self
+
+    def add_image(self, image: Picture) -> "BuildDynmaic":
+        """
+        添加图片
+
+        Args:
+            image (Picture): 图片类
+        """
+        self.pic.append(image)
+        return self
+
+    def set_attach_card(self, oid: int) -> "BuildDynmaic":
+        """
+        设置直播预约
+
+        在 live.create_live_reserve 中获取 oid
+
+        Args:
+            oid (int): 卡片oid
+        """
+        self.attach_card = {
+            "type": 14,
+            "biz_id": oid,
+            "reserve_source": 1,  # 疑似0为视频预告但没法验证...
+            "reserve_lottery": 0
+        }
+        return self
+
+    def set_topic(self, topic_id: int) -> "BuildDynmaic":
+        """
+        设置话题
+
+        Args:
+            topic_id (int): 话题ID
+        """
+        self.topic = {
+            "id": topic_id
+        }
+        return self
+
+    def set_options(self, up_choose_comment: bool = False, close_comment: bool = False) -> "BuildDynmaic":
+        """
+        设置选项
+
+        Args:
+            up_choose_comment	(bool): 	精选评论flag
+            close_comment	    (bool): 	关闭评论flag
+        """
+        if up_choose_comment:
+            self.options["up_choose_comment"] = 1
+        if close_comment:
+            self.options["close_comment"] = 1
+        return self
+
+    def set_send_time(self, time: datetime):
+        """
+        设置发送时间
+
+        Args:
+            time (datetime): 发送时间
+        """
+        self.time = time
+        return self
+
+
+    def get_dynamic_type(self) -> SendDynmaicType:
+        if len(self.pic) != 0:
+            return SendDynmaicType.IMAGE
+        return SendDynmaicType.TEXT
+
+    def get_contents(self) -> list:
+        return self.contents
+
+    def get_pics(self) -> list:
+        return self.pic
+
+    def get_attach_card(self) -> Optional[dict]:
+        return self.attach_card
+
+    def get_topic(self) -> Optional[dict]:
+        return self.topic
+
+    def get_options(self) -> dict:
+        return self.options
+
+
+async def send_dynamic(
+    info: BuildDynmaic,
+    credential: Credential
+):
+    """
+    发送动态
+
+    Args:
+        info (BuildDynmaic): 动态内容
+        credential (Credential): 凭据
+
+    Returns:
+        Dynamic: 动态类
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+    pic_data = []
+    for image in info.pic:
+        await image.upload_file(credential)
+        pic_data.append({
+            "img_src": image.url,
+            "img_width": image.width,
+            "img_height": image.height
+        })
+
+    async def schedule(type_: int):
+        api = API["send"]["schedule"]
+        text = "".join([part["raw_text"] for part in info.contents if part["type"] != 4])
+        send_time = info.time
+        if len(info.pic) > 0:
+            # 画册动态
+            request_data = await _get_draw_data(text, info.pic, credential)  # type: ignore
+            request_data.pop("setting")
+        else:
+            # 文字动态
+            request_data = await _get_text_data(text)
+        data = {
+            "type": type_,
+            "publish_time": int(send_time.timestamp()),  # type: ignore
+            "request": json.dumps(request_data, ensure_ascii=False),
+        }
+        return await request("POST", api["url"], data=data, credential=credential)
+
+    if info.time != None:
+        return await schedule(2 if len(info.pic) == 0 else 4)
+    api = API["send"]["instant"]
+    data = {"dyn_req": {
+        "content": {  # 必要参数
+            "contents": info.get_contents()
+        },
+        "scene": info.get_dynamic_type().value,  # 必要参数
+        "meta": {
+            "app_meta": {
+                "from": "create.dynamic.web",
+                        "mobi_app": "web"
+            },
+        }
+    }
+    }
+    if len(info.get_pics()) != 0:
+        data["dyn_req"]["pics"] = info.get_pics()
+    if info.get_topic() is not None:
+        data["dyn_req"]["topic"] = info.get_topic()
+    if len(info.get_options()) > 0:
+        data["dyn_req"]["option"] = info.get_options()
+    if info.get_attach_card() is not None:
+        data["dyn_req"]["attach_card"] = {}
+        data["dyn_req"]["attach_card"]["common_card"] = info.get_attach_card()
+    else:
+        data["dyn_req"]["attach_card"] = None
+    send_result = await request("POST", api["url"], data=data, credential=credential, params={"csrf": credential.bili_jct}, json_body=True)
+    return Dynamic(dynamic_id=send_result["dynamic_id"], credential=credential)
+
+
+# 定时动态操作
+
+
+async def get_schedules_list(credential: Credential) -> dict:
+    """
+    获取待发送定时动态列表
+
+    Args:
+        credential  (Credential): 凭据
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+
+    api = API["schedule"]["list"]
+    return await request("GET", api["url"], credential=credential)
+
+
+async def send_schedule_now(draft_id: int, credential: Credential) -> dict:
+    """
+    立即发送定时动态
+
+    Args:
+        draft_id (int): 定时动态 ID
+        credential  (Credential): 凭据
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+
+    api = API["schedule"]["publish_now"]
+    data = {"draft_id": draft_id}
+    return await request("POST", api["url"], data=data, credential=credential)
+
+
+async def delete_schedule(draft_id: int, credential: Credential) -> dict:
+    """
+    删除定时动态
+
+    Args:
+        draft_id (int): 定时动态 ID
+        credential  (Credential): 凭据
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+
+    api = API["schedule"]["delete"]
+    data = {"draft_id": draft_id}
+    return await request("POST", api["url"], data=data, credential=credential)
+
 
 class Dynamic:
     """
@@ -290,251 +614,6 @@ class Dynamic:
         data = await _get_text_data(text)
         data["dynamic_id"] = self.__dynamic_id
         return await request("POST", api["url"], data=data, credential=self.credential)
-
-class BuildDynmaic:
-    def __init__(self) -> None:
-        """
-        构建动态内容
-        """
-        self.contents: list = []
-        self.pics: list = []
-        self.attach_card: Optional[dict] = None
-        self.topic: Optional[dict] = None
-        self.options: dict = {}
-
-    def add_text(self, text: str) -> "BuildDynmaic":
-        """
-        添加文本
-
-        Args:
-            text (str): 文本内容
-        """
-        self.contents.append(
-            {"biz_id": "", "type": DynmaicContentType.TEXT.value, "raw_text": text})
-        return self
-
-    def add_at(self, user: Union[int, User]) -> "BuildDynmaic":
-        """
-        添加@用户，支持传入 User 类或 UID
-
-        Args:
-            user (Union[int, user.User]): UID 或用户类
-        """
-        if isinstance(user, User):
-            user = user.__uid
-        self.contents.append(
-            {"biz_id": user, "type": DynmaicContentType.EMOJI.value, "raw_text": f"@{user}"})
-        return self
-
-    def add_emoji(self, emoji_name: str) -> "BuildDynmaic":
-        """
-        添加表情
-
-        Args:
-            emoji_name (str): 表情名
-        """
-        self.contents.append({
-            "biz_id": "",
-            "type": DynmaicContentType.EMOJI.value,
-            "raw_text": emoji_name
-        }
-        )
-        return self
-
-    def add_vote(self, vote: Union[Vote, int]) -> "BuildDynmaic":
-        """
-        添加投票
-
-        Args:
-            vote (Union[Vote, int]): 投票类或投票ID
-        """
-        self.add_text("我发起了一个投票")  # 按照Web端的逻辑，投票动态会自动添加一段文本
-        if isinstance(vote, int):
-            vote = Vote(vote)
-        self.contents.append(
-            {"biz_id": str(vote.vote_id), "type": DynmaicContentType.VOTE.value, "raw_text": sync(vote.get_title())}) # vote_id must str
-        return self
-
-    def add_image(self, image: Picture) -> "BuildDynmaic":
-        """
-        添加图片
-
-        Args:
-            image (Picture): 图片类
-        """
-        # 请自行上传为图片类
-        self.pics.append({
-            "img_src": image.url,
-            "img_width": image.width,
-            "img_height": image.height
-        })
-        return self
-
-    def set_attach_card(self, oid: int) -> "BuildDynmaic":
-        """
-        设置直播预约
-
-        在 live.create_live_reserve 中获取 oid
-
-        Args:
-            oid (int): 卡片oid
-        """
-        self.attach_card = {
-            "type": 14,
-            "biz_id": oid,
-            "reserve_source": 1,  # 疑似0为视频预告但没法验证...
-            "reserve_lottery": 0
-        }
-        return self
-
-    def set_topic(self, topic: Union[Topic, int]) -> "BuildDynmaic":
-        """
-        设置话题
-
-        Args:
-            topic_id (int, Topci): 话题ID 或话题类
-        """
-        if isinstance(topic, Topic):
-            topic = topic.__topic_id
-        self.topic = {
-            "id": topic
-        }
-        return self
-
-    def set_options(self, up_choose_comment: bool = False, close_comment: bool = False) -> "BuildDynmaic":
-        """
-        设置选项
-
-        Args:
-            up_choose_comment	(bool): 	精选评论flag
-            close_comment	    (bool): 	关闭评论flag
-        """
-        if up_choose_comment:
-            self.options["up_choose_comment"] = 1
-        if close_comment:
-            self.options["close_comment"] = 1
-        return self
-
-    def get_dynamic_type(self) -> SendDynmaicType:
-        if len(self.pics) != 0:
-            return SendDynmaicType.IMAGE
-        return SendDynmaicType.TEXT
-
-    def get_contents(self) -> list:
-        return self.contents
-
-    def get_pics(self) -> list:
-        return self.pics
-
-    def get_attach_card(self) -> Optional[dict]:
-        return self.attach_card
-
-    def get_topic(self) -> Optional[dict]:
-        return self.topic
-
-    def get_options(self) -> dict:
-        return self.options
-
-
-async def send_dynamic(
-    info: BuildDynmaic,
-    credential: Credential,
-) -> Dynamic:
-    """
-    发送动态
-
-    Args:
-        info (BuildDynmaic): 动态内容
-        credential (Credential): 凭据
-
-    Returns:
-        Dynamic: 动态类
-    """
-    credential.raise_for_no_sessdata()
-    api = API["send"]["instant"]
-    data = {"dyn_req": {
-        "content": {  # 必要参数
-            "contents": info.get_contents()
-        },
-        "scene": info.get_dynamic_type().value,  # 必要参数
-        "meta": {
-            "app_meta": {
-                "from": "create.dynamic.web",
-                        "mobi_app": "web"
-            },
-        }
-    }
-    }
-    if len(info.get_pics()) != 0:
-        data["dyn_req"]["pics"] = info.get_pics()
-    if info.get_topic() is not None:
-        data["dyn_req"]["topic"] = info.get_topic()
-    if len(info.get_options()) > 0:
-        data["dyn_req"]["option"] = info.get_options()
-    if info.get_attach_card() is not None:
-        data["dyn_req"]["attach_card"] = {}
-        data["dyn_req"]["attach_card"]["common_card"] = info.get_attach_card()
-    else:
-        data["dyn_req"]["attach_card"] = None
-    send_result = await request("POST", api["url"], data=data, credential=credential, params={"csrf": credential.bili_jct}, json_body=True)
-    return Dynamic(dynamic_id=send_result["dyn_id"], credential=credential)
-
-# 定时动态操作
-
-
-async def get_schedules_list(credential: Credential) -> dict:
-    """
-    获取待发送定时动态列表
-
-    Args:
-        credential  (Credential): 凭据
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    credential.raise_for_no_sessdata()
-
-    api = API["schedule"]["list"]
-    return await request("GET", api["url"], credential=credential)
-
-
-async def send_schedule_now(draft_id: int, credential: Credential) -> dict:
-    """
-    立即发送定时动态
-
-    Args:
-        draft_id (int): 定时动态 ID
-        credential  (Credential): 凭据
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    credential.raise_for_no_sessdata()
-
-    api = API["schedule"]["publish_now"]
-    data = {"draft_id": draft_id}
-    return await request("POST", api["url"], data=data, credential=credential)
-
-
-async def delete_schedule(draft_id: int, credential: Credential) -> dict:
-    """
-    删除定时动态
-
-    Args:
-        draft_id (int): 定时动态 ID
-        credential  (Credential): 凭据
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    credential.raise_for_no_sessdata()
-
-    api = API["schedule"]["delete"]
-    data = {"draft_id": draft_id}
-    return await request("POST", api["url"], data=data, credential=credential)
-
-
-
 
 
 async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> dict:
