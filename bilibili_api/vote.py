@@ -84,6 +84,7 @@ class Vote:
         """
         self.vote_id = vote_id
         self.credential = credential
+        self.title: Optional[str] = None
 
     async def get_info(self) -> dict:
         """
@@ -94,7 +95,20 @@ class Vote:
         """
         api = API["info"]["vote_info"]
         params = {"vote_id": self.vote_id}
-        return await request("GET", api["url"], params=params)
+        info = await request("GET", api["url"], params=params)
+        self.title = info["info"]["title"] # 为 dynmaic.BuildDnamic.add_vote 缓存 title
+        return info
+
+    async def get_title(self) -> str:
+        """
+        快速获取投票标题
+
+        Returns:
+            str: 投票标题
+        """
+        if self.title is None:
+            return (await self.get_info())["info"]["title"]
+        return self.title
 
     async def update_vote(self,
         title: str,

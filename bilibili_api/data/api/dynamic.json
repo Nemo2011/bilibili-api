@@ -81,35 +81,41 @@
             "data": "int: 用户 UID"
           }
         ]
-      },
-      "instant": {
-        "url": "https://api.bilibili.com/x/dynamic/feed/create/dyn",
-        "method": "POST",
-        "verify": true,
-        "data": {
-          "content": {
-            "contents": [
-              "#: 动态信息",
-              {"raw_text": "纯文本", "biz_id": "", "type": 1},
-              {"raw_text": "表情包", "biz_id": "", "type": 9},
-              {"raw_text": "@人", "biz_id": "UID", "type": 2},
-              {"raw_text": "投票", "biz_id": "投票 id", "type": 4}
-            ]
-          },
-          "scene": "int: 1 纯文本, 2 带图",
-          "pics": [
-            {
-              "img_src":"str: 图片地址",
-              "img_height":"int: 图片高度",
-              "img_width":"int: 图片宽度",
-              "img_size":"int: 图片大小 (kb)"
-            }
-          ],
-          "topic": {
-            "id": "int: 话题 id"
+      }
+    },
+    "instant": {
+      "url": "https://api.bilibili.com/x/dynamic/feed/create/dyn",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "content": {
+          "contents": [
+            "#: 动态信息",
+            {"raw_text": "纯文本", "biz_id": "", "type": 1},
+            {"raw_text": "表情包", "biz_id": "", "type": 9},
+            {"raw_text": "@人", "biz_id": "UID", "type": 2},
+            {"raw_text": "投票", "biz_id": "投票 id", "type": 4}
+          ]
+        },
+        "scene": "int: 1 纯文本, 2 带图",
+        "pics": [
+          {
+            "img_src":"str: 图片地址",
+            "img_height":"int: 图片高度",
+            "img_width":"int: 图片宽度",
+            "img_size":"int: 图片大小 (kb)"
           }
+        ],
+        "topic": {
+          "id": "int: 话题 id"
         }
       }
+    },
+    "sub_check": {
+      "url": "https://api.bilibili.com/x/dynamic/feed/create/submit_check",
+      "method": "POST",
+      "verify": true,
+      "comment": "动态发送预检测"
     }
   },
   "operate": {
