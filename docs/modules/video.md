@@ -10,6 +10,8 @@ from bilibili_api import video
 
 ## class DanmakuOperatorType(Enum)
 
+**Extends:** enum.Enum
+
 弹幕操作枚举
 
 + DELETE - 删除弹幕

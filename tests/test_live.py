@@ -5,6 +5,7 @@ from bilibili_api import live
 from bilibili_api.exceptions import ResponseCodeException
 from .common import get_credential
 import random
+import time
 
 l = live.LiveRoom(22544798, get_credential())
 
@@ -175,3 +176,6 @@ async def test_zc_get_live_followers_info():
 
 async def test_zd_get_unlive_followers_info():
     return await live.get_unlive_followers_info(page=1, credential=get_credential())
+
+async def test_ze_get_following_live():
+    return await live.create_live_reserve(credential=get_credential(), title="测试", start_time=round(time.time()) + (60 * 60 * 4))
