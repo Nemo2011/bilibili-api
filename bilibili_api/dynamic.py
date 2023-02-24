@@ -326,21 +326,17 @@ class BuildDynmaic:
             {"biz_id": user, "type": DynmaicContentType.EMOJI.value, "raw_text": f"@{user}"})
         return self
 
-    def add_emoji(self, emoji_id: int) -> "BuildDynmaic":
+    def add_emoji(self, emoji_name: str) -> "BuildDynmaic":
         """
         添加表情
 
         Args:
-            emoji_id (int): 表情ID
+            emoji_name (str): 表情名
         """
-        with open(os.path.join(os.path.dirname(__file__), "data/emote.json"), encoding="UTF-8") as f:
-            emote_info = json.load(f)
-        if str(emoji_id) not in emote_info:
-            raise ValueError("不存在此表情")
         self.contents.append({
             "biz_id": "",
             "type": DynmaicContentType.EMOJI.value,
-            "raw_text": emote_info[str(emoji_id)]
+            "raw_text": emoji_name
         }
         )
         return self

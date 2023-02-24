@@ -36,5 +36,6 @@ async def test_c_update_vote():
         choice_cnt=2,
         duration=259200,
         choices=vote.VoteChoices().add_choice("选项1C").add_choice("选项2c"),
-        desc="测试投票2"
+        desc="测试投票2",
+        credential=credential, # type: ignore
     )
