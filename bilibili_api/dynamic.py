@@ -17,7 +17,9 @@ from .utils.sync import sync
 from . import user, exceptions
 from .utils import utils
 from .utils.Picture import Picture
-from . import vote
+from .vote import Vote
+from .user import User
+from .topic import Topic
 
 API = utils.get_api("dynamic")
 
@@ -295,7 +297,7 @@ class BuildDynmaic:
         构建动态内容
         """
         self.contents: list = []
-        self.pic: list = []
+        self.pics: list = []
         self.attach_card: Optional[dict] = None
         self.topic: Optional[dict] = None
         self.options: dict = {}
@@ -311,17 +313,17 @@ class BuildDynmaic:
             {"biz_id": "", "type": DynmaicContentType.TEXT.value, "raw_text": text})
         return self
 
-    def add_at(self, uid: Union[int, user.User]) -> "BuildDynmaic":
+    def add_at(self, user: Union[int, User]) -> "BuildDynmaic":
         """
         添加@用户，支持传入 User 类或 UID
 
         Args:
-            uid (Union[int, user.User]): 用户ID
+            user (Union[int, user.User]): UID 或用户类
         """
-        if isinstance(uid, user.User):
-            uid = uid.__uid
+        if isinstance(user, User):
+            user = user.__uid
         self.contents.append(
-            {"biz_id": uid, "type": DynmaicContentType.EMOJI.value, "raw_text": f"@{uid}"})
+            {"biz_id": user, "type": DynmaicContentType.EMOJI.value, "raw_text": f"@{user}"})
         return self
 
     def add_emoji(self, emoji_id: int) -> "BuildDynmaic":
@@ -343,10 +345,18 @@ class BuildDynmaic:
         )
         return self
 
-    def add_vote(self, vote: vote.Vote) -> "BuildDynmaic":
+    def add_vote(self, vote: Union[Vote, int]) -> "BuildDynmaic":
+        """
+        添加投票
+
+        Args:
+            vote (Union[Vote, int]): 投票类或投票ID
+        """
         self.add_text("我发起了一个投票")  # 按照Web端的逻辑，投票动态会自动添加一段文本
+        if isinstance(vote, int):
+            vote = Vote(vote)
         self.contents.append(
-            {"biz_id": str(vote.vote_id), "type": DynmaicContentType.VOTE.value, "raw_text": sync(vote.get_title())})
+            {"biz_id": str(vote.vote_id), "type": DynmaicContentType.VOTE.value, "raw_text": sync(vote.get_title())}) # vote_id must str
         return self
 
     def add_image(self, image: Picture) -> "BuildDynmaic":
@@ -357,7 +367,7 @@ class BuildDynmaic:
             image (Picture): 图片类
         """
         # 请自行上传为图片类
-        self.pic.append({
+        self.pics.append({
             "img_src": image.url,
             "img_width": image.width,
             "img_height": image.height
@@ -381,15 +391,17 @@ class BuildDynmaic:
         }
         return self
 
-    def set_topic(self, topic_id: int) -> "BuildDynmaic":
+    def set_topic(self, topic: Union[Topic, int]) -> "BuildDynmaic":
         """
         设置话题
 
         Args:
-            topic_id (int): 话题ID
+            topic_id (int, Topci): 话题ID 或话题类
         """
+        if isinstance(topic, Topic):
+            topic = topic.__topic_id
         self.topic = {
-            "id": topic_id
+            "id": topic
         }
         return self
 
@@ -408,7 +420,7 @@ class BuildDynmaic:
         return self
 
     def get_dynamic_type(self) -> SendDynmaicType:
-        if len(self.pic) != 0:
+        if len(self.pics) != 0:
             return SendDynmaicType.IMAGE
         return SendDynmaicType.TEXT
 
@@ -416,7 +428,7 @@ class BuildDynmaic:
         return self.contents
 
     def get_pics(self) -> list:
-        return self.pic
+        return self.pics
 
     def get_attach_card(self) -> Optional[dict]:
         return self.attach_card
