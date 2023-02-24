@@ -55,7 +55,7 @@ from bilibili_api import dynamic
 
 | name | type | description |
 | ---- | ---- | ----------- |
-| emoji_id | int | 表情 ID |
+| emoji_name | str | 表情中文名称 |
 
 添加表情
 
