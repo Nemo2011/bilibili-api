@@ -161,7 +161,133 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
 
     return return_info
 
+class Dynamic:
+    """
+    动态类
 
+    Attributes:
+        credential (Credential): 凭据类
+    """
+
+    def __init__(self, dynamic_id: int, credential: Union[Credential, None] = None) -> None:
+        """
+        Args:
+            dynamic_id (int)                        : 动态 ID
+            credential (Credential | None, optional): 凭据类. Defaults to None.
+        """
+        self.__dynamic_id = dynamic_id
+        self.credential = credential if credential is not None else Credential()
+
+    def get_dynamic_id(self) -> int:
+        return self.__dynamic_id
+
+    async def get_info(self) -> dict:
+        """
+        获取动态信息
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+
+        api = API["info"]["detail"]
+        params = {"dynamic_id": self.__dynamic_id}
+        data = await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
+        data["card"]["card"] = json.loads(data["card"]["card"])
+        data["card"]["extend_json"] = json.loads(data["card"]["extend_json"])
+        return data["card"]
+
+    async def get_reposts(self, offset: str = "0") -> dict:
+        """
+        获取动态转发列表
+
+        Args:
+            offset (str, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0"
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["repost"]
+        params: dict[str, Any] = {"dynamic_id": self.__dynamic_id}
+        if offset != "0":
+            params["offset"] = offset
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
+    async def get_likes(self, pn: int = 1, ps: int = 30) -> dict:
+        """
+        获取动态点赞列表
+
+        Args:
+            pn (int, optional): 页码，defaults to 1
+            ps (int, optional): 每页大小，defaults to 30
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["likes"]
+        params = {"dynamic_id": self.__dynamic_id, "pn": pn, "ps": ps}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
+    async def set_like(self, status: bool = True) -> dict:
+        """
+        设置动态点赞状态
+
+        Args:
+            status (bool, optional): 点赞状态. Defaults to True.
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["like"]
+
+        user_info = await user.get_self_info(credential=self.credential)
+
+        self_uid = user_info["mid"]
+        data = {
+            "dynamic_id": self.__dynamic_id,
+            "up": 1 if status else 2,
+            "uid": self_uid,
+        }
+        return await request("POST", api["url"], data=data, credential=self.credential)
+
+    async def delete(self) -> dict:
+        """
+        删除动态
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["operate"]["delete"]
+        data = {"dynamic_id": self.__dynamic_id}
+        return await request("POST", api["url"], data=data, credential=self.credential)
+
+    async def repost(self, text: str = "转发动态") -> dict:
+        """
+        转发动态
+
+        Args:
+            text (str, optional): 转发动态时的文本内容. Defaults to "转发动态"
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["operate"]["repost"]
+        data = await _get_text_data(text)
+        data["dynamic_id"] = self.__dynamic_id
+        return await request("POST", api["url"], data=data, credential=self.credential)
 
 class BuildDynmaic:
     def __init__(self) -> None:
@@ -305,7 +431,7 @@ class BuildDynmaic:
 async def send_dynamic(
     info: BuildDynmaic,
     credential: Credential,
-):
+) -> Dynamic:
     """
     发送动态
 
@@ -343,7 +469,7 @@ async def send_dynamic(
     else:
         data["dyn_req"]["attach_card"] = None
     send_result = await request("POST", api["url"], data=data, credential=credential, params={"csrf": credential.bili_jct}, json_body=True)
-    return Dynamic(dynamic_id=send_result["dynamic_id"], credential=credential)
+    return Dynamic(dynamic_id=send_result["dyn_id"], credential=credential)
 
 # 定时动态操作
 
@@ -400,133 +526,7 @@ async def delete_schedule(draft_id: int, credential: Credential) -> dict:
     return await request("POST", api["url"], data=data, credential=credential)
 
 
-class Dynamic:
-    """
-    动态类
 
-    Attributes:
-        credential (Credential): 凭据类
-    """
-
-    def __init__(self, dynamic_id: int, credential: Union[Credential, None] = None) -> None:
-        """
-        Args:
-            dynamic_id (int)                        : 动态 ID
-            credential (Credential | None, optional): 凭据类. Defaults to None.
-        """
-        self.__dynamic_id = dynamic_id
-        self.credential = credential if credential is not None else Credential()
-
-    def get_dynamic_id(self) -> int:
-        return self.__dynamic_id
-
-    async def get_info(self) -> dict:
-        """
-        获取动态信息
-
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-
-        api = API["info"]["detail"]
-        params = {"dynamic_id": self.__dynamic_id}
-        data = await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
-
-        data["card"]["card"] = json.loads(data["card"]["card"])
-        data["card"]["extend_json"] = json.loads(data["card"]["extend_json"])
-        return data["card"]
-
-    async def get_reposts(self, offset: str = "0") -> dict:
-        """
-        获取动态转发列表
-
-        Args:
-            offset (str, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0"
-
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        api = API["info"]["repost"]
-        params: dict[str, Any] = {"dynamic_id": self.__dynamic_id}
-        if offset != "0":
-            params["offset"] = offset
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
-
-    async def get_likes(self, pn: int = 1, ps: int = 30) -> dict:
-        """
-        获取动态点赞列表
-
-        Args:
-            pn (int, optional): 页码，defaults to 1
-            ps (int, optional): 每页大小，defaults to 30
-
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        api = API["info"]["likes"]
-        params = {"dynamic_id": self.__dynamic_id, "pn": pn, "ps": ps}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
-
-    async def set_like(self, status: bool = True) -> dict:
-        """
-        设置动态点赞状态
-
-        Args:
-            status (bool, optional): 点赞状态. Defaults to True.
-
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        self.credential.raise_for_no_sessdata()
-        self.credential.raise_for_no_bili_jct()
-
-        api = API["operate"]["like"]
-
-        user_info = await user.get_self_info(credential=self.credential)
-
-        self_uid = user_info["mid"]
-        data = {
-            "dynamic_id": self.__dynamic_id,
-            "up": 1 if status else 2,
-            "uid": self_uid,
-        }
-        return await request("POST", api["url"], data=data, credential=self.credential)
-
-    async def delete(self) -> dict:
-        """
-        删除动态
-
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        self.credential.raise_for_no_sessdata()
-
-        api = API["operate"]["delete"]
-        data = {"dynamic_id": self.__dynamic_id}
-        return await request("POST", api["url"], data=data, credential=self.credential)
-
-    async def repost(self, text: str = "转发动态") -> dict:
-        """
-        转发动态
-
-        Args:
-            text (str, optional): 转发动态时的文本内容. Defaults to "转发动态"
-
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        self.credential.raise_for_no_sessdata()
-
-        api = API["operate"]["repost"]
-        data = await _get_text_data(text)
-        data["dynamic_id"] = self.__dynamic_id
-        return await request("POST", api["url"], data=data, credential=self.credential)
 
 
 async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> dict:

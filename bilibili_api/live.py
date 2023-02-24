@@ -1350,7 +1350,7 @@ async def create_live_reserve(title: str, start_time: int, credential: Credentia
     data = {
         "title": title,
         "type": 2,
-        "start_time": start_time,
+        "live_plan_start_time": start_time,
         "stime": None,
         "from": 1
     }
