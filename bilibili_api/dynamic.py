@@ -418,7 +418,7 @@ async def send_dynamic(
     }
     }
     if len(info.get_pics()) != 0:
-        data["dyn_req"]["pics"] = info.get_pics()
+        data["dyn_req"]["pics"] = pic_data
     if info.get_topic() is not None:
         data["dyn_req"]["topic"] = info.get_topic()
     if len(info.get_options()) > 0:
