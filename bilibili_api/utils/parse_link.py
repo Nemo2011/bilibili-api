@@ -127,7 +127,7 @@ async def parse_link(
         sobj = await check_short_name(url, credential)
         if sobj != -1:
             sobj[0].credential = credential
-            return sobj  # type: ignore
+            return sobj
 
         # 删去首尾部空格
         url = url.strip()
@@ -136,7 +136,7 @@ async def parse_link(
             url = "https:" + url
 
         # 转换为 yarl
-        url = URL(url)  # type: ignore
+        url = URL(url) # type: ignore
 
         # 排除小黑屋
         black_room = parse_black_room(url, credential)  # type: ignore
@@ -154,8 +154,8 @@ async def parse_link(
                 return (User(info["mid"], credential=credential), ResourceType.USER)
 
         channel = parse_season_series(
-            url, credential
-        )  # 不需要 real_url，提前处理 # type: ignore
+            url, credential # type: ignore
+        )  # 不需要 real_url，提前处理
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES)  # type: ignore
 
@@ -641,3 +641,9 @@ def parse_note(url: URL, credential: Credential) -> Union[Note, int]:
             return -1
         return Note(cvid=int(url.query.get("cvid")), note_type=NoteType.PUBLIC, credential=credential)  # type: ignore
     return -1
+
+
+def parse_nianshizhiwang(url: URL) -> None:
+    # https://www.bilibili.com/festival/nianshizhiwang?bvid=BV1yt4y1Q7SS&spm_id_from=trigger_reload
+    pass
+    # 貌似 parse_bnj 已经可以判断了
