@@ -30,7 +30,6 @@ class RankDayType(Enum):
     - THREE_DAY: 三日排行
     - WEEK: 周排行
     """
-
     THREE_DAY = 3
     WEEK = 7
 
@@ -239,3 +238,24 @@ async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW) -> dict:
     params = {"device": "pc", "platform": "web"}
     data = {"id": type_.value}
     return await request("POST", api["url"], params=params, data=data, no_csrf=True)
+
+
+async def get_live_hot_rank() -> dict:
+    """
+    获取直播人气排行榜
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_hot_rank"]
+    return await request("GET", api["url"])
+
+async def get_live_guard_rank() -> dict:
+    """
+    获取直播大航海排行榜
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_guard_rank"]
+    return await request("GET", api["url"])

@@ -114,6 +114,21 @@
                 "id": "int: 排行榜 id"
             },
             "comment":"获取漫画排行榜"
+        },
+        "live_hot_rank": {
+            "url": "https://api.live.bilibili.com/xlive/web-interface/v1/index/getHotRankList",
+            "method": "GET",
+            "verify": false,
+            "comment": "获取直播人气排行榜"
+        },
+        "live_guard_rank": {
+            "url": "https://api.live.bilibili.com/room/v2/Index/getNewRankTop?type=guard",
+            "method": "GET",
+            "verify": false,
+            "params": {
+                "type": "str: guard"
+            },
+            "comment": "获取直播大航海排行榜"
         }
     }
 }

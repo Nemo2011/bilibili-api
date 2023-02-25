@@ -137,3 +137,15 @@ from bilibili_api import rank
 获取漫画专属排行榜
 
 **Returns:** dict: 调用 API 返回的结果
+
+## async def get_live_hot_rank()
+
+获取直播热门榜
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_live_guard_rank()
+
+获取直播大航海榜
+
+**Returns:** dict: 调用 API 返回的结果
