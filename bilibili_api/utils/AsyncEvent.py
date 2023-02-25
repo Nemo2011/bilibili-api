@@ -4,7 +4,7 @@ bilibili_api.utils.AsyncEvent
 发布-订阅模式异步事件类支持。
 """
 
-from typing import Any, Coroutine, Callable
+from typing import Coroutine, Callable
 import asyncio
 
 
@@ -86,7 +86,7 @@ class AsyncEvent:
         """
         self.__ignore_events = []
 
-    def dispatch(self, name: str, data: Any = None) -> None:
+    def dispatch(self, name: str, *args, **kwargs) -> None:
         """
         异步发布事件。
 
@@ -100,7 +100,8 @@ class AsyncEvent:
         name = name.upper()
         if name in self.__handlers:
             for coroutine in self.__handlers[name]:
-                asyncio.create_task(coroutine(data))
+                asyncio.create_task(coroutine(*args, **kwargs))
 
         if name != "__ALL__":
-            self.dispatch("__ALL__", {"name": name, "data": data})
+            kwargs.update({"name": name, "data": args})
+            self.dispatch("__ALL__", kwargs)
