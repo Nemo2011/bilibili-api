@@ -114,6 +114,54 @@
                 "id": "int: 排行榜 id"
             },
             "comment":"获取漫画排行榜"
+        },
+        "live_hot_rank": {
+            "url": "https://api.live.bilibili.com/xlive/web-interface/v1/index/getHotRankList",
+            "method": "GET",
+            "verify": false,
+            "comment": "获取直播人气排行榜"
+        },
+        "live_sailing_rank": {
+            "url": "https://api.live.bilibili.com/room/v2/Index/getNewRankTop?type=guard",
+            "method": "GET",
+            "verify": false,
+            "params": {
+                "type": "str: guard"
+            },
+            "comment": "获取直播大航海主播排行榜"
+        },
+        "live_energy_user_rank": {
+            "url": "https://api.live.bilibili.com/xlive/general-interface/v1/rank/getFeedingMonthlyRankEnergy",
+            "method": "GET",
+            "verify": false,
+            "params": {
+                "date": "str: month, pre_month",
+                "page": "int: 页码",
+                "page_size": "int: 页大小"
+            },
+            "comment": "获取直播用户能量榜"
+        },
+        "live_web_top": {
+            "url": "https://api.live.bilibili.com/rankdb/v1/Rank2018/getWebTop",
+            "method": "GET",
+            "verify": false,
+            "params": {
+                "type": "str: 榜单类型",
+                "page": "int: 页码",
+                "page_size": "int: 页大小",
+                "is_trend": "int: 1 Unknown"
+            },
+            "comment": "获取直播通用排行榜"
+        },
+        "live_medal_level_rank": {
+            "url": "https://api.live.bilibili.com/xlive/general-interface/v1/Rank/GetTotalMedalLevelRank",
+            "method": "GET",
+            "verify": false,
+            "params": {
+                "page": "int: 页码",
+                "page_size": "int: 页大小"
+            },
+            "comment": "获取直播勋章等级排行榜"
         }
     }
 }
