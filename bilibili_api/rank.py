@@ -140,6 +140,33 @@ class MangeRankType(Enum):
     FINISH = 13
 
 
+class LiveRankType(Enum):
+    """
+    直播通用榜类型
+
+    - SAIL_BOAT_VALUE: 主播舰队榜
+    - SAIL_BOAT_TICKET: 船员价值榜
+    - SAIL_BOAT_NUMBER: 舰船人数榜
+    - MASTER_LEVEL: 主播等级榜
+    - USER_LEVEL: 用户等级榜
+    """
+    SAIL_BOAT_VALUE = "sail_boat_value"
+    SAIL_BOAT_TICKET = "sail_boat_ticket"
+    SAIL_BOAT_NUMBER = "sail_boat_number"
+    MASTER_LEVEL = "master_level"
+    USER_LEVEL = "user_level"
+
+class LiveEnergyRankType(Enum):
+    """
+    直播超能用户榜类型
+
+    - MONTH: 本月
+    - PRE_MONTH: 上月
+    """
+
+    MONTH = "month"
+    PRE_MONTH = "pre_month"
+
 async def get_rank(
     type_: RankType = RankType.All, day: RankDayType = RankDayType.THREE_DAY
 ) -> dict:
@@ -242,7 +269,7 @@ async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW) -> dict:
 
 async def get_live_hot_rank() -> dict:
     """
-    获取直播人气排行榜
+    获取直播首页人气排行榜
 
     Returns:
         dict: 调用 API 返回的结果
@@ -250,12 +277,59 @@ async def get_live_hot_rank() -> dict:
     api = API["info"]["live_hot_rank"]
     return await request("GET", api["url"])
 
-async def get_live_guard_rank() -> dict:
+async def get_live_sailing_rank() -> dict:
     """
-    获取直播大航海排行榜
+    获取首页直播大航海排行榜
 
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API["info"]["live_guard_rank"]
+    api = API["info"]["live_sailing_rank"]
     return await request("GET", api["url"])
+
+async def get_live_energy_user_rank(date: LiveEnergyRankType = LiveEnergyRankType.MONTH, pn: int = 1, ps: int = 20) -> dict:
+    """
+    获取直播超能用户榜
+
+    Args:
+        date (LiveEnergyRankType): 月份. Defaults to LiveEnergyRankType.MONTH
+        pn (int): 页码. Defaults to 1
+        ps (int): 每页数量. Defaults to 20
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_energy_user_rank"]
+    params = {"date": date.value, "page": pn, "page_size": ps}
+    return await request("GET", api["url"], params=params)
+
+async def get_live_rank(_type: LiveRankType = LiveRankType.SAIL_BOAT_VALUE, pn: int = 1, ps: int = 20) -> dict:
+    """
+    获取直播通用榜单
+
+    Args:
+        _type (LiveRankType): 榜单类型. Defaults to LiveRankType.VALUE
+        pn (int): 页码. Defaults to 1
+        ps (int): 每页数量. Defaults to 20
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_web_top"]
+    params = {"type": _type.value, "page": pn, "page_size": ps, "is_trend": 1, "area_id": None}
+    return await request("GET", api["url"], params=params)
+
+async def get_live_user_medal_rank(pn: int = 1, ps: int = 20) -> dict:
+    """
+    获取直播用户勋章榜
+
+    Args:
+        pn (int): 页码. Defaults to 1
+        ps (int): 每页数量. Defaults to 20
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_medal_level_rank"]
+    params = {"page": pn, "page_size": ps}
+    return await request("GET", api["url"], params=params)

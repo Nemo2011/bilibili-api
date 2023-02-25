@@ -60,8 +60,17 @@ async def test_i_get_vip_rank():
 async def test_j_get_manga_rank():
     return [await rank.get_manga_rank(rank_type) for rank_type in MangeRankType]
 
-async def test_k_get_live_guard_rank():
-    return await rank.get_live_guard_rank()
+async def test_k_get_live_sailing_rank():
+    return await rank.get_live_sailing_rank()
 
 async def test_l_get_live_hot_rank():
     return await rank.get_live_hot_rank()
+
+async def test_m_get_live_energy_user_rank():
+    return await rank.get_live_energy_user_rank()
+
+async def test_n_get_live_rank():
+    return await rank.get_live_rank()
+
+async def test_o_get_live_user_medal_rank():
+    return await rank.get_live_user_medal_rank()
