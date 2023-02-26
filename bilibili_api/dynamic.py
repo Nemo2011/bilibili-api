@@ -217,7 +217,7 @@ class BuildDynmaic:
         构建动态内容
         """
         self.contents: list = []
-        self.pic: List[Picture] = []
+        self.pics: List[Picture] = []
         self.attach_card: Optional[dict] = None
         self.topic: Optional[dict] = None
         self.options: dict = {}
@@ -280,7 +280,7 @@ class BuildDynmaic:
         Args:
             image (Picture): 图片类
         """
-        self.pic.append(image)
+        self.pics.append(image)
         return self
 
     def set_attach_card(self, oid: int) -> "BuildDynmaic":
@@ -338,7 +338,7 @@ class BuildDynmaic:
 
 
     def get_dynamic_type(self) -> SendDynmaicType:
-        if len(self.pic) != 0:
+        if len(self.pics) != 0:
             return SendDynmaicType.IMAGE
         return SendDynmaicType.TEXT
 
@@ -346,7 +346,7 @@ class BuildDynmaic:
         return self.contents
 
     def get_pics(self) -> list:
-        return self.pic
+        return self.pics
 
     def get_attach_card(self) -> Optional[dict]:
         return self.attach_card
@@ -375,7 +375,7 @@ async def send_dynamic(
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
     pic_data = []
-    for image in info.pic:
+    for image in info.pics:
         await image.upload_file(credential)
         pic_data.append({
             "img_src": image.url,
@@ -387,7 +387,7 @@ async def send_dynamic(
         api = API["send"]["schedule"]
         text = "".join([part["raw_text"] for part in info.contents if part["type"] != 4])
         send_time = info.time
-        if len(info.pic) > 0:
+        if len(info.pics) > 0:
             # 画册动态
             request_data = await _get_draw_data(text, info.pic, credential)  # type: ignore
             request_data.pop("setting")
@@ -402,7 +402,7 @@ async def send_dynamic(
         return await request("POST", api["url"], data=data, credential=credential)
 
     if info.time != None:
-        return await schedule(2 if len(info.pic) == 0 else 4)
+        return await schedule(2 if len(info.pics) == 0 else 4)
     api = API["send"]["instant"]
     data = {"dyn_req": {
         "content": {  # 必要参数
