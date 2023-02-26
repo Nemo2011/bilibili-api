@@ -80,6 +80,26 @@ from bilibili_api import rank
 - FREE: 免费
 - FINISH: 完结
 
+## class LiveRankType
+
+**Extends:enum.Enum**
+
+直播通用榜类型
+
+- SAIL_BOAT_VALUE: 主播舰队榜
+- SAIL_BOAT_TICKET: 船员价值榜
+- SAIL_BOAT_NUMBER: 舰船人数榜
+- MASTER_LEVEL: 主播等级榜
+- USER_LEVEL: 用户等级榜
+
+## class LiveEnergyRankType
+
+**Extends:enum.Enum**
+
+直播超能用户榜类型
+
+- MONTH: 本月
+- PRE_MONTH: 上月
 
 ## async def get_rank()
 
@@ -135,5 +155,52 @@ from bilibili_api import rank
 | type_ | MangaRankType | 漫画排行榜类型. Defaults to MangaRankType.NEW |
 
 获取漫画专属排行榜
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_live_hot_rank()
+
+获取直播首页人气排行榜
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_live_sailing_rank()
+
+获取首页直播大航海排行榜
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_live_energy_user_rank()
+
+| name | type | description |
+| - | - | - |
+| date | LiveEnergyRankType | 直播超能用户榜月份类型. Defaults to LiveEnergyRankType.MONTH |
+| pn | int | 页数. Defaults to 1 |
+| ps | int | 每页数量. Defaults to 20 |
+
+获取直播超能用户榜
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_live_rank()
+
+| name | type | description |
+| - | - | - |
+| type_ | LiveRankType | 直播通用榜类型. Defaults to LiveRankType.SAIL_BOAT_VALUE |
+| pn | int | 页数. Defaults to 1 |
+| ps | int | 每页数量. Defaults to 20 |
+
+获取直播通用榜单
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_live_user_medal_rank()
+
+| name | type | description |
+| - | - | - |
+| pn | int | 页数. Defaults to 1 |
+| ps | int | 每页数量. Defaults to 20 |
+
+获取直播用户勋章榜
 
 **Returns:** dict: 调用 API 返回的结果
