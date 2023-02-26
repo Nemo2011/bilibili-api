@@ -533,39 +533,3 @@ class Check:
         self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
         params = {"tmp_code": self.tmp_token}
         return json.loads(httpx.get(api["url"], params=params).text)["data"]
-
-    def send_sms(self) -> None:
-        """
-        发送验证码
-
-        **需要经过极验验证**
-        """
-        try:
-            api = API["safecenter"]["send"]
-            geetest_data = get_safecenter_geetest()
-            data = {
-                "sms_type": "loginTelCheck",
-                "type": 11,
-                "tmp_code": self.tmp_token,
-                "recaptcha_token": geetest_data["token"],  # type: ignore
-                "gee_challenge": geetest_data["challenge"],  # type: ignore
-                "gee_gt": geetest_data["gt"],  # type: ignore
-                "gee_validate": geetest_data["validate"],  # type: ignore
-                "gee_seccode": geetest_data["seccode"],  # type: ignore
-            }
-            res = json.loads(httpx.post(api["url"], data=data).text)
-            self.captcha_key = res["data"]["captcha_key"]
-        except Exception as e:
-            raise LoginError(str(e))
-
-    def complete_check(self, code: Union[int, str]) -> Credential:
-        """
-        完成验证
-
-        Args:
-            code (int | str): 验证码
-
-        Returns:
-            Credential: 凭据类
-        """
-        # XXX: 已经失效力

@@ -102,6 +102,8 @@ $ sudo apt-get install python3-tk
 
 **Returns:** Union[Credential, Check]: 如果需要验证，会返回 [`Check`](#check) 类，否则返回 `Credential` 类。
 
+**如果返回错误：验证码错误，请尝试再次完成极验验证码（极验验证码结果一个只能用一次）**
+
 ## def send_sms()
 
 **需要经过极验验证**
@@ -146,21 +148,5 @@ $ sudo apt-get install python3-tk
 获取验证信息
 
 **Returns:** dict: 调用 API 返回的结果
-
-#### def send_sms()
-
-**需要经过极验验证**
-
-发送验证码
-
-#### def complete_check()
-
-完成验证
-
-| name | type | description |
-| - | - | - |
-| code | str | 验证码 |
-
-**Returns:** Credential: 凭据类
 
 ---
