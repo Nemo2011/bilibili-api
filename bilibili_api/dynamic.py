@@ -268,9 +268,10 @@ class BuildDynmaic:
         return self
 
     def add_vote(self, vote: vote.Vote) -> "BuildDynmaic":
-        self.add_text("我发起了一个投票")  # 按照Web端的逻辑，投票动态会自动添加一段文本
+        vote_info = httpx.get("https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info?vote_id={}".format(vote.get_vote_id())).json()
+        title = vote_info["data"]["info"]["title"]
         self.contents.append(
-            {"biz_id": str(vote.vote_id), "type": DynmaicContentType.VOTE.value, "raw_text": sync(vote.get_title())})
+            {"biz_id": str(vote.get_vote_id()), "type": DynmaicContentType.VOTE.value, "raw_text": title})
         return self
 
     def add_image(self, image: Picture) -> "BuildDynmaic":

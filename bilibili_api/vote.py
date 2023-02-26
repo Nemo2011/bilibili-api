@@ -30,7 +30,7 @@ class VoteChoices:
     """
     def __init__(self) -> None:
         self.choices = []
-    
+
     def add_choice(self, desc: str, image: Optional[Union[str, Picture]] = None) -> "VoteChoices":
         """
         往 VoteChoices 添加选项
@@ -82,9 +82,12 @@ class Vote:
             vote_id (int): vote_id, 获取：https://nemo2011.github.io/bilibili-api/#/vote_id
             credential (Credential): 凭据类，非必要.
         """
-        self.vote_id = vote_id
+        self.__vote_id = vote_id
         self.credential = credential
         self.title: Optional[str] = None
+
+    def get_vote_id(self) -> int:
+        return self.__vote_id
 
     async def get_info(self) -> dict:
         """
@@ -94,7 +97,7 @@ class Vote:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["vote_info"]
-        params = {"vote_id": self.vote_id}
+        params = {"vote_id": self.get_vote_id()}
         info = await request("GET", api["url"], params=params)
         self.title = info["info"]["title"] # 为 dynmaic.BuildDnamic.add_vote 缓存 title
         return info
@@ -142,7 +145,7 @@ class Vote:
             "info[type]": _type.value,
             "info[choice_cnt]": choice_cnt,
             "info[duration]": duration,
-            "info[vote_id]": self.vote_id
+            "info[vote_id]": self.get_vote_id()
         }
         data.update(choices.get_choices())
         if choice_cnt > len(choices.choices):
