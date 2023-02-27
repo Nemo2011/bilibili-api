@@ -7,6 +7,7 @@ bilibili_api.dynamic
 import json
 import re
 import os
+import sys
 from typing import Any, List, Tuple, Union, Optional
 from enum import Enum
 
@@ -35,6 +36,7 @@ class DynamicType(Enum):
     + ARTICLE: 文章
     + VIDEO: 视频投稿
     """
+
     ALL = "all"
     ANIME = "pgc"
     ARTICLE = "article"
@@ -49,6 +51,7 @@ class SendDynmaicType(Enum):
     + TEXT: 纯文本
     + IMAGE: 图片
     """
+
     TEXT = 1
     IMAGE = 2
 
@@ -62,6 +65,7 @@ class DynmaicContentType(Enum):
     + AT: @User
     + VOTE: 投票
     """
+
     TEXT = 1
     EMOJI = 9
     AT = 2
@@ -83,7 +87,6 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
     match_result = re.finditer(pattern, text)
     uid_list = []
     names = []
-    new_text = text
     for match in match_result:
         uname = match.group()
         try:
@@ -92,25 +95,20 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
             # 没有此用户
             continue
 
-        u = user.User(int(uid))
-        user_info = await u.get_user_info()
-
-        name = user_info["name"]
         uid_list.append(str(uid))
-        names.append(name)
-        new_text = new_text.replace(f"@{uid} ", f"@{name} ")
+        names.append(uname + " ")
     at_uids = ",".join(uid_list)
     ctrl = []
-
+    last_index = 0
     for i, name in enumerate(names):
-        index = new_text.index(f"@{name}")
+        index = text.index(f"@{name}", last_index)
+        last_index = index + 1
         length = 2 + len(name)
         ctrl.append(
-            {"location": index, "type": 1,
-                "length": length, "data": int(uid_list[i])}
+            {"location": index, "type": 1, "length": length, "data": int(uid_list[i])}
         )
 
-    return new_text, at_uids, json.dumps(ctrl, ensure_ascii=False)
+    return text, at_uids, json.dumps(ctrl, ensure_ascii=False)
 
 
 async def _get_text_data(text: str) -> dict:
@@ -210,7 +208,6 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
     return return_info
 
 
-
 class BuildDynmaic:
     def __init__(self) -> None:
         """
@@ -223,15 +220,16 @@ class BuildDynmaic:
         self.options: dict = {}
         self.time: Optional[datetime] = None
 
-    def add_text(self, text: str) -> "BuildDynmaic":
+    def add_plain_text(self, text: str) -> "BuildDynmaic":
         """
-        添加文本
+        添加纯文本
 
         Args:
             text (str): 文本内容
         """
         self.contents.append(
-            {"biz_id": "", "type": DynmaicContentType.TEXT.value, "raw_text": text})
+            {"biz_id": "", "type": DynmaicContentType.TEXT.value, "raw_text": text}
+        )
         return self
 
     def add_at(self, uid: Union[int, user.User]) -> "BuildDynmaic":
@@ -243,9 +241,17 @@ class BuildDynmaic:
         """
         if isinstance(uid, user.User):
             uid = uid.__uid
-        name = httpx.get("https://api.bilibili.com/x/space/acc/info", params={"mid": uid}, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}).json()["data"]["name"]
+        name = httpx.get(
+            "https://api.bilibili.com/x/space/acc/info",
+            params={"mid": uid},
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://www.bilibili.com",
+            },
+        ).json()["data"]["name"]
         self.contents.append(
-            {"biz_id": uid, "type": DynmaicContentType.EMOJI.value, "raw_text": f"@{name}"})
+            {"biz_id": uid, "type": DynmaicContentType.AT.value, "raw_text": f"@{name}"}
+        )
         return self
 
     def add_emoji(self, emoji_id: int) -> "BuildDynmaic":
@@ -255,23 +261,35 @@ class BuildDynmaic:
         Args:
             emoji_id (int): 表情ID
         """
-        with open(os.path.join(os.path.dirname(__file__), "data/emote.json"), encoding="UTF-8") as f:
+        with open(
+            os.path.join(os.path.dirname(__file__), "data/emote.json"), encoding="UTF-8"
+        ) as f:
             emote_info = json.load(f)
         if str(emoji_id) not in emote_info:
             raise ValueError("不存在此表情")
-        self.contents.append({
-            "biz_id": "",
-            "type": DynmaicContentType.EMOJI.value,
-            "raw_text": emote_info[str(emoji_id)]
-        }
+        self.contents.append(
+            {
+                "biz_id": "",
+                "type": DynmaicContentType.EMOJI.value,
+                "raw_text": emote_info[str(emoji_id)],
+            }
         )
         return self
 
     def add_vote(self, vote: vote.Vote) -> "BuildDynmaic":
-        vote_info = httpx.get("https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info?vote_id={}".format(vote.get_vote_id())).json()
+        vote_info = httpx.get(
+            "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info?vote_id={}".format(
+                vote.get_vote_id()
+            )
+        ).json()
         title = vote_info["data"]["info"]["title"]
         self.contents.append(
-            {"biz_id": str(vote.get_vote_id()), "type": DynmaicContentType.VOTE.value, "raw_text": title})
+            {
+                "biz_id": str(vote.get_vote_id()),
+                "type": DynmaicContentType.VOTE.value,
+                "raw_text": title,
+            }
+        )
         return self
 
     def add_image(self, image: Picture) -> "BuildDynmaic":
@@ -282,6 +300,135 @@ class BuildDynmaic:
             image (Picture): 图片类
         """
         self.pics.append(image)
+        return self
+
+    def add_text(self, text: str) -> "BuildDynmaic":
+        """
+        添加文本 (可包括 at, 表情包)
+
+        Args:
+            text (str): 文本内容
+        """
+
+        def _get_ats(text: str) -> List:
+            text += " "
+            pattern = re.compile(r"(?<=@).*?(?=\s)")
+            match_result = re.finditer(pattern, text)
+            uid_list = []
+            names = []
+            for match in match_result:
+                uname = match.group()
+                try:
+                    name_to_uid_resp = httpx.get(
+                        "https://api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/name_to_uid?",
+                        params={"names": uname},
+                    )
+                    uid = name_to_uid_resp.json()["data"]["uid_list"][0]["uid"]
+                except KeyError:
+                    # 没有此用户
+                    continue
+                uid_list.append(str(uid))
+                names.append(uname)
+            data = []
+            last_index = 0
+            for i, name in enumerate(names):
+                index = text.index(f"@{name}", last_index)
+                last_index = index + 1
+                length = 2 + len(name)
+                data.append(
+                    {
+                        "location": index,
+                        "length": length,
+                        "text": f"@{name} ",
+                        "type": "at",
+                        "uid": uid_list[i],
+                    }
+                )
+            return data
+
+        def _get_emojis(text: str) -> List:
+            with open(
+                os.path.join(os.path.dirname(__file__), "data/emote.json"),
+                encoding="UTF-8",
+            ) as f:
+                emote_info = json.load(f)
+            all_emojis = []
+            for key, item in emote_info.items():
+                all_emojis.append(item)
+            pattern = re.compile(r"(?<=\[).*?(?=\])")
+            match_result = re.finditer(pattern, text)
+            emotes = []
+            for match in match_result:
+                emote = match.group(0)
+                if f"[{emote}]" not in all_emojis:
+                    continue
+                emotes.append(f"[{emote}]")
+            data = []
+            last_index = 0
+            for i, emoji in enumerate(emotes):
+                index = text.index(emoji, last_index)
+                last_index = index + 1
+                length = len(emoji)
+                data.append(
+                    {
+                        "location": index,
+                        "length": length,
+                        "text": emoji,
+                        "type": "emoji",
+                    }
+                )
+            return data
+
+        all_at_and_emoji = _get_ats(text) + _get_emojis(text)
+
+        def split_text_to_plain_at_and_emoji(text: str, at_and_emoji: List):
+            def base_split(texts: List[str], at_and_emoji: List, last_length: int):
+                if len(at_and_emoji) == 0:
+                    return texts
+                last_piece_of_text = texts.pop(-1)
+                next_at_or_emoji = at_and_emoji.pop(0)
+                texts += [
+                    last_piece_of_text[: next_at_or_emoji["location"] - last_length],
+                    next_at_or_emoji,
+                    last_piece_of_text[
+                        next_at_or_emoji["location"]
+                        + next_at_or_emoji["length"]
+                        - last_length :
+                    ],
+                ]
+                last_length += (
+                    next_at_or_emoji["length"]
+                    + next_at_or_emoji["location"]
+                    - last_length
+                )
+                return base_split(texts, at_and_emoji, last_length)
+
+            old_recursion_limit = sys.getrecursionlimit()
+            sys.setrecursionlimit(100000)
+            all_pieces = base_split([text], at_and_emoji, 0)
+            sys.setrecursionlimit(old_recursion_limit)
+            return all_pieces
+
+        all_pieces = split_text_to_plain_at_and_emoji(text, all_at_and_emoji)
+        for piece in all_pieces:
+            if isinstance(piece, str):
+                self.add_plain_text(piece)
+            elif piece["type"] == "at":
+                self.contents.append(
+                    {
+                        "biz_id": piece["uid"],
+                        "type": DynmaicContentType.AT.value,
+                        "raw_text": piece["text"],
+                    }
+                )
+            else:
+                self.contents.append(
+                    {
+                        "biz_id": "",
+                        "type": DynmaicContentType.EMOJI.value,
+                        "raw_text": piece["text"],
+                    }
+                )
         return self
 
     def set_attach_card(self, oid: int) -> "BuildDynmaic":
@@ -297,7 +444,7 @@ class BuildDynmaic:
             "type": 14,
             "biz_id": oid,
             "reserve_source": 1,  # 疑似0为视频预告但没法验证...
-            "reserve_lottery": 0
+            "reserve_lottery": 0,
         }
         return self
 
@@ -308,12 +455,12 @@ class BuildDynmaic:
         Args:
             topic_id (int): 话题ID
         """
-        self.topic = {
-            "id": topic_id
-        }
+        self.topic = {"id": topic_id}
         return self
 
-    def set_options(self, up_choose_comment: bool = False, close_comment: bool = False) -> "BuildDynmaic":
+    def set_options(
+        self, up_choose_comment: bool = False, close_comment: bool = False
+    ) -> "BuildDynmaic":
         """
         设置选项
 
@@ -337,7 +484,6 @@ class BuildDynmaic:
         self.time = time
         return self
 
-
     def get_dynamic_type(self) -> SendDynmaicType:
         if len(self.pics) != 0:
             return SendDynmaicType.IMAGE
@@ -359,10 +505,7 @@ class BuildDynmaic:
         return self.options
 
 
-async def send_dynamic(
-    info: BuildDynmaic,
-    credential: Credential
-):
+async def send_dynamic(info: BuildDynmaic, credential: Credential):
     """
     发送动态
 
@@ -378,15 +521,15 @@ async def send_dynamic(
     pic_data = []
     for image in info.pics:
         await image.upload_file(credential)
-        pic_data.append({
-            "img_src": image.url,
-            "img_width": image.width,
-            "img_height": image.height
-        })
+        pic_data.append(
+            {"img_src": image.url, "img_width": image.width, "img_height": image.height}
+        )
 
     async def schedule(type_: int):
         api = API["send"]["schedule"]
-        text = "".join([part["raw_text"] for part in info.contents if part["type"] != 4])
+        text = "".join(
+            [part["raw_text"] for part in info.contents if part["type"] != 4]
+        )
         send_time = info.time
         if len(info.pics) > 0:
             # 画册动态
@@ -405,18 +548,14 @@ async def send_dynamic(
     if info.time != None:
         return await schedule(2 if len(info.pics) == 0 else 4)
     api = API["send"]["instant"]
-    data = {"dyn_req": {
-        "content": {  # 必要参数
-            "contents": info.get_contents()
-        },
-        "scene": info.get_dynamic_type().value,  # 必要参数
-        "meta": {
-            "app_meta": {
-                "from": "create.dynamic.web",
-                        "mobi_app": "web"
+    data = {
+        "dyn_req": {
+            "content": {"contents": info.get_contents()},  # 必要参数
+            "scene": info.get_dynamic_type().value,  # 必要参数
+            "meta": {
+                "app_meta": {"from": "create.dynamic.web", "mobi_app": "web"},
             },
         }
-    }
     }
     if len(info.get_pics()) != 0:
         data["dyn_req"]["pics"] = pic_data
@@ -429,7 +568,14 @@ async def send_dynamic(
         data["dyn_req"]["attach_card"]["common_card"] = info.get_attach_card()
     else:
         data["dyn_req"]["attach_card"] = None
-    send_result = await request("POST", api["url"], data=data, credential=credential, params={"csrf": credential.bili_jct}, json_body=True)
+    send_result = await request(
+        "POST",
+        api["url"],
+        data=data,
+        credential=credential,
+        params={"csrf": credential.bili_jct},
+        json_body=True,
+    )
     return send_result
 
 
@@ -496,7 +642,9 @@ class Dynamic:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, dynamic_id: int, credential: Union[Credential, None] = None) -> None:
+    def __init__(
+        self, dynamic_id: int, credential: Union[Credential, None] = None
+    ) -> None:
         """
         Args:
             dynamic_id (int)                        : 动态 ID
@@ -633,7 +781,9 @@ async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> d
     return await request("GET", api["url"], credential=credential)
 
 
-async def get_live_users(size: int = 10, credential: Union[Credential, None] = None) -> dict:
+async def get_live_users(
+    size: int = 10, credential: Union[Credential, None] = None
+) -> dict:
     """
     获取正在直播的关注者
 
@@ -665,7 +815,13 @@ async def get_dynamic_page_UPs_info(credential: Credential) -> dict:
     return await request("GET", api["url"], credential=credential)
 
 
-async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicType] = None, host_mid: Optional[int] = None, pn: int = 1, offset: Optional[int] = None) -> List[Dynamic]:
+async def get_dynamic_page_info(
+    credential: Credential,
+    _type: Optional[DynamicType] = None,
+    host_mid: Optional[int] = None,
+    pn: int = 1,
+    offset: Optional[int] = None,
+) -> List[Dynamic]:
     """
     获取动态页动态信息
 
@@ -696,5 +852,10 @@ async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicT
     elif host_mid:  # 指定 UP 主动态
         params["host_mid"] = host_mid
 
-    dynmaic_data = await request("GET", api["url"], credential=credential, params=params)
-    return [Dynamic(dynamic_id=int(dynamic["id_str"]), credential=credential) for dynamic in dynmaic_data["items"]]
+    dynmaic_data = await request(
+        "GET", api["url"], credential=credential, params=params
+    )
+    return [
+        Dynamic(dynamic_id=int(dynamic["id_str"]), credential=credential)
+        for dynamic in dynmaic_data["items"]
+    ]
