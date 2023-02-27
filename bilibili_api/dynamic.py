@@ -292,14 +292,16 @@ class BuildDynmaic:
         )
         return self
 
-    def add_image(self, image: Picture) -> "BuildDynmaic":
+    def add_image(self, image: Union[List[Picture], Picture]) -> "BuildDynmaic":
         """
         添加图片
 
         Args:
-            image (Picture): 图片类
+            image (Picture | List[Picture]): 图片类
         """
-        self.pics.append(image)
+        if isinstance(image, Picture):
+            image = [image]
+        self.pics += image
         return self
 
     def add_text(self, text: str) -> "BuildDynmaic":
