@@ -505,7 +505,7 @@ class Article:
                     if not className:
                         # 图片
                         node = ImageNode()
-                        node.url = e.attrs.get("data-src")
+                        node.url = e.attrs.get("data-src") # type: ignore
                         node_list.append(node)
 
                     elif "latex" in className:

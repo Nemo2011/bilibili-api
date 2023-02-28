@@ -204,3 +204,14 @@ from bilibili_api import rank
 获取直播用户勋章榜
 
 **Returns:** dict: 调用 API 返回的结果
+
+## async def subscribe_music_rank()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| status | bool | 是否订阅的状态. Defaults to True. |
+| credential | Credential | 凭据类 |
+
+设置关注全站音乐榜
+
+**Returns:** dict: 调用 API 返回的结果
