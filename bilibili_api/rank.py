@@ -4,8 +4,10 @@ bilibili_api.rank
 和哔哩哔哩视频排行榜相关的 API
 """
 
+from typing import Union
 from .utils.network_httpx import request
 from .utils.utils import get_api
+from .utils.Credential import Credential
 from enum import Enum
 
 API = get_api("rank")
@@ -226,7 +228,7 @@ async def get_music_rank_weakly_detail(week: int = 1) -> dict:
 
 async def get_music_rank_weakly_musics(week: int = 1) -> dict:
     """
-    获取全站音乐榜一周的音频列表
+    获取全站音乐榜一周的音频列表(返回的音乐的 id 对应了 music.Music 类创建实例传入的 id)
 
     Args:
         week(int): 第几周. Defaults to 1.
@@ -333,3 +335,26 @@ async def get_live_user_medal_rank(pn: int = 1, ps: int = 20) -> dict:
     api = API["info"]["live_medal_level_rank"]
     params = {"page": pn, "page_size": ps}
     return await request("GET", api["url"], params=params)
+
+async def subscribe_music_rank(status: bool = True, credential: Union[Credential, None] = None):
+    """
+    设置关注全站音乐榜
+
+    Args:
+        status     (bool)      : 关注状态. Defaults to True.
+        credential (Credential): 凭据类. Defaults to None.
+    """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+    api = API["operate"]["subscribe"]
+    data = {
+        "list_id": 1,
+        "state": (1 if status else 2)
+    }
+    return await request(
+        "POST",
+        api["url"],
+        data=data,
+        credential=credential
+    )
