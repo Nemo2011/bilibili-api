@@ -189,11 +189,13 @@
       "comment": "动态点赞信息"
     },
     "detail": {
-      "url": "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail",
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail",
       "method": "GET",
       "verify": false,
       "params": {
-        "dynamic_id": "int: 动态 ID"
+        "timezone_offset":"int: 时区偏移量",
+        "dynamic_id": "int: 动态 ID",
+        "features":"str: 默认 itemOpusStyle"
       },
       "comment": "动态详细信息"
     },

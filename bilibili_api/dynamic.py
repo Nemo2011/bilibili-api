@@ -667,14 +667,11 @@ class Dynamic:
         """
 
         api = API["info"]["detail"]
-        params = {"dynamic_id": self.__dynamic_id}
+        params = {"id": self.__dynamic_id, "timezone_offset": -480, "features": "itemOpusStyle"}
         data = await request(
             "GET", api["url"], params=params, credential=self.credential
         )
-
-        data["card"]["card"] = json.loads(data["card"]["card"])
-        data["card"]["extend_json"] = json.loads(data["card"]["extend_json"])
-        return data["card"]
+        return data
 
     async def get_reposts(self, offset: str = "0") -> dict:
         """
