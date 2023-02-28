@@ -41,7 +41,15 @@ from bilibili_api import dynamic
 | ---- | ---- | ----------- |
 | text | str | 文本内容 |
 
-添加文本内容
+添加文本内容（可以附加 at 人和表情包）
+
+#### def add_plain_text()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| text | str | 文本内容 |
+
+添加纯内容
 
 #### def add_at()
 

@@ -4,6 +4,144 @@
 from bilibili_api import interactive_video
 ```
 
+## class InteractiveVideo
+
+**Extends: bilibili_api.video.Video**
+
+互动视频类
+
+### Attributes
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+### Functions
+
+**这里仅列出新增的或重写过的函数，Video 类的其他函数都可使用**
+
+#### async def up_submit_story_tree()
+| name       | type                 | description                                       |
+| ---------- | -------------------- | ------------------------------------------------- |
+| story_tree | str                  | 情节树的描述。参考 bilibili_storytree.StoryGraph  |
+| credential | Credential           | Credential 类。up 主需要拥有交互视频              |
+
+提交情节树。up 主需要拥有交互视频。
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def up_get_ivideo_pages()
+| name       | type                 | description                           |
+| ---------- | -------------------- | ------------------------------------- |
+| bvid       | str                  | BV 号。                               |
+| credential | Credential           | Credential 类。up 主需要拥有交互视频  |
+
+获取交互视频分 P。up 主需要拥有交互视频。
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_graph_version()
+
+| name       | type                 | description             |
+| ---------- | -------------------- | ----------------------- |
+| bvid       | str                  | BV 号。                 |
+| credential | Credential, optional | 凭据. Defaults to None. |
+
+ 获取剧情图版本号，仅供 `get_edge_info()` 使用。
+
+**Returns:** int: 剧情图版本号
+
+#### async def get_edge_info()
+
+| name       | type                 | description                                          |
+| ---------- | -------------------- | ---------------------------------------------------- |
+| bvid       | str                  | BV 号。                                              |
+| edge_id    | int \| None, optional        | 节点 ID，为 None 时获取根节点信息. Defaults to None. |
+| credential | Credential, optional | 凭据. Defaults to None.                              |
+
+获取剧情树节点信息。
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def mark_score()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| score | int | 互动视频分数. Defaults to 5. |
+
+为互动视频打分
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_graph()
+
+获取视频对应情节树。
+
+**Returns:** InteractiveGraph: 情节树
+
+---
+
+## class InteractiveVideoDownloaderMode
+
+**Extends: enum.Enum**
+
+互动视频下载模式
+
+- IVI: 下载可播放的 ivi 文件
+- NODE_VIDEOS: 下载所有节点的所有视频并存放在某个文件夹，每一个节点的视频命名为 `{节点 id} {节点标题 (自动去除敏感字符)}.mp4`
+- DOT_GRAPH: 下载 dot 格式的情节树图表
+- NO_PACKAGING: 前面按照 ivi 文件下载步骤进行下载，但是最终不会打包成为 ivi 文件，所有文件将存放于一个文件夹中。互动视频数据将存放在一个文件夹中，里面的文件命名/含义与拆包后的 ivi 文件完全相同。
+
+---
+
+## class InteractiveVideoDownloaderEvents
+
+**Extends: enum.Enum**
+
+| event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode | Is Built-In downloader event |
+| ----- | ------- | -------- | ---------------- | -------------- | ----------------- | ------------------------- |
+| START | 开始下载 | [x] | [x] | [x] | [x] | [ ] |
+| GET | 获取到节点信息 | [x] | [x] | [x] | [x] | [ ] |
+| PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] | [ ] |
+| DOWNLOAD_START | 开始下载单个文件 | Unknown | Unknown | [ ] | Unknown | [x] |
+| DOWNLOAD_PART | 文件分块部分完成 | Unknown | Unknown | [ ] | Unknown | [x] |
+| DOWNLOAD_SUCCESS | 完成下载 | Unknown | Unknown | [ ] | Unknown | [x] |
+| PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] | [ ] |
+| SUCCESS | 下载成功 | [x] | [x] | [x] | [x] | [ ] |
+| ABORTED | 用户暂停 | [x] | [x] | [x] | [x] | [ ] |
+| FAILED | 下载失败 | [x] | [x] | [x] | [x] | [ ] |
+
+---
+
+## class InteractiveVideoDownloader
+
+**Extends: AsyncEvent**
+
+互动视频下载类
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name               | type             | description                 |
+| ------------------ | ---------------- | --------------------------- |
+| video              | InteractiveVideo | 互动视频类                   |
+| out                | str              | 输出文件地址                  |
+| self_download_func | Coroutine \| None        | 自定义下载函数（需 async 函数） |
+| downloader_mode | InteractiveVideoDownloaderMode | 下载模式 |
+
+`self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
+
+#### async def start()
+
+开始下载
+
+#### async def abort()
+
+中断下载
+
+---
+
 ## class InteractiveButtonAlign
 
 **Extends: enum.Enum**
@@ -285,135 +423,6 @@ o----|xxx| (TEXT_RIGHT)
 获取子节点
 
 **Returns:** List[InteractiveNode]: 子节点
-
---- 
-
-## class InteractiveVideo
-
-**Extends: bilibili_api.video.Video**
-
-互动视频类
-
-### Attributes
-
-| name | type | description |
-| - | - | - |
-| credential | Credential | 凭据类 |
-
-### Functions
-
-**这里仅列出新增的或重写过的函数，Video 类的其他函数都可使用**
-
-#### async def up_submit_story_tree()
-| name       | type                 | description                                       |
-| ---------- | -------------------- | ------------------------------------------------- |
-| story_tree | str                  | 情节树的描述。参考 bilibili_storytree.StoryGraph  |
-| credential | Credential           | Credential 类。up 主需要拥有交互视频              |
-
-提交情节树。up 主需要拥有交互视频。
-
-**Returns:** dict: 调用 API 返回的结果
-
-#### async def up_get_ivideo_pages()
-| name       | type                 | description                           |
-| ---------- | -------------------- | ------------------------------------- |
-| bvid       | str                  | BV 号。                               |
-| credential | Credential           | Credential 类。up 主需要拥有交互视频  |
-
-获取交互视频分 P。up 主需要拥有交互视频。
-
-**Returns:** dict: 调用 API 返回的结果
-
-#### async def get_graph_version()
-
-| name       | type                 | description             |
-| ---------- | -------------------- | ----------------------- |
-| bvid       | str                  | BV 号。                 |
-| credential | Credential, optional | 凭据. Defaults to None. |
-
- 获取剧情图版本号，仅供 `get_edge_info()` 使用。
-
-**Returns:** int: 剧情图版本号
-
-#### async def get_edge_info()
-
-| name       | type                 | description                                          |
-| ---------- | -------------------- | ---------------------------------------------------- |
-| bvid       | str                  | BV 号。                                              |
-| edge_id    | int \| None, optional        | 节点 ID，为 None 时获取根节点信息. Defaults to None. |
-| credential | Credential, optional | 凭据. Defaults to None.                              |
-
-获取剧情树节点信息。
-
-**Returns:** dict: 调用 API 返回的结果
-
-#### async def get_graph()
-
-获取视频对应情节树。
-
-**Returns:** InteractiveGraph: 情节树
-
-
----
-
-## class InteractiveVideoDownloaderMode
-
-**Extends: enum.Enum**
-
-互动视频下载模式
-
-- IVI: 下载可播放的 ivi 文件
-- NODE_VIDEOS: 下载所有节点的所有视频并存放在某个文件夹，每一个节点的视频命名为 `{节点 id} {节点标题 (自动去除敏感字符)}.mp4`
-- DOT_GRAPH: 下载 dot 格式的情节树图表
-- NO_PACKAGING: 前面按照 ivi 文件下载步骤进行下载，但是最终不会打包成为 ivi 文件，所有文件将存放于一个文件夹中。互动视频数据将存放在一个文件夹中，里面的文件命名/含义与拆包后的 ivi 文件完全相同。
-
----
-
-## class InteractiveVideoDownloaderEvents
-
-**Extends: enum.Enum**
-
-| event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode | Is Built-In downloader event |
-| ----- | ------- | -------- | ---------------- | -------------- | ----------------- | ------------------------- |
-| START | 开始下载 | [x] | [x] | [x] | [x] | [ ] |
-| GET | 获取到节点信息 | [x] | [x] | [x] | [x] | [ ] |
-| PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] | [ ] |
-| DOWNLOAD_START | 开始下载单个文件 | Unknown | Unknown | [ ] | Unknown | [x] |
-| DOWNLOAD_PART | 文件分块部分完成 | Unknown | Unknown | [ ] | Unknown | [x] |
-| DOWNLOAD_SUCCESS | 完成下载 | Unknown | Unknown | [ ] | Unknown | [x] |
-| PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] | [ ] |
-| SUCCESS | 下载成功 | [x] | [x] | [x] | [x] | [ ] |
-| ABORTED | 用户暂停 | [x] | [x] | [x] | [x] | [ ] |
-| FAILED | 下载失败 | [x] | [x] | [x] | [x] | [ ] |
-
----
-
-## class InteractiveVideoDownloader
-
-**Extends: AsyncEvent**
-
-互动视频下载类
-
-### Functions
-
-#### def \_\_init\_\_()
-
-| name               | type             | description                 |
-| ------------------ | ---------------- | --------------------------- |
-| video              | InteractiveVideo | 互动视频类                   |
-| out                | str              | 输出文件地址                  |
-| self_download_func | Coroutine \| None        | 自定义下载函数（需 async 函数） |
-| downloader_mode | InteractiveVideoDownloaderMode | 下载模式 |
-
-`self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
-
-#### async def start()
-
-开始下载
-
-#### async def abort()
-
-中断下载
 
 ---
 
