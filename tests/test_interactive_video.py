@@ -75,3 +75,7 @@ async def test_c_get_all_nodes():
             queue.insert(0, n)
 
     return edges_info
+
+
+async def test_d_mark_score():
+    await v.mark_score(5)
