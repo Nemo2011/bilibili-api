@@ -224,6 +224,9 @@ async def parse_link(
         album = parse_album(url, credential)  # type: ignore
         if not album == -1:
             obj = (album, ResourceType.ALBUM)
+        opus_dynamic = parse_opus_dynamic(url, credential) # type: ignore
+        if not opus_dynamic == -1:
+            obj = (opus_dynamic, ResourceType.DYNAMIC)
 
         if obj == None or obj[0] == None:
             return (-1, ResourceType.FAILED)
@@ -647,3 +650,10 @@ def parse_nianshizhiwang(url: URL) -> None:
     # https://www.bilibili.com/festival/nianshizhiwang?bvid=BV1yt4y1Q7SS&spm_id_from=trigger_reload
     pass
     # 貌似 parse_bnj 已经可以判断了
+
+
+def parse_opus_dynamic(url: URL, credential: Credential) -> Union[Dynamic, int]:
+    # https://www.bilibili.com/opus/767674573455884292
+    if url.host == "www.bilibili.com" and url.parts[:2] == ("/", "opus"):
+        return Dynamic(dynamic_id=int(url.parts[-1]), credential=credential)
+    return -1
