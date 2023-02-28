@@ -537,7 +537,7 @@ class CheeseVideo:
                     elif data_type == 5:
                         dm.color = hex(dm_reader.varint())[2:]
                     elif data_type == 6:
-                        dm.set_crc32_id(dm_reader.string())
+                        dm.crc32_id = dm_reader.string()
                     elif data_type == 7:
                         dm.text = dm_reader.string()
                     elif data_type == 8:

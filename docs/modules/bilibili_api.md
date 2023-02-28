@@ -337,13 +337,11 @@ BV 号转 AV 号。
 | pool      | int, optional        | 暂不清楚。Defaults to -1.                                   |
 | attr      | int, optional        | 暂不清楚。 Defaults to -1.                                  |
 
-#### def set_crc32_id()
+#### def crack_uid()
 
-| name      | type               | description                                                 |
-| - | - | - |
-| crc32_id | str | crc32_id |
+暴力破解 UID，可能存在误差，请慎重使用。
 
-设置 crc32_id 同时破解 uid
+**Returns:** int: 真实 UID。
 
 #### def to_xml()
 

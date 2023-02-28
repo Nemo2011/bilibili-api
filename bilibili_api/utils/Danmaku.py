@@ -102,6 +102,7 @@ class Danmaku:
     def crack_uid(self):
         """
         暴力破解 UID，可能存在误差，请慎重使用。
+
         Returns:
             int: 真实 UID。
         """
