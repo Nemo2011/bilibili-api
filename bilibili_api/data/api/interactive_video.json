@@ -31,6 +31,15 @@
         "data": "故事树信息"
       },
       "comment": "保存故事树"
+    },
+    "mark_score": {
+      "url": "https://api.bilibili.com/x/stein/mark",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "mark": "int: 星数",
+        "bvid":"str: BV 号"
+      }
     }
   }
 }

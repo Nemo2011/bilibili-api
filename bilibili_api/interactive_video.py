@@ -535,6 +535,30 @@ class InteractiveVideo(Video):
 
         return await request("GET", url, params, credential=credential)
 
+    async def mark_score(self, score: int = 5):
+        """
+        为互动视频打分
+
+        Args:
+            score (int): 互动视频分数. Defaults to 5.
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+        api = API["operate"]["mark_score"]
+        data = {
+            "mark": score,
+            "bvid": self.get_bvid()
+        }
+        return await request(
+            "POST",
+            api["url"],
+            data=data,
+            credential=self.credential
+        )
+
     async def get_cid(self) -> int:
         """
         获取稿件 cid
@@ -828,7 +852,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                 url = await self.__video.get_download_url(cid=cid, html5=True)
                 await self.__download_func(
                     url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
-                )
+                ) # type: ignore
 
         root_cid = await self.__video.get_cid()
         if not root_cid in cid_set:
@@ -840,7 +864,7 @@ class InteractiveVideoDownloader(AsyncEvent):
             title = (await self.__video.get_info())["title"]
             await self.__download_func(
                 url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
-            )
+            ) # type: ignore
 
         self.dispatch("PACKAGING")
         zip = zipfile.ZipFile(
@@ -995,7 +1019,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                 url = await self.__video.get_download_url(cid=cid, html5=True)
                 await self.__download_func(
                     url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
-                )
+                ) # type: ignore
 
         root_cid = await self.__video.get_cid()
         if not root_cid in cid_set:
@@ -1007,7 +1031,7 @@ class InteractiveVideoDownloader(AsyncEvent):
             title = (await self.__video.get_info())["title"]
             await self.__download_func(
                 url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
-            )
+            ) # type: ignore
         self.dispatch("SUCCESS")
 
     async def __dot_graph_main(self) -> None:
@@ -1252,7 +1276,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                 url = await self.__video.get_download_url(cid=cid, html5=True)
                 await self.__download_func(
                     url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
-                )
+                ) # type: ignore
 
         root_cid = await self.__video.get_cid()
         if not root_cid in cid_set:
@@ -1264,7 +1288,7 @@ class InteractiveVideoDownloader(AsyncEvent):
             title = (await self.__video.get_info())["title"]
             await self.__download_func(
                 url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
-            )
+            ) # type: ignore
 
         self.dispatch("SUCCESS")
 
