@@ -2,6 +2,7 @@
 
 from bilibili_api import rank
 from bilibili_api.rank import RankType, RankDayType, VIPRankType, MangeRankType
+from .common import get_credential
 
 
 async def test_a_get_rank():
@@ -74,3 +75,6 @@ async def test_n_get_live_rank():
 
 async def test_o_get_live_user_medal_rank():
     return await rank.get_live_user_medal_rank()
+
+async def test_p_subscribe_music_rank():
+    return await rank.subscribe_music_rank(status=True, credential=get_credential())
