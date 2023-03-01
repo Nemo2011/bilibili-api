@@ -240,6 +240,11 @@ class IndexFilter:
         + SKY: SKY
         + ZDF: ZDF
         + PARTNER: 合作机构
+        + SONY: 索尼
+        + GLOBAL_NEWS: 环球
+        + PARAMOUNT: 派拉蒙
+        + WARNER: 华纳
+        + DISNEY: 迪士尼
         + DOMESTIC_OTHER: 国内其他
         + FOREIGN_OTHER: 国外其他
         """
@@ -259,6 +264,11 @@ class IndexFilter:
         PARTNER = 11
         DOMESTIC_OTHER = 12
         FOREIGN_OTHER = 13
+        SONY = 15
+        GLOBAL_NEWS = 16
+        PARAMOUNT = 17
+        WARNER = 18
+        DISNEY = 19
 
     class Payment(Enum):
         """

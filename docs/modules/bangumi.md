@@ -95,6 +95,11 @@ from bilibili_api import bangumi
 + + SKY: SKY
 + + ZDF: ZDF
 + + Partner: 合作机构
++ + SONY: 索尼
++ + GLOBAL_NEWS: 环球
++ + PARAMOUNT: 派拉蒙
++ + WARNER: 华纳
++ + DISNEY: 迪士尼
 + + DOMESTIC_OTHER: 国内其他
 + + FOREIGN_OTHER: 国外其他
 + **class Payment**: 付费条件
