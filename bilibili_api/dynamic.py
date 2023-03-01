@@ -209,6 +209,21 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
 
 
 class BuildDynmaic:
+    """
+    构建动态内容. 提供两种 API.
+
+    - 1. 链式调用构建
+
+    ``` python
+    BuildDynamic.empty().add_plain_text("114514").add_image(Picture.from_url("https://www.bilibili.com/favicon.ico"))
+    ```
+
+    - 2. 参数构建
+
+    ``` python
+    BuildDynamic.create_by_args(text="114514", topic_id=114514)
+    ```
+    """
     def __init__(self) -> None:
         """
         构建动态内容
@@ -219,6 +234,46 @@ class BuildDynmaic:
         self.topic: Optional[dict] = None
         self.options: dict = {}
         self.time: Optional[datetime] = None
+
+    @staticmethod
+    def empty():
+        """
+        新建空的动态以链式逐步构建
+        """
+        return BuildDynmaic()
+
+    @staticmethod
+    def create_by_args(
+        text: str = "",
+        pics: List[Picture] = [],
+        topic_id: int = -1,
+        vote_id: int = -1,
+        live_reserve_id: int = -1,
+        send_time: Union[datetime, None] = None
+    ):
+        """
+        通过参数构建动态
+
+        Args:
+            text            (str            , optional): 动态文字. Defaults to "".
+            pics            (List[Picture]  , optional): 动态图片列表. Defaults to [].
+            topic_id        (int            , optional): 动态话题 id. Defaults to -1.
+            vote_id         (int            , optional): 动态中的投票的 id. 将放在整个动态的最后面. Defaults to -1.
+            live_reserve_id (int            , optional): 直播预约 oid. 通过 `live.create_live_reserve` 获取. Defaults to -1.
+            send_time       (datetime | None, optional): 发送时间. Defaults to None.
+        """
+        dyn = BuildDynmaic()
+        dyn.add_text(text)
+        dyn.add_image(pics)
+        if topic_id != -1:
+            dyn.set_topic(topic_id)
+        if vote_id != -1:
+            dyn.add_vote(vote.Vote(vote_id=vote_id))
+        if live_reserve_id != -1:
+            dyn.set_attach_card(live_reserve_id)
+        if send_time != None:
+            dyn.set_send_time(send_time)
+        return dyn
 
     def add_plain_text(self, text: str) -> "BuildDynmaic":
         """
