@@ -43,6 +43,7 @@ RATELIMIT = (
 
 settings.timeout = 100
 
+
 async def test(module):
     print(Fore.YELLOW + f"::group::=========== 开始测试 {module.__name__} ===========")
     funcs = collect_test_function(module)
@@ -67,12 +68,22 @@ async def test(module):
         start_time = time.time()
         try:
             res = await func()
-            print(Fore.GREEN + "[PASSED]" + Fore.YELLOW + f" in {str(datetime.timedelta(seconds=time.time() - start_time))}s")
+            print(
+                Fore.GREEN
+                + "[PASSED]"
+                + Fore.YELLOW
+                + f" in {str(datetime.timedelta(seconds=time.time() - start_time))}s"
+            )
             if res is not None:
                 print(Fore.MAGENTA + str(res)[:100])
             result["passed"] += 1
         except Exception as e:
-            print(Fore.RED + "[FAILED]" + Fore.YELLOW + f" in {str(datetime.timedelta(seconds=time.time() - start_time))}s")
+            print(
+                Fore.RED
+                + "[FAILED]"
+                + Fore.YELLOW
+                + f" in {str(datetime.timedelta(seconds=time.time() - start_time))}s"
+            )
             print(Fore.BLUE)
             print(str(e))
             print(traceback.format_exc())

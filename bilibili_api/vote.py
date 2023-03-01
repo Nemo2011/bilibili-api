@@ -14,6 +14,7 @@ from .utils.Credential import Credential
 
 API = get_api("vote")
 
+
 class VoteType(Enum):
     """
     投票类型枚举类
@@ -21,17 +22,22 @@ class VoteType(Enum):
     + TEXT: 文字投票
     + IMAGE: 图片投票
     """
+
     TEXT = 0
     IMAGE = 1
+
 
 class VoteChoices:
     """
     投票选项类
     """
+
     def __init__(self) -> None:
         self.choices = []
 
-    def add_choice(self, desc: str, image: Optional[Union[str, Picture]] = None) -> "VoteChoices":
+    def add_choice(
+        self, desc: str, image: Optional[Union[str, Picture]] = None
+    ) -> "VoteChoices":
         """
         往 VoteChoices 添加选项
 
@@ -63,10 +69,11 @@ class VoteChoices:
         """
         results = {}
         for i in range(len(self.choices)):
-            choice_key_name = f'info[options][{i}]'
-            results[f'{choice_key_name}[desc]'] = self.choices[i]["desc"]
-            results[f'{choice_key_name}[img_url]'] = self.choices[i]["img_url"]
+            choice_key_name = f"info[options][{i}]"
+            results[f"{choice_key_name}[desc]"] = self.choices[i]["desc"]
+            results[f"{choice_key_name}[img_url]"] = self.choices[i]["img_url"]
         return results
+
 
 class Vote:
     """
@@ -76,6 +83,7 @@ class Vote:
         vote_id (int): vote_id, 获取：https://nemo2011.github.io/bilibili-api/#/vote_id
         credential (Credential): 凭据类
     """
+
     def __init__(self, vote_id: int, credential: Credential = Credential()) -> None:
         """
         Args:
@@ -99,7 +107,7 @@ class Vote:
         api = API["info"]["vote_info"]
         params = {"vote_id": self.get_vote_id()}
         info = await request("GET", api["url"], params=params)
-        self.title = info["info"]["title"] # 为 dynmaic.BuildDnamic.add_vote 缓存 title
+        self.title = info["info"]["title"]  # 为 dynmaic.BuildDnamic.add_vote 缓存 title
         return info
 
     async def get_title(self) -> str:
@@ -113,13 +121,14 @@ class Vote:
             return (await self.get_info())["info"]["title"]
         return self.title
 
-    async def update_vote(self,
+    async def update_vote(
+        self,
         title: str,
         _type: VoteType,
         choice_cnt: int,
         duration: int,
         choices: VoteChoices,
-        desc: Optional[str] = None
+        desc: Optional[str] = None,
     ) -> dict:
         """
         更新投票内容
@@ -145,7 +154,7 @@ class Vote:
             "info[type]": _type.value,
             "info[choice_cnt]": choice_cnt,
             "info[duration]": duration,
-            "info[vote_id]": self.get_vote_id()
+            "info[vote_id]": self.get_vote_id(),
         }
         data.update(choices.get_choices())
         if choice_cnt > len(choices.choices):
@@ -160,7 +169,7 @@ async def create_vote(
     duration: int,
     choices: VoteChoices,
     credential: Credential,
-    desc: Optional[str] = None
+    desc: Optional[str] = None,
 ) -> Vote:
     """
     创建投票
@@ -178,14 +187,17 @@ async def create_vote(
         Vote: Vote 类
     """
     api = API["operate"]["create"]
-    data = {"info[title]": title,
-    "info[desc]": desc,
-    "info[type]": _type.value,
-    "info[choice_cnt]": choice_cnt,
-    "info[duration]": duration
+    data = {
+        "info[title]": title,
+        "info[desc]": desc,
+        "info[type]": _type.value,
+        "info[choice_cnt]": choice_cnt,
+        "info[duration]": duration,
     }
     data.update(choices.get_choices())
     if choice_cnt > len(choices.choices):
         raise ValueError("choice_cnt 大于 choices 选项数")
-    vote_id = (await request("POST", api["url"], data=data, credential=credential))["vote_id"]
+    vote_id = (await request("POST", api["url"], data=data, credential=credential))[
+        "vote_id"
+    ]
     return Vote(vote_id=vote_id, credential=credential)

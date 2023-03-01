@@ -32,6 +32,7 @@ class RankDayType(Enum):
     - THREE_DAY: 三日排行
     - WEEK: 周排行
     """
+
     THREE_DAY = 3
     WEEK = 7
 
@@ -152,11 +153,13 @@ class LiveRankType(Enum):
     - MASTER_LEVEL: 主播等级榜
     - USER_LEVEL: 用户等级榜
     """
+
     SAIL_BOAT_VALUE = "sail_boat_value"
     SAIL_BOAT_TICKET = "sail_boat_ticket"
     SAIL_BOAT_NUMBER = "sail_boat_number"
     MASTER_LEVEL = "master_level"
     USER_LEVEL = "user_level"
+
 
 class LiveEnergyRankType(Enum):
     """
@@ -168,6 +171,7 @@ class LiveEnergyRankType(Enum):
 
     MONTH = "month"
     PRE_MONTH = "pre_month"
+
 
 async def get_rank(
     type_: RankType = RankType.All, day: RankDayType = RankDayType.THREE_DAY
@@ -279,6 +283,7 @@ async def get_live_hot_rank() -> dict:
     api = API["info"]["live_hot_rank"]
     return await request("GET", api["url"])
 
+
 async def get_live_sailing_rank() -> dict:
     """
     获取首页直播大航海排行榜
@@ -289,7 +294,10 @@ async def get_live_sailing_rank() -> dict:
     api = API["info"]["live_sailing_rank"]
     return await request("GET", api["url"])
 
-async def get_live_energy_user_rank(date: LiveEnergyRankType = LiveEnergyRankType.MONTH, pn: int = 1, ps: int = 20) -> dict:
+
+async def get_live_energy_user_rank(
+    date: LiveEnergyRankType = LiveEnergyRankType.MONTH, pn: int = 1, ps: int = 20
+) -> dict:
     """
     获取直播超能用户榜
 
@@ -305,7 +313,10 @@ async def get_live_energy_user_rank(date: LiveEnergyRankType = LiveEnergyRankTyp
     params = {"date": date.value, "page": pn, "page_size": ps}
     return await request("GET", api["url"], params=params)
 
-async def get_live_rank(_type: LiveRankType = LiveRankType.SAIL_BOAT_VALUE, pn: int = 1, ps: int = 20) -> dict:
+
+async def get_live_rank(
+    _type: LiveRankType = LiveRankType.SAIL_BOAT_VALUE, pn: int = 1, ps: int = 20
+) -> dict:
     """
     获取直播通用榜单
 
@@ -318,8 +329,15 @@ async def get_live_rank(_type: LiveRankType = LiveRankType.SAIL_BOAT_VALUE, pn: 
         dict: 调用 API 返回的结果
     """
     api = API["info"]["live_web_top"]
-    params = {"type": _type.value, "page": pn, "page_size": ps, "is_trend": 1, "area_id": None}
+    params = {
+        "type": _type.value,
+        "page": pn,
+        "page_size": ps,
+        "is_trend": 1,
+        "area_id": None,
+    }
     return await request("GET", api["url"], params=params)
+
 
 async def get_live_user_medal_rank(pn: int = 1, ps: int = 20) -> dict:
     """
@@ -336,7 +354,10 @@ async def get_live_user_medal_rank(pn: int = 1, ps: int = 20) -> dict:
     params = {"page": pn, "page_size": ps}
     return await request("GET", api["url"], params=params)
 
-async def subscribe_music_rank(status: bool = True, credential: Union[Credential, None] = None):
+
+async def subscribe_music_rank(
+    status: bool = True, credential: Union[Credential, None] = None
+):
     """
     设置关注全站音乐榜
 
@@ -348,13 +369,5 @@ async def subscribe_music_rank(status: bool = True, credential: Union[Credential
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
     api = API["operate"]["subscribe"]
-    data = {
-        "list_id": 1,
-        "state": (1 if status else 2)
-    }
-    return await request(
-        "POST",
-        api["url"],
-        data=data,
-        credential=credential
-    )
+    data = {"list_id": 1, "state": (1 if status else 2)}
+    return await request("POST", api["url"], data=data, credential=credential)

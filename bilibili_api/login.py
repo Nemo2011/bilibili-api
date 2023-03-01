@@ -213,10 +213,10 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
         "username": username,
         "password": final_password,
         "keep": True,
-        "token": geetest_data["token"], # type: ignore
-        "challenge": geetest_data["challenge"], # type: ignore
-        "validate": geetest_data["validate"], # type: ignore
-        "seccode": geetest_data["seccode"] # type: ignore
+        "token": geetest_data["token"],  # type: ignore
+        "challenge": geetest_data["challenge"],  # type: ignore
+        "validate": geetest_data["validate"],  # type: ignore
+        "seccode": geetest_data["seccode"],  # type: ignore
     }
     resp = sess.request(
         "POST",
@@ -229,16 +229,14 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
         },
         cookies={"buvid3": str(uuid.uuid1())},
     )
-    login_data = json.loads(
-        resp.text
-    )
+    login_data = json.loads(resp.text)
     if login_data["code"] == 0:
         if login_data["data"]["status"] == 1:
             return Check(login_data["data"]["url"])
         return Credential(
             sessdata=resp.cookies.get("SESSDATA"),
             bili_jct=resp.cookies.get("bili_jct"),
-            dedeuserid=resp.cookies.get("DedeUserID")
+            dedeuserid=resp.cookies.get("DedeUserID"),
         )
     else:
         raise LoginError(login_data["message"])
@@ -481,7 +479,7 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
         c = Credential(sessdata, bili_jct, dedeuserid=dede)
         return c
     elif return_data["data"]["status"] == 5:
-        return Check(return_data["data"]["url"]) # type: ignore
+        return Check(return_data["data"]["url"])  # type: ignore
     else:
         raise LoginError(return_data["message"])
 

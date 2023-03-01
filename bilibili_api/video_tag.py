@@ -20,7 +20,12 @@ class Tag:
     标签类
     """
 
-    def __init__(self, tag_name: Optional[str] = None, tag_id: Optional[int] = None, credential: Optional[Credential] = None):
+    def __init__(
+        self,
+        tag_name: Optional[str] = None,
+        tag_id: Optional[int] = None,
+        credential: Optional[Credential] = None,
+    ):
         """
         Args:
             tag_name   (str | None): 标签名. Defaults to None.

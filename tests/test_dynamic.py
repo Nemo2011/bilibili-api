@@ -15,9 +15,22 @@ draft_ids = []
 async def test_a_send_dynamic():
     # 测试发送动态
     print("测试立即发送纯文本动态")
-    text_dynamic_build = dynamic.BuildDynmaic().add_text("测试立即发送纯文本动态").add_image(Picture.from_file("./design/logo.png").upload_file_sync(credential=credential))
+    text_dynamic_build = (
+        dynamic.BuildDynmaic()
+        .add_text("测试立即发送纯文本动态")
+        .add_image(
+            Picture.from_file("./design/logo.png").upload_file_sync(
+                credential=credential
+            )
+        )
+    )
     global dy
-    dy = dynamic.Dynamic((await dynamic.send_dynamic(text_dynamic_build, credential=credential))["dyn_id"], credential=credential)
+    dy = dynamic.Dynamic(
+        (await dynamic.send_dynamic(text_dynamic_build, credential=credential))[
+            "dyn_id"
+        ],
+        credential=credential,
+    )
 
 
 async def test_b_get_schedules_list():
@@ -26,29 +39,40 @@ async def test_b_get_schedules_list():
 
 async def test_e_Dynamic_get_info():
     global dy
-    return await dy.get_info() # type: ignore
+    return await dy.get_info()  # type: ignore
+
 
 async def test_f_Dynamic_get_reposts():
-    return await dy.get_reposts() # type: ignore
+    return await dy.get_reposts()  # type: ignore
 
 
 async def test_g_Dynamic_set_like():
-    return await dy.set_like() # type: ignore
+    return await dy.set_like()  # type: ignore
+
 
 async def test_i_Dynamic_delete():
-    return await dy.delete() # type: ignore
+    return await dy.delete()  # type: ignore
+
 
 async def test_j_get_new_dynamic_users():
     return await dynamic.get_new_dynamic_users(common.get_credential())
 
+
 async def test_k_get_live_users():
-    return await dynamic.get_live_users(credential = common.get_credential())
+    return await dynamic.get_live_users(credential=common.get_credential())
+
 
 async def test_l_get_dynamic_page_UPs_info():
-    return await dynamic.get_dynamic_page_UPs_info(credential = common.get_credential())
+    return await dynamic.get_dynamic_page_UPs_info(credential=common.get_credential())
+
 
 async def test_m_get_dynamic_page_info_by_type():
-    return await dynamic.get_dynamic_page_info(credential = common.get_credential(), _type=dynamic.DynamicType.ALL)
+    return await dynamic.get_dynamic_page_info(
+        credential=common.get_credential(), _type=dynamic.DynamicType.ALL
+    )
+
 
 async def test_m_get_dynamic_page_info_by_mid():
-    return await dynamic.get_dynamic_page_info(credential = common.get_credential(), host_mid=12434430)
+    return await dynamic.get_dynamic_page_info(
+        credential=common.get_credential(), host_mid=12434430
+    )

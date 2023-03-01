@@ -26,28 +26,22 @@ async def test_e_get_suggest_keywords():
 async def test_f_search_by_order():
     return await search.search_by_type(
         "小马宝莉",
-        search_type = search.SearchObjectType.VIDEO,
-        order_type = search.OrderVideo.SCORES,
-        time_range = 10,
-        video_zone_type = video_zone.VideoZoneTypes.DOUGA_MMD,
-        page = 1,
-        debug_param_func = print,
+        search_type=search.SearchObjectType.VIDEO,
+        order_type=search.OrderVideo.SCORES,
+        time_range=10,
+        video_zone_type=video_zone.VideoZoneTypes.DOUGA_MMD,
+        page=1,
+        debug_param_func=print,
     )
 
 
 async def test_g_search_game():
-    return await search.search_games(
-        "原神"
-    )
+    return await search.search_games("原神")
 
 
 async def test_h_search_manga():
-    return await search.search_manga(
-        "来自深渊"
-    )
+    return await search.search_manga("来自深渊")
 
 
 async def test_i_search_cheese():
-    return await search.search_cheese(
-        "Python"
-    )
+    return await search.search_cheese("Python")

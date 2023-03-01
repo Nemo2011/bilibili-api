@@ -45,13 +45,8 @@ async def get_cid_info(cid: int):
         dict: 调用 https://hd.biliplus.com 的 API 返回的结果
     """
     api = API["info"]["cid_info"]
-    params = {
-        "cid": cid
-    }
-    return await request(
-        "GET", api["url"], params=params
-    )
-
+    params = {"cid": cid}
+    return await request("GET", api["url"], params=params)
 
 
 class DanmakuOperatorType(Enum):
@@ -62,6 +57,7 @@ class DanmakuOperatorType(Enum):
     + PROTECT - 保护弹幕
     + UNPROTECT - 取消保护弹幕
     """
+
     DELETE = 1
     PROTECT = 2
     UNPROTECT = 3
@@ -91,6 +87,7 @@ class VideoAppealReasonType:
     - CANNOT_CHARGE(): 不能参加充电
     - UNREAL_COPYRIGHT(source: str): 转载/自制类型错误
     """
+
     ILLEGAL = lambda: 2
     PRON = lambda: 3
     VULGAR = lambda: 4
@@ -106,6 +103,7 @@ class VideoAppealReasonType:
     OTHER = lambda: 1
     LEAD_WAR = lambda: 9
     CANNOT_CHARGE = lambda: 10
+
     @staticmethod
     def PLAGIARISM(bvid: str):
         """
@@ -115,6 +113,7 @@ class VideoAppealReasonType:
             bvid (str): 撞车对象
         """
         return {"tid": 8, "撞车对象": bvid}
+
     @staticmethod
     def UNREAL_COPYRIGHT(source: str):
         """
@@ -240,7 +239,9 @@ class Video:
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_tags(self, page_index: Union[int, None] = 0, cid: Union[int, None] = None) -> dict:
+    async def get_tags(
+        self, page_index: Union[int, None] = 0, cid: Union[int, None] = None
+    ) -> dict:
         """
         获取视频标签。
 
@@ -1188,10 +1189,7 @@ class Video:
             dict: 调用 API 返回的结果
         """
         api = API["operate"]["yjsl"]
-        data = {
-            "bvid": self.get_bvid(),
-            "aid": self.get_aid()
-        }
+        data = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await request("POST", api["url"], data=data, credential=self.credential)
 
     async def add_tag(self, name: str) -> dict:
@@ -1233,7 +1231,6 @@ class Video:
             "POST", url=api["url"], data=data, credential=self.credential
         )
 
-
     async def appeal(self, reason: Any, detail: str):
         """
         投诉稿件
@@ -1246,19 +1243,14 @@ class Video:
             dict: 调用 API 返回的结果
         """
         api = API["operate"]["appeal"]
-        data = {
-            "aid": self.get_aid(),
-            "desc": detail
-        }
+        data = {"aid": self.get_aid(), "desc": detail}
         if isfunction(reason):
             reason = reason()
         if isinstance(reason, int):
             reason = {"tid": reason}
         data.update(reason)
         # XXX: 暂不支持上传附件
-        return await request(
-            "POST", api["url"], data=data, credential=self.credential
-        )
+        return await request("POST", api["url"], data=data, credential=self.credential)
 
     async def set_favorite(
         self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
@@ -1804,6 +1796,7 @@ class VideoOnlineMonitor(AsyncEvent):
             offset += region_header[0]
         return tuple(real_data)
 
+
 class VideoQuality(Enum):
     """
     视频的视频流分辨率枚举
@@ -2025,20 +2018,28 @@ class VideoDownloadURLDataDetecter:
         audio_max_quality: AudioQuality = AudioQuality._192K,
         video_min_quality: VideoQuality = VideoQuality._360P,
         audio_min_quality: AudioQuality = AudioQuality._64K,
-        video_accepted_qualities: List[VideoQuality] = [item for _, item in VideoQuality.__dict__.items() if isinstance(item, VideoQuality)],
-        audio_accepted_qualities: List[AudioQuality] = [item for _, item in AudioQuality.__dict__.items() if isinstance(item, AudioQuality)],
+        video_accepted_qualities: List[VideoQuality] = [
+            item
+            for _, item in VideoQuality.__dict__.items()
+            if isinstance(item, VideoQuality)
+        ],
+        audio_accepted_qualities: List[AudioQuality] = [
+            item
+            for _, item in AudioQuality.__dict__.items()
+            if isinstance(item, AudioQuality)
+        ],
         codecs: List[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
         no_dolby_video: bool = False,
         no_dolby_audio: bool = False,
         no_hdr: bool = False,
-        no_hires: bool = False
+        no_hires: bool = False,
     ) -> List[
         Union[
             VideoStreamDownloadURL,
             AudioStreamDownloadURL,
             FLVStreamDownloadURL,
             HTML5MP4DownloadURL,
-            EpisodeTryMP4DownloadURL
+            EpisodeTryMP4DownloadURL,
         ]
     ]:
         """
@@ -2087,23 +2088,31 @@ class VideoDownloadURLDataDetecter:
                     continue
                 if video_stream_quality == VideoQuality.DOLBY and no_dolby_video:
                     continue
-                if video_stream_quality != VideoQuality.DOLBY and \
-                    video_stream_quality != VideoQuality.HDR and \
-                        video_stream_quality.value > video_max_quality.value:
+                if (
+                    video_stream_quality != VideoQuality.DOLBY
+                    and video_stream_quality != VideoQuality.HDR
+                    and video_stream_quality.value > video_max_quality.value
+                ):
                     continue
-                if video_stream_quality != VideoQuality.DOLBY and \
-                    video_stream_quality != VideoQuality.HDR and \
-                        video_stream_quality.value < video_min_quality.value:
+                if (
+                    video_stream_quality != VideoQuality.DOLBY
+                    and video_stream_quality != VideoQuality.HDR
+                    and video_stream_quality.value < video_min_quality.value
+                ):
                     continue
-                if video_stream_quality != VideoQuality.DOLBY and \
-                    video_stream_quality != VideoQuality.HDR and \
-                        (not video_stream_quality in video_accepted_qualities):
+                if (
+                    video_stream_quality != VideoQuality.DOLBY
+                    and video_stream_quality != VideoQuality.HDR
+                    and (not video_stream_quality in video_accepted_qualities)
+                ):
                     continue
                 video_stream_codecs = None
                 for val in VideoCodecs:
                     if val.value in video_data["codecs"]:
                         video_stream_codecs = val
-                if (not video_stream_codecs in codecs) and (video_stream_codecs != None):
+                if (not video_stream_codecs in codecs) and (
+                    video_stream_codecs != None
+                ):
                     continue
                 video_stream = VideoStreamDownloadURL(
                     url=video_stream_url,
@@ -2118,7 +2127,7 @@ class VideoDownloadURLDataDetecter:
                     continue
                 if audio_stream_quality.value < audio_min_quality.value:
                     continue
-                if (not audio_stream_quality in audio_accepted_qualities):
+                if not audio_stream_quality in audio_accepted_qualities:
                     continue
                 audio_stream = AudioStreamDownloadURL(
                     url=audio_stream_url, audio_quality=audio_stream_quality
@@ -2148,13 +2157,21 @@ class VideoDownloadURLDataDetecter:
         audio_max_quality: AudioQuality = AudioQuality._192K,
         video_min_quality: VideoQuality = VideoQuality._360P,
         audio_min_quality: AudioQuality = AudioQuality._64K,
-        video_accepted_qualities: List[VideoQuality] = [item for _, item in VideoQuality.__dict__.items() if isinstance(item, VideoQuality)],
-        audio_accepted_qualities: List[AudioQuality] = [item for _, item in AudioQuality.__dict__.items() if isinstance(item, AudioQuality)],
+        video_accepted_qualities: List[VideoQuality] = [
+            item
+            for _, item in VideoQuality.__dict__.items()
+            if isinstance(item, VideoQuality)
+        ],
+        audio_accepted_qualities: List[AudioQuality] = [
+            item
+            for _, item in AudioQuality.__dict__.items()
+            if isinstance(item, AudioQuality)
+        ],
         codecs: List[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
         no_dolby_video: bool = False,
         no_dolby_audio: bool = False,
         no_hdr: bool = False,
-        no_hires: bool = False
+        no_hires: bool = False,
     ) -> Union[
         List[FLVStreamDownloadURL],
         List[HTML5MP4DownloadURL],
@@ -2196,7 +2213,7 @@ class VideoDownloadURLDataDetecter:
                 audio_min_quality=audio_min_quality,
                 video_accepted_qualities=video_accepted_qualities,
                 audio_accepted_qualities=audio_accepted_qualities,
-                codecs=codecs
+                codecs=codecs,
             )
             video_streams = []
             audio_streams = []
@@ -2205,7 +2222,10 @@ class VideoDownloadURLDataDetecter:
                     video_streams.append(stream)
                 if isinstance(stream, AudioStreamDownloadURL):
                     audio_streams.append(stream)
-            def video_stream_cmp(s1: VideoStreamDownloadURL, s2: VideoStreamDownloadURL):
+
+            def video_stream_cmp(
+                s1: VideoStreamDownloadURL, s2: VideoStreamDownloadURL
+            ):
                 # 杜比/HDR 优先
                 if s1.video_quality == VideoQuality.DOLBY and (not no_dolby_video):
                     return 1
@@ -2221,7 +2241,10 @@ class VideoDownloadURLDataDetecter:
                 elif s1.video_codecs.value != s2.video_codecs.value:
                     return codecs.index(s2.video_codecs) - codecs.index(s1.video_codecs)
                 return -1
-            def audio_stream_cmp(s1: AudioStreamDownloadURL, s2: AudioStreamDownloadURL):
+
+            def audio_stream_cmp(
+                s1: AudioStreamDownloadURL, s2: AudioStreamDownloadURL
+            ):
                 # 杜比/Hi-Res 优先
                 if s1.audio_quality == AudioQuality.DOLBY and (not no_dolby_audio):
                     return 1
@@ -2232,6 +2255,7 @@ class VideoDownloadURLDataDetecter:
                 if s2.audio_quality == AudioQuality.HI_RES and (not no_hires):
                     return -1
                 return s1.audio_quality.value - s2.audio_quality.value
+
             video_streams.sort(key=cmp_to_key(video_stream_cmp), reverse=True)
             audio_streams.sort(key=cmp_to_key(audio_stream_cmp), reverse=True)
             if len(video_streams) == 0:

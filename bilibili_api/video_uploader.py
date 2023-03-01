@@ -40,9 +40,7 @@ async def _upload_cover(cover: Picture, credential: Credential):
     data = {
         "cover": f'data:image/jpeg;base64,{base64.b64encode(cover.content).decode("utf-8")}'
     }
-    return await request(
-        "POST", api["url"], data=data, credential=credential
-    )
+    return await request("POST", api["url"], data=data, credential=credential)
 
 
 class VideoUploaderPage:
@@ -468,9 +466,7 @@ class VideoUploader(AsyncEvent):
                 else Picture().from_file(self.cover_path)
             )
             resp = await _upload_cover(pic, self.credential)
-            self.dispatch(
-                VideoUploaderEvents.AFTER_COVER.value, {"url": resp["url"]}
-            )
+            self.dispatch(VideoUploaderEvents.AFTER_COVER.value, {"url": resp["url"]})
             return resp["image_url"]
         except Exception as e:
             self.dispatch(VideoUploaderEvents.COVER_FAILED.value, {"err": e})
@@ -907,9 +903,7 @@ class VideoEditor(AsyncEvent):
                 else Picture().from_file(self.cover_path)
             )
             resp = await _upload_cover(pic, self.credential)
-            self.dispatch(
-                VideoEditorEvents.AFTER_COVER.value, {"url": resp["url"]}
-            )
+            self.dispatch(VideoEditorEvents.AFTER_COVER.value, {"url": resp["url"]})
             self.meta["cover"] = resp["image_url"]
         except Exception as e:
             self.dispatch(VideoEditorEvents.COVER_FAILED.value, {"err": e})

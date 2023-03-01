@@ -224,6 +224,7 @@ class BuildDynmaic:
     BuildDynamic.create_by_args(text="114514", topic_id=114514)
     ```
     """
+
     def __init__(self) -> None:
         """
         构建动态内容
@@ -249,7 +250,7 @@ class BuildDynmaic:
         topic_id: int = -1,
         vote_id: int = -1,
         live_reserve_id: int = -1,
-        send_time: Union[datetime, None] = None
+        send_time: Union[datetime, None] = None,
     ):
         """
         通过参数构建动态
@@ -722,7 +723,11 @@ class Dynamic:
         """
 
         api = API["info"]["detail"]
-        params = {"id": self.__dynamic_id, "timezone_offset": -480, "features": "itemOpusStyle"}
+        params = {
+            "id": self.__dynamic_id,
+            "timezone_offset": -480,
+            "features": "itemOpusStyle",
+        }
         data = await request(
             "GET", api["url"], params=params, credential=self.credential
         )

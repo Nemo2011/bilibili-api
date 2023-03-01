@@ -103,7 +103,6 @@ async def test_p_sign_up_dahanghai():
 
 async def test_q_send_gift_from_bag():
     try:
-
         return await l.send_gift_from_bag(5702480, 255051127, 30607, 1)
     except ResponseCodeException as e:
         if e.code != 200161:
@@ -177,5 +176,10 @@ async def test_zc_get_live_followers_info():
 async def test_zd_get_unlive_followers_info():
     return await live.get_unlive_followers_info(page=1, credential=get_credential())
 
+
 async def test_ze_get_following_live():
-    return await live.create_live_reserve(credential=get_credential(), title="测试", start_time=round(time.time()) + (60 * 60 * 4))
+    return await live.create_live_reserve(
+        credential=get_credential(),
+        title="测试",
+        start_time=round(time.time()) + (60 * 60 * 4),
+    )

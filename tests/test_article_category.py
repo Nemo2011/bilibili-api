@@ -24,5 +24,5 @@ async def test_e_get_category_recommend_articles():
         category_id=3,
         order=article_category.ArticleOrder.FAVORITES,
         page_num=11,
-        page_size=4514
+        page_size=4514,
     )

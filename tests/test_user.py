@@ -221,7 +221,7 @@ async def test_zl_name2uid():
 #     global series_id
 #     return await user.del_channel_series(series_id=series_id, credential=credential)
 #
-# 
+#
 async def test_zr_get_self_same_followings():
     return await u.get_self_same_followers()
 
