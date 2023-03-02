@@ -208,7 +208,7 @@ class Picture:
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
         open(img_path, "wb").write(self.content)
         img = Image.open(img_path)
-        img.save(path, save_all=(True if self.imageType in ["webp", "jpeg"] else False))
+        img.save(path, save_all=(True if self.imageType in ["webp", "gif"] else False))
         self.url = "file://" + path
         return self
 
@@ -247,6 +247,6 @@ class Picture:
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
         open(img_path, "wb").write(self.content)
         img = Image.open(img_path)
-        img.save(path, save_all=(True if self.imageType in ["webp", "jpeg"] else False))
+        img.save(path, save_all=(True if self.imageType in ["webp", "gif"] else False))
         self.url = "file://" + path
         return self
