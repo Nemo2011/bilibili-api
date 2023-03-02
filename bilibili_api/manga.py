@@ -304,7 +304,7 @@ class Manga:
                     "x": img["x"],
                     "y": img["y"],
                     "picture": Picture.from_content(
-                        httpx.get(url, headers=HEADERS).content, "jpg"
+                        (await httpx.AsyncClient().get(url, headers=HEADERS)).content, "jpg"
                     ),
                 }
             )
@@ -343,7 +343,7 @@ async def manga_image_url_turn_to_Picture(
         return f'{token_data[0]["url"]}?token={token_data[0]["token"]}'
 
     url = await get_real_image_url(url)
-    return Picture.from_url(url)
+    return await Picture.async_load_url(url)
 
 
 async def set_follow_manga(

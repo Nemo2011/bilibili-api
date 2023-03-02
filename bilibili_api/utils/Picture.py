@@ -43,11 +43,37 @@ class Picture:
         img_path = os.path.join(tmp_dir, "test." + imgtype)
         with open(img_path, "wb+") as file:
             file.write(self.content)
-        img = Image.open(img_path, formats=(["gif"] if imgtype == "gif" else None))
+        img = Image.open(img_path)
         self.size = img.size
         self.height = img.height
         self.width = img.width
         self.imageType = imgtype
+
+    @staticmethod
+    async def async_load_url(url: str) -> "Picture":
+        """
+        加载网络图片。(async 方法)
+
+        Args:
+            url (str): 图片链接
+
+        Returns:
+            Picture: 加载后的图片对象
+        """
+        if URL(url).scheme == "":
+            url = "https:" + url
+        obj = Picture()
+        session = httpx.AsyncClient()
+        resp = await session.get(
+            url,
+            headers={
+                "User-Agent": "Mozilla/5.0"
+            },
+        )
+        obj.content = resp.read()
+        obj.url = url
+        obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1])
+        return obj
 
     @staticmethod
     def from_url(url: str) -> "Picture":
@@ -182,7 +208,7 @@ class Picture:
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
         open(img_path, "wb").write(self.content)
         img = Image.open(img_path)
-        img.save(path, save_all=True)
+        img.save(path, save_all=(True if self.imageType in ["webp", "jpeg"] else False))
         self.url = "file://" + path
         return self
 
@@ -221,6 +247,6 @@ class Picture:
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
         open(img_path, "wb").write(self.content)
         img = Image.open(img_path)
-        img.save(path, save_all=True)
+        img.save(path, save_all=(True if self.imageType in ["webp", "jpeg"] else False))
         self.url = "file://" + path
         return self

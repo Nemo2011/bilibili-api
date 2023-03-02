@@ -7,11 +7,11 @@
         "start": "docsify serve ./docs",
         "dev": "docsify start ./docs",
         "localhost": "docsify start .",
-        "localdev": "docsify serve .",
+        "localdev": "docsify serve ."
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/nemo2011/bilibili-api.git",
+        "url": "git+https://github.com/nemo2011/bilibili-api.git"
     },
     "keywords": [],
     "author": "",
@@ -24,6 +24,6 @@
         "docsify-cli": "^4.4.3",
         "greenlock-express": "^2.7.18",
         "koa": "^2.13.1",
-        "koa-bodyparser": "^4.3.0",
-    },
+        "koa-bodyparser": "^4.3.0"
+    }
 }
