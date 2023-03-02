@@ -43,7 +43,7 @@ class Picture:
         img_path = os.path.join(tmp_dir, "test." + imgtype)
         with open(img_path, "wb+") as file:
             file.write(self.content)
-        img = Image.open(img_path)
+        img = Image.open(img_path, formats=(["gif"] if imgtype == "gif" else None))
         self.size = img.size
         self.height = img.height
         self.width = img.width
@@ -67,8 +67,7 @@ class Picture:
         resp = session.get(
             url,
             headers={
-                "User-Agent": "Mozilla/5.0",
-                "Referer": "https://www.bilibili.com",
+                "User-Agent": "Mozilla/5.0"
             },
         )
         obj.content = resp.read()
@@ -183,7 +182,7 @@ class Picture:
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
         open(img_path, "wb").write(self.content)
         img = Image.open(img_path)
-        img.save(path)
+        img.save(path, save_all=True)
         self.url = "file://" + path
         return self
 
@@ -222,6 +221,6 @@ class Picture:
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
         open(img_path, "wb").write(self.content)
         img = Image.open(img_path)
-        img.save(path)
+        img.save(path, save_all=True)
         self.url = "file://" + path
         return self

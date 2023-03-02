@@ -36,9 +36,9 @@ _API = get_api("video_uploader")
 
 async def _upload_cover(cover: Picture, credential: Credential):
     api = _API["cover_up"]
-    cover = cover.convert_format("jpg")
+    cover = cover.convert_format("png")
     data = {
-        "cover": f'data:image/jpeg;base64,{base64.b64encode(cover.content).decode("utf-8")}'
+        "cover": f'data:image/png;base64,{base64.b64encode(cover.content).decode("utf-8")}'
     }
     return await request("POST", api["url"], data=data, credential=credential)
 
