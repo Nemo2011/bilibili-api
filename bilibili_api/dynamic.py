@@ -591,7 +591,7 @@ async def send_dynamic(info: BuildDynmaic, credential: Credential):
         send_time = info.time
         if len(info.pics) > 0:
             # 画册动态
-            request_data = await _get_draw_data(text, info.pic, credential)  # type: ignore
+            request_data = await _get_draw_data(text, info.pics, credential)  # type: ignore
             request_data.pop("setting")
         else:
             # 文字动态
