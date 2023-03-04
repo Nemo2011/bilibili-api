@@ -5,7 +5,7 @@ bilibili_api.black_room
 """
 
 from enum import Enum
-from typing import Union
+from typing import Union, Optional, List
 
 from .utils.utils import get_api
 from .utils.network_httpx import request
@@ -125,6 +125,30 @@ class BlackFrom(Enum):
     ADMIN = 1
     ALL = None
 
+class JuryVoteOpinion(Enum):
+    """
+    仲裁投票类型枚举，选择对应案件类型的观点
+
+    单条评论（弹幕）
+    - SUITABLE: 合适
+    - AVERAGE: 一般
+    - UNSUITABLE: 不合适
+    - UNKNOW: 无法判断
+
+    评论（弹幕）氛围
+    - ENV_GREAT: 评论环境好
+    - ENV_AVERAGE: 评论环境一般
+    - ENV_BAD: 评论环境差
+    - ENV_UNKNOW: 无法判断评论环境
+    """
+    SUITABLE = 1
+    AVERAGE = 2
+    UNSUITABLE = 3
+    UNKNOW = 4
+    ENV_GREAT = 11
+    ENV_AVERAGE = 12
+    ENV_BAD = 13
+    ENV_UNKNOW = 14
 
 API = get_api("black-room")
 
@@ -145,7 +169,7 @@ async def get_blocked_list(
         credential (Credential | None): 凭据. Defaults to None.
     """
     credential = credential if credential else Credential()
-    api = API["info"]
+    api = API["black_room"]["info"]
     params = {"pn": pn, "otype": type_.value}
     if from_.value != None:
         params["btype"] = from_.value
@@ -176,7 +200,7 @@ class BlackRoom:
         Returns:
             dict: 调用 API 返回的结果
         """
-        api = API["detail"]
+        api = API["black_room"]["detail"]
         params = {"id": self.__id}
         return await request(
             "GET", api["url"], params=params, credential=self.credential
@@ -196,3 +220,101 @@ class BlackRoom:
 
     async def set_id(self, id_) -> None:
         self.__init__(id_, self.credential)
+
+class JuryCase:
+    def __init__(self, case_id: str, credential: Credential):
+        """
+        Args:
+            case_id (str)                              : 案件 id
+            credential (Credential)                    : 凭据类
+        """
+        self.case_id = case_id
+        self.credential = credential
+
+    async def get_details(self) -> dict:
+        """
+        获取案件详细信息
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["jury"]["detail"]
+        params = {"case_id": self.case_id}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+    
+    async def get_opinions(self, pn: int = 1, ps: int = 20) -> dict:
+        """
+        获取案件的观点列表
+
+        Args:
+            pn (int, optional): 页数. Defaults to 1.
+            ps (int, optional): 每页数量. Defaults to 20.
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["jury"]["opinion"]
+        params = {"case_id": self.case_id, "pn": pn, "ps": ps}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
+
+    async def vote(self, opinion: JuryVoteOpinion, is_insider: bool, is_anonymous: bool, reason: Optional[str] = None) -> dict:
+        """
+        进行仲裁投票
+
+        Args:
+            opinion (JuryVoteOpinion): 投票选项类型
+            is_insider (bool): 是否观看此类视频
+            is_anonymous (bool): 是否匿名投票
+            reason (str, optional): 投票理由. Defaults to None.
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["jury"]["vote"]
+        data = {"case_id": self.case_id, 
+                  "vote": opinion.value, 
+                  "insiders": 1 if is_insider else 0, 
+                  "anonymous": 1 if is_anonymous else 0,
+                  "csrf": self.credential.bili_jct,
+                  }
+        if reason:
+            data["content"] = reason
+        return await request(
+            "POST", api["url"], data=data, credential=self.credential
+        )
+
+async def get_next_jury_case(credential: Credential) -> JuryCase:
+    """
+    获取下一个待审理的案件
+
+    Args:
+        credential (Credential | None, optional): 凭据类. Defaults to None.
+
+    Returns:
+        JuryCase: 案件类
+    """
+    credential.raise_for_no_sessdata()
+    api = API["jury"]["next_case"]
+    return JuryCase((await request("GET", api["url"], credential=credential))["case_id"], credential)
+
+async def get_jury_case_list(credential: Credential, pn: int = 1, ps: int = 20) -> List[JuryCase]:
+    """
+    获取仲裁案件列表
+
+    Args:
+        credential (Credential): 凭据类
+        pn (int, optional): 页数. Defaults to 1.
+        ps (int, optional): 每页数量. Defaults to 20.
+
+    Returns:
+        List[JuryCase]: 仲裁案件列表
+    """
+    api = API["jury"]["case_list"]
+    params = {"pn": pn, "ps": ps}
+    info = await request("GET", api["url"], params=params, credential=credential)
+    return [JuryCase(case["case_id"], credential) for case in info["list"]]
