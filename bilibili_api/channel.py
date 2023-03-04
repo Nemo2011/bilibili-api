@@ -134,7 +134,7 @@ class Channel:
     async def get_featured_list(
         self,
         filter: ChannelVideosFilter = ChannelVideosFilter.ALL,
-        offset: str = None,
+        offset: Optional[str] = None,
         page_size: int = 30,
     ) -> dict:
         """
@@ -165,7 +165,7 @@ class Channel:
     async def get_raw_list(
         self,
         order: ChannelVideosOrder = ChannelVideosOrder.HOT,
-        offset: str = None,
+        offset: Optional[str] = None,
         page_size: int = 30,
     ) -> dict:
         """
@@ -197,7 +197,7 @@ class Channel:
     async def get_list(
         self,
         order: ChannelVideosOrder = ChannelVideosOrder.HOT,
-        offset: str = None,
+        offset: Optional[str] = None,
         page_size: int = 30,
     ) -> dict:
         """
