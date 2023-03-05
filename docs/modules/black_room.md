@@ -63,6 +63,24 @@ from bilibili_api import black_room
 
 ---
 
+## class JuryVoteOpinion
+
+仲裁投票类型枚举，选择对应案件类型的观点
+
+    单条评论（弹幕）
+    - SUITABLE: 合适
+    - AVERAGE: 一般
+    - UNSUITABLE: 不合适
+    - UNKNOW: 无法判断
+
+    评论（弹幕）氛围
+    - ENV_GREAT: 评论环境好
+    - ENV_AVERAGE: 评论环境一般
+    - ENV_BAD: 评论环境差
+    - ENV_UNKNOW: 无法判断评论环境
+
+---
+
 ## class BlackFrom
 
 **Extends: enum.Enum**
@@ -108,3 +126,80 @@ from bilibili_api import black_room
 ## async def get_details()
 
 获取小黑屋详细信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_reason()
+
+获取小黑屋违规原因
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## class JuryCase
+
+### Attributes
+
+| name | type | description |
+| - | - | - |
+| case_id | int | 案件 id |
+| credential | Credential \| None | 凭据类 ｜
+
+### Functions
+
+#### def \_\_init\_\_()
+
+| name | type | description |
+| - | - | - |
+| case_id | int | 案件 id |
+| credential | Credential | 凭据类 |
+
+#### async def get_details()
+
+获取案件详细信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_opinions()
+
+获取案件观点列表
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def vote()
+
+| name | type | description |
+| - | - | - |
+| opinion | JuryVoteOpinion | 仲裁投票类型枚举，选择对应案件类型的观点 |
+| is_insider | bool | 是否观看此类视频 |
+| is_anonymous | bool | 是否匿名投票 |
+| reason | str, optional | 投票理由. Defaults to None. |
+
+进行仲裁投票
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_next_jury_case()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据 |
+
+获取下一个仲裁案件
+
+**Returns:** JuryCase: JuryCase 类
+
+---
+
+## async def get_jury_case_list()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据 |
+
+获取仲裁案件列表
+
+**Returns:** list: JuryCase 类列表

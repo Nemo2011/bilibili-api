@@ -242,5 +242,8 @@ async def test_zv_get_self_special_followings():
     return await user.get_self_special_followings(credential)
 
 
+async def test_zw_get_self_jury_info():
+    return await user.get_self_jury_info(credential)
+
 async def after_all():
     await u.modify_relation(user.RelationType.UNSUBSCRIBE)
