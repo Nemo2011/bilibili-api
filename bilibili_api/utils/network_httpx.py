@@ -187,7 +187,7 @@ def get_session() -> httpx.AsyncClient:
             session = httpx.AsyncClient(proxies=proxies, timeout=settings.timeout)  # type: ignore
         else:
             last_proxy = ""
-            session = httpx.AsyncClient()
+            session = httpx.AsyncClient(timeout=settings.timeout)
         __session_pool[loop] = session
 
     return session
