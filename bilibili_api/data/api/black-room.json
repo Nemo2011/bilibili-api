@@ -1,22 +1,76 @@
 {
-    "info": {
-        "url": "https://api.bilibili.com/x/credit/blocked/list",
-        "method": "GET", 
-        "verify": false,
-        "params": {
-            "btype": "int: 违规来源",
-            "otype": "int: 违规类型",
-            "pn": "int: 页码"
+    "black_room": {
+        "info": {
+            "url": "https://api.bilibili.com/x/credit/blocked/list",
+            "method": "GET", 
+            "verify": false,
+            "params": {
+                "btype": "int: 违规来源",
+                "otype": "int: 违规类型",
+                "pn": "int: 页码"
+            },
+            "comment": "获取小黑屋内容"
         },
-        "comment": "获取小黑屋内容"
+        "detail": {
+            "url": "https://api.bilibili.com/x/credit/blocked/info",
+            "method": "GET", 
+            "verify": false,
+            "params": {
+                "id": "小黑屋 id"
+            },
+            "comment": "获取小黑屋详细信息"
+        }
     },
-    "detail": {
-        "url": "https://api.bilibili.com/x/credit/blocked/info",
-        "method": "GET", 
-        "verify": false,
-        "params": {
-            "id": "小黑屋 id"
+    "jury": {
+        "detail": {
+            "url": "https://api.bilibili.com/x/credit/v2/jury/case/info",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "case_id": "案件仲裁 id"
+            },
+            "comment": "获取案件仲裁详细信息"
         },
-        "comment": "获取小黑屋详细信息"
+        "opinion": {
+            "url": "https://api.bilibili.com/x/credit/v2/jury/case/opinion",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "case_id": "案件仲裁 id",
+                "pn":"int: 页码",
+                "ps":"int: 每页数量"
+            },
+            "comment": "获取案件仲裁观点"
+        },
+        "next_case": {
+            "url": "https://api.bilibili.com/x/credit/v2/jury/case/next",
+            "method": "GET",
+            "verify": true,
+            "comment": "获取下一个案件仲裁"
+        },
+        "vote": {
+            "url": "https://api.bilibili.com/x/credit/v2/jury/vote",
+            "method": "POST",
+            "verify": true,
+            "params": {
+                "case_id": "案件仲裁 id",
+                "vote": "int: 投票结果",
+                "content": "string: 投票理由",
+                "insiders": "int: 是否观看此类视频",
+                "anonymous": "int: 是否匿名投票",
+                "csrf": "string: csrf"
+            },
+            "comment": "进行仲裁投票"
+        },
+        "case_list": {
+            "url": "https://api.bilibili.com/x/credit/v2/jury/case/list?pn=1&ps=20",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "pn":"int: 页码",
+                "ps":"int: 每页数量"
+            },
+            "comment": "获取案件仲裁列表"
+        }
     }
 }

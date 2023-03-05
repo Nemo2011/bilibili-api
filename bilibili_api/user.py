@@ -1136,3 +1136,11 @@ async def get_self_public_notes_info(
     api = API["info"]["public_notes"]
     params = {"pn": page_num, "ps": page_size}
     return await request("GET", api["url"], params=params, credential=credential)
+
+async def get_self_jury_info(credential: Credential) -> dict:
+    """
+    获取自己风纪委员信息
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["jury"]
+    return await request("GET", api["url"], credential=credential)

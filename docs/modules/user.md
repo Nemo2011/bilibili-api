@@ -653,3 +653,13 @@ from bilibili_api import user
 **Returns:** dict: 调用 API 返回的结果
 
 ---
+
+## async def get_self_jury_info()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+获取自己风纪委员信息
+
+**Returns:** dict: 调用 API 返回的结果
