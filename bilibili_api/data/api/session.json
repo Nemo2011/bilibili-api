@@ -34,6 +34,16 @@
         },
         "comment": "获取已有消息"
       },
+      "get_session_detail": {
+        "url": "https://api.vc.bilibili.com/session_svr/v1/session_svr/session_detail",
+        "method": "GET",
+        "verify": true,
+        "params": {
+          "talker_id": "int: 私聊时为用户UID 应援团时为团号",
+          "session_type": "int: 会话类型"
+        },
+        "comment": "获取会话详情"
+      },
       "likes": {
         "url": "https://api.bilibili.com/x/msgfeed/like",
         "method": "GET",

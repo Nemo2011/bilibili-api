@@ -41,6 +41,18 @@ from bilibili_api import session
 
 **Returns:** dict: 调用 API 返回结果
 
+#### async def get_session_detail()
+
+| name         | type          | description                                 |
+| ------------ | ------------- | ------------------------------------------- |
+| credential   | Credential    | 凭证                                        |
+| session_type | int, optional | 会话类型                                     |
+| talker_id    | int           | 对话人 UID                                   |
+
+获取指定会话的详细信息
+
+**Returns:** dict: 调用 API 返回结果
+
 #### async def send_msg()
 
 | name        | type          | description |
