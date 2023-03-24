@@ -99,7 +99,7 @@ async def get_sessions(credential: Credential, session_type: int = 4) -> dict:
 
     return await request("GET", api["url"], params=params, credential=credential)
 
-async def get_session_detail(credential: Credential, talker_id: int, session_type: int) -> dict:
+async def get_session_detail(credential: Credential, talker_id: int, session_type: int = 1) -> dict:
     """
     获取会话详情
 
