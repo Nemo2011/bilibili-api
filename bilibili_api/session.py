@@ -99,6 +99,24 @@ async def get_sessions(credential: Credential, session_type: int = 4) -> dict:
 
     return await request("GET", api["url"], params=params, credential=credential)
 
+async def get_session_detail(credential: Credential, talker_id: int, session_type: int = 1) -> dict:
+    """
+    获取会话详情
+
+    Args:
+        credential (Credential): Credential
+        session_type (int)       : 会话类型
+        talker_id (int)       : 会话对象的UID
+
+    Returns:
+        dict: 调用 API 返回结果
+    """
+
+    credential.raise_for_no_sessdata()
+    params = {"talker_id": talker_id, "session_type": session_type}
+    api = API["session"]["get_session_detail"]
+
+    return await request("GET", api["url"], params=params, credential=credential)
 
 async def get_likes(credential: Credential) -> dict:
     """
