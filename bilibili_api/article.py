@@ -537,6 +537,10 @@ class Article:
                         node = ImageNode()
                         node.url = field["insert"]["cut-off"]["url"]
                         self.__children.append(node)
+                    elif "native-image" in field["insert"].keys():
+                        node = ImageNode()
+                        node.url = field["insert"]["native-image"]["url"]
+                        self.__children.append(node)
                     else:
                         raise Exception()
                 else:
@@ -609,7 +613,8 @@ class Article:
         """
         sess = get_session()
         resp = await sess.get(f"https://www.bilibili.com/read/cv{self.__cvid}", 
-                              headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.62"}
+                              headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.62",
+                              "cookie": "opus-goback=1"}
                               )
         if resp.status_code == 200:
             html = resp.text
@@ -622,24 +627,6 @@ class Article:
             data = json.loads(match[1])
 
             return data
-        elif resp.status_code == 302:
-            real_url = resp.headers["location"]
-            real_resp = await sess.get(real_url, 
-                              headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.62"}
-                              )
-            if real_resp.status_code == 301:
-                real_url = real_resp.headers["location"]
-                second_real_resp = await sess.get(real_url, 
-                              headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.62"}
-                                )
-                
-                match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", second_real_resp.text)  # type: ignore
-
-                if not match:
-                    raise ApiException("找不到信息")
-
-                data = json.loads(match[1])
-                return data
 
     async def set_like(self, status: bool = True) -> dict:
         """
