@@ -97,18 +97,20 @@ class Game:
             "GET", api["url"], params=params, credential=self.credential
         )
 
-    async def get_score(self) -> dict:
-        """
-        获取游戏评分
+    # async def get_score(self) -> dict:
+    #     """
+    #     获取游戏评分
 
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        api = API["info"]["score"]
-        params = {"game_base_id": self.__game_id}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+    #     该接口需要鉴权，暂时停用
+
+    #     Returns:
+    #         dict: 调用 API 返回的结果
+    #     """
+    #     api = API["info"]["score"]
+    #     params = {"game_base_id": self.__game_id}
+    #     return await request(
+    #         "GET", api["url"], params=params, credential=self.credential
+    #     )
 
     # async def get_comments(self) -> dict:
     #     """
