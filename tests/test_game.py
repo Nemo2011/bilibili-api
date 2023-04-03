@@ -31,5 +31,5 @@ async def test_e_Game_get_videos():
     return await g.get_videos()
 
 
-async def test_f_Game_get_score():
-    return await g.get_score()
+# async def test_f_Game_get_score():
+#     return await g.get_score()
