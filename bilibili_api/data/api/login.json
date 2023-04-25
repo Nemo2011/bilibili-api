@@ -1,7 +1,7 @@
 {
     "qrcode": {
         "get_qrcode_and_token": {
-            "url": "http://passport.bilibili.com/qrcode/getLoginUrl",
+            "url": "https://passport.bilibili.com/qrcode/getLoginUrl",
             "method": "GET",
             "verify": false,
             "comment": "请求二维码及登录密钥"
