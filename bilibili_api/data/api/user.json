@@ -99,7 +99,7 @@
       "comment": "直播间基本信息"
     },
     "video": {
-      "url": "https://api.bilibili.com/x/space/arc/search",
+      "url": "https://api.bilibili.com/x/space/wbi/arc/search",
       "method": "GET",
       "verify": false,
       "params": {
@@ -146,7 +146,7 @@
       "comment": "音频"
     },
     "article": {
-      "url": "https://api.bilibili.com/x/space/article",
+      "url": "https://api.bilibili.com/x/space/wbi/article",
       "method": "GET",
       "verify": false,
       "params": {
