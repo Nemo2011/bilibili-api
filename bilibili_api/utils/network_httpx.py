@@ -138,8 +138,8 @@ async def request(
     content_type = resp.headers.get("content-type")
 
     # 不是 application/json
-    if content_type.lower().index("application/json") == -1:
-        raise ResponseException("响应不是 application/json 类型")
+    # if content_type.lower().index("application/json") == -1:
+    #     raise ResponseException("响应不是 application/json 类型")
 
     raw_data = resp.text
     resp_data: dict
