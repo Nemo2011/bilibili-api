@@ -12,7 +12,7 @@ from .utils.network_httpx import request
 from .exceptions.ArgsException import ArgsException
 from .utils.Credential import Credential
 from .utils.utils import get_api, join
-from typing import List, Union
+from typing import List, Union, Optional
 
 API = get_api("favorite-list")
 
@@ -43,6 +43,17 @@ class FavoriteListType(Enum):
     VIDEO = "video"
     ARTICLE = "articles"
     CHEESE = "pugvfav"
+
+class SearchFavoriteListMode(Enum):
+    """
+    收藏夹搜索模式枚举
+
+    + ONLY : 仅当前收藏夹
+    + ALL  : 该用户所有收藏夹
+    """
+
+    ONLY = 0
+    ALL = 1
 
 
 class FavoriteList:
@@ -158,16 +169,20 @@ async def get_video_favorite_list(
     return await request("GET", url=api["url"], params=params, credential=credential)
 
 
+
 async def get_video_favorite_list_content(
     media_id: int,
     page: int = 1,
     keyword: Union[str, None] = None,
     order: FavoriteListContentOrder = FavoriteListContentOrder.MTIME,
     tid: int = 0,
+    mode: SearchFavoriteListMode = SearchFavoriteListMode.ONLY,
     credential: Union[Credential, None] = None,
 ) -> dict:
     """
-    获取视频收藏夹列表内容。
+    获取视频收藏夹列表内容，也可用于搜索收藏夹内容。
+
+    mode 参数见 SearchFavoriteListMode 枚举。
 
     Args:
         media_id   (int)                               : 收藏夹 ID。
@@ -175,6 +190,7 @@ async def get_video_favorite_list_content(
         keyword    (str, optional)                     : 搜索关键词. Defaults to None.
         order      (FavoriteListContentOrder, optional): 排序方式. Defaults to FavoriteListContentOrder.MTIME.
         tid        (int, optional)                     : 分区 ID. Defaults to 0.
+        mode       (SearchFavoriteListMode, optional)  : 搜索模式，默认仅当前收藏夹.
         credential (Credential, optional)              : Credential. Defaults to None.
 
     Returns:
@@ -187,6 +203,7 @@ async def get_video_favorite_list_content(
         "ps": 20,
         "order": order.value,
         "tid": tid,
+        "type": mode.value,
     }
 
     if keyword is not None:

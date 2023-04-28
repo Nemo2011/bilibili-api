@@ -28,6 +28,16 @@ from bilibili_api import favorite_list
 + CHEESE : 课程收藏夹
 ---
 
+## class SearchFavoriteListMode
+
+**Extends:** enum.Enum
+
+收藏夹搜索模式枚举
+
++ ONLY : 仅当前收藏夹
++ ALL  : 该用户所有收藏夹
+
+---
 ## class FavoriteList
 
 收藏夹类
@@ -108,14 +118,17 @@ from bilibili_api import favorite_list
 
 | name       | type                               | description                                           |
 | ---------- | ---------------------------------- | :---------------------------------------------------- |
-| media_id   | int                                | 收藏夹 ID                                             |
-| page       | int, optional                      | 页码. Defaults to 1.                                  |
-| keyword    | str \| None, optional                      | 搜索关键词. Defaults to None.                         |
-| order      | FavoriteListContentOrder, optional | 排序方式. Defaults to FavoriteListContentOrder.MTIME. |
+| media_id   | int                                | 收藏夹 ID                                              |
+| page       | int, optional                      | 页码. Defaults to 1.                                   |
+| keyword    | str \| None, optional              | 搜索关键词. Defaults to None.                           |
+| order      | FavoriteListContentOrder, optional | 排序方式. Defaults to FavoriteListContentOrder.MTIME.  |
 | tid        | int, optional                      | 分区 ID. Defaults to 0.                               |
-| credential | Credential \| None, optional               | 凭据. Defaults to None.                               |
+| mode       | SearchFavoriteListMode, optional   | 搜索模式，默认仅当前收藏夹.                               |
+| credential | Credential \| None, optional        | 凭据. Defaults to None.                              |
 
-获取视频收藏夹列表内容。
+获取视频收藏夹列表内容，也可用于搜索收藏夹内容。
+
+mode 参数见 SearchFavoriteListMode 枚举。
 
 **Returns:** dict: 调用 API 返回的结果
 
