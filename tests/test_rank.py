@@ -89,3 +89,12 @@ async def test_o_get_live_user_medal_rank():
 
 async def test_p_subscribe_music_rank():
     return await rank.subscribe_music_rank(status=True, credential=get_credential())
+
+async def test_q_get_playlet_rank_phases():
+    phases = await rank.get_playlet_rank_phases()
+    global phase_id
+    phase_id = phases["editorChoicePhaseId"]
+    return phases
+
+async def test_r_get_playlet_rank_info():
+    return await rank.get_playlet_rank_info(phase_id=phase_id)
