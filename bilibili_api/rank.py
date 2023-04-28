@@ -371,3 +371,29 @@ async def subscribe_music_rank(
     api = API["operate"]["subscribe"]
     data = {"list_id": 1, "state": (1 if status else 2)}
     return await request("POST", api["url"], data=data, credential=credential)
+
+async def get_playlet_rank_phases():
+    """
+    获取全站短剧榜期数
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["playlet_rank_phase"]
+    return await request("POST", api["url"], data={}, json_body=True, no_csrf=True)
+
+async def get_playlet_rank_info(phase_id: int):
+    """
+    获取全站短剧榜
+
+    https://www.bilibili.com/v/popular/drama/
+
+    Args:
+        phase_id (int): 期数，从 get_playlet_rank_phase 获取
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["playlet_rank_info"]
+    data = {"phaseID": phase_id}
+    return await request("POST", api["url"], data=data, json_body=True, no_csrf=True)
