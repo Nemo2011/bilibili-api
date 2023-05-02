@@ -7,7 +7,7 @@
             "comment": "请求二维码及登录密钥"
         },
         "get_events": {
-            "url": "http://passport.bilibili.com/qrcode/getLoginInfo",
+            "url": "https://passport.bilibili.com/qrcode/getLoginInfo",
             "method": "POST",
             "verify": false,
             "data": {
