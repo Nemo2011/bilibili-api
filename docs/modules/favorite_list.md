@@ -285,3 +285,16 @@ mode 参数见 SearchFavoriteListMode 枚举。
 清除视频收藏夹失效内容
 
 **Returns:** dict: 调用 API 返回的结果
+
+
+## async def get_favorite_collected()
+
+| name       | type              | description         |
+| ---------- | ----------------- | :------------------ |
+| uid        | int               | 用户 UID             |
+| page       | int, optional     | 页码. Defaults to 1. |
+| credential | Credential        | 凭据                 |
+
+获取收藏合集列表
+
+**Returns:** dict: 调用 API 返回的结果

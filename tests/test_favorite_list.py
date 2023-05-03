@@ -105,6 +105,11 @@ async def test_n_delete_video_favorite_list():
     return data
 
 
+async def test_get_favorite_collected():
+    data = await favorite_list.get_favorite_collected(uid, 1, credential)
+    return data
+
+
 async def after_all():
     # 清理默认收藏夹中的视频
     v = video.Video(aid=aids[0], credential=credential)
