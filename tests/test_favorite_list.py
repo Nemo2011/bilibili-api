@@ -105,8 +105,13 @@ async def test_n_delete_video_favorite_list():
     return data
 
 
-async def test_get_favorite_collected():
-    data = await favorite_list.get_favorite_collected(uid, 1, credential)
+async def test_get_favorite_collected_1():
+    data = await favorite_list.get_favorite_collected(uid, credential=credential)
+    return data
+
+
+async def test_get_favorite_collected_2():
+    data = await favorite_list.get_favorite_collected(uid, 1, 20, credential)
     return data
 
 
