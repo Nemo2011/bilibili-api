@@ -535,3 +535,23 @@ async def clean_video_favorite_list_content(
     data = {"media_id": media_id}
 
     return await request("POST", api["url"], data=data, credential=credential)
+
+
+async def get_favorite_collected(
+    uid: int,
+    pn: int = 1,
+    ps: int = 20,
+    credential: Union[Credential, None] = None,
+) -> dict:
+    """
+    获取收藏合集列表
+
+    Args:
+        uid        (int)                               : 用户 UID。
+        pn         (int, optional)                     : 页码. Defaults to 1.
+        ps         (int, optional)                     : 每页数据大小. Defaults to 20.
+        credential (Credential | None, optional)       : Credential. Defaults to None.
+    """
+    api = API["info"]["collected"]
+    params = {"up_mid": uid, "platform": "web", "pn": pn, "ps": ps}
+    return await request("GET", api["url"], params=params, credential=credential)
