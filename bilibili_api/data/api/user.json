@@ -108,7 +108,7 @@
         "tid": "int: 分区 ID，0 表示全部",
         "pn": "int: 页码",
         "keyword": "str: 关键词，可为空",
-        "order": "str: pubdate 上传日期，pubdate 播放量，pubdate 收藏量"
+        "order": "str: pubdate 上传日期，click 播放量，stow 收藏量"
       },
       "comment": "搜索用户视频"
     },
