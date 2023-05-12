@@ -57,11 +57,15 @@ from bilibili_api import favorite_list
 | media_id   | int \| None                                | 收藏夹 ID                                             |
 | credential | Credential \| None, optional               | 凭据. Defaults to None.                               |
 
+---
+
 #### def is_video_favorite_list()
 
 收藏夹是否为视频收藏夹
 
 **Returns:** bool: 是否为视频收藏夹
+
+---
 
 #### def get_favorite_list_type()
 
@@ -69,11 +73,22 @@ from bilibili_api import favorite_list
 
 **Returns:** FavoriteListType: 收藏夹类型
 
+---
+
 #### def get_media_id()
 
 获取收藏夹 id
 
 **Returns:** int: 收藏夹 id
+
+---
+#### def get_info()
+
+获取收藏夹信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
 
 #### async def get_content_video()
 
@@ -88,6 +103,8 @@ from bilibili_api import favorite_list
 
 **Returns:** dict: 调用 API 返回的结果
 
+---
+
 #### async def get_content()
 
 | name       | type                               | description                                           |
@@ -97,6 +114,14 @@ from bilibili_api import favorite_list
 获取收藏夹内容。
 
 **Returns:** dict: 调用 API 返回的结果
+
+---
+
+#### async def get_content_ids_info()
+
+获取收藏夹所有内容的 ID。
+
+**Returns:** dict: 收藏夹所有内容的 ID 信息
 
 ---
 

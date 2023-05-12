@@ -95,6 +95,20 @@ class FavoriteList:
     def get_favorite_list_type(self) -> FavoriteListType:
         return self.__type
 
+    async def get_info(self):
+        """
+        获取收藏夹信息。
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        assert self.__media_id != None, "视频收藏夹需要 media_id"
+        
+        api = API["info"]["info"]
+        params = {"media_id": self.__media_id}
+
+        return await request("GET", url=api["url"], params=params, credential=self.credential)
+
     async def get_content_video(
         self,
         page: int = 1,
@@ -143,6 +157,19 @@ class FavoriteList:
         else:
             raise ArgsException("无法识别传入的类型")
 
+    async def get_content_ids_info(self) -> dict:
+        """
+        获取收藏夹所有内容的 ID。
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        assert self.__media_id != None, "视频收藏夹需要 media_id"
+
+        api = API["info"]["list_content_id_list"]
+        params = {"media_id": self.__media_id}
+
+        return await request("GET", url=api["url"], params=params, credential=self.credential)
 
 async def get_video_favorite_list(
     uid: int,
