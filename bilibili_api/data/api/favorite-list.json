@@ -11,6 +11,15 @@
       },
       "comment": "获取收藏夹列表。提供 type 和 rid 时会同时提供对该资源收藏情况。"
     },
+    "info": {
+      "url": "https://api.bilibili.com/x/v3/fav/folder/info",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "media_id": "int: 收藏夹 ID"
+      },
+      "comment": "获取收藏夹信息。"
+    },
     "list_content": {
       "url": "https://api.bilibili.com/x/v3/fav/resource/list",
       "method": "GET",
@@ -25,6 +34,15 @@
         "tid": "int: 分区 ID。0 为全部分区。"
       },
       "comment": "获取收藏夹列表内容。"
+    },
+    "list_content_id_list": {
+      "url": "https://api.bilibili.com/x/v3/fav/resource/ids",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "media_id": "int: 收藏夹 ID"
+      },
+      "comment": "获取收藏夹所有内容的 ID。"
     },
     "list_topics": {
       "url": "https://app.bilibili.com/x/topic/web/fav/list",

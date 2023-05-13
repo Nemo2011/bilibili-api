@@ -1,19 +1,36 @@
 {
     "qrcode": {
         "get_qrcode_and_token": {
-            "url": "https://passport.bilibili.com/qrcode/getLoginUrl",
+            "url": "https://passport.bilibili.com/x/passport-login/web/qrcode/generate?source=main-fe-header",
             "method": "GET",
             "verify": false,
             "comment": "请求二维码及登录密钥"
         },
         "get_events": {
-            "url": "http://passport.bilibili.com/qrcode/getLoginInfo",
-            "method": "POST",
+            "url": "https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header",
+            "method": "GET",
             "verify": false,
             "data": {
-                "oauthKey": "str: 登陆密钥"
+                "qrcode_key": "str: 登陆密钥"
             },
             "comment": "获取最新信息"
+        },
+        "old": {
+            "get_qrcode_and_token": {
+                "url": "https://passport.bilibili.com/qrcode/getLoginUrl",
+                "method": "GET",
+                "verify": false,
+                "comment": "旧请求二维码及登录密钥"
+            },
+            "get_events": {
+                "url": "https://passport.bilibili.com/qrcode/getLoginInfo",
+                "method": "POST",
+                "verify": false,
+                "data": {
+                    "oauthKey": "str: 登陆密钥"
+                },
+                "comment": "旧获取最新信息"
+            }
         }
     },
     "password": {

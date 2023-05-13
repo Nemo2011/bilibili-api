@@ -56,22 +56,22 @@ def check_qrcode_events(login_key) -> Tuple[QrCodeLoginEvents, Union[str, Creden
         Tuple[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
     """
     events_api = API["qrcode"]["get_events"]
-    data = {"oauthKey": login_key}
+    params = {"qrcode_key": login_key}
     events = json.loads(
-        requests.post(
+        requests.get(
             events_api["url"],
-            data=data,
+            params=params,
             cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
         ).text
     )
     if "code" in events.keys() and events["code"] == -412:
         raise LoginError(events["message"])
-    if events["data"] == -4:
+    if events["data"]["code"] == 86101:
         return QrCodeLoginEvents.SCAN, events["message"]
-    elif events["data"] == -5:
+    elif events["data"]["code"] == 86090:
         return QrCodeLoginEvents.CONF, events["message"]
-    elif isinstance(events["data"], dict):
-        url = events["data"]["url"]
+    elif events["data"]["code"] == 0:
+        url: str = events["data"]["url"]
         cookies_list = url.split("?")[1].split("&")
         sessdata = ""
         bili_jct = ""
