@@ -215,3 +215,22 @@ from bilibili_api import rank
 设置关注全站音乐榜
 
 **Returns:** dict: 调用 API 返回的结果
+
+
+## async def get_playlet_rank_phases
+
+获取全站短剧榜期数
+
+**Returns:** dict: 调用 API 返回的结果
+
+## async def get_playlet_rank_info
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| phase_id | int | 期数，从 get_playlet_rank_phase 获取 |
+
+获取全站短剧榜
+
+https://www.bilibili.com/v/popular/drama/
+
+**Returns:** dict: 调用 API 返回的结果

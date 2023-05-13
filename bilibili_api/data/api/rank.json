@@ -162,6 +162,22 @@
         "page_size": "int: 页大小"
       },
       "comment": "获取直播勋章等级排行榜"
+    },
+    "playlet_rank_phase": {
+      "url": "https://api.bilibili.com/pgc/activity/rank/ugc/playlet/queryList",
+      "method": "POST",
+      "verify": false,
+      "data": {},
+      "comment": "获取短剧榜期数"
+    },
+    "playlet_rank_info": {
+      "url": "https://api.bilibili.com/pgc/activity/rank/ugc/playlet/queryInfo",
+      "method": "POST",
+      "verify": false,
+      "data": {
+        "phaseID": "int: 期数"
+      },
+      "comment": "获取短剧榜信息"
     }
   },
   "operate": {
