@@ -97,22 +97,27 @@ def login_with_qrcode(root=None) -> Credential:
         global start, credential, is_destroy
         # log.configure(text="点下确认啊！", fg="orange", font=big_font)
         events_api = API["qrcode"]["get_events"]
-        data = {"oauthKey": login_key}
+        params = {"qrcode_key": login_key}
         events = json.loads(
-            requests.post(
+            requests.get(
                 events_api["url"],
-                data=data,
+                params=params,
                 cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
             ).text
         )
+        # print(events)
+        # 新的 events["data"]
+        # {'url': '', 'refresh_token': '', 'timestamp': 0, 'code': 86101, 'message': '未扫码'}
+        # {'url': '', 'refresh_token': '', 'timestamp': 0, 'code': 86090, 'message': '二维码已扫码未确认'}
+        # {'url': 'https://passport.biligame.com/x/passport-login/web/crossDomain?DedeUserID=x&DedeUserID__ckMd5=x&Expires=x&SESSDATA=x&bili_jct=x&gourl=x', 'refresh_token': 'x', 'timestamp': 1683903305723, 'code': 0, 'message': ''}
         if "code" in events.keys() and events["code"] == -412:
             raise LoginError(events["message"])
-        if events["data"] == -4:
+        if events["data"]["code"] == 86101:
             log.configure(text="请扫描二维码↑", fg="red", font=big_font)
-        elif events["data"] == -5:
+        elif events["data"]["code"] == 86090:
             log.configure(text="点下确认啊！", fg="orange", font=big_font)
-        elif isinstance(events["data"], dict):
-            url = events["data"]["url"]
+        elif events["data"]["code"] == 0:
+            url: str = events["data"]["url"]
             cookies_list = url.split("?")[1].split("&")
             sessdata = ""
             bili_jct = ""
@@ -153,7 +158,7 @@ def update_qrcode() -> str:
     global login_key, qrcode_image
     api = API["qrcode"]["get_qrcode_and_token"]
     qrcode_login_data = json.loads(httpx.get(api["url"]).text)["data"]
-    login_key = qrcode_login_data["oauthKey"]
+    login_key = qrcode_login_data["qrcode_key"]
     qrcode = qrcode_login_data["url"]
     qrcode_image = make_qrcode(qrcode)
     return qrcode_image
