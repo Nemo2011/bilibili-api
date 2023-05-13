@@ -33,6 +33,16 @@
       "verify": false,
       "comment": "获取热搜"
     },
+    "app_hot_search_keywords":
+    {
+      "url": "https://app.bilibili.com/x/v2/search/trending/ranking?limit=30",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "limit": "int: 热搜数量"
+      },
+      "comment": "获取APP接口热搜"
+    },
     "suggest": {
       "url": "https://s.search.bilibili.com/main/suggest",
       "method": "GET",

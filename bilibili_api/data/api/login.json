@@ -14,6 +14,23 @@
                 "qrcode_key": "str: 登陆密钥"
             },
             "comment": "获取最新信息"
+        },
+        "old": {
+            "get_qrcode_and_token": {
+                "url": "https://passport.bilibili.com/qrcode/getLoginUrl",
+                "method": "GET",
+                "verify": false,
+                "comment": "旧请求二维码及登录密钥"
+            },
+            "get_events": {
+                "url": "https://passport.bilibili.com/qrcode/getLoginInfo",
+                "method": "POST",
+                "verify": false,
+                "data": {
+                    "oauthKey": "str: 登陆密钥"
+                },
+                "comment": "旧获取最新信息"
+            }
         }
     },
     "password": {
@@ -30,26 +47,19 @@
             "comment": "获取极验信息"
         },
         "login": {
-            "url": "https://passport.bilibili.com/x/passport-login/oauth2/login",
+            "url": "https://passport.bilibili.com/x/passport-login/web/login",
             "method": "POST",
             "verify": false,
             "data": {
-                "username": "string: 账号",
-                "password": "string: 加密的密码",
-                "actionKey": "string: 密钥类型？",
-                "build": "int: 客户端版本号",
-                "captcha": "string: None(这个接口不用验证码了)",
-                "challenge": "string: 极验 challenge",
-                "channel": "string: bili",
-                "device": "string: 设备",
-                "mobi_app": "string: 系统",
-                "permission": "string: ALL",
-                "platform": "string: 系统",
-                "seccode": "string: 极验 seccode",
-                "subid": "int: 1",
-                "ts": "string: 时间戳",
-                "validate": "string: 极验 validate"
-            },
+              "username": "string: 账号",
+              "password": "string: 加密的密码",
+              "keep": "bool: true",
+              "key": "string: 密钥",
+              "token": "string: 极验信息中的登陆密钥 token",
+              "challenge": "string: 极验 challenge",
+              "validate": "string: 极验 validate",
+              "seccode": "string: 极验 seccode"
+          },
             "comment": "登录"
         }
     },
@@ -84,54 +94,16 @@
             },
             "comment": "验证码登录"
         }
-    }, 
+    },
     "safecenter": {
-        "#": "https://ivan.hanloth.cn/index.php/archives/530/", 
         "check_info": {
-            "url": "https://api.bilibili.com/x/safecenter/user/info", 
-            "method": "GET", 
-            "verify": false, 
+            "url": "https://api.bilibili.com/x/safecenter/user/info",
+            "method": "GET",
+            "verify": false,
             "params": {
                 "tmp_code": "str: 验证标记代码"
-            }, 
+            },
             "comment": "获取验证信息"
-        }, 
-        "captcha": {
-            "url": "https://passport.bilibili.com/x/safecenter/captcha/pre"
-        }, 
-        "send": {
-            "url": "https://passport.bilibili.com/x/safecenter/common/sms/send", 
-            "method": "POST", 
-            "verify": false, 
-            "params": {
-                "sms_type": "str: loginTelCheck", 
-                "tmp_code": "str: 验证标记代码", 
-                "gee_challenge": "str: 极验 challenge", 
-                "gee_gt": "str: 极验 gt", 
-                "gee_seccode": "str: 极验 seccode", 
-                "gee_validate": "str: 极验 validate", 
-                "recaptcha_token": "str: 极验 token"
-            }
-        }, 
-        "get_exchange": {
-            "url": "https://passport.bilibili.com/x/safecenter/login/tel/verify", 
-            "method": "POST",
-            "params": [
-                "type: (str)loginTelCheck",	
-                "code: (int)验证码内容",
-                "tmp_code: (str)验证标记代码,来自数据处理中的解析出的参数tmp_token",
-                "request_id: (str)验证请求标记,来自数据处理中的解析出的参数requestId",
-                "captcha_key: (str)验证秘钥,来自申请验证码的captcha_key（data->captcha_key）"
-            ], 
-            "comment": "获取交换验证码"
-        }, 
-        "get_cookies": {
-            "url": "https://passport.bilibili.com/x/passport-login/web/exchange_cookie", 
-            "method": "POST", 
-            "params": {
-                "code": "str: 交换代码"
-            }, 
-            "comment": "获取 cookies (头部会执行 set-cookies)"
         }
     }
 }

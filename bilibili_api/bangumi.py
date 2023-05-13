@@ -12,8 +12,7 @@ bilibili_api.bangumi
 
 import datetime
 from enum import Enum
-from typing import Any, Tuple, Union, List
-import httpx
+from typing import Any, Tuple, Union, List, Optional
 
 import requests
 
@@ -22,6 +21,7 @@ from bilibili_api.utils.Danmaku import Danmaku
 from . import settings
 
 from .utils.utils import get_api
+from .utils.initial_state import get_initial_state, get_initial_state_sync
 from .utils.Credential import Credential
 from .utils.network_httpx import get_session, request
 from .exceptions.ResponseException import ResponseException
@@ -174,8 +174,8 @@ class IndexFilter:
 
     @staticmethod
     def make_time_filter(
-        start: Union[datetime.datetime, str, int] = None,
-        end: Union[datetime.datetime, str, int] = None,
+        start: Optional[Union[datetime.datetime, str, int]] = None,
+        end: Optional[Union[datetime.datetime, str, int]] = None,
         include_start: bool = True,
         include_end: bool = False,
     ) -> str:
@@ -240,6 +240,11 @@ class IndexFilter:
         + SKY: SKY
         + ZDF: ZDF
         + PARTNER: 合作机构
+        + SONY: 索尼
+        + GLOBAL_NEWS: 环球
+        + PARAMOUNT: 派拉蒙
+        + WARNER: 华纳
+        + DISNEY: 迪士尼
         + DOMESTIC_OTHER: 国内其他
         + FOREIGN_OTHER: 国外其他
         """
@@ -259,6 +264,11 @@ class IndexFilter:
         PARTNER = 11
         DOMESTIC_OTHER = 12
         FOREIGN_OTHER = 13
+        SONY = 15
+        GLOBAL_NEWS = 16
+        PARAMOUNT = 17
+        WARNER = 18
+        DISNEY = 19
 
     class Payment(Enum):
         """
@@ -1133,34 +1143,8 @@ class Bangumi:
         if len(episode_list["main_section"]["episodes"]) == 0:
             return []
         first_epid = episode_list["main_section"]["episodes"][0]["id"]
-
-        async def get_episode_info(epid: int):
-            credential = self.credential if self.credential else Credential()
-            session = get_session()
-
-            try:
-                resp = await session.get(
-                    f"https://www.bilibili.com/bangumi/play/ep{epid}",
-                    cookies=credential.get_cookies(),
-                    headers={"User-Agent": "Mozilla/5.0"},
-                )
-            except Exception as e:
-                raise ResponseException(str(e))
-            else:
-                content = resp.text
-
-                pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
-                match = re.search(pattern, content)
-                if match is None:
-                    raise ApiException("未找到番剧信息")
-                try:
-                    content = json.loads(match.group(1))
-                except json.JSONDecodeError:
-                    raise ApiException("信息解析错误")
-
-                return content
-
-        bangumi_meta = await get_episode_info(first_epid)
+        credential = self.credential if self.credential else Credential()
+        bangumi_meta = await get_initial_state(url=f"https://www.bilibili.com/bangumi/play/ep{first_epid}", credential=credential)
         bangumi_meta["media_id"] = self.get_media_id()
 
         episodes = []
@@ -1265,23 +1249,7 @@ class Episode(Video):
         self.__epid = epid
 
         if not epid in episode_data_cache.keys():
-            try:
-                resp = httpx.get(
-                    f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
-                    cookies=self.credential.get_cookies(),
-                    headers={"User-Agent": "Mozilla/5.0"},
-                )
-            except Exception as e:
-                raise ResponseException(str(e))
-            content = resp.text
-            pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
-            match = re.search(pattern, content)
-            if match is None:
-                raise ApiException("未找到番剧信息")
-            try:
-                content = json.loads(match.group(1))
-            except json.JSONDecodeError:
-                raise ApiException("信息解析错误")
+            content = get_initial_state_sync(url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}", credential=self.credential)
         else:
             content = episode_data_cache[epid]["bangumi_meta"]
 
@@ -1292,7 +1260,7 @@ class Episode(Video):
             self.bangumi = episode_data_cache[epid]["bangumi_class"]
 
         self.video_class = Video(bvid=bvid, credential=self.credential)
-        super().__init__(bvid=bvid)
+        super().__init__(bvid=bvid, credential=self.credential)
         self.set_aid = self.set_aid_e
         self.set_bvid = self.set_bvid_e
 
@@ -1336,30 +1304,7 @@ class Episode(Video):
         Returns:
             HTML 中的数据
         """
-        credential = self.credential if self.credential else Credential()
-        session = get_session()
-
-        try:
-            resp = await session.get(
-                f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
-                cookies=credential.get_cookies(),
-                headers={"User-Agent": "Mozilla/5.0"},
-            )
-        except Exception as e:
-            raise ResponseException(str(e))
-        else:
-            content = resp.text
-
-            pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
-            match = re.search(pattern, content)
-            if match is None:
-                raise ApiException("未找到番剧信息")
-            try:
-                content = json.loads(match.group(1))
-            except json.JSONDecodeError:
-                raise ApiException("信息解析错误")
-
-            return content
+        return await get_initial_state(url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}", credential=self.credential)
 
     async def get_bangumi_from_episode(self) -> "Bangumi":
         """

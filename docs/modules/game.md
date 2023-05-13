@@ -65,8 +65,8 @@ from bilibili_api import game
 
 **Returns:** dict: 调用 API 返回的结果
 
-#### async def get_comments()
+<!-- #### async def get_comments()
 
 获取游戏的评论
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果 -->

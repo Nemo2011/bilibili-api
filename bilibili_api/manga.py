@@ -262,6 +262,8 @@ class Manga:
         """
         获取某一话的所有图片
 
+        # 注意事项：此函数速度非常慢并且失败率高
+
         Args:
             episode_count (int | float | None): 第几话.
             episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
@@ -302,7 +304,7 @@ class Manga:
                     "x": img["x"],
                     "y": img["y"],
                     "picture": Picture.from_content(
-                        httpx.get(url, headers=HEADERS).content, "jpg"
+                        (await httpx.AsyncClient().get(url, headers=HEADERS)).content, "jpg"
                     ),
                 }
             )
@@ -317,7 +319,7 @@ async def manga_image_url_turn_to_Picture(
 
     Args:
         url        (str)               : 未经处理的漫画图片链接。
-        credential (Credential \| None): 凭据类. Defaults to None.
+        credential (Credential | None): 凭据类. Defaults to None.
 
     Returns:
         Picture: 图片类。
@@ -341,7 +343,7 @@ async def manga_image_url_turn_to_Picture(
         return f'{token_data[0]["url"]}?token={token_data[0]["token"]}'
 
     url = await get_real_image_url(url)
-    return Picture.from_url(url)
+    return await Picture.async_load_url(url)
 
 
 async def set_follow_manga(
@@ -436,7 +438,11 @@ async def get_manga_index(
     return [Manga(manga_data["season_id"]) for manga_data in data]
 
 
-async def get_manga_update(date: Union[str, datetime.datetime] = datetime.datetime.now(), pn: int = 1, ps: int = 8) -> List[Manga]:
+async def get_manga_update(
+    date: Union[str, datetime.datetime] = datetime.datetime.now(),
+    pn: int = 1,
+    ps: int = 8,
+) -> List[Manga]:
     """
     获取更新推荐的漫画
 
@@ -452,22 +458,29 @@ async def get_manga_update(date: Union[str, datetime.datetime] = datetime.dateti
     if isinstance(date, datetime.datetime):
         date = date.strftime("%Y-%m-%d")
     data = {"date": date, "page_num": pn, "page_size": ps}
-    manga_data = await request("POST", api["url"], no_csrf=True, params=params, data=data)
+    manga_data = await request(
+        "POST", api["url"], no_csrf=True, params=params, data=data
+    )
     return [Manga(manga["comic_id"]) for manga in manga_data["list"]]
 
-async def get_manga_home_recommend(pn: int = 1, seed: Optional[str] = "0") -> List[Manga]:
+
+async def get_manga_home_recommend(
+    pn: int = 1, seed: Optional[str] = "0"
+) -> List[Manga]:
     """
     获取首页推荐的漫画
 
     Args:
         pn   (int)                          : 页码。Defaults to 1.
         seed (Optional[str])                : Unknown param，无需传入.
-        
+
     Returns:
         List[Manga]: 漫画列表
     """
     api = API["info"]["home_recommend"]
     params = {"device": "pc", "platform": "web"}
     data = {"page_num": pn, "seed": seed}
-    manga_data = await request("POST", api["url"], no_csrf=True, params=params, data=data)
+    manga_data = await request(
+        "POST", api["url"], no_csrf=True, params=params, data=data
+    )
     return [Manga(manga["comic_id"]) for manga in manga_data["list"]]

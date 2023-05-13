@@ -3,6 +3,7 @@ import enum
 import json
 import os
 import random
+from random import random as rand
 import shutil
 import sys
 import time

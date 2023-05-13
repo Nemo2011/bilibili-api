@@ -672,7 +672,6 @@ class LiveRoom:
     async def send_gift_gold(
         self, uid: int, gift_id: int, gift_num: int, price: int, storm_beat_id: int = 0
     ) -> dict:
-
         """
         赠送金瓜子礼物
 
@@ -718,7 +717,6 @@ class LiveRoom:
         price: int,
         storm_beat_id: int = 0,
     ) -> dict:
-
         """
         赠送银瓜子礼物
 
@@ -1332,3 +1330,29 @@ async def get_unlive_followers_info(
     return await request(
         api["method"], api["url"], params=params, credential=credential
     )
+
+
+async def create_live_reserve(
+    title: str, start_time: int, credential: Credential
+) -> dict:
+    """
+    创建直播预约
+
+    Args:
+        title (str)         : 直播间标题
+        start_time (int)    : 开播时间戳
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+
+    api = API["operate"]["create_reserve"]
+    data = {
+        "title": title,
+        "type": 2,
+        "live_plan_start_time": start_time,
+        "stime": None,
+        "from": 1,
+    }
+    return await request("POST", api["url"], data=data, credential=credential)

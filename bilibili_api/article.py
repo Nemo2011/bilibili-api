@@ -505,7 +505,7 @@ class Article:
                     if not className:
                         # 图片
                         node = ImageNode()
-                        node.url = e.attrs.get("data-src")
+                        node.url = e.attrs.get("data-src")  # type: ignore
                         node_list.append(node)
 
                     elif "latex" in className:
@@ -536,6 +536,10 @@ class Article:
                     elif "cut-off" in field["insert"].keys():
                         node = ImageNode()
                         node.url = field["insert"]["cut-off"]["url"]
+                        self.__children.append(node)
+                    elif "native-image" in field["insert"].keys():
+                        node = ImageNode()
+                        node.url = field["insert"]["native-image"]["url"]
                         self.__children.append(node)
                     else:
                         raise Exception()
@@ -608,17 +612,21 @@ class Article:
             dict: 调用 API 返回的结果
         """
         sess = get_session()
-        resp = await sess.get(f"https://www.bilibili.com/read/cv{self.__cvid}")
-        html = resp.text
+        resp = await sess.get(f"https://www.bilibili.com/read/cv{self.__cvid}", 
+                              headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.62",
+                              "cookie": "opus-goback=1"}
+                              )
+        if resp.status_code == 200:
+            html = resp.text
 
-        match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", html, re.I)  # type: ignore
+            match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", html, re.I)  # type: ignore
 
-        if not match:
-            raise ApiException("找不到信息")
+            if not match:
+                raise ApiException("找不到信息")
 
-        data = json.loads(match[1])
+            data = json.loads(match[1])
 
-        return data
+            return data
 
     async def set_like(self, status: bool = True) -> dict:
         """

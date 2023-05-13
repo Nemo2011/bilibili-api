@@ -535,6 +535,22 @@ class InteractiveVideo(Video):
 
         return await request("GET", url, params, credential=credential)
 
+    async def mark_score(self, score: int = 5):
+        """
+        为互动视频打分
+
+        Args:
+            score (int): 互动视频分数. Defaults to 5.
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+        api = API["operate"]["mark_score"]
+        data = {"mark": score, "bvid": self.get_bvid()}
+        return await request("POST", api["url"], data=data, credential=self.credential)
+
     async def get_cid(self) -> int:
         """
         获取稿件 cid
@@ -591,6 +607,7 @@ class InteractiveVideoDownloaderMode(enum.Enum):
     - DOT_GRAPH: 下载 dot 格式的情节树图表
     - NO_PACKAGING: 前面按照 ivi 文件下载步骤进行下载，但是最终不会打包成为 ivi 文件，所有文件将存放于一个文件夹中。互动视频数据将存放在一个文件夹中，里面的文件命名/含义与拆包后的 ivi 文件完全相同。
     """
+
     IVI = "ivi"
     NODE_VIDEOS = "videos"
     DOT_GRAPH = "dot"
@@ -607,7 +624,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         video: InteractiveVideo,
         out: str = "",
         self_download_func: Union[Coroutine, None] = None,
-        downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI
+        downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI,
     ):
         """
         Args:
@@ -827,20 +844,19 @@ class InteractiveVideoDownloader(AsyncEvent):
                 cid_set.add(cid)
                 url = await self.__video.get_download_url(cid=cid, html5=True)
                 await self.__download_func(
-                    url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
-                )
+                    url["durl"][0]["url"],
+                    tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4",
+                )  # type: ignore
 
         root_cid = await self.__video.get_cid()
         if not root_cid in cid_set:
-            self.dispatch(
-                "PREPARE_DOWNLOAD", {"cid": root_cid}
-            )
+            self.dispatch("PREPARE_DOWNLOAD", {"cid": root_cid})
             cid = await self.__video.get_cid()
             url = await self.__video.get_download_url(cid=cid, html5=True)
             title = (await self.__video.get_info())["title"]
             await self.__download_func(
                 url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
-            )
+            )  # type: ignore
 
         self.dispatch("PACKAGING")
         zip = zipfile.ZipFile(
@@ -994,39 +1010,47 @@ class InteractiveVideoDownloader(AsyncEvent):
                 cid_set.add(cid)
                 url = await self.__video.get_download_url(cid=cid, html5=True)
                 await self.__download_func(
-                    url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
-                )
+                    url["durl"][0]["url"],
+                    tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4",
+                )  # type: ignore
 
         root_cid = await self.__video.get_cid()
         if not root_cid in cid_set:
-            self.dispatch(
-                "PREPARE_DOWNLOAD", {"cid": root_cid}
-            )
+            self.dispatch("PREPARE_DOWNLOAD", {"cid": root_cid})
             cid = await self.__video.get_cid()
             url = await self.__video.get_download_url(cid=cid, html5=True)
             title = (await self.__video.get_info())["title"]
             await self.__download_func(
                 url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
-            )
+            )  # type: ignore
         self.dispatch("SUCCESS")
 
     async def __dot_graph_main(self) -> None:
         self.dispatch("START")
         if not self.__out.endswith(".dot"):
             self.__out += ".dot"
+
         class node_info:
             node_id: int
             subs: List[int]
             cid: int
             title: str
+
             def __eq__(self, info: "node_info"):
                 self.subs.sort()
                 info.subs.sort()
-                return (info.subs == self.subs) and (info.title == self.title) and (info.cid == self.cid)
+                return (
+                    (info.subs == self.subs)
+                    and (info.title == self.title)
+                    and (info.cid == self.cid)
+                )
+
             def __lt__(self, info: "node_info"):
                 return self.cid < info.cid
+
             def __gt__(self, info: "node_info"):
                 return self.cid > info.cid
+
         fetched_nodes_info: List[node_info] = []
         node_info_dict = {}
         scripts = []
@@ -1038,7 +1062,13 @@ class InteractiveVideoDownloader(AsyncEvent):
             for cur_node in queue_backup:
                 cur_node_info = await cur_node.get_info()
                 cur_node_children = await cur_node.get_children()
-                self.dispatch("GET", {"title": cur_node_info["title"], "node_id": cur_node.get_node_id()})
+                self.dispatch(
+                    "GET",
+                    {
+                        "title": cur_node_info["title"],
+                        "node_id": cur_node.get_node_id(),
+                    },
+                )
                 cur_node_info_class = node_info()
                 cur_node_info_class.node_id = cur_node.get_node_id()
                 cur_node_info_class.cid = cur_node.get_cid()
@@ -1054,17 +1084,19 @@ class InteractiveVideoDownloader(AsyncEvent):
                     node_info_dict[cur_node.get_node_id()] = cur_node_info_class
                     for cur_node_child in cur_node_children:
                         script_label = ""
-                        if cur_node_child.get_jumping_condition()._InteractiveJumpingCondition__command != "": # type: ignore
-                            script_label = script_label + "Condition: [" + cur_node_child.get_jumping_condition()._InteractiveJumpingCondition__command + "]" # type: ignore
-                            if cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command != "": # type: ignore
-                                script_label = script_label + "\nNative Command: [" + cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command + "]" # type: ignore
-                        elif cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command != "": # type: ignore
-                            script_label = script_label + "\nNative Command: [" + cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command + "]" # type: ignore
-                        scripts.append({
-                            "from": cur_node.get_node_id(),
-                            "to": cur_node_child.get_node_id(),
-                            "label": script_label
-                        })
+                        if cur_node_child.get_jumping_condition()._InteractiveJumpingCondition__command != "":  # type: ignore
+                            script_label = script_label + "Condition: [" + cur_node_child.get_jumping_condition()._InteractiveJumpingCondition__command + "]"  # type: ignore
+                            if cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command != "":  # type: ignore
+                                script_label = script_label + "\nNative Command: [" + cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command + "]"  # type: ignore
+                        elif cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command != "":  # type: ignore
+                            script_label = script_label + "\nNative Command: [" + cur_node_child._InteractiveNode__command._InteractiveJumpingCommand__command + "]"  # type: ignore
+                        scripts.append(
+                            {
+                                "from": cur_node.get_node_id(),
+                                "to": cur_node_child.get_node_id(),
+                                "label": script_label,
+                            }
+                        )
                         queue.append(cur_node_child)
                     fetched_nodes_info.append(cur_node_info_class)
                 else:
@@ -1091,13 +1123,12 @@ class InteractiveVideoDownloader(AsyncEvent):
                     var_attribute = "Normal"
                 else:
                     var_attribute = "Hide"
-            vars_string += f'[{var.get_id()} -> {var.get_name()} = {var.get_value()}, {var_attribute}]\n'
+            vars_string += f"[{var.get_id()} -> {var.get_name()} = {var.get_value()}, {var_attribute}]\n"
         graph_content += f'\tlabel="{vars_string}"'
         graph_content += "}"
         with open(self.__out, "w+", encoding="utf-8") as dot_file:
             dot_file.write(graph_content)
         self.dispatch("SUCCESS")
-
 
     async def __no_packaging_main(self) -> None:
         # 初始化
@@ -1251,23 +1282,21 @@ class InteractiveVideoDownloader(AsyncEvent):
                 cid_set.add(cid)
                 url = await self.__video.get_download_url(cid=cid, html5=True)
                 await self.__download_func(
-                    url["durl"][0]["url"], tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4"
-                )
+                    url["durl"][0]["url"],
+                    tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4",
+                )  # type: ignore
 
         root_cid = await self.__video.get_cid()
         if not root_cid in cid_set:
-            self.dispatch(
-                "PREPARE_DOWNLOAD", {"cid": root_cid}
-            )
+            self.dispatch("PREPARE_DOWNLOAD", {"cid": root_cid})
             cid = await self.__video.get_cid()
             url = await self.__video.get_download_url(cid=cid, html5=True)
             title = (await self.__video.get_info())["title"]
             await self.__download_func(
                 url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
-            )
+            )  # type: ignore
 
         self.dispatch("SUCCESS")
-
 
     async def start(self) -> None:
         """

@@ -4,8 +4,10 @@ bilibili_api.rank
 和哔哩哔哩视频排行榜相关的 API
 """
 
+from typing import Union
 from .utils.network_httpx import request
 from .utils.utils import get_api
+from .utils.Credential import Credential
 from enum import Enum
 
 API = get_api("rank")
@@ -141,6 +143,36 @@ class MangeRankType(Enum):
     FINISH = 13
 
 
+class LiveRankType(Enum):
+    """
+    直播通用榜类型
+
+    - SAIL_BOAT_VALUE: 主播舰队榜
+    - SAIL_BOAT_TICKET: 船员价值榜
+    - SAIL_BOAT_NUMBER: 舰船人数榜
+    - MASTER_LEVEL: 主播等级榜
+    - USER_LEVEL: 用户等级榜
+    """
+
+    SAIL_BOAT_VALUE = "sail_boat_value"
+    SAIL_BOAT_TICKET = "sail_boat_ticket"
+    SAIL_BOAT_NUMBER = "sail_boat_number"
+    MASTER_LEVEL = "master_level"
+    USER_LEVEL = "user_level"
+
+
+class LiveEnergyRankType(Enum):
+    """
+    直播超能用户榜类型
+
+    - MONTH: 本月
+    - PRE_MONTH: 上月
+    """
+
+    MONTH = "month"
+    PRE_MONTH = "pre_month"
+
+
 async def get_rank(
     type_: RankType = RankType.All, day: RankDayType = RankDayType.THREE_DAY
 ) -> dict:
@@ -200,7 +232,7 @@ async def get_music_rank_weakly_detail(week: int = 1) -> dict:
 
 async def get_music_rank_weakly_musics(week: int = 1) -> dict:
     """
-    获取全站音乐榜一周的音频列表
+    获取全站音乐榜一周的音频列表(返回的音乐的 id 对应了 music.Music 类创建实例传入的 id)
 
     Args:
         week(int): 第几周. Defaults to 1.
@@ -239,3 +271,129 @@ async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW) -> dict:
     params = {"device": "pc", "platform": "web"}
     data = {"id": type_.value}
     return await request("POST", api["url"], params=params, data=data, no_csrf=True)
+
+
+async def get_live_hot_rank() -> dict:
+    """
+    获取直播首页人气排行榜
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_hot_rank"]
+    return await request("GET", api["url"])
+
+
+async def get_live_sailing_rank() -> dict:
+    """
+    获取首页直播大航海排行榜
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_sailing_rank"]
+    return await request("GET", api["url"])
+
+
+async def get_live_energy_user_rank(
+    date: LiveEnergyRankType = LiveEnergyRankType.MONTH, pn: int = 1, ps: int = 20
+) -> dict:
+    """
+    获取直播超能用户榜
+
+    Args:
+        date (LiveEnergyRankType): 月份. Defaults to LiveEnergyRankType.MONTH
+        pn (int): 页码. Defaults to 1
+        ps (int): 每页数量. Defaults to 20
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_energy_user_rank"]
+    params = {"date": date.value, "page": pn, "page_size": ps}
+    return await request("GET", api["url"], params=params)
+
+
+async def get_live_rank(
+    _type: LiveRankType = LiveRankType.SAIL_BOAT_VALUE, pn: int = 1, ps: int = 20
+) -> dict:
+    """
+    获取直播通用榜单
+
+    Args:
+        _type (LiveRankType): 榜单类型. Defaults to LiveRankType.VALUE
+        pn (int): 页码. Defaults to 1
+        ps (int): 每页数量. Defaults to 20
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_web_top"]
+    params = {
+        "type": _type.value,
+        "page": pn,
+        "page_size": ps,
+        "is_trend": 1,
+        "area_id": None,
+    }
+    return await request("GET", api["url"], params=params)
+
+
+async def get_live_user_medal_rank(pn: int = 1, ps: int = 20) -> dict:
+    """
+    获取直播用户勋章榜
+
+    Args:
+        pn (int): 页码. Defaults to 1
+        ps (int): 每页数量. Defaults to 20
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["live_medal_level_rank"]
+    params = {"page": pn, "page_size": ps}
+    return await request("GET", api["url"], params=params)
+
+
+async def subscribe_music_rank(
+    status: bool = True, credential: Union[Credential, None] = None
+):
+    """
+    设置关注全站音乐榜
+
+    Args:
+        status     (bool)      : 关注状态. Defaults to True.
+        credential (Credential): 凭据类. Defaults to None.
+    """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+    api = API["operate"]["subscribe"]
+    data = {"list_id": 1, "state": (1 if status else 2)}
+    return await request("POST", api["url"], data=data, credential=credential)
+
+async def get_playlet_rank_phases():
+    """
+    获取全站短剧榜期数
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["playlet_rank_phase"]
+    return await request("POST", api["url"], data={}, json_body=True, no_csrf=True)
+
+async def get_playlet_rank_info(phase_id: int):
+    """
+    获取全站短剧榜
+
+    https://www.bilibili.com/v/popular/drama/
+
+    Args:
+        phase_id (int): 期数，从 get_playlet_rank_phase 获取
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["info"]["playlet_rank_info"]
+    data = {"phaseID": phase_id}
+    return await request("POST", api["url"], data=data, json_body=True, no_csrf=True)

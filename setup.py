@@ -8,12 +8,12 @@ with open("requirements.txt", "r", encoding="utf8") as f:
 
 setuptools.setup(
     name="bilibili-api-python",
-    version="15.1.0",
+    version="15.4.1",
     license="GPLv3+",
     author="Nemo2011",
     author_email="yimoxia@outlook.com",
     maintainer="MoyuScript, Nemo2011",
-    description="哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。",
+    description="The fork of module bilibili-api. 哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=[

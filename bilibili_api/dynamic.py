@@ -4,19 +4,25 @@ bilibili_api.dynamic
 动态相关
 """
 
-import re
 import json
-import datetime
-import asyncio
+import re
+import os
+import sys
 from typing import Any, List, Tuple, Union, Optional
 from enum import Enum
+
+import httpx
 
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 from .utils.network_httpx import request
 from .utils.Credential import Credential
+from .utils.sync import sync
 from . import user, exceptions
 from .utils import utils
 from .utils.Picture import Picture
+from . import vote
+from datetime import datetime
+import asyncio
 
 API = utils.get_api("dynamic")
 
@@ -30,10 +36,40 @@ class DynamicType(Enum):
     + ARTICLE: 文章
     + VIDEO: 视频投稿
     """
+
     ALL = "all"
     ANIME = "pgc"
     ARTICLE = "article"
     VIDEO = "video"
+
+
+class SendDynmaicType(Enum):
+    """
+    发送动态类型
+    scene 参数
+
+    + TEXT: 纯文本
+    + IMAGE: 图片
+    """
+
+    TEXT = 1
+    IMAGE = 2
+
+
+class DynmaicContentType(Enum):
+    """
+    动态内容类型
+
+    + TEXT: 文本
+    + EMOJI: 表情
+    + AT: @User
+    + VOTE: 投票
+    """
+
+    TEXT = 1
+    EMOJI = 9
+    AT = 2
+    VOTE = 4
 
 
 async def _parse_at(text: str) -> Tuple[str, str, str]:
@@ -51,37 +87,28 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
     match_result = re.finditer(pattern, text)
     uid_list = []
     names = []
-    new_text = text
     for match in match_result:
         uname = match.group()
-        uid = (await user.name2uid(uname))["uid_list"][0]["uid"]
-
         try:
-            u = user.User(int(uid))
-            user_info = await u.get_user_info()
-        except exceptions.ResponseCodeException as e:
-            if e.code == -404:
-                raise exceptions.ResponseCodeException(
-                    -404, f"用户 uid={uid} 不存在")
-            else:
-                raise e
+            uid = (await user.name2uid(uname))["uid_list"][0]["uid"]
+        except KeyError:
+            # 没有此用户
+            continue
 
-        name = user_info["name"]
         uid_list.append(str(uid))
-        names.append(name)
-        new_text = new_text.replace(f"@{uid} ", f"@{name} ")
+        names.append(uname + " ")
     at_uids = ",".join(uid_list)
     ctrl = []
-
+    last_index = 0
     for i, name in enumerate(names):
-        index = new_text.index(f"@{name}")
+        index = text.index(f"@{name}", last_index)
+        last_index = index + 1
         length = 2 + len(name)
         ctrl.append(
-            {"location": index, "type": 1,
-                "length": length, "data": int(uid_list[i])}
+            {"location": index, "type": 1, "length": length, "data": int(uid_list[i])}
         )
 
-    return new_text, at_uids, json.dumps(ctrl, ensure_ascii=False)
+    return text, at_uids, json.dumps(ctrl, ensure_ascii=False)
 
 
 async def _get_text_data(text: str) -> dict:
@@ -105,36 +132,6 @@ async def _get_text_data(text: str) -> dict:
         "ctrl": ctrl,
     }
     return data
-
-
-async def upload_image(image: Picture, credential: Credential) -> dict:
-    """
-    上传动态图片
-
-    Args:
-        image        (Picture)   : 图片流. 有格式要求.
-        credential   (Credential): 凭据
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    credential.raise_for_no_sessdata()
-    credential.raise_for_no_bili_jct()
-
-    api = API["send"]["upload_img"]
-    raw = image.content
-
-    data = {"biz": "new_dyn", "category": "daily"}
-
-    return_info = await request(
-        "POST",
-        url=api["url"],
-        data=data,
-        files={"file_up": raw},
-        credential=credential,
-    )
-
-    return return_info
 
 
 async def _get_draw_data(
@@ -181,51 +178,424 @@ async def _get_draw_data(
     return data
 
 
-async def send_dynamic(
-    text: str,
-    images: Union[List[Picture], None] = None,
-    send_time: Union[datetime.datetime, None] = None,
-    credential: Union[Credential, None] = None,
-):
+async def upload_image(image: Picture, credential: Credential) -> dict:
     """
-    自动判断动态类型选择合适的 API 并发送动态
+    上传动态图片
 
     Args:
-        text          (str)                              : 动态文本
-        images        (List[Picture] | None, optional)   : 图片列表. Defaults to None.
-        send_time     (datetime.datetime | None, optional)      : 定时动态发送时间. Defaults to None.
-        credential    (Credential | None, optional)             : 凭据. Defaults to None.
+        image        (Picture)   : 图片流. 有格式要求.
+        credential   (Credential): 凭据
 
     Returns:
         dict: 调用 API 返回的结果
     """
-
-    if credential is None:
-        credential = Credential()
-
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
 
-    async def instant_text():
-        api = API["send"]["instant_text"]
-        data = await _get_text_data(text)
-        return await request("POST", api["url"], data=data, credential=credential)
+    api = API["send"]["upload_img"]
+    raw = image.content
 
-    async def instant_draw():
-        api = API["send"]["instant_draw"]
-        data = await _get_draw_data(text, images, credential)  # type: ignore
-        return await request("POST", api["url"], data=data, credential=credential)
+    data = {"biz": "new_dyn", "category": "daily"}
+
+    return_info = await request(
+        "POST",
+        url=api["url"],
+        data=data,
+        files={"file_up": raw},
+        credential=credential,
+    )
+
+    return return_info
+
+
+class BuildDynmaic:
+    """
+    构建动态内容. 提供两种 API.
+
+    - 1. 链式调用构建
+
+    ``` python
+    BuildDynamic.empty().add_plain_text("114514").add_image(Picture.from_url("https://www.bilibili.com/favicon.ico"))
+    ```
+
+    - 2. 参数构建
+
+    ``` python
+    BuildDynamic.create_by_args(text="114514", topic_id=114514)
+    ```
+    """
+
+    def __init__(self) -> None:
+        """
+        构建动态内容
+        """
+        self.contents: list = []
+        self.pics: List[Picture] = []
+        self.attach_card: Optional[dict] = None
+        self.topic: Optional[dict] = None
+        self.options: dict = {}
+        self.time: Optional[datetime] = None
+
+    @staticmethod
+    def empty():
+        """
+        新建空的动态以链式逐步构建
+        """
+        return BuildDynmaic()
+
+    @staticmethod
+    def create_by_args(
+        text: str = "",
+        pics: List[Picture] = [],
+        topic_id: int = -1,
+        vote_id: int = -1,
+        live_reserve_id: int = -1,
+        send_time: Union[datetime, None] = None,
+    ):
+        """
+        通过参数构建动态
+
+        Args:
+            text            (str            , optional): 动态文字. Defaults to "".
+            pics            (List[Picture]  , optional): 动态图片列表. Defaults to [].
+            topic_id        (int            , optional): 动态话题 id. Defaults to -1.
+            vote_id         (int            , optional): 动态中的投票的 id. 将放在整个动态的最后面. Defaults to -1.
+            live_reserve_id (int            , optional): 直播预约 oid. 通过 `live.create_live_reserve` 获取. Defaults to -1.
+            send_time       (datetime | None, optional): 发送时间. Defaults to None.
+        """
+        dyn = BuildDynmaic()
+        dyn.add_text(text)
+        dyn.add_image(pics)
+        if topic_id != -1:
+            dyn.set_topic(topic_id)
+        if vote_id != -1:
+            dyn.add_vote(vote.Vote(vote_id=vote_id))
+        if live_reserve_id != -1:
+            dyn.set_attach_card(live_reserve_id)
+        if send_time != None:
+            dyn.set_send_time(send_time)
+        return dyn
+
+    def add_plain_text(self, text: str) -> "BuildDynmaic":
+        """
+        添加纯文本
+
+        Args:
+            text (str): 文本内容
+        """
+        self.contents.append(
+            {"biz_id": "", "type": DynmaicContentType.TEXT.value, "raw_text": text}
+        )
+        return self
+
+    def add_at(self, uid: Union[int, user.User]) -> "BuildDynmaic":
+        """
+        添加@用户，支持传入 User 类或 UID
+
+        Args:
+            uid (Union[int, user.User]): 用户ID
+        """
+        if isinstance(uid, user.User):
+            uid = uid.__uid
+        name = httpx.get(
+            "https://api.bilibili.com/x/space/acc/info",
+            params={"mid": uid},
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://www.bilibili.com",
+            },
+        ).json()["data"]["name"]
+        self.contents.append(
+            {"biz_id": uid, "type": DynmaicContentType.AT.value, "raw_text": f"@{name}"}
+        )
+        return self
+
+    def add_emoji(self, emoji_id: int) -> "BuildDynmaic":
+        """
+        添加表情
+
+        Args:
+            emoji_id (int): 表情ID
+        """
+        with open(
+            os.path.join(os.path.dirname(__file__), "data/emote.json"), encoding="UTF-8"
+        ) as f:
+            emote_info = json.load(f)
+        if str(emoji_id) not in emote_info:
+            raise ValueError("不存在此表情")
+        self.contents.append(
+            {
+                "biz_id": "",
+                "type": DynmaicContentType.EMOJI.value,
+                "raw_text": emote_info[str(emoji_id)],
+            }
+        )
+        return self
+
+    def add_vote(self, vote: vote.Vote) -> "BuildDynmaic":
+        vote_info = httpx.get(
+            "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info?vote_id={}".format(
+                vote.get_vote_id()
+            )
+        ).json()
+        title = vote_info["data"]["info"]["title"]
+        self.contents.append(
+            {
+                "biz_id": str(vote.get_vote_id()),
+                "type": DynmaicContentType.VOTE.value,
+                "raw_text": title,
+            }
+        )
+        return self
+
+    def add_image(self, image: Union[List[Picture], Picture]) -> "BuildDynmaic":
+        """
+        添加图片
+
+        Args:
+            image (Picture | List[Picture]): 图片类
+        """
+        if isinstance(image, Picture):
+            image = [image]
+        self.pics += image
+        return self
+
+    def add_text(self, text: str) -> "BuildDynmaic":
+        """
+        添加文本 (可包括 at, 表情包)
+
+        Args:
+            text (str): 文本内容
+        """
+
+        def _get_ats(text: str) -> List:
+            text += " "
+            pattern = re.compile(r"(?<=@).*?(?=\s)")
+            match_result = re.finditer(pattern, text)
+            uid_list = []
+            names = []
+            for match in match_result:
+                uname = match.group()
+                try:
+                    name_to_uid_resp = httpx.get(
+                        "https://api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/name_to_uid?",
+                        params={"names": uname},
+                    )
+                    uid = name_to_uid_resp.json()["data"]["uid_list"][0]["uid"]
+                except KeyError:
+                    # 没有此用户
+                    continue
+                uid_list.append(str(uid))
+                names.append(uname)
+            data = []
+            last_index = 0
+            for i, name in enumerate(names):
+                index = text.index(f"@{name}", last_index)
+                last_index = index + 1
+                length = 2 + len(name)
+                data.append(
+                    {
+                        "location": index,
+                        "length": length,
+                        "text": f"@{name} ",
+                        "type": "at",
+                        "uid": uid_list[i],
+                    }
+                )
+            return data
+
+        def _get_emojis(text: str) -> List:
+            with open(
+                os.path.join(os.path.dirname(__file__), "data/emote.json"),
+                encoding="UTF-8",
+            ) as f:
+                emote_info = json.load(f)
+            all_emojis = []
+            for key, item in emote_info.items():
+                all_emojis.append(item)
+            pattern = re.compile(r"(?<=\[).*?(?=\])")
+            match_result = re.finditer(pattern, text)
+            emotes = []
+            for match in match_result:
+                emote = match.group(0)
+                if f"[{emote}]" not in all_emojis:
+                    continue
+                emotes.append(f"[{emote}]")
+            data = []
+            last_index = 0
+            for i, emoji in enumerate(emotes):
+                index = text.index(emoji, last_index)
+                last_index = index + 1
+                length = len(emoji)
+                data.append(
+                    {
+                        "location": index,
+                        "length": length,
+                        "text": emoji,
+                        "type": "emoji",
+                    }
+                )
+            return data
+
+        all_at_and_emoji = _get_ats(text) + _get_emojis(text)
+
+        def split_text_to_plain_at_and_emoji(text: str, at_and_emoji: List):
+            def base_split(texts: List[str], at_and_emoji: List, last_length: int):
+                if len(at_and_emoji) == 0:
+                    return texts
+                last_piece_of_text = texts.pop(-1)
+                next_at_or_emoji = at_and_emoji.pop(0)
+                texts += [
+                    last_piece_of_text[: next_at_or_emoji["location"] - last_length],
+                    next_at_or_emoji,
+                    last_piece_of_text[
+                        next_at_or_emoji["location"]
+                        + next_at_or_emoji["length"]
+                        - last_length :
+                    ],
+                ]
+                last_length += (
+                    next_at_or_emoji["length"]
+                    + next_at_or_emoji["location"]
+                    - last_length
+                )
+                return base_split(texts, at_and_emoji, last_length)
+
+            old_recursion_limit = sys.getrecursionlimit()
+            sys.setrecursionlimit(100000)
+            all_pieces = base_split([text], at_and_emoji, 0)
+            sys.setrecursionlimit(old_recursion_limit)
+            return all_pieces
+
+        all_pieces = split_text_to_plain_at_and_emoji(text, all_at_and_emoji)
+        for piece in all_pieces:
+            if isinstance(piece, str):
+                self.add_plain_text(piece)
+            elif piece["type"] == "at":
+                self.contents.append(
+                    {
+                        "biz_id": piece["uid"],
+                        "type": DynmaicContentType.AT.value,
+                        "raw_text": piece["text"],
+                    }
+                )
+            else:
+                self.contents.append(
+                    {
+                        "biz_id": "",
+                        "type": DynmaicContentType.EMOJI.value,
+                        "raw_text": piece["text"],
+                    }
+                )
+        return self
+
+    def set_attach_card(self, oid: int) -> "BuildDynmaic":
+        """
+        设置直播预约
+
+        在 live.create_live_reserve 中获取 oid
+
+        Args:
+            oid (int): 卡片oid
+        """
+        self.attach_card = {
+            "type": 14,
+            "biz_id": oid,
+            "reserve_source": 1,  # 疑似0为视频预告但没法验证...
+            "reserve_lottery": 0,
+        }
+        return self
+
+    def set_topic(self, topic_id: int) -> "BuildDynmaic":
+        """
+        设置话题
+
+        Args:
+            topic_id (int): 话题ID
+        """
+        self.topic = {"id": topic_id}
+        return self
+
+    def set_options(
+        self, up_choose_comment: bool = False, close_comment: bool = False
+    ) -> "BuildDynmaic":
+        """
+        设置选项
+
+        Args:
+            up_choose_comment	(bool): 	精选评论flag
+            close_comment	    (bool): 	关闭评论flag
+        """
+        if up_choose_comment:
+            self.options["up_choose_comment"] = 1
+        if close_comment:
+            self.options["close_comment"] = 1
+        return self
+
+    def set_send_time(self, time: datetime):
+        """
+        设置发送时间
+
+        Args:
+            time (datetime): 发送时间
+        """
+        self.time = time
+        return self
+
+    def get_dynamic_type(self) -> SendDynmaicType:
+        if len(self.pics) != 0:
+            return SendDynmaicType.IMAGE
+        return SendDynmaicType.TEXT
+
+    def get_contents(self) -> list:
+        return self.contents
+
+    def get_pics(self) -> list:
+        return self.pics
+
+    def get_attach_card(self) -> Optional[dict]:
+        return self.attach_card
+
+    def get_topic(self) -> Optional[dict]:
+        return self.topic
+
+    def get_options(self) -> dict:
+        return self.options
+
+
+async def send_dynamic(info: BuildDynmaic, credential: Credential):
+    """
+    发送动态
+
+    Args:
+        info (BuildDynmaic): 动态内容
+        credential (Credential): 凭据
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+    pic_data = []
+    for image in info.pics:
+        await image.upload_file(credential)
+        pic_data.append(
+            {"img_src": image.url, "img_width": image.width, "img_height": image.height}
+        )
 
     async def schedule(type_: int):
         api = API["send"]["schedule"]
-        if type_ == 2:
+        text = "".join(
+            [part["raw_text"] for part in info.contents if part["type"] != 4]
+        )
+        send_time = info.time
+        if len(info.pics) > 0:
             # 画册动态
-            request_data = await _get_draw_data(text, images, credential) # type: ignore            
+            request_data = await _get_draw_data(text, info.pics, credential)  # type: ignore
             request_data.pop("setting")
         else:
             # 文字动态
             request_data = await _get_text_data(text)
-
         data = {
             "type": type_,
             "publish_time": int(send_time.timestamp()),  # type: ignore
@@ -233,24 +603,38 @@ async def send_dynamic(
         }
         return await request("POST", api["url"], data=data, credential=credential)
 
-    if images is None:
-        images = []
-
-    if len(images) == 0:
-        # 纯文本动态
-        if send_time is None:
-            ret = await instant_text()
-        else:
-            ret = await schedule(2)
+    if info.time != None:
+        return await schedule(2 if len(info.pics) == 0 else 4)
+    api = API["send"]["instant"]
+    data = {
+        "dyn_req": {
+            "content": {"contents": info.get_contents()},  # 必要参数
+            "scene": info.get_dynamic_type().value,  # 必要参数
+            "meta": {
+                "app_meta": {"from": "create.dynamic.web", "mobi_app": "web"},
+            },
+        }
+    }
+    if len(info.get_pics()) != 0:
+        data["dyn_req"]["pics"] = pic_data
+    if info.get_topic() is not None:
+        data["dyn_req"]["topic"] = info.get_topic()
+    if len(info.get_options()) > 0:
+        data["dyn_req"]["option"] = info.get_options()
+    if info.get_attach_card() is not None:
+        data["dyn_req"]["attach_card"] = {}
+        data["dyn_req"]["attach_card"]["common_card"] = info.get_attach_card()
     else:
-        # 图片动态
-        if len(images) > 9:
-            raise DynamicExceedImagesException()
-        if send_time is None:
-            ret = await instant_draw()
-        else:
-            ret = await schedule(4)
-    return ret
+        data["dyn_req"]["attach_card"] = None
+    send_result = await request(
+        "POST",
+        api["url"],
+        data=data,
+        credential=credential,
+        params={"csrf": credential.bili_jct},
+        json_body=True,
+    )
+    return send_result
 
 
 # 定时动态操作
@@ -316,7 +700,9 @@ class Dynamic:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, dynamic_id: int, credential: Union[Credential, None] = None) -> None:
+    def __init__(
+        self, dynamic_id: int, credential: Union[Credential, None] = None
+    ) -> None:
         """
         Args:
             dynamic_id (int)                        : 动态 ID
@@ -337,14 +723,15 @@ class Dynamic:
         """
 
         api = API["info"]["detail"]
-        params = {"dynamic_id": self.__dynamic_id}
+        params = {
+            "id": self.__dynamic_id,
+            "timezone_offset": -480,
+            "features": "itemOpusStyle",
+        }
         data = await request(
             "GET", api["url"], params=params, credential=self.credential
         )
-
-        data["card"]["card"] = json.loads(data["card"]["card"])
-        data["card"]["extend_json"] = json.loads(data["card"]["extend_json"])
-        return data["card"]
+        return data
 
     async def get_reposts(self, offset: str = "0") -> dict:
         """
@@ -453,7 +840,9 @@ async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> d
     return await request("GET", api["url"], credential=credential)
 
 
-async def get_live_users(size: int = 10, credential: Union[Credential, None] = None) -> dict:
+async def get_live_users(
+    size: int = 10, credential: Union[Credential, None] = None
+) -> dict:
     """
     获取正在直播的关注者
 
@@ -485,7 +874,13 @@ async def get_dynamic_page_UPs_info(credential: Credential) -> dict:
     return await request("GET", api["url"], credential=credential)
 
 
-async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicType] = None, host_mid: Optional[int] = None, pn: int = 1, offset: Optional[int] = None) -> list[Dynamic]:
+async def get_dynamic_page_info(
+    credential: Credential,
+    _type: Optional[DynamicType] = None,
+    host_mid: Optional[int] = None,
+    pn: int = 1,
+    offset: Optional[int] = None,
+) -> List[Dynamic]:
     """
     获取动态页动态信息
 
@@ -511,10 +906,15 @@ async def get_dynamic_page_info(credential: Credential, _type: Optional[DynamicT
         "offset": offset,
         "page": pn,
     }
-    if _type: # 全部动态
+    if _type:  # 全部动态
         params["type"] = _type.value
-    elif host_mid: # 指定 UP 主动态
+    elif host_mid:  # 指定 UP 主动态
         params["host_mid"] = host_mid
 
-    dynmaic_data = await request("GET", api["url"], credential=credential, params=params)
-    return [Dynamic(dynamic_id=int(dynamic["id_str"]), credential=credential) for dynamic in dynmaic_data["items"]]
+    dynmaic_data = await request(
+        "GET", api["url"], credential=credential, params=params
+    )
+    return [
+        Dynamic(dynamic_id=int(dynamic["id_str"]), credential=credential)
+        for dynamic in dynmaic_data["items"]
+    ]

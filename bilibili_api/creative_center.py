@@ -26,6 +26,7 @@ class GraphPeriod(Enum):
     + THREE_MONTH: 近三月
     + TOTAL: 历史累计
     """
+
     YESTERDAY = -1
     WEEK = 0
     MONTH = 1
@@ -42,6 +43,7 @@ class FanGraphPeriod(Enum):
     + MONTH: 近一月
     + THREE_MONTH: 近三月
     """
+
     YESTERDAY = -1
     WEEK = 0
     MONTH = 1
@@ -63,6 +65,7 @@ class GraphType(Enum):
     + COIN: 投币数
     + ELEC: 充电数
     """
+
     PLAY = "play"
     VISITOR = "visitor"
     FAN = "fan"
@@ -84,10 +87,12 @@ class FanGraphType(Enum):
     + FOLLOW: 新增关注
     + UNFOLLOW: 取消关注
     """
+
     ALL_FANS = "all_fans"
     NEW_FANS = "fan"
     FOLLOW = "follow"
     UNFOLLOW = "unfollow"
+
 
 class ArticleInfoType(Enum):
     """
@@ -100,6 +105,7 @@ class ArticleInfoType(Enum):
     + FAV: 收藏
     + LIKE: 点赞
     """
+
     READ = 1
     COMMENT = 2
     SHARE = 3
@@ -116,6 +122,7 @@ class Copyright(Enum):
     + ORIGINAL: 原创
     + REPRINT: 转载
     """
+
     ALL = 0
     ORIGINAL = 1
     REPRINT = 2
@@ -135,7 +142,11 @@ async def get_compare(credential: Credential) -> dict:
     return await request("GET", api["url"], credential=credential)
 
 
-async def get_graph(credential: Credential, period: GraphPeriod = GraphPeriod.WEEK, graph_type: GraphType = GraphType.PLAY) -> dict:
+async def get_graph(
+    credential: Credential,
+    period: GraphPeriod = GraphPeriod.WEEK,
+    graph_type: GraphType = GraphType.PLAY,
+) -> dict:
     """
     获取统计图表数据。
 
@@ -156,7 +167,9 @@ async def get_graph(credential: Credential, period: GraphPeriod = GraphPeriod.WE
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_overview(credential: Credential, period: GraphPeriod = GraphPeriod.WEEK) -> dict:
+async def get_overview(
+    credential: Credential, period: GraphPeriod = GraphPeriod.WEEK
+) -> dict:
     """
     获取概览数据。
 
@@ -188,7 +201,9 @@ async def get_video_survey(credential: Credential) -> dict:
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_video_playanalysis(credential: Credential, copyright: Copyright = Copyright.ALL) -> dict:
+async def get_video_playanalysis(
+    credential: Credential, copyright: Copyright = Copyright.ALL
+) -> dict:
     """
     获取稿件播放完成率对比。
 
@@ -219,7 +234,9 @@ async def get_video_source(credential: Credential) -> dict:
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_fan_overview(credential: Credential, period: FanGraphPeriod = FanGraphPeriod.WEEK) -> dict:
+async def get_fan_overview(
+    credential: Credential, period: FanGraphPeriod = FanGraphPeriod.WEEK
+) -> dict:
     """
     获取粉丝概览数据。
 
@@ -235,7 +252,11 @@ async def get_fan_overview(credential: Credential, period: FanGraphPeriod = FanG
     return await request("GET", api["url"], params=params, credential=credential)
 
 
-async def get_fan_graph(credential: Credential, period: FanGraphPeriod = FanGraphPeriod.WEEK, graph_type: FanGraphType = FanGraphType.ALL_FANS) -> dict:
+async def get_fan_graph(
+    credential: Credential,
+    period: FanGraphPeriod = FanGraphPeriod.WEEK,
+    graph_type: FanGraphType = FanGraphType.ALL_FANS,
+) -> dict:
     """
     获取粉丝图表数据。
 
@@ -251,6 +272,7 @@ async def get_fan_graph(credential: Credential, period: FanGraphPeriod = FanGrap
     params = {"period": period.value, "type": graph_type.value}
     return await request("GET", api["url"], params=params, credential=credential)
 
+
 async def get_article_overview(credential: Credential) -> dict:
     """
     获取文章概览数据。
@@ -264,7 +286,10 @@ async def get_article_overview(credential: Credential) -> dict:
     api = API["article"]["overview"]
     return await request("GET", api["url"], credential=credential)
 
-async def get_article_graph(credential: Credential, graph_type: ArticleInfoType = ArticleInfoType.READ) -> dict:
+
+async def get_article_graph(
+    credential: Credential, graph_type: ArticleInfoType = ArticleInfoType.READ
+) -> dict:
     """
     获取文章图表数据。
 
@@ -280,7 +305,10 @@ async def get_article_graph(credential: Credential, graph_type: ArticleInfoType 
     params = {"type": graph_type.value}
     return await request("GET", api["url"], params=params, credential=credential)
 
-async def get_article_rank(credential: Credential, rank_type: ArticleInfoType = ArticleInfoType.READ) -> dict:
+
+async def get_article_rank(
+    credential: Credential, rank_type: ArticleInfoType = ArticleInfoType.READ
+) -> dict:
     """
     获取文章排行数据。
 
@@ -295,6 +323,7 @@ async def get_article_rank(credential: Credential, rank_type: ArticleInfoType = 
     api = API["article"]["rank"]
     params = {"type": rank_type.value}
     return await request("GET", api["url"], params=params, credential=credential)
+
 
 async def get_article_source(credential: Credential) -> dict:
     """

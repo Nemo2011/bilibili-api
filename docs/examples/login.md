@@ -42,14 +42,11 @@ if mode == 1:
     c = login_with_password(username, password)
     if isinstance(c, Check):
         # 还需验证
-        phone = print("需要进行验证。")
-        print(f'手机号码为：{c.fetch_info()["account_info"]["hide_tel"]}')
-        print("正在发送验证码：")
-        c.send_sms()
-        code = input("请输入验证码：")
-        credential = c.complete_check(code)
+        phone = print("需要进行验证。请考虑使用二维码登录")
+        exit(1)
     else:
         credential = c
+    print("登录成功")
 elif mode == 2:
     # 验证码登录
     phone = input("请输入手机号：")
@@ -57,7 +54,12 @@ elif mode == 2:
     send_sms(PhoneNumber(phone, country="+86")) # 默认设置地区为中国大陆
     code = input("请输入验证码：")
     c = login_with_sms(PhoneNumber(phone, country="+86"), code)
-    credential = c
+    if isinstance(c, Check):
+        # 还需验证
+        phone = print("需要进行验证。请考虑使用二维码登录")
+        exit(1)
+    else:
+        credential = c
     print("登录成功")
 else:
     print("请输入 1/2 ！")

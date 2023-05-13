@@ -8,6 +8,7 @@ from asyncio.exceptions import CancelledError
 from asyncio.tasks import Task, create_task
 import os
 import time
+import random
 
 from .video import Video
 from .utils.aid_bvid_transformer import bvid2aid
@@ -36,13 +37,11 @@ _API = get_api("video_uploader")
 
 async def _upload_cover(cover: Picture, credential: Credential):
     api = _API["cover_up"]
-    cover = cover.convert_format("jpg")
+    cover = cover.convert_format("png")
     data = {
-        "cover": f'data:image/jpeg;base64,{base64.b64encode(cover.content).decode("utf-8")}'
+        "cover": f'data:image/png;base64,{base64.b64encode(cover.content).decode("utf-8")}'
     }
-    return await request(
-        "POST", api["url"], data=data, credential=credential
-    )
+    return await request("POST", api["url"], data=data, credential=credential)
 
 
 class VideoUploaderPage:
@@ -468,10 +467,9 @@ class VideoUploader(AsyncEvent):
                 else Picture().from_file(self.cover_path)
             )
             resp = await _upload_cover(pic, self.credential)
-            self.dispatch(
-                VideoUploaderEvents.AFTER_COVER.value, {"url": resp["url"]}
-            )
-            return resp["image_url"]
+            self.dispatch(VideoUploaderEvents.AFTER_COVER.value,
+                          {"url": resp["url"]})
+            return resp["url"]
         except Exception as e:
             self.dispatch(VideoUploaderEvents.COVER_FAILED.value, {"err": e})
             raise e
@@ -541,7 +539,7 @@ class VideoUploader(AsyncEvent):
         # 上传目标 URL
         return (
             "https:"
-            + preupload["endpoint"]
+            + random.choice(preupload["endpoints"])
             + "/"
             + preupload["upos_uri"].removeprefix("upos://")
         )
@@ -907,10 +905,8 @@ class VideoEditor(AsyncEvent):
                 else Picture().from_file(self.cover_path)
             )
             resp = await _upload_cover(pic, self.credential)
-            self.dispatch(
-                VideoEditorEvents.AFTER_COVER.value, {"url": resp["url"]}
-            )
-            self.meta["cover"] = resp["image_url"]
+            self.dispatch(VideoEditorEvents.AFTER_COVER.value, {"url": resp["url"]})
+            self.meta["cover"] = resp["image_url"]  # not sure if this key changed to "url" as well
         except Exception as e:
             self.dispatch(VideoEditorEvents.COVER_FAILED.value, {"err": e})
             raise e

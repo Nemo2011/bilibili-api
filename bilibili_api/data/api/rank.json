@@ -1,119 +1,195 @@
 {
-    "info": {
-        "hot": {
-            "url": "https://api.bilibili.com/x/web-interface/popular",
-            "method": "GET", 
-            "verify": false,
-            "params": {
-                "ps": "int: 每页视频数",
-                "pn": "int: 页码"
-            },
-            "comment": "小破站的热门视频排行"
-        },
-        "weakly_series": {
-            "url": "https://api.bilibili.com/x/web-interface/popular/series/list",
-            "method": "GET", 
-            "verify": false,
-            "comment": "小破站每周必看全部信息（简介）"
-        },
-        "weakly_details": {
-            "url": "https://api.bilibili.com/x/web-interface/popular/series/one",
-            "method": "GET", 
-            "verify": false,
-            "params": {
-                "number": "int: 第几周"
-            },
-            "comment": "小破站每周必看一期的详细信息"
-        },
-        "history_popular": {
-            "url": "https://api.bilibili.com/x/web-interface/popular/precious",
-            "method": "GET", 
-            "verify": false,
-            "params": {
-                "page_size": "int: 就设置 85 好了（每页的大小）",
-                "page": "int: 页码"
-            },
-            "comment": "获取入站必刷 85 个视频"
-        },
-        "v2_ranking": {
-            "url": "https://api.bilibili.com/x/web-interface/ranking/v2",
-            "method": "GET", 
-            "verify": false,
-            "params": {
-                "rid": "int: 频道的 tid",
-                "type": "string: all"
-            },
-            "comment": "获取各个分区的排行榜"
-        },
-        "pgc_ranking": {
-            "url": "https://api.bilibili.com/pgc/web/rank/list",
-            "method": "GET", 
-            "verify": false,
-            "params": {
-                "day": "int: 天数 3/7",
-                "season_type": "int: 类型"
-            },
-            "comment": "获取番剧等排行榜"
-        },
-        "music_weakly_series": {
-            "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/all_period", 
-            "method": "GET", 
-            "verify": false, 
-            "params": {
-                "list_type": "const int: 1"
-            }, 
-            "comment": "获取全站音乐榜每周信息(不包括具体的音频列表)"
-        }, 
-        "music_weakly_details": {
-            "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/detail", 
-            "method": "GET", 
-            "verify": false, 
-            "params": {
-                "list_id": "int: 第几周"
-            }, 
-            "comment": "获取全站音乐榜一周的详细信息(不包括具体的音频列表)"
-        }, 
-        "music_weakly_content": {
-            "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/music_list", 
-            "method": "GET", 
-            "verify": false, 
-            "params": {
-                "list_id": "int: 第几周"
-            }, 
-            "comment": "获取全站音乐榜一周的音频列表"
-        },
-        "VIP_rank":{
-            "url": "https://api.bilibili.com/x/vip/vip_center/hotlist?=279",
-            "method": "GET", 
-            "verify": false,
-            "params":{
-                "rank_id": "int: 排行榜 rank_id"
-            },
-            "comment":"获取大会员中心的新热榜单"
-        },
-        "manga_rank_type": {
-            "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ListRank",
-            "method": "POST",
-            "verify": false,
-            "params": {
-                "device": "str: 设备",
-                "platform": "str: 平台"
-            },
-            "data": {},
-            "comment": "获取漫画排行榜类型，data 字段为空字典"
-        },
-        "manga_rank":{
-            "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetRankInfo",
-            "method": "POST", 
-            "verify": false,
-            "params":{
-                "device": "str: 设备",
-                "platform": "str: 平台"
-            },
-            "data":{
-                "id": "int: 排行榜 id"
-            },
-            "comment":"获取漫画排行榜"
-        }
+  "info": {
+    "hot": {
+      "url": "https://api.bilibili.com/x/web-interface/popular",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "ps": "int: 每页视频数",
+        "pn": "int: 页码"
+      },
+      "comment": "小破站的热门视频排行"
+    },
+    "weakly_series": {
+      "url": "https://api.bilibili.com/x/web-interface/popular/series/list",
+      "method": "GET",
+      "verify": false,
+      "comment": "小破站每周必看全部信息（简介）"
+    },
+    "weakly_details": {
+      "url": "https://api.bilibili.com/x/web-interface/popular/series/one",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "number": "int: 第几周"
+      },
+      "comment": "小破站每周必看一期的详细信息"
+    },
+    "history_popular": {
+      "url": "https://api.bilibili.com/x/web-interface/popular/precious",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "page_size": "int: 就设置 85 好了（每页的大小）",
+        "page": "int: 页码"
+      },
+      "comment": "获取入站必刷 85 个视频"
+    },
+    "v2_ranking": {
+      "url": "https://api.bilibili.com/x/web-interface/ranking/v2",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "rid": "int: 频道的 tid",
+        "type": "string: all"
+      },
+      "comment": "获取各个分区的排行榜"
+    },
+    "pgc_ranking": {
+      "url": "https://api.bilibili.com/pgc/web/rank/list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "day": "int: 天数 3/7",
+        "season_type": "int: 类型"
+      },
+      "comment": "获取番剧等排行榜"
+    },
+    "music_weakly_series": {
+      "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/all_period",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "list_type": "const int: 1"
+      },
+      "comment": "获取全站音乐榜每周信息(不包括具体的音频列表)"
+    },
+    "music_weakly_details": {
+      "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/detail",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "list_id": "int: 第几周"
+      },
+      "comment": "获取全站音乐榜一周的详细信息(不包括具体的音频列表)"
+    },
+    "music_weakly_content": {
+      "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/music_list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "list_id": "int: 第几周"
+      },
+      "comment": "获取全站音乐榜一周的音频列表"
+    },
+    "VIP_rank": {
+      "url": "https://api.bilibili.com/x/vip/vip_center/hotlist?=279",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "rank_id": "int: 排行榜 rank_id"
+      },
+      "comment": "获取大会员中心的新热榜单"
+    },
+    "manga_rank_type": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ListRank",
+      "method": "POST",
+      "verify": false,
+      "params": {
+        "device": "str: 设备",
+        "platform": "str: 平台"
+      },
+      "data": {},
+      "comment": "获取漫画排行榜类型，data 字段为空字典"
+    },
+    "manga_rank": {
+      "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetRankInfo",
+      "method": "POST",
+      "verify": false,
+      "params": {
+        "device": "str: 设备",
+        "platform": "str: 平台"
+      },
+      "data": {
+        "id": "int: 排行榜 id"
+      },
+      "comment": "获取漫画排行榜"
+    },
+    "live_hot_rank": {
+      "url": "https://api.live.bilibili.com/xlive/web-interface/v1/index/getHotRankList",
+      "method": "GET",
+      "verify": false,
+      "comment": "获取直播人气排行榜"
+    },
+    "live_sailing_rank": {
+      "url": "https://api.live.bilibili.com/room/v2/Index/getNewRankTop?type=guard",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "type": "str: guard"
+      },
+      "comment": "获取直播大航海主播排行榜"
+    },
+    "live_energy_user_rank": {
+      "url": "https://api.live.bilibili.com/xlive/general-interface/v1/rank/getFeedingMonthlyRankEnergy",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "date": "str: month, pre_month",
+        "page": "int: 页码",
+        "page_size": "int: 页大小"
+      },
+      "comment": "获取直播用户能量榜"
+    },
+    "live_web_top": {
+      "url": "https://api.live.bilibili.com/rankdb/v1/Rank2018/getWebTop",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "type": "str: 榜单类型",
+        "page": "int: 页码",
+        "page_size": "int: 页大小",
+        "is_trend": "int: 1 Unknown"
+      },
+      "comment": "获取直播通用排行榜"
+    },
+    "live_medal_level_rank": {
+      "url": "https://api.live.bilibili.com/xlive/general-interface/v1/Rank/GetTotalMedalLevelRank",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "page": "int: 页码",
+        "page_size": "int: 页大小"
+      },
+      "comment": "获取直播勋章等级排行榜"
+    },
+    "playlet_rank_phase": {
+      "url": "https://api.bilibili.com/pgc/activity/rank/ugc/playlet/queryList",
+      "method": "POST",
+      "verify": false,
+      "data": {},
+      "comment": "获取短剧榜期数"
+    },
+    "playlet_rank_info": {
+      "url": "https://api.bilibili.com/pgc/activity/rank/ugc/playlet/queryInfo",
+      "method": "POST",
+      "verify": false,
+      "data": {
+        "phaseID": "int: 期数"
+      },
+      "comment": "获取短剧榜信息"
     }
+  },
+  "operate": {
+    "subscribe": {
+      "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/subscribe/update",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "list_id": "int: 1",
+        "state": "int: 1 订阅 2 取消"
+      },
+      "comment": "订阅全站音乐榜"
+    }
+  }
 }

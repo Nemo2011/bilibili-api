@@ -1,5 +1,6 @@
 from bilibili_api import channel
 
+
 async def test_a_get_channel_categories():
     return await channel.get_channel_categories()
 

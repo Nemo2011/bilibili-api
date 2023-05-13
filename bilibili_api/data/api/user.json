@@ -27,7 +27,7 @@
       "comment": "修改自己的信息"
     },
     "info": {
-      "url": "https://api.bilibili.com/x/space/acc/info",
+      "url": "https://api.bilibili.com/x/space/wbi/acc/info",
       "method": "GET",
       "verify": false,
       "params": {
@@ -90,7 +90,7 @@
       "comment": "读取用户粉丝牌详细信息，如果隐私则不可以"
     },
     "live": {
-      "url": "https://api.bilibili.com/x/space/acc/info",
+      "url": "https://api.bilibili.com/x/space/wbi/acc/info",
       "method": "GET",
       "verify": false,
       "params": {
@@ -99,7 +99,7 @@
       "comment": "直播间基本信息"
     },
     "video": {
-      "url": "https://api.bilibili.com/x/space/arc/search",
+      "url": "https://api.bilibili.com/x/space/wbi/arc/search",
       "method": "GET",
       "verify": false,
       "params": {
@@ -146,7 +146,7 @@
       "comment": "音频"
     },
     "article": {
-      "url": "https://api.bilibili.com/x/space/article",
+      "url": "https://api.bilibili.com/x/space/wbi/article",
       "method": "GET",
       "verify": false,
       "params": {
@@ -406,6 +406,12 @@
         "ps":"int: 每页项数"
       },
       "comment": "获取指定用户和自己共同关注的 up 主"
+    },
+    "jury": {
+      "url": "https://api.bilibili.com/x/credit/v2/jury/jury",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取自己风纪委员信息"
     }
   },
   "operate": {

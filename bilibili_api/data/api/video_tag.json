@@ -25,6 +25,15 @@
         "topic_id": "int: 标签 id"
       },
       "comment": "获取相关的动态/视频"
+    },
+    "get_history_list": {
+      "url": "https://api.vc.bilibili.com/topic_svr/v1/topic_svr/topic_history",
+      "method": "GET",
+      "params": {
+        "topic_id": "int: 标签 id",
+        "offset_dynamic_id": "int: 起始视频/动态的dynamic_id(不包含自身)"
+      },
+      "comment": "获取从指定dynamic_id视频的后一位开始的相关的动态/视频, 先用get_list获取dynamic_id。"
     }
   }
 }

@@ -6,7 +6,7 @@ bilibili_api.utils.Danmaku
 
 import time
 from enum import Enum
-import zlib
+from .utils import crack_uid
 from typing import Union
 
 
@@ -92,11 +92,6 @@ class Danmaku:
         self.pool = pool
         self.attr = attr
 
-        if crc32_id != "":
-            self.uid = zlib.crc32(crc32_id.encode("utf8"))
-        else:
-            self.uid = 0
-
     def __str__(self):
         ret = "%s, %s, %s" % (self.send_time, self.dm_time, self.text)
         return ret
@@ -104,15 +99,15 @@ class Danmaku:
     def __len__(self):
         return len(self.text)
 
-    def set_crc32_id(self, crc32_id):
+    def crack_uid(self):
         """
-        设置 crc32_id 同时破解 uid
+        暴力破解 UID，可能存在误差，请慎重使用。
 
-        Args:
-            crc32_id(str): crc32_id
+        Returns:
+            int: 真实 UID。
         """
-        self.crc32_id = crc32_id
-        self.uid = zlib.crc32(crc32_id.encode("utf8"))
+        self.uid = int(crack_uid(self.crc32_id))
+        return self.uid
 
     def to_xml(self):
         """

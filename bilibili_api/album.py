@@ -106,7 +106,7 @@ class Album:
         info = await self.get_info()
         pictures = []
         for picture in info["item"]["pictures"]:
-            pictures.append(Picture.from_url(picture["img_src"]))
+            pictures.append(await Picture.async_load_url(picture["img_src"]))
         return pictures
 
 

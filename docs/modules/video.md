@@ -10,6 +10,8 @@ from bilibili_api import video
 
 ## class DanmakuOperatorType(Enum)
 
+**Extends:** enum.Enum
+
 弹幕操作枚举
 
 + DELETE - 删除弹幕
@@ -705,9 +707,31 @@ FLV 视频流
 
 **Returns:**bool: 是否为番剧试看的 mp4 视频流
 
-#### def detect_all()
+#### def detect()
 
 解析数据
+
+**以下参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| video_max_quality | VideoQuality | 设置提取的视频流清晰度最大值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._8K. |
+| audio_max_quality | AudioQuality | 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K. |
+| video_min_quality | VideoQuality | 设置提取的视频流清晰度最小值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._360P. |
+| audio_min_quality | AudioQuality | 设置提取的音频流清晰度最小值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._64K. |
+| video_accepted_qualities | List\[VideoQuality\] | 设置允许的所有视频流清晰度. Defaults to ALL. |
+| audio_accepted_qualities | List\[AudioQuality\] | 设置允许的所有音频清晰度. Defaults to ALL. |
+| codecs | List\[VideoCodecs\] | 设置所有允许提取出来的视频编码. 此项不会忽略 HDR/杜比. Defaults to ALL codecs. |
+| no_dolby_video | bool | 是否禁止提取杜比视界视频流. Defaults to False. |
+| no_dolby_audio | bool | 是否禁止提取杜比全景声音频流. Defaults to False. |
+| no_hdr | bool | 是否禁止提取 HDR 视频流. Defaults to False. |
+| no_hires | bool | 是否禁止提取 Hi-Res 音频流. Defaults to False. |
+
+**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 提取出来的视频/音频流
+
+#### def detect_all()
+
+解析并返回所有数据
 
 **Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 所有的视频/音频流
 
@@ -715,4 +739,18 @@ FLV 视频流
 
 提取出分辨率、音质等信息最好的音视频流
 
-**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL]: FLV 视频流 / HTML5 MP4 视频流 / 番剧或课程试看 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL | EpisodeTryMP4DownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`
+| name | type | description |
+| ---- | ---- | ----------- |
+| video_max_quality | VideoQuality | 设置提取的视频流清晰度最大值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._8K. |
+| audio_max_quality | AudioQuality | 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K. |
+| video_min_quality | VideoQuality | 设置提取的视频流清晰度最小值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._360P. |
+| audio_min_quality | AudioQuality | 设置提取的音频流清晰度最小值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._64K. |
+| video_accepted_qualities | List\[VideoQuality\] | 设置允许的所有视频流清晰度. Defaults to ALL. |
+| audio_accepted_qualities | List\[AudioQuality\] | 设置允许的所有音频清晰度. Defaults to ALL. |
+| codecs | List\[VideoCodecs\] | 设置所有允许提取出来的视频编码. 在数组中越靠前的编码选择优先级越高. 此项不会忽略 HDR/杜比. Defaults to [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV]. |
+| no_dolby_video | bool | 是否禁止提取杜比视界视频流. Defaults to False. |
+| no_dolby_audio | bool | 是否禁止提取杜比全景声音频流. Defaults to False. |
+| no_hdr | bool | 是否禁止提取 HDR 视频流. Defaults to False. |
+| no_hires | bool | 是否禁止提取 Hi-Res 音频流. Defaults to False. |
+
+**Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | None]: FLV 视频流 / HTML5 MP4 视频流 / 番剧或课程试看 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL | EpisodeTryMP4DownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`, 如果未匹配上任何合适的流则对应的位置位 `None`

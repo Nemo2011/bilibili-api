@@ -19,16 +19,106 @@ from bilibili_api import dynamic
 
 ---
 
+## class BuildDynmaic
+
+构建动态内容
+
+### Attributes
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| contents | List | 动态内容字段 |
+| pics | List | 图片字段 |
+| attach_card | dict | 动态卡片字段 |
+| topic | dict | 话题字段 |
+| options | dict | 选项字段 |
+
+### Functions
+
+#### def add_text()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| text | str | 文本内容 |
+
+添加文本内容（可以附加 at 人和表情包）
+
+#### def add_plain_text()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| text | str | 文本内容 |
+
+添加纯内容
+
+#### def add_at()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| user | int, User | 用户 ID 或用户类 |
+
+添加 @ 用户
+
+#### def add_emoji()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| emoji_name | str | 表情中文名称 |
+
+添加表情
+
+#### def add_vote()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| vote | Vote, int | 投票类或 vote_id |
+
+添加投票
+#### def add_image()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| image | Picture | 图片类 |
+
+添加图片
+
+#### def set_attach_card()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| oid | int | 卡片id |
+
+设置直播预约
+
+在 live.create_live_reserve 中获取 oid
+
+#### def set_topic()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| topic_id | int, Topic | 话题id 或话题类 |
+
+设置话题
+
+#### def set_options()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| up_choose_comment | bool | 开启精选评论 |
+| close_comment | bool | 关闭评论 |
+
+设置选项
+
+---
+
 ## async def send_dynamic()
 
-| name         | type                              | description                         |
-| ------------ | --------------------------------- | ----------------------------------- |
-| text         | str                               | 动态文本                            |
-| images       | List[Picture] \| None, optional | 图片流列表. Defaults to None.       |
-| send_time    | datetime.datetime \| None, optional       | 定时动态发送时间. Defaults to None. |
-| credential   | Credential \| None, optional              | 凭据. Defaults to None.             |
+| name         | type         | description |
+| ------------ | ------------ | ----------- |
+| info         | BuildDynmaic | 动态构建类    |
+| credential   | Credential   | 凭据         |
 
-自动判断动态类型选择合适的 API 并发送动态。
+发送动态（Web端）
 
 **Returns:** dict: 调用 API 返回的结果
 

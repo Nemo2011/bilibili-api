@@ -7,19 +7,62 @@ bilibili_api
 import asyncio
 import platform
 
-from . import (album, app, article, article_category, ass, audio, bangumi,
-               black_room, channel, channel_series, cheese, client, comment,
-               creative_center, dynamic, emoji, favorite_list, game, homepage,
-               hot, interactive_video, live, live_area, login, login_func,
-               manga, note, rank, search, session, settings, topic, user,
-               video, video_tag, video_uploader, video_zone, vote)
-from .errors import (ApiException, ArgsException, CredentialNoBiliJctException,
-                     CredentialNoBuvid3Exception,
-                     CredentialNoDedeUserIDException,
-                     CredentialNoSessdataException, DanmakuClosedException,
-                     DynamicExceedImagesException, LiveException, LoginError,
-                     NetworkException, ResponseCodeException,
-                     ResponseException, VideoUploadException)
+from . import (
+    album,
+    app,
+    article,
+    article_category,
+    ass,
+    audio,
+    bangumi,
+    black_room,
+    channel,
+    channel_series,
+    cheese,
+    client,
+    comment,
+    creative_center,
+    dynamic,
+    emoji,
+    favorite_list,
+    game,
+    homepage,
+    hot,
+    interactive_video,
+    live,
+    live_area,
+    login,
+    login_func,
+    manga,
+    note,
+    rank,
+    search,
+    session,
+    settings,
+    topic,
+    user,
+    video,
+    video_tag,
+    video_uploader,
+    video_zone,
+    vote,
+)
+from .errors import (
+    ApiException,
+    ArgsException,
+    CredentialNoBiliJctException,
+    CredentialNoBuvid3Exception,
+    CredentialNoDedeUserIDException,
+    CredentialNoSessdataException,
+    DanmakuClosedException,
+    DynamicExceedImagesException,
+    LiveException,
+    LoginError,
+    NetworkException,
+    ResponseCodeException,
+    ResponseException,
+    VideoUploadException,
+)
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
@@ -29,7 +72,7 @@ from .utils.Picture import Picture
 from .utils.short import get_real_url
 from .utils.sync import sync
 
-BILIBILI_API_VERSION = "15.1.0"
+BILIBILI_API_VERSION = "15.4.1"
 
 # 如果系统为 Windows，则修改默认策略，以解决代理报错问题
 if "windows" in platform.system().lower():
@@ -100,7 +143,7 @@ __all__ = [
     "settings",
     "sync",
     "topic",
-    "user",\
+    "user",
     "video",
     "video_tag",
     "video_uploader",

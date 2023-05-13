@@ -20,7 +20,12 @@ class Tag:
     标签类
     """
 
-    def __init__(self, tag_name: Optional[str] = None, tag_id: Optional[int] = None, credential: Optional[Credential] = None):
+    def __init__(
+        self,
+        tag_name: Optional[str] = None,
+        tag_id: Optional[int] = None,
+        credential: Optional[Credential] = None,
+    ):
         """
         Args:
             tag_name   (str | None): 标签名. Defaults to None.
@@ -75,6 +80,15 @@ class Tag:
         """
         api = API["info"]["get_list"]
         params = {"topic_id": self.get_tag_id()}
+        return await request("GET", api["url"], params=params)
+    async def get_history_cards(self,offset_dynamic_id:int)-> dict:
+        """
+        获取标签下，指定dynamic_id的视频的后一个视频/动态作为起始的视频/动态
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["get_history_list"]
+        params = {"topic_id": self.get_tag_id(), "offset_dynamic_id": offset_dynamic_id}
         return await request("GET", api["url"], params=params)
 
     async def subscribe_tag(self) -> dict:

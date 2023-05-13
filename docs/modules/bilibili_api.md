@@ -110,7 +110,7 @@ import bilibili_api
 ---
 
 **@dataclasses.dataclass**
-## class Picture
+## class Picture()
 
 图片类，包含图片链接、尺寸以及下载操作。
 
@@ -122,7 +122,7 @@ Args:
     width     (int)  : 宽度           
     content   (bytes): 图片内容   
 
-可以不实例化，用 `from_url` 或 `from_file` 加载。
+可以不实例化，用 `from_url` 或 `from_file` 或 `from_content` 加载。
 
 ### Functions
 
@@ -145,6 +145,14 @@ Args:
 | path | str  | 图片地址。   |
 
 加载本地图片。
+
+**@staticmethod**
+#### def from_content
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| content | bytes | 图片内容 |
+| format | str | 图片后缀名，如 `webp`, `jpg`, `ico` |
 
 **Returns:** Picture: 加载后的图片对象。
 
@@ -169,6 +177,26 @@ Args:
 **Returns:** Picture: `self`
 
 #### async def download()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| path | str  | 下载地址。    |
+
+下载图片至本地。
+
+**Returns:** Picture: `self`
+
+#### def upload_file_sync()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据类。 |
+
+上传图片至 B 站。
+
+**Returns:** Picture: `self`
+
+#### def download_sync()
 
 | name | type | description |
 | ---- | ---- | ----------- |
@@ -337,13 +365,11 @@ BV 号转 AV 号。
 | pool      | int, optional        | 暂不清楚。Defaults to -1.                                   |
 | attr      | int, optional        | 暂不清楚。 Defaults to -1.                                  |
 
-#### def set_crc32_id()
+#### def crack_uid()
 
-| name      | type               | description                                                 |
-| - | - | - |
-| crc32_id | str | crc32_id |
+暴力破解 UID，可能存在误差，请慎重使用。
 
-设置 crc32_id 同时破解 uid
+**Returns:** int: 真实 UID。
 
 #### def to_xml()
 
