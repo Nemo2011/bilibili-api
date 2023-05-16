@@ -4,13 +4,14 @@ bilibili_api.utils.network_httpx
 复写了 .utils.network，使用 httpx
 """
 
-from typing import Any, Union
+from typing import Any, Callable, Dict, Optional, Union
 from urllib.parse import quote
 import json
 import re
 import asyncio
 import atexit
 import uuid
+from aiohttp import CookieJar
 
 import httpx
 
@@ -210,3 +211,73 @@ def to_form_urlencoded(data: dict) -> str:
         temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
 
     return "&".join(temp)
+
+class Request:
+    url:str
+    method:str
+    path:Optional[Dict[str,Any]] = None
+    query:Optional[Dict[str,Any]] = None
+    body:Optional[Dict[str,Any]] = None
+    form:Optional[Dict[str,Any]] = None
+    cookies:Optional['CookieJar'] = None
+    json:Optional[Dict[str,Any]] = None
+    timeout:Optional[int] = None
+    headers:Optional[Dict[str,Any]] = None
+    def __init__(
+        self,
+        url:str,
+        method:str,
+        path:Optional[Dict[str,Any]] = None,
+        query:Optional[Dict[str,Any]] = None,
+        body:Optional[Dict[str,Any]] = None,
+        cookies:Optional[Dict[str,Any]] = None,
+        json:Optional[Dict[str,Any]] = None,
+        headers:Optional[Dict[str,Any]] = None,
+        timeout:Optional[int] = None
+    ):
+        self.url = url
+        self.query = query
+        self.path = path
+        self.method = method
+        self.body = body
+        self.cookies = self.covernCookies(cookies)
+        self.headers = headers
+        self.timeout = timeout
+        self.json = json
+    def formatURLPath(self,url:str,data:Optional[Dict[str,Any]]= None):
+        if(data != None):
+            backupURL = url
+            for key in data:
+                backupURL = backupURL.replace("{%s}"%(key),str(data.get(key)),1)
+                backupURL = backupURL.replace(":%s"%(key),str(data.get(key)),1)
+            return backupURL
+        return url
+    def covernCookies(self,cookies:Optional[Dict[str,Any]] = None):
+        if cookies != None:
+            # TODO: implement dict to cookiesJar
+            cookiejarInstance = CookieJar()
+            return cookiejarInstance
+    async def __call__(self,func:Callable):
+        async def wapper(*args, **kw):
+            session =  get_session()
+            self.method = kw.get("method") or self.method
+            self.url = kw.get("url") or self.url
+            self.path = kw.get('path') or self.path
+            overrideHeaders:Optional[Dict[str,Any]] = kw.get("headers")
+            if overrideHeaders:
+                self.headers = self.headers or {}
+                for key in overrideHeaders:
+                    self.headers[key] = overrideHeaders[key]
+            self.headers = kw.get('headers') or self.headers
+            self.query = kw.get('query') or self.query
+            self.json = kw.get('json') or self.json
+            res = await session.request(
+                method=self.method,
+                url=self.formatURLPath(self.url,self.path),
+                json=self.json,
+                headers=self.headers,
+                params=self.query,
+                timeout=self.timeout
+            )
+            return func(response=res,*args,**kw)
+        return wapper
