@@ -250,7 +250,7 @@ class Request:
                 self.headers[key] = overrideHeaders[key]
         self.query = kwargs.get("query", self.query)
         self.json = kwargs.get("json", self.json)
-    async def __call__(self,func:Callable):
+    def __call__(self,func:Callable):
         if isAsync(func):
             async def wapperAsync(*args, **kw):
                 session =  get_session()
