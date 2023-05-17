@@ -13,8 +13,9 @@ import atexit
 import uuid
 from aiohttp import CookieJar
 from websockets.sync.client import connect
+from inspect import iscoroutinefunction as isAsync
 import httpx
-
+from dataclasses import dataclass
 from ..exceptions import ResponseCodeException, ResponseException, NetworkException
 from .Credential import Credential
 from .. import settings
@@ -212,6 +213,7 @@ def to_form_urlencoded(data: dict) -> str:
 
     return "&".join(temp)
 
+@dataclass
 class Request:
     url:str
     method:str
@@ -223,27 +225,6 @@ class Request:
     json:Optional[Dict[str,Any]] = None
     timeout:Optional[int] = None
     headers:Optional[Dict[str,Any]] = None
-    def __init__(
-        self,
-        url:str,
-        method:str,
-        path:Optional[Dict[str,Any]] = None,
-        query:Optional[Dict[str,Any]] = None,
-        body:Optional[Dict[str,Any]] = None,
-        cookies:Optional[Dict[str,Any]] = None,
-        json:Optional[Dict[str,Any]] = None,
-        headers:Optional[Dict[str,Any]] = None,
-        timeout:Optional[int] = None
-    ):
-        self.url = url
-        self.query = query
-        self.path = path
-        self.method = method
-        self.body = body
-        self.cookies = self.covernCookies(cookies)
-        self.headers = headers
-        self.timeout = timeout
-        self.json = json
     def formatURLPath(self,url:str,data:Optional[Dict[str,Any]]= None):
         if(data != None):
             backupURL = url
@@ -257,31 +238,51 @@ class Request:
             # TODO: implement dict to cookiesJar
             cookiejarInstance = CookieJar()
             return cookiejarInstance
+    def update(self, **kwargs):
+        "更新参数"
+        self.url = kwargs.get("url", self.url)
+        self.path = kwargs.get("path", self.path)
+        self.method = kwargs.get("method", self.method)
+        overrideHeaders: Optional[Dict[str,Any]] = kwargs.get("headers")
+        if overrideHeaders is not None:
+            self.headers = self.headers or {}
+            for key in overrideHeaders:
+                self.headers[key] = overrideHeaders[key]
+        self.query = kwargs.get("query", self.query)
+        self.json = kwargs.get("json", self.json)
     async def __call__(self,func:Callable):
-        async def wapper(*args, **kw):
-            session =  get_session()
-            self.method = kw.get("method") or self.method
-            self.url = kw.get("url") or self.url
-            self.path = kw.get('path') or self.path
-            overrideHeaders:Optional[Dict[str,Any]] = kw.get("headers")
-            if overrideHeaders:
-                self.headers = self.headers or {}
-                for key in overrideHeaders:
-                    self.headers[key] = overrideHeaders[key]
-            self.headers = kw.get('headers') or self.headers
-            self.query = kw.get('query') or self.query
-            self.json = kw.get('json') or self.json
-            if(self.method == "ws" or self.method == "websocket"):
-                with connect(self.url) as websocket:
-                    websocket.send(self.body or self.json or "")
-                    res = websocket.recv()
-            res = await session.request(
-                method=self.method,
-                url=self.formatURLPath(self.url,self.path),
-                json=self.json,
-                headers=self.headers,
-                params=self.query,
-                timeout=self.timeout
-            )
-            return func(response=res,*args,**kw)
-        return wapper
+        if isAsync(func):
+            async def wapperAsync(*args, **kw):
+                session =  get_session()
+                self.update(kwargs=kw)
+                if(self.method == "ws" or self.method == "websocket"):
+                    with connect(self.url) as websocket:
+                        websocket.send(self.body or self.json or "")
+                        res = websocket.recv()
+                res = await session.request(
+                    method=self.method,
+                    url=self.formatURLPath(self.url,self.path),
+                    json=self.json,
+                    headers=self.headers,
+                    params=self.query,
+                    timeout=self.timeout
+                )
+                return func(response=res,*args,**kw)
+            return wapperAsync
+        else:
+            def wapper(*args, **kw):
+                self.update(kwargs=kw)
+                if(self.method == "ws" or self.method == "websocket"):
+                    with connect(self.url) as websocket:
+                        websocket.send(self.body or self.json or "")
+                        res = websocket.recv()
+                res = httpx.request(
+                    method=self.method,
+                    url=self.formatURLPath(self.url,self.path),
+                    json=self.json,
+                    headers=self.headers,
+                    params=self.query,
+                    timeout=self.timeout
+                )
+                return func(response=res,*args,**kw)
+            return wapper
