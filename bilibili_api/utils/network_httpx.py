@@ -12,7 +12,7 @@ import asyncio
 import atexit
 import uuid
 from aiohttp import CookieJar
-
+from websockets.sync.client import connect
 import httpx
 
 from ..exceptions import ResponseCodeException, ResponseException, NetworkException
@@ -271,6 +271,10 @@ class Request:
             self.headers = kw.get('headers') or self.headers
             self.query = kw.get('query') or self.query
             self.json = kw.get('json') or self.json
+            if(self.method == "ws" or self.method == "websocket"):
+                with connect(self.url) as websocket:
+                    websocket.send(self.body or self.json or "")
+                    res = websocket.recv()
             res = await session.request(
                 method=self.method,
                 url=self.formatURLPath(self.url,self.path),
