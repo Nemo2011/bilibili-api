@@ -186,3 +186,7 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 [issues-new]: https://github.com/Nemo2011/bilibili-api/issues/new/choose
 [get-credential]: https://nemo2011.github.io/bilibili-api/#/get-credential
 [pypi]: https://pypi.org/project/bilibili-api-python
+
+# Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Nemo2011/bilibili-api&type=Date)](https://star-history.com/#Nemo2011/bilibili-api&Date)
