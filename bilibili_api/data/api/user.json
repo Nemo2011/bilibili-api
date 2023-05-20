@@ -30,6 +30,7 @@
       "url": "https://api.bilibili.com/x/space/wbi/acc/info",
       "method": "GET",
       "verify": false,
+      "wbi": true,
       "params": {
         "mid": "int: uid"
       },
@@ -93,6 +94,7 @@
       "url": "https://api.bilibili.com/x/space/wbi/acc/info",
       "method": "GET",
       "verify": false,
+      "wbi": true,
       "params": {
         "mid": "int: uid"
       },
@@ -102,6 +104,7 @@
       "url": "https://api.bilibili.com/x/space/wbi/arc/search",
       "method": "GET",
       "verify": false,
+      "wbi": true,
       "params": {
         "mid": "int: uid",
         "ps": "const int: 30",
@@ -116,6 +119,7 @@
       "url": "https://api.bilibili.com/x/space/reservation",
       "method": "GET",
       "verify": false,
+      "wbi": true,
       "params": {
         "vmid": "int: uid"
       },
