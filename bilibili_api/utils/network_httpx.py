@@ -17,9 +17,11 @@ import httpx
 from ..exceptions import ResponseCodeException, ResponseException, NetworkException
 from .Credential import Credential
 from .. import settings
+from .wbi import encWbi
 
 __session_pool = {}
 last_proxy = ""
+wbi_mixin_key = ""
 
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
 
@@ -85,6 +87,22 @@ async def request(
 
     if params is None:
         params = {}
+
+    # 处理 wbi 鉴权
+    # 为什么tmd api 信息不传入而是直接传入 url
+    
+    wbi_mode = False
+    if "wbi" in url: # 只能暂时这么判断了
+        wbi_mode = True
+        global wbi_mixin_key
+        if wbi_mixin_key == "":
+            w_rid, wts, mixin_key = encWbi(params)
+            wbi_mixin_key = mixin_key
+        else:
+            w_rid, wts, _ = encWbi(params, wbi_mixin_key)
+        params["w_rid"] = w_rid
+        params["wts"] = wts
+            
 
     # 自动添加 csrf
     if not no_csrf and method in ["POST", "DELETE", "PATCH"]:
@@ -157,6 +175,10 @@ async def request(
     if code is None:
         raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
     if code != 0:
+        # 403 时尝试重新获取 wbi_mixin_key 可能过期了
+        if code == -403 and wbi_mode:
+            wbi_mixin_key = ""
+            return await request(method, url, params, data, credential, no_csrf, json_body, **kwargs)
         msg = resp_data.get("msg", None)
         if msg is None:
             msg = resp_data.get("message", None)

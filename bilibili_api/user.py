@@ -16,7 +16,6 @@ from .utils.utils import get_api, join
 from .utils.Credential import Credential
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
 from typing import List, Union
-import httpx
 
 API = get_api("user")
 

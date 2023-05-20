@@ -93,11 +93,17 @@ async def make_ass_file_subtitle(
         out        (str, optional)       : 输出位置. Defaults to "test.ass".
         name       (str, optional)       : 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）".
     """
-    info = await obj.get_info()
-    json_files = info["subtitle"]["list"]
+    if isinstance(obj, Episode):
+        info = await obj.get_player_info(cid=await obj.get_cid(), epid=obj.get_epid())
+        json_files = info["subtitle"]["subtitles"]
+    else:
+        info = await obj.get_info() 
+        json_files = info["subtitle"]["list"]
     for subtitle in json_files:
         if subtitle["lan_doc"] == name:
             url = subtitle["subtitle_url"]
+            if isinstance(obj, Episode):
+                url = "https:" + url
             req = await get_session().request("GET", url)
             file_dir = gettempdir() + "/" + "subtitle.json"
             with open(file_dir, "wb") as f:
