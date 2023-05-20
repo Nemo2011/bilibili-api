@@ -1285,7 +1285,7 @@ class Video:
     async def get_subtitle(
         self,
         cid: Union[int, None] = None,
-    ):
+    ) -> dict:
         """
         获取字幕信息
 
@@ -1297,16 +1297,37 @@ class Video:
         """
         if cid is None:
             raise ArgsException("需要 cid")
+
+        return (await self.get_player_info(cid=cid)).get("subtitle")
+
+    async def get_player_info(
+        self,
+        cid: Union[int, None] = None,
+        epid: Union[int, None] = None,
+    ) -> dict:
+        """
+        获取字幕信息
+
+        Args:
+            cid (int | None): 分 P ID,从视频信息中获取
+            epid (int | None): 番剧分集 ID,从番剧信息中获取
+
+        Returns:
+            调用 API 返回的结果
+        """
+        if cid is None:
+            raise ArgsException("需要 cid")
         api = API["info"]["get_player_info"]
 
         params = {
             "aid": self.get_aid(),
             "cid": cid,
+            "ep_id": epid,
         }
-        result = await request(
+        return await request(
             "GET", api["url"], params=params, credential=self.credential
         )
-        return result.get("subtitle")
+
 
     async def submit_subtitle(
         self,
