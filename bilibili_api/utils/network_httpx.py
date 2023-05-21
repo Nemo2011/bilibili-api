@@ -4,26 +4,59 @@ bilibili_api.utils.network_httpx
 复写了 .utils.network，使用 httpx
 """
 
-from typing import Any, Union
-from urllib.parse import quote
-import json
-import re
 import asyncio
 import atexit
+import hashlib
+import json
+import re
+import time
 import uuid
+from functools import reduce
+from typing import Any, Dict, Optional, Tuple, Union
+from urllib.parse import quote
 
 import httpx
 
-from ..exceptions import ResponseCodeException, ResponseException, NetworkException
-from .Credential import Credential
 from .. import settings
-from .wbi import encWbi
+from ..exceptions import NetworkException, ResponseCodeException, ResponseException
+from .Credential import Credential, get_nav
 
 __session_pool = {}
 last_proxy = ""
 wbi_mixin_key = ""
 
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
+
+
+async def get_mixin_key() -> str:
+    """
+    获取混合密钥
+    
+    Returns:
+        str: 新获取的密钥
+    """
+
+    data = await get_nav(headers=HEADERS)
+    wbi_img: Dict[str, str] = data["wbi_img"]
+    split = lambda key: wbi_img.get(key).split("/")[-1].split(".")[0]
+    ae = split("img_url") + split("sub_url")
+    oe = [46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41,
+          13, 37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36, 20, 34, 44, 52]
+    le = reduce(lambda s, i: s + ae[i], oe, "")
+    return le[:32]
+
+
+def encWbi(params: dict, mixin_key: str):
+    """
+    更新请求参数
+    """
+
+    Ae = "&".join([f"{key}={value}" for key, value in params.items()])
+    w_rid = hashlib.md5(
+        (Ae + mixin_key).encode(encoding="utf-8")
+    ).hexdigest()
+    params["w_rid"] = w_rid
+    params["wts"] = int(time.time())
 
 
 @atexit.register
@@ -96,13 +129,8 @@ async def request(
         wbi_mode = True
         global wbi_mixin_key
         if wbi_mixin_key == "":
-            w_rid, wts, mixin_key = encWbi(params)
-            wbi_mixin_key = mixin_key
-        else:
-            w_rid, wts, _ = encWbi(params, wbi_mixin_key)
-        params["w_rid"] = w_rid
-        params["wts"] = wts
-            
+            wbi_mixin_key = await get_mixin_key()
+        encWbi(params, wbi_mixin_key)
 
     # 自动添加 csrf
     if not no_csrf and method in ["POST", "DELETE", "PATCH"]:
@@ -178,6 +206,7 @@ async def request(
         # 403 时尝试重新获取 wbi_mixin_key 可能过期了
         if code == -403 and wbi_mode:
             wbi_mixin_key = ""
+            # 这里有潜在的性能影响 可能爆栈 虽然需要至少 995 次失败
             return await request(method, url, params, data, credential, no_csrf, json_body, **kwargs)
         msg = resp_data.get("msg", None)
         if msg is None:
