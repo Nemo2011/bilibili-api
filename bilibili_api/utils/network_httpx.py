@@ -51,13 +51,13 @@ def enc_wbi(params: dict, mixin_key: str):
     更新请求参数
     """
 
-    keys = sorted(filter(lambda k: k not in ["w_rid", "wts"], params.keys()))
+    params["wts"] = int(time.time())
+    keys = sorted(filter(lambda k: k != "w_rid", params.keys()))
     Ae = "&".join(f"{key}={params[key]}" for key in keys)
     w_rid = hashlib.md5(
         (Ae + mixin_key).encode(encoding="utf-8")
     ).hexdigest()
     params["w_rid"] = w_rid
-    params["wts"] = int(time.time())
 
 
 @atexit.register
