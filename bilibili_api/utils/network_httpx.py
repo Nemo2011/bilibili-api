@@ -40,23 +40,24 @@ async def get_mixin_key() -> str:
     wbi_img: Dict[str, str] = data["wbi_img"]
     split = lambda key: wbi_img.get(key).split("/")[-1].split(".")[0]
     ae = split("img_url") + split("sub_url")
-    oe = [46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41,
-          13, 37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36, 20, 34, 44, 52]
-    le = reduce(lambda s, i: s + ae[i], oe, "")
+    oe = [46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41, 13,
+          37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36, 20, 34, 44, 52]
+    le = reduce(lambda s, i: s + (ae[i] if i < len(ae) else ""), oe, "")
     return le[:32]
 
 
-def encWbi(params: dict, mixin_key: str):
+def enc_wbi(params: dict, mixin_key: str):
     """
     更新请求参数
     """
 
-    Ae = "&".join([f"{key}={value}" for key, value in params.items()])
+    params["wts"] = int(time.time())
+    keys = sorted(filter(lambda k: k != "w_rid", params.keys()))
+    Ae = "&".join(f"{key}={params[key]}" for key in keys)
     w_rid = hashlib.md5(
         (Ae + mixin_key).encode(encoding="utf-8")
     ).hexdigest()
     params["w_rid"] = w_rid
-    params["wts"] = int(time.time())
 
 
 @atexit.register
@@ -130,7 +131,7 @@ async def request(
         global wbi_mixin_key
         if wbi_mixin_key == "":
             wbi_mixin_key = await get_mixin_key()
-        encWbi(params, wbi_mixin_key)
+        enc_wbi(params, wbi_mixin_key)
 
     # 自动添加 csrf
     if not no_csrf and method in ["POST", "DELETE", "PATCH"]:

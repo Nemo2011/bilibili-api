@@ -167,7 +167,12 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["info"]
-        params = {"mid": self.__uid}
+        params = {
+            "mid": self.__uid,
+            "token": "",
+            "platform": "web",
+            "web_location": 1550101
+        }
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
