@@ -12,7 +12,8 @@ import re
 import time
 import uuid
 from functools import reduce
-from typing import Any, Dict, Optional, Tuple, Union
+from inspect import iscoroutinefunction as isAsync
+from typing import Any, Coroutine, Dict, Optional, Tuple, Union
 from urllib.parse import quote
 
 import httpx
@@ -49,6 +50,11 @@ async def get_mixin_key() -> str:
 def enc_wbi(params: dict, mixin_key: str):
     """
     更新请求参数
+
+    Args:
+        params (dict): 原请求参数
+
+        mixin_key (str): 混合密钥
     """
 
     params["wts"] = int(time.time())
@@ -124,10 +130,7 @@ async def request(
 
     # 处理 wbi 鉴权
     # 为什么tmd api 信息不传入而是直接传入 url
-    
-    wbi_mode = False
-    if "wbi" in url: # 只能暂时这么判断了
-        wbi_mode = True
+    if "wbi" in url:  # 只能暂时这么判断了
         global wbi_mixin_key
         if wbi_mixin_key == "":
             wbi_mixin_key = await get_mixin_key()
@@ -204,11 +207,6 @@ async def request(
     if code is None:
         raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
     if code != 0:
-        # 403 时尝试重新获取 wbi_mixin_key 可能过期了
-        if code == -403 and wbi_mode:
-            wbi_mixin_key = ""
-            # 这里有潜在的性能影响 可能爆栈 虽然需要至少 995 次失败
-            return await request(method, url, params, data, credential, no_csrf, json_body, **kwargs)
         msg = resp_data.get("msg", None)
         if msg is None:
             msg = resp_data.get("message", None)
@@ -262,3 +260,42 @@ def to_form_urlencoded(data: dict) -> str:
         temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
 
     return "&".join(temp)
+
+
+def retry(times: int = 3):
+    """
+    重试装饰器
+
+    Args:
+        times (int): 最大重试次数 默认 3 次 负数则一直重试直到成功
+
+    Returns:
+        Any: 原函数调用结果
+    """
+
+    def wrapper(func: Coroutine):
+        async def req(*args, **kwargs):
+            nonlocal times
+            while times != 0:
+                times -= 1
+                try:
+                    result = await func(*args, **kwargs)
+                    return result
+                except ResponseCodeException as e:
+                    # -403 时尝试重新获取 wbi_mixin_key 可能过期了
+                    if e.code == -403 and times != 0:
+                        global wbi_mixin_key
+                        wbi_mixin_key = ""
+                        continue
+                    else:
+                        # 不是 -403 错误或者重试次数达到了报最后一次错
+                        raise e
+        return req
+
+    if isAsync(times):
+        # 防呆不防傻 防止有人 @retry() 不打括号
+        func = times
+        times = 3
+        return wrapper(func)
+
+    return wrapper
