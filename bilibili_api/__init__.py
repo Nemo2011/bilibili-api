@@ -66,7 +66,7 @@ from .errors import (
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
-from .utils.network_httpx import HEADERS, get_session, set_session
+from .utils.network_httpx import HEADERS, get_session, set_session, retry
 from .utils.parse_link import ResourceType, parse_link
 from .utils.Picture import Picture
 from .utils.short import get_real_url
@@ -137,6 +137,7 @@ __all__ = [
     "parse_link",
     "platform",
     "rank",
+    "retry",
     "search",
     "session",
     "set_session",
