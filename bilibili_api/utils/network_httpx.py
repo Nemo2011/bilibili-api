@@ -4,26 +4,66 @@ bilibili_api.utils.network_httpx
 复写了 .utils.network，使用 httpx
 """
 
-from typing import Any, Union
-from urllib.parse import quote
-import json
-import re
 import asyncio
 import atexit
+import hashlib
+import json
+import re
+import time
 import uuid
+from functools import reduce
+from inspect import iscoroutinefunction as isAsync
+from typing import Any, Coroutine, Dict, Optional, Tuple, Union
+from urllib.parse import quote
 
 import httpx
 
-from ..exceptions import ResponseCodeException, ResponseException, NetworkException
-from .Credential import Credential
 from .. import settings
-from .wbi import encWbi
+from ..exceptions import NetworkException, ResponseCodeException, ResponseException
+from .Credential import Credential, get_nav
 
 __session_pool = {}
 last_proxy = ""
 wbi_mixin_key = ""
 
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
+
+
+async def get_mixin_key() -> str:
+    """
+    获取混合密钥
+    
+    Returns:
+        str: 新获取的密钥
+    """
+
+    data = await get_nav(headers=HEADERS)
+    wbi_img: Dict[str, str] = data["wbi_img"]
+    split = lambda key: wbi_img.get(key).split("/")[-1].split(".")[0]
+    ae = split("img_url") + split("sub_url")
+    oe = [46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41, 13,
+          37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36, 20, 34, 44, 52]
+    le = reduce(lambda s, i: s + (ae[i] if i < len(ae) else ""), oe, "")
+    return le[:32]
+
+
+def enc_wbi(params: dict, mixin_key: str):
+    """
+    更新请求参数
+
+    Args:
+        params (dict): 原请求参数
+
+        mixin_key (str): 混合密钥
+    """
+
+    params["wts"] = int(time.time())
+    keys = sorted(filter(lambda k: k != "w_rid", params.keys()))
+    Ae = "&".join(f"{key}={params[key]}" for key in keys)
+    w_rid = hashlib.md5(
+        (Ae + mixin_key).encode(encoding="utf-8")
+    ).hexdigest()
+    params["w_rid"] = w_rid
 
 
 @atexit.register
@@ -90,19 +130,11 @@ async def request(
 
     # 处理 wbi 鉴权
     # 为什么tmd api 信息不传入而是直接传入 url
-    
-    wbi_mode = False
-    if "wbi" in url: # 只能暂时这么判断了
-        wbi_mode = True
+    if "wbi" in url:  # 只能暂时这么判断了
         global wbi_mixin_key
         if wbi_mixin_key == "":
-            w_rid, wts, mixin_key = encWbi(params)
-            wbi_mixin_key = mixin_key
-        else:
-            w_rid, wts, _ = encWbi(params, wbi_mixin_key)
-        params["w_rid"] = w_rid
-        params["wts"] = wts
-            
+            wbi_mixin_key = await get_mixin_key()
+        enc_wbi(params, wbi_mixin_key)
 
     # 自动添加 csrf
     if not no_csrf and method in ["POST", "DELETE", "PATCH"]:
@@ -175,10 +207,6 @@ async def request(
     if code is None:
         raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
     if code != 0:
-        # 403 时尝试重新获取 wbi_mixin_key 可能过期了
-        if code == -403 and wbi_mode:
-            wbi_mixin_key = ""
-            return await request(method, url, params, data, credential, no_csrf, json_body, **kwargs)
         msg = resp_data.get("msg", None)
         if msg is None:
             msg = resp_data.get("message", None)
@@ -232,3 +260,42 @@ def to_form_urlencoded(data: dict) -> str:
         temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
 
     return "&".join(temp)
+
+
+def retry(times: int = 3):
+    """
+    重试装饰器
+
+    Args:
+        times (int): 最大重试次数 默认 3 次 负数则一直重试直到成功
+
+    Returns:
+        Any: 原函数调用结果
+    """
+
+    def wrapper(func: Coroutine):
+        async def req(*args, **kwargs):
+            nonlocal times
+            while times != 0:
+                times -= 1
+                try:
+                    result = await func(*args, **kwargs)
+                    return result
+                except ResponseCodeException as e:
+                    # -403 时尝试重新获取 wbi_mixin_key 可能过期了
+                    if e.code == -403 and times != 0:
+                        global wbi_mixin_key
+                        wbi_mixin_key = ""
+                        continue
+                    else:
+                        # 不是 -403 错误或者重试次数达到了报最后一次错
+                        raise e
+        return req
+
+    if isAsync(times):
+        # 防呆不防傻 防止有人 @retry() 不打括号
+        func = times
+        times = 3
+        return wrapper(func)
+
+    return wrapper

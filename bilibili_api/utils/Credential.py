@@ -130,18 +130,31 @@ class Credential:
         Returns:
             bool: cookies 是否有效
         """
-        api = API["valid"]
-        try:
-            datas = httpx.request("GET", api["url"], cookies=self.get_cookies())
-        except Exception as e:
-            raise e
-        datas = json.loads(datas.text)
-        if datas["code"] == 0:
-            return True
-        return False
+
+        data = await get_nav(self)
+        return data["isLogin"]
 
     def generate_buvid3(self):
         """
         生成 buvid3
         """
         self.buvid3 = str(uuid.uuid1()) + "infoc"
+
+
+async def get_nav(credential: Union[Credential, None] = None, headers = None):
+    """
+    获取导航
+
+    Returns:
+        dict: 账号相关信息
+    """
+
+    api = API["valid"]
+    try:
+        cookies = None
+        if credential is not None:
+            cookies = credential.get_cookies()
+        resp = httpx.request("GET", api["url"], cookies=cookies, headers=headers)
+    except Exception as e:
+        raise e
+    return resp.json()["data"]
