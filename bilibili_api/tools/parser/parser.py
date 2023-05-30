@@ -3,7 +3,7 @@ from enum import Enum
 from inspect import isclass
 from inspect import iscoroutinefunction as isAsync
 from inspect import isfunction as isFn
-from typing import List, Tuple
+from typing import List, Tuple, Any
 
 import bilibili_api
 
@@ -29,7 +29,7 @@ class Parser:
             msg, obj = await self.parse(val)
             if msg == "":
                 if isinstance(obj, bilibili_api.Credential):
-                    self.valid = await obj.check_valid()
+                    self.valid = bilibili_api.check_valid(obj)
                 self.varDict[key] = obj
         return self
 
@@ -58,7 +58,7 @@ class Parser:
         # 指令列表
         sentences = SENTENCES.findall(path)
         # 起始点
-        position: any = bilibili_api
+        position: Any = bilibili_api
 
         async def inner() -> str:
             "递归取值"
