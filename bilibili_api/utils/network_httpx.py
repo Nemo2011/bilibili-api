@@ -11,22 +11,84 @@ import json
 import re
 import time
 import uuid
+from dataclasses import dataclass, field
 from functools import reduce
 from inspect import iscoroutinefunction as isAsync
-from typing import Any, Coroutine, Dict, Optional, Tuple, Union
-from urllib.parse import quote
+from typing import Any, Coroutine, Dict, Union
 
 import httpx
 
 from .. import settings
-from ..exceptions import NetworkException, ResponseCodeException, ResponseException
-from .Credential import Credential, get_nav
+from ..exceptions import ResponseCodeException
+from .Credential import Credential
+from .utils import get_api
 
 __session_pool = {}
 last_proxy = ""
 wbi_mixin_key = ""
 
+# 使用 Referer 和 UA 请求头以绕过反爬虫机制
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
+
+@dataclass
+class Api:
+    url: str
+    method: str
+    comment: str = ""
+    wbi: bool = False
+    verify: bool = False
+    no_csrf: bool = False
+    json_body: bool = False
+    ignore_code: bool = False
+    data: dict = field(default_factory=dict)
+    params: dict = field(default_factory=dict)
+    credential: Credential = field(default_factory=Credential)
+
+    def __post_init__(self):
+        self.method = self.method.upper()
+        self.credential = self.credential if self.credential is not None else Credential()
+        self.original_data = self.data.copy()
+        self.original_params = self.params.copy()
+        self.data = {k: "" for k in self.data.keys()}
+        self.params = {k: "" for k in self.params.keys()}
+
+    def update_data(self, **kwargs):
+        self.data.update(kwargs)
+        return self
+
+    def update_params(self, **kwargs):
+        self.params.update(kwargs)
+        return self
+
+    def update(self, **kwargs):
+        if self.method == "GET":
+            return self.update_params(**kwargs)
+        else:
+            return self.update_data(**kwargs)
+
+
+async def check_valid(credential: Credential) -> bool:
+    """
+    检查 cookies 是否有效
+
+    Returns:
+        bool: cookies 是否有效
+    """
+
+    data = await get_nav(credential)
+    return data["isLogin"]
+
+
+async def get_nav(credential: Union[Credential, None] = None):
+    """
+    获取导航
+
+    Returns:
+        dict: 账号相关信息
+    """
+
+    api = Api(credential=credential, **get_api("credential")["valid"])
+    return await request(api)
 
 
 async def get_mixin_key() -> str:
@@ -37,7 +99,7 @@ async def get_mixin_key() -> str:
         str: 新获取的密钥
     """
 
-    data = await get_nav(headers=HEADERS)
+    data = await get_nav()
     wbi_img: Dict[str, str] = data["wbi_img"]
     split = lambda key: wbi_img.get(key).split("/")[-1].split(".")[0]
     ae = split("img_url") + split("sub_url")
@@ -85,7 +147,7 @@ def __clean() -> None:
         loop.create_task(__clean_task())
 
 
-async def request(
+async def request_old(
     method: str,
     url: str,
     params: Union[dict, None] = None,
@@ -254,12 +316,13 @@ def set_session(session: httpx.AsyncClient) -> None:
     __session_pool[loop] = session
 
 
-def to_form_urlencoded(data: dict) -> str:
-    temp = []
-    for [k, v] in data.items():
-        temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
-
-    return "&".join(temp)
+def rollback(func):
+    async def wrapper(*args, **kwargs):
+        try:
+            return await func(*args, **kwargs)
+        except AttributeError:
+            return await request_old(*args, **kwargs)
+    return wrapper
 
 
 def retry(times: int = 3):
@@ -299,3 +362,92 @@ def retry(times: int = 3):
         return wrapper(func)
 
     return wrapper
+
+
+@rollback
+@retry()
+async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any:
+    """
+    向接口发送请求。
+
+    Args:
+        api (Api): 请求Api信息。
+        url, params: 这两个参数是为了通过 Conventional Commits 写的，最后使用的时候(指完全取代老的之后)可以去掉。
+
+    Returns:
+        接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
+    """
+
+    # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
+    if api.method != "GET" and not api.no_csrf:
+        api.credential.raise_for_no_bili_jct()
+    
+    print(f"Request {api}")
+    
+    # jsonp
+    if api.params.get("jsonp") == "jsonp":
+        api.params["callback"] = "callback"
+
+    if api.wbi:
+        global wbi_mixin_key
+        if wbi_mixin_key == "":
+            wbi_mixin_key = await get_mixin_key()
+        enc_wbi(api.params, wbi_mixin_key)
+
+    # 自动添加 csrf
+    if not api.no_csrf and api.method in ["POST", "DELETE", "PATCH"]:
+        api.data["csrf"] = api.credential.bili_jct
+        api.data["csrf_token"] = api.credential.bili_jct
+
+    cookies = api.credential.get_cookies()
+    cookies["buvid3"] = str(uuid.uuid1())
+    cookies["Domain"] = ".bilibili.com"
+
+    config = {
+        "method": api.method,
+        "url": api.url,
+        "params": api.params,
+        "data": api.data,
+        "headers": HEADERS,
+        "cookies": cookies,
+    }
+    config.update(kwargs)
+
+    if api.json_body:
+        config["headers"]["Content-Type"] = "application/json"
+        config["data"] = json.dumps(config["data"])
+
+    session = get_session()
+
+    resp = await session.request(**config)
+
+    # 检查响应头 Content-Length
+    content_length = resp.headers.get("content-length")
+    if content_length and int(content_length) == 0:
+        return None
+
+    if "callback" in api.params:
+        # JSONP 请求
+        resp_data: dict = json.loads(re.match("^.*?({.*}).*$", resp.text, re.S).group(1))
+    else:
+        # JSON
+        resp_data: dict = json.loads(resp.text)
+
+    # 检查 code
+    if not api.ignore_code:
+        code = resp_data.get("code")
+
+        if code is None:
+            raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
+        if code != 0:
+            msg = resp_data.get("msg")
+            if msg is None:
+                msg = resp_data.get("message")
+            if msg is None:
+                msg = "接口未返回错误信息"
+            raise ResponseCodeException(code, msg, resp_data)
+
+    real_data = resp_data.get("data")
+    if real_data is None:
+        real_data = resp_data.get("result")
+    return real_data
