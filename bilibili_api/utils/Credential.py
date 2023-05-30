@@ -4,19 +4,14 @@ bilibili_api.utils.Credential
 凭据类，用于各种请求操作的验证。
 """
 
-import json
 from ..exceptions import (
     CredentialNoBiliJctException,
     CredentialNoSessdataException,
     CredentialNoBuvid3Exception,
     CredentialNoDedeUserIDException,
 )
-from .utils import get_api
-import httpx
 import uuid
 from typing import Union
-
-API = get_api("credential")
 
 
 class Credential:
@@ -123,38 +118,8 @@ class Credential:
         if not self.has_dedeuserid():
             raise CredentialNoDedeUserIDException()
 
-    async def check_valid(self):
-        """
-        检查 cookies 是否有效
-
-        Returns:
-            bool: cookies 是否有效
-        """
-
-        data = await get_nav(self)
-        return data["isLogin"]
-
     def generate_buvid3(self):
         """
         生成 buvid3
         """
         self.buvid3 = str(uuid.uuid1()) + "infoc"
-
-
-async def get_nav(credential: Union[Credential, None] = None, headers = None):
-    """
-    获取导航
-
-    Returns:
-        dict: 账号相关信息
-    """
-
-    api = API["valid"]
-    try:
-        cookies = None
-        if credential is not None:
-            cookies = credential.get_cookies()
-        resp = httpx.request("GET", api["url"], cookies=cookies, headers=headers)
-    except Exception as e:
-        raise e
-    return resp.json()["data"]
