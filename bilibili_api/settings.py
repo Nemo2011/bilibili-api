@@ -24,3 +24,8 @@ geetest_auto_open: bool = True
 """
 是否自动打开 geetest 验证窗口
 """
+
+request_log: bool = False
+"""
+请求 Api 时是否打印 Api 信息
+"""
