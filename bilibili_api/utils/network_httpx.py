@@ -22,6 +22,7 @@ from .. import settings
 from ..exceptions import ResponseCodeException
 from .Credential import Credential
 from .utils import get_api
+from .sync import sync
 
 __session_pool = {}
 last_proxy = ""
@@ -46,25 +47,85 @@ class Api:
 
     def __post_init__(self):
         self.method = self.method.upper()
-        self.credential = self.credential if self.credential is not None else Credential()
         self.original_data = self.data.copy()
         self.original_params = self.params.copy()
         self.data = {k: "" for k in self.data.keys()}
         self.params = {k: "" for k in self.params.keys()}
+        if self.credential is None:
+            self.credential = Credential()
+        self.__result = None
+
+    def __setattr__(self, __name: str, __value: Any) -> None:
+        """
+        每次更新参数都要把 __result 清除
+        """
+        if self.initialized and __name != "_Api__result":
+            self.__result = None
+        return super().__setattr__(__name, __value)
+
+    @property
+    def initialized(self):
+        return "_Api__result" in self.__dict__
+
+    @property
+    async def result(self) -> Union[None, dict]:
+        """
+        异步获取请求结果 
+        
+        __result 用来暂存数据 参数不变时获取结果不变
+        """
+        if self.__result is None:
+            self.__result = await request(self)
+        return self.__result
+
+    @property
+    def sync_result(self):
+        """
+        同步获取请求结果
+        """
+        return sync(self.result)
 
     def update_data(self, **kwargs):
+        """
+        毫无亮点的更新 data
+        """
         self.data.update(kwargs)
+        self.__result = None
         return self
 
     def update_params(self, **kwargs):
+        """
+        毫无亮点的更新 params
+        """
         self.params.update(kwargs)
+        self.__result = None
         return self
 
     def update(self, **kwargs):
+        """
+        毫无亮点的自动选择更新
+        """
         if self.method == "GET":
             return self.update_params(**kwargs)
         else:
             return self.update_data(**kwargs)
+
+    @classmethod
+    def from_file(cls, path: str):
+        """
+        以 json 文件生成对象
+
+        Args:
+            path (str): 例如 user.info.info
+        
+        Returns:
+            api (Api): 从文件中读取的 api 信息
+        """
+        path_list = path.split(".")
+        api = get_api(path_list.pop(0))
+        for key in path_list:
+            api = api.get(key)
+        return cls(**api)
 
 
 async def check_valid(credential: Credential) -> bool:
@@ -74,7 +135,6 @@ async def check_valid(credential: Credential) -> bool:
     Returns:
         bool: cookies 是否有效
     """
-
     data = await get_nav(credential)
     return data["isLogin"]
 
@@ -86,9 +146,7 @@ async def get_nav(credential: Union[Credential, None] = None):
     Returns:
         dict: 账号相关信息
     """
-
-    api = Api(credential=credential, **get_api("credential")["valid"])
-    return await request(api)
+    return await Api(credential=credential, **get_api("credential")["valid"]).result
 
 
 async def get_mixin_key() -> str:
@@ -98,7 +156,6 @@ async def get_mixin_key() -> str:
     Returns:
         str: 新获取的密钥
     """
-
     data = await get_nav()
     wbi_img: Dict[str, str] = data["wbi_img"]
     split = lambda key: wbi_img.get(key).split("/")[-1].split(".")[0]
@@ -118,7 +175,6 @@ def enc_wbi(params: dict, mixin_key: str):
 
         mixin_key (str): 混合密钥
     """
-
     params["wts"] = int(time.time())
     keys = sorted(filter(lambda k: k != "w_rid", params.keys()))
     Ae = "&".join(f"{key}={params[key]}" for key in keys)
@@ -335,7 +391,6 @@ def retry(times: int = 3):
     Returns:
         Any: 原函数调用结果
     """
-
     def wrapper(func: Coroutine):
         async def req(*args, **kwargs):
             nonlocal times
@@ -377,12 +432,12 @@ async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any
     Returns:
         接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
     """
-
     # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
     if api.method != "GET" and not api.no_csrf:
         api.credential.raise_for_no_bili_jct()
     
-    print(f"Request {api}")
+    if settings.request_log:
+        print(f"Request {api}")
     
     # jsonp
     if api.params.get("jsonp") == "jsonp":
