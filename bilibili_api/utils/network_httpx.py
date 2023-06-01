@@ -111,12 +111,13 @@ class Api:
             return self.update_data(**kwargs)
 
     @classmethod
-    def from_file(cls, path: str):
+    def from_file(cls, path: str, credential: Union[Credential, None] = None):
         """
         以 json 文件生成对象
 
         Args:
             path (str): 例如 user.info.info
+            credential (Credential, Optional): 凭据类. Defaults to None.
         
         Returns:
             api (Api): 从文件中读取的 api 信息
@@ -125,12 +126,15 @@ class Api:
         api = get_api(path_list.pop(0))
         for key in path_list:
             api = api.get(key)
-        return cls(**api)
+        return cls(credential=credential, **api)
 
 
 async def check_valid(credential: Credential) -> bool:
     """
     检查 cookies 是否有效
+
+    Args:
+        credential (Credential): 凭据类
 
     Returns:
         bool: cookies 是否有效
@@ -142,6 +146,9 @@ async def check_valid(credential: Credential) -> bool:
 async def get_nav(credential: Union[Credential, None] = None):
     """
     获取导航
+
+    Args:
+        credential (Credential, Optional): 凭据类. Defaults to None
 
     Returns:
         dict: 账号相关信息
@@ -393,15 +400,17 @@ def retry(times: int = 3):
     """
     def wrapper(func: Coroutine):
         async def req(*args, **kwargs):
+            # 这里必须新建一个变量用来计数！！不能直接对 times 操作！！！
             nonlocal times
-            while times != 0:
-                times -= 1
+            tt = times
+            while tt != 0:
+                tt -= 1
                 try:
                     result = await func(*args, **kwargs)
                     return result
                 except ResponseCodeException as e:
                     # -403 时尝试重新获取 wbi_mixin_key 可能过期了
-                    if e.code == -403 and times != 0:
+                    if e.code == -403 and tt != 0:
                         global wbi_mixin_key
                         wbi_mixin_key = ""
                         continue
