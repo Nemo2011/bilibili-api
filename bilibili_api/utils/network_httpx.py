@@ -9,6 +9,7 @@ import atexit
 import hashlib
 import json
 import re
+import threading
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -21,8 +22,8 @@ import httpx
 from .. import settings
 from ..exceptions import ResponseCodeException
 from .Credential import Credential
-from .utils import get_api
 from .sync import sync
+from .utils import get_api
 
 __session_pool = {}
 last_proxy = ""
@@ -72,18 +73,39 @@ class Api:
         """
         异步获取请求结果 
         
-        __result 用来暂存数据 参数不变时获取结果不变
+        `self.__result` 用来暂存数据 参数不变时获取结果不变
         """
         if self.__result is None:
             self.__result = await request(self)
         return self.__result
 
     @property
-    def sync_result(self):
+    def sync_result(self) -> Union[None, dict]:
         """
-        同步获取请求结果
+        通过 `sync` 同步获取请求结果
+
+        一般用于非协程内同步获取数据
         """
         return sync(self.result)
+
+    @property
+    def thread_result(self) -> Union[None, dict]:
+        """
+        通过 `threading.Thread` 同步获取请求结果
+
+        一般用于协程内同步获取数据
+
+        为什么协程里不直接 await self.result 呢
+
+        因为协程内有的地方不让异步
+        
+        例如类的 `__init__()` 函数中需要获取请求结果时
+        """
+        job = threading.Thread(target=asyncio.run, args=[self.result])
+        job.start()
+        while job.is_alive():
+            time.sleep(0.0167)
+        return self.__result
 
     def update_data(self, **kwargs):
         """
@@ -324,6 +346,8 @@ async def request_old(
         resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1))  # type: ignore
     else:
         # JSON
+        with open("test.txt", "w", encoding="utf-8") as fp:
+            fp.write(raw_data)
         resp_data = json.loads(raw_data)
 
     # 检查 code
@@ -444,10 +468,10 @@ async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any
     # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
     if api.method != "GET" and not api.no_csrf:
         api.credential.raise_for_no_bili_jct()
-    
+
     if settings.request_log:
-        print(f"Request {api}")
-    
+        settings.logger.info(api)
+
     # jsonp
     if api.params.get("jsonp") == "jsonp":
         api.params["callback"] = "callback"
