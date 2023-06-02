@@ -4,6 +4,8 @@ bilibili_api.settings
 这里是配置模块的地方
 """
 
+import logging
+
 proxy: str = ""
 """
 代理设置
@@ -29,3 +31,14 @@ request_log: bool = False
 """
 请求 Api 时是否打印 Api 信息
 """
+
+logger = logging.getLogger("request")
+if not logger.handlers:
+    logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    handler.setFormatter(
+        logging.Formatter(
+            "[Request][%(asctime)s] %(message)s"
+        )
+    )
+    logger.addHandler(handler)
