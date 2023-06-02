@@ -20,7 +20,7 @@ from typing import Any, Coroutine, Dict, Union
 import httpx
 
 from .. import settings
-from ..exceptions import ResponseCodeException
+from ..exceptions import ResponseCodeException, ApiException
 from .Credential import Credential
 from .sync import sync
 from .utils import get_api
@@ -346,8 +346,6 @@ async def request_old(
         resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1))  # type: ignore
     else:
         # JSON
-        with open("test.txt", "w", encoding="utf-8") as fp:
-            fp.write(raw_data)
         resp_data = json.loads(raw_data)
 
     # 检查 code
@@ -423,25 +421,29 @@ def retry(times: int = 3):
         Any: 原函数调用结果
     """
     def wrapper(func: Coroutine):
-        async def req(*args, **kwargs):
+        async def inner(*args, **kwargs):
             # 这里必须新建一个变量用来计数！！不能直接对 times 操作！！！
             nonlocal times
-            tt = times
-            while tt != 0:
-                tt -= 1
+            loop = times
+            while loop != 0:
+                if loop != times and settings.request_log:
+                    settings.logger.info(f"第 {times - loop} 次重试")
+                loop -= 1
                 try:
-                    result = await func(*args, **kwargs)
-                    return result
+                    return await func(*args, **kwargs)
+                except json.decoder.JSONDecodeError:
+                    # json 解析错误 说明数据获取有误 再给次机会
+                    continue
                 except ResponseCodeException as e:
                     # -403 时尝试重新获取 wbi_mixin_key 可能过期了
-                    if e.code == -403 and tt != 0:
+                    if e.code == -403:
                         global wbi_mixin_key
                         wbi_mixin_key = ""
                         continue
-                    else:
-                        # 不是 -403 错误或者重试次数达到了报最后一次错
-                        raise e
-        return req
+                    # 不是 -403 错误直接报错
+                    raise
+            raise ApiException("重试达到最大次数")
+        return inner
 
     if isAsync(times):
         # 防呆不防傻 防止有人 @retry() 不打括号
@@ -452,8 +454,8 @@ def retry(times: int = 3):
     return wrapper
 
 
-@rollback
 @retry()
+@rollback
 async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any:
     """
     向接口发送请求。
@@ -492,12 +494,12 @@ async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any
     cookies["Domain"] = ".bilibili.com"
 
     config = {
-        "method": api.method,
         "url": api.url,
-        "params": api.params,
+        "method": api.method,
         "data": api.data,
-        "headers": HEADERS,
+        "params": api.params,
         "cookies": cookies,
+        "headers": HEADERS,
     }
     config.update(kwargs)
 
@@ -506,7 +508,6 @@ async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any
         config["data"] = json.dumps(config["data"])
 
     session = get_session()
-
     resp = await session.request(**config)
 
     # 检查响应头 Content-Length
