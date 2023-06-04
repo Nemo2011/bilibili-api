@@ -191,6 +191,12 @@ class User:
         return self.__self_info
 
     def get_uid(self) -> int:
+        """
+        获取用户 UID
+
+        Returns:
+            int: 用户 UID
+        """
         return self.__uid
 
     async def get_user_fav_tag(self) -> dict:
