@@ -16,7 +16,7 @@ from typing import Any, Tuple, Union, List, Optional
 
 import requests
 
-from bilibili_api.utils.Danmaku import Danmaku
+from bilibili_api.utils.danmaku import Danmaku
 
 from . import settings
 

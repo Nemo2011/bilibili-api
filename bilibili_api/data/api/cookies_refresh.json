@@ -1,0 +1,40 @@
+{
+    "info": {
+        "check_cookies": {
+            "url": "https://passport.bilibili.com/x/passport-login/web/cookie/info",
+            "method": "GET",
+            "verify": true,
+            "comment": "检查是否需要刷新 Cookie"
+        }
+    },
+    "operate":{
+        "get_refresh_csrf": {
+            "url": "https://www.bilibili.com/correspond/1/{correspondPath}",
+            "method": "GET",
+            "verify": true,
+            "comment": "获取刷新 CSRF，记得替换 correspondPath"
+        },
+        "refresh_cookies": {
+            "url": "https://passport.bilibili.com/x/passport-login/web/cookie/refresh",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "refresh_csrf": "refresh_csrf",
+                "csrf": "Cookie 中的 bili_jct 字段",
+                "source": "main_web",
+                "refresh_token": "Cookie 中的 ac_time_value 字段"
+            },
+            "comment": "刷新 Cookies"
+        },
+        "confirm_refresh": {
+            "url": "https://passport.bilibili.com/x/passport-login/web/confirm/refresh",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "csrf": "从新的 cookie 中获取",
+                "refresh_token": "在刷新前 localStorage 中的ac_time_value获取，并非刷新后返回的值"
+            },
+            "comment": "确认刷新"
+        }
+    }
+}
