@@ -13,7 +13,7 @@ from .exceptions import ResponseCodeException
 
 from .utils.network_httpx import get_session, request
 from .utils.utils import get_api, join
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
 from typing import List, Union
 

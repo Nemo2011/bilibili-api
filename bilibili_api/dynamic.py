@@ -15,11 +15,11 @@ import httpx
 
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.sync import sync
 from . import user, exceptions
 from .utils import utils
-from .utils.Picture import Picture
+from .utils.picture import Picture
 from . import vote
 from datetime import datetime
 import asyncio

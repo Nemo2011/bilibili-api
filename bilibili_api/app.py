@@ -5,7 +5,7 @@ bilibili_api.app
 """
 
 from .utils.utils import get_api
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.network_httpx import request
 from hashlib import md5
 import time

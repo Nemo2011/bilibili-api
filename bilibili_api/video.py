@@ -22,12 +22,12 @@ from .exceptions import ResponseException
 from .exceptions import NetworkException
 from .exceptions import ArgsException, DanmakuClosedException
 
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
 from .utils.network import get_session as get_session_aiohttp
-from .utils.Danmaku import Danmaku, SpecialDanmaku
+from .utils.danmaku import Danmaku, SpecialDanmaku
 from .utils.BytesReader import BytesReader
 from .utils.AsyncEvent import AsyncEvent
 from dataclasses import dataclass

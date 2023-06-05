@@ -15,7 +15,7 @@ import importlib
 
 from ..exceptions import ResponseCodeException, ResponseException, NetworkException
 from .. import settings
-from .Credential import Credential
+from .credential import Credential
 
 __session_pool = {}
 

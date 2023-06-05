@@ -7,8 +7,8 @@ bilibili_api.album
 from typing import Any, List, Union, Optional
 from .utils.utils import get_api
 from .utils.network_httpx import request
-from .utils.Credential import Credential
-from .utils.Picture import Picture
+from .utils.credential import Credential
+from .utils.picture import Picture
 from .exceptions import ArgsException
 import enum
 

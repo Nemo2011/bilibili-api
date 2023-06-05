@@ -22,8 +22,8 @@ from .exceptions import (
 )
 from .exceptions.ArgsException import ArgsException
 from .utils.BytesReader import BytesReader
-from .utils.Danmaku import Danmaku
-from .utils.Credential import Credential
+from .utils.danmaku import Danmaku
+from .utils.credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import get_session, request
 from typing import Any, List, Union

@@ -18,7 +18,7 @@ import webbrowser
 import requests
 from .exceptions.LoginError import LoginError
 
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
 from .utils.sync import sync
 from .utils.network_httpx import get_session, to_form_urlencoded

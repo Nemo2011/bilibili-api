@@ -7,7 +7,7 @@ import httpx
 from yarl import URL
 from typing import Union
 from .network_httpx import get_session
-from .Credential import Credential
+from .credential import Credential
 from .. import settings
 from typing import Optional
 

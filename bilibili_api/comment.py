@@ -17,7 +17,7 @@ from typing import Union
 
 from .utils.utils import get_api
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .exceptions.ArgsException import ArgsException
 
 

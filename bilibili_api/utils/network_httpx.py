@@ -20,7 +20,7 @@ import httpx
 
 from .. import settings
 from ..exceptions import NetworkException, ResponseCodeException, ResponseException
-from .Credential import Credential, get_nav
+from .credential import Credential, get_nav
 
 __session_pool = {}
 last_proxy = ""

@@ -5,7 +5,7 @@ import tempfile
 import os
 import httpx
 from yarl import URL
-from .Credential import Credential
+from .credential import Credential
 from .utils import get_api
 
 

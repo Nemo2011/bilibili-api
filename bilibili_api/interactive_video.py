@@ -14,7 +14,7 @@ import os
 import shutil
 import time
 from typing import Callable, List, Tuple, Union
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request
 from .video import Video

@@ -22,7 +22,7 @@ from . import settings
 
 from .utils.utils import get_api
 from .utils.initial_state import get_initial_state, get_initial_state_sync
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.network_httpx import get_session, request
 from .exceptions.ResponseException import ResponseException
 from .exceptions.ApiException import ApiException

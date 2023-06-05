@@ -17,9 +17,9 @@ from bilibili_api.exceptions import ApiException
 
 from .user import get_self_info
 from .utils.AsyncEvent import AsyncEvent
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.network_httpx import request
-from .utils.Picture import Picture
+from .utils.picture import Picture
 from .utils.utils import get_api
 from .video import Video
 
