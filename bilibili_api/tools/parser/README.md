@@ -70,9 +70,9 @@ print(sync(main()))
 
 ### 进阶用法
 
-[https://aliyun.nana7mi.link/comment.get_comments(708326075350908930,type,1:int)?var=type<-comment.CommentResourceType.DYNAMIC](https://aliyun.nana7mi.link/comment.get_comments(708326075350908930,type,1:int)?var=type<-comment.CommentResourceType.DYNAMIC)
+使用网址 params 请求参数储存值。
 
-在网址后使用 var 参数用于储存变量，变量名与值用 `<-` 连接，多个变量用 `;` 分割。
+[https://aliyun.nana7mi.link/comment.get_comments(708326075350908930,type,1:int)?type=comment.CommentResourceType.DYNAMIC](https://aliyun.nana7mi.link/comment.get_comments(708326075350908930,type,1:int)?type=comment.CommentResourceType.DYNAMIC)
 
 这个变量是另一个需要被解析的文本，为什么不直接放在网址里呢？因为放前面会被当做字符串传进去。
 

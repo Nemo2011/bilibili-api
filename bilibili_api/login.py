@@ -21,7 +21,7 @@ from .exceptions.LoginError import LoginError
 from .utils.Credential import Credential
 from .utils.utils import get_api
 from .utils.sync import sync
-from .utils.network_httpx import get_session, to_form_urlencoded
+from .utils.network_httpx import get_session
 from .utils.captcha import start_server, close_server, get_result
 from .utils.safecenter_captcha import (
     start_server as safecenter_start_server,

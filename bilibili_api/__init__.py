@@ -66,7 +66,7 @@ from .errors import (
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.Credential import Credential
 from .utils.Danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
-from .utils.network_httpx import HEADERS, get_session, set_session, retry
+from .utils.network_httpx import HEADERS, Api, check_valid, enc_wbi, get_mixin_key, get_nav, get_session, request, retry, set_session
 from .utils.parse_link import ResourceType, parse_link
 from .utils.Picture import Picture
 from .utils.short import get_real_url
@@ -79,9 +79,11 @@ if "windows" in platform.system().lower():
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore
 
 __all__ = [
+    "Api",
     "ApiException",
     "ArgsException",
     "BILIBILI_API_VERSION",
+    "check_valid",
     "Credential",
     "CredentialNoBiliJctException",
     "CredentialNoBuvid3Exception",
@@ -92,6 +94,7 @@ __all__ = [
     "DmFontSize",
     "DmMode",
     "DynamicExceedImagesException",
+    "enc_wbi",
     "HEADERS",
     "LiveException",
     "LoginError",
@@ -123,6 +126,8 @@ __all__ = [
     "emoji",
     "favorite_list",
     "game",
+    "get_mixin_key",
+    "get_nav",
     "get_real_url",
     "get_session",
     "homepage",
@@ -137,6 +142,7 @@ __all__ = [
     "parse_link",
     "platform",
     "rank",
+    "request",
     "retry",
     "search",
     "session",
