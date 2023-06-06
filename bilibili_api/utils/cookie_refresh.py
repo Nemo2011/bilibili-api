@@ -1,3 +1,12 @@
+"""
+bilibili_api.utils.refresh_cookies
+
+Cookies 刷新相关
+
+感谢 bilibili-API-collect 提供的刷新 Cookies 的思路
+
+https://socialsisteryi.github.io/bilibili-API-collect/docs/login/cookie_refresh.html
+"""
 from .network_httpx import request, get_session
 from .utils import get_api
 from .credential import Credential
@@ -68,12 +77,15 @@ async def get_refresh_csrf(credential: Credential) -> str:
     elif resp.status_code != 200:
         raise Exception("获取刷新 Cookies 的 csrf 失败。")
     
-async def refresh_cookies(credential: Credential):
+async def refresh_cookies(credential: Credential) -> Credential:
     """
     刷新 Cookies
 
     Args:
         credential (Credential): 用户凭证
+    
+    Return:
+        Credential: 新的用户凭证
     """
     api = API["operate"]["refresh_cookies"]
     credential.raise_for_no_bili_jct()
