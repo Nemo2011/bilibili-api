@@ -4,7 +4,6 @@ bilibili_api.utils.Credential
 凭据类，用于各种请求操作的验证。
 """
 
-import json
 from ..exceptions import (
     CredentialNoBiliJctException,
     CredentialNoSessdataException,
@@ -16,8 +15,6 @@ from .cookie_refresh import check_cookies, refresh_cookies
 import httpx
 import uuid
 from typing import Union
-
-API = get_api("credential")
 
 
 class Credential:
@@ -136,7 +133,7 @@ class Credential:
         """
         if not self.has_dedeuserid():
             raise CredentialNoDedeUserIDException()
-        
+
     def raise_for_no_ac_time_value(self):
         """
         没有提供 ac_time_value 时抛出异常。
@@ -160,7 +157,7 @@ class Credential:
         生成 buvid3
         """
         self.buvid3 = str(uuid.uuid1()) + "infoc"
-
+        
     def chcek_refresh(self):
         """
         检查是否需要刷新 cookies
