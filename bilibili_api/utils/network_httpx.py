@@ -26,20 +26,23 @@ __session_pool = {}
 last_proxy = ""
 wbi_mixin_key = ""
 
-HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"}
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37",
+           "Referer": "https://www.bilibili.com"
+           }
+           
 
 
 async def get_mixin_key() -> str:
     """
     获取混合密钥
-    
+
     Returns:
         str: 新获取的密钥
     """
 
     data = await get_nav(headers=HEADERS)
     wbi_img: Dict[str, str] = data["wbi_img"]
-    split = lambda key: wbi_img.get(key).split("/")[-1].split(".")[0]
+    def split(key): return wbi_img.get(key).split("/")[-1].split(".")[0]
     ae = split("img_url") + split("sub_url")
     oe = [46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41, 13,
           37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36, 20, 34, 44, 52]
@@ -119,11 +122,12 @@ async def request(
         credential.raise_for_no_bili_jct()
 
     # 使用 Referer 和 UA 请求头以绕过反爬虫机制
-    DEFAULT_HEADERS = {
-        "Referer": "https://www.bilibili.com",
-        "User-Agent": "Mozilla/5.0",
-    }
-    headers = DEFAULT_HEADERS
+    # DEFAULT_HEADERS = {
+    #     "Referer": "https://www.bilibili.com",
+    #     "User-Agent": "Mozilla/5.0",
+    # }
+    # 现有常量为啥不用...
+    headers = HEADERS
 
     if params is None:
         params = {}
@@ -196,7 +200,8 @@ async def request(
 
     if "callback" in params:
         # JSONP 请求
-        resp_data = json.loads(re.match("^.*?({.*}).*$", raw_data, re.S).group(1))  # type: ignore
+        resp_data = json.loads(
+            re.match("^.*?({.*}).*$", raw_data, re.S).group(1))  # type: ignore
     else:
         # JSON
         resp_data = json.loads(raw_data)
@@ -234,7 +239,8 @@ def get_session() -> httpx.AsyncClient:
         if settings.proxy != "":
             last_proxy = settings.proxy
             proxies = {"all://": settings.proxy}
-            session = httpx.AsyncClient(proxies=proxies, timeout=settings.timeout)  # type: ignore
+            session = httpx.AsyncClient(
+                proxies=proxies, timeout=settings.timeout)  # type: ignore
         else:
             last_proxy = ""
             session = httpx.AsyncClient(timeout=settings.timeout)
