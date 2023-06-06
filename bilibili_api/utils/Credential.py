@@ -12,6 +12,7 @@ from ..exceptions import (
     CredentialNoDedeUserIDException,
 )
 from .utils import get_api
+from .cookie_refresh import check_cookies, refresh_cookies
 import httpx
 import uuid
 from typing import Union
@@ -160,6 +161,24 @@ class Credential:
         """
         self.buvid3 = str(uuid.uuid1()) + "infoc"
 
+    def chcek_refresh(self):
+        """
+        检查是否需要刷新 cookies
+
+        Returns:
+            bool: cookies 是否需要刷新
+        """
+        return check_cookies(self)
+
+    def refresh(self):
+        """
+        刷新 cookies
+        """
+        new_cred: Credential = refresh_cookies(self)
+        self.sessdata = new_cred.sessdata
+        self.bili_jct = new_cred.bili_jct
+        self.dedeuserid = new_cred.dedeuserid
+        self.ac_time_value = new_cred.ac_time_value
 
 async def get_nav(credential: Union[Credential, None] = None, headers = None):
     """
