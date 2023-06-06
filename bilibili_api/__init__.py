@@ -67,6 +67,7 @@ from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.credential import Credential
 from .utils.danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
 from .utils.network_httpx import HEADERS, get_session, set_session, retry
+from .utils.cookie_refresh import check_cookies, refresh_cookies
 from .utils.parse_link import ResourceType, parse_link
 from .utils.picture import Picture
 from .utils.short import get_real_url
@@ -132,6 +133,8 @@ __all__ = [
     "live_area",
     "login",
     "login_func",
+    "check_cookies",
+    "refresh_cookies",
     "manga",
     "note",
     "parse_link",
