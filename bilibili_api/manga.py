@@ -6,9 +6,9 @@ bilibili_api.manga
 
 from bilibili_api.utils.network_httpx import request, HEADERS
 from bilibili_api.utils.utils import get_api
-from bilibili_api.utils.Credential import Credential
+from bilibili_api.utils.credential import Credential
 from bilibili_api.errors import ArgsException
-from bilibili_api.utils.Picture import Picture
+from bilibili_api.utils.picture import Picture
 from typing import Optional, List, Dict, Union
 from urllib.parse import urlparse
 import httpx

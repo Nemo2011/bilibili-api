@@ -11,7 +11,7 @@ from typing import Union, List
 
 from .utils.utils import get_api
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 
 API = get_api("creative_center")
 

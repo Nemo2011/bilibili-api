@@ -13,7 +13,7 @@ from .exceptions import ResponseCodeException
 
 from .utils.network_httpx import get_session, request
 from .utils.utils import get_api, join
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
 from typing import List, Union
 
@@ -191,6 +191,12 @@ class User:
         return self.__self_info
 
     def get_uid(self) -> int:
+        """
+        获取用户 UID
+
+        Returns:
+            int: 用户 UID
+        """
         return self.__uid
 
     async def get_user_fav_tag(self) -> dict:

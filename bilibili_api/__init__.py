@@ -64,11 +64,12 @@ from .errors import (
     VideoUploadException,
 )
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
-from .utils.Credential import Credential
-from .utils.Danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
+from .utils.credential import Credential
+from .utils.danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
+from .utils.cookie_refresh import check_cookies, refresh_cookies
 from .utils.network_httpx import HEADERS, Api, check_valid, enc_wbi, get_mixin_key, get_nav, get_session, request, retry, set_session
 from .utils.parse_link import ResourceType, parse_link
-from .utils.Picture import Picture
+from .utils.picture import Picture
 from .utils.short import get_real_url
 from .utils.sync import sync
 
@@ -137,6 +138,8 @@ __all__ = [
     "live_area",
     "login",
     "login_func",
+    "check_cookies",
+    "refresh_cookies",
     "manga",
     "note",
     "parse_link",

@@ -12,8 +12,8 @@ import random
 
 from .video import Video
 from .utils.aid_bvid_transformer import bvid2aid
-from .utils.Credential import Credential
-from .utils.Picture import Picture
+from .utils.credential import Credential
+from .utils.picture import Picture
 from copy import copy, deepcopy
 from .exceptions.ResponseCodeException import ResponseCodeException
 import json

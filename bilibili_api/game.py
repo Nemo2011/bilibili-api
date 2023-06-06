@@ -5,7 +5,7 @@ bilibili_api.game
 """
 
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
 from typing import Union
 

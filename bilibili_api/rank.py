@@ -7,7 +7,7 @@ bilibili_api.rank
 from typing import Union
 from .utils.network_httpx import request
 from .utils.utils import get_api
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from enum import Enum
 
 API = get_api("rank")

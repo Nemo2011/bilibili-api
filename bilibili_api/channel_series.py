@@ -5,7 +5,7 @@ bilibili_api.channel_series
 """
 from enum import Enum
 from typing import Union, List, Optional
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request
 import json

@@ -10,7 +10,7 @@ from .bangumi import Episode
 from .cheese import CheeseVideo
 from .exceptions.ArgsException import ArgsException
 
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.network_httpx import get_session
 from .utils.danmaku2ass import Danmaku2ASS
 from .utils.json2srt import json2srt

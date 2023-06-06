@@ -5,7 +5,7 @@ Credential 类实例化代码如下：
 ```python
 from bilibili_api import Credential
 
-credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct", buvid3="你的 buvid3", dedeuserid="你的 DedeUserID")
+credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct", buvid3="你的 buvid3", dedeuserid="你的 DedeUserID", ac_time_value="你的 ac_time_value")
 ```
 
 `sessdata` `bili_jct` `buvid3` 和 `dedeuserid` 这四个参数的值均在浏览器的 Cookies 里头，下面说明获取方法。
@@ -51,3 +51,13 @@ credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct", 
 3. 在左侧找到 **存储/Cookies**，并选中任一b站域名，在右侧找到对应三项即可。
 
 ![](https://pic.imgdb.cn/item/6038d5755f4313ce253571bb.jpg)
+
+---
+
+`ac_time_value` 相对特殊，仅用于刷新 Cookies，可以选择不获取，在 localStorage 中的ac_time_value 字段
+
+按照上方的方法打开 **应用程序** 或 **Application** 选项卡后，找到 **存储/Local Storage** 或 **存储/本地存储**，并选中 https://www.bilibili.com/，在右侧找到对应字段即可。
+
+以 Microsoft Edge 为例：
+
+![](https://cdn.img.z0z0r4.top/2023/06/06/647e88325d3e8.png)

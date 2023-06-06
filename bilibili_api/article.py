@@ -11,7 +11,7 @@ from typing import List, overload, Union
 
 import httpx
 from .utils.utils import get_api
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .note import Note, NoteType
 import re
 from html import unescape

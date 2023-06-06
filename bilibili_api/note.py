@@ -10,10 +10,10 @@ from enum import Enum
 
 from yarl import URL
 from .utils.utils import get_api
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.network_httpx import request, get_session
 from .exceptions import ArgsException, ApiException
-from .utils.Picture import Picture
+from .utils.picture import Picture
 from typing import List, Union, overload
 import httpx
 import re

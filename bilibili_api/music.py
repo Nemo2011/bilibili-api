@@ -7,7 +7,7 @@ bilibili_api.music
 """
 
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
 from typing import Optional
 from enum import Enum
