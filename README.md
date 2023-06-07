@@ -7,20 +7,21 @@
 [![API 数量](https://img.shields.io/badge/API%20数量-300+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3+-red)][LICENSE]
 [![Python](https://img.shields.io/badge/python-3.11|3.10|3.9|3.8-blue)](https://www.python.org)
-[![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]
+<!-- [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi] -->
 [![Pre-release Version](https://img.shields.io/github/v/release/Nemo2011/bilibili-api?label=pre-release&include_prereleases&sort=semver)][pypi]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 [![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
 
+**:warning: 接口可能改动，请及时更新最新版 [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]**
 </div>
 
-开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])([Gitee][docs-gitee])
+开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github]) <!-- ([Gitee][docs-gitee]) -->
 
 原仓库地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
 Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/nemo2011/bilibili-api)
 
-Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2011/bilibili-api)
+<!-- Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2011/bilibili-api) 长期未同步... -->
 
 > 此仓库是对原仓库 `bilibili-api` 的继续的维护。更多相关的信息请前往原仓库地址进行查看。
 
@@ -110,7 +111,7 @@ if __name__ == '__main__':
 
 如果没有报错，就代表调用 API 成功，你可以到视频页面确认是不是调用成功了。
 
-!> 注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！
+> **Warning** 注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！
 
 # 异步迁移
 
