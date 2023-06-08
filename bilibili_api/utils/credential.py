@@ -11,7 +11,6 @@ from ..exceptions import (
     CredentialNoDedeUserIDException,
 )
 from .utils import get_api
-from .cookie_refresh import check_cookies, refresh_cookies
 import httpx
 import uuid
 from typing import Union
