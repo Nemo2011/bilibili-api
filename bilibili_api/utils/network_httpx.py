@@ -20,8 +20,8 @@ from typing import Any, Coroutine, Dict, Union
 import httpx
 
 from .. import settings
-from ..exceptions import NetworkException, ResponseCodeException, ResponseException
-from .credential import Credential, get_nav
+from ..exceptions import NetworkException, ResponseCodeException, ResponseException, ApiException
+from .credential import Credential
 from .sync import sync
 from .utils import get_api
 
@@ -33,6 +33,7 @@ wbi_mixin_key = ""
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37",
            "Referer": "https://www.bilibili.com"
            }
+
 
 @dataclass
 class Api:
@@ -74,7 +75,7 @@ class Api:
     async def result(self) -> Union[None, dict]:
         """
         异步获取请求结果 
-        
+
         `self.__result` 用来暂存数据 参数不变时获取结果不变
         """
         if self.__result is None:
@@ -100,7 +101,7 @@ class Api:
         为什么协程里不直接 await self.result 呢
 
         因为协程内有的地方不让异步
-        
+
         例如类的 `__init__()` 函数中需要获取请求结果时
         """
         job = threading.Thread(target=asyncio.run, args=[self.result])
@@ -142,7 +143,7 @@ class Api:
         Args:
             path (str): 例如 user.info.info
             credential (Credential, Optional): 凭据类. Defaults to None.
-        
+
         Returns:
             api (Api): 从文件中读取的 api 信息
         """
@@ -177,7 +178,7 @@ async def get_nav(credential: Union[Credential, None] = None):
     Returns:
         dict: 账号相关信息
     """
-    return await Api(credential=credential, **get_api("credential")["valid"]).result
+    return await Api(credential=credential, **get_api("credential")["info"]["valid"]).result
 
 
 async def get_mixin_key() -> str:
@@ -466,7 +467,7 @@ async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any
     向接口发送请求。
 
     Args:
-        api (Api): 请求Api信息。
+        api (Api): 请求 Api 信息。
         url, params: 这两个参数是为了通过 Conventional Commits 写的，最后使用的时候(指完全取代老的之后)可以去掉。
 
     Returns:
@@ -522,7 +523,8 @@ async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any
 
     if "callback" in api.params:
         # JSONP 请求
-        resp_data: dict = json.loads(re.match("^.*?({.*}).*$", resp.text, re.S).group(1))
+        resp_data: dict = json.loads(
+            re.match("^.*?({.*}).*$", resp.text, re.S).group(1))
     else:
         # JSON
         resp_data: dict = json.loads(resp.text)
