@@ -48,6 +48,32 @@ class Api:
     data: dict = field(default_factory=dict)
     params: dict = field(default_factory=dict)
     credential: Credential = field(default_factory=Credential)
+    """
+    用于请求的 Api 类
+
+    Args:
+        url (str): 请求地址
+
+        method (str): 请求方法
+
+        comment (str, optional): 注释. Defaults to "".
+
+        wbi (bool, optional): 是否使用 wbi 鉴权. Defaults to False.
+
+        verify (bool, optional): 是否验证凭据. Defaults to False.
+
+        no_csrf (bool, optional): 是否不使用 csrf. Defaults to False.
+
+        json_body (bool, optional): 是否使用 json 作为载荷. Defaults to False.
+
+        ignore_code (bool, optional): 是否忽略返回值 code. Defaults to False.
+
+        data (dict, optional): 请求载荷. Defaults to {}.
+
+        params (dict, optional): 请求参数. Defaults to {}.
+
+        credential (Credential, optional): 凭据. Defaults to Credential().
+    """
 
     def __post_init__(self):
         self.method = self.method.upper()
@@ -250,11 +276,17 @@ async def request_old(
 
     Args:
         method     (str)                 : 请求方法。
+        
         url        (str)                 : 请求 URL。
+        
         params     (dict, optional)      : 请求参数。
+        
         data       (Any, optional)       : 请求载荷。
+        
         credential (Credential, optional): Credential 类。
+        
         no_csrf    (bool, optional)      : 不要自动添加 CSRF。
+        
         json_body  (bool, optional)      : 载荷是否为 JSON
 
     Returns:
@@ -468,6 +500,7 @@ async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any
 
     Args:
         api (Api): 请求 Api 信息。
+        
         url, params: 这两个参数是为了通过 Conventional Commits 写的，最后使用的时候(指完全取代老的之后)可以去掉。
 
     Returns:

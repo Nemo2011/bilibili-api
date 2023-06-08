@@ -25,6 +25,7 @@ class Audio:
         """
         Args:
             auid       (int)                        : 音频 AU 号
+
             credential (Credential | None, optional): 凭据. Defaults to None
         """
         self.credential = credential if credential is not None else Credential()
@@ -99,6 +100,7 @@ class AudioList:
         """
         Args:
             amid       (int)                        : 歌单 ID
+
             credential (Credential | None, optional): 凭据. Defaults to None.
         """
         self.__amid = amid
@@ -155,6 +157,7 @@ async def get_user_stat(uid: int, credential: Union[Credential, None] = None) ->
 
     Args:
         uid        (int)                        : 用户 UID
+
         credential (Credential | None, optional): 凭据. Defaults to None
 
     Returns:
@@ -174,6 +177,7 @@ async def get_hot_song_list(
 
     Args:
         pn(int, optional)                       : 页数. Defaults to 1
+        
         credential (Credential | None, optional): 凭据. Defaults to None
 
     Returns:

@@ -181,6 +181,7 @@ async def get_rank(
 
     Args:
         type_ (RankType): 排行榜类型. Defaults to RankType.All
+        
         day (RankDayType): 排行榜时间. Defaults to RankDayType.THREE_DAY
                            仅对 api_type 为 RankAPIType.PGC 有效
 
@@ -303,7 +304,9 @@ async def get_live_energy_user_rank(
 
     Args:
         date (LiveEnergyRankType): 月份. Defaults to LiveEnergyRankType.MONTH
+        
         pn (int): 页码. Defaults to 1
+        
         ps (int): 每页数量. Defaults to 20
 
     Returns:
@@ -322,7 +325,9 @@ async def get_live_rank(
 
     Args:
         _type (LiveRankType): 榜单类型. Defaults to LiveRankType.VALUE
+        
         pn (int): 页码. Defaults to 1
+        
         ps (int): 每页数量. Defaults to 20
 
     Returns:
@@ -345,6 +350,7 @@ async def get_live_user_medal_rank(pn: int = 1, ps: int = 20) -> dict:
 
     Args:
         pn (int): 页码. Defaults to 1
+        
         ps (int): 每页数量. Defaults to 20
 
     Returns:
@@ -363,6 +369,7 @@ async def subscribe_music_rank(
 
     Args:
         status     (bool)      : 关注状态. Defaults to True.
+        
         credential (Credential): 凭据类. Defaults to None.
     """
     credential = credential if credential else Credential()

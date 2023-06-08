@@ -6,7 +6,7 @@ bilibili_api.utils.Danmaku
 
 import time
 from enum import Enum
-from .utils import crack_uid
+from .utils import crack_uid as _crack_uid
 from typing import Union
 
 
@@ -61,18 +61,31 @@ class Danmaku:
         """
         Args:
             (self.)text      (str)                             : 弹幕文本。
+            
             (self.)dm_time   (float, optional)                 : 弹幕在视频中的位置，单位为秒。Defaults to 0.0.
+            
             (self.)send_time (float, optional)                 : 弹幕发送的时间。Defaults to time.time().
+            
             (self.)crc32_id  (str, optional)                   : 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to "".
+            
             (self.)color     (str, optional)                   : 弹幕十六进制颜色。Defaults to "ffffff".
+            
             (self.)weight    (int, optional)                   : 弹幕在弹幕列表显示的权重。Defaults to -1.
+            
             (self.)id_       (int, optional)                   : 弹幕 ID。Defaults to -1.
+            
             (self.)id_str    (str, optional)                   : 弹幕字符串 ID。Defaults to "".
+            
             (self.)action    (str, optional)                   : 暂不清楚。Defaults to "".
+            
             (self.)mode      (Union[DmMode, int], optional)    : 弹幕模式。Defaults to Mode.FLY.
+            
             (self.)font_size (Union[DmFontSize, int], optional): 弹幕字体大小。Defaults to FontSize.NORMAL.
+            
             (self.)is_sub    (bool, optional)                  : 是否为字幕弹幕。Defaults to False.
+            
             (self.)pool      (int, optional)                   : 池。Defaults to 0.
+            
             (self.)attr      (int, optional)                   : 暂不清楚。 Defaults to -1.
         """
         self.text = text
@@ -103,10 +116,12 @@ class Danmaku:
         """
         暴力破解 UID，可能存在误差，请慎重使用。
 
+        仅限低位数 UID 可破解
+
         Returns:
             int: 真实 UID。
         """
-        self.uid = int(crack_uid(self.crc32_id))
+        self.uid = int(_crack_uid(self.crc32_id))
         return self.uid
 
     def to_xml(self):
@@ -130,9 +145,13 @@ class SpecialDanmaku:
         """
         Args:
             (self.)content (str)               : 弹幕内容
+
             (self.)id_     (int)               : 弹幕 id. Defaults to -1.
+
             (self.)id_str  (str)               : 弹幕 id (string 类型). Defaults to "".
+
             (self.)mode    (Union[DmMode, int]): 弹幕类型. Defaults to DmMode.SPECIAL.
+            
             (self.)pool    (int)               : 弹幕池. Defaults to 2.
         """
         self.content = content

@@ -11,7 +11,6 @@ import json
 import re
 import asyncio
 import atexit
-import importlib
 
 from ..exceptions import ResponseCodeException, ResponseException, NetworkException
 from .. import settings

@@ -161,6 +161,11 @@ async def refresh_cookies(credential: Credential) -> Credential:
 async def confirm_refresh(old_credential: Credential, new_credential: Credential) -> None:
     """
     让旧的refresh_token对应的 Cookie 失效
+
+    Args:
+        old_credential (Credential): 旧的用户凭证
+
+        new_credential (Credential): 新的用户凭证
     """
     api = API["operate"]["confirm_refresh"]
     data = {
