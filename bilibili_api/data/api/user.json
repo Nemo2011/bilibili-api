@@ -192,7 +192,8 @@
         "vmid": "int: uid",
         "pn": "int: 页码",
         "ps": "const int: 15",
-        "type": "int: 1 追番，2 追剧"
+        "type": "int: 1 追番，2 追剧",
+        "follow_status": "0 全部 1 想看 2 在看 3 看过"
       },
       "comment": "用户追番列表"
     },

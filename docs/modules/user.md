@@ -116,6 +116,18 @@ from bilibili_api import user
 
 ---
 
+## class BangumiFollowStatus
+
+**Extends:** enum.Enum
+
+番剧追番状态。
+
++ ALL        : 全部
++ WANT       : 想看
++ WATCHING   : 在看
++ WATCHED    : 已看
+
+---
 ## async def name2uid()
 
 | name | type | description |
@@ -315,8 +327,10 @@ from bilibili_api import user
 
 | name  | type                  | description                           |
 |-------|-----------------------|---------------------------------------|
-| pn    | int, optional         | 页码数，从 1 开始。 Defaults to 1.            |
+| pn    | int, optional         | 页码数，从 1 开始。 Defaults to 1.       |
+| ps    | int, optional         | 每一页的番剧数. Defaults to 15.         |
 | type_ | BangumiType, optional | 资源类型. Defaults to BangumiType.BANGUMI |
+| follow_status | BangumiFollowStatus, optional | 追番状态. Defaults to BangumiFollowStatus.ALL |
 
 获取用户追番/追剧列表。
 
