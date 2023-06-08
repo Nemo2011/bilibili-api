@@ -157,6 +157,5 @@ __all__ = [
     "video_tag",
     "video_uploader",
     "video_zone",
-    "vote",
-    "credential"
+    "vote"
 ]

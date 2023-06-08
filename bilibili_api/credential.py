@@ -27,14 +27,9 @@ API = get_api('credential')
 
 
 class Credential(_Credential):
-    def __init__(self,
-                 sessdata: Union[str, None] = None,
-                 bili_jct: Union[str, None] = None,
-                 buvid3: Union[str, None] = None,
-                 dedeuserid: Union[str, None] = None,
-                 ac_time_value: Union[str, None] = None,
-                 ) -> None:
-        super().__init__(sessdata, bili_jct, buvid3, dedeuserid, ac_time_value)
+    """
+    凭据操作类，用于各种请求操作。
+    """
 
     def chcek_refresh(self) -> bool:
         """
