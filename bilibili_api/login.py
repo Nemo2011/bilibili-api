@@ -204,6 +204,7 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
 
     Args:
         username (str): 用户手机号、邮箱
+        
         password (str): 密码
 
     Returns:
@@ -386,6 +387,7 @@ class PhoneNumber:
         """
         Args:
             number(str): 手机号
+            
             country(str): 地区/地区码，如 +86
         """
         number = number.replace("-", "")

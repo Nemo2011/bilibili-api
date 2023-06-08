@@ -28,11 +28,17 @@ async def get_loading_images(
 
     Args:
         build      (int, optional)              : 客户端内部版本号
+
         mobi_app   (str, optional)              : android / iphone / ipad
+
         platform   (str, optional)              : android / ios    / ios
+
         height     (int, optional)              : 屏幕高度
+
         width      (int, optional)              : 屏幕宽度
+
         birth      (str, optional)              : 生日日期(四位数，例 0101)
+
         credential (Credential | None, optional): 凭据. Defaults to None.
 
     Returns:
@@ -64,9 +70,13 @@ async def get_loading_images_special(
 
     Args:
         mobi_app   (str, optional)              : android / iphone / ipad
+
         platform   (str, optional)              : android / ios    / ios
+
         height     (str, optional)              : 屏幕高度
+
         width      (str, optional)              : 屏幕宽度
+        
         credential (Credential | None, optional): 凭据. Defaults to None.
 
     Returns:

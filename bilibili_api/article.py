@@ -123,6 +123,7 @@ class ArticleList:
         """
         Args:
             rlid       (int)                        : 文集 id
+
             credential (Credential | None, optional): 凭据类. Defaults to None.
         """
         self.__rlid = rlid
@@ -157,6 +158,7 @@ class Article:
         """
         Args:
             cvid       (int)                        : cv 号
+
             credential (Credential | None, optional): 凭据. Defaults to None.
         """
         self.__children: List[Node] = []
@@ -256,6 +258,7 @@ class Article:
     async def fetch_content(self) -> None:
         """
         获取并解析专栏内容
+        
         该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
         """
 

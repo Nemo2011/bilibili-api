@@ -15,6 +15,11 @@ import json
 async def get_initial_state(url: str, credential: Credential = Credential()) -> dict:
     '''
     异步获取初始化信息
+
+    Args:
+        url (str): 链接
+
+        credential (Credential, optional): 用户凭证. Defaults to Credential().
     '''
     try:
         session = get_session()
@@ -42,6 +47,11 @@ async def get_initial_state(url: str, credential: Credential = Credential()) -> 
 def get_initial_state_sync(url: str, credential: Credential = Credential()) -> dict:
     '''
     同步获取初始化信息
+
+    Args:
+        url (str): 链接
+
+        credential (Credential, optional): 用户凭证. Defaults to Credential().
     '''
     try:
         resp = httpx.get(

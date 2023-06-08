@@ -137,8 +137,6 @@ __all__ = [
     "live_area",
     "login",
     "login_func",
-    "check_cookies",
-    "refresh_cookies",
     "manga",
     "note",
     "parse_link",

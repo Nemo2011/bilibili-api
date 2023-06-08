@@ -4,9 +4,11 @@ bilibili_api.cheese
 有关 bilibili 课程的 api。
 
 注意，注意！课程中的视频和其他视频几乎没有任何相通的 API！
+
 不能将 CheeseVideo 换成 Video 类。(CheeseVideo 类保留了所有的通用的 API)
 
 获取下载链接需要使用 bilibili_api.cheese.get_download_url，video.get_download_url 不适用。
+
 还有，课程的 season_id 和 ep_id 不与番剧相通，井水不犯河水，请不要错用!
 """
 
@@ -52,7 +54,9 @@ class CheeseList:
         """
         Args:
             season_id  (int)       : ssid
+            
             ep_id      (int)       : 单集 ep_id
+            
             credential (Credential): 凭据类
 
         注意：season_id 和 ep_id 任选一个即可，两个都选的话
@@ -136,6 +140,7 @@ class CheeseVideo:
 
     Attributes:
         credential (Credential): 凭据类
+        
         cheese     (CheeseList): 所属的课程
     """
 
@@ -143,6 +148,7 @@ class CheeseVideo:
         """
         Args:
             epid      (int)       : 单集 ep_id
+            
             credential (Credential): 凭据类
         """
         global cheese_video_meta_cache
@@ -686,6 +692,7 @@ class CheeseVideo:
 
         Args:
             num  (int, optional) : 硬币数量，为 1 ~ 2 个。Defaults to 1.
+            
             like (bool, optional): 是否同时点赞。Defaults to False.
 
         Returns:
@@ -715,6 +722,7 @@ class CheeseVideo:
 
         Args:
             add_media_ids (List[int], optional): 要添加到的收藏夹 ID. Defaults to [].
+            
             del_media_ids (List[int], optional): 要移出的收藏夹 ID. Defaults to [].
 
         Returns:
