@@ -46,11 +46,13 @@
       "comment": "用户个人空间公告"
     },
     "user_tag": {
-      "url": "http://space.bilibili.com/ajax/tags/getSubList",
+      "url": "https://api.bilibili.com/x/space/tag/sub/list?vmid=558830935&pn=2&ps=1",
       "method": "GET",
       "verify": false,
       "params": {
-        "mid": "int: uid"
+        "vmid": "int: uid",
+        "pn": "int: 页码",
+        "ps":"int: 每页项数"
       },
       "comment": "用户关注的 TAG / 话题,认证方式：SESSDATA"
     },
@@ -190,7 +192,8 @@
         "vmid": "int: uid",
         "pn": "int: 页码",
         "ps": "const int: 15",
-        "type": "int: 1 追番，2 追剧"
+        "type": "int: 1 追番，2 追剧",
+        "follow_status": "0 全部 1 想看 2 在看 3 看过"
       },
       "comment": "用户追番列表"
     },
