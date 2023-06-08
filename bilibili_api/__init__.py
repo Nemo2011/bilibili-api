@@ -63,10 +63,9 @@ from .errors import (
     ResponseException,
     VideoUploadException,
 )
+from .credential import Credential
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
-from .utils.credential import Credential
 from .utils.danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
-from .utils.cookie_refresh import check_cookies, refresh_cookies
 from .utils.network_httpx import HEADERS, Api, check_valid, enc_wbi, get_mixin_key, get_nav, get_session, request, retry, set_session
 from .utils.parse_link import ResourceType, parse_link
 from .utils.picture import Picture
@@ -159,4 +158,5 @@ __all__ = [
     "video_uploader",
     "video_zone",
     "vote",
+    "credential"
 ]

@@ -10,8 +10,6 @@ from ..exceptions import (
     CredentialNoBuvid3Exception,
     CredentialNoDedeUserIDException,
 )
-from .utils import get_api
-import httpx
 import uuid
 from typing import Union
 
@@ -28,7 +26,7 @@ class Credential:
         buvid3: Union[str, None] = None,
         dedeuserid: Union[str, None] = None,
         ac_time_value: Union[str, None] = None,
-    ):
+    ) -> None:
         """
         各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
@@ -95,7 +93,7 @@ class Credential:
             bool.
         """
         return self.buvid3 is not None
-    
+
     def has_ac_time_value(self) -> bool:
         """
         是否提供 ac_time_value
@@ -139,7 +137,7 @@ class Credential:
         """
         if not self.has_ac_time_value():
             raise CredentialNoDedeUserIDException()
-        
+
     async def check_valid(self):
         """
         检查 cookies 是否有效
@@ -148,48 +146,8 @@ class Credential:
             bool: cookies 是否有效
         """
 
-        data = await get_nav(self)
-        return data["isLogin"]
-
     def generate_buvid3(self):
         """
         生成 buvid3
         """
         self.buvid3 = str(uuid.uuid1()) + "infoc"
-        
-    def chcek_refresh(self):
-        """
-        检查是否需要刷新 cookies
-
-        Returns:
-            bool: cookies 是否需要刷新
-        """
-        return check_cookies(self)
-
-    def refresh(self):
-        """
-        刷新 cookies
-        """
-        new_cred: Credential = refresh_cookies(self)
-        self.sessdata = new_cred.sessdata
-        self.bili_jct = new_cred.bili_jct
-        self.dedeuserid = new_cred.dedeuserid
-        self.ac_time_value = new_cred.ac_time_value
-
-async def get_nav(credential: Union[Credential, None] = None, headers = None):
-    """
-    获取导航
-
-    Returns:
-        dict: 账号相关信息
-    """
-
-    api = API["valid"]
-    try:
-        cookies = None
-        if credential is not None:
-            cookies = credential.get_cookies()
-        resp = httpx.request("GET", api["url"], cookies=cookies, headers=headers)
-    except Exception as e:
-        raise e
-    return resp.json()["data"]
