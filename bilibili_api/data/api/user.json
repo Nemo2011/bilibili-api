@@ -46,11 +46,13 @@
       "comment": "用户个人空间公告"
     },
     "user_tag": {
-      "url": "http://space.bilibili.com/ajax/tags/getSubList",
+      "url": "https://api.bilibili.com/x/space/tag/sub/list?vmid=558830935&pn=2&ps=1",
       "method": "GET",
       "verify": false,
       "params": {
-        "mid": "int: uid"
+        "vmid": "int: uid",
+        "pn": "int: 页码",
+        "ps":"int: 每页项数"
       },
       "comment": "用户关注的 TAG / 话题,认证方式：SESSDATA"
     },

@@ -197,37 +197,22 @@ class User:
         """
         return self.__uid
 
-    async def get_user_fav_tag(self) -> dict:
+    async def get_user_fav_tag(self, pn: int = 1, ps: int = 20) -> dict:
         """
         获取用户关注的 Tag 信息，如果用户设为隐私，则返回 获取登录数据失败
+
+        Args:
+            pn (int, optional): 页码，从 1 开始. Defaults to 1.
+            ps (int, optional): 每页的数据量. Defaults to 20.
 
         Returns:
             dict: 调用接口返回的内容。
         """
-        # (未打包至 utils 的) 获取被 ajax 重定向后的接口数据
         api = API["info"]["user_tag"]
-        params = {"mid": self.__uid}
-        if self.credential is None:
-            cookies = Credential().get_cookies()
-        else:
-            cookies = self.credential.get_cookies()
-        # cookies["buvid3"] = str(uuid.uuid1())
-        cookies["Domain"] = ".bilibili.com"
-        sess = get_session()
-        resp = await sess.request(
-            "GET",
-            url=api["url"],
-            params=params,
-            follow_redirects=True,
-            cookies=cookies,
-        )
-        try:
-            r_json = json.loads(resp.text)
-        except JSONDecodeError:
-            r_json = {"status": False, "data": f"解析接口返回的数据失败:{resp.status_code}"}
-        if not r_json:
-            r_json = {"status": False, "data": "Failed"}
-        return r_json
+        params = {"mid": self.__uid
+                  , "pn": pn
+                  , "ps": ps}
+        return await request("GET", url=api["url"], params=params, credential=self.credential)
 
     async def get_space_notice(self) -> dict:
         """
