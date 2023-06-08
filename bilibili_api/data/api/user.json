@@ -46,7 +46,7 @@
       "comment": "用户个人空间公告"
     },
     "user_tag": {
-      "url": "https://api.bilibili.com/x/space/tag/sub/list?vmid=558830935&pn=2&ps=1",
+      "url": "https://api.bilibili.com/x/space/tag/sub/list",
       "method": "GET",
       "verify": false,
       "params": {
