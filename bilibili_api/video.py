@@ -796,7 +796,12 @@ class Video:
                     elif type_ == 5:
                         # 大会员专属颜色
                         reader.varint()
+                        reader.varint()
+                        reader.varint()
                         reader.bytes_string()
+                    elif type_ == 13:
+                        # ???
+                        continue
                     else:
                         raise ResponseException("解析响应数据错误")
 
@@ -821,7 +826,7 @@ class Video:
                             color = hex(color)[2:]
                         else:
                             color = "special"
-                        dm.color = hex(color)[2:]
+                        dm.color = color
                     elif data_type == 6:
                         dm.crc32_id = dm_reader.string()
                     elif data_type == 7:
@@ -838,6 +843,14 @@ class Video:
                         dm.id_str = dm_reader.string()
                     elif data_type == 13:
                         dm.attr = dm_reader.varint()
+                    elif data_type == 14:
+                        dm.uid = dm_reader.varint()
+                    elif data_type == 15:
+                        dm_reader.varint()
+                    elif data_type == 20:
+                        dm_reader.bytes_string()
+                    elif data_type == 21:
+                        dm_reader.bytes_string()
                     else:
                         break
                 danmakus.append(dm)
