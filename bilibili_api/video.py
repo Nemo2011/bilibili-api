@@ -793,6 +793,10 @@ class Video:
                     if type_ == 4:
                         reader.bytes_string()
                         # 什么鬼？我用 protoc 解析出乱码！
+                    elif type_ == 5:
+                        # 大会员专属颜色
+                        reader.varint()
+                        reader.bytes_string()
                     else:
                         raise ResponseException("解析响应数据错误")
 
@@ -812,7 +816,12 @@ class Video:
                     elif data_type == 4:
                         dm.font_size = dm_reader.varint()
                     elif data_type == 5:
-                        dm.color = hex(dm_reader.varint())[2:]
+                        color = dm_reader.varint()
+                        if (color != 60001):
+                            color = hex(color)[2:]
+                        else:
+                            color = "special"
+                        dm.color = hex(color)[2:]
                     elif data_type == 6:
                         dm.crc32_id = dm_reader.string()
                     elif data_type == 7:

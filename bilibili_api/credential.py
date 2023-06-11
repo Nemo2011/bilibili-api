@@ -7,9 +7,9 @@ from bilibili_api import Credential
 from typing import Union
 from .utils.credential import Credential as _Credential
 from .utils.network_httpx import get_api, request, get_session, Api
-from Crypto.Cipher import PKCS1_OAEP
-from Crypto.PublicKey import RSA
-from Crypto.Hash import SHA256
+from Cryptodome.Cipher import PKCS1_OAEP
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Hash import SHA256
 import binascii
 import time
 import uuid
@@ -74,7 +74,7 @@ async def check_cookies(credential: Credential) -> bool:
     """
     检查是否需要刷新 Cookies
 
-    Args: 
+    Args:
         credential (Credential): 用户凭证
 
     Return:
