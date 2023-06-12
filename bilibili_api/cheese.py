@@ -54,9 +54,9 @@ class CheeseList:
         """
         Args:
             season_id  (int)       : ssid
-            
+
             ep_id      (int)       : 单集 ep_id
-            
+
             credential (Credential): 凭据类
 
         注意：season_id 和 ep_id 任选一个即可，两个都选的话
@@ -140,7 +140,7 @@ class CheeseVideo:
 
     Attributes:
         credential (Credential): 凭据类
-        
+
         cheese     (CheeseList): 所属的课程
     """
 
@@ -148,7 +148,7 @@ class CheeseVideo:
         """
         Args:
             epid      (int)       : 单集 ep_id
-            
+
             credential (Credential): 凭据类
         """
         global cheese_video_meta_cache
@@ -522,6 +522,15 @@ class CheeseVideo:
                     if type_ == 4:
                         reader.bytes_string()
                         # 什么鬼？我用 protoc 解析出乱码！
+                    elif type_ == 5:
+                        # 大会员专属颜色
+                        reader.varint()
+                        reader.varint()
+                        reader.varint()
+                        reader.bytes_string()
+                    elif type_ == 13:
+                        # ???
+                        continue
                     else:
                         raise ResponseException("解析响应数据错误")
 
@@ -558,6 +567,14 @@ class CheeseVideo:
                         dm.id_str = dm_reader.string()
                     elif data_type == 13:
                         dm.attr = dm_reader.varint()
+                    elif data_type == 14:
+                        dm.uid = dm_reader.varint()
+                    elif data_type == 15:
+                        dm_reader.varint()
+                    elif data_type == 20:
+                        dm_reader.bytes_string()
+                    elif data_type == 21:
+                        dm_reader.bytes_string()
                     else:
                         break
                 danmakus.append(dm)
@@ -692,7 +709,7 @@ class CheeseVideo:
 
         Args:
             num  (int, optional) : 硬币数量，为 1 ~ 2 个。Defaults to 1.
-            
+
             like (bool, optional): 是否同时点赞。Defaults to False.
 
         Returns:
@@ -722,7 +739,7 @@ class CheeseVideo:
 
         Args:
             add_media_ids (List[int], optional): 要添加到的收藏夹 ID. Defaults to [].
-            
+
             del_media_ids (List[int], optional): 要移出的收藏夹 ID. Defaults to [].
 
         Returns:
