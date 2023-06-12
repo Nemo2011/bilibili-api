@@ -1,4 +1,4 @@
-urllib3~=2.0.2
+urllib3~=2.0.3
 aiohttp~=3.8.4
 beautifulsoup4~=4.12.2
 colorama~=0.4.6
