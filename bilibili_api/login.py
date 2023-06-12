@@ -22,6 +22,7 @@ from .utils.credential import Credential
 from .utils.utils import get_api
 from .utils.sync import sync
 from .utils.network_httpx import get_session, HEADERS
+from .utils.network import to_form_urlencoded
 from .utils.captcha import start_server, close_server, get_result
 from .utils.safecenter_captcha import (
     start_server as safecenter_start_server,
@@ -129,8 +130,8 @@ def login_with_qrcode(root=None) -> Credential:
                     bili_jct = cookie[9:]
                 if cookie[:11].upper() == "DEDEUSERID=":
                     dedeuserid = cookie[11:]
-            c = Credential(sessdata=sessdata, 
-                           bili_jct=bili_jct, 
+            c = Credential(sessdata=sessdata,
+                           bili_jct=bili_jct,
                            dedeuserid=dedeuserid,
                            ac_time_value=events["data"]["refresh_token"])
             global credential
@@ -204,7 +205,7 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
 
     Args:
         username (str): 用户手机号、邮箱
-        
+
         password (str): 密码
 
     Returns:
@@ -387,7 +388,7 @@ class PhoneNumber:
         """
         Args:
             number(str): 手机号
-            
+
             country(str): 地区/地区码，如 +86
         """
         number = number.replace("-", "")
@@ -423,16 +424,23 @@ def send_sms(phonenumber: PhoneNumber) -> None:
         sync(
             sess.post(
                 url=api["url"],
-                data={
+                data=to_form_urlencoded({
+                    "source": "main-fe-header",
                     "tel": tell,
                     "cid": code,
-                    "source": "main-fe-header",
-                    "token": geetest_data["token"],  # type: ignore
-                    "challenge": geetest_data["challenge"],  # type: ignore
                     "validate": geetest_data["validate"],  # type: ignore
+                    "token": geetest_data["token"],  # type: ignore
                     "seccode": geetest_data["seccode"],  # type: ignore
+                    "challenge": geetest_data["challenge"],  # type: ignore
+                }),
+                headers={
+                    "User-Agent": "Mozilla/5.0",
+                    "Referer": "https://www.bilibili.com",
+                    "Content-Type": "application/x-www-form-urlencoded"
                 },
-                headers=HEADERS,
+                cookies={
+                    "buvid3": "E9BAB99E-FE1E-981E-F772-958B7F572FF487330infoc"
+                }
             )
         ).text
     )
@@ -491,9 +499,9 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
                 bili_jct = cookie[9:]
             if cookie[:11].upper() == "DEDEUSERID=":
                 dede = cookie[11:]
-        c = Credential(sessdata=sessdata, 
-                       bili_jct=bili_jct, 
-                       dedeuserid=dede, 
+        c = Credential(sessdata=sessdata,
+                       bili_jct=bili_jct,
+                       dedeuserid=dede,
                        ac_time_value=return_data["data"]["refresh_token"])
         return c
     elif return_data["data"]["status"] == 5:
