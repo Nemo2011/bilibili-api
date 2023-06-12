@@ -116,17 +116,22 @@ class Danmaku:
     def __len__(self):
         return len(self.text)
 
-    # def crack_uid(self):
-    #     """
-    #     暴力破解 UID，可能存在误差，请慎重使用。
+    @staticmethod
+    def crack_uid(crc32_id: str):
+        """
+        (@staticmethod)
 
-    #     仅限低位数 UID 可破解
+        暴力破解 UID，可能存在误差，请慎重使用。
 
-    #     Returns:
-    #         int: 真实 UID。
-    #     """
-    #     self.uid = int(_crack_uid(self.crc32_id))
-    #     return self.uid
+        精确至 UID 小于 10000000 的破解。
+
+        Args:
+            crc32_id (str): crc32 id
+
+        Returns:
+            int: 真实 UID。
+        """
+        return int(_crack_uid(crc32_id))
 
     def to_xml(self):
         """
