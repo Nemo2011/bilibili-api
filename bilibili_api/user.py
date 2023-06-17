@@ -820,6 +820,17 @@ class User:
             "GET", api["url"], params=params, credential=self.credential
         )
 
+    async def get_elec_user_monthly(self) -> dict:
+        """
+        获取空间充电公示信息
+
+        Returns:
+            dict: 调用接口返回的结果
+        """
+        api = API["info"]["elec_user_monthly"]
+        params = {"up_mid": self.get_uid()}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential)
 
 async def get_self_info(credential: Credential) -> dict:
     """
