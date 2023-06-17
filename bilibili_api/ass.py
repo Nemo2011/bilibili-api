@@ -4,7 +4,7 @@ bilibili_api.ass
 有关 ASS 文件的操作
 """
 import os
-from typing import Union
+from typing import Union, Optional
 
 from .bangumi import Episode
 from .cheese import CheeseVideo
@@ -86,28 +86,42 @@ def export_ass_from_json(file_local, output_local) -> None:
 
 
 async def make_ass_file_subtitle(
-    obj: Union[Video, Episode], out="test.ass", name="中文（自动生成）"
+    obj: Union[Video, Episode], 
+    page_index: Optional[int] = 0, 
+    cid: Optional[int] = None, 
+    out: Optional[str] ="test.ass", 
+    lan_name: Optional[str] ="中文（自动生成）",
+    lan_code: Optional[str] ="ai-zh"
 ) -> None:
     """
     生成视频字幕文件
 
     Args:
         obj        (Union[Video,Episode]): 对象
+
+        page_index (int, optional)       : 分 P 索引
+
+        cid        (int, optional)       : cid
         
         out        (str, optional)       : 输出位置. Defaults to "test.ass".
 
-        name       (str, optional)       : 字幕名，如”中文（自动生成）“,是简介的'subtitle'项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）".
+        lan_name   (str, optional)       : 字幕名，如”中文（自动生成）“,是简介的 subtitle 项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）".
+
+        lan_code   (str, optional)       : 字幕语言代码，如 ”中文（自动翻译）” 和 ”中文（自动生成）“ 为 "ai-zh"
     """
     if isinstance(obj, Episode):
         info = await obj.get_player_info(cid=await obj.get_cid(), epid=obj.get_epid())
-        json_files = info["subtitle"]["subtitles"]
     else:
-        info = await obj.get_info() 
-        json_files = info["subtitle"]["list"]
+        if cid == None:
+            if page_index == None:
+                raise ArgsException("page_index 和 cid 至少提供一个。")
+            cid = await obj.get_cid(page_index=page_index)
+        info = await obj.get_player_info(cid=cid)
+    json_files = info["subtitle"]["subtitles"]
     for subtitle in json_files:
-        if subtitle["lan_doc"] == name:
+        if subtitle["lan_doc"] == lan_name or subtitle["lan"] == lan_code:
             url = subtitle["subtitle_url"]
-            if isinstance(obj, Episode):
+            if isinstance(obj, Episode) or "https:" not in url:
                 url = "https:" + url
             req = await get_session().request("GET", url)
             file_dir = gettempdir() + "/" + "subtitle.json"
