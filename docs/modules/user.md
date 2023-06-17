@@ -419,6 +419,16 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_elec_user_monthly()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| up_mid | int  | uid 号      |
+
+获取空间充电公示信息
+
+**Returns:** 调用接口返回的内容。
+
 ---
 
 ## async def get_self_info()

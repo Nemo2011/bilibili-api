@@ -419,6 +419,15 @@
       "method": "GET",
       "verify": true,
       "comment": "获取自己风纪委员信息"
+    },
+    "elec_user_monthly": {
+      "url": "https://api.bilibili.com/x/ugcpay-rank/elec/month/up",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "up_mid": "int: uid 号"
+      },
+      "comment": "获取空间充电公示列表"
     }
   },
   "operate": {

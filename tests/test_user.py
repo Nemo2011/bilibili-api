@@ -110,6 +110,9 @@ async def test_t_User_modify_relation():
     await asyncio.sleep(0.5)
     return result
 
+async def test_u_User_get_elec_user_monthly():
+    await u.get_elec_user_monthly()
+
 
 subscribe_id = None
 
