@@ -69,7 +69,7 @@ class Credential:
         Returns:
             bool。
         """
-        return self.dedeuserid is not None
+        return self.dedeuserid is not None and self.sessdata != ""
 
     def has_sessdata(self) -> bool:
         """
@@ -78,7 +78,7 @@ class Credential:
         Returns:
             bool。
         """
-        return self.sessdata is not None
+        return self.sessdata is not None and self.sessdata != ""
 
     def has_bili_jct(self) -> bool:
         """
@@ -87,7 +87,7 @@ class Credential:
         Returns:
             bool。
         """
-        return self.bili_jct is not None
+        return self.bili_jct is not None and self.sessdata != ""
 
     def has_buvid3(self) -> bool:
         """
@@ -96,7 +96,7 @@ class Credential:
         Returns:
             bool.
         """
-        return self.buvid3 is not None
+        return self.buvid3 is not None and self.sessdata != ""
 
     def has_ac_time_value(self) -> bool:
         """
@@ -105,7 +105,7 @@ class Credential:
         Returns:
             bool.
         """
-        return self.ac_time_value is not None
+        return self.ac_time_value is not None and self.sessdata != ""
 
     def raise_for_no_sessdata(self):
         """
