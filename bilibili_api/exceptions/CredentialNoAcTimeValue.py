@@ -14,4 +14,4 @@ class CredentialNoAcTimeValueException(ApiException):
 
     def __init__(self):
         super().__init__()
-        self.msg = "Credential 类未提供 ac_time_value。"
+        self.msg = "Credential 类未提供 ac_time_value 或者为空。"

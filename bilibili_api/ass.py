@@ -86,12 +86,13 @@ def export_ass_from_json(file_local, output_local) -> None:
 
 
 async def make_ass_file_subtitle(
-    obj: Union[Video, Episode], 
-    page_index: Optional[int] = 0, 
-    cid: Optional[int] = None, 
-    out: Optional[str] ="test.ass", 
-    lan_name: Optional[str] ="中文（自动生成）",
-    lan_code: Optional[str] ="ai-zh"
+    obj: Union[Video, Episode],
+    page_index: Optional[int] = 0,
+    cid: Optional[int] = None,
+    out: Optional[str] = "test.ass",
+    lan_name: Optional[str] = "中文（自动生成）",
+    lan_code: Optional[str] = "ai-zh",
+    credential: Credential = Credential()
 ) -> None:
     """
     生成视频字幕文件
@@ -102,13 +103,21 @@ async def make_ass_file_subtitle(
         page_index (int, optional)       : 分 P 索引
 
         cid        (int, optional)       : cid
-        
+
         out        (str, optional)       : 输出位置. Defaults to "test.ass".
 
         lan_name   (str, optional)       : 字幕名，如”中文（自动生成）“,是简介的 subtitle 项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）".
 
         lan_code   (str, optional)       : 字幕语言代码，如 ”中文（自动翻译）” 和 ”中文（自动生成）“ 为 "ai-zh"
+
+        credential (Credential)          : Credential 类. 必须在此处或传入的视频 obj 中传入凭据，两者均存在则优先此处
     """
+    # 目测必须得有 Credential 才能获取字幕
+    if credential.has_sessdata():
+        obj.credential = credential
+    elif not obj.credential.has_sessdata():
+        raise credential.raise_for_no_sessdata()
+
     if isinstance(obj, Episode):
         info = await obj.get_player_info(cid=await obj.get_cid(), epid=obj.get_epid())
     else:
@@ -160,7 +169,7 @@ async def make_ass_file_danmakus_protobuf(
         out         (str, optional)                          : 输出文件. Defaults to "test.ass"
 
         cid         (int | None, optional)                   : cid. Defaults to None.
-        
+
         credential  (Credential | None, optional)            : 凭据. Defaults to None.
 
         date        (datetime.date, optional)                : 获取时间. Defaults to None.
@@ -186,7 +195,8 @@ async def make_ass_file_danmakus_protobuf(
             if cid is None:
                 if page is None:
                     raise ArgsException("page_index 和 cid 至少提供一个。")
-                cid = await v._Video__get_page_id_by_index(page)  # type: ignore
+                # type: ignore
+                cid = await v._Video__get_page_id_by_index(page)
         try:
             info = await v.get_info()
         except:
@@ -258,7 +268,7 @@ async def make_ass_file_danmakus_xml(
         alpha       (float, optional)            : 透明度(0-1). Defaults to 1.
 
         fly_time    (float, optional)            : 滚动弹幕持续时间. Defaults to 7.
-        
+
         static_time (float, optional)            : 静态弹幕持续时间. Defaults to 5.
     """
     if isinstance(obj, Video):
