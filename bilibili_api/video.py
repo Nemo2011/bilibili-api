@@ -241,7 +241,7 @@ class Video:
 
     async def get_tags(
         self, page_index: Union[int, None] = 0, cid: Union[int, None] = None
-    ) -> dict:
+    ) -> List[dict]:
         """
         获取视频标签。
 
@@ -250,7 +250,7 @@ class Video:
             cid        (int | None): 分 P 编码. Defaults to None.
 
         Returns:
-            dict: 调用 API 返回的结果。
+            List[dict]: 调用 API 返回的结果。
         """
         if cid == None:
             if page_index == None:
