@@ -72,7 +72,7 @@ from .utils.picture import Picture
 from .utils.short import get_real_url
 from .utils.sync import sync
 
-BILIBILI_API_VERSION = "15.4.4"
+BILIBILI_API_VERSION = "15.5.0"
 
 # 如果系统为 Windows，则修改默认策略，以解决代理报错问题
 if "windows" in platform.system().lower():
