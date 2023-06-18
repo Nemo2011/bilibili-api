@@ -1,5 +1,6 @@
 + [主页](/homepage.md)
 + [获取 Credential 类所需信息](/get-credential.md)
++ [Credential 类刷新](/refresh_cookies.md)
 + [同步执行异步代码](/sync-executor.md)
 + [配置](/configuration.md)
 + [获取 vote_id](/vote_id.md)
