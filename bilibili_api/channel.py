@@ -6,7 +6,7 @@ bilibili_api.channel
 from bilibili_api.utils.initial_state import get_initial_state
 from bilibili_api.utils.network_httpx import request, get_session
 from bilibili_api.utils.utils import get_api
-from bilibili_api.utils.Credential import Credential
+from bilibili_api.utils.credential import Credential
 from bilibili_api.errors import ResponseException, ApiException
 import re
 import json
@@ -35,6 +35,7 @@ async def get_channel_category_detail(
 
     Args:
         category_id (int): 频道分类的 id。
+        
         offset      (str): 偏移值（下面的数据的第一个频道 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0"
     """
     credential = credential if credential else Credential()
@@ -122,6 +123,7 @@ class Channel:
 
         Args:
             info (list): 待筛选的数据
+        
         Returns:
             list: card_type=achieve 的数据
         """
@@ -142,7 +144,9 @@ class Channel:
 
         Args:
             filter          (ChannelVideosFilter)       : 获取视频的相关选项. Defaults to ALL
+        
             offset          (str)                       : 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None
+            
             page_size       (int)                       : 每页的数据大小. Defaults to 30
 
         Returns:
@@ -173,7 +177,9 @@ class Channel:
 
         Args:
             order          (ChannelVideosOrder)         : 排序方式. Defaults to HOT
+            
             offset         (str)                        : 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表
+            
             page_size      (int)                        : 每页的数据大小
 
         Returns:
@@ -205,7 +211,9 @@ class Channel:
 
         Args:
             order          (ChannelVideosOrder)         : 排序方式. Defaults to HOT
+            
             offset         (str)                        : 偏移值（下面的第一个视频的 ID，为该请求结果中的 offset 键对应的值），类似单向链表
+            
             page_size      (int)                        : 每页的数据大小
 
         Returns:
@@ -279,6 +287,7 @@ async def subscribe_channel(channel: Channel, credential: Credential) -> dict:
 
     Args:
         channel    (Channel)   : 要订阅的频道
+        
         credential (Credential): 凭据类
 
     Returns:
@@ -295,6 +304,7 @@ async def unsubscribe_channel(channel: Channel, credential: Credential) -> dict:
 
     Args:
         channel    (Channel)   : 要订阅的频道
+        
         credential (Credential): 凭据类
 
     Returns:

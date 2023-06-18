@@ -5,7 +5,7 @@ bilibili_api.game
 """
 
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
 from typing import Union
 
@@ -24,6 +24,7 @@ class Game:
         """
         Args:
             game_id    (int)       : 游戏 id
+            
             credential (Credential): 凭据类. Defaults to None.
         """
         self.__game_id = game_id

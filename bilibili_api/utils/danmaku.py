@@ -6,7 +6,7 @@ bilibili_api.utils.Danmaku
 
 import time
 from enum import Enum
-from .utils import crack_uid
+from .utils import crack_uid as _crack_uid
 from typing import Union
 
 
@@ -57,23 +57,43 @@ class Danmaku:
         is_sub: bool = False,
         pool: int = 0,
         attr: int = -1,
+        uid: int = -1,
     ):
         """
         Args:
             (self.)text      (str)                             : 弹幕文本。
+
             (self.)dm_time   (float, optional)                 : 弹幕在视频中的位置，单位为秒。Defaults to 0.0.
+
             (self.)send_time (float, optional)                 : 弹幕发送的时间。Defaults to time.time().
+
             (self.)crc32_id  (str, optional)                   : 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to "".
-            (self.)color     (str, optional)                   : 弹幕十六进制颜色。Defaults to "ffffff".
+
+            (self.)color     (str, optional)                   : 弹幕十六进制颜色。Defaults to "ffffff" (如果为大会员专属的颜色则为"special").
+
             (self.)weight    (int, optional)                   : 弹幕在弹幕列表显示的权重。Defaults to -1.
+
             (self.)id_       (int, optional)                   : 弹幕 ID。Defaults to -1.
+
             (self.)id_str    (str, optional)                   : 弹幕字符串 ID。Defaults to "".
+
             (self.)action    (str, optional)                   : 暂不清楚。Defaults to "".
+
             (self.)mode      (Union[DmMode, int], optional)    : 弹幕模式。Defaults to Mode.FLY.
+
             (self.)font_size (Union[DmFontSize, int], optional): 弹幕字体大小。Defaults to FontSize.NORMAL.
+
             (self.)is_sub    (bool, optional)                  : 是否为字幕弹幕。Defaults to False.
+
             (self.)pool      (int, optional)                   : 池。Defaults to 0.
+
             (self.)attr      (int, optional)                   : 暂不清楚。 Defaults to -1.
+
+            (self.)uid       (int, optional)                   : 弹幕发送者 UID。Defaults to -1.
+
+        大会员专属颜色文字填充：http://i0.hdslb.com/bfs/dm/9dcd329e617035b45d2041ac889c49cb5edd3e44.png
+
+        大会员专属颜色背景填充：http://i0.hdslb.com/bfs/dm/ba8e32ae03a0a3f70f4e51975a965a9ddce39d50.png
         """
         self.text = text
         self.dm_time = dm_time
@@ -91,6 +111,7 @@ class Danmaku:
         self.is_sub = is_sub
         self.pool = pool
         self.attr = attr
+        self.uid = uid
 
     def __str__(self):
         ret = "%s, %s, %s" % (self.send_time, self.dm_time, self.text)
@@ -99,15 +120,22 @@ class Danmaku:
     def __len__(self):
         return len(self.text)
 
-    def crack_uid(self):
+    @staticmethod
+    def crack_uid(crc32_id: str):
         """
+        (@staticmethod)
+
         暴力破解 UID，可能存在误差，请慎重使用。
+
+        精确至 UID 小于 10000000 的破解。
+
+        Args:
+            crc32_id (str): crc32 id
 
         Returns:
             int: 真实 UID。
         """
-        self.uid = int(crack_uid(self.crc32_id))
-        return self.uid
+        return int(_crack_uid(crc32_id))
 
     def to_xml(self):
         """
@@ -130,9 +158,13 @@ class SpecialDanmaku:
         """
         Args:
             (self.)content (str)               : 弹幕内容
+
             (self.)id_     (int)               : 弹幕 id. Defaults to -1.
+
             (self.)id_str  (str)               : 弹幕 id (string 类型). Defaults to "".
+
             (self.)mode    (Union[DmMode, int]): 弹幕类型. Defaults to DmMode.SPECIAL.
+
             (self.)pool    (int)               : 弹幕池. Defaults to 2.
         """
         self.content = content

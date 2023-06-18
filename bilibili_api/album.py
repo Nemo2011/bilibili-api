@@ -7,8 +7,8 @@ bilibili_api.album
 from typing import Any, List, Union, Optional
 from .utils.utils import get_api
 from .utils.network_httpx import request
-from .utils.Credential import Credential
-from .utils.Picture import Picture
+from .utils.credential import Credential
+from .utils.picture import Picture
 from .exceptions import ArgsException
 import enum
 
@@ -52,6 +52,7 @@ class Album:
         """
         Args:
             doc_id (int): 相簿 ID。如 https://h.bilibili.com/1919 的 doc_id 为 1919
+
             credential (Credential): 用户凭证。
         """
         self.__doc_id = doc_id
@@ -122,9 +123,13 @@ async def get_homepage_albums_list(
 
     Args:
         category   (AlbumCategory)       : 分区. Defaults to AlbumCategory.ALL
+
         order      (AlbumOrder)          : 排序方式. Defaults to AlbumOrder.RECOMMEND
+
         page_num   (int)                 : 第几页. Defaults to 1.
+
         page_size  (int)                 : 每一页的数据大小. Defaults to 45.
+        
         credential (Optional[Credential]): 凭据类. Defaults to None.
 
     Returns:
@@ -166,7 +171,9 @@ async def get_homepage_recommend_uppers(
 
     Args:
         category   (AlbumCategory)       : 分区. Defaults to AlbumCategory.ALL
+
         numbers    (int)                 : 获取数据的大小. Defaults to 6. (分区为全部时此参数必须为偶数。)
+
         credential (Optional[Credential]): 凭据类. Defaults to None.
 
     Returns:
@@ -208,9 +215,13 @@ async def get_user_albums(
 
     Args:
         uid        (int)                 : 用户 uid
+
         category   (AlbumCategory)       : 分区. Defaults to AlbumCategory.ALL
+
         page_num   (int)                 : 第几页. Defaults to 1.
+
         page_size  (int)                 : 每一页的数据大小. Defaults to 45.
+
         credential (Optional[Credential]): 凭据类. Defaults to None.
 
     Returns:

@@ -22,12 +22,12 @@ from .exceptions import ResponseException
 from .exceptions import NetworkException
 from .exceptions import ArgsException, DanmakuClosedException
 
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.utils import get_api
 from .utils.network_httpx import request, get_session
 from .utils.network import get_session as get_session_aiohttp
-from .utils.Danmaku import Danmaku, SpecialDanmaku
+from .utils.danmaku import Danmaku, SpecialDanmaku
 from .utils.BytesReader import BytesReader
 from .utils.AsyncEvent import AsyncEvent
 from dataclasses import dataclass
@@ -139,7 +139,9 @@ class Video:
         """
         Args:
             bvid       (str | None, optional)       : BV 号. bvid 和 aid 必须提供其中之一。
+            
             aid        (int | None, optional)       : AV 号. bvid 和 aid 必须提供其中之一。
+            
             credential (Credential | None, optional): Credential 类. Defaults to None.
         """
         # ID 检查
@@ -241,16 +243,17 @@ class Video:
 
     async def get_tags(
         self, page_index: Union[int, None] = 0, cid: Union[int, None] = None
-    ) -> dict:
+    ) -> List[dict]:
         """
         获取视频标签。
 
         Args:
             page_index (int | None): 分 P 序号. Defaults to 0.
+            
             cid        (int | None): 分 P 编码. Defaults to None.
 
         Returns:
-            dict: 调用 API 返回的结果。
+            List[dict]: 调用 API 返回的结果。
         """
         if cid == None:
             if page_index == None:
@@ -319,7 +322,9 @@ class Video:
 
         Args:
             cid(int): 分 P CID(可选)
+            
             json_index(bool): json 数组截取时间表 True 为需要，False 不需要
+            
             pvideo(bool): 是否只获取预览
 
         Returns:
@@ -364,7 +369,9 @@ class Video:
 
         Args:
             page_index (int | None, optional) : 分 P 号，从 0 开始。Defaults to None
+            
             cid        (int | None, optional) : 分 P 的 ID。Defaults to None
+            
             html5      (bool, optional): 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。
 
         Returns:
@@ -488,6 +495,7 @@ class Video:
 
         Args:
             pn (int): 页码
+            
             ps (int): 每页项数
 
         Returns:
@@ -506,6 +514,7 @@ class Video:
 
         Args:
             page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
+            
             cid        (int, optional): 分 P 的 ID。Defaults to None
 
         Returns:
@@ -723,7 +732,9 @@ class Video:
 
         Args:
             page_index (int, optional): 分 P 号，从 0 开始。Defaults to None
+            
             date       (datetime.Date | None, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+            
             cid        (int | None, optional): 分 P 的 ID。Defaults to None
 
         Returns:
@@ -793,6 +804,15 @@ class Video:
                     if type_ == 4:
                         reader.bytes_string()
                         # 什么鬼？我用 protoc 解析出乱码！
+                    elif type_ == 5:
+                        # 大会员专属颜色
+                        reader.varint()
+                        reader.varint()
+                        reader.varint()
+                        reader.bytes_string()
+                    elif type_ == 13:
+                        # ???
+                        continue
                     else:
                         raise ResponseException("解析响应数据错误")
 
@@ -812,7 +832,12 @@ class Video:
                     elif data_type == 4:
                         dm.font_size = dm_reader.varint()
                     elif data_type == 5:
-                        dm.color = hex(dm_reader.varint())[2:]
+                        color = dm_reader.varint()
+                        if (color != 60001):
+                            color = hex(color)[2:]
+                        else:
+                            color = "special"
+                        dm.color = color
                     elif data_type == 6:
                         dm.crc32_id = dm_reader.string()
                     elif data_type == 7:
@@ -829,6 +854,14 @@ class Video:
                         dm.id_str = dm_reader.string()
                     elif data_type == 13:
                         dm.attr = dm_reader.varint()
+                    elif data_type == 14:
+                        dm.uid = dm_reader.varint()
+                    elif data_type == 15:
+                        dm_reader.varint()
+                    elif data_type == 20:
+                        dm_reader.bytes_string()
+                    elif data_type == 21:
+                        dm_reader.bytes_string()
                     else:
                         break
                 danmakus.append(dm)
@@ -842,6 +875,7 @@ class Video:
 
         Args:
             page_index (int, optional)       : 分 P 号. Defaults to 0.
+            
             cid        (int | None, optional): 分 P id. Defaults to None.
 
         Returns:
@@ -906,7 +940,9 @@ class Video:
 
         Args:
             page_index (int | None, optional): 分 P 号，从 0 开始。Defaults to None
+            
             date       (datetime.date | None): 精确到年月. Defaults to None。
+            
             cid        (int | None, optional): 分 P 的 ID。Defaults to None
 
         Returns:
@@ -940,7 +976,9 @@ class Video:
 
         Args:
             page_index (int | None, optional): 分 P 号，从 0 开始。Defaults to None
+            
             ids        (List[int] | None): 要查询的弹幕 ID 列表。
+            
             cid        (int | None, optional): 分 P 的 ID。Defaults to None
 
         Returns:
@@ -974,7 +1012,9 @@ class Video:
 
         Args:
             page_index (int | None, optional): 分 P 号，从 0 开始。Defaults to None
+            
             danmaku    (Danmaku | None)      : Danmaku 类。
+            
             cid        (int | None, optional): 分 P 的 ID。Defaults to None
 
         Returns:
@@ -1024,6 +1064,7 @@ class Video:
 
         Args:
             page_index (int, optional)       : 分 P 序号. Defaults to 0.
+            
             cid        (int | None, optional): cid. Defaults to None.
 
         Return:
@@ -1055,8 +1096,11 @@ class Video:
 
         Args:
             page_index (int | None, optional) : 分 P 号，从 0 开始。Defaults to None
+            
             dmid       (int | None)           : 弹幕 ID。
+            
             status     (bool | None, optional): 点赞状态。Defaults to True
+            
             cid        (int | None, optional) : 分 P 的 ID。Defaults to None
 
         Returns:
@@ -1098,8 +1142,11 @@ class Video:
 
         Args:
             page_index (int | None, optional)      : 分 P 号，从 0 开始。Defaults to None
+            
             dmids      (List[int] | None)          : 弹幕 ID 列表。
+            
             cid        (int | None, optional)      : 分 P 的 ID。Defaults to None
+            
             type_      (DanmakuOperatorType | None): 操作类型
 
         Returns:
@@ -1159,6 +1206,7 @@ class Video:
 
         Args:
             num  (int, optional) : 硬币数量，为 1 ~ 2 个。Defaults to 1.
+            
             like (bool, optional): 是否同时点赞。Defaults to False.
 
         Returns:
@@ -1237,6 +1285,7 @@ class Video:
 
         Args:
             reason (Any): 投诉类型。传入 VideoAppealReasonType 中的项目即可。
+            
             detail (str): 详情信息。
 
         Returns:
@@ -1260,6 +1309,7 @@ class Video:
 
         Args:
             add_media_ids (List[int], optional): 要添加到的收藏夹 ID. Defaults to [].
+            
             del_media_ids (List[int], optional): 要移出的收藏夹 ID. Defaults to [].
 
         Returns:
@@ -1310,6 +1360,7 @@ class Video:
 
         Args:
             cid (int | None): 分 P ID,从视频信息中获取
+            
             epid (int | None): 番剧分集 ID,从番剧信息中获取
 
         Returns:
@@ -1363,10 +1414,15 @@ class Video:
 
         Args:
             lan        (str)                 : 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm
+            
             data       (dict)                : 字幕数据
+            
             submit     (bool)                : 是否提交，不提交为草稿
+            
             sign       (bool)                : 是否署名
+            
             page_index (int | None, optional): 分 P 索引. Defaults to None.
+            
             cid        (int | None, optional): 分 P id. Defaults to None.
 
         Returns:
@@ -1424,7 +1480,9 @@ class Video:
 
         Args:
             page_index(int | None, optional): 分 P 号
+            
             dmid(int)      : 弹幕 id
+            
             cid(int | None, optional)       : 分 P 编码
         Returns:
             调用 API 返回的结果
@@ -1453,6 +1511,7 @@ class Video:
 
         Args:
             page_index(int | None): 分 P 号
+            
             cid(int | None)       : 分 P 编码
 
         Returns:
@@ -1573,9 +1632,13 @@ class VideoOnlineMonitor(AsyncEvent):
         """
         Args:
             bvid       (str | None, optional)       : BVID. Defaults to None.
+            
             aid        (int | None, optional)       : AID. Defaults to None.
+            
             page_index (int, optional)              : 分 P 序号. Defaults to 0.
+            
             credential (Credential | None, optional): Credential 类. Defaults to None.
+            
             debug      (bool, optional)             : 调试模式，将输出更详细信息. Defaults to False.
         """
         super().__init__()
@@ -2070,15 +2133,25 @@ class VideoDownloadURLDataDetecter:
             **以下参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
 
             video_max_quality       (VideoQuality, optional)      : 设置提取的视频流清晰度最大值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._8K.
+            
             audio_max_quality       (AudioQuality, optional)      : 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K.
+            
             video_min_quality       (VideoQuality, optional)      : 设置提取的视频流清晰度最小值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._360P.
+            
             audio_min_quality       (AudioQuality, optional)      : 设置提取的音频流清晰度最小值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._64K.
+            
             video_accepted_qualities(List[VideoQuality], optional): 设置允许的所有视频流清晰度. Defaults to ALL.
+            
             audio_accepted_qualities(List[AudioQuality], optional): 设置允许的所有音频清晰度. Defaults to ALL.
+            
             codecs                  (List[VideoCodecs], optional) : 设置所有允许提取出来的视频编码. 此项不会忽略 HDR/杜比. Defaults to ALL codecs.
+            
             no_dolby_video          (bool, optional)              : 是否禁止提取杜比视界视频流. Defaults to False.
+            
             no_dolby_audio          (bool, optional)              : 是否禁止提取杜比全景声音频流. Defaults to False.
+            
             no_hdr                  (bool, optional)              : 是否禁止提取 HDR 视频流. Defaults to False.
+            
             no_hires                (bool, optional)              : 是否禁止提取 Hi-Res 音频流. Defaults to False.
 
         Returns:
@@ -2206,15 +2279,25 @@ class VideoDownloadURLDataDetecter:
             **以下参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
 
             video_max_quality       (VideoQuality)                : 设置提取的视频流清晰度最大值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._8K.
+            
             audio_max_quality       (AudioQuality)                : 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K.
+            
             video_min_quality       (VideoQuality, optional)      : 设置提取的视频流清晰度最小值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._360P.
+            
             audio_min_quality       (AudioQuality, optional)      : 设置提取的音频流清晰度最小值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._64K.
+            
             video_accepted_qualities(List[VideoQuality], optional): 设置允许的所有视频流清晰度. Defaults to ALL.
+            
             audio_accepted_qualities(List[AudioQuality], optional): 设置允许的所有音频清晰度. Defaults to ALL.
+            
             codecs                  (List[VideoCodecs])           : 设置所有允许提取出来的视频编码. 在数组中越靠前的编码选择优先级越高. 此项不会忽略 HDR/杜比. Defaults to [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV].
+            
             no_dolby_video          (bool)                        : 是否禁止提取杜比视界视频流. Defaults to False.
+            
             no_dolby_audio          (bool)                        : 是否禁止提取杜比全景声音频流. Defaults to False.
+            
             no_hdr                  (bool)                        : 是否禁止提取 HDR 视频流. Defaults to False.
+            
             no_hires                (bool)                        : 是否禁止提取 Hi-Res 音频流. Defaults to False.
 
         Returns:

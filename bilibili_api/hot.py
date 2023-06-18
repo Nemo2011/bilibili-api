@@ -17,6 +17,7 @@ async def get_hot_videos(pn: int = 1, ps: int = 20) -> dict:
 
     Args:
         pn (int): 第几页. Default to 1.
+        
         ps (int): 每页视频数. Default to 20.
 
     Returns:
@@ -71,6 +72,7 @@ async def get_hot_buzzwords(page_num: int = 1, page_size: int = 20) -> dict:
 
     Args:
         page_num  (int): 页码. Defaults to 1.
+        
         page_size (int): 每一页的数据大小. Defaults to 20.
 
     Returns:

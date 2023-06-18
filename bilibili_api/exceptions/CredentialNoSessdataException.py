@@ -14,4 +14,4 @@ class CredentialNoSessdataException(ApiException):
 
     def __init__(self):
         super().__init__()
-        self.msg = "Credential 类未提供 sessdata。"
+        self.msg = "Credential 类未提供 sessdata 或者为空。"

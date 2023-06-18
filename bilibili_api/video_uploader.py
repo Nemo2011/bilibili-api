@@ -12,8 +12,8 @@ import random
 
 from .video import Video
 from .utils.aid_bvid_transformer import bvid2aid
-from .utils.Credential import Credential
-from .utils.Picture import Picture
+from .utils.credential import Credential
+from .utils.picture import Picture
 from copy import copy, deepcopy
 from .exceptions.ResponseCodeException import ResponseCodeException
 import json
@@ -147,8 +147,11 @@ class VideoUploader(AsyncEvent):
 
     Attributes:
         pages        (List[VideoUploaderPage]): 分 P 列表
+        
         meta         (dict)                   : 视频信息
+        
         credential   (Credential)             : 凭据
+        
         cover_path   (str)                    : 封面路径
     """
 
@@ -163,10 +166,13 @@ class VideoUploader(AsyncEvent):
         """
         Args:
             pages        (List[VideoUploaderPage]): 分 P 列表
+        
             meta         (dict)                   : 视频信息
+            
             credential   (Credential)             : 凭据
+            
             cover        (str | Picture)          : 封面路径 / Picture 对象
-
+            
         meta 参数示例：
 
         ```json
@@ -246,13 +252,15 @@ class VideoUploader(AsyncEvent):
             },
         )
         if resp.status_code >= 400:
-            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            self.dispatch(
+                VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
             raise NetworkException(resp.status_code, resp.reason_phrase)
 
         preupload = resp.json()
 
         if preupload["OK"] != 1:
-            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            self.dispatch(
+                VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
             raise ApiException(json.dumps(preupload))
 
         url = self._get_upload_url(preupload)
@@ -275,13 +283,15 @@ class VideoUploader(AsyncEvent):
             },
         )
         if resp.status_code >= 400:
-            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            self.dispatch(
+                VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
             raise ApiException("获取 upload_id 错误")
 
         data = json.loads(resp.text)
 
         if data["OK"] != 1:
-            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            self.dispatch(
+                VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
             raise ApiException("获取 upload_id 错误：" + json.dumps(data))
 
         preupload["upload_id"] = data["upload_id"]
@@ -571,7 +581,8 @@ class VideoUploader(AsyncEvent):
             "chunk_number": chunk_number,
             "total_chunk_count": total_chunk_count,
         }
-        self.dispatch(VideoUploaderEvents.PRE_CHUNK.value, chunk_event_callback_data)
+        self.dispatch(VideoUploaderEvents.PRE_CHUNK.value,
+                      chunk_event_callback_data)
         session = get_session()
 
         stream = open(page.path, "rb")
@@ -641,7 +652,8 @@ class VideoUploader(AsyncEvent):
             )
             return err_return
 
-        self.dispatch(VideoUploaderEvents.AFTER_CHUNK.value, chunk_event_callback_data)
+        self.dispatch(VideoUploaderEvents.AFTER_CHUNK.value,
+                      chunk_event_callback_data)
         return ok_return
 
     async def _complete_page(
@@ -652,18 +664,23 @@ class VideoUploader(AsyncEvent):
 
         Args:
             page (VideoUploaderPage): 分 P 对象
+            
             chunks (int): 分块数量
+            
             preupload (dict): preupload 数据
+            
             upload_id (str): upload_id
 
         Returns:
             dict: filename: 该分 P 的标识符，用于最后提交视频。cid: 分 P 的 cid
         """
-        self.dispatch(VideoUploaderEvents.PRE_PAGE_SUBMIT.value, {"page": page})
+        self.dispatch(VideoUploaderEvents.PRE_PAGE_SUBMIT.value,
+                      {"page": page})
 
         data = {
             "parts": list(
-                map(lambda x: {"partNumber": x, "eTag": "etag"}, range(1, chunks + 1))
+                map(lambda x: {"partNumber": x, "eTag": "etag"},
+                    range(1, chunks + 1))
             )
         }
 
@@ -706,7 +723,8 @@ class VideoUploader(AsyncEvent):
             )
             raise err
 
-        self.dispatch(VideoUploaderEvents.AFTER_PAGE_SUBMIT.value, {"page": page})
+        self.dispatch(
+            VideoUploaderEvents.AFTER_PAGE_SUBMIT.value, {"page": page})
 
         return {
             "filename": os.path.splitext(data["key"].removeprefix("/"))[0],
@@ -719,6 +737,7 @@ class VideoUploader(AsyncEvent):
 
         Args:
             videos (list): 视频列表
+            
             cover_url (str, optional): 封面 URL.
 
         Returns:
@@ -746,7 +765,8 @@ class VideoUploader(AsyncEvent):
             return resp
 
         except Exception as err:
-            self.dispatch(VideoUploaderEvents.SUBMIT_FAILED.value, {"err": err})
+            self.dispatch(
+                VideoUploaderEvents.SUBMIT_FAILED.value, {"err": err})
             raise err
 
     async def abort(self):
@@ -765,6 +785,7 @@ async def get_missions(tid: int = 0, credential: Union[Credential, None] = None)
 
     Args:
         tid        (int, optional)       : 分区 ID. Defaults to 0.
+        
         credential (Credential, optional): 凭据. Defaults to None.
 
     Returns:
@@ -818,8 +839,11 @@ class VideoEditor(AsyncEvent):
 
     Attributes:
         bvid (str)             : 稿件 BVID
+        
         meta (dict)            : 视频信息
+        
         cover_path (str)       : 封面路径. Defaults to None(不更换封面).
+        
         credential (Credential): 凭据类. Defaults to None.
     """
 
@@ -833,8 +857,11 @@ class VideoEditor(AsyncEvent):
         """
         Args:
             bvid (str)                    : 稿件 BVID
+            
             meta (dict)                   : 视频信息
+            
             cover (str | Picture)         : 封面地址. Defaults to None(不更改封面).
+            
             credential (Credential | None): 凭据类. Defaults to None.
 
         meta 参数示例: (保留 video, cover, tid, aid 字段)
@@ -905,8 +932,10 @@ class VideoEditor(AsyncEvent):
                 else Picture().from_file(self.cover_path)
             )
             resp = await _upload_cover(pic, self.credential)
-            self.dispatch(VideoEditorEvents.AFTER_COVER.value, {"url": resp["url"]})
-            self.meta["cover"] = resp["image_url"]  # not sure if this key changed to "url" as well
+            self.dispatch(VideoEditorEvents.AFTER_COVER.value,
+                          {"url": resp["url"]})
+            # not sure if this key changed to "url" as well
+            self.meta["cover"] = resp["image_url"]
         except Exception as e:
             self.dispatch(VideoEditorEvents.COVER_FAILED.value, {"err": e})
             raise e
@@ -920,7 +949,8 @@ class VideoEditor(AsyncEvent):
             resp = await request(
                 "POST",
                 api["url"],
-                params={"csrf": self.credential.bili_jct, "t": int(time.time())},
+                params={"csrf": self.credential.bili_jct,
+                        "t": int(time.time())},
                 data=json.dumps(datas),
                 headers={
                     "content-type": "application/json;charset=UTF-8",
@@ -941,7 +971,8 @@ class VideoEditor(AsyncEvent):
         cnt = 0
         for v in self.__old_configs["videos"]:
             self.meta["videos"].append(
-                {"title": v["title"], "desc": v["desc"], "filename": v["filename"]}
+                {"title": v["title"], "desc": v["desc"],
+                    "filename": v["filename"]}
             )
             self.meta["videos"][-1]["cid"] = await Video(self.bvid).get_cid(cnt)
             cnt += 1

@@ -14,4 +14,4 @@ class CredentialNoBuvid3Exception(ApiException):
 
     def __init__(self):
         super().__init__()
-        self.msg = "Credential 类未提供 buvid3。"
+        self.msg = "Credential 类未提供 buvid3 或者为空。"

@@ -18,10 +18,11 @@ import webbrowser
 import requests
 from .exceptions.LoginError import LoginError
 
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
 from .utils.sync import sync
-from .utils.network_httpx import get_session, to_form_urlencoded
+from .utils.network_httpx import get_session, HEADERS
+from .utils.network import to_form_urlencoded
 from .utils.captcha import start_server, close_server, get_result
 from .utils.safecenter_captcha import (
     start_server as safecenter_start_server,
@@ -121,15 +122,18 @@ def login_with_qrcode(root=None) -> Credential:
             cookies_list = url.split("?")[1].split("&")
             sessdata = ""
             bili_jct = ""
-            dede = ""
+            dedeuserid = ""
             for cookie in cookies_list:
                 if cookie[:8] == "SESSDATA":
                     sessdata = cookie[9:]
                 if cookie[:8] == "bili_jct":
                     bili_jct = cookie[9:]
                 if cookie[:11].upper() == "DEDEUSERID=":
-                    dede = cookie[11:]
-            c = Credential(sessdata, bili_jct, dedeuserid=dede)
+                    dedeuserid = cookie[11:]
+            c = Credential(sessdata=sessdata,
+                           bili_jct=bili_jct,
+                           dedeuserid=dedeuserid,
+                           ac_time_value=events["data"]["refresh_token"])
             global credential
             credential = c
             log.configure(text="成功！", fg="green", font=big_font)
@@ -201,6 +205,7 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
 
     Args:
         username (str): 用户手机号、邮箱
+
         password (str): 密码
 
     Returns:
@@ -234,14 +239,17 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
         },
         cookies={"buvid3": str(uuid.uuid1())},
     )
-    login_data = json.loads(resp.text)
+    login_data = resp.json()
     if login_data["code"] == 0:
         if login_data["data"]["status"] == 1:
             return Check(login_data["data"]["url"])
+        elif login_data["data"]["status"] == 2:
+            raise LoginError("需要手机号进一步验证码验证，请直接通过验证码登录")
         return Credential(
             sessdata=resp.cookies.get("SESSDATA"),
             bili_jct=resp.cookies.get("bili_jct"),
             dedeuserid=resp.cookies.get("DedeUserID"),
+            ac_time_value=login_data["data"]["refresh_token"],
         )
     else:
         raise LoginError(login_data["message"])
@@ -380,6 +388,7 @@ class PhoneNumber:
         """
         Args:
             number(str): 手机号
+
             country(str): 地区/地区码，如 +86
         """
         number = number.replace("-", "")
@@ -415,15 +424,23 @@ def send_sms(phonenumber: PhoneNumber) -> None:
         sync(
             sess.post(
                 url=api["url"],
-                data={
+                data=to_form_urlencoded({
+                    "source": "main-fe-header",
                     "tel": tell,
                     "cid": code,
-                    "source": "main_web",
-                    "token": geetest_data["token"],  # type: ignore
-                    "challenge": geetest_data["challenge"],  # type: ignore
                     "validate": geetest_data["validate"],  # type: ignore
+                    "token": geetest_data["token"],  # type: ignore
                     "seccode": geetest_data["seccode"],  # type: ignore
+                    "challenge": geetest_data["challenge"],  # type: ignore
+                }),
+                headers={
+                    "User-Agent": "Mozilla/5.0",
+                    "Referer": "https://www.bilibili.com",
+                    "Content-Type": "application/x-www-form-urlencoded"
                 },
+                cookies={
+                    "buvid3": "E9BAB99E-FE1E-981E-F772-958B7F572FF487330infoc"
+                }
             )
         ).text
     )
@@ -462,6 +479,7 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
                     "captcha_key": captcha_id,
                     "keep": "true",
                 },
+                headers=HEADERS,
             )
         ).text
     )
@@ -481,7 +499,10 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
                 bili_jct = cookie[9:]
             if cookie[:11].upper() == "DEDEUSERID=":
                 dede = cookie[11:]
-        c = Credential(sessdata, bili_jct, dedeuserid=dede)
+        c = Credential(sessdata=sessdata,
+                       bili_jct=bili_jct,
+                       dedeuserid=dede,
+                       ac_time_value=return_data["data"]["refresh_token"])
         return c
     elif return_data["data"]["status"] == 5:
         return Check(return_data["data"]["url"])  # type: ignore

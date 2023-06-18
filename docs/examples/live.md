@@ -104,3 +104,44 @@ if __name__ == '__main__':
     sched.start()  # 启动定时任务
     sync(room.connect())  # 连接直播间
 ```
+
+# 示例：直播间自动回复弹幕
+
+```python
+from bilibili_api import Credential, Danmaku, sync
+from bilibili_api.live import LiveDanmaku, LiveRoom
+
+# 自己直播间号
+ROOMID = 123
+# 凭证 根据回复弹幕的账号填写
+credential = Credential(
+    sessdata="",
+    bili_jct=""
+)
+# 监听直播间弹幕
+monitor = LiveDanmaku(ROOMID, credential=credential)
+# 用来发送弹幕
+sender = LiveRoom(ROOMID, credential=credential)
+# 自己的UID 可以手动填写也可以根据直播间号获取
+UID = sync(sender.get_room_info())["room_info"]["uid"]
+
+
+@monitor.on("DANMU_MSG")
+async def recv(event):
+    # 发送者UID
+    uid = event["data"]["info"][2][0]
+    # 排除自己发送的弹幕
+    if uid == UID:
+        return
+    # 弹幕文本
+    msg = event["data"]["info"][1]
+    if msg == "你好":
+        # 发送弹幕
+        await sender.send_danmaku(Danmaku("你好！"))
+
+
+# 启动监听
+sync(monitor.connect())
+```
+
+参考：[自动回复直播间弹幕](https://github.com/Nemo2011/bilibili-api/issues/240#issuecomment-1475619484)

@@ -13,7 +13,7 @@ from .exceptions import ResponseCodeException
 
 from .utils.network_httpx import get_session, request
 from .utils.utils import get_api, join
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
 from typing import List, Union
 
@@ -122,6 +122,21 @@ class RelationType(Enum):
     REMOVE_FANS = 7
 
 
+class BangumiFollowStatus(Enum):
+    """
+    番剧追番状态类型。
+
+    + ALL        : 全部
+    + WANT       : 想看
+    + WATCHING   : 在看
+    + WATCHED    : 已看
+    """
+    ALL = 0
+    WANT = 1
+    WATCHING = 2
+    WATCHED = 3
+
+
 async def name2uid(names: Union[str, List[str]]):
     """
     将用户名转为 uid
@@ -150,6 +165,7 @@ class User:
         """
         Args:
             uid        (int)                        : 用户 UID
+
             credential (Credential | None, optional): 凭据. Defaults to None.
         """
         self.__uid = uid
@@ -169,9 +185,6 @@ class User:
         api = API["info"]["info"]
         params = {
             "mid": self.__uid,
-            "token": "",
-            "platform": "web",
-            "web_location": 1550101
         }
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
@@ -191,39 +204,28 @@ class User:
         return self.__self_info
 
     def get_uid(self) -> int:
+        """
+        获取用户 UID
+
+        Returns:
+            int: 用户 UID
+        """
         return self.__uid
 
-    async def get_user_fav_tag(self) -> dict:
+    async def get_user_fav_tag(self, pn: int = 1, ps: int = 20) -> dict:
         """
         获取用户关注的 Tag 信息，如果用户设为隐私，则返回 获取登录数据失败
+
+        Args:
+            pn (int, optional): 页码，从 1 开始. Defaults to 1.
+            ps (int, optional): 每页的数据量. Defaults to 20.
 
         Returns:
             dict: 调用接口返回的内容。
         """
-        # (未打包至 utils 的) 获取被 ajax 重定向后的接口数据
         api = API["info"]["user_tag"]
-        params = {"mid": self.__uid}
-        if self.credential is None:
-            cookies = Credential().get_cookies()
-        else:
-            cookies = self.credential.get_cookies()
-        # cookies["buvid3"] = str(uuid.uuid1())
-        cookies["Domain"] = ".bilibili.com"
-        sess = get_session()
-        resp = await sess.request(
-            "GET",
-            url=api["url"],
-            params=params,
-            follow_redirects=True,
-            cookies=cookies,
-        )
-        try:
-            r_json = json.loads(resp.text)
-        except JSONDecodeError:
-            r_json = {"status": False, "data": f"解析接口返回的数据失败:{resp.status_code}"}
-        if not r_json:
-            r_json = {"status": False, "data": "Failed"}
-        return r_json
+        params = {"mid": self.__uid, "pn": pn, "ps": ps}
+        return await request("GET", url=api["url"], params=params, credential=self.credential)
 
     async def get_space_notice(self) -> dict:
         """
@@ -340,13 +342,17 @@ class User:
 
         Args:
             tid     (int, optional)       : 分区 ID. Defaults to 0（全部）.
+
             pn      (int, optional)       : 页码，从 1 开始. Defaults to 1.
+
             ps      (int, optional)       : 每一页的视频数. Defaults to 30.
+
             keyword (str, optional)       : 搜索关键词. Defaults to "".
+
             order   (VideoOrder, optional): 排序方式. Defaults to VideoOrder.PUBDATE
 
         Returns:
-            dict.
+            dict: 调用接口返回的内容。
         """
         api = API["info"]["video"]
         params = {
@@ -389,7 +395,9 @@ class User:
 
         Args:
             biz (AlbumType, optional): 排序方式. Defaults to AlbumType.ALL.
+
             page_num      (int, optional)       : 页码数，从 1 开始。 Defaults to 1.
+
             page_size    (int)       : 每一页的相簿条目. Defaults to 30.
 
         Returns:
@@ -414,7 +422,9 @@ class User:
 
         Args:
             order (ArticleOrder, optional): 排序方式. Defaults to ArticleOrder.PUBDATE.
+
             pn    (int, optional)         : 页码数，从 1 开始。 Defaults to 1.
+
             ps      (int, optional)       : 每一页的视频数. Defaults to 30.
 
         Returns:
@@ -450,11 +460,16 @@ class User:
 
         Args:
             offset (str, optional):     该值为第一次调用本方法时，数据中会有个 next_offset 字段，
+
                                         指向下一动态列表第一条动态（类似单向链表）。
+
                                         根据上一次获取结果中的 next_offset 字段值，
+
                                         循环填充该值即可获取到全部动态。
+
                                         0 为从头开始。
                                         Defaults to 0.
+
             need_top (bool, optional):  显示置顶动态. Defaults to False.
 
         Returns:
@@ -477,20 +492,34 @@ class User:
         return data
 
     async def get_subscribed_bangumi(
-        self, pn: int = 1, type_: BangumiType = BangumiType.BANGUMI
+        self,
+        type_: BangumiType = BangumiType.BANGUMI,
+        follow_status: BangumiFollowStatus = BangumiFollowStatus.ALL,
+        pn: int = 1,
+        ps: int = 15,
     ) -> dict:
         """
         获取用户追番/追剧列表。
 
         Args:
             pn    (int, optional)         : 页码数，从 1 开始。 Defaults to 1.
+
+            ps      (int, optional)       : 每一页的番剧数. Defaults to 15.
+
             type_ (BangumiType, optional): 资源类型. Defaults to BangumiType.BANGUMI
+
+            follow_status (BangumiFollowStatus, optional): 追番状态. Defaults to BangumiFollowStatus.ALL
 
         Returns:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["bangumi"]
-        params = {"vmid": self.__uid, "pn": pn, "ps": 15, "type": type_.value}
+        params = {"vmid": self.__uid,
+                  "pn": pn,
+                  "ps": ps,
+                  "type": type_.value,
+                  "follow_status": follow_status.value
+                  }
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -503,7 +532,9 @@ class User:
 
         Args:
             pn        (int, optional)  : 页码，从 1 开始. Defaults to 1.
+
             ps        (int, optional)  : 每页的数据量. Defaults to 100.
+
             attention (bool, optional) : 是否采用“最常访问”排序. Defaults to False.
 
         Returns:
@@ -547,7 +578,9 @@ class User:
 
         Args:
             pn   (int, optional) : 页码，从 1 开始. Defaults to 1.
+
             ps   (int, optional) : 每页的数据量. Defaults to 100.
+
             desc (bool, optional): 倒序排序. Defaults to True.
 
         Returns:
@@ -570,6 +603,7 @@ class User:
 
         Args:
             pn (int): 页码. Defaults to 1.
+
             ps (int): 单页数据量. Defaults to 50.
 
         Returns:
@@ -648,7 +682,9 @@ class User:
 
         Args:
             sid(int): 频道的 series_id
+
             pn(int) : 页数，默认为 1
+
             ps(int) : 每一页显示的视频数量
 
         Returns:
@@ -678,8 +714,11 @@ class User:
 
         Args:
             sid(int)          : 频道的 season_id
+
             sort(ChannelOrder): 排序方式
+
             pn(int)           : 页数，默认为 1
+
             ps(int)           : 每一页显示的视频数量
 
         Returns:
@@ -700,7 +739,9 @@ class User:
     async def get_channel_list(self) -> dict:
         """
         查看用户所有的频道（包括新版）和部分视频。
+
         适用于获取列表。
+
         未处理数据。不推荐。
 
         Returns:
@@ -779,6 +820,17 @@ class User:
             "GET", api["url"], params=params, credential=self.credential
         )
 
+    async def get_elec_user_monthly(self) -> dict:
+        """
+        获取空间充电公示信息
+
+        Returns:
+            dict: 调用接口返回的结果
+        """
+        api = API["info"]["elec_user_monthly"]
+        params = {"up_mid": self.get_uid()}
+        return await request(
+            "GET", api["url"], params=params, credential=self.credential)
 
 async def get_self_info(credential: Credential) -> dict:
     """
@@ -801,9 +853,13 @@ async def edit_self_info(
 
     Args:
         birthday (str)      : 生日 YYYY-MM-DD
+
         sex (str)           : 性别 男|女|保密
+
         uname (str)         : 用户名
+
         usersign (str)      : 个性签名
+
         credential (Credential): Credential
     """
 
@@ -811,7 +867,8 @@ async def edit_self_info(
     credential.raise_for_no_bili_jct()
 
     api = API["info"]["edit_my_info"]
-    data = {"birthday": birthday, "sex": sex, "uname": uname, "usersign": usersign}
+    data = {"birthday": birthday, "sex": sex,
+            "uname": uname, "usersign": usersign}
 
     return await request("POST", api["url"], data=data, credential=credential)
 
@@ -822,6 +879,7 @@ async def create_subscribe_group(name: str, credential: Credential) -> dict:
 
     Args:
         name       (str)       : 分组名
+
         credential (Credential): Credential
 
     Returns:
@@ -842,6 +900,7 @@ async def delete_subscribe_group(group_id: int, credential: Credential) -> dict:
 
     Args:
         group_id   (int)       : 分组 ID
+
         credential (Credential): Credential
 
     Returns:
@@ -864,7 +923,9 @@ async def rename_subscribe_group(
 
     Args:
         group_id   (int)       : 分组 ID
+
         new_name   (str)       : 新的分组名
+
         credential (Credential): Credential
 
     Returns:
@@ -887,7 +948,9 @@ async def set_subscribe_group(
 
     Args:
         uids       (List[int]) : 要设置的用户 UID 列表，必须已关注。
+
         group_ids  (List[int]) : 要复制到的分组列表
+
         credential (Credential): Credential
 
     Returns:
@@ -912,7 +975,9 @@ async def get_self_history(
 
     Args:
         page_num (int): 页码数
+
         per_page_item (int): 每页多少条历史记录
+
         credential (Credential): Credential
 
     Returns:
@@ -952,7 +1017,9 @@ async def get_self_special_followings(
 
     Args:
         credential (Credential)   : 凭据类
+
         pn         (int, optional): 页码. Defaults to 1.
+
         ps         (int, optional): 每页数据大小. Defaults to 50.
     """
     credential.raise_for_no_sessdata()
@@ -969,7 +1036,9 @@ async def get_self_whisper_followings(
 
     Args:
         credential (Credential)   : 凭据类
+
         pn         (int, optional): 页码. Defaults to 1.
+
         ps         (int, optional): 每页数据大小. Defaults to 50.
     """
     credential.raise_for_no_sessdata()
@@ -998,7 +1067,9 @@ async def get_self_black_list(
 
     Args:
         credential (Credential)   : 凭据类
+
         pn         (int, optional): 页码. Defaults to 1.
+
         ps         (int, optional): 每页数据大小. Defaults to 50.
     """
     credential.raise_for_no_sessdata()
@@ -1081,6 +1152,7 @@ async def get_self_events(ts: int = 0, credential: Union[Credential, None] = Non
 
     Args:
         ts(int, optional)                      : 时间戳. Defaults to 0.
+
         credential(Credential | None, optional): 凭据. Defaults to None.
 
     Returns:
@@ -1100,7 +1172,9 @@ async def get_self_notes_info(
 
     Args:
         page_num: 页码
+
         page_size: 每页项数
+
         credential(Credential): 凭据类
 
     Returns:
@@ -1125,7 +1199,9 @@ async def get_self_public_notes_info(
 
     Args:
         page_num: 页码
+
         page_size: 每页项数
+
         credential(Credential): 凭据类
 
     Returns:
@@ -1140,6 +1216,7 @@ async def get_self_public_notes_info(
     api = API["info"]["public_notes"]
     params = {"pn": page_num, "ps": page_size}
     return await request("GET", api["url"], params=params, credential=credential)
+
 
 async def get_self_jury_info(credential: Credential) -> dict:
     """
