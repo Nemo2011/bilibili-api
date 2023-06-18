@@ -57,6 +57,7 @@ class Danmaku:
         is_sub: bool = False,
         pool: int = 0,
         attr: int = -1,
+        uid: int = -1,
     ):
         """
         Args:
@@ -88,6 +89,8 @@ class Danmaku:
 
             (self.)attr      (int, optional)                   : 暂不清楚。 Defaults to -1.
 
+            (self.)uid       (int, optional)                   : 弹幕发送者 UID。Defaults to -1.
+
         大会员专属颜色文字填充：http://i0.hdslb.com/bfs/dm/9dcd329e617035b45d2041ac889c49cb5edd3e44.png
 
         大会员专属颜色背景填充：http://i0.hdslb.com/bfs/dm/ba8e32ae03a0a3f70f4e51975a965a9ddce39d50.png
@@ -108,6 +111,7 @@ class Danmaku:
         self.is_sub = is_sub
         self.pool = pool
         self.attr = attr
+        self.uid = uid
 
     def __str__(self):
         ret = "%s, %s, %s" % (self.send_time, self.dm_time, self.text)
