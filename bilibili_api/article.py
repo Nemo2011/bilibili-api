@@ -258,7 +258,7 @@ class Article:
     async def fetch_content(self) -> None:
         """
         获取并解析专栏内容
-        
+
         该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
         """
 
@@ -615,10 +615,13 @@ class Article:
             dict: 调用 API 返回的结果
         """
         sess = get_session()
-        resp = await sess.get(f"https://www.bilibili.com/read/cv{self.__cvid}", 
-                              headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.62",
-                              "cookie": "opus-goback=1"}
-                              )
+        resp = await sess.get(
+            f"https://www.bilibili.com/read/cv{self.__cvid}",
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.62",
+                "cookie": "opus-goback=1",
+            },
+        )
         if resp.status_code == 200:
             html = resp.text
 

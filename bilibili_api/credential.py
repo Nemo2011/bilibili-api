@@ -15,15 +15,17 @@ import time
 import uuid
 import re
 
-key = RSA.importKey('''\
+key = RSA.importKey(
+    """\
 -----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDLgd2OAkcGVtoE3ThUREbio0Eg
 Uc/prcajMKXvkCKFCWhJYJcLkcM2DKKcSeFpD/j6Boy538YXnR6VhcuUJOhH2x71
 nzPjfdTcqMz7djHum0qSZA0AyCBDABUqCrfNgCiJ00Ra7GmRj+YCK1NJEuewlb40
 JNrRuoEUXpabUzGB8QIDAQAB
------END PUBLIC KEY-----''')
+-----END PUBLIC KEY-----"""
+)
 
-API = get_api('credential')
+API = get_api("credential")
 
 
 class Credential(_Credential):
@@ -57,7 +59,9 @@ class Credential(_Credential):
         Returns:
             bool: cookies 是否有效
         """
-        data = await Api(credential=self, **get_api("credential")["info"]["valid"]).result
+        data = await Api(
+            credential=self, **get_api("credential")["info"]["valid"]
+        ).result
         return data["isLogin"]
 
 
@@ -93,7 +97,7 @@ def getCorrespondPath() -> str:
     """
     ts = round(time.time() * 1000)
     cipher = PKCS1_OAEP.new(key, SHA256)
-    encrypted = cipher.encrypt(f'refresh_{ts}'.encode())
+    encrypted = cipher.encrypt(f"refresh_{ts}".encode())
     return binascii.b2a_hex(encrypted).decode()
 
 
@@ -110,8 +114,8 @@ async def get_refresh_csrf(credential: Credential) -> str:
     cookies["buvid3"] = str(uuid.uuid1())
     cookies["Domain"] = ".bilibili.com"
     resp = await get_session().request(
-        "GET", api["url"].replace("{correspondPath}", correspond_path),
-        cookies=cookies)
+        "GET", api["url"].replace("{correspondPath}", correspond_path), cookies=cookies
+    )
     if resp.status_code == 404:
         raise Exception("correspondPath 过期或错误。")
     elif resp.status_code == 200:
@@ -140,25 +144,25 @@ async def refresh_cookies(credential: Credential) -> Credential:
         "csrf": credential.bili_jct,
         "refresh_csrf": refresh_csrf,
         "refresh_token": credential.ac_time_value,
-        "source": "main_web"
+        "source": "main_web",
     }
     cookies = credential.get_cookies()
     cookies["buvid3"] = str(uuid.uuid1())
     cookies["Domain"] = ".bilibili.com"
-    resp = await get_session().request(
-        "POST",
-        api["url"],
-        cookies=cookies,
-        data=data)
-    new_credential = Credential(sessdata=resp.cookies["SESSDATA"],
-                                bili_jct=resp.cookies["bili_jct"],
-                                dedeuserid=resp.cookies["DedeUserID"],
-                                ac_time_value=resp.json()["data"]["refresh_token"])
+    resp = await get_session().request("POST", api["url"], cookies=cookies, data=data)
+    new_credential = Credential(
+        sessdata=resp.cookies["SESSDATA"],
+        bili_jct=resp.cookies["bili_jct"],
+        dedeuserid=resp.cookies["DedeUserID"],
+        ac_time_value=resp.json()["data"]["refresh_token"],
+    )
     await confirm_refresh(credential, new_credential)
     return new_credential
 
 
-async def confirm_refresh(old_credential: Credential, new_credential: Credential) -> None:
+async def confirm_refresh(
+    old_credential: Credential, new_credential: Credential
+) -> None:
     """
     让旧的refresh_token对应的 Cookie 失效
 
@@ -170,6 +174,6 @@ async def confirm_refresh(old_credential: Credential, new_credential: Credential
     api = API["operate"]["confirm_refresh"]
     data = {
         "csrf": new_credential.bili_jct,
-        "refresh_token": old_credential.ac_time_value
+        "refresh_token": old_credential.ac_time_value,
     }
     await request("POST", api["url"], data=data, credential=new_credential)

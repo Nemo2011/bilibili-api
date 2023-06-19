@@ -131,6 +131,7 @@ class BangumiFollowStatus(Enum):
     + WATCHING   : 在看
     + WATCHED    : 已看
     """
+
     ALL = 0
     WANT = 1
     WATCHING = 2
@@ -225,7 +226,9 @@ class User:
         """
         api = API["info"]["user_tag"]
         params = {"mid": self.__uid, "pn": pn, "ps": ps}
-        return await request("GET", url=api["url"], params=params, credential=self.credential)
+        return await request(
+            "GET", url=api["url"], params=params, credential=self.credential
+        )
 
     async def get_space_notice(self) -> dict:
         """
@@ -514,12 +517,13 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["bangumi"]
-        params = {"vmid": self.__uid,
-                  "pn": pn,
-                  "ps": ps,
-                  "type": type_.value,
-                  "follow_status": follow_status.value
-                  }
+        params = {
+            "vmid": self.__uid,
+            "pn": pn,
+            "ps": ps,
+            "type": type_.value,
+            "follow_status": follow_status.value,
+        }
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
         )
@@ -830,7 +834,9 @@ class User:
         api = API["info"]["elec_user_monthly"]
         params = {"up_mid": self.get_uid()}
         return await request(
-            "GET", api["url"], params=params, credential=self.credential)
+            "GET", api["url"], params=params, credential=self.credential
+        )
+
 
 async def get_self_info(credential: Credential) -> dict:
     """
@@ -867,8 +873,7 @@ async def edit_self_info(
     credential.raise_for_no_bili_jct()
 
     api = API["info"]["edit_my_info"]
-    data = {"birthday": birthday, "sex": sex,
-            "uname": uname, "usersign": usersign}
+    data = {"birthday": birthday, "sex": sex, "uname": uname, "usersign": usersign}
 
     return await request("POST", api["url"], data=data, credential=credential)
 
