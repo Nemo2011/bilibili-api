@@ -46,7 +46,7 @@ class Credential(_Credential):
         """
         刷新 cookies
         """
-        new_cred: Credential = refresh_cookies(self)
+        new_cred: Credential = await refresh_cookies(self)
         self.sessdata = new_cred.sessdata
         self.bili_jct = new_cred.bili_jct
         self.dedeuserid = new_cred.dedeuserid
