@@ -42,7 +42,7 @@ class Credential(_Credential):
         """
         return check_cookies(self)
 
-    def refresh(self) -> None:
+    async def refresh(self) -> None:
         """
         刷新 cookies
         """
