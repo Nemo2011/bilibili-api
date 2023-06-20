@@ -277,7 +277,7 @@ class Video:
         params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "mid": mid}
         return await request("GET", url, params=params, credential=self.credential)
 
-    async def get_pages(self) -> dict:
+    async def get_pages(self) -> List[dict]:
         """
         获取分 P 信息。
 
