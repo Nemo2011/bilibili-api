@@ -15,11 +15,11 @@ import httpx
 
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.sync import sync
 from . import user, exceptions
 from .utils import utils
-from .utils.Picture import Picture
+from .utils.picture import Picture
 from . import vote
 from datetime import datetime
 import asyncio
@@ -142,6 +142,7 @@ async def _get_draw_data(
 
     Args:
         text   (str)          : 文本内容
+        
         images (List[Picture]): 图片流
     """
     new_text, at_uids, ctrl = await _parse_at(text)
@@ -184,6 +185,7 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
 
     Args:
         image        (Picture)   : 图片流. 有格式要求.
+        
         credential   (Credential): 凭据
 
     Returns:
@@ -257,10 +259,15 @@ class BuildDynmaic:
 
         Args:
             text            (str            , optional): 动态文字. Defaults to "".
+            
             pics            (List[Picture]  , optional): 动态图片列表. Defaults to [].
+            
             topic_id        (int            , optional): 动态话题 id. Defaults to -1.
+            
             vote_id         (int            , optional): 动态中的投票的 id. 将放在整个动态的最后面. Defaults to -1.
+            
             live_reserve_id (int            , optional): 直播预约 oid. 通过 `live.create_live_reserve` 获取. Defaults to -1.
+            
             send_time       (datetime | None, optional): 发送时间. Defaults to None.
         """
         dyn = BuildDynmaic()
@@ -524,6 +531,7 @@ class BuildDynmaic:
 
         Args:
             up_choose_comment	(bool): 	精选评论flag
+            
             close_comment	    (bool): 	关闭评论flag
         """
         if up_choose_comment:
@@ -569,6 +577,7 @@ async def send_dynamic(info: BuildDynmaic, credential: Credential):
 
     Args:
         info (BuildDynmaic): 动态内容
+        
         credential (Credential): 凭据
 
     Returns:
@@ -662,6 +671,7 @@ async def send_schedule_now(draft_id: int, credential: Credential) -> dict:
 
     Args:
         draft_id (int): 定时动态 ID
+        
         credential  (Credential): 凭据
 
     Returns:
@@ -680,6 +690,7 @@ async def delete_schedule(draft_id: int, credential: Credential) -> dict:
 
     Args:
         draft_id (int): 定时动态 ID
+        
         credential  (Credential): 凭据
 
     Returns:
@@ -757,6 +768,7 @@ class Dynamic:
 
         Args:
             pn (int, optional): 页码，defaults to 1
+            
             ps (int, optional): 每页大小，defaults to 30
 
         Returns:
@@ -848,6 +860,7 @@ async def get_live_users(
 
     Args:
         size       (int)       : 获取的数据数量. Defaults to 10.
+        
         credential (Credential | None): 凭据类. Defaults to None.
 
     Returns:
@@ -885,15 +898,19 @@ async def get_dynamic_page_info(
     获取动态页动态信息
 
     获取全部动态或者相应类型需传入 _type
+    
     获取指定 UP 主动态需传入 host_mid
 
     Args:
         credential (Credential): 凭据类.
+        
         _type      (DynamicType, optional): 动态类型. Defaults to DynamicType.ALL.
+        
         host_mid   (int, optional): 获取对应 UP 主动态的 mid. Defaults to None.
+        
         pn         (int, optional): 页码. Defaults to 1.
+        
         offset     (int, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None.
-
 
     Returns:
         list[Dynamic]: 动态类列表

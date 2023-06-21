@@ -14,7 +14,7 @@ import os
 import shutil
 import time
 from typing import Callable, List, Tuple, Union
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
 from .utils.network_httpx import request
 from .video import Video
@@ -92,9 +92,13 @@ class InteractiveVariable:
         """
         Args:
             name      (str)  : 变量名
+            
             var_id    (str)  : 变量 id
+            
             var_value (int)  : 变量的值
+            
             show      (bool) : 是否显示
+            
             random    (bool) : 是否为随机值(1-100)
         """
         self.__var_id = var_id
@@ -144,8 +148,11 @@ class InteractiveButton:
         """
         Args:
             text  (str)                         : 文字
+            
             x     (int)                         : x 轴
+            
             y     (int)                         : y 轴
+            
             align (InteractiveButtonAlign | int): 按钮的文字在按钮中的位置
         """
         self.__text = text
@@ -176,6 +183,7 @@ class InteractiveJumpingCondition:
         """
         Args:
             var       (List[InteractiveVariable]): 所有变量
+            
             condition (str)                      : 公式
         """
         self.__vars = var
@@ -217,6 +225,7 @@ class InteractiveJumpingCommand:
         """
         Args:
             var       (List[InteractiveVariable]): 所有变量
+            
             command   (str)                      : 公式
         """
         self.__vars = var
@@ -264,12 +273,19 @@ class InteractiveNode:
         """
         Args:
             video          (InteractiveVideo)           : 视频类
+            
             node_id        (int)                        : 节点 id
+            
             cid            (int)                        : CID
+            
             vars           (List[InteractiveVariable])  : 变量
+            
             button         (InteractiveButton)          : 对应的按钮
+            
             condition      (InteractiveJumpingCondition): 跳转公式
+            
             native_command (InteractiveJumpingCommand)  : 跳转时变量操作
+            
             is_default     (bool)                       : 是不是默认的跳转的节点
         """
         self.__parent = video
@@ -629,8 +645,11 @@ class InteractiveVideoDownloader(AsyncEvent):
         """
         Args:
             video              (InteractiveVideo)              : 互动视频类
+            
             out                (str)                           : 输出文件地址 (如果模式为 NODE_VIDEOS/NO_PACKAGING 则此参数表示所有节点视频的存放目录)
+            
             self_download_func (Coroutine | None)              : 自定义下载函数（需 async 函数）
+            
             downloader_mode    (InteractiveVideoDownloaderMode): 下载模式
 
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））

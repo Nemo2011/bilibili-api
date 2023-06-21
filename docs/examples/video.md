@@ -118,7 +118,7 @@ async def main():
     else:
         # MP4 流下载
         await download_url(streams[0].url, "video_temp.m4s", "视频流")
-        await download_url(streams[1].url, "audio_temp.m4s", "视频流")
+        await download_url(streams[1].url, "audio_temp.m4s", "音频流")
         # 混流
         os.system(f'{FFMPEG_PATH} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy video.mp4')
         # 删除临时文件

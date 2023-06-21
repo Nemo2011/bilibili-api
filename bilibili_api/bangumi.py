@@ -16,20 +16,17 @@ from typing import Any, Tuple, Union, List, Optional
 
 import requests
 
-from bilibili_api.utils.Danmaku import Danmaku
+from bilibili_api.utils.danmaku import Danmaku
 
 from . import settings
 
 from .utils.utils import get_api
 from .utils.initial_state import get_initial_state, get_initial_state_sync
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.network_httpx import get_session, request
 from .exceptions.ResponseException import ResponseException
 from .exceptions.ApiException import ApiException
 from .video import Video
-
-import json
-import re
 
 API = get_api("bangumi")
 
@@ -190,8 +187,11 @@ class IndexFilter:
 
         Args:
             start (datetime, str, int): 开始时间. 如果是 None 则不设置开头.
+            
             end   (datetime, str, int): 结束时间. 如果是 None 则不设置结尾.
+
             include_start (bool): 是否包含开始时间. 默认为 True.
+
             include_end   (bool): 是否包含结束时间. 默认为 False.
 
         Returns:
@@ -753,13 +753,21 @@ class IndexFilterMeta:
             Anime Meta
             Args:
                 version (Index_Filter.Version): 类型，如正片、电影等
+
                 spoken_language (Index_Filter.Spoken_Language): 配音
+
                 area (Index_Filter.Area): 地区
+
                 finish_status (Index_Filter.Finish_Status): 是否完结
+
                 copyright (Index_Filter.Copryright): 版权
+
                 payment (Index_Filter.Payment): 付费门槛
+
                 season (Index_Filter.Season): 季度
+
                 year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
+
                 style (Index_Filter.Style.Anime): 风格
             """
             self.season_type = IndexFilter.Type.ANIME
@@ -785,9 +793,13 @@ class IndexFilterMeta:
             Movie Meta
             Args:
                 area (Index_Filter.Area): 地区
+
                 payment (Index_Filter.Payment): 付费门槛
+
                 season (Index_Filter.Season): 季度
+
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
+
                 style (Index_Filter.Style.Movie): 风格
             """
             self.season_type = IndexFilter.Type.MOVIE
@@ -808,8 +820,11 @@ class IndexFilterMeta:
             Documentary Meta
             Args:
                 area (Index_Filter.Area): 地区
+
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
+
                 style (Index_Filter.Style.Documentary): 风格
+
                 producer (Index_Filter.Producer): 制作方
             """
             self.season_type = IndexFilter.Type.DOCUMENTARY
@@ -830,8 +845,11 @@ class IndexFilterMeta:
             TV Meta
             Args:
                 area (Index_Filter.Area): 地区
+
                 payment (Index_Filter.Payment): 付费门槛
+
                 release_date (str): 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取
+
                 style (Index_Filter.Style.TV): 风格
             """
             self.season_type = IndexFilter.Type.TV
@@ -854,10 +872,15 @@ class IndexFilterMeta:
             Guochuang Meta
             Args:
                 version (Index_Filter.VERSION): 类型，如正片、电影等
+
                 finish_status (Index_Filter.Finish_Status): 是否完结
+
                 copyright (Index_Filter.Copyright): 版权
+                
                 payment (Index_Filter.Payment): 付费门槛
+
                 year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
+
                 style (Index_Filter.Style.GuoChuang): 风格
             """
             self.season_type = IndexFilter.Type.GUOCHUANG
@@ -878,6 +901,7 @@ class IndexFilterMeta:
             Variety Meta
             Args:
                 payment (Index_Filter.Payment): 付费门槛
+
                 style (Index_Filter.Style.Variety): 风格
             """
             self.season_type = IndexFilter.Type.VARIETY
@@ -899,9 +923,13 @@ async def get_index_info(
 
     Args:
         filters (Index_Filter_Meta, optional): 筛选条件元数据. Defaults to Anime.
+
         order (BANGUMI_INDEX.ORDER, optional): 排序字段. Defaults to SCORE.
+
         sort (BANGUMI_INDEX.SORT, optional): 排序方式. Defaults to DESC.
+
         pn (int, optional): 页数. Defaults to 1.
+        
         ps (int, optional): 每页数量. Defaults to 20.
 
     Returns:
@@ -959,9 +987,13 @@ class Bangumi:
         """
         Args:
             media_id   (int, optional)              : 番剧本身的 ID. Defaults to -1.
+
             ssid       (int, optional)              : 每季度的 ID. Defaults to -1.
+
             epid       (int, optional)              : 每集的 ID. Defaults to -1.
+
             oversea    (bool, optional)             : 是否要采用兼容的港澳台Api,用于仅限港澳台地区番剧的信息请求. Defaults to False.
+
             credential (Credential | None, optional): 凭据类. Defaults to None.
         """
         if media_id == -1 and ssid == -1 and epid == -1:
@@ -1072,6 +1104,7 @@ class Bangumi:
 
         Args:
             order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
+
             next       (str | None, optional)         : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
 
         Returns:
@@ -1096,6 +1129,7 @@ class Bangumi:
 
         Args:
             order      (BangumiCommentOrder, optional): 排序方式。Defaults to BangumiCommentOrder.DEFAULT
+
             next       (str | None, optional)         : 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None
 
         Returns:
@@ -1193,7 +1227,9 @@ async def set_follow(
 
     Args:
         bangumi    (Bangumi)                    : 番剧类
+
         status     (bool, optional)             : 追番状态. Defaults to True.
+
         credential (Credential | None, optional): 凭据. Defaults to None.
 
     Returns:
@@ -1215,7 +1251,9 @@ async def update_follow_status(
 
     Args:
         bangumi    (Bangumi)                    : 番剧类
+
         credential (Credential | None, optional): 凭据. Defaults to None.
+
         status     (int)                        : 追番状态 1 想看 2 在看 3 已看
     Returns:
         dict: 调用 API 返回的结果
@@ -1234,7 +1272,9 @@ class Episode(Video):
 
     Attributes:
         credential  (Credential): 凭据类
+
         video_class (Video)     : 视频类
+
         bangumi     (Bangumi)   : 所属番剧
     """
 
@@ -1242,6 +1282,7 @@ class Episode(Video):
         """
         Args:
             epid       (int)                 : 番剧 epid
+            
             credential (Credential, optional): 凭据. Defaults to None.
         """
         global episode_data_cache

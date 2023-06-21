@@ -17,7 +17,9 @@ class ResponseCodeException(ApiException):
 
         Args:
             code (int):             错误代码。
+
             msg (str):              错误信息。
+            
             raw (dict, optional):   原始响应数据. Defaults to None.
         """
         super().__init__(msg)

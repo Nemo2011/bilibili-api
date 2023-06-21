@@ -44,6 +44,7 @@ import bilibili_api
 | bili_jct | str, optional | 浏览器 Cookies 中的 bili_jct 字段值 |
 | buvid3   | str, optional | 浏览器 Cookies 中的 BUVID3 字段值   |
 | dedeuserid | str, optional | 浏览器 Cookies 中的 DedeUserID 字段值 |
+| ac_time_value | str | 浏览器 Cookies 中的 ac_time 字段值 |
 
 各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
@@ -77,6 +78,12 @@ import bilibili_api
 
 **Returns:** bool
 
+#### def has_ac_time_value()
+
+是否提供 ac_time_value。
+
+**Returns:** bool
+
 #### def raise_for_no_sessdata()
 
 没有提供 sessdata 则抛出异常。
@@ -101,11 +108,29 @@ import bilibili_api
 
 **Returns:** None
 
+#### def raise_for_no_ac_time_value()
+
+没有提供 ac_time_value 则抛出异常。
+
+**Returns:** None
+
 #### async def check_valid()
 
 检查 cookies 是否有效
 
 **Returns:** bool: cookies 是否有效
+
+#### async def refresh()
+
+刷新 cookies
+
+**Returns:** None
+
+#### def check_refresh()
+
+检查 cookies 是否需要刷新
+
+**Returns:** bool: cookies 是否需要刷新
 
 ---
 

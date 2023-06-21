@@ -26,7 +26,7 @@ from ..user import ChannelSeries, ChannelSeriesType, User, get_self_info
 from ..note import Note, NoteType
 from ..video import Video
 from ..game import Game
-from .Credential import Credential
+from .credential import Credential
 from .short import get_real_url
 from .utils import get_api
 from ..topic import Topic
@@ -113,6 +113,7 @@ async def parse_link(
 
     Args:
         url(str)              : 链接
+
         credential(Credential): 凭据类
 
     Returns:
@@ -235,7 +236,7 @@ async def parse_link(
             return obj  # type: ignore
     except Exception as e:
         raise e
-        return (-1, ResourceType.FAILED)
+        # return (-1, ResourceType.FAILED)
 
 
 async def auto_convert_video(

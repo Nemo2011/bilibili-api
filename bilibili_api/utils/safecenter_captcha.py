@@ -7,7 +7,6 @@ import copy
 import json
 import os
 import time
-import webbrowser
 import requests
 from .utils import get_api
 

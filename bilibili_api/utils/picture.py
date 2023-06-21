@@ -5,7 +5,7 @@ import tempfile
 import os
 import httpx
 from yarl import URL
-from .Credential import Credential
+from .credential import Credential
 from .utils import get_api
 
 
@@ -18,10 +18,15 @@ class Picture:
 
     Args:
         height    (int)  : 高度
+        
         imageType (str)  : 格式，例如: png
+        
         size      (Any)  : 尺寸
+        
         url       (str)  : 图片链接
+        
         width     (int)  : 宽度
+        
         content   (bytes): 图片内容
 
     可以不实例化，用 `from_url`, `from_content` 或 `from_file` 加载图片。
@@ -126,6 +131,7 @@ class Picture:
 
         Args:
             content (str): 图片内容
+            
             format  (str): 图片后缀名，如 `webp`, `jpg`, `ico`
 
         Returns:

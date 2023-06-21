@@ -10,10 +10,10 @@ from enum import Enum
 
 from yarl import URL
 from .utils.utils import get_api
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.network_httpx import request, get_session
 from .exceptions import ArgsException, ApiException
-from .utils.Picture import Picture
+from .utils.picture import Picture
 from typing import List, Union, overload
 import httpx
 import re
@@ -44,9 +44,13 @@ class Note:
         """
         Args:
             cvid       (int)                  : 公开笔记 ID (对应专栏的 cvid) (公开笔记必要)
+            
             aid        (int)                  : 稿件 ID（oid_type 为 0 时是 avid） (私有笔记必要)
+            
             note_id    (int)                  : 私有笔记 ID (私有笔记必要)
+            
             note_type  (str)                  : 笔记类型 (private, public)
+            
             credential (Credential, optional) : Credential. Defaults to None.
         """
         self.__oid = -1
@@ -272,6 +276,7 @@ class Note:
     async def fetch_content(self) -> None:
         """
         获取并解析笔记内容
+        
         该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
         """
 

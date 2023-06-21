@@ -9,7 +9,7 @@ from typing import Union, Optional, List
 
 from .utils.utils import get_api
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 
 
 class BlackReasonType(Enum):
@@ -164,8 +164,11 @@ async def get_blocked_list(
 
     Args:
         from_      (BlackFrom)        : 违规来源. Defaults to BlackFrom.ALL.
+
         type_      (int)              : 违规类型. Defaults to BlackType.ALL.
+
         pn         (int)              : 页数. Defaults to 1.
+
         credential (Credential | None): 凭据. Defaults to None.
     """
     credential = credential if credential else Credential()
@@ -188,6 +191,7 @@ class BlackRoom:
         """
         Args:
             black_room_id (int)                        : 小黑屋 id
+
             credential    (Credential | None, optional): 凭据类. Defaults to None.
         """
         self.__id = black_room_id
@@ -226,6 +230,7 @@ class JuryCase:
         """
         Args:
             case_id (str)                              : 案件 id
+
             credential (Credential)                    : 凭据类
         """
         self.case_id = case_id
@@ -250,6 +255,7 @@ class JuryCase:
 
         Args:
             pn (int, optional): 页数. Defaults to 1.
+
             ps (int, optional): 每页数量. Defaults to 20.
 
         Returns:
@@ -268,8 +274,11 @@ class JuryCase:
 
         Args:
             opinion (JuryVoteOpinion): 投票选项类型
+            
             is_insider (bool): 是否观看此类视频
+            
             is_anonymous (bool): 是否匿名投票
+            
             reason (str, optional): 投票理由. Defaults to None.
 
         Returns:
@@ -308,7 +317,9 @@ async def get_jury_case_list(credential: Credential, pn: int = 1, ps: int = 20) 
 
     Args:
         credential (Credential): 凭据类
+        
         pn (int, optional): 页数. Defaults to 1.
+        
         ps (int, optional): 每页数量. Defaults to 20.
 
     Returns:

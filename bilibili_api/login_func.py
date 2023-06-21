@@ -7,9 +7,9 @@ bilibili_api.login_func
 import threading
 from typing import Tuple, Union
 from . import login
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
-from .utils.Picture import Picture
+from .utils.picture import Picture
 import json
 import requests
 import uuid

@@ -1,6 +1,6 @@
 # bilibili_api.live
 
-from bilibili_api.utils.Danmaku import Danmaku
+from bilibili_api.utils.danmaku import Danmaku
 from bilibili_api import live
 from bilibili_api.exceptions import ResponseCodeException
 from .common import get_credential

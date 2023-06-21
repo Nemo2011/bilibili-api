@@ -17,6 +17,7 @@ class NetworkException(ApiException):
 
         Args:
             status (int):   状态码。
+            
             msg (str):      状态消息。
         """
         super().__init__(msg)

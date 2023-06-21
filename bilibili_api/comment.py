@@ -17,7 +17,7 @@ from typing import Union
 
 from .utils.utils import get_api
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .exceptions.ArgsException import ArgsException
 
 
@@ -80,8 +80,11 @@ class Comment:
         """
         Args:
             oid        (int)         : 评论所在资源 ID。
+            
             type_      (ResourceType): 评论所在资源类型枚举。
+            
             rpid       (int)         : 评论 ID。
+            
             credential (Credential)  : 凭据类. Defaults to None.
         """
         self.__oid = oid
@@ -234,10 +237,15 @@ async def send_comment(
 
     Args:
         text       (str)          : 评论内容。
+        
         oid        (str)          : 资源 ID。
+        
         type_      (CommentsResourceType) : 资源类型枚举。
+        
         root       (int, optional): 根评论 ID, Defaults to None.
+        
         parent     (int, optional): 父评论 ID, Defaults to None.
+        
         credential (Credential)   : 凭据
 
     Returns:
@@ -287,9 +295,13 @@ async def get_comments(
 
     Args:
         oid        (int)                 : 资源 ID。
+        
         type_      (CommentsResourceType)        : 资源类枚举。
+        
         page_index (int, optional)       : 页码. Defaults to 1.
+        
         order      (OrderType, optional) : 排序方式枚举. Defaults to OrderType.TIME.
+        
         credential (Credential, optional): 凭据。Defaults to None.
 
     Returns:

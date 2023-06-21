@@ -3,7 +3,7 @@
 import asyncio
 from sqlite3 import DatabaseError
 import time
-from bilibili_api.utils.Danmaku import Danmaku
+from bilibili_api.utils.danmaku import Danmaku
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 from bilibili_api import video as video_m, exceptions
 

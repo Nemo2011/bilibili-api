@@ -14,4 +14,4 @@ class CredentialNoDedeUserIDException(ApiException):
 
     def __init__(self):
         super().__init__()
-        self.msg = "Credential 类未提供 DedeUserID。"
+        self.msg = "Credential 类未提供 DedeUserID 或者为空。"

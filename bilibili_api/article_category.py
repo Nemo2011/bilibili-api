@@ -136,8 +136,11 @@ async def get_category_recommend_articles(
 
     Args:
         category_id (int)         : 专栏分类的 id, 0 为全部. Defaults to 0.
+
         order       (ArticleOrder): 排序方式. Defaults to ArticleOrder.DEFAULT.
+
         page_num    (int)         : 页码. Defaults to 1.
+        
         page_size   (int)         : 每一页数据大小. Defaults to 20.
 
     Returns:

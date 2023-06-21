@@ -7,10 +7,10 @@ bilibili_api.vote
 """
 from typing import Optional, Union
 from enum import Enum
-from .utils.Picture import Picture
+from .utils.picture import Picture
 from .utils.utils import get_api
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 
 API = get_api("vote")
 
@@ -43,6 +43,7 @@ class VoteChoices:
 
         Args:
             desc (str): 选项描述
+            
             image (str, Picture, optional): 选项的图片链接，用于图片投票。支持 Picture 类. Defaults to None.
         """
         if isinstance(image, Picture):
@@ -81,6 +82,7 @@ class Vote:
 
     Attributes:
         vote_id (int): vote_id, 获取：https://nemo2011.github.io/bilibili-api/#/vote_id
+        
         credential (Credential): 凭据类
     """
 
@@ -88,6 +90,7 @@ class Vote:
         """
         Args:
             vote_id (int): vote_id, 获取：https://nemo2011.github.io/bilibili-api/#/vote_id
+            
             credential (Credential): 凭据类，非必要.
         """
         self.__vote_id = vote_id
@@ -135,12 +138,19 @@ class Vote:
 
         Args:
             vote_id (int): vote_id
+            
             title (str): 投票标题
+            
             _type (VoteType): 投票类型
+            
             choice_cnt (int): 最多几项
+            
             duration (int): 投票持续秒数 常用: 三天:259200 七天:604800 三十天:2592000
+            
             choices (VoteChoices): 投票选项
+            
             credential (Credential): Credential 枚举类
+            
             desc (Optional[str], optional): 投票描述. Defaults to None.
 
         Returns:
@@ -176,11 +186,17 @@ async def create_vote(
 
     Args:
         title (str): 投票标题
+        
         _type (VoteType): 投票类型
+        
         choice_cnt (int): 最多几项
+        
         duration (int): 投票持续秒数 常用: 三天:259200 七天:604800 三十天:2592000
+        
         choices (VoteChoices): 投票选项
+        
         credential (Credential): Credential
+        
         desc (Optional[str], optional): 投票描述. Defaults to None.
 
     Returns:

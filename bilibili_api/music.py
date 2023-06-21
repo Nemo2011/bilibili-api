@@ -7,7 +7,7 @@ bilibili_api.music
 """
 
 from .utils.network_httpx import request
-from .utils.Credential import Credential
+from .utils.credential import Credential
 from .utils.utils import get_api
 from typing import Optional
 from enum import Enum
@@ -133,10 +133,15 @@ async def get_music_index_info(
 
     Args:
         keyword   (str)                 : 关键词. Defaults to None.
+        
         lang      (MusicIndexTags.Lang) : 语言. Defaults to MusicIndexTags.Lang.ALL
+        
         genre     (MusicIndexTags.Genre): 类型. Defaults to MusicIndexTags.Genre.ALL
+        
         order     (MusicOrder)          : 排序方式. Defaults to OrderAudio.NEW
+        
         page_num  (int)                 : 页码. Defaults to 1.
+        
         page_size (int)                 : 每页的数据大小. Defaults to 10.
     """
     api = API_audio["audio_info"]["audio_list"]
