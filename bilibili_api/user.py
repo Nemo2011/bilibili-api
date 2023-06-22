@@ -976,7 +976,7 @@ async def get_self_history(
     credential: Union[Credential, None] = None,
 ) -> dict:
     """
-    获取用户浏览历史记录
+    获取用户浏览历史记录（旧版）
 
     Args:
         page_num (int): 页码数
@@ -999,7 +999,78 @@ async def get_self_history(
     return await request("GET", url=api["url"], params=params, credential=credential)
 
 
-async def get_self_coins(credential: Credential):
+class HistoryType(Enum):
+    """
+    历史记录分类
+
+    + ALL      : 全部
+    + archive  : 稿件
+    + live     : 直播
+    + article  : 专栏
+    """
+
+    ALL = "all"
+    archive = "archive"
+    live = "live"
+    article = "article"
+
+
+class HistoryBusinessType(Enum):
+    """
+    历史记录 Business 分类
+    
+    + archive：稿件
+    + pgc：剧集（番剧 / 影视）
+    + live：直播
+    + article-list：文集
+    + article：文章
+    """
+
+    archive = "archive"
+    pgc = "pgc"
+    live = "live"
+    article_list = "article-list"
+    article = "article"
+
+
+async def get_self_history_new(
+    credential: Credential,
+    _type: HistoryType = HistoryType.ALL,
+    ps: int = 20,
+    view_at: int = None,
+    max: int = None,
+    business: HistoryBusinessType = None,
+) -> dict:
+    """
+    获取用户浏览历史记录（新版），与旧版不同有分类参数，但相对缺少视频信息
+
+    max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，其用法类似链表的 next 指针
+
+    将返回值某历史记录的 oid、business、view_at 作为上述参数传入，即可获取此 oid 之前的历史记录
+
+    Args:
+        credential (Credential) : Credential
+        _type      (HistroyType): 历史记录分类, 默认为 HistroyType.ALL
+        ps         (int)        : 每页多少条历史记录, 默认为 20
+        view_at    (int)        : 时间戳，获取此时间戳之前的历史记录
+        max        (int)        : 历史记录截止目标 oid
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["history_new"]
+    params = {
+        "type": _type.value,
+        "ps": ps,
+        "view_at": view_at,
+        "max": max,
+        "business": business if business is None else business.value,
+    }
+    return await request("GET", url=api["url"], params=params, credential=credential)
+
+
+async def get_self_coins(credential: Credential) -> int:
     """
     获取自己的硬币数量。
 
