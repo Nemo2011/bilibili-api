@@ -130,10 +130,12 @@ def login_with_qrcode(root=None) -> Credential:
                     bili_jct = cookie[9:]
                 if cookie[:11].upper() == "DEDEUSERID=":
                     dedeuserid = cookie[11:]
-            c = Credential(sessdata=sessdata,
-                           bili_jct=bili_jct,
-                           dedeuserid=dedeuserid,
-                           ac_time_value=events["data"]["refresh_token"])
+            c = Credential(
+                sessdata=sessdata,
+                bili_jct=bili_jct,
+                dedeuserid=dedeuserid,
+                ac_time_value=events["data"]["refresh_token"],
+            )
             global credential
             credential = c
             log.configure(text="成功！", fg="green", font=big_font)
@@ -424,23 +426,23 @@ def send_sms(phonenumber: PhoneNumber) -> None:
         sync(
             sess.post(
                 url=api["url"],
-                data=to_form_urlencoded({
-                    "source": "main-fe-header",
-                    "tel": tell,
-                    "cid": code,
-                    "validate": geetest_data["validate"],  # type: ignore
-                    "token": geetest_data["token"],  # type: ignore
-                    "seccode": geetest_data["seccode"],  # type: ignore
-                    "challenge": geetest_data["challenge"],  # type: ignore
-                }),
+                data=to_form_urlencoded(
+                    {
+                        "source": "main-fe-header",
+                        "tel": tell,
+                        "cid": code,
+                        "validate": geetest_data["validate"],  # type: ignore
+                        "token": geetest_data["token"],  # type: ignore
+                        "seccode": geetest_data["seccode"],  # type: ignore
+                        "challenge": geetest_data["challenge"],  # type: ignore
+                    }
+                ),
                 headers={
                     "User-Agent": "Mozilla/5.0",
                     "Referer": "https://www.bilibili.com",
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/x-www-form-urlencoded",
                 },
-                cookies={
-                    "buvid3": "E9BAB99E-FE1E-981E-F772-958B7F572FF487330infoc"
-                }
+                cookies={"buvid3": "E9BAB99E-FE1E-981E-F772-958B7F572FF487330infoc"},
             )
         ).text
     )
@@ -499,10 +501,12 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
                 bili_jct = cookie[9:]
             if cookie[:11].upper() == "DEDEUSERID=":
                 dede = cookie[11:]
-        c = Credential(sessdata=sessdata,
-                       bili_jct=bili_jct,
-                       dedeuserid=dede,
-                       ac_time_value=return_data["data"]["refresh_token"])
+        c = Credential(
+            sessdata=sessdata,
+            bili_jct=bili_jct,
+            dedeuserid=dede,
+            ac_time_value=return_data["data"]["refresh_token"],
+        )
         return c
     elif return_data["data"]["status"] == 5:
         return Check(return_data["data"]["url"])  # type: ignore

@@ -306,7 +306,7 @@ async def request_old(
     #     "User-Agent": "Mozilla/5.0",
     # }
     # 现有常量为啥不用...
-    headers = HEADERS
+    headers = HEADERS.copy()
 
     if params is None:
         params = {}
@@ -538,7 +538,7 @@ async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any
         "data": api.data,
         "params": api.params,
         "cookies": cookies,
-        "headers": HEADERS,
+        "headers": HEADERS.copy(),
     }
     config.update(kwargs)
 

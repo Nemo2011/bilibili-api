@@ -129,7 +129,7 @@ async def get_homepage_albums_list(
         page_num   (int)                 : 第几页. Defaults to 1.
 
         page_size  (int)                 : 每一页的数据大小. Defaults to 45.
-        
+
         credential (Optional[Credential]): 凭据类. Defaults to None.
 
     Returns:

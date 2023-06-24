@@ -66,7 +66,18 @@ from .errors import (
 from .credential import Credential
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
-from .utils.network_httpx import HEADERS, Api, check_valid, enc_wbi, get_mixin_key, get_nav, get_session, request, retry, set_session
+from .utils.network_httpx import (
+    HEADERS,
+    Api,
+    check_valid,
+    enc_wbi,
+    get_mixin_key,
+    get_nav,
+    get_session,
+    request,
+    retry,
+    set_session,
+)
 from .utils.parse_link import ResourceType, parse_link
 from .utils.picture import Picture
 from .utils.short import get_real_url
@@ -155,5 +166,5 @@ __all__ = [
     "video_tag",
     "video_uploader",
     "video_zone",
-    "vote"
+    "vote",
 ]

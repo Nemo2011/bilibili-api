@@ -76,7 +76,7 @@ async def get_loading_images_special(
         height     (str, optional)              : 屏幕高度
 
         width      (str, optional)              : 屏幕宽度
-        
+
         credential (Credential | None, optional): 凭据. Defaults to None.
 
     Returns:

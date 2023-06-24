@@ -29,9 +29,9 @@ class Tag:
         """
         Args:
             tag_name   (str | None): 标签名. Defaults to None.
-            
+
             tag_id     (int | None): 标签 id. Defaults to None.
-            
+
             credential (Credential): 凭据类. Defaults to None.
 
         注意：tag_name 和 tag_id 任选一个传入即可。tag_id 优先使用。
@@ -83,10 +83,11 @@ class Tag:
         api = API["info"]["get_list"]
         params = {"topic_id": self.get_tag_id()}
         return await request("GET", api["url"], params=params)
-    async def get_history_cards(self,offset_dynamic_id:int)-> dict:
+
+    async def get_history_cards(self, offset_dynamic_id: int) -> dict:
         """
         获取标签下，指定dynamic_id的视频的后一个视频/动态作为起始的视频/动态
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
