@@ -33,14 +33,14 @@ class Credential(_Credential):
     凭据操作类，用于各种请求操作。
     """
 
-    def chcek_refresh(self) -> bool:
+    async def chcek_refresh(self) -> bool:
         """
         检查是否需要刷新 cookies
 
         Returns:
             bool: cookies 是否需要刷新
         """
-        return check_cookies(self)
+        return await check_cookies(self)
 
     async def refresh(self) -> None:
         """

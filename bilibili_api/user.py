@@ -137,6 +137,39 @@ class BangumiFollowStatus(Enum):
     WATCHING = 2
     WATCHED = 3
 
+class HistoryType(Enum):
+    """
+    历史记录分类
+
+    + ALL      : 全部
+    + archive  : 稿件
+    + live     : 直播
+    + article  : 专栏
+    """
+
+    ALL = "all"
+    archive = "archive"
+    live = "live"
+    article = "article"
+
+
+class HistoryBusinessType(Enum):
+    """
+    历史记录 Business 分类
+    
+    + archive：稿件
+    + pgc：剧集（番剧 / 影视）
+    + live：直播
+    + article-list：文集
+    + article：文章
+    """
+
+    archive = "archive"
+    pgc = "pgc"
+    live = "live"
+    article_list = "article-list"
+    article = "article"
+
 
 async def name2uid(names: Union[str, List[str]]):
     """
@@ -999,40 +1032,6 @@ async def get_self_history(
     return await request("GET", url=api["url"], params=params, credential=credential)
 
 
-class HistoryType(Enum):
-    """
-    历史记录分类
-
-    + ALL      : 全部
-    + archive  : 稿件
-    + live     : 直播
-    + article  : 专栏
-    """
-
-    ALL = "all"
-    archive = "archive"
-    live = "live"
-    article = "article"
-
-
-class HistoryBusinessType(Enum):
-    """
-    历史记录 Business 分类
-    
-    + archive：稿件
-    + pgc：剧集（番剧 / 影视）
-    + live：直播
-    + article-list：文集
-    + article：文章
-    """
-
-    archive = "archive"
-    pgc = "pgc"
-    live = "live"
-    article_list = "article-list"
-    article = "article"
-
-
 async def get_self_history_new(
     credential: Credential,
     _type: HistoryType = HistoryType.ALL,
@@ -1050,9 +1049,13 @@ async def get_self_history_new(
 
     Args:
         credential (Credential) : Credential
+
         _type      (HistroyType): 历史记录分类, 默认为 HistroyType.ALL
+
         ps         (int)        : 每页多少条历史记录, 默认为 20
+
         view_at    (int)        : 时间戳，获取此时间戳之前的历史记录
+
         max        (int)        : 历史记录截止目标 oid
 
     Returns:
