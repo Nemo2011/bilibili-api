@@ -152,9 +152,9 @@ async def get_graph(
 
     Args:
         credentials (Credential): Credential 凭据。
-        
+
         period      (GraphPeriod): 时间段。
-        
+
         graph_type  (GraphType):   图表类型。
 
     Returns:
@@ -177,7 +177,7 @@ async def get_overview(
 
     Args:
         credentials (Credential): Credential 凭据。
-        
+
         period      (GraphPeriod): 时间段。
 
     Returns:
@@ -212,7 +212,7 @@ async def get_video_playanalysis(
 
     Args:
         credentials (Credential): Credential 凭据。
-        
+
         copyright   (Copyright):   版权类型。
 
     Returns:
@@ -246,7 +246,7 @@ async def get_fan_overview(
 
     Args:
         credentials (Credential): Credential 凭据。
-        
+
         period      (FanGraphPeriod): 时间段。
 
     Returns:
@@ -267,9 +267,9 @@ async def get_fan_graph(
 
     Args:
         credentials (Credential): Credential 凭据。
-        
+
         period      (FanGraphPeriod): 时间段。
-        
+
         graph_type  (FanGraphType):   图表类型。
 
     Returns:
@@ -302,7 +302,7 @@ async def get_article_graph(
 
     Args:
         credentials (Credential): Credential 凭据。
-        
+
         graph_type  (ArticleInfoType):   图表类型。
 
     Returns:
@@ -322,7 +322,7 @@ async def get_article_rank(
 
     Args:
         credentials (Credential): Credential 凭据。
-        
+
         rank_type  (ArticleInfoType):   排行依据。
 
     Returns:

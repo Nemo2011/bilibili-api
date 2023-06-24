@@ -1,0 +1,118 @@
+{
+    "info": {
+        "info": {
+            "url": "https://api.bilibili.com/pgc/freya/web/room/info",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "room_id": "int: 放映室id",
+                "platform": "str: web"
+            },
+            "comment": "放映室信息"
+        }
+    },
+    "operate": {
+        "match": {
+            "url": "https://api.bilibili.com/pgc/freya/web/room/match",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "fail_fast": "int",
+                "season_id": "int: 番剧的 season_id",
+                "from_type": "int",
+                "season_type": "int",
+                "platform": "str: web",
+                "csrf": "str: csrf"
+            },
+            "comment": "匹配放映室"
+        },
+        "create": {
+            "url": "https://api.bilibili.com/pgc/freya/web/room/create",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "season_id": "int: 番剧的 season_id",
+                "episode_id": "int: 剧集id",
+                "is_open": "int: 是否公开 0 不公开 1 公开",
+                "platform": "str: web",
+                "csrf": "str: csrf"
+            },
+            "comment": "创建放映室"
+        },
+        "join": {
+            "url": "https://api.bilibili.com/pgc/freya/web/room/join",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "room_id": "int: 放映室id",
+                "platform": "str: web",
+                "csrf": "str: csrf"
+            },
+            "comment": "加入放映室"
+        },
+        "open": {
+            "url": "https://api.bilibili.com/pgc/freya/web/room/modify/info",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "room_id": "int: 放映室id",
+                "is_open": "int: 是否公开 0 不公开 1 公开",
+                "platform": "str: web",
+                "csrf": "str: csrf"
+            },
+            "comment": "开启放映室"
+        },
+        "progress": {
+            "url": "https://api.bilibili.com/pgc/freya/web/room/modify/progress",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "room_id": "int: 放映室id",
+                "status": "状态 1 播放中 0 暂停中 2 已结束",
+                "progress": "int: 进度 s",
+                "platform": "str: web",
+                "csrf": "str: csrf"
+            },
+            "comment": "修改放映室进度"
+        },
+        "kickout": {
+            "url": "https://api.bilibili.com/pgc/freya/web/room/kickout",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "room_id": "int: 放映室id",
+                "mid": "int: 被踢出用户uid",
+                "platform": "str: web",
+                "csrf": "str: csrf"
+            },
+            "comment": "踢出放映室"
+        },
+        "season": {
+            "url": "https://api.bilibili.com/pgc/freya/web/room/modify/season",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "room_id": "int: 放映室id",
+                "season_id": "int: 番剧的 season_id",
+                "episode_id": "int: 剧集id",
+                "platform": "str: web",
+                "csrf": "str: csrf"
+            },
+            "comment": "修改放映室播放内容"
+        },
+        "send": {
+            "url": "https://api.bilibili.com/pgc/freya/web/im/msg/send",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "room_id": "int: 放映室id",
+                "content_type": "int: 0",
+                "content": "str: 发送内容",
+                "req_id": "int: 时间戳",
+                "platform": "str: web",
+                "csrf": "str: csrf"
+            },
+            "comment": "发送弹幕"
+        }
+    }
+}

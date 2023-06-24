@@ -94,6 +94,8 @@ class AsyncEvent:
             name (str):       事件名。
             *args, **kwargs:  要传递给函数的参数。
         """
+        if len(args) == 0 and len(kwargs.keys()) == 0:
+            args = [{}]
         if name.upper() in self.__ignore_events:
             return
 
