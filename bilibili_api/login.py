@@ -97,15 +97,7 @@ def login_with_qrcode(root=None) -> Credential:
         global id_
         global start, credential, is_destroy
         # log.configure(text="点下确认啊！", fg="orange", font=big_font)
-        events_api = API["qrcode"]["get_events"]
-        params = {"qrcode_key": login_key}
-        events = json.loads(
-            requests.get(
-                events_api["url"],
-                params=params,
-                cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
-            ).text
-        )
+        events = login_with_key(login_key)
         # print(events)
         # 新的 events["data"]
         # {'url': '', 'refresh_token': '', 'timestamp': 0, 'code': 86101, 'message': '未扫码'}
@@ -170,11 +162,15 @@ def update_qrcode() -> str:
     return qrcode_image
 
 
+def get_cookie_str(credential):
+    return ";".join([f"{k}={v}" for k, v in credential.get_cookies().items()])
+
+
 def is_login(credential: Credential):
     if not credential:
         return False
     url = "https://api.bilibili.com/x/web-interface/nav"
-    cookie_str = "; ".join([f"{k}={v}" for k, v in credential.get_cookies().items()])
+    cookie_str = get_cookie_str(credential)
     with httpx.Client() as client:
         headers = {"User-Agent": "Mozilla/5.0", "Cookie": cookie_str}
         response = client.get(url, headers=headers)
@@ -200,20 +196,24 @@ def login_with_qrcode_term(credent=None) -> Credential:
     data = httpx.get(api["url"], follow_redirects=True).json()['data']
     qrcode = data["url"]
     s = qrcode_terminal.qr_terminal_str(qrcode)
-    input(f"用客户端扫描下面二维码，完成后回车\n{s}")
-    return get_credential(data["oauthKey"])
+    input(f"data: {data}\n用客户端扫描下面二维码，完成后回车\n{s}")
+    return get_credential(data["qrcode_key"])
 
 
-def get_credential(login_key) -> Credential:
+def login_with_key(key: str):
+    params = {"qrcode_key": key}
     events_api = API["qrcode"]["get_events"]
-    data = {"oauthKey": login_key}
     events = json.loads(
-        requests.post(
+        requests.get(
             events_api["url"],
-            data=data,
+            params=params,
             cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
         ).text
     )
+    return events
+
+def get_credential(key: str) -> Credential:
+    events = login_with_key(key)
     if "code" in events.keys() and events["code"] == -412:
         raise LoginError(events["message"])
     if events["data"] == -4:
