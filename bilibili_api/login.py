@@ -170,6 +170,82 @@ def update_qrcode() -> str:
     return qrcode_image
 
 
+def is_login(credential: Credential):
+    if not credential:
+        return False
+    url = "https://api.bilibili.com/x/web-interface/nav"
+    cookie_str = "; ".join([f"{k}={v}" for k, v in credential.get_cookies().items()])
+    with httpx.Client() as client:
+        headers = {"User-Agent": "Mozilla/5.0", "Cookie": cookie_str}
+        response = client.get(url, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+    return data["code"] == 0
+
+
+def login_with_qrcode_term(credent=None) -> Credential:
+    """
+    终端扫描二维码登录
+
+    Args:
+
+    Returns:
+        Credential: 凭据
+    """
+    import qrcode_terminal
+    if is_login(credent):
+        print('已经登录')
+        return credent
+    api = API["qrcode"]["get_qrcode_and_token"]
+    data = httpx.get(api["url"], follow_redirects=True).json()['data']
+    qrcode = data["url"]
+    s = qrcode_terminal.qr_terminal_str(qrcode)
+    input(f"用客户端扫描下面二维码，完成后回车\n{s}")
+    return get_credential(data["oauthKey"])
+
+
+def get_credential(login_key) -> Credential:
+    events_api = API["qrcode"]["get_events"]
+    data = {"oauthKey": login_key}
+    events = json.loads(
+        requests.post(
+            events_api["url"],
+            data=data,
+            cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
+        ).text
+    )
+    if "code" in events.keys() and events["code"] == -412:
+        raise LoginError(events["message"])
+    if events["data"] == -4:
+        raise LoginError("请扫描二维码↑")
+    elif events["data"] == -5:
+        raise LoginError("点下确认啊！")
+    elif isinstance(events["data"], dict):
+        url = events["data"]["url"]
+        cookies_list = url.split("?")[1].split("&")
+        sessdata = ""
+        bili_jct = ""
+        dede = ""
+        for cookie in cookies_list:
+            if cookie[:8] == "SESSDATA":
+                sessdata = cookie[9:]
+            if cookie[:8] == "bili_jct":
+                bili_jct = cookie[9:]
+            if cookie[:11].upper() == "DEDEUSERID=":
+                dede = cookie[11:]
+        return Credential(sessdata, bili_jct, buvid3=get_live_buvid(), dedeuserid=dede)
+
+
+def get_live_buvid():
+    import re
+    url = "https://api.live.bilibili.com/gift/v3/live/gift_config"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = httpx.get(url, headers=headers)
+    response.raise_for_status()
+    set_cookie = response.headers.get("Set-Cookie")
+    live_buvid = re.findall(r"LIVE_BUVID=(AUTO[0-9]+)", set_cookie)[0]
+    return live_buvid
+
 # ----------------------------------------------------------------
 # 密码登录
 # ----------------------------------------------------------------
