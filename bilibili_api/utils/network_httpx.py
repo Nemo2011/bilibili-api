@@ -16,11 +16,12 @@ from dataclasses import dataclass, field
 from functools import reduce
 from inspect import iscoroutinefunction as isAsync
 from typing import Any, Coroutine, Dict, Union
+from urllib.parse import urlencode
 
 import httpx
 
 from .. import settings
-from ..exceptions import ResponseCodeException, ApiException
+from ..exceptions import ApiException, ResponseCodeException
 from .credential import Credential
 from .sync import sync
 from .utils import get_api
@@ -365,13 +366,12 @@ def enc_wbi(params: dict, mixin_key: str):
 
         mixin_key (str): 混合密钥
     """
+    params.pop("w_rid", None)  # 重试时先把原有 w_rid 去除
     params["wts"] = int(time.time())
-    keys = sorted(filter(lambda k: k != "w_rid", params.keys()))
-    Ae = "&".join(f"{key}={params[key]}" for key in keys)
-    w_rid = hashlib.md5(
+    Ae = urlencode(sorted(params.items()))
+    params["w_rid"] = hashlib.md5(
         (Ae + mixin_key).encode(encoding="utf-8")
     ).hexdigest()
-    params["w_rid"] = w_rid
 
 
 @atexit.register
