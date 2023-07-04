@@ -920,7 +920,9 @@ class LiveDanmaku(AsyncEvent):
         self.logger.info(f"准备连接直播间 {self.room_display_id}")
         # 获取真实房间号
         self.logger.debug("正在获取真实房间号")
-        self.__room_real_id = (await room.get_room_play_info())["room_id"]
+        info = await room.get_room_play_info()
+        self.__room__uid = info["uid"]
+        self.__room_real_id = info["room_id"]
         self.logger.debug(f"获取成功，真实房间号：{self.__room_real_id}")
 
         # 获取直播服务器配置
@@ -1064,9 +1066,10 @@ class LiveDanmaku(AsyncEvent):
 
     async def __send_verify_data(self, ws: ClientWebSocketResponse, token: str) -> None:
         verifyData = {
-            "uid": 0,
+            "uid": self.__room__uid,
             "roomid": self.__room_real_id,
             "protover": 3,
+            "buvid": self.credential.buvid3,
             "platform": "web",
             "type": 2,
             "key": token,
