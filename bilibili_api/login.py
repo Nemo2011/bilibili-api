@@ -74,25 +74,6 @@ def parse_credential_url(events: dict) -> Credential:
                         buvid3=buvid3, 
                         dedeuserid=dedeuserid, 
                         ac_time_value=ac_time_value)
-
-def anylize_event_data(events: dict) -> Union[Credential, int]:
-    """
-    成功则返回 Credential 类，失败则返回错误代码
-    """
-    # {'url': '', 'refresh_token': '', 'timestamp': 0, 'code': 86101, 'message': '未扫码'}
-    # {'url': '', 'refresh_token': '', 'timestamp': 0, 'code': 86090, 'message': '二维码已扫码未确认'}
-    # {'url': 'https://passport.biligame.com/x/passport-login/web/crossDomain?DedeUserID=x&DedeUserID__ckMd5=x&Expires=x&SESSDATA=x&bili_jct=x&gourl=x', 'refresh_token': 'x', 'timestamp': 1683903305723, 'code': 0, 'message': ''}
-    if "code" in events.keys() and events["code"] == 0:
-        if result == 86101:
-            log.configure(text="请扫描二维码↑", fg="red", font=big_font)
-        elif result == 86090:
-            log.configure(text="点下确认啊！", fg="orange", font=big_font)
-        elif result == 86038:
-            raise LoginError("二维码过期，请扫新二维码！")
-        elif events["data"]["code"] == 0:
-            return parse_credential_url(events)
-    elif "code" in events.keys():
-        raise LoginError(events["message"])
     
 def make_qrcode(url) -> str:
     qr = qrcode.QRCode()
