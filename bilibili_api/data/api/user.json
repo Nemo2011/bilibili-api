@@ -219,11 +219,13 @@
       "comment": "获取用户所有关注（需要用户公开信息）"
     },
     "all_followings2": {
-      "url": "https://app.biliapi.net/x/v2/relation/followings",
+      "url": "https://api.bilibili.com/x/relation/followings",
       "method": "GET",
-      "verify": false,
+      "verify": true,
       "params": {
         "vmid": "int: uid",
+        "order": "str: desc 倒序, asc 正序",
+        "order_type": "str: 按照关注顺序排列：留空 按照最常访问排列：attention",
         "pn": "int: 页码",
         "ps":"const int: 100"
       },
