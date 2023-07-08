@@ -179,15 +179,16 @@ async def _get_draw_data(
     return data
 
 
-async def upload_image(image: Picture, credential: Credential) -> dict:
+async def upload_image(image: Picture, credential: Credential, data: dict = None) -> dict:
     """
     上传动态图片
 
     Args:
-        image        (Picture)   : 图片流. 有格式要求.
+        image (Picture)   : 图片流. 有格式要求.
 
-        credential   (Credential): 凭据
+        credential (Credential): 凭据
 
+        data (dict): 自定义请求体
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -197,7 +198,8 @@ async def upload_image(image: Picture, credential: Credential) -> dict:
     api = API["send"]["upload_img"]
     raw = image.content
 
-    data = {"biz": "new_dyn", "category": "daily"}
+    if data is None:
+        data = {"biz": "new_dyn", "category": "daily"}
 
     return_info = await request(
         "POST",

@@ -9,7 +9,7 @@ from bilibili_api import login
 ---
 **注意：**
 
-用 `linux` 的小伙伴在使用 `login_with_qrcode` 时先装一下 `python3-tk` 吧。
+建议 `linux` 的用户使用 `login_with_qrcode_term` 通过终端扫码登录，或者在使用 `login_with_qrcode` 时先装一下 `python3-tk` 吧。
 
 ``` bash
 $ sudo apt-get install python3-tk
@@ -79,6 +79,14 @@ $ sudo apt-get install python3-tk
 
 ---
 
+## def login_with_qrcode_term()
+
+**推荐方式** 扫描终端二维码登录。
+
+**Returns:** Credential 凭据类。
+
+---
+
 ## def login_with_qrcode()
 
 | name | type | description |
@@ -90,6 +98,8 @@ $ sudo apt-get install python3-tk
 扫描二维码登录。
 
 **Returns:** Credential 凭据类。
+
+---
 
 ## def login_with_password()
 
