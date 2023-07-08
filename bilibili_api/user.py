@@ -170,6 +170,15 @@ class HistoryBusinessType(Enum):
     article_list = "article-list"
     article = "article"
 
+class OrderType(Enum):
+    """
+    排序字段
+
+    + desc：倒序
+    + asc：正序
+    """
+    desc = "desc"
+    asc = "asc" 
 
 async def name2uid(names: Union[str, List[str]]):
     """
@@ -234,7 +243,7 @@ class User:
         if self.__self_info is not None:
             return self.__self_info
 
-        self.__self_info = await get_self_info(credential=self.credential)
+        self.__self_info = await self.get_user_info()
         return self.__self_info
 
     def get_uid(self) -> int:
@@ -562,7 +571,7 @@ class User:
         )
 
     async def get_followings(
-        self, pn: int = 1, ps: int = 100, attention: bool = False
+        self, pn: int = 1, ps: int = 100, attention: bool = False, order: OrderType = OrderType.desc
     ) -> dict:
         """
         获取用户关注列表（不是自己只能访问前 5 页）
@@ -572,7 +581,9 @@ class User:
 
             ps        (int, optional)  : 每页的数据量. Defaults to 100.
 
-            attention (bool, optional) : 是否采用“最常访问”排序. Defaults to False.
+            attention (bool, optional) : 是否采用“最常访问”排序，否则为“关注顺序”排序. Defaults to False.
+
+            order     (OrderType, optional) : 排序方式. Defaults to OrderType.desc.
 
         Returns:
             dict: 调用接口返回的内容。
@@ -583,6 +594,7 @@ class User:
             "ps": ps,
             "pn": pn,
             "order_type": "attention" if attention else "",
+            "order": order.value
         }
         return await request(
             "GET", url=api["url"], params=params, credential=self.credential
