@@ -14,3 +14,4 @@ pillow~=10.0.0
 tqdm~=4.65.0
 yarl~=1.9.2
 pycryptodomex~=3.18.0
+qrcode_terminal~=0.8
