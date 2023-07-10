@@ -289,7 +289,7 @@ async def get_comments(
     page_index: int = 1,
     order: OrderType = OrderType.TIME,
     credential: Union[Credential, None] = None,
-):
+) -> dict:
     """
     获取资源评论列表。
 

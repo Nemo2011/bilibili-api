@@ -464,7 +464,8 @@ async def request(
         params["callback"] = "callback"
 
     cookies = credential.get_cookies()
-    cookies["buvid3"] = str(uuid.uuid1())
+    # bvuid3 没啥用 issues#390
+    # cookies["buvid3"] = str(uuid.uuid1())
     cookies["Domain"] = ".bilibili.com"
 
     config = {
