@@ -6,12 +6,11 @@ bilibili_api.user
 
 from enum import Enum
 import json
-from json.decoder import JSONDecodeError
 import time
 
 from .exceptions import ResponseCodeException
 
-from .utils.network_httpx import get_session, request
+from .utils.network_httpx import get_session, Api
 from .utils.utils import get_api, join
 from .utils.credential import Credential
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
@@ -190,13 +189,12 @@ async def name2uid(names: Union[str, List[str]]):
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API["info"]["name_to_uid"]
     if isinstance(names, str):
         n = names
     else:
         n = ",".join(names)
     params = {"names": n}
-    return await request("GET", api["url"], params=params)
+    return await Api(**API["info"]["name_to_uid"]).update_params(**params).result
 
 
 class User:
@@ -224,14 +222,13 @@ class User:
 
         Returns:
             dict: 调用接口返回的内容。
+        
+        [用户空间详细信息](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md#%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF)
         """
-        api = API["info"]["info"]
         params = {
             "mid": self.__uid,
         }
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**API["info"]["info"], credential=self.credential).update_params(**params).result
 
     async def __get_self_info(self) -> dict:
         """
@@ -268,9 +265,7 @@ class User:
         """
         api = API["info"]["user_tag"]
         params = {"mid": self.__uid, "pn": pn, "ps": ps}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_space_notice(self) -> dict:
         """
@@ -281,9 +276,7 @@ class User:
         """
         api = API["info"]["space_notice"]
         params = {"mid": self.__uid}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def set_space_notice(self, content: str = "") -> dict:
         """
@@ -301,9 +294,7 @@ class User:
 
         api = API["operate"]["set_space_notice"]
         data = {"notice": content}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_relation_info(self) -> dict:
         """
@@ -314,9 +305,7 @@ class User:
         """
         api = API["info"]["relation"]
         params = {"vmid": self.__uid}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_up_stat(self) -> dict:
         """
@@ -329,9 +318,7 @@ class User:
 
         api = API["info"]["upstat"]
         params = {"mid": self.__uid}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_top_videos(self) -> dict:
         """
@@ -342,9 +329,7 @@ class User:
         """
         api = API["info"]["user_top_videos"]
         params = {"vmid": self.get_uid()}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_user_medal(self) -> dict:
         """
@@ -357,9 +342,7 @@ class User:
         # self.credential.raise_for_no_bili_jct()
         api = API["info"]["user_medal"]
         params = {"target_id": self.__uid}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_live_info(self) -> dict:
         """
@@ -370,9 +353,7 @@ class User:
         """
         api = API["info"]["live"]
         params = {"mid": self.__uid}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_videos(
         self,
@@ -408,9 +389,7 @@ class User:
             "keyword": keyword,
             "order": order.value,
         }
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_audios(
         self, order: AudioOrder = AudioOrder.PUBDATE, pn: int = 1, ps: int = 30
@@ -428,9 +407,7 @@ class User:
         """
         api = API["info"]["audio"]
         params = {"uid": self.__uid, "ps": ps, "pn": pn, "order": order.value}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_album(
         self, biz: AlbumType = AlbumType.ALL, page_num: int = 1, page_size: int = 30
@@ -455,9 +432,7 @@ class User:
             "page_size": page_size,
             "biz": biz.value,
         }
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_articles(
         self, pn: int = 1, order: ArticleOrder = ArticleOrder.PUBDATE, ps: int = 30
@@ -477,9 +452,7 @@ class User:
         """
         api = API["info"]["article"]
         params = {"mid": self.__uid, "ps": ps, "pn": pn, "sort": order.value}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_article_list(
         self, order: ArticleListOrder = ArticleListOrder.LATEST
@@ -495,9 +468,7 @@ class User:
         """
         api = API["info"]["article_lists"]
         params = {"mid": self.__uid, "sort": order.value}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_dynamics(self, offset: int = 0, need_top: bool = False) -> dict:
         """
@@ -526,9 +497,7 @@ class User:
             "offset_dynamic_id": offset,
             "need_top": 1 if need_top else 0,
         }
-        data = await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        data = await Api(**api, credential=self.credential).update_params(**params).result
         # card 字段自动转换成 JSON。
         if "cards" in data:
             for card in data["cards"]:
@@ -566,9 +535,7 @@ class User:
             "type": type_.value,
             "follow_status": follow_status.value,
         }
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_followings(
         self, pn: int = 1, ps: int = 100, attention: bool = False, order: OrderType = OrderType.desc
@@ -596,9 +563,7 @@ class User:
             "order_type": "attention" if attention else "",
             "order": order.value
         }
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_all_followings(self) -> dict:
         """
@@ -642,9 +607,7 @@ class User:
             "pn": pn,
             "order": "desc" if desc else "asc",
         }
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_self_same_followers(self, pn: int = 1, ps: int = 50) -> dict:
         """
@@ -661,9 +624,7 @@ class User:
         self.credential.raise_for_no_sessdata()
         api = API["info"]["get_same_followings"]
         params = {"vmid": self.get_uid(), "pn": pn, "ps": ps}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def top_followers(self, since=None) -> dict:
         """
@@ -678,9 +639,7 @@ class User:
         params = {}
         if since:
             params["t"] = int(since)
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_overview_stat(self) -> dict:
         """
@@ -691,9 +650,7 @@ class User:
         """
         api = API["info"]["overview"]
         params = {"mid": self.__uid, "jsonp": "jsonp"}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     # 操作用户
 
@@ -713,9 +670,7 @@ class User:
 
         api = API["operate"]["modify"]
         data = {"fid": self.__uid, "act": relation.value, "re_src": 11}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     # 有关合集与列表
 
@@ -740,16 +695,14 @@ class User:
             dict: 调用接口返回的内容
         """
         api = API["info"]["channel_video_series"]
-        param = {
+        params = {
             "mid": self.__uid,
             "series_id": sid,
             "pn": pn,
             "ps": ps,
             "sort": "asc" if ChannelOrder.CHANGE else "desc",
         }
-        return await request(
-            "GET", url=api["url"], params=param, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_channel_videos_season(
         self,
@@ -774,16 +727,14 @@ class User:
             dict: 调用接口返回的内容
         """
         api = API["info"]["channel_video_season"]
-        param = {
+        params = {
             "mid": self.__uid,
             "season_id": sid,
             "sort_reverse": sort.value,
             "page_num": pn,
             "page_size": ps,
         }
-        return await request(
-            "GET", url=api["url"], params=param, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_channel_list(self) -> dict:
         """
@@ -797,18 +748,14 @@ class User:
             dict: 调用接口返回的结果
         """
         api = API["info"]["channel_list"]
-        param = {"mid": self.__uid, "page_num": 1, "page_size": 1}
-        res = await request(
-            "GET", url=api["url"], params=param, credential=self.credential
-        )
+        params = {"mid": self.__uid, "page_num": 1, "page_size": 1}
+        res = await Api(**api, credential=self.credential).update_params(**params).result
         items = res["items_lists"]["page"]["total"]
         time.sleep(0.5)
         if items == 0:
             items = 1
-        param["page_size"] = items
-        return await request(
-            "GET", url=api["url"], params=param, credential=self.credential
-        )
+        params["page_size"] = items
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_channels(self) -> List["ChannelSeries"]:
         """
@@ -854,7 +801,7 @@ class User:
         """
         api = API["info"]["pugv"]
         params = {"mid": self.__uid}
-        return await request("GET", api["url"], params=params)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_reservation(self) -> dict:
         """
@@ -865,9 +812,7 @@ class User:
         """
         api = API["info"]["reservation"]
         params = {"vmid": self.get_uid()}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_elec_user_monthly(self) -> dict:
         """
@@ -878,9 +823,7 @@ class User:
         """
         api = API["info"]["elec_user_monthly"]
         params = {"up_mid": self.get_uid()}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
 
 async def get_self_info(credential: Credential) -> dict:
@@ -893,7 +836,7 @@ async def get_self_info(credential: Credential) -> dict:
     api = API["info"]["my_info"]
     credential.raise_for_no_sessdata()
 
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def edit_self_info(
@@ -920,7 +863,7 @@ async def edit_self_info(
     api = API["info"]["edit_my_info"]
     data = {"birthday": birthday, "sex": sex, "uname": uname, "usersign": usersign}
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def create_subscribe_group(name: str, credential: Credential) -> dict:
@@ -941,7 +884,7 @@ async def create_subscribe_group(name: str, credential: Credential) -> dict:
     api = API["operate"]["create_subscribe_group"]
     data = {"tag": name}
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def delete_subscribe_group(group_id: int, credential: Credential) -> dict:
@@ -962,7 +905,7 @@ async def delete_subscribe_group(group_id: int, credential: Credential) -> dict:
     api = API["operate"]["del_subscribe_group"]
     data = {"tagid": group_id}
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def rename_subscribe_group(
@@ -987,7 +930,7 @@ async def rename_subscribe_group(
     api = API["operate"]["rename_subscribe_group"]
     data = {"tagid": group_id, "name": new_name}
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def set_subscribe_group(
@@ -1012,7 +955,7 @@ async def set_subscribe_group(
     api = API["operate"]["set_user_subscribe_group"]
     data = {"fids": join(",", uids), "tagids": join(",", group_ids)}
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def get_self_history(
@@ -1041,7 +984,7 @@ async def get_self_history(
     api = API["info"]["history"]
     params = {"pn": page_num, "ps": per_page_item}
 
-    return await request("GET", url=api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_self_history_new(
@@ -1082,7 +1025,7 @@ async def get_self_history_new(
         "max": max,
         "business": business if business is None else business.value,
     }
-    return await request("GET", url=api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_self_coins(credential: Credential) -> int:
@@ -1097,7 +1040,7 @@ async def get_self_coins(credential: Credential) -> int:
     credential.raise_for_no_sessdata()
     credential.raise_for_no_dedeuserid()
     api = API["info"]["get_coins"]
-    return (await request("GET", url=api["url"], credential=credential))["money"]
+    return (await Api(**api, credential=credential).result)["money"]
 
 
 async def get_self_special_followings(
@@ -1116,7 +1059,7 @@ async def get_self_special_followings(
     credential.raise_for_no_sessdata()
     api = API["info"]["get_special_followings"]
     params = {"pn": pn, "ps": ps}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_self_whisper_followings(
@@ -1135,7 +1078,7 @@ async def get_self_whisper_followings(
     credential.raise_for_no_sessdata()
     api = API["info"]["get_whisper_followings"]
     params = {"pn": pn, "ps": ps}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_self_friends(credential: Credential) -> dict:
@@ -1147,7 +1090,7 @@ async def get_self_friends(credential: Credential) -> dict:
     """
     credential.raise_for_no_sessdata()
     api = API["info"]["get_friends"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_self_black_list(
@@ -1166,7 +1109,7 @@ async def get_self_black_list(
     credential.raise_for_no_sessdata()
     api = API["info"]["get_black_list"]
     params = {"pn": pn, "ps": ps}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_toview_list(credential: Credential):
@@ -1181,7 +1124,7 @@ async def get_toview_list(credential: Credential):
     """
     api = get_api("toview")["info"]["list"]
     credential.raise_for_no_sessdata()
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def clear_toview_list(credential: Credential):
@@ -1197,7 +1140,7 @@ async def clear_toview_list(credential: Credential):
     api = get_api("toview")["operate"]["clear"]
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
-    return await request("POST", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def delete_viewed_videos_from_toview(credential: Credential):
@@ -1214,10 +1157,10 @@ async def delete_viewed_videos_from_toview(credential: Credential):
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
     datas = {"viewed": "true"}
-    return await request("POST", api["url"], credential=credential, data=datas)
+    return await Api(**api, credential=credential).update_data(**datas).result
 
 
-async def check_nickname(nick_name: str):
+async def check_nickname(nick_name: str) -> tuple[bool, str]:
     """
     检验昵称是否可用
 
@@ -1230,7 +1173,7 @@ async def check_nickname(nick_name: str):
     api = get_api("common")["nickname"]["check_nickname"]
     params = {"nickName": nick_name}
     try:
-        resp = await request("GET", api["url"], params=params)
+        resp = await Api(**api).update_params(**params).result
     except ResponseCodeException as e:
         return False, str(e)
     else:
@@ -1252,7 +1195,7 @@ async def get_self_events(ts: int = 0, credential: Union[Credential, None] = Non
     credential = credential if credential else Credential()
     api = API["info"]["events"]
     params = {"ts": ts}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_self_notes_info(
@@ -1279,7 +1222,7 @@ async def get_self_notes_info(
 
     api = API["info"]["all_notes"]
     params = {"pn": page_num, "ps": page_size}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_self_public_notes_info(
@@ -1306,7 +1249,7 @@ async def get_self_public_notes_info(
 
     api = API["info"]["public_notes"]
     params = {"pn": page_num, "ps": page_size}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_self_jury_info(credential: Credential) -> dict:
@@ -1315,4 +1258,4 @@ async def get_self_jury_info(credential: Credential) -> dict:
     """
     credential.raise_for_no_sessdata()
     api = API["info"]["jury"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
