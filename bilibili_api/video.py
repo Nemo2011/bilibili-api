@@ -2143,7 +2143,7 @@ class VideoDownloadURLDataDetecter:
             flac_data = self.__data["dash"]["flac"]
             dolby_data = self.__data["dash"]["dolby"]
             for video_data in videos_data:
-                video_stream_api = video_data["baseUrl"]
+                video_stream_url = video_data["baseUrl"]
                 video_stream_quality = VideoQuality(video_data["id"])
                 if video_stream_quality == VideoQuality.HDR and no_hdr:
                     continue
@@ -2182,7 +2182,7 @@ class VideoDownloadURLDataDetecter:
                 )
                 streams.append(video_stream)
             for audio_data in audios_data:
-                audio_stream_api = audio_data["baseUrl"]
+                audio_stream_url = audio_data["baseUrl"]
                 audio_stream_quality = AudioQuality(audio_data["id"])
                 if audio_stream_quality.value > audio_max_quality.value:
                     continue
@@ -2196,7 +2196,7 @@ class VideoDownloadURLDataDetecter:
                 streams.append(audio_stream)
             if flac_data and (not no_hires):
                 if flac_data["audio"]:
-                    flac_stream_api = flac_data["audio"]["baseUrl"]
+                    flac_stream_url = flac_data["audio"]["baseUrl"]
                     flac_stream_quality = AudioQuality(flac_data["audio"]["id"])
                     flac_stream = AudioStreamDownloadURL(
                         url=flac_stream_url, audio_quality=flac_stream_quality
@@ -2204,7 +2204,7 @@ class VideoDownloadURLDataDetecter:
                     streams.append(flac_stream)
             if dolby_data and (not no_dolby_audio):
                 if dolby_data["audio"]:
-                    dolby_stream_api = dolby_data["audio"]["baseUrl"]
+                    dolby_stream_url = dolby_data["audio"]["baseUrl"]
                     dolby_stream_quality = AudioQuality(dolby_data["audio"]["id"])
                     dolby_stream = AudioStreamDownloadURL(
                         url=dolby_stream_url, audio_quality=dolby_stream_quality
