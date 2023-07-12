@@ -197,6 +197,12 @@
         "ps": "int: 每页项数"
       },
       "comment": "列出稿件公开笔记列表"
+    },
+    "video_online_broadcast_servers": {
+      "method": "GET",
+      "verify": true,
+      "url": "https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc",
+      "comment": "获取视频在线人数实时监测服务器列表"
     }
   },
   "operate": {
