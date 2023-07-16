@@ -239,7 +239,9 @@ class Api:
             self.data["csrf_token"] = self.credential.bili_jct
 
         cookies = self.credential.get_cookies()
-        cookies["buvid3"] = str(uuid.uuid1())
+        # cookies["buvid3"] = str(uuid.uuid1())
+        # 直接定值，随机字符串部分接口 -412
+        cookies["buvid3"] = "931081E9D-AE3E-9F5F-9109F-6E1521591018836102infoc"
         cookies["Domain"] = ".bilibili.com"
 
         config = {
@@ -464,8 +466,9 @@ async def request(
         params["callback"] = "callback"
 
     cookies = credential.get_cookies()
-    # bvuid3 没啥用 issues#390
     # cookies["buvid3"] = str(uuid.uuid1())
+    # 直接定值，随机字符串部分接口 -412
+    cookies["buvid3"] = "931081E9D-AE3E-9F5F-9109F-6E1521591018836102infoc"
     cookies["Domain"] = ".bilibili.com"
 
     config = {
