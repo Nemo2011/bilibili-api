@@ -24,6 +24,5 @@ async def test_e_unsubscribe_tag():
     return await tag.unsubscribe_tag()
 
 
-async def test_f_get_history_cards():
-    first_offset_dynamic_id = (await tag.get_cards())["cards"][0]["desc"]["dynamic_id"] # tag下第一个视频/动态的dynamic id
-    return await tag.get_history_cards(offset_dynamic_id=first_offset_dynamic_id)
+async def test_f_get_cards():
+    return await tag.get_cards()

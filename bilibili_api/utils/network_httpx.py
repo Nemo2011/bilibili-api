@@ -100,7 +100,7 @@ class Api:
     @property
     async def result(self) -> Union[None, dict]:
         """
-        异步获取请求结果 
+        异步获取请求结果
 
         `self.__result` 用来暂存数据 参数不变时获取结果不变
         """
@@ -276,17 +276,17 @@ async def request_old(
 
     Args:
         method     (str)                 : 请求方法。
-        
+
         url        (str)                 : 请求 URL。
-        
+
         params     (dict, optional)      : 请求参数。
-        
+
         data       (Any, optional)       : 请求载荷。
-        
+
         credential (Credential, optional): Credential 类。
-        
+
         no_csrf    (bool, optional)      : 不要自动添加 CSRF。
-        
+
         json_body  (bool, optional)      : 载荷是否为 JSON
 
     Returns:
@@ -479,7 +479,9 @@ def retry(times: int = 3):
                         wbi_mixin_key = ""
                         continue
                     # 不是 -403 错误直接报错
-                    raise
+                    raise e
+                except Exception as e:
+                    raise e
             raise ApiException("重试达到最大次数")
         return inner
 
@@ -500,7 +502,7 @@ async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any
 
     Args:
         api (Api): 请求 Api 信息。
-        
+
         url, params: 这两个参数是为了通过 Conventional Commits 写的，最后使用的时候(指完全取代老的之后)可以去掉。
 
     Returns:

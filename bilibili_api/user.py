@@ -224,7 +224,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["user_tag"]
-        params = {"mid": self.__uid, "pn": pn, "ps": ps}
+        params = {"vmid": self.__uid, "pn": pn, "ps": ps}
         return await request("GET", url=api["url"], params=params, credential=self.credential)
 
     async def get_space_notice(self) -> dict:
