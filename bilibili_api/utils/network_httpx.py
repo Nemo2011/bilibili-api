@@ -393,7 +393,7 @@ def __clean() -> None:
         loop.create_task(__clean_task())
 
 
-async def request(
+async def request_old(
     method: str,
     url: str,
     params: Union[dict, None] = None,
