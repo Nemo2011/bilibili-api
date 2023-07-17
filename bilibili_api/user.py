@@ -156,7 +156,7 @@ class HistoryType(Enum):
 class HistoryBusinessType(Enum):
     """
     历史记录 Business 分类
-    
+
     + archive：稿件
     + pgc：剧集（番剧 / 影视）
     + live：直播
@@ -178,7 +178,7 @@ class OrderType(Enum):
     + asc：正序
     """
     desc = "desc"
-    asc = "asc" 
+    asc = "asc"
 
 async def name2uid(names: Union[str, List[str]]):
     """
@@ -267,10 +267,8 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["user_tag"]
-        params = {"mid": self.__uid, "pn": pn, "ps": ps}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        params = {"vmid": self.__uid, "pn": pn, "ps": ps}
+        return await request("GET", url=api["url"], params=params, credential=self.credential)
 
     async def get_space_notice(self) -> dict:
         """
