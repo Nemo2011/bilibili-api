@@ -219,11 +219,13 @@
       "comment": "获取用户所有关注（需要用户公开信息）"
     },
     "all_followings2": {
-      "url": "https://app.biliapi.net/x/v2/relation/followings",
+      "url": "https://api.bilibili.com/x/relation/followings",
       "method": "GET",
-      "verify": false,
+      "verify": true,
       "params": {
         "vmid": "int: uid",
+        "order": "str: desc 倒序, asc 正序",
+        "order_type": "str: 按照关注顺序排列：留空 按照最常访问排列：attention",
         "pn": "int: 页码",
         "ps":"const int: 100"
       },
@@ -283,6 +285,19 @@
       "verify": true,
       "params": {
         "pn": "int: 页码",
+        "ps": "const int: 100"
+      },
+      "comment": "用户浏览历史记录（旧版）"
+    },
+    "history_new": {
+      "url": "https://api.bilibili.com/x/web-interface/history/cursor",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "type": "all：全部类型（默认）archive：稿件 live：直播 article：文章",
+        "view_at": "int: 时间戳，获取此时间戳之前的历史记录",
+        "business": "历史记录截止目标业务类型 默认为空 archive：稿件 pgc：剧集（番剧 / 影视） live：直播 article-list：文集 article：文章",
+        "max": "历史记录截止目标 oid",
         "ps": "const int: 100"
       },
       "comment": "用户浏览历史记录"

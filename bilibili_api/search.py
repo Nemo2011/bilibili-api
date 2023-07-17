@@ -155,7 +155,7 @@ async def search(keyword: str, page: int = 1) -> dict:
 
     Args:
         keyword (str): 搜索关键词
-        
+
         page    (int): 页码. Defaults to 1.
 
     Returns:
@@ -183,21 +183,21 @@ async def search_by_type(
 
     Args:
         debug_param_func (Callable | None, optional)                                             : 参数回调器，用来存储或者什么的
-        
+
         order_sort       (int | None, optional)                                                  : 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1
-        
+
         category_id      (CategoryTypeArticle | CategoryTypePhoto | int | None, optional)        : 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
-        
+
         time_range       (int, optional)                                                         : 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
-        
+
         video_zone_type        (int | ZoneTypes | None, optional)                                : 话题类型，指定 tid (可使用 channel 模块查询)
-        
+
         order_type       (OrderUser | OrderLiveRoom | OrderArticle | OrderVideo | None, optional): 排序分类类型
-        
+
         keyword          (str)                                                                   : 搜索关键词
-        
+
         search_type      (SearchObjectType | None, optional)                                     : 搜索类型
-        
+
         page             (int, optional)                                                         : 页码
 
     Returns:
@@ -317,9 +317,9 @@ async def search_manga(keyword: str, page_num: int = 1, page_size: int = 9):
 
     Args:
         keyword   (str): 搜索关键词
-        
+
         page_num  (int): 页码. Defaults to 1.
-        
+
         page_size (int): 每一页的数据大小. Defaults to 9.
 
     Returns:
@@ -341,11 +341,11 @@ async def search_cheese(
 
     Args:
         keyword   (str)        : 搜索关键词
-        
+
         page_num  (int)        : 页码. Defaults to 1.
-        
+
         page_size (int)        : 每一页的数据大小. Defaults to 30.
-        
+
         order     (OrderCheese): 排序方式. Defaults to OrderCheese.RECOMMEND
 
     Returns:

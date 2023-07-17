@@ -135,7 +135,7 @@ class Manga:
         """
         Args:
             manga_id   (int)              : 漫画 id
-            
+
             credential (Credential | None): 凭据类. Defaults to None.
         """
         credential = credential if credential else Credential()
@@ -185,7 +185,7 @@ class Manga:
 
         Args:
             episode_count (int | float | None): 第几话.
-            
+
             episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
         **注意：episode_count 和 episode_id 中必须提供一个参数。**
@@ -231,7 +231,7 @@ class Manga:
 
         Args:
             episode_count (int | float | None): 第几话.
-            
+
             episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
         **注意：episode_count 和 episode_id 中必须提供一个参数。**
@@ -269,7 +269,7 @@ class Manga:
 
         Args:
             episode_count (int | float | None): 第几话.
-            
+
             episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
         **注意：episode_count 和 episode_id 中必须提供一个参数。**
@@ -308,7 +308,8 @@ class Manga:
                     "x": img["x"],
                     "y": img["y"],
                     "picture": Picture.from_content(
-                        (await httpx.AsyncClient().get(url, headers=HEADERS)).content, "jpg"
+                        (await httpx.AsyncClient().get(url, headers=HEADERS)).content,
+                        "jpg",
                     ),
                 }
             )
@@ -323,7 +324,7 @@ async def manga_image_url_turn_to_Picture(
 
     Args:
         url        (str)               : 未经处理的漫画图片链接。
-        
+
         credential (Credential | None): 凭据类. Defaults to None.
 
     Returns:
@@ -359,9 +360,9 @@ async def set_follow_manga(
 
     Args:
         manga      (Manga)     : 漫画类。
-        
+
         status     (bool)      : 设置是否追漫。是为 True，否为 False。Defaults to True.
-        
+
         credential (Credential): 凭据类。
     """
     if credential == None:
@@ -393,17 +394,17 @@ async def get_raw_manga_index(
 
     Args:
         area    (MangaIndexFilter.Area)   : 地区。Defaults to MangaIndexFilter.Area.ALL.
-        
+
         order   (MangaIndexFilter.Order)  : 排序。Defaults to MangaIndexFilter.Order.HOT.
-        
+
         status  (MangaIndexFilter.Status) : 状态。Defaults to MangaIndexFilter.Status.ALL.
-        
+
         payment (MangaIndexFilter.Payment): 支付。Defaults to MangaIndexFilter.Payment.ALL.
-        
+
         style   (MangaIndexFilter.Style)  : 风格。Defaults to MangaIndexFilter.Style.ALL.
-        
+
         pn      (int)                     : 页码。Defaults to 1.
-        
+
         ps      (int)                     : 每页数量。Defaults to 18.
 
     Returns:
@@ -436,17 +437,17 @@ async def get_manga_index(
     获取漫画索引
 
     Args:
-        
+
         area    (MangaIndexFilter.Area)   : 地区。Defaults to MangaIndexFilter.Area.ALL.
-        
+
         order   (MangaIndexFilter.Order)  : 排序。Defaults to MangaIndexFilter.Order.HOT.
-        
+
         status  (MangaIndexFilter.Status) : 状态。Defaults to MangaIndexFilter.Status.ALL.
-        
+
         payment (MangaIndexFilter.Payment): 支付。Defaults to MangaIndexFilter.Payment.ALL.
-        
+
         style   (MangaIndexFilter.Style)  : 风格。Defaults to MangaIndexFilter.Style.ALL.
-        
+
         ps      (int)                     : 每页数量。Defaults to 18.
 
     Returns:
@@ -466,9 +467,9 @@ async def get_manga_update(
 
     Args:
         date (Union[str, datetime.datetime]): 日期，默认为今日。
-        
+
         pn   (int)                          : 页码。Defaults to 1.
-        
+
         ps   (int)                          : 每页数量。Defaults to 8.
     Returns:
         List[Manga]: 漫画列表
@@ -492,7 +493,7 @@ async def get_manga_home_recommend(
 
     Args:
         pn   (int)                          : 页码。Defaults to 1.
-        
+
         seed (Optional[str])                : Unknown param，无需传入.
 
     Returns:

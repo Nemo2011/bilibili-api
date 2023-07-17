@@ -103,7 +103,7 @@ class LiveRoom:
 
     AttributesL
         credential      (Credential): 凭据类
-        
+
         room_display_id (int)       : 房间展示 id
     """
 
@@ -113,7 +113,7 @@ class LiveRoom:
         """
         Args:
             room_display_id (int)                 : 房间展示 ID（即 URL 中的 ID）
-            
+
             credential      (Credential, optional): 凭据. Defaults to None.
         """
         self.room_display_id = room_display_id
@@ -237,9 +237,9 @@ class LiveRoom:
 
         Args:
             roomId    (int, optional)       : 指定房间，查询是否拥有此房间的粉丝牌
-            
+
             target_id (int | None, optional): 指定返回一个主播的粉丝牌，留空就不返回
-            
+
             page_num  (int | None, optional): 粉丝牌列表，默认 1
 
         Returns:
@@ -396,11 +396,11 @@ class LiveRoom:
 
         Args:
             live_protocol (LiveProtocol, optional)    : 直播源流协议. Defaults to LiveProtocol.DEFAULT.
-            
+
             live_format   (LiveFormat, optional)      : 直播源容器格式. Defaults to LiveFormat.DEFAULT.
-            
+
             live_codec    (LiveCodec, optional)       : 直播源视频编码. Defaults to LiveCodec.DEFAULT.
-            
+
             live_qn       (ScreenResolution, optional): 直播源清晰度. Defaults to ScreenResolution.ORIGINAL.
 
         Returns:
@@ -529,15 +529,15 @@ class LiveRoom:
 
         Args:
             uid (int)                       : 赠送用户的 UID
-            
+
             bag_id (int)                    : 礼物背包 ID
-            
+
             gift_id (int)                   : 礼物 ID
-            
+
             gift_num (int)                  : 礼物数量
-            
+
             storm_beat_id (int, optional)   : 未知， Defaults to 0
-            
+
             price (int, optional)           : 礼物单价，Defaults to 0
 
         Returns:
@@ -689,13 +689,13 @@ class LiveRoom:
 
         Args:
             uid           (int)          : 赠送用户的 UID
-            
+
             gift_id       (int)          : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
-            
+
             gift_num      (int)          : 赠送礼物数量
-            
+
             price         (int)          : 礼物单价
-            
+
             storm_beat_id (int, Optional): 未知，Defaults to 0
 
         Returns:
@@ -738,13 +738,13 @@ class LiveRoom:
 
         Args:
             uid           (int)          : 赠送用户的 UID
-            
+
             gift_id       (int)          : 礼物 ID (可以通过 get_gift_common 或 get_gift_special 或 get_gift_config 获取)
-            
+
             gift_num      (int)          : 赠送礼物数量
-            
+
             price         (int)          : 礼物单价
-            
+
             storm_beat_id (int, Optional): 未知, Defaults to 0
 
         Returns:
@@ -920,7 +920,9 @@ class LiveDanmaku(AsyncEvent):
         self.logger.info(f"准备连接直播间 {self.room_display_id}")
         # 获取真实房间号
         self.logger.debug("正在获取真实房间号")
-        self.__room_real_id = (await room.get_room_play_info())["room_id"]
+        info = await room.get_room_play_info()
+        self.__room__uid = info["uid"]
+        self.__room_real_id = info["room_id"]
         self.logger.debug(f"获取成功，真实房间号：{self.__room_real_id}")
 
         # 获取直播服务器配置
@@ -1064,9 +1066,10 @@ class LiveDanmaku(AsyncEvent):
 
     async def __send_verify_data(self, ws: ClientWebSocketResponse, token: str) -> None:
         verifyData = {
-            "uid": 0,
+            "uid": self.__room__uid,
             "roomid": self.__room_real_id,
             "protover": 3,
+            "buvid": self.credential.buvid3,
             "platform": "web",
             "type": 2,
             "key": token,
@@ -1220,7 +1223,7 @@ async def get_self_dahanghai_info(
 
     Args:
         page      (int, optional): 页数. Defaults to 1.
-        
+
         page_size (int, optional): 每页数量. Defaults to 10.
 
     总页数取得方法:
@@ -1268,9 +1271,9 @@ async def get_gift_config(
 ):
     """
     获取所有礼物的信息，包括礼物 id、名称、价格、等级等。
-    
+
     同时填了 room_id、area_id、area_parent_id，则返回一个较小的 json，只包含该房间、该子区域、父区域的礼物。
-    
+
     但即使限定了三个条件，仍然会返回约 1.5w 行的 json。不加限定则是 2.8w 行。
 
     Args:
@@ -1335,7 +1338,7 @@ async def get_unlive_followers_info(
 
     Args:
         page      (int, optional): 页码, Defaults to 1.
-        
+
         page_size (int, optional): 每页数量 Defaults to 30.
 
     Returns:
@@ -1364,7 +1367,7 @@ async def create_live_reserve(
 
     Args:
         title (str)         : 直播间标题
-        
+
         start_time (int)    : 开播时间戳
 
     Returns:

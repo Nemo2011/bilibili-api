@@ -36,9 +36,5 @@ logger = logging.getLogger("request")
 if not logger.handlers:
     logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
-    handler.setFormatter(
-        logging.Formatter(
-            "[Request][%(asctime)s] %(message)s"
-        )
-    )
+    handler.setFormatter(logging.Formatter("[Request][%(asctime)s] %(message)s"))
     logger.addHandler(handler)

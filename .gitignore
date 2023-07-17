@@ -20,6 +20,7 @@ scratch/
 !tests/*.py
 # Virtual environments
 venv/
+.venv/
 virtualenv/
 # IDE
 .idea/

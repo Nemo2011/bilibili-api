@@ -177,7 +177,7 @@ async def get_hot_song_list(
 
     Args:
         pn(int, optional)                       : 页数. Defaults to 1
-        
+
         credential (Credential | None, optional): 凭据. Defaults to None
 
     Returns:

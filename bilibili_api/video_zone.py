@@ -84,9 +84,9 @@ async def get_zone_top10(
 
     Args:
         tid        (int)                        : 频道的 tid。
-        
+
         day        (int, optional)              : 3 天排行还是 7 天排行。 Defaults to 7.
-        
+
         credential (Credential | None, optional): Credential 类。Defaults to None.
 
     Returns:
@@ -149,7 +149,7 @@ async def get_zone_videos_count_today(
 
     Args:
         credential (Credential | None): 凭据类
-    
+
     Returns:
         dict: 调用 API 返回的结果
     """
@@ -164,9 +164,9 @@ async def get_zone_new_videos(tid: int, page_num: int = 1, page_size: int = 10) 
 
     Args:
         tid        (int)              : 分区 id
-    
+
         page_num   (int)              : 第几页. Defaults to 1.
-        
+
         page_size  (int)              : 每页的数据大小. Defaults to 10.
 
     Returns:

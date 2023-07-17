@@ -155,6 +155,9 @@ async def test_y_get_self_info():
 async def test_z_get_self_history():
     return await user.get_self_history(page_num, per_page_item, credential)
 
+async def test_z_get_self_history_new():
+    return await user.get_self_history_new(credential)
+
 
 async def test_za_get_self_events():
     return await user.get_self_events(0, common.get_credential())

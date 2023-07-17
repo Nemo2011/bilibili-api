@@ -7,16 +7,16 @@
 获取方法见 [获取 Credential 类所需信息](get-credential.md)。
 
 ```python
-from bilibili_api import Credential
+from bilibili_api import Credential, sync
 
 # 生成一个 Credential 对象
 credential = Credential(sessdata="xxx", bili_jct="xxx", ac_time_value="xxx")
 
 # 检查 Credential 是否需要刷新
-print(credential.check_refresh())
+print(sync(credential.check_refresh()))
 
 # 刷新 Credential
-credential.refresh()
+sync(credential.refresh())
 ```
 
 不需要过于频繁地刷新。

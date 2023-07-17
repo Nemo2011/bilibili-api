@@ -187,7 +187,7 @@ class IndexFilter:
 
         Args:
             start (datetime, str, int): 开始时间. 如果是 None 则不设置开头.
-            
+
             end   (datetime, str, int): 结束时间. 如果是 None 则不设置结尾.
 
             include_start (bool): 是否包含开始时间. 默认为 True.
@@ -876,7 +876,7 @@ class IndexFilterMeta:
                 finish_status (Index_Filter.Finish_Status): 是否完结
 
                 copyright (Index_Filter.Copyright): 版权
-                
+
                 payment (Index_Filter.Payment): 付费门槛
 
                 year (str): 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取
@@ -929,7 +929,7 @@ async def get_index_info(
         sort (BANGUMI_INDEX.SORT, optional): 排序方式. Defaults to DESC.
 
         pn (int, optional): 页数. Defaults to 1.
-        
+
         ps (int, optional): 每页数量. Defaults to 20.
 
     Returns:
@@ -1178,7 +1178,10 @@ class Bangumi:
             return []
         first_epid = episode_list["main_section"]["episodes"][0]["id"]
         credential = self.credential if self.credential else Credential()
-        bangumi_meta = await get_initial_state(url=f"https://www.bilibili.com/bangumi/play/ep{first_epid}", credential=credential)
+        bangumi_meta = await get_initial_state(
+            url=f"https://www.bilibili.com/bangumi/play/ep{first_epid}",
+            credential=credential,
+        )
         bangumi_meta["media_id"] = self.get_media_id()
 
         episodes = []
@@ -1282,7 +1285,7 @@ class Episode(Video):
         """
         Args:
             epid       (int)                 : 番剧 epid
-            
+
             credential (Credential, optional): 凭据. Defaults to None.
         """
         global episode_data_cache
@@ -1290,7 +1293,10 @@ class Episode(Video):
         self.__epid = epid
 
         if not epid in episode_data_cache.keys():
-            content = get_initial_state_sync(url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}", credential=self.credential)
+            content = get_initial_state_sync(
+                url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
+                credential=self.credential,
+            )
         else:
             content = episode_data_cache[epid]["bangumi_meta"]
 
@@ -1345,7 +1351,10 @@ class Episode(Video):
         Returns:
             HTML 中的数据
         """
-        return await get_initial_state(url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}", credential=self.credential)
+        return await get_initial_state(
+            url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
+            credential=self.credential,
+        )
 
     async def get_bangumi_from_episode(self) -> "Bangumi":
         """

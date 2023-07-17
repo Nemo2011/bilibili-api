@@ -34,11 +34,11 @@ async def fetch_session_msgs(
 
     Args:
         talker_id    (int)       : 用户 UID
-        
+
         credential   (Credential): Credential
-        
+
         session_type (int)       : 会话类型 1 私聊 2 应援团
-        
+
         begin_seqno  (int)       : 起始 Seqno
 
     Returns:
@@ -64,7 +64,7 @@ async def new_sessions(
 
     Args:
         credential (Credential): Credential
-        
+
         begin_ts   (int)       : 起始时间戳
 
     Returns:
@@ -84,7 +84,7 @@ async def get_sessions(credential: Credential, session_type: int = 4) -> dict:
 
     Args:
         credential   (Credential): Credential
-        
+
         session_type (int)       : 会话类型 1: 私聊, 2: 通知, 3: 应援团, 4: 全部
 
     Returns:
@@ -104,15 +104,18 @@ async def get_sessions(credential: Credential, session_type: int = 4) -> dict:
 
     return await request("GET", api["url"], params=params, credential=credential)
 
-async def get_session_detail(credential: Credential, talker_id: int, session_type: int = 1) -> dict:
+
+async def get_session_detail(
+    credential: Credential, talker_id: int, session_type: int = 1
+) -> dict:
     """
     获取会话详情
 
     Args:
         credential (Credential): Credential
-        
+
         session_type (int)       : 会话类型
-        
+
         talker_id (int)       : 会话对象的UID
 
     Returns:
@@ -124,6 +127,7 @@ async def get_session_detail(credential: Credential, talker_id: int, session_typ
     api = API["session"]["get_session_detail"]
 
     return await request("GET", api["url"], params=params, credential=credential)
+
 
 async def get_likes(credential: Credential) -> dict:
     """
@@ -206,11 +210,11 @@ async def send_msg(
 
     Args:
         credential  (Credential)   : 凭证
-        
+
         receiver_id (int)          : 接收者 UID
-        
+
         msg_type    (str)          : 信息类型，参考 Event 类的时间类型。
-        
+
         content     (str | Picture): 信息内容。支持文字和图片。
 
     Returns:
@@ -249,8 +253,8 @@ async def send_msg(
         "msg[msg_type]": int(msg_type),
         "msg[msg_status]": 0,
         "msg[content]": real_content,
-        "msg[dev_id]": "B9A37BF3-AA9D-4076-A4D3-366AC8C4C5DB",
-        "msg[new_face_version]": "0",
+        "msg[dev_id]": "A6716E9A-7CE3-47AF-994B-F0B34178D28D",
+        "msg[new_face_version]": 0,
         "msg[timestamp]": int(time.time()),
         "from_filework": 0,
         "build": 0,
@@ -305,10 +309,10 @@ class Event:
     def __init__(self, data: dict, self_uid: int):
         """
         信息事件类型
-        
+
         Args:
             data: 接收到的事件详细信息
-            
+
             self_uid: 用户自身 UID
         """
         self.__dict__.update(data)
@@ -514,9 +518,9 @@ class Session(AsyncEvent):
 
         Args:
             event  :  Event          要回复的消息
-            
+
             content:  str | Picture  要回复的文字内容
-        
+
         Returns:
             dict: 调用接口返回的内容。
         """

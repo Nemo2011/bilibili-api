@@ -128,6 +128,33 @@ from bilibili_api import user
 + WATCHED    : 已看
 
 ---
+
+## class HistoryType
+
+**Extends:** enum.Enum
+
+历史记录分类
+
++ ALL      : 全部
++ archive  : 稿件
++ live     : 直播
++ article  : 专栏
+
+---
+
+## class HistoryBusinessType
+
+**Extends:** enum.Enum
+
+历史记录 Business 分类
+
++ archive：稿件
++ pgc：剧集（番剧 / 影视）
++ live：直播
++ article-list：文集
++ article：文章
+
+---
 ## async def name2uid()
 
 | name | type | description |
@@ -348,7 +375,8 @@ from bilibili_api import user
 |------|----------------|---------------------------|
 | pn   | int, optional  | 页码，从 1 开始. Defaults to 1. |
 | ps   | int, optional | 每页的数据量. Defaults to 100. |
-| desc | bool, optional | 倒序排序. Defaults to True.   |
+| order | OrderType, optional | 排序方式. Defaults to OrderType.desc. |
+| attention | bool, optional | 是否采用“最常访问”排序，否则为“关注顺序”排序. Defaults to False. |
 
 获取用户关注列表（不是自己只能访问前5页）
 
@@ -521,9 +549,29 @@ from bilibili_api import user
 | per_page_item | int, optional | 每页多少条历史记录, Defaults to 100 |
 | credential    | Credential \| None    | 凭据                                |
 
-获取用户浏览历史记录
+获取用户浏览历史记录（旧版）
 
 **Returns:** 返回当前页的指定历史记录列表。
+
+---
+
+## async def get_self_history_new()
+
+| name          | type          | description                         |
+| ------------- | ------------- | ----------------------------------- |
+| _type         | HistoryType   | 历史记录分类, 默认为 HistroyType.ALL   |
+| ps            | int           | 每页多少条历史记录, 默认为 20           |
+| credential    | Credential    | 凭据                                |
+| view_at       | int           | 时间戳，获取此时间戳之前的历史记录        |
+| max           | int           | 历史记录截止目标 oid                   |
+
+获取用户浏览历史记录（新版），与旧版不同有分类参数，但相对缺少视频信息
+
+max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，其用法类似链表的 next 指针
+
+将返回值某历史记录的 oid、business、view_at 作为上述参数传入，即可获取此 oid 之前的历史记录
+
+**Returns:** dict: 调用接口返回的内容。
 
 ---
 

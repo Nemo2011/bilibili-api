@@ -14,8 +14,8 @@ from typing import Union
 import uuid
 from yarl import URL
 import webbrowser
+import sys
 
-import requests
 from .exceptions.LoginError import LoginError
 
 from .utils.credential import Credential
@@ -54,13 +54,39 @@ credential = Credential()
 is_destroy = False
 id_ = 0  # 事件 id,用于取消 after 绑定
 
-
+def parse_credential_url(events: dict) -> Credential:
+    url = events["data"]["url"]
+    cookies_list = url.split("?")[1].split("&")
+    sessdata = ""
+    bili_jct = ""
+    dedeuserid = ""
+    for cookie in cookies_list:
+        if cookie[:8] == "SESSDATA":
+            sessdata = cookie[9:]
+        if cookie[:8] == "bili_jct":
+            bili_jct = cookie[9:]
+        if cookie[:11].upper() == "DEDEUSERID=":
+            dedeuserid = cookie[11:]
+    ac_time_value=events["data"]["refresh_token"]
+    buvid3=get_live_buvid()
+    return Credential(sessdata=sessdata, 
+                        bili_jct=bili_jct, 
+                        buvid3=buvid3, 
+                        dedeuserid=dedeuserid, 
+                        ac_time_value=ac_time_value)
+    
 def make_qrcode(url) -> str:
     qr = qrcode.QRCode()
     qr.add_data(url)
     img = qr.make_image()
     img.save(os.path.join(tempfile.gettempdir(), "qrcode.png"))
+    print("二维码已保存至", os.path.join(tempfile.gettempdir(), "qrcode.png"))
     return os.path.join(tempfile.gettempdir(), "qrcode.png")
+
+def update_qrcode_data() -> dict:
+    api = API["qrcode"]["get_qrcode_and_token"]
+    qrcode_data = httpx.get(api["url"], follow_redirects=True).json()['data']
+    return qrcode_data
 
 
 def login_with_qrcode(root=None) -> Credential:
@@ -85,9 +111,11 @@ def login_with_qrcode(root=None) -> Credential:
     if root == None:
         root = tkinter.Tk()
     root.title("扫码登录")
-    qrcode_image = update_qrcode()
+    qrcode_data = update_qrcode_data()
+    login_key = qrcode_data["qrcode_key"]
+    qrcode_image = make_qrcode(qrcode_data["url"])
     photo = PhotoImage(file=qrcode_image)
-    qrcode_label = tkinter.Label(root, image=photo, width=500, height=500)
+    qrcode_label = tkinter.Label(root, image=photo, width=600, height=600)
     qrcode_label.pack()
     big_font = tkinter.font.Font(root, size=25)
     log = tkinter.Label(root, text="请扫描二维码↑", font=big_font, fg="red")
@@ -95,56 +123,30 @@ def login_with_qrcode(root=None) -> Credential:
 
     def update_events():
         global id_
-        global start, credential, is_destroy
-        # log.configure(text="点下确认啊！", fg="orange", font=big_font)
-        events_api = API["qrcode"]["get_events"]
-        params = {"qrcode_key": login_key}
-        events = json.loads(
-            requests.get(
-                events_api["url"],
-                params=params,
-                cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
-            ).text
-        )
-        # print(events)
-        # 新的 events["data"]
-        # {'url': '', 'refresh_token': '', 'timestamp': 0, 'code': 86101, 'message': '未扫码'}
-        # {'url': '', 'refresh_token': '', 'timestamp': 0, 'code': 86090, 'message': '二维码已扫码未确认'}
-        # {'url': 'https://passport.biligame.com/x/passport-login/web/crossDomain?DedeUserID=x&DedeUserID__ckMd5=x&Expires=x&SESSDATA=x&bili_jct=x&gourl=x', 'refresh_token': 'x', 'timestamp': 1683903305723, 'code': 0, 'message': ''}
-        if "code" in events.keys() and events["code"] == -412:
-            raise LoginError(events["message"])
-        if events["data"]["code"] == 86101:
-            log.configure(text="请扫描二维码↑", fg="red", font=big_font)
-        elif events["data"]["code"] == 86090:
-            log.configure(text="点下确认啊！", fg="orange", font=big_font)
-        elif events["data"]["code"] == 0:
-            url: str = events["data"]["url"]
-            cookies_list = url.split("?")[1].split("&")
-            sessdata = ""
-            bili_jct = ""
-            dedeuserid = ""
-            for cookie in cookies_list:
-                if cookie[:8] == "SESSDATA":
-                    sessdata = cookie[9:]
-                if cookie[:8] == "bili_jct":
-                    bili_jct = cookie[9:]
-                if cookie[:11].upper() == "DEDEUSERID=":
-                    dedeuserid = cookie[11:]
-            c = Credential(sessdata=sessdata,
-                           bili_jct=bili_jct,
-                           dedeuserid=dedeuserid,
-                           ac_time_value=events["data"]["refresh_token"])
-            global credential
-            credential = c
-            log.configure(text="成功！", fg="green", font=big_font)
-            global start
-            start = time.perf_counter()
-            root.after(1000, destroy)
-        id_ = root.after(500, update_events)
-        # 刷新
-        if time.perf_counter() - start > 120:
-            update_qrcode()
-            start = time.perf_counter()
+        global start, credential, is_destroy, login_key
+        events = login_with_key(login_key)
+        if "code" in events.keys() and events["code"] == 0:
+            if events["data"]["code"] == 86101:
+                log.configure(text="请扫描二维码↑", fg="red", font=big_font)
+            elif events["data"]["code"] == 86090:
+                log.configure(text="点下确认啊！", fg="orange", font=big_font)
+            elif events["data"]["code"] == 86038:
+                raise LoginError("二维码过期，请扫新二维码！")
+            elif events["data"]["code"] == 0:
+                log.configure(text="成功！", fg="green", font=big_font)
+                credential = parse_credential_url(events)
+                root.after(1000, destroy) 
+                return 0
+            id_ = root.after(500, update_events)
+            if time.perf_counter() - start > 120: # 刷新
+                qrcode_data = update_qrcode_data()
+                login_key = qrcode_data["qrcode_key"]
+                qrcode_image = make_qrcode(qrcode_data["url"])
+                photo = PhotoImage(file=qrcode_image)
+                qrcode_label = tkinter.Label(root, image=photo, width=600, height=600)
+                qrcode_label.pack()
+                start = time.perf_counter()
+
         root.update()
 
     def destroy():
@@ -157,16 +159,63 @@ def login_with_qrcode(root=None) -> Credential:
     root.after_cancel(id_)  # type: ignore
     return credential
 
+def login_with_qrcode_term() -> Credential:
+    """
+    终端扫描二维码登录
 
-def update_qrcode() -> str:
-    global login_key, qrcode_image
-    api = API["qrcode"]["get_qrcode_and_token"]
-    qrcode_login_data = json.loads(httpx.get(api["url"]).text)["data"]
-    login_key = qrcode_login_data["qrcode_key"]
-    qrcode = qrcode_login_data["url"]
-    qrcode_image = make_qrcode(qrcode)
-    return qrcode_image
+    Args:
 
+    Returns:
+        Credential: 凭据
+    """
+    import qrcode_terminal
+    qrcode_data = update_qrcode_data()
+    qrcode_url = qrcode_data["url"]
+    login_key = qrcode_data["qrcode_key"]
+    print(qrcode_terminal.qr_terminal_str(qrcode_url) + "\n")
+    while True:
+        events = login_with_key(login_key)
+        if "code" in events.keys() and events["code"] == 0:
+            if events["data"]["code"] == 86101:
+                sys.stdout.write('\r 请扫描二维码↑') 
+                sys.stdout.flush()
+            elif events["data"]["code"] == 86090:
+                sys.stdout.write('\r 点下确认啊！') 
+                sys.stdout.flush()
+            elif events["data"]["code"] == 86038:
+                print("二维码过期，请扫新二维码！")
+                qrcode_data = update_qrcode_data()
+                qrcode_url = qrcode_data["url"]
+                print(qrcode_terminal.qr_terminal_str(qrcode_url) + "\n")
+            elif events["data"]["code"] == 0:
+                sys.stdout.write('\r 成功！') 
+                sys.stdout.flush()
+                return parse_credential_url(events)
+            elif "code" in events.keys():
+                raise LoginError(events["message"])
+        time.sleep(0.5)
+
+
+def login_with_key(key: str) -> dict:
+    params = {"qrcode_key": key, "source": "main-fe-header"}
+    events_api = API["qrcode"]["get_events"]
+    events = httpx.get(
+            events_api["url"],
+            params=params,
+            cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
+        ).json()
+    return events
+
+
+def get_live_buvid():
+    import re
+    url = "https://api.live.bilibili.com/gift/v3/live/gift_config"
+    headers = HEADERS.copy()
+    response = httpx.get(url, headers=headers)
+    response.raise_for_status()
+    set_cookie = response.headers.get("Set-Cookie")
+    live_buvid = re.findall(r"LIVE_BUVID=(AUTO[0-9]+)", set_cookie)[0]
+    return live_buvid
 
 # ----------------------------------------------------------------
 # 密码登录
@@ -424,23 +473,23 @@ def send_sms(phonenumber: PhoneNumber) -> None:
         sync(
             sess.post(
                 url=api["url"],
-                data=to_form_urlencoded({
-                    "source": "main-fe-header",
-                    "tel": tell,
-                    "cid": code,
-                    "validate": geetest_data["validate"],  # type: ignore
-                    "token": geetest_data["token"],  # type: ignore
-                    "seccode": geetest_data["seccode"],  # type: ignore
-                    "challenge": geetest_data["challenge"],  # type: ignore
-                }),
+                data=to_form_urlencoded(
+                    {
+                        "source": "main-fe-header",
+                        "tel": tell,
+                        "cid": code,
+                        "validate": geetest_data["validate"],  # type: ignore
+                        "token": geetest_data["token"],  # type: ignore
+                        "seccode": geetest_data["seccode"],  # type: ignore
+                        "challenge": geetest_data["challenge"],  # type: ignore
+                    }
+                ),
                 headers={
                     "User-Agent": "Mozilla/5.0",
                     "Referer": "https://www.bilibili.com",
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/x-www-form-urlencoded",
                 },
-                cookies={
-                    "buvid3": "E9BAB99E-FE1E-981E-F772-958B7F572FF487330infoc"
-                }
+                cookies={"buvid3": "E9BAB99E-FE1E-981E-F772-958B7F572FF487330infoc"},
             )
         ).text
     )
@@ -499,10 +548,12 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
                 bili_jct = cookie[9:]
             if cookie[:11].upper() == "DEDEUSERID=":
                 dede = cookie[11:]
-        c = Credential(sessdata=sessdata,
-                       bili_jct=bili_jct,
-                       dedeuserid=dede,
-                       ac_time_value=return_data["data"]["refresh_token"])
+        c = Credential(
+            sessdata=sessdata,
+            bili_jct=bili_jct,
+            dedeuserid=dede,
+            ac_time_value=return_data["data"]["refresh_token"],
+        )
         return c
     elif return_data["data"]["status"] == 5:
         return Check(return_data["data"]["url"])  # type: ignore

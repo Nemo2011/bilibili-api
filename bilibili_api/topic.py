@@ -52,9 +52,9 @@ async def search_topic(keyword: str, ps: int = 20, pn: int = 1) -> dict:
 
     Args:
         keyword (str): 搜索关键词
-        
+
         ps      (int): 每页数量. Defaults to 20.
-        
+
         pn      (int): 页数. Defaults to 1.
 
     Returns:
@@ -77,7 +77,7 @@ class Topic:
         """
         Args:
             topic_id   (int)       : 话题 id
-            
+
             credential (Credential): 凭据类
         """
         self.__topic_id = topic_id
@@ -118,9 +118,9 @@ class Topic:
 
         Args:
             ps (int): 数据数量. Defaults to 100.
-            
+
             offset (Optional[str]): 偏移量. 生成格式为 f'{页码}_{页码*数据量]}' 如'2_40' Defaults to None.
-            
+
             sort_by (TopicCardsSortBy): 排序方式. Defaults to TopicCardsSortBy.HOT.
 
         Returns:
@@ -152,9 +152,9 @@ class Topic:
 
         Args:
             ps (int): 数据数量. Defaults to 100.
-            
+
             offset (Optional[str]): 偏移量. 生成格式为 f'{页码}_{页码*数据量]}' 如'2_40' Defaults to None.
-            
+
             sort_by (TopicCardsSortBy): 排序方式. Defaults to TopicCardsSortBy.HOT.
 
         Returns:

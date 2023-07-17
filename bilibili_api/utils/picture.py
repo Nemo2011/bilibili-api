@@ -49,7 +49,7 @@ class Picture:
         with open(img_path, "wb+") as file:
             file.write(self.content)
         img = Image.open(img_path)
-        self.size = img.size
+        self.size = int(round(os.path.getsize(img_path) / 1024, 0))
         self.height = img.height
         self.width = img.width
         self.imageType = imgtype
@@ -155,7 +155,7 @@ class Picture:
         """
         from ..dynamic import upload_image
 
-        res = await upload_image(self, credential)
+        res = await upload_image(self, credential, data={"biz": "im"})
         self.height = res["image_height"]
         self.width = res["image_width"]
         self.url = res["image_url"]

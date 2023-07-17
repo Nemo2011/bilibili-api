@@ -92,7 +92,7 @@ async def make_ass_file_subtitle(
     out: Optional[str] = "test.ass",
     lan_name: Optional[str] = "中文（自动生成）",
     lan_code: Optional[str] = "ai-zh",
-    credential: Credential = Credential()
+    credential: Credential = Credential(),
 ) -> None:
     """
     生成视频字幕文件
