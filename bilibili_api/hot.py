@@ -4,8 +4,8 @@ bilibili_api.hot
 热门相关 API
 """
 
-from .utils.network_httpx import request
 from .utils.utils import get_api
+from .utils.network_httpx import request
 
 API_rank = get_api("rank")
 API = get_api("hot")

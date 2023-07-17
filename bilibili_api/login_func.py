@@ -4,17 +4,19 @@ bilibili_api.login_func
 登录功能相关
 """
 
+import enum
+import json
+import uuid
 import threading
 from typing import Tuple, Union
-from . import login
-from .utils.credential import Credential
-from .utils.utils import get_api
-from .utils.picture import Picture
-import json
+
 import requests
-import uuid
+
+from . import login
+from .utils.utils import get_api
 from .exceptions import LoginError
-import enum
+from .utils.picture import Picture
+from .utils.credential import Credential
 
 API = get_api("login")
 

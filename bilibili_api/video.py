@@ -6,33 +6,36 @@ bilibili_api.video
 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 """
 
-from enum import Enum
 import re
-import datetime
-import asyncio
-import logging
 import json
 import struct
-import aiohttp
-import httpx
-from typing import Any, List, Union
-from functools import cmp_to_key
-
-from .exceptions import ResponseException
-from .exceptions import NetworkException
-from .exceptions import ArgsException, DanmakuClosedException
-
-from .utils.credential import Credential
-from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
-from .utils.utils import get_api
-from .utils.network_httpx import request, get_session
-from .utils.network import get_session as get_session_aiohttp
-from .utils.danmaku import Danmaku, SpecialDanmaku
-from .utils.BytesReader import BytesReader
-from .utils.AsyncEvent import AsyncEvent
-from dataclasses import dataclass
-from . import settings
+import asyncio
+import logging
+import datetime
+from enum import Enum
 from inspect import isfunction
+from functools import cmp_to_key
+from dataclasses import dataclass
+from typing import Any, List, Union
+
+import httpx
+import aiohttp
+
+from . import settings
+from .utils.utils import get_api
+from .utils.AsyncEvent import AsyncEvent
+from .utils.credential import Credential
+from .utils.BytesReader import BytesReader
+from .utils.danmaku import Danmaku, SpecialDanmaku
+from .utils.network_httpx import request, get_session
+from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
+from .utils.network import get_session as get_session_aiohttp
+from .exceptions import (
+    ArgsException,
+    NetworkException,
+    ResponseException,
+    DanmakuClosedException,
+)
 
 API = get_api("video")
 

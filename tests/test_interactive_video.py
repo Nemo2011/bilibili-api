@@ -1,8 +1,10 @@
 # bilibili_api.interactive_video
 
 from typing import List
-from .common import get_credential
+
 from bilibili_api import interactive_video
+
+from .common import get_credential
 
 v = interactive_video.InteractiveVideo("BV1Dt411N7LY", credential=get_credential())
 

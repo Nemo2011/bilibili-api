@@ -1,10 +1,10 @@
 # Bibibili API Documentions
 
-import webbrowser
 import sys
+import webbrowser
 
 try:
-    from PyQt5 import QtCore, QtWidgets, QtGui, QtWebEngineWidgets
+    from PyQt5 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets
 except:
     PYQT5 = False
 else:

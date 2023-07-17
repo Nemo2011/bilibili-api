@@ -1,8 +1,10 @@
 # bilibili_api.dynamic
 
-from datetime import datetime
 from time import time, sleep
-from bilibili_api import dynamic, user, Picture
+from datetime import datetime
+
+from bilibili_api import Picture, user, dynamic
+
 from . import common
 
 credential = common.get_credential()

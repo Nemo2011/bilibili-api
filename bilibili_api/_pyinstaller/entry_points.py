@@ -1,5 +1,5 @@
-from typing import List
 import os
+from typing import List
 
 
 def get_hook_dirs() -> List[str]:

@@ -5,10 +5,11 @@ ivitools.download
 """
 import os
 
-from colorama import Fore
-from bilibili_api import interactive_video, sync
 import tqdm
 import requests
+from colorama import Fore
+
+from bilibili_api import sync, interactive_video
 
 
 async def download_file(url: str, out: str):

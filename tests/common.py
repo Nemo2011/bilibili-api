@@ -1,5 +1,6 @@
-from bilibili_api import Credential
 import os
+
+from bilibili_api import Credential
 
 
 def get_credential():

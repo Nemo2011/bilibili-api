@@ -3,15 +3,16 @@ bilibili_api.channel
 
 频道相关，与视频分区不互通。
 """
-from bilibili_api.utils.initial_state import get_initial_state
-from bilibili_api.utils.network_httpx import request, get_session
-from bilibili_api.utils.utils import get_api
-from bilibili_api.utils.credential import Credential
-from bilibili_api.errors import ResponseException, ApiException
 import re
 import json
 from enum import Enum
-from typing import Optional, List, Union
+from typing import List, Union, Optional
+
+from bilibili_api.utils.utils import get_api
+from bilibili_api.utils.credential import Credential
+from bilibili_api.utils.initial_state import get_initial_state
+from bilibili_api.errors import ApiException, ResponseException
+from bilibili_api.utils.network_httpx import request, get_session
 
 API = get_api("channel")
 

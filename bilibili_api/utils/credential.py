@@ -4,14 +4,15 @@ bilibili_api.utils.Credential
 凭据类，用于各种请求操作的验证。
 """
 
-from ..exceptions import (
-    CredentialNoBiliJctException,
-    CredentialNoSessdataException,
-    CredentialNoBuvid3Exception,
-    CredentialNoDedeUserIDException,
-)
 import uuid
 from typing import Union
+
+from ..exceptions import (
+    CredentialNoBuvid3Exception,
+    CredentialNoBiliJctException,
+    CredentialNoSessdataException,
+    CredentialNoDedeUserIDException,
+)
 
 
 class Credential:

@@ -4,11 +4,12 @@ bilibili_api.rank
 和哔哩哔哩视频排行榜相关的 API
 """
 
+from enum import Enum
 from typing import Union
-from .utils.network_httpx import request
+
 from .utils.utils import get_api
 from .utils.credential import Credential
-from enum import Enum
+from .utils.network_httpx import request
 
 API = get_api("rank")
 

@@ -1,6 +1,7 @@
 # bilibili_api.article
-from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 from bilibili_api import article
+from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
+
 from .common import get_credential
 
 ar = article.Article(17973349, get_credential())

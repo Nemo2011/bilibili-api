@@ -1,4 +1,5 @@
 from bilibili_api import video_tag
+
 from .common import get_credential
 
 tag = video_tag.Tag(tag_name="真白花音", credential=get_credential())

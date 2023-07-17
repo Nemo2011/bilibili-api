@@ -4,35 +4,35 @@ bilibili_api.utils.parse_link
 链接资源解析。
 """
 
-import json
 import re
+import json
 from enum import Enum
-from typing import Literal, Tuple, Union
+from typing import Tuple, Union, Literal
 
 import httpx
 from yarl import URL
 
-from ..article import Article, ArticleList
+from ..game import Game
+from ..album import Album
+from ..manga import Manga
+from ..topic import Topic
+from ..video import Video
+from ..exceptions import *
+from .utils import get_api
+from ..live import LiveRoom
+from ..dynamic import Dynamic
+from .short import get_real_url
+from ..note import Note, NoteType
+from ..black_room import BlackRoom
+from .credential import Credential
 from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
-from ..black_room import BlackRoom
-from ..cheese import CheeseVideo, CheeseList
-from ..dynamic import Dynamic
-from ..exceptions import *
-from ..favorite_list import FavoriteList, FavoriteListType
-from ..interactive_video import InteractiveVideo
-from ..live import LiveRoom
-from ..user import ChannelSeries, ChannelSeriesType, User, get_self_info
-from ..note import Note, NoteType
-from ..video import Video
-from ..game import Game
-from .credential import Credential
-from .short import get_real_url
-from .utils import get_api
-from ..topic import Topic
-from ..manga import Manga
-from ..album import Album
+from ..article import Article, ArticleList
+from ..cheese import CheeseList, CheeseVideo
 from .initial_state import get_initial_state
+from ..interactive_video import InteractiveVideo
+from ..favorite_list import FavoriteList, FavoriteListType
+from ..user import User, ChannelSeries, ChannelSeriesType, get_self_info
 
 
 class ResourceType(Enum):

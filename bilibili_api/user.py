@@ -4,18 +4,17 @@ bilibili_api.user
 用户相关
 """
 
-from enum import Enum
 import json
-from json.decoder import JSONDecodeError
 import time
-
-from .exceptions import ResponseCodeException
-
-from .utils.network_httpx import get_session, request
-from .utils.utils import get_api, join
-from .utils.credential import Credential
-from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
+from enum import Enum
 from typing import List, Union
+from json.decoder import JSONDecodeError
+
+from .utils.utils import join, get_api
+from .utils.credential import Credential
+from .exceptions import ResponseCodeException
+from .utils.network_httpx import request, get_session
+from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
 
 API = get_api("user")
 

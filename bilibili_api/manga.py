@@ -4,16 +4,18 @@ bilibili_api.manga
 漫画相关操作
 """
 
-from bilibili_api.utils.network_httpx import request, HEADERS
+import datetime
+from enum import Enum
+from urllib.parse import urlparse
+from typing import Dict, List, Union, Optional
+
+import httpx
+
 from bilibili_api.utils.utils import get_api
-from bilibili_api.utils.credential import Credential
 from bilibili_api.errors import ArgsException
 from bilibili_api.utils.picture import Picture
-from typing import Optional, List, Dict, Union
-from urllib.parse import urlparse
-import httpx
-from enum import Enum
-import datetime
+from bilibili_api.utils.credential import Credential
+from bilibili_api.utils.network_httpx import HEADERS, request
 
 API = get_api("manga")
 

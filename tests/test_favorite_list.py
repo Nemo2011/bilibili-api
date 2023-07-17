@@ -2,7 +2,8 @@
 
 import random
 
-from bilibili_api import favorite_list, video, bvid2aid
+from bilibili_api import video, bvid2aid, favorite_list
+
 from . import common
 
 media_id = None

@@ -7,11 +7,11 @@ bilibili_api.creative_center
 """
 
 from enum import Enum
-from typing import Union, List
+from typing import List, Union
 
 from .utils.utils import get_api
-from .utils.network_httpx import request
 from .utils.credential import Credential
+from .utils.network_httpx import request
 
 API = get_api("creative_center")
 

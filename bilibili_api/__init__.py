@@ -7,81 +7,81 @@ bilibili_api
 import asyncio
 import platform
 
-from . import (
-    album,
-    app,
-    article,
-    article_category,
-    ass,
-    audio,
-    bangumi,
-    black_room,
-    channel,
-    channel_series,
-    cheese,
-    client,
-    comment,
-    creative_center,
-    dynamic,
-    emoji,
-    favorite_list,
-    game,
-    homepage,
-    hot,
-    interactive_video,
-    live,
-    live_area,
-    login,
-    login_func,
-    manga,
-    note,
-    rank,
-    search,
-    session,
-    settings,
-    topic,
-    user,
-    video,
-    video_tag,
-    video_uploader,
-    video_zone,
-    vote,
-)
-from .errors import (
-    ApiException,
-    ArgsException,
-    CredentialNoBiliJctException,
-    CredentialNoBuvid3Exception,
-    CredentialNoDedeUserIDException,
-    CredentialNoSessdataException,
-    DanmakuClosedException,
-    DynamicExceedImagesException,
-    LiveException,
-    LoginError,
-    NetworkException,
-    ResponseCodeException,
-    ResponseException,
-    VideoUploadException,
-)
+from .utils.sync import sync
 from .credential import Credential
+from .utils.picture import Picture
+from .utils.short import get_real_url
+from .utils.parse_link import ResourceType, parse_link
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
-from .utils.danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
+from .utils.danmaku import DmMode, Danmaku, DmFontSize, SpecialDanmaku
 from .utils.network_httpx import (
     HEADERS,
     Api,
-    check_valid,
-    enc_wbi,
-    get_mixin_key,
-    get_nav,
-    get_session,
-    request,
     retry,
+    enc_wbi,
+    get_nav,
+    request,
+    check_valid,
+    get_session,
     set_session,
+    get_mixin_key,
 )
-from .utils.parse_link import ResourceType, parse_link
-from .utils.picture import Picture
-from .utils.short import get_real_url
-from .utils.sync import sync
+from .errors import (
+    LoginError,
+    ApiException,
+    ArgsException,
+    LiveException,
+    NetworkException,
+    ResponseException,
+    VideoUploadException,
+    ResponseCodeException,
+    DanmakuClosedException,
+    CredentialNoBuvid3Exception,
+    CredentialNoBiliJctException,
+    DynamicExceedImagesException,
+    CredentialNoSessdataException,
+    CredentialNoDedeUserIDException,
+)
+from . import (
+    app,
+    ass,
+    hot,
+    game,
+    live,
+    note,
+    rank,
+    user,
+    vote,
+    album,
+    audio,
+    emoji,
+    login,
+    manga,
+    topic,
+    video,
+    cheese,
+    client,
+    search,
+    article,
+    bangumi,
+    channel,
+    comment,
+    dynamic,
+    session,
+    homepage,
+    settings,
+    live_area,
+    video_tag,
+    black_room,
+    login_func,
+    video_zone,
+    favorite_list,
+    channel_series,
+    video_uploader,
+    creative_center,
+    article_category,
+    interactive_video,
+)
 
 BILIBILI_API_VERSION = "15.5.1.b0"
 

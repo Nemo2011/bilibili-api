@@ -6,25 +6,26 @@ bilibili_api.interactive_video
 
 # pylint: skip-file
 
-from asyncio import CancelledError, create_task
+import os
 import copy
 import enum
 import json
-import os
-import shutil
 import time
-from typing import Callable, List, Tuple, Union
-from .utils.credential import Credential
-from .utils.utils import get_api
-from .utils.network_httpx import request
-from .video import Video
+import shutil
+import zipfile
 from urllib import parse
 from random import randint as rand
+from asyncio import CancelledError, create_task
+from typing import List, Tuple, Union, Callable, Coroutine
+
 import requests
+
 from . import settings
-import zipfile
+from .video import Video
+from .utils.utils import get_api
 from .utils.AsyncEvent import AsyncEvent
-from typing import Coroutine
+from .utils.credential import Credential
+from .utils.network_httpx import request
 
 API = get_api("interactive_video")
 

@@ -4,27 +4,27 @@ bilibili_api.utils.network_httpx
 复写了 .utils.network，使用 httpx
 """
 
-import asyncio
-import atexit
-import hashlib
-import json
 import re
-import threading
+import json
 import time
 import uuid
-from dataclasses import dataclass, field
+import atexit
+import asyncio
+import hashlib
+import threading
 from functools import reduce
-from inspect import iscoroutinefunction as isAsync
-from typing import Any, Coroutine, Dict, Union
 from urllib.parse import urlencode
+from dataclasses import field, dataclass
+from typing import Any, Dict, Union, Coroutine
+from inspect import iscoroutinefunction as isAsync
 
 import httpx
 
-from .. import settings
-from ..exceptions import ApiException, ResponseCodeException
-from .credential import Credential
 from .sync import sync
+from .. import settings
 from .utils import get_api
+from .credential import Credential
+from ..exceptions import ApiException, ResponseCodeException
 
 __session_pool = {}
 last_proxy = ""

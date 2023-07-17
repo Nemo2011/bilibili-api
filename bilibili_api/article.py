@@ -4,26 +4,25 @@ bilibili_api.article
 专栏相关
 """
 
-from copy import copy
-import json
-from enum import Enum
-from typing import List, overload, Union
-
-import httpx
-from .utils.utils import get_api
-from .utils.credential import Credential
-from .note import Note, NoteType
 import re
+import json
+from copy import copy
+from enum import Enum
 from html import unescape
-
-import yaml
-from yarl import URL
-from .utils.network_httpx import get_session, request
-from .exceptions.NetworkException import NetworkException, ApiException
-from bs4 import BeautifulSoup, element
 from datetime import datetime
 from urllib.parse import unquote
-from typing import TypeVar
+from typing import List, Union, TypeVar, overload
+
+import yaml
+import httpx
+from yarl import URL
+from bs4 import BeautifulSoup, element
+
+from .note import Note, NoteType
+from .utils.utils import get_api
+from .utils.credential import Credential
+from .utils.network_httpx import request, get_session
+from .exceptions.NetworkException import ApiException, NetworkException
 
 API = get_api("article")
 
@@ -473,7 +472,7 @@ class Article:
                 elif e.name == "a":
                     # 超链接
                     if len(e.contents) == 0:
-                        from .utils.parse_link import parse_link, ResourceType
+                        from .utils.parse_link import ResourceType, parse_link
 
                         parse_link_res = await parse_link(e.attrs["href"])
                         if parse_link_res[1] == ResourceType.VIDEO:

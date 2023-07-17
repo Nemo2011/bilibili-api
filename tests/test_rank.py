@@ -2,6 +2,7 @@
 
 from bilibili_api import rank
 from bilibili_api.rank import RankType, RankDayType, VIPRankType, MangeRankType
+
 from .common import get_credential
 
 

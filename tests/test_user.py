@@ -1,6 +1,7 @@
 # bilibili_api.user
 
 import asyncio
+
 from bilibili_api import user, bvid2aid
 
 try:
@@ -12,6 +13,7 @@ except:
     print("导入凭据未成功")
 import time
 import random
+
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 
 UID = 660303135

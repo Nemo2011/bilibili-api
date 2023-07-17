@@ -4,13 +4,13 @@ bilibili_api.article_category
 专栏分类相关
 """
 import os
-from typing import List, Tuple, Optional
 import copy
 import json
-from .utils.network_httpx import request
-from .utils.utils import get_api
 from enum import Enum
+from typing import List, Tuple, Optional
 
+from .utils.utils import get_api
+from .utils.network_httpx import request
 
 API = get_api("article-category")
 

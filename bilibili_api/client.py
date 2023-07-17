@@ -4,8 +4,8 @@ bilibili_api.client
 IP 终端相关
 """
 
-from .utils.network_httpx import request
 from .utils.utils import get_api
+from .utils.network_httpx import request
 
 API = get_api("client")
 

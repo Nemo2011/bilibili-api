@@ -1,8 +1,8 @@
-from bilibili_api.utils.initial_state import get_initial_state
+import json
+
 from bilibili_api import sync
 from bilibili_api.exceptions import *
-
-import json
+from bilibili_api.utils.initial_state import get_initial_state
 
 
 async def main() -> None:

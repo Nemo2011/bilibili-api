@@ -4,20 +4,21 @@ bilibili_api.note
 笔记相关
 """
 
-from html import unescape
+import re
 import json
 from enum import Enum
-
-from yarl import URL
-from .utils.utils import get_api
-from .utils.credential import Credential
-from .utils.network_httpx import request, get_session
-from .exceptions import ArgsException, ApiException
-from .utils.picture import Picture
+from html import unescape
 from typing import List, Union, overload
-import httpx
-import re
+
 import yaml
+import httpx
+from yarl import URL
+
+from .utils.utils import get_api
+from .utils.picture import Picture
+from .utils.credential import Credential
+from .exceptions import ApiException, ArgsException
+from .utils.network_httpx import request, get_session
 
 API = get_api("note")
 API_ARTICLE = get_api("article")

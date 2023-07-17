@@ -37,7 +37,15 @@ setuptools.setup(
         "Programming Language :: Python :: 3.11",
     ],
     package_data={
-        "": ["data/**/*.*", "py.typed", "requirements.txt", "data/*.*", "data/article/*.*", "data/geetest/*.*", "data/corerespond/*.*"]
+        "": [
+            "data/**/*.*",
+            "py.typed",
+            "requirements.txt",
+            "data/*.*",
+            "data/article/*.*",
+            "data/geetest/*.*",
+            "data/corerespond/*.*",
+        ]
     },
     install_requires=requires.splitlines(),
     url="https://github.com/nemo2011/bilibili-api",
@@ -48,7 +56,7 @@ setuptools.setup(
         ],
         "console_scripts": [
             "bilibili-api-docs = bilibili_api.tools.opendocs.__main__:main",
-            "ivitools = bilibili_api.tools.ivitools.__main__:main"
+            "ivitools = bilibili_api.tools.ivitools.__main__:main",
         ],
     },
 )

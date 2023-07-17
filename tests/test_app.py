@@ -1,6 +1,7 @@
 # bilibili_api.app
 
 from bilibili_api import app
+
 from .common import get_credential
 
 credential = get_credential()
