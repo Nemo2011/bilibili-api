@@ -208,7 +208,7 @@ class Api:
         else:
             return self.update_data(**kwargs)
 
-    @retry(times=3)
+    @retry(times=settings.wbi_retry_times)
     async def request(self, **kwargs) -> Any:
         """
         向接口发送请求。
@@ -583,51 +583,7 @@ def rollback(func):
     return wrapper
 
 
-def retry(times: int = 3):
-    """
-    重试装饰器
-
-    Args:
-        times (int): 最大重试次数 默认 3 次 负数则一直重试直到成功
-
-    Returns:
-        Any: 原函数调用结果
-    """
-    def wrapper(func: Coroutine):
-        async def inner(*args, **kwargs):
-            # 这里必须新建一个变量用来计数！！不能直接对 times 操作！！！
-            nonlocal times
-            loop = times
-            while loop != 0:
-                if loop != times and settings.request_log:
-                    settings.logger.info(f"第 {times - loop} 次重试")
-                loop -= 1
-                try:
-                    return await func(*args, **kwargs)
-                except json.decoder.JSONDecodeError:
-                    # json 解析错误 说明数据获取有误 再给次机会
-                    continue
-                except ResponseCodeException as e:
-                    # -403 时尝试重新获取 wbi_mixin_key 可能过期了
-                    if e.code == -403:
-                        global wbi_mixin_key
-                        wbi_mixin_key = ""
-                        continue
-                    # 不是 -403 错误直接报错
-                    raise
-            raise ApiException("重试达到最大次数")
-        return inner
-
-    if isAsync(times):
-        # 防呆不防傻 防止有人 @retry() 不打括号
-        func = times
-        times = 3
-        return wrapper(func)
-
-    return wrapper
-
-
-@retry()
+@retry(times = settings.wbi_retry_times)
 @rollback
 async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any:
     """
