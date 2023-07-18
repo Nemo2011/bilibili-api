@@ -3,12 +3,13 @@ bilibili_api.search
 
 搜索
 """
-from enum import Enum
-from typing import Callable, Union, List
 import json
+from enum import Enum
+from typing import List, Union, Callable
+
 from .utils.utils import get_api
-from .utils.network_httpx import request, get_session
 from .video_zone import VideoZoneTypes
+from .utils.network_httpx import request, get_session
 
 API = get_api("search")
 

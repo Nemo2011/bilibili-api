@@ -4,13 +4,14 @@ bilibili_api.album
 相簿相关
 """
 
+import enum
 from typing import Any, List, Union, Optional
+
 from .utils.utils import get_api
-from .utils.network_httpx import request
-from .utils.credential import Credential
 from .utils.picture import Picture
 from .exceptions import ArgsException
-import enum
+from .utils.credential import Credential
+from .utils.network_httpx import request
 
 API = get_api("album")
 

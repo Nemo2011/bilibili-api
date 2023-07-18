@@ -4,16 +4,16 @@ bilibili_api.video_zone
 分区相关操作，与频道不互通。
 """
 
-import json
 import os
 import copy
 import enum
-from typing import Tuple, Union, List, Dict
+import json
+from typing import Dict, List, Tuple, Union
 
-from .exceptions import ArgsException
 from .utils.utils import get_api
-from .utils.network_httpx import request
+from .exceptions import ArgsException
 from .utils.credential import Credential
+from .utils.network_httpx import request
 
 API = get_api("video_zone")
 

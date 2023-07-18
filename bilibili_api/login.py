@@ -8,36 +8,32 @@ bilibili_api.login
 **login_with_qrcode 用到了 tkinter，linux 的小伙伴请注意安装**
 """
 
-import json
-import httpx
-from typing import Union
-import uuid
-from yarl import URL
-import webbrowser
-import sys
-
-from .exceptions.LoginError import LoginError
-
-from .utils.credential import Credential
-from .utils.utils import get_api
-from .utils.sync import sync
-from .utils.network_httpx import get_session, HEADERS
-from .utils.network import to_form_urlencoded
-from .utils.captcha import start_server, close_server, get_result
-from .utils.safecenter_captcha import (
-    start_server as safecenter_start_server,
-    close_server as safecenter_close_server,
-    get_result as safecenter_get_result,
-)
-from . import settings
-import qrcode
 import os
-import tempfile
+import sys
+import json
 import time
+import uuid
 import base64
-import rsa
+import tempfile
+import webbrowser
+from typing import Dict, List, Union
 
-from typing import List, Dict
+import rsa
+import httpx
+import qrcode
+from yarl import URL
+
+from . import settings
+from .utils.sync import sync
+from .utils.utils import get_api
+from .utils.credential import Credential
+from .exceptions.LoginError import LoginError
+from .utils.network import to_form_urlencoded
+from .utils.network_httpx import HEADERS, get_session
+from .utils.captcha import get_result, close_server, start_server
+from .utils.safecenter_captcha import get_result as safecenter_get_result
+from .utils.safecenter_captcha import close_server as safecenter_close_server
+from .utils.safecenter_captcha import start_server as safecenter_start_server
 
 API = get_api("login")
 
@@ -106,6 +102,7 @@ def login_with_qrcode(root=None) -> Credential:
     global id_
     import tkinter
     import tkinter.font
+
     from PIL.ImageTk import PhotoImage
 
     if root == None:

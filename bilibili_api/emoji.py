@@ -4,8 +4,8 @@ bilibili_api.emoji
 表情包相关
 """
 
-from .utils.network_httpx import request
 from .utils.utils import get_api
+from .utils.network_httpx import request
 
 API = get_api("emoji")
 

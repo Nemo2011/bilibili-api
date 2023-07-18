@@ -4,10 +4,11 @@ bilibili_api.game
 游戏相关
 """
 
-from .utils.network_httpx import request
-from .utils.credential import Credential
-from .utils.utils import get_api
 from typing import Union
+
+from .utils.utils import get_api
+from .utils.credential import Credential
+from .utils.network_httpx import request
 
 API = get_api("game")
 

@@ -5,14 +5,14 @@ bilibili_api.favorite_list
 """
 
 from enum import Enum
+from typing import List, Union, Optional
 
-from .video import Video
 from . import user
+from .video import Video
+from .utils.utils import join, get_api
+from .utils.credential import Credential
 from .utils.network_httpx import request
 from .exceptions.ArgsException import ArgsException
-from .utils.credential import Credential
-from .utils.utils import get_api, join
-from typing import List, Union, Optional
 
 API = get_api("favorite-list")
 

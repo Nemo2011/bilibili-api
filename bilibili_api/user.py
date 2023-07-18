@@ -4,17 +4,17 @@ bilibili_api.user
 用户相关
 """
 
-from enum import Enum
 import json
 import time
+from enum import Enum
+from typing import List, Union
+from json.decoder import JSONDecodeError
 
-from .exceptions import ResponseCodeException
-
-from .utils.network_httpx import get_session, Api
 from .utils.utils import get_api, join
 from .utils.credential import Credential
+from .exceptions import ResponseCodeException
+from .utils.network_httpx import request, get_session, Api
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
-from typing import List, Union
 
 API = get_api("user")
 
@@ -155,7 +155,7 @@ class HistoryType(Enum):
 class HistoryBusinessType(Enum):
     """
     历史记录 Business 分类
-    
+
     + archive：稿件
     + pgc：剧集（番剧 / 影视）
     + live：直播
@@ -177,7 +177,7 @@ class OrderType(Enum):
     + asc：正序
     """
     desc = "desc"
-    asc = "asc" 
+    asc = "asc"
 
 async def name2uid(names: Union[str, List[str]]):
     """

@@ -12,21 +12,20 @@ bilibili_api.bangumi
 
 import datetime
 from enum import Enum
-from typing import Any, Tuple, Union, List, Optional
+from typing import Any, List, Tuple, Union, Optional
 
 import requests
 
 from bilibili_api.utils.danmaku import Danmaku
 
 from . import settings
-
-from .utils.utils import get_api
-from .utils.initial_state import get_initial_state, get_initial_state_sync
-from .utils.credential import Credential
-from .utils.network_httpx import get_session, request
-from .exceptions.ResponseException import ResponseException
-from .exceptions.ApiException import ApiException
 from .video import Video
+from .utils.utils import get_api
+from .utils.credential import Credential
+from .exceptions.ApiException import ApiException
+from .utils.network_httpx import request, get_session
+from .exceptions.ResponseException import ResponseException
+from .utils.initial_state import get_initial_state, get_initial_state_sync
 
 API = get_api("bangumi")
 

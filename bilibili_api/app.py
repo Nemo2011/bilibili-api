@@ -4,12 +4,13 @@ bilibili_api.app
 手机 APP 相关
 """
 
+import time
+from hashlib import md5
+from typing import Union
+
 from .utils.utils import get_api
 from .utils.credential import Credential
 from .utils.network_httpx import request
-from hashlib import md5
-import time
-from typing import Union
 
 API = get_api("app")
 

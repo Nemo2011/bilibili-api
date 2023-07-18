@@ -5,12 +5,13 @@ bilibili_api.vote
 
 需要 vote_id,获取 vote_id: https://nemo2011.github.io/bilibili-api/#/vote_id
 """
-from typing import Optional, Union
 from enum import Enum
-from .utils.picture import Picture
+from typing import Union, Optional
+
 from .utils.utils import get_api
-from .utils.network_httpx import request
+from .utils.picture import Picture
 from .utils.credential import Credential
+from .utils.network_httpx import request
 
 API = get_api("vote")
 

@@ -4,17 +4,18 @@ bilibili_api.utils.network
 与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。
 """
 
+import re
+import json
+import atexit
+import asyncio
 from typing import Any, Union
 from urllib.parse import quote
-import aiohttp
-import json
-import re
-import asyncio
-import atexit
 
-from ..exceptions import ResponseCodeException, ResponseException, NetworkException
+import aiohttp
+
 from .. import settings
 from .credential import Credential
+from ..exceptions import NetworkException, ResponseException, ResponseCodeException
 
 __session_pool = {}
 

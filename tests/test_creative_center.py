@@ -1,4 +1,5 @@
 from bilibili_api import creative_center
+
 from . import common
 
 credential = common.get_credential()

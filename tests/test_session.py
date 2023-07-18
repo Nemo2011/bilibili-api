@@ -1,6 +1,7 @@
 # bilibili_api.session
 
-from bilibili_api import session, ResponseCodeException
+from bilibili_api import ResponseCodeException, session
+
 from .common import get_credential
 
 

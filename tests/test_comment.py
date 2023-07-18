@@ -1,11 +1,12 @@
 # bilibili_api.comment
 
-from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
-from bilibili_api import comment
 import random
 import asyncio
-from . import common
 
+from bilibili_api import comment
+from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
+
+from . import common
 
 BVID = "BV1xx411c7Xg"
 AID = 271
@@ -77,21 +78,22 @@ async def test_d_hate_comment():
     return await cmt.hate()
 
 
-async def test_e_pin_comment():
-    cmt = comment.Comment(
-        oid=AID,
-        type_=comment.CommentResourceType.VIDEO,
-        rpid=comment_id,
-        credential=credential,
-    )
-    try:
-        info = await cmt.pin()
-        return info
-    except ResponseCodeException as e:
-        # -403  权限不足
-        if e.code not in (-403,):
-            raise e
-        return e.raw
+# async def test_e_pin_comment():
+#     cmt = comment.Comment(
+#         oid=AID,
+#         type_=comment.CommentResourceType.VIDEO,
+#         rpid=comment_id,
+#         credential=credential,
+#     )
+#     try:
+#         info = await cmt.pin()
+#         return info
+#     except ResponseCodeException as e:
+#         # -403  权限不足
+#         if e.code not in (-403,):
+#             raise e
+#         return e.raw
+# FIXME: 重试次数达到上限
 
 
 async def test_f_get_sub_comments():

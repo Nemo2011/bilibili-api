@@ -5,11 +5,11 @@ bilibili_api.black_room
 """
 
 from enum import Enum
-from typing import Union, Optional, List
+from typing import List, Union, Optional
 
 from .utils.utils import get_api
-from .utils.network_httpx import request
 from .utils.credential import Credential
+from .utils.network_httpx import request
 
 
 class BlackReasonType(Enum):

@@ -3,13 +3,15 @@ bilibili_api.channel_series
 
 用户合集与列表相关
 """
-from enum import Enum
-from typing import Union, List, Optional
-from .utils.credential import Credential
-from .utils.utils import get_api
-from .utils.network_httpx import request
 import json
+from enum import Enum
+from typing import List, Union, Optional
+
 import httpx
+
+from .utils.utils import get_api
+from .utils.credential import Credential
+from .utils.network_httpx import request
 
 API_USER = get_api("user")
 API = get_api("channel-series")
@@ -181,7 +183,7 @@ async def del_channel_series(series_id: int, credential: Credential) -> dict:
     Returns:
         dict: 调用 API 返回的结果
     """
-    from .user import get_self_info, User
+    from .user import User, get_self_info
 
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()

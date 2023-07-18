@@ -3,12 +3,14 @@ bilibili_api.utils.captcha
 
 人机测试
 """
+import os
 import copy
 import json
-import os
 import time
 import webbrowser
+
 import requests
+
 from .utils import get_api
 
 validate = None
@@ -128,10 +130,10 @@ def _start_server(urlhandler, hostname, port):
         >>> print(serverthread.error)
         None
     """
-    import http.server
-    import email.message
     import select
     import threading
+    import http.server
+    import email.message
 
     class DocHandler(http.server.BaseHTTPRequestHandler):
         def do_GET(self):

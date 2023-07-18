@@ -5,7 +5,7 @@ bilibili_api.utils.sync
 """
 
 import asyncio
-from typing import Any, Coroutine, TypeVar
+from typing import Any, TypeVar, Coroutine
 
 T = TypeVar("T")
 
