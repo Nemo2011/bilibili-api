@@ -7,7 +7,7 @@ bilibili_api.user
 import json
 import time
 from enum import Enum
-from typing import List, Union
+from typing import List, Union, Tuple
 from json.decoder import JSONDecodeError
 
 from .utils.utils import get_api, join
@@ -222,7 +222,7 @@ class User:
 
         Returns:
             dict: 调用接口返回的内容。
-        
+
         [用户空间详细信息](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md#%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF)
         """
         params = {
@@ -1160,7 +1160,7 @@ async def delete_viewed_videos_from_toview(credential: Credential):
     return await Api(**api, credential=credential).update_data(**datas).result
 
 
-async def check_nickname(nick_name: str) -> tuple[bool, str]:
+async def check_nickname(nick_name: str) -> Tuple[bool, str]:
     """
     检验昵称是否可用
 
