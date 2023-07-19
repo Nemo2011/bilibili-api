@@ -22,6 +22,7 @@ import httpx
 import aiohttp
 
 from . import settings
+from .utils.aid_bvid_transformer import bvid2aid, aid2bvid
 from .utils.utils import get_api
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
@@ -430,7 +431,7 @@ class Video:
         api = API["info"]["has_liked"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         return await Api(**api, credential=self.credential).update_params(**params).result
-    
+
     async def get_pay_coins(self) -> int:
         """
         获取视频已投币数量。
