@@ -374,6 +374,7 @@ def enc_wbi(params: dict, mixin_key: str):
     params["w_rid"] = hashlib.md5(
         (Ae + mixin_key).encode(encoding="utf-8")
     ).hexdigest()
+    params["web_location"] = 1550101
 
 
 @atexit.register

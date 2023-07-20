@@ -264,7 +264,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["user_tag"]
-        params = {"mid": self.__uid, "pn": pn, "ps": ps}
+        params = {"vmid": self.__uid}#, "pn": pn, "ps": ps}
         return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_space_notice(self) -> dict:
@@ -452,7 +452,7 @@ class User:
         """
         api = API["info"]["article"]
         params = {"mid": self.__uid, "ps": ps, "pn": pn, "sort": order.value}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return await Api(**api, credential=self.credential, wbi=True).update_params(**params).result
 
     async def get_article_list(
         self, order: ArticleListOrder = ArticleListOrder.LATEST
@@ -702,7 +702,7 @@ class User:
             "ps": ps,
             "sort": "asc" if ChannelOrder.CHANGE else "desc",
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return await Api(**api, wbi=True, credential=self.credential).update_params(**params).result
 
     async def get_channel_videos_season(
         self,
@@ -734,7 +734,7 @@ class User:
             "page_num": pn,
             "page_size": ps,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return await Api(**api, wbi=True,credential=self.credential).update_params(**params).result
 
     async def get_channel_list(self) -> dict:
         """
@@ -749,13 +749,13 @@ class User:
         """
         api = API["info"]["channel_list"]
         params = {"mid": self.__uid, "page_num": 1, "page_size": 1}
-        res = await Api(**api, credential=self.credential).update_params(**params).result
+        res = await Api(**api, wbi=True, credential=self.credential).update_params(**params).result
         items = res["items_lists"]["page"]["total"]
         time.sleep(0.5)
         if items == 0:
             items = 1
         params["page_size"] = items
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return await Api(**api, wbi=True,credential=self.credential).update_params(**params).result
 
     async def get_channels(self) -> List["ChannelSeries"]:
         """
@@ -801,7 +801,7 @@ class User:
         """
         api = API["info"]["pugv"]
         params = {"mid": self.__uid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return await Api(**api, wbi=True, credential=self.credential).update_params(**params).result
 
     async def get_reservation(self) -> dict:
         """

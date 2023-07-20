@@ -19,6 +19,7 @@ from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 UID = 660303135
 UID2 = 1033942996
 UID3 = 7949629
+UID4 = 166311555
 UID_Model_Test = 12344667
 
 u = user.User(UID_Model_Test, credential=credential)
@@ -192,7 +193,7 @@ async def test_zg_get_album():
 
 async def test_zh_get_user_fav_tag():
     try:
-        return await u.get_user_fav_tag()
+        return await user.User(UID4).get_user_fav_tag()
     except ResponseCodeException as e:
         if e.code == 53013:
             # 用户隐私未公开
