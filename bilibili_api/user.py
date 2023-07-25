@@ -13,7 +13,7 @@ from json.decoder import JSONDecodeError
 from .utils.utils import get_api, join
 from .utils.credential import Credential
 from .exceptions import ResponseCodeException
-from .utils.network_httpx import request, get_session, Api
+from .utils.network_httpx import get_session, Api
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
 
 API = get_api("user")

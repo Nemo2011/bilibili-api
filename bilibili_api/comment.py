@@ -17,7 +17,7 @@ from typing import Union
 
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 from .exceptions.ArgsException import ArgsException
 
 API = get_api("common")
@@ -132,9 +132,7 @@ class Comment:
         self.credential.raise_for_no_bili_jct()
 
         api = API["comment"]["like"]
-        return await request(
-            "POST", api["url"], data=self.__get_data(status), credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**self.__get_data(status)).result
 
     async def hate(self, status: bool = True) -> dict:
         """
@@ -151,9 +149,7 @@ class Comment:
         self.credential.raise_for_no_bili_jct()
 
         api = API["comment"]["hate"]
-        return await request(
-            "POST", api["url"], data=self.__get_data(status), credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**self.__get_data(status)).result
 
     async def pin(self, status: bool = True) -> dict:
         """
@@ -169,9 +165,7 @@ class Comment:
         self.credential.raise_for_no_bili_jct()
 
         api = API["comment"]["pin"]
-        return await request(
-            "POST", api["url"], data=self.__get_data(status), credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**self.__get_data(status)).result
 
     async def delete(self) -> dict:
         """
@@ -186,7 +180,7 @@ class Comment:
         api = API["comment"]["del"]
         data = self.__get_data(True)
         del data["action"]
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_sub_comments(self, page_index: int = 1) -> dict:
         """
@@ -210,9 +204,7 @@ class Comment:
             "root": self.__rpid,
         }
 
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
 
 async def send_comment(
@@ -279,7 +271,7 @@ async def send_comment(
         raise ArgsException("root=None 时，parent 不得设置")
 
     api = API["comment"]["send"]
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def get_comments(
@@ -311,4 +303,4 @@ async def get_comments(
 
     api = API["comment"]["get"]
     params = {"pn": page_index, "type": type_.value, "oid": oid, "sort": order.value}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result

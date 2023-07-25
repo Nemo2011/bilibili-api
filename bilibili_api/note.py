@@ -18,7 +18,7 @@ from .utils.utils import get_api
 from .utils.picture import Picture
 from .utils.credential import Credential
 from .exceptions import ApiException, ArgsException
-from .utils.network_httpx import request, get_session
+from .utils.network_httpx import Api, get_session
 
 API = get_api("note")
 API_ARTICLE = get_api("article")
@@ -130,9 +130,7 @@ class Note:
         api = API["private"]["detail"]
         # oid 为 0 时指 avid
         params = {"oid": self.get_aid(), "note_id": self.get_note_id(), "oid_type": 0}
-        resp = await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        resp = await Api(**api, credential=self.credential).update_params(**params).result
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
@@ -149,9 +147,7 @@ class Note:
 
         api = API["public"]["detail"]
         params = {"cvid": self.get_cvid()}
-        resp = await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        resp = await Api(**api, credential=self.credential).update_params(**params).result
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
@@ -229,7 +225,7 @@ class Note:
 
         api = API_ARTICLE["operate"]["like"]
         data = {"id": self.__cvid, "type": 1 if status else 2}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def set_favorite(self, status: bool = True) -> dict:
         """
@@ -254,7 +250,7 @@ class Note:
         )
 
         data = {"id": self.__cvid}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def add_coins(self) -> dict:
         """
@@ -272,7 +268,7 @@ class Note:
         upid = (await self.get_info())["mid"]
         api = API_ARTICLE["operate"]["coin"]
         data = {"aid": self.__cvid, "multiply": 1, "upid": upid, "avtype": 2}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def fetch_content(self) -> None:
         """

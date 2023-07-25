@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup, element
 from .note import Note, NoteType
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import request, get_session
+from .utils.network_httpx import Api, get_session
 from .exceptions.NetworkException import ApiException, NetworkException
 
 API = get_api("article")
@@ -107,7 +107,7 @@ async def get_article_rank(
     """
     api = API["info"]["rank"]
     params = {"cid": rank_type.value}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 class ArticleList:
@@ -142,7 +142,7 @@ class ArticleList:
 
         api = API["info"]["list"]
         params = {"id": self.__rlid}
-        return await request("GET", api["url"], params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
 
 class Article:
@@ -601,10 +601,7 @@ class Article:
 
         api = API["info"]["view"]
         params = {"id": self.__cvid}
-        resp = await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
-        return resp
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_all(self) -> dict:
         """
@@ -647,7 +644,7 @@ class Article:
 
         api = API["operate"]["like"]
         data = {"id": self.__cvid, "type": 1 if status else 2}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def set_favorite(self, status: bool = True) -> dict:
         """
@@ -666,7 +663,7 @@ class Article:
         )
 
         data = {"id": self.__cvid}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def add_coins(self) -> dict:
         """
@@ -680,7 +677,7 @@ class Article:
         upid = (await self.get_info())["mid"]
         api = API["operate"]["coin"]
         data = {"aid": self.__cvid, "multiply": 1, "upid": upid, "avtype": 2}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     # TODO: 专栏上传/编辑/删除
 

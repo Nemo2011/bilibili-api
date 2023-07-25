@@ -11,7 +11,7 @@ from enum import Enum
 from typing import Dict, List, Tuple, Union
 
 from .utils.utils import get_api
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API = get_api("live-area")
 
@@ -149,4 +149,4 @@ async def get_list_by_area(
         "page": page,
         "sort_type": order.value,
     }
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result

@@ -9,7 +9,7 @@ from typing import List, Union, Callable
 
 from .utils.utils import get_api
 from .video_zone import VideoZoneTypes
-from .utils.network_httpx import request, get_session
+from .utils.network_httpx import Api, get_session
 
 API = get_api("search")
 
@@ -164,7 +164,7 @@ async def search(keyword: str, page: int = 1) -> dict:
     """
     api = API["search"]["web_search"]
     params = {"keyword": keyword, "page": page}
-    return await request("GET", url=api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def search_by_type(
@@ -250,7 +250,7 @@ async def search_by_type(
     if debug_param_func:
         debug_param_func(params)
     api = API["search"]["web_search_by_type"]
-    return await request("GET", url=api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_default_search_keyword() -> dict:
@@ -261,7 +261,7 @@ async def get_default_search_keyword() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["search"]["default_search_keyword"]
-    return await request("GET", api["url"])
+    return await Api(**api).result
 
 
 async def get_hot_search_keywords() -> dict:
@@ -309,7 +309,7 @@ async def search_games(keyword: str) -> dict:
     """
     api = API["search"]["game"]
     params = {"keyword": keyword}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def search_manga(keyword: str, page_num: int = 1, page_size: int = 9):
@@ -328,7 +328,7 @@ async def search_manga(keyword: str, page_num: int = 1, page_size: int = 9):
     """
     api = API["search"]["manga"]
     data = {"key_word": keyword, "page_num": page_num, "page_size": page_size}
-    return await request("POST", api["url"], data=data, no_csrf=True)
+    return await Api(**api, no_csrf=True).update_data(**data).result
 
 
 async def search_cheese(
@@ -359,4 +359,4 @@ async def search_cheese(
         "page_size": page_size,
         "sort_type": order.value,
     }
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result

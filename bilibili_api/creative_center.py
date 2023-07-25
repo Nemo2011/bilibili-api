@@ -11,7 +11,7 @@ from typing import List, Union
 
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API = get_api("creative_center")
 
@@ -139,7 +139,7 @@ async def get_compare(credential: Credential) -> dict:
         dict: 视频对比数据。
     """
     api = API["overview"]["compare"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_graph(
@@ -166,7 +166,7 @@ async def get_graph(
         "s_locale": "zh_CN",
         "type": graph_type.value,
     }
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_overview(
@@ -186,7 +186,7 @@ async def get_overview(
     api = API["overview"]["num"]
     # 不知道 tab 的作用是什么，但是不传会报错
     params = {"period": period.value, "s_locale": "zh_CN", "tab": 0}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_video_survey(credential: Credential) -> dict:
@@ -201,7 +201,7 @@ async def get_video_survey(credential: Credential) -> dict:
     """
     api = API["video"]["survey"]
     params = {"type": 1}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_video_playanalysis(
@@ -220,7 +220,7 @@ async def get_video_playanalysis(
     """
     api = API["video"]["playanalysis"]
     params = {"copyright": copyright.value}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_video_source(credential: Credential) -> dict:
@@ -235,7 +235,7 @@ async def get_video_source(credential: Credential) -> dict:
     """
     api = API["video"]["source"]
     params = {"s_locale": "zh_CN"}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_fan_overview(
@@ -254,7 +254,7 @@ async def get_fan_overview(
     """
     api = API["fan"]["overview"]
     params = {"period": period.value}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_fan_graph(
@@ -277,7 +277,7 @@ async def get_fan_graph(
     """
     api = API["fan"]["graph"]
     params = {"period": period.value, "type": graph_type.value}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_article_overview(credential: Credential) -> dict:
@@ -291,7 +291,7 @@ async def get_article_overview(credential: Credential) -> dict:
         dict: 文章概览数据。
     """
     api = API["article"]["overview"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_article_graph(
@@ -311,7 +311,7 @@ async def get_article_graph(
 
     api = API["article"]["graph"]
     params = {"type": graph_type.value}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_article_rank(
@@ -331,7 +331,7 @@ async def get_article_rank(
 
     api = API["article"]["rank"]
     params = {"type": rank_type.value}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_article_source(credential: Credential) -> dict:
@@ -346,4 +346,4 @@ async def get_article_source(credential: Credential) -> dict:
     """
 
     api = API["article"]["source"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result

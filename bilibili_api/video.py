@@ -28,7 +28,7 @@ from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
 from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku, SpecialDanmaku
-from .utils.network_httpx import request, get_session, Api
+from .utils.network_httpx import Api, get_session
 from .utils.network import get_session as get_session_aiohttp
 from .exceptions import (
     ArgsException,

@@ -40,7 +40,7 @@ async def ...(...) -> dict:
     params = {
         ...
     }
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 ```
 
 首先如果函数要传入凭据类，那么你要添加 `credential = credential if credential else Credential()` 以确保 `credential` 参数不会是 `None` 类型，~~当然不这么做也不会报错，但是你好歹要走个形式啊！~~。接着我们声明 `api` 变量，它是字典 `API` 的一部分，这里的字典 `API` 就是你写入 API 的那个 `json` 文件的内容。所以你的 API 也在里面，你只需要补充好字典的键值就可以了。接着就是可选的 `params` 或 `data`，如果你的 API 需要传入参数的话不要忘记创建它们。最后你只需要返回已经封装好了的函数 `request` 得到的结果就可以了。`request` 函数的第一个参数是访问 `API` 的方法，一般是 `GET`/`POST`/`PUT`/`DELETE`/`PATCH`，第二个参数是 `API` 的链接，你只需要填入 `api["url"]` 就可以了 ( 前提是你的键值没有输错 )，下面的参数最好要指定名称传参，最后不要忘记了：如果这个接口需要登录，那么你得要把凭据类传入进去！( 如果你的函数是在一个类里面，通常每一个类都有一个属性 `credential`，就是创建这个类的时候会传入的，这个时候你只需要传入 `self.credential` 就可以了。当然参数里面不用再写 `credential` 参数了！！ )<br><br>

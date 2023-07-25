@@ -11,7 +11,7 @@ import httpx
 
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API_USER = get_api("user")
 API = get_api("channel-series")
@@ -168,7 +168,7 @@ async def create_channel_series(
         "keywords": ",".join(keywords),
         "description": description,
     }
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def del_channel_series(series_id: int, credential: Credential) -> dict:
@@ -205,7 +205,7 @@ async def del_channel_series(series_id: int, credential: Credential) -> dict:
         "series_id": series_id,
         "aids": ",".join(map(lambda x: str(x), aids)),
     }
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def add_aids_to_series(
@@ -235,7 +235,7 @@ async def add_aids_to_series(
         "series_id": series_id,
         "aids": ",".join(map(lambda x: str(x), aids)),
     }
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def del_aids_from_series(
@@ -265,7 +265,7 @@ async def del_aids_from_series(
         "series_id": series_id,
         "aids": ",".join(map(lambda x: str(x), aids)),
     }
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def set_follow_channel_season(
@@ -281,4 +281,4 @@ async def set_follow_channel_season(
     """
     api = API["operate"]["fav"] if status else API["operate"]["unfav"]
     data = {"season_id": season_id}
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result

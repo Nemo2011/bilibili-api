@@ -21,7 +21,7 @@ from .utils.utils import get_api
 from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API = get_api("session")
 
@@ -53,7 +53,7 @@ async def fetch_session_msgs(
     }
     api = API["session"]["fetch"]
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def new_sessions(
@@ -75,7 +75,7 @@ async def new_sessions(
     params = {"begin_ts": begin_ts, "build": 0, "mobi_app": "web"}
     api = API["session"]["new"]
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_sessions(credential: Credential, session_type: int = 4) -> dict:
@@ -102,7 +102,7 @@ async def get_sessions(credential: Credential, session_type: int = 4) -> dict:
     }
     api = API["session"]["get"]
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_session_detail(
@@ -126,7 +126,7 @@ async def get_session_detail(
     params = {"talker_id": talker_id, "session_type": session_type}
     api = API["session"]["get_session_detail"]
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_likes(credential: Credential) -> dict:
@@ -140,7 +140,7 @@ async def get_likes(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["likes"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_unread_messages(credential: Credential) -> dict:
@@ -154,7 +154,7 @@ async def get_unread_messages(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["unread"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_replies(credential: Credential) -> dict:
@@ -168,7 +168,7 @@ async def get_replies(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["replies"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_system_messages(credential: Credential) -> dict:
@@ -182,7 +182,7 @@ async def get_system_messages(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["system_msg"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_session_settings(credential: Credential) -> dict:
@@ -196,7 +196,7 @@ async def get_session_settings(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["session_settings"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def send_msg(
@@ -260,7 +260,7 @@ async def send_msg(
         "build": 0,
         "mobi_app": "web",
     }
-    return await request("POST", url=api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 class Event:

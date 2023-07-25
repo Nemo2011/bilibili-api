@@ -23,7 +23,7 @@ from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
 from .utils.aid_bvid_transformer import bvid2aid
 from .exceptions.ApiException import ApiException
-from .utils.network_httpx import request, get_session
+from .utils.network_httpx import Api, get_session
 from .exceptions.NetworkException import NetworkException
 from .exceptions.ResponseCodeException import ResponseCodeException
 
@@ -38,7 +38,7 @@ async def _upload_cover(cover: Picture, credential: Credential):
     data = {
         "cover": f'data:image/png;base64,{base64.b64encode(cover.content).decode("utf-8")}'
     }
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 class VideoUploaderPage:
@@ -738,16 +738,13 @@ class VideoUploader(AsyncEvent):
         api = _API["submit"]
 
         try:
-            resp = await request(
-                "POST",
-                api["url"],
-                params={"csrf": self.credential.bili_jct},
-                data=json.dumps(meta),
-                headers={"content-type": "application/json"},
-                credential=self.credential,
-                no_csrf=True,
-            )
-
+            params = {"csrf": self.credential.bili_jct}
+            data = json.dumps(meta)
+            headers = {"content-type": "application/json"}
+            resp = await Api(**api, credential=self.credential, no_csrf=True
+                             ).update_params(**params
+                                             ).update_data(**data
+                                                           ).update_headers(**headers).result
             self.dispatch(VideoUploaderEvents.AFTER_SUBMIT.value, resp)
             return resp
 
@@ -781,7 +778,7 @@ async def get_missions(tid: int = 0, credential: Union[Credential, None] = None)
 
     params = {"tid": tid}
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 class VideoEditorEvents(Enum):
@@ -891,9 +888,7 @@ class VideoEditor(AsyncEvent):
         try:
             api = _API["upload_args"]
             params = {"bvid": self.bvid}
-            self.__old_configs = await request(
-                "GET", api["url"], params=params, credential=self.credential
-            )
+            self.__old_configs = await Api(**api, credential=self.credential).update_params(**params).result
         except Exception as e:
             self.dispatch(VideoEditorEvents.PRELOAD_FAILED.value, {"err", e})
             raise e
@@ -931,19 +926,17 @@ class VideoEditor(AsyncEvent):
         datas["csrf"] = self.credential.bili_jct
         self.dispatch(VideoEditorEvents.PRE_SUBMIT.value)
         try:
-            resp = await request(
-                "POST",
-                api["url"],
-                params={"csrf": self.credential.bili_jct, "t": int(time.time())},
-                data=json.dumps(datas),
-                headers={
-                    "content-type": "application/json;charset=UTF-8",
-                    "referer": "https://member.bilibili.com",
-                    "user-agent": "Mozilla/5.0",
-                },
-                credential=self.credential,
-                no_csrf=True,
-            )
+            params={"csrf": self.credential.bili_jct, "t": int(time.time())},
+            data=json.dumps(datas),
+            headers={
+                "content-type": "application/json;charset=UTF-8",
+                "referer": "https://member.bilibili.com",
+                "user-agent": "Mozilla/5.0",
+            }
+            resp = await Api(**api, credential=self.credential, no_csrf=True
+                             ).update_params(**params
+                                             ).update_data(**data
+                                                           ).update_headers(**headers).result
             self.dispatch(VideoEditorEvents.AFTER_SUBMIT.value, resp)
         except Exception as e:
             self.dispatch(VideoEditorEvents.SUBMIT_FAILED.value, {"err", e})
