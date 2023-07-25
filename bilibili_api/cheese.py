@@ -637,7 +637,7 @@ class CheeseVideo:
         """
         self.credential.raise_for_no_sessdata()
 
-        api =get_api("video")["info"]["has_liked"]
+        api =API_video["info"]["has_liked"]
         params = {"aid": self.get_aid()}
         return await Api(**api, credential=self.credential).update_params(**params).result == 1
 
@@ -650,7 +650,7 @@ class CheeseVideo:
         """
         self.credential.raise_for_no_sessdata()
 
-        api =get_api("video")["info"]["get_pay_coins"]
+        api =API_video["info"]["get_pay_coins"]
         params = {"aid": self.get_aid()}
         return (await Api(**api, credential=self.credential).update_params(**params).result)[
             "multiply"
@@ -665,7 +665,7 @@ class CheeseVideo:
         """
         self.credential.raise_for_no_sessdata()
 
-        api =get_api("video")["info"]["has_favoured"]
+        api =API_video["info"]["has_favoured"]
         params = {"aid": self.get_aid()}
         return (await Api(**api, credential=self.credential).update_params(**params).result)[
             "favoured"
@@ -684,7 +684,7 @@ class CheeseVideo:
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
-        api = get_api("video")["operate"]["like"]
+        api = API_video["operate"]["like"]
         data = {"aid": self.get_aid(), "like": 1 if status else 2}
         return await Api(**api, credential=self.credential).update_data(data).result
 
@@ -706,7 +706,7 @@ class CheeseVideo:
         if num not in (1, 2):
             raise ArgsException("投币数量只能是 1 ~ 2 个。")
 
-        api = get_api("video")["operate"]["coin"]
+        api = API_video["operate"]["coin"]
         data = {
             "aid": self.get_aid(),
             "multiply": num,
@@ -734,7 +734,7 @@ class CheeseVideo:
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
-        api = get_api("video")["operate"]["favorite"]
+        api = API_video["operate"]["favorite"]
         data = {
             "rid": self.get_aid(),
             "type": 2,
