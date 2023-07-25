@@ -201,7 +201,7 @@ async def upload_image(image: Picture, credential: Credential, data: dict = None
         data = {"biz": "new_dyn", "category": "daily"}
 
     files={"file_up": raw}
-    return_info = await Api(**api, credential=credential).update_data(**data).update_files(**files).result
+    return_info = await Api(**api, credential=credential).update_data(**data).request(files=files)
     return return_info
 
 
