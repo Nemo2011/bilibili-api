@@ -74,7 +74,6 @@ class Album:
         api = API["info"]["detail"]
         params = {"doc_id": self.get_doc_id()}
         resp = await Api(**api).update_params(**params).result
-        resp = await Api(**api).update_params(**params).result
         self.__info = resp
         return resp
 
