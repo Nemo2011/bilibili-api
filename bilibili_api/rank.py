@@ -294,7 +294,7 @@ async def get_live_sailing_rank() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["info"]["live_sailing_rank"]
-    return await Api(**api).result
+    return await Api(**api).update_params(**{}).result
 
 
 async def get_live_energy_user_rank(
