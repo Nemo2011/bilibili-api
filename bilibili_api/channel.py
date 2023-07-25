@@ -296,7 +296,7 @@ async def subscribe_channel(channel: Channel, credential: Credential) -> dict:
     """
     api = API["channel"]["subscribe"]
     data = {"id": channel.get_channel_id()}
-    return await Api(**api, credential=credential).update_data(data).result
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def unsubscribe_channel(channel: Channel, credential: Credential) -> dict:
@@ -313,4 +313,4 @@ async def unsubscribe_channel(channel: Channel, credential: Credential) -> dict:
     """
     api = API["channel"]["unsubscribe"]
     data = {"id": channel.get_channel_id()}
-    return await Api(**api, credential=credential).update_data(data).result
+    return await Api(**api, credential=credential).update_data(**data).result

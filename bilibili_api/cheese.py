@@ -626,7 +626,7 @@ class CheeseVideo:
             "mode": danmaku.mode,
             "plat": 1,
         }
-        return await Api(**api, credential=self.credential).update_data(data).result
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def has_liked(self):
         """
@@ -686,7 +686,7 @@ class CheeseVideo:
 
         api = API_video["operate"]["like"]
         data = {"aid": self.get_aid(), "like": 1 if status else 2}
-        return await Api(**api, credential=self.credential).update_data(data).result
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def pay_coin(self, num: int = 1, like: bool = False):
         """
@@ -712,7 +712,7 @@ class CheeseVideo:
             "multiply": num,
             "like": 1 if like else 0,
         }
-        return await Api(**api, credential=self.credential).update_data(data).result
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def set_favorite(
         self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
@@ -741,7 +741,7 @@ class CheeseVideo:
             "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
             "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
         }
-        return await Api(**api, credential=self.credential).update_data(data).result
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_danmaku_xml(self):
         """

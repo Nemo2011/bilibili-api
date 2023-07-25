@@ -110,7 +110,7 @@ class Tag:
         api = API_video["operate"]["subscribe_tag"]
 
         data = {"tag_id": self.__tag_id}
-        return await Api(**api, credential=self.credential).update_data(data).result
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def unsubscribe_tag(self) -> dict:
         """
@@ -125,4 +125,4 @@ class Tag:
         api = API_video["operate"]["unsubscribe_tag"]
 
         data = {"tag_id": self.__tag_id}
-        return await Api(**api, credential=self.credential).update_data(data).result
+        return await Api(**api, credential=self.credential).update_data(**data).result
