@@ -63,14 +63,12 @@
       "url": "https://api.live.bilibili.com/room/v1/Area/getList",
       "method": "GET",
       "verify": false,
-      "params": null,
       "comment": "获取直播间分区信息"
     },
     "user_info": {
       "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/get_user_info",
       "method": "GET",
       "verify": true,
-      "params": null,
       "comment": "获取直播用户等级等信息"
     },
     "user_guards": {
@@ -87,7 +85,6 @@
       "url": "https://api.live.bilibili.com/xlive/web-room/v1/gift/bag_list",
       "method": "GET",
       "verify": "true",
-      "params": null,
       "comment": "获取自己的礼物包裹"
     },
     "dahanghai": {
@@ -130,7 +127,6 @@
       "url": "https://api.live.bilibili.com/xlive/web-ucenter/user/live_info",
       "method": "GET",
       "verify": false,
-      "params": null,
       "comment": "获取自己粉丝牌,粉丝勋章,大航海等数据"
     },
     "general_info": {

@@ -519,10 +519,10 @@ class InteractiveVideo(Video):
         cid = page_list[0]["cid"]
 
         # 获取剧情图版本号
-        api = "https://api.bilibili.com/x/player/v2"
+        url = "https://api.bilibili.com/x/player/v2"
         params = {"bvid": bvid, "cid": cid}
 
-        resp = await Api(**api, credential=credential).update_params(**params).result
+        resp = await Api(method="GET", url=url, credential=credential).update_params(**params).result
         return resp["interaction"]["graph_version"]
 
     async def get_edge_info(self, edge_id: Union[int, None] = None):

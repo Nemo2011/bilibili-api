@@ -191,7 +191,7 @@ class Api:
         """
         毫无亮点的更新 data
         """
-        self.data.update(kwargs)
+        self.data = kwargs
         self.__result = None
         return self
 
@@ -199,7 +199,7 @@ class Api:
         """
         毫无亮点的更新 params
         """
-        self.params.update(kwargs)
+        self.params = kwargs
         self.__result = None
         return self
 
@@ -207,7 +207,7 @@ class Api:
         """
         毫无亮点的更新 files
         """
-        self.files.update(kwargs)
+        self.files = kwargs
         self.__result = None
         return self
     
@@ -215,7 +215,7 @@ class Api:
         """
         毫无亮点的更新 headers
         """
-        self.headers.update(kwargs)
+        self.headers = kwargs
         self.__result = None
         return self
 
