@@ -11,7 +11,7 @@ from . import user
 from .video import Video
 from .utils.utils import join, get_api
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 from .exceptions.ArgsException import ArgsException
 
 API = get_api("favorite-list")
@@ -110,9 +110,7 @@ class FavoriteList:
         api = API["info"]["info"]
         params = {"media_id": self.__media_id}
 
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_content_video(
         self,
@@ -177,9 +175,7 @@ class FavoriteList:
         api = API["info"]["list_content_id_list"]
         params = {"media_id": self.__media_id}
 
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
 
 async def get_video_favorite_list(
@@ -206,7 +202,7 @@ async def get_video_favorite_list(
     if video is not None:
         params["rid"] = video.get_aid()
 
-    return await request("GET", url=api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_video_favorite_list_content(
@@ -254,7 +250,7 @@ async def get_video_favorite_list_content(
     if keyword is not None:
         params["keyword"] = keyword
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_topic_favorite_list(
@@ -279,7 +275,7 @@ async def get_topic_favorite_list(
     api = API["info"]["list_topics"]
     params = {"page_num": page, "page_size": 16}
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_article_favorite_list(
@@ -304,7 +300,7 @@ async def get_article_favorite_list(
     api = API["info"]["list_articles"]
     params = {"pn": page, "ps": 16}
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_album_favorite_list(
@@ -329,7 +325,7 @@ async def get_album_favorite_list(
     api = API["info"]["list_albums"]
     params = {"page": page, "pagesize": 30, "biz_type": 2}
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_course_favorite_list(
@@ -355,7 +351,7 @@ async def get_course_favorite_list(
     self_info = await user.get_self_info(credential)
     params = {"pn": page, "ps": 10, "mid": self_info["mid"]}
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_note_favorite_list(
@@ -380,7 +376,7 @@ async def get_note_favorite_list(
     api = API["info"]["list_notes"]
     params = {"pn": page, "ps": 16}
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def create_video_favorite_list(
@@ -418,7 +414,7 @@ async def create_video_favorite_list(
         "cover": "",
     }
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def modify_video_favorite_list(
@@ -461,7 +457,7 @@ async def modify_video_favorite_list(
         "media_id": media_id,
     }
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def delete_video_favorite_list(
@@ -485,7 +481,7 @@ async def delete_video_favorite_list(
     data = {"media_ids": join(",", media_ids)}
     api = API["operate"]["delete"]
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def copy_video_favorite_list_content(
@@ -519,7 +515,7 @@ async def copy_video_favorite_list_content(
         "resources": ",".join(map(lambda x: f"{str(x)}:2", aids)),
     }
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def move_video_favorite_list_content(
@@ -550,7 +546,7 @@ async def move_video_favorite_list_content(
         "resources": ",".join(map(lambda x: f"{str(x)}:2", aids)),
     }
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def delete_video_favorite_list_content(
@@ -578,7 +574,7 @@ async def delete_video_favorite_list_content(
         "resources": ",".join(map(lambda x: f"{str(x)}:2", aids)),
     }
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def clean_video_favorite_list_content(
@@ -601,7 +597,7 @@ async def clean_video_favorite_list_content(
 
     data = {"media_id": media_id}
 
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def get_favorite_collected(
@@ -624,4 +620,4 @@ async def get_favorite_collected(
     """
     api = API["info"]["collected"]
     params = {"up_mid": uid, "platform": "web", "pn": pn, "ps": ps}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result

@@ -24,7 +24,7 @@ from .utils.danmaku import Danmaku
 from .utils.credential import Credential
 from .utils.BytesReader import BytesReader
 from .exceptions.ArgsException import ArgsException
-from .utils.network_httpx import request, get_session
+from .utils.network_httpx import Api, get_session
 from .exceptions import NetworkException, ResponseException, DanmakuClosedException
 
 API = get_api("cheese")
@@ -92,9 +92,7 @@ class CheeseList:
         """
         api = API["info"]["meta"]
         params = {"season_id": self.__season_id, "ep_id": self.__ep_id}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_list_raw(self):
         """
@@ -105,9 +103,7 @@ class CheeseList:
         """
         api = API["info"]["list"]
         params = {"season_id": self.__season_id, "pn": 1, "ps": 1000}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_list(self) -> List["CheeseVideo"]:
         """
@@ -119,9 +115,7 @@ class CheeseList:
         global cheese_video_meta_cache
         api = API["info"]["list"]
         params = {"season_id": self.__season_id, "pn": 1, "ps": 1000}
-        lists = await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        lists = await Api(**api, credential=self.credential).update_params(**params).result
         cheese_videos = []
         for c in lists["items"]:
             c["ssid"] = self.get_season_id()
@@ -220,9 +214,7 @@ class CheeseVideo:
             "fnval": 4048,
             "fourk": 1,
         }
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_stat(self) -> dict:
         """
@@ -231,9 +223,9 @@ class CheeseVideo:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        url = API_video["info"]["stat"]["url"]
+        api = API_video["info"]["stat"]
         params = {"aid": self.get_aid()}
-        return await request("GET", url, params=params, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_pages(self) -> dict:
         """
@@ -242,9 +234,9 @@ class CheeseVideo:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        url = API_video["info"]["pages"]["url"]
+        api = API_video["info"]["pages"]
         params = {"aid": self.get_aid()}
-        return await request("GET", url, params=params, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_danmaku_view(self) -> dict:
         """
@@ -634,9 +626,7 @@ class CheeseVideo:
             "mode": danmaku.mode,
             "plat": 1,
         }
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(data).result
 
     async def has_liked(self):
         """
@@ -647,9 +637,9 @@ class CheeseVideo:
         """
         self.credential.raise_for_no_sessdata()
 
-        url = get_api("video")["info"]["has_liked"]["url"]
+        api =API_video["info"]["has_liked"]
         params = {"aid": self.get_aid()}
-        return await request("GET", url, params=params, credential=self.credential) == 1
+        return await Api(**api, credential=self.credential).update_params(**params).result == 1
 
     async def get_pay_coins(self):
         """
@@ -660,9 +650,9 @@ class CheeseVideo:
         """
         self.credential.raise_for_no_sessdata()
 
-        url = get_api("video")["info"]["get_pay_coins"]["url"]
+        api =API_video["info"]["get_pay_coins"]
         params = {"aid": self.get_aid()}
-        return (await request("GET", url, params=params, credential=self.credential))[
+        return (await Api(**api, credential=self.credential).update_params(**params).result)[
             "multiply"
         ]
 
@@ -675,9 +665,9 @@ class CheeseVideo:
         """
         self.credential.raise_for_no_sessdata()
 
-        url = get_api("video")["info"]["has_favoured"]["url"]
+        api =API_video["info"]["has_favoured"]
         params = {"aid": self.get_aid()}
-        return (await request("GET", url, params=params, credential=self.credential))[
+        return (await Api(**api, credential=self.credential).update_params(**params).result)[
             "favoured"
         ]
 
@@ -694,11 +684,9 @@ class CheeseVideo:
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
-        api = get_api("video")["operate"]["like"]
+        api = API_video["operate"]["like"]
         data = {"aid": self.get_aid(), "like": 1 if status else 2}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(data).result
 
     async def pay_coin(self, num: int = 1, like: bool = False):
         """
@@ -718,15 +706,13 @@ class CheeseVideo:
         if num not in (1, 2):
             raise ArgsException("投币数量只能是 1 ~ 2 个。")
 
-        api = get_api("video")["operate"]["coin"]
+        api = API_video["operate"]["coin"]
         data = {
             "aid": self.get_aid(),
             "multiply": num,
             "like": 1 if like else 0,
         }
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(data).result
 
     async def set_favorite(
         self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
@@ -748,16 +734,14 @@ class CheeseVideo:
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
 
-        api = get_api("video")["operate"]["favorite"]
+        api = API_video["operate"]["favorite"]
         data = {
             "rid": self.get_aid(),
             "type": 2,
             "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
             "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
         }
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(data).result
 
     async def get_danmaku_xml(self):
         """

@@ -11,7 +11,7 @@ from .utils.utils import get_api
 from .utils.picture import Picture
 from .exceptions import ArgsException
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API = get_api("album")
 
@@ -73,7 +73,7 @@ class Album:
         """
         api = API["info"]["detail"]
         params = {"doc_id": self.get_doc_id()}
-        resp = await request("GET", api["url"], params=params)
+        resp = await Api(**api).update_params(**params).result
         self.__info = resp
         return resp
 
@@ -142,14 +142,14 @@ async def get_homepage_albums_list(
         if order != AlbumOrder.RECOMMEND:
             raise ArgsException("摄影相簿暂不支持以热度/以时间排序。")
         params = {"type": order.value, "page_num": page_num, "page_size": page_size}
-        return await request("GET", api["url"], params=params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     async def get_photos() -> dict:
         api = API["info"]["homepage_photos_albums_list"]
         if order != AlbumOrder.RECOMMEND:
             raise ArgsException("摄影相簿暂不支持以热度/以时间排序。")
         params = {"type": order.value, "page_num": page_num, "page_size": page_size}
-        return await request("GET", api["url"], params=params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     if category == AlbumCategory.PAINTS:
         return await get_painter()
@@ -184,12 +184,12 @@ async def get_homepage_recommend_uppers(
     async def get_painters() -> dict:
         api = API["info"]["homepage_recommended_painters"]
         params = {"num": numbers}
-        return await request("GET", api["url"], params=params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     async def get_photos_uppers() -> dict:
         api = API["info"]["homepage_recommended_photos_uppers"]
         params = {"num": numbers}
-        return await request("GET", api["url"], params=params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     if category == AlbumCategory.PAINTS:
         return await get_painters()
@@ -235,4 +235,4 @@ async def get_user_albums(
         "page_num": page_num,
         "page_size": page_size,
     }
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result

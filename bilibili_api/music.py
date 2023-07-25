@@ -11,7 +11,7 @@ from typing import Optional
 
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API_audio = get_api("audio")
 API = get_api("music")
@@ -118,7 +118,7 @@ async def get_homepage_recommend(credential: Optional[Credential] = None):
     """
     credential = credential if credential else Credential()
     api = API_audio["audio_info"]["homepage_recommend"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_music_index_info(
@@ -154,7 +154,7 @@ async def get_music_index_info(
         "pn": page_num,
         "ps": page_size,
     }
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 class Music:
@@ -185,7 +185,7 @@ class Music:
         """
         api = API["info"]["detail"]
         params = {"music_id": self.__music_id}
-        return await request("GET", api["url"], params=params)
+        return await Api(**api).update_params(**params).result
 
     async def get_music_videos(self):
         """
@@ -196,4 +196,4 @@ class Music:
         """
         api = API["info"]["video_recommend_list"]
         params = {"music_id": self.__music_id}
-        return await request("GET", api["url"], params=params)
+        return await Api(**api).update_params(**params).result

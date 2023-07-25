@@ -120,14 +120,18 @@ class Api:
     ignore_code: bool = False
     data: dict = field(default_factory=dict)
     params: dict = field(default_factory=dict)
+    files: dict = field(default_factory=dict)
+    headers: dict = field(default_factory=dict)
     credential: Credential = field(default_factory=Credential)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.method = self.method.upper()
         self.original_data = self.data.copy()
         self.original_params = self.params.copy()
         self.data = {k: "" for k in self.data.keys()}
         self.params = {k: "" for k in self.params.keys()}
+        self.files = {k: "" for k in self.files.keys()}
+        self.headers = {k: "" for k in self.headers.keys()}
         if self.credential is None:
             self.credential = Credential()
         self.__result = None
@@ -183,7 +187,7 @@ class Api:
             time.sleep(0.0167)
         return self.__result
 
-    def update_data(self, **kwargs):
+    def update_data(self, **kwargs) -> "Api":
         """
         毫无亮点的更新 data
         """
@@ -191,7 +195,7 @@ class Api:
         self.__result = None
         return self
 
-    def update_params(self, **kwargs):
+    def update_params(self, **kwargs) -> "Api":
         """
         毫无亮点的更新 params
         """
@@ -199,9 +203,25 @@ class Api:
         self.__result = None
         return self
 
-    def update(self, **kwargs):
+    def update_files(self, **kwargs) -> "Api":
         """
-        毫无亮点的自动选择更新
+        毫无亮点的更新 files
+        """
+        self.files.update(kwargs)
+        self.__result = None
+        return self
+    
+    def update_headers(self, **kwargs) -> "Api":
+        """
+        毫无亮点的更新 headers
+        """
+        self.headers.update(kwargs)
+        self.__result = None
+        return self
+
+    def update(self, **kwargs) -> "Api":
+        """
+        毫无亮点的自动选择更新，不包括 files, headers
         """
         if self.method == "GET":
             return self.update_params(**kwargs)
@@ -249,8 +269,9 @@ class Api:
             "method": self.method,
             "data": self.data,
             "params": self.params,
+            "files": self.files,
             "cookies": cookies,
-            "headers": HEADERS.copy(),
+            "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
         }
         config.update(kwargs)
 

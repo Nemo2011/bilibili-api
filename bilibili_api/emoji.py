@@ -5,7 +5,7 @@ bilibili_api.emoji
 """
 
 from .utils.utils import get_api
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API = get_api("emoji")
 
@@ -22,4 +22,4 @@ async def get_emoji_list(business: str = "reply") -> dict:
     """
     api = API["list"]
     params = {"business": business}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result

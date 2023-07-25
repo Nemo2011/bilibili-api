@@ -11,7 +11,7 @@ from typing import Union, Optional
 from .utils.utils import get_api
 from .utils.picture import Picture
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API = get_api("vote")
 
@@ -110,7 +110,7 @@ class Vote:
         """
         api = API["info"]["vote_info"]
         params = {"vote_id": self.get_vote_id()}
-        info = await request("GET", api["url"], params=params)
+        info = await Api(**api).update_params(**params).result
         self.title = info["info"]["title"]  # 为 dynmaic.BuildDnamic.add_vote 缓存 title
         return info
 
@@ -170,7 +170,7 @@ class Vote:
         data.update(choices.get_choices())
         if choice_cnt > len(choices.choices):
             raise ValueError("choice_cnt 大于 choices 选项数")
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
 
 async def create_vote(
@@ -214,7 +214,7 @@ async def create_vote(
     data.update(choices.get_choices())
     if choice_cnt > len(choices.choices):
         raise ValueError("choice_cnt 大于 choices 选项数")
-    vote_id = (await request("POST", api["url"], data=data, credential=credential))[
+    vote_id = (await Api(**api, credential=credential).update_data(**data).result)[
         "vote_id"
     ]
     return Vote(vote_id=vote_id, credential=credential)

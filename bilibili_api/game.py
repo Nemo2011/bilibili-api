@@ -8,7 +8,7 @@ from typing import Union
 
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API = get_api("game")
 
@@ -43,9 +43,7 @@ class Game:
         """
         api = API["info"]["info"]
         params = {"game_base_id": self.__game_id}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_up_info(self) -> dict:
         """
@@ -56,9 +54,7 @@ class Game:
         """
         api = API["info"]["UP"]
         params = {"game_base_id": self.__game_id}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_detail(self) -> dict:
         """
@@ -69,9 +65,7 @@ class Game:
         """
         api = API["info"]["detail"]
         params = {"game_base_id": self.__game_id}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_wiki(self) -> dict:
         """
@@ -82,9 +76,7 @@ class Game:
         """
         api = API["info"]["wiki"]
         params = {"game_base_id": self.__game_id}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_videos(self) -> dict:
         """
@@ -95,9 +87,7 @@ class Game:
         """
         api = API["info"]["videos"]
         params = {"game_base_id": self.__game_id}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     # async def get_score(self) -> dict:
     #     """

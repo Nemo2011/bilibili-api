@@ -13,7 +13,7 @@ from typing import Dict, List, Tuple, Union
 from .utils.utils import get_api
 from .exceptions import ArgsException
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API = get_api("video_zone")
 
@@ -97,9 +97,9 @@ async def get_zone_top10(
     if day not in (3, 7):
         raise ArgsException("参数 day 只能是 3，7。")
 
-    url = API["ranking"]["get_top10"]["url"]
+    api = API["ranking"]["get_top10"]
     params = {"rid": tid, "day": day}
-    return await request("GET", url, params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 def get_zone_list() -> List[Dict]:
@@ -155,7 +155,7 @@ async def get_zone_videos_count_today(
     """
     credential = credential if credential else Credential()
     api = API["count"]
-    return (await request("GET", api["url"], credential=credential))["region_count"]
+    return (await Api(**api, credential=credential).result)["region_count"]
 
 
 async def get_zone_new_videos(tid: int, page_num: int = 1, page_size: int = 10) -> dict:
@@ -174,7 +174,7 @@ async def get_zone_new_videos(tid: int, page_num: int = 1, page_size: int = 10) 
     """
     api = API["new"]
     params = {"rid": tid, "pn": page_num, "ps": page_size}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_zone_hot_tags(tid: int) -> List[dict]:
@@ -190,7 +190,7 @@ async def get_zone_hot_tags(tid: int) -> List[dict]:
 
     api = API["get_hot_tags"]
     params = {"rid": tid}
-    return (await request("GET", api["url"], params=params))[0]
+    return (await Api(**api).update_params(**params).result)[0]
 
 
 class VideoZoneTypes(enum.Enum):

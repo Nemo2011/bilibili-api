@@ -11,7 +11,7 @@ import httpx
 from .errors import *
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import Api
 
 API = get_api("video_tag")
 API_video = get_api("video")
@@ -62,7 +62,7 @@ class Tag:
         """
         api = API["info"]["tag_info"]
         params = {"tag_id": self.get_tag_id()}
-        return await request("GET", api["url"], params=params)
+        return await Api(**api).update_params(**params).result
 
     async def get_similar_tags(self) -> dict:
         """
@@ -73,7 +73,7 @@ class Tag:
         """
         api = API["info"]["get_similar"]
         params = {"tag_id": self.get_tag_id()}
-        return await request("GET", api["url"], params=params)
+        return await Api(**api).update_params(**params).result
 
     async def get_cards(self) -> dict:
         """
@@ -84,7 +84,7 @@ class Tag:
         """
         api = API["info"]["get_list"]
         params = {"topic_id": self.get_tag_id()}
-        return await request("GET", api["url"], params=params)
+        return await Api(**api).update_params(**params).result
 
     async def get_history_cards(self, offset_dynamic_id: int) -> dict:
         """
@@ -95,7 +95,7 @@ class Tag:
         """
         api = API["info"]["get_history_list"]
         params = {"topic_id": self.get_tag_id(), "offset_dynamic_id": offset_dynamic_id}
-        return await request("GET", api["url"], params=params)
+        return await Api(**api).update_params(**params).result
 
     async def subscribe_tag(self) -> dict:
         """
@@ -110,9 +110,7 @@ class Tag:
         api = API_video["operate"]["subscribe_tag"]
 
         data = {"tag_id": self.__tag_id}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(data).result
 
     async def unsubscribe_tag(self) -> dict:
         """
@@ -127,6 +125,4 @@ class Tag:
         api = API_video["operate"]["unsubscribe_tag"]
 
         data = {"tag_id": self.__tag_id}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(data).result
