@@ -4,8 +4,8 @@ bilibili_api.utils.utils
 通用工具库。
 """
 
-import json
 import os
+import json
 from typing import List, TypeVar
 
 

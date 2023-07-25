@@ -3,13 +3,15 @@ bilibili_api.utils.initial_state
 
 用于获取页码的初始化信息
 """
-from .credential import Credential
-from ..exceptions import *
-from .network_httpx import get_session
-from .short import get_real_url
-import httpx
 import re
 import json
+
+import httpx
+
+from ..exceptions import *
+from .short import get_real_url
+from .credential import Credential
+from .network_httpx import get_session
 
 
 async def get_initial_state(url: str, credential: Credential = Credential()) -> dict:

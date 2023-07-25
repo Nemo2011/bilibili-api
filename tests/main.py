@@ -17,16 +17,18 @@ Environment:
     BILI_PASSWORD
     BILI_RATELIMIT
 """
-import asyncio
-from colorama import Fore, init, Style
-from bilibili_api import settings
 import os
 import sys
+import time
 import getopt
-import datetime, time
-import traceback
-import os
+import asyncio
+import datetime
 import importlib
+import traceback
+
+from colorama import Fore, Style, init
+
+from bilibili_api import settings
 
 
 def collect_test_function(module):

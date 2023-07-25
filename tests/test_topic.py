@@ -1,4 +1,5 @@
 from bilibili_api import topic
+
 from .common import get_credential
 
 t = topic.Topic(66571, get_credential())

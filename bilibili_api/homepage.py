@@ -5,9 +5,10 @@ bilibili_api.homepage
 """
 
 from typing import Union
+
 from .utils.utils import get_api
-from .utils.network_httpx import request
 from .utils.credential import Credential
+from .utils.network_httpx import Api
 
 API = get_api("homepage")
 
@@ -22,7 +23,7 @@ async def get_top_photo() -> dict:
     """
     api = API["info"]["top_photo"]
     params = {"resource_id": 142}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_links(credential: Union[Credential, None] = None):
@@ -38,7 +39,7 @@ async def get_links(credential: Union[Credential, None] = None):
     """
     api = API["info"]["links"]
     params = {"pf": 0, "ids": 4694}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_popularize(credential: Union[Credential, None] = None):
@@ -54,7 +55,7 @@ async def get_popularize(credential: Union[Credential, None] = None):
     """
     api = API["info"]["popularize"]
     params = {"pf": 0, "ids": 34}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_videos(credential: Union[Credential, None] = None):
@@ -68,4 +69,4 @@ async def get_videos(credential: Union[Credential, None] = None):
         调用 API 返回的结果
     """
     api = API["info"]["videos"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result

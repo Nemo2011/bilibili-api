@@ -4,17 +4,19 @@ bilibili_api.login_func
 登录功能相关
 """
 
+import enum
+import json
+import uuid
 import threading
 from typing import Tuple, Union
-from . import login
-from .utils.credential import Credential
-from .utils.utils import get_api
-from .utils.picture import Picture
-import json
+
 import requests
-import uuid
+
+from . import login
+from .utils.utils import get_api
 from .exceptions import LoginError
-import enum
+from .utils.picture import Picture
+from .utils.credential import Credential
 
 API = get_api("login")
 
@@ -40,8 +42,9 @@ def get_qrcode() -> Tuple[Picture, str]:
     Returns:
         Tuple[dir, str]: 第一项是二维码图片地址（本地缓存）和登录密钥。登录密钥需要保存。
     """
-    img = login.update_qrcode_image()
-    login_key = login.login_key
+    login_data = login.update_qrcode_data()
+    login_key = login_data["qrcode_key"]
+    img = login.make_qrcode(login_data["url"])
     return (Picture.from_file(img), login_key)
 
 

@@ -1,11 +1,12 @@
 # bilibili_api.comment
 
-from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
-from bilibili_api import comment
 import random
 import asyncio
-from . import common
 
+from bilibili_api import comment
+from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
+
+from . import common
 
 BVID = "BV1xx411c7Xg"
 AID = 271

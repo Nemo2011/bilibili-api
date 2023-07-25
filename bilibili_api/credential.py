@@ -4,16 +4,18 @@ from bilibili_api import Credential
 凭据操作类
 """
 
-from typing import Union
-from .utils.credential import Credential as _Credential
-from .utils.network_httpx import get_api, request, get_session, Api
-from Cryptodome.Cipher import PKCS1_OAEP
-from Cryptodome.PublicKey import RSA
-from Cryptodome.Hash import SHA256
-import binascii
+import re
 import time
 import uuid
-import re
+import binascii
+from typing import Union
+
+from Cryptodome.Hash import SHA256
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Cipher import PKCS1_OAEP
+
+from .utils.credential import Credential as _Credential
+from .utils.network_httpx import Api, get_api, get_session
 
 key = RSA.importKey(
     """\
@@ -85,7 +87,7 @@ async def check_cookies(credential: Credential) -> bool:
         bool: 是否需要刷新 Cookies
     """
     api = API["info"]["check_cookies"]
-    return (await request("GET", api["url"], credential=credential))["refresh"]
+    return (await Api(**api, credential=credential).result)["refresh"]
 
 
 def getCorrespondPath() -> str:
@@ -176,4 +178,4 @@ async def confirm_refresh(
         "csrf": new_credential.bili_jct,
         "refresh_token": old_credential.ac_time_value,
     }
-    await request("POST", api["url"], data=data, credential=new_credential)
+    await Api(**api, credential=new_credential).update_data(**data).result

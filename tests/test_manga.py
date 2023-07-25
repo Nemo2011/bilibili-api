@@ -1,7 +1,8 @@
 # bilibili_api.manga
 
-from .common import get_credential
 from bilibili_api import manga
+
+from .common import get_credential
 
 comic = manga.Manga(manga_id=30023, credential=get_credential())
 

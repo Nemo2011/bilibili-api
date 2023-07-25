@@ -3,8 +3,8 @@ ivitools.touch
 
 获取 ivi 文件信息
 """
-import zipfile
 import json
+import zipfile
 
 
 def touch_ivi(path: str):

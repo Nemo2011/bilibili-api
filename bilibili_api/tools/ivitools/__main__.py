@@ -10,15 +10,17 @@ Licensed under the GNU General Public License v3+.
 __author__ = "Nemo2011 <yimoxia@outlook.com>"
 __license__ = "GPLv3+"
 
-from typing import List
 import sys
-import warnings
 import platform
+import warnings
+from typing import List
+
+from colorama import Fore
+
+from .touch import touch_ivi
 from .scan import scan_ivi_file
 from .extract import extract_ivi
-from .touch import touch_ivi
 from .download import download_interactive_video
-from colorama import Fore
 
 
 def run_args(command: str, args: List[str]):

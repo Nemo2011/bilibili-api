@@ -4,27 +4,27 @@ bilibili_api.utils.network_httpx
 复写了 .utils.network，使用 httpx
 """
 
-import asyncio
-import atexit
-import hashlib
-import json
 import re
-import threading
+import json
 import time
 import uuid
-from dataclasses import dataclass, field
+import atexit
+import asyncio
+import hashlib
+import threading
 from functools import reduce
-from inspect import iscoroutinefunction as isAsync
-from typing import Any, Coroutine, Dict, Union
 from urllib.parse import urlencode
+from dataclasses import field, dataclass
+from typing import Any, Dict, Union, Coroutine
+from inspect import iscoroutinefunction as isAsync
 
 import httpx
 
-from .. import settings
-from ..exceptions import ApiException, ResponseCodeException
-from .credential import Credential
 from .sync import sync
+from .. import settings
 from .utils import get_api
+from .credential import Credential
+from ..exceptions import ApiException, ResponseCodeException
 
 __session_pool = {}
 last_proxy = ""
@@ -120,14 +120,18 @@ class Api:
     ignore_code: bool = False
     data: dict = field(default_factory=dict)
     params: dict = field(default_factory=dict)
+    files: dict = field(default_factory=dict)
+    headers: dict = field(default_factory=dict)
     credential: Credential = field(default_factory=Credential)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.method = self.method.upper()
         self.original_data = self.data.copy()
         self.original_params = self.params.copy()
         self.data = {k: "" for k in self.data.keys()}
         self.params = {k: "" for k in self.params.keys()}
+        self.files = {k: "" for k in self.files.keys()}
+        self.headers = {k: "" for k in self.headers.keys()}
         if self.credential is None:
             self.credential = Credential()
         self.__result = None
@@ -183,7 +187,7 @@ class Api:
             time.sleep(0.0167)
         return self.__result
 
-    def update_data(self, **kwargs):
+    def update_data(self, **kwargs) -> "Api":
         """
         毫无亮点的更新 data
         """
@@ -191,7 +195,7 @@ class Api:
         self.__result = None
         return self
 
-    def update_params(self, **kwargs):
+    def update_params(self, **kwargs) -> "Api":
         """
         毫无亮点的更新 params
         """
@@ -199,16 +203,32 @@ class Api:
         self.__result = None
         return self
 
-    def update(self, **kwargs):
+    def update_files(self, **kwargs) -> "Api":
         """
-        毫无亮点的自动选择更新
+        毫无亮点的更新 files
+        """
+        self.files.update(kwargs)
+        self.__result = None
+        return self
+    
+    def update_headers(self, **kwargs) -> "Api":
+        """
+        毫无亮点的更新 headers
+        """
+        self.headers.update(kwargs)
+        self.__result = None
+        return self
+
+    def update(self, **kwargs) -> "Api":
+        """
+        毫无亮点的自动选择更新，不包括 files, headers
         """
         if self.method == "GET":
             return self.update_params(**kwargs)
         else:
             return self.update_data(**kwargs)
 
-    @retry(times=3)
+    @retry(times=settings.wbi_retry_times)
     async def request(self, **kwargs) -> Any:
         """
         向接口发送请求。
@@ -239,7 +259,9 @@ class Api:
             self.data["csrf_token"] = self.credential.bili_jct
 
         cookies = self.credential.get_cookies()
-        cookies["buvid3"] = str(uuid.uuid1())
+        # cookies["buvid3"] = str(uuid.uuid1())
+        # 直接定值，随机字符串部分接口 -412
+        cookies["buvid3"] = "931081E9D-AE3E-9F5F-9109F-6E1521591018836102infoc"
         cookies["Domain"] = ".bilibili.com"
 
         config = {
@@ -247,8 +269,9 @@ class Api:
             "method": self.method,
             "data": self.data,
             "params": self.params,
+            "files": self.files,
             "cookies": cookies,
-            "headers": HEADERS.copy(),
+            "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
         }
         config.update(kwargs)
 
@@ -372,6 +395,7 @@ def enc_wbi(params: dict, mixin_key: str):
     params["w_rid"] = hashlib.md5(
         (Ae + mixin_key).encode(encoding="utf-8")
     ).hexdigest()
+    params["web_location"] = 1550101
 
 
 @atexit.register
@@ -464,7 +488,9 @@ async def request_old(
         params["callback"] = "callback"
 
     cookies = credential.get_cookies()
-    cookies["buvid3"] = str(uuid.uuid1())
+    # cookies["buvid3"] = str(uuid.uuid1())
+    # 直接定值，随机字符串部分接口 -412
+    cookies["buvid3"] = "931081E9D-AE3E-9F5F-9109F-6E1521591018836102infoc"
     cookies["Domain"] = ".bilibili.com"
 
     config = {
@@ -579,51 +605,7 @@ def rollback(func):
     return wrapper
 
 
-def retry(times: int = 3):
-    """
-    重试装饰器
-
-    Args:
-        times (int): 最大重试次数 默认 3 次 负数则一直重试直到成功
-
-    Returns:
-        Any: 原函数调用结果
-    """
-    def wrapper(func: Coroutine):
-        async def inner(*args, **kwargs):
-            # 这里必须新建一个变量用来计数！！不能直接对 times 操作！！！
-            nonlocal times
-            loop = times
-            while loop != 0:
-                if loop != times and settings.request_log:
-                    settings.logger.info(f"第 {times - loop} 次重试")
-                loop -= 1
-                try:
-                    return await func(*args, **kwargs)
-                except json.decoder.JSONDecodeError:
-                    # json 解析错误 说明数据获取有误 再给次机会
-                    continue
-                except ResponseCodeException as e:
-                    # -403 时尝试重新获取 wbi_mixin_key 可能过期了
-                    if e.code == -403:
-                        global wbi_mixin_key
-                        wbi_mixin_key = ""
-                        continue
-                    # 不是 -403 错误直接报错
-                    raise
-            raise ApiException("重试达到最大次数")
-        return inner
-
-    if isAsync(times):
-        # 防呆不防傻 防止有人 @retry() 不打括号
-        func = times
-        times = 3
-        return wrapper(func)
-
-    return wrapper
-
-
-@retry()
+@retry(times = settings.wbi_retry_times)
 @rollback
 async def request(api: Api, url: str = "", params: dict = None, **kwargs) -> Any:
     """

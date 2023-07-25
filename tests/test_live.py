@@ -1,11 +1,13 @@
 # bilibili_api.live
 
-from bilibili_api.utils.danmaku import Danmaku
-from bilibili_api import live
-from bilibili_api.exceptions import ResponseCodeException
-from .common import get_credential
-import random
 import time
+import random
+
+from bilibili_api import live
+from bilibili_api.utils.danmaku import Danmaku
+from bilibili_api.exceptions import ResponseCodeException
+
+from .common import get_credential
 
 l = live.LiveRoom(22544798, get_credential())
 

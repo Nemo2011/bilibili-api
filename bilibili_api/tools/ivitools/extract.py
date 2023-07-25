@@ -3,8 +3,8 @@ ivitools.extract
 
 拆解 ivi 文件相关
 """
-import zipfile
 import os
+import zipfile
 
 
 def extract_ivi(path: str, dest: str):

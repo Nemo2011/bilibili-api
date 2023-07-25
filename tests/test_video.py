@@ -1,11 +1,13 @@
 # bilibili_api.video
 
+import time
 import asyncio
 from sqlite3 import DatabaseError
-import time
+
+from bilibili_api import exceptions
+from bilibili_api import video as video_m
 from bilibili_api.utils.danmaku import Danmaku
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
-from bilibili_api import video as video_m, exceptions
 
 # 调试兼容
 try:

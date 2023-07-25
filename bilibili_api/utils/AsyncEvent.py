@@ -4,8 +4,8 @@ bilibili_api.utils.AsyncEvent
 发布-订阅模式异步事件类支持。
 """
 
-from typing import Coroutine, Callable
 import asyncio
+from typing import Callable, Coroutine
 
 
 class AsyncEvent:

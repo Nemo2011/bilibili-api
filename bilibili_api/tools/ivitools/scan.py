@@ -4,14 +4,16 @@ ivitools.scan
 扫描 ivi 文件相关
 """
 import os
-from .touch import touch_ivi
-from colorama import Fore, Cursor
-from colorama.ansi import clear_line
+import json
+import time
 import zipfile
 import tempfile
-import time
-import json
+
 from tqdm import tqdm
+from colorama import Fore, Cursor
+from colorama.ansi import clear_line
+
+from .touch import touch_ivi
 
 
 def scan_ivi_file(path: str):

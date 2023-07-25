@@ -3,15 +3,16 @@ bilibili_api.channel
 
 频道相关，与视频分区不互通。
 """
-from bilibili_api.utils.initial_state import get_initial_state
-from bilibili_api.utils.network_httpx import request, get_session
-from bilibili_api.utils.utils import get_api
-from bilibili_api.utils.credential import Credential
-from bilibili_api.errors import ResponseException, ApiException
 import re
 import json
 from enum import Enum
-from typing import Optional, List, Union
+from typing import List, Union, Optional
+
+from bilibili_api.utils.utils import get_api
+from bilibili_api.utils.credential import Credential
+from bilibili_api.utils.initial_state import get_initial_state
+from bilibili_api.errors import ApiException, ResponseException
+from bilibili_api.utils.network_httpx import request, Api
 
 API = get_api("channel")
 
@@ -24,7 +25,7 @@ async def get_channel_categories() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["categories"]["list"]
-    return await request("GET", api["url"])
+    return await Api(**api).result
 
 
 async def get_channel_category_detail(
@@ -41,7 +42,7 @@ async def get_channel_category_detail(
     credential = credential if credential else Credential()
     api = API["categories"]["sub_channels"]
     params = {"id": category_id, "offset": offset}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 class ChannelVideosOrder(Enum):
@@ -160,7 +161,7 @@ class Channel:
         if offset is not None:
             params["offset"] = offset
         params["page_size"] = page_size
-        info = await request("GET", api["url"], params=params)
+        info = await Api(**api).update_params(**params).result
 
         # 如果频道与番剧有关，会有番剧信息，需要排除掉 card_type=season 的数据
         info["list"] = self.only_achieve(info["list"])
@@ -198,7 +199,7 @@ class Channel:
             params["offset"] = offset
         params["page_size"] = page_size
 
-        return await request("GET", api["url"], params=params)
+        return await Api(**api).update_params(**params).result
 
     async def get_list(
         self,
@@ -278,7 +279,7 @@ async def get_self_subscribe_channels(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["self_subscribes"]["list"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def subscribe_channel(channel: Channel, credential: Credential) -> dict:
@@ -294,8 +295,8 @@ async def subscribe_channel(channel: Channel, credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["channel"]["subscribe"]
-    params = {"id": channel.get_channel_id()}
-    return await request("POST", api["url"], data=params, credential=credential)
+    data = {"id": channel.get_channel_id()}
+    return await Api(**api, credential=credential).update_data(data).result
 
 
 async def unsubscribe_channel(channel: Channel, credential: Credential) -> dict:
@@ -311,5 +312,5 @@ async def unsubscribe_channel(channel: Channel, credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["channel"]["unsubscribe"]
-    params = {"id": channel.get_channel_id()}
-    return await request("POST", api["url"], data=params, credential=credential)
+    data = {"id": channel.get_channel_id()}
+    return await Api(**api, credential=credential).update_data(data).result

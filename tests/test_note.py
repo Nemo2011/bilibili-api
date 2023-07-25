@@ -1,6 +1,7 @@
 # bilibili_api.note
 
 from bilibili_api import note, bvid2aid
+
 from .common import get_credential
 
 public_note = note.Note(

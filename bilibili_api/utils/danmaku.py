@@ -6,8 +6,9 @@ bilibili_api.utils.Danmaku
 
 import time
 from enum import Enum
-from .utils import crack_uid as _crack_uid
 from typing import Union
+
+from .utils import crack_uid as _crack_uid
 
 
 class DmFontSize(Enum):

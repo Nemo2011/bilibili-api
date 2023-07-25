@@ -1,12 +1,14 @@
-from dataclasses import dataclass
-from PIL import Image
-from typing import Any
-import tempfile
 import os
+import tempfile
+from typing import Any
+from dataclasses import dataclass
+
 import httpx
 from yarl import URL
-from .credential import Credential
+from PIL import Image
+
 from .utils import get_api
+from .credential import Credential
 
 
 @dataclass

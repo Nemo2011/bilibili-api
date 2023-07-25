@@ -6,25 +6,26 @@ bilibili_api.interactive_video
 
 # pylint: skip-file
 
-from asyncio import CancelledError, create_task
+import os
 import copy
 import enum
 import json
-import os
-import shutil
 import time
-from typing import Callable, List, Tuple, Union
-from .utils.credential import Credential
-from .utils.utils import get_api
-from .utils.network_httpx import request
-from .video import Video
+import shutil
+import zipfile
 from urllib import parse
 from random import randint as rand
+from asyncio import CancelledError, create_task
+from typing import List, Tuple, Union, Callable, Coroutine
+
 import requests
+
 from . import settings
-import zipfile
+from .video import Video
+from .utils.utils import get_api
 from .utils.AsyncEvent import AsyncEvent
-from typing import Coroutine
+from .utils.credential import Credential
+from .utils.network_httpx import Api
 
 API = get_api("interactive_video")
 
@@ -475,9 +476,9 @@ class InteractiveVideo(Video):
             dict: 调用 API 返回的结果
         """
         credential = self.credential if self.credential else Credential()
-        url = API["info"]["videolist"]["url"]
+        api = API["info"]["videolist"]
         params = {"bvid": self.get_bvid()}
-        return await request("GET", url=url, params=params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     async def up_submit_story_tree(self, story_tree: str) -> dict:
         """
@@ -490,7 +491,7 @@ class InteractiveVideo(Video):
             dict: 调用 API 返回的结果
         """
         credential = self.credential if self.credential else Credential()
-        url = API["operate"]["savestory"]["url"]
+        api = API["operate"]["savestory"]
         form_data = {"preview": "0", "data": story_tree, "csrf": credential.bili_jct}
         headers = {
             "User-Agent": "Mozilla/5.0",
@@ -500,15 +501,9 @@ class InteractiveVideo(Video):
             "Accept": "application/json, text/plain, */*",
         }
         data = parse.urlencode(form_data)
-        return await request(
-            "POST",
-            url=url,
-            data=data,
-            headers=headers,
-            no_csrf=True,
-            credential=credential,
-        )
-
+        return await Api(**api, credential=credential, no_csrf=True
+                         ).update_data(**data).update_headers(**headers).result
+    
     async def get_graph_version(self) -> int:
         """
         获取剧情图版本号，仅供 `get_edge_info()` 使用。
@@ -527,7 +522,7 @@ class InteractiveVideo(Video):
         api = "https://api.bilibili.com/x/player/v2"
         params = {"bvid": bvid, "cid": cid}
 
-        resp = await request("GET", api, params, credential=credential)
+        resp = await Api(**api, credential=credential).update_params(**params).result
         return resp["interaction"]["graph_version"]
 
     async def get_edge_info(self, edge_id: Union[int, None] = None):
@@ -543,13 +538,13 @@ class InteractiveVideo(Video):
         bvid = self.get_bvid()
         credential = self.credential if self.credential is not None else Credential()
 
-        url = API["info"]["edge_info"]["url"]
+        api = API["info"]["edge_info"]
         params = {"bvid": bvid, "graph_version": (await self.get_graph_version())}
 
         if edge_id is not None:
             params["edge_id"] = edge_id
 
-        return await request("GET", url, params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     async def mark_score(self, score: int = 5):
         """
@@ -565,7 +560,7 @@ class InteractiveVideo(Video):
         self.credential.raise_for_no_bili_jct()
         api = API["operate"]["mark_score"]
         data = {"mark": score, "bvid": self.get_bvid()}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_cid(self) -> int:
         """
