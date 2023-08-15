@@ -908,7 +908,7 @@ class LiveDanmaku(AsyncEvent):
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
-                async with session.ws_connect(uri, headers=HEADERS) as ws:
+                async with session.ws_connect(uri, headers=HEADERS.copy()) as ws:
 
                     @self.on("VERIFICATION_SUCCESSFUL")
                     async def on_verification_successful(data):
