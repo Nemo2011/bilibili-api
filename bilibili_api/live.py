@@ -21,7 +21,7 @@ from .utils.danmaku import Danmaku
 from .utils.network import get_session
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
-from .utils.network_httpx import Api
+from .utils.network_httpx import Api, HEADERS
 from .exceptions.LiveException import LiveException
 
 API = get_api("live")
@@ -908,7 +908,7 @@ class LiveDanmaku(AsyncEvent):
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
-                async with session.ws_connect(uri) as ws:
+                async with session.ws_connect(uri, headers=HEADERS.copy()) as ws:
 
                     @self.on("VERIFICATION_SUCCESSFUL")
                     async def on_verification_successful(data):
