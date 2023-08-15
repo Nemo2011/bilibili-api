@@ -17,7 +17,7 @@ import brotli
 from aiohttp.client_ws import ClientWebSocketResponse
 
 from .utils.credential import Credential
-from .utils.network_httpx import request
+from .utils.network_httpx import request, HEADERS
 from .utils.network import get_session
 from .utils.utils import get_api
 from .utils.danmaku import Danmaku
@@ -962,7 +962,7 @@ class LiveDanmaku(AsyncEvent):
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
-                async with session.ws_connect(uri) as ws:
+                async with session.ws_connect(uri, headers=HEADERS.copy()) as ws:
 
                     @self.on("VERIFICATION_SUCCESSFUL")
                     async def on_verification_successful(data):
