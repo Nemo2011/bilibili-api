@@ -14,20 +14,19 @@
 # pylint: skip-file
 # type: ignore
 
-import argparse
-import calendar
-import gettext
 import io
-import json
-import logging
-import math
 import os
-import random
 import re
 import sys
+import json
+import math
 import time
+import random
+import gettext
+import logging
+import argparse
+import calendar
 import xml.dom.minidom
-
 
 if sys.version_info < (3,):
     raise RuntimeError("at least Python 3.0 is required")

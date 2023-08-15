@@ -12,21 +12,20 @@ bilibili_api.bangumi
 
 import datetime
 from enum import Enum
-from typing import Any, Tuple, Union, List, Optional
+from typing import Any, List, Tuple, Union, Optional
 
 import requests
 
 from bilibili_api.utils.danmaku import Danmaku
 
 from . import settings
-
-from .utils.utils import get_api
-from .utils.initial_state import get_initial_state, get_initial_state_sync
-from .utils.credential import Credential
-from .utils.network_httpx import get_session, request
-from .exceptions.ResponseException import ResponseException
-from .exceptions.ApiException import ApiException
 from .video import Video
+from .utils.utils import get_api
+from .utils.credential import Credential
+from .exceptions.ApiException import ApiException
+from .utils.network_httpx import request, Api, get_session
+from .exceptions.ResponseException import ResponseException
+from .utils.initial_state import get_initial_state, get_initial_state_sync
 
 API = get_api("bangumi")
 
@@ -71,7 +70,7 @@ async def get_timeline(type_: BangumiType, before: int = 7, after: int = 0) -> d
     """
     api = API["info"]["timeline"]
     params = {"types": type_.value, "before": before, "after": after}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 class IndexFilter:
@@ -965,7 +964,7 @@ async def get_index_info(
     # params["type"] 未知参数，为 1
     params["type"] = 1
 
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 class Bangumi:
@@ -1092,7 +1091,7 @@ class Bangumi:
 
         api = API["info"]["meta"]
         params = {"media_id": self.__media_id}
-        return await request("GET", api["url"], params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     async def get_short_comment_list(
         self,
@@ -1117,7 +1116,7 @@ class Bangumi:
         if next is not None:
             params["cursor"] = next
 
-        return await request("GET", api["url"], params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     async def get_long_comment_list(
         self,
@@ -1142,7 +1141,7 @@ class Bangumi:
         if next is not None:
             params["cursor"] = next
 
-        return await request("GET", api["url"], params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     async def get_episode_list(self) -> dict:
         """
@@ -1166,7 +1165,7 @@ class Bangumi:
             )
             api = API["info"]["episodes_list"]
             params = {"season_id": self.__ssid}
-            return await request("GET", api["url"], params, credential=credential)
+            return await Api(**api, credential=credential).update_params(**params).result
 
     async def get_episodes(self) -> List["Episode"]:
         """
@@ -1204,7 +1203,7 @@ class Bangumi:
 
         api = API["info"]["season_status"]
         params = {"season_id": self.__ssid}
-        return await request("GET", api["url"], params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
     async def get_overview(self) -> dict:
         """
@@ -1219,7 +1218,7 @@ class Bangumi:
         else:
             api = API["info"]["collective_info"]
         params = {"season_id": self.__ssid}
-        return await request("GET", api["url"], params, credential=credential)
+        return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def set_follow(
@@ -1243,7 +1242,7 @@ async def set_follow(
 
     api = API["operate"]["follow_add"] if status else API["operate"]["follow_del"]
     data = {"season_id": bangumi.get_season_id()}
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def update_follow_status(
@@ -1266,7 +1265,7 @@ async def update_follow_status(
 
     api = API["operate"]["follow_status"]
     data = {"season_id": bangumi.get_season_id(), "status": status}
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 class Episode(Video):
@@ -1374,7 +1373,7 @@ class Episode(Video):
         Returns:
             dict: 调用 API 返回的结果。
         """
-        url = API["info"]["playurl"]["url"]
+        api = API["info"]["playurl"]
         if True:
             params = {
                 "avid": self.get_aid(),
@@ -1384,7 +1383,7 @@ class Episode(Video):
                 "fnval": 4048,
                 "fourk": 1,
             }
-        return await request("GET", url, params=params, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_danmaku_xml(self) -> str:
         """

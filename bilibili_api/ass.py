@@ -4,19 +4,18 @@ bilibili_api.ass
 有关 ASS 文件的操作
 """
 import os
+from tempfile import gettempdir
 from typing import Union, Optional
 
+from .video import Video
 from .bangumi import Episode
 from .cheese import CheeseVideo
-from .exceptions.ArgsException import ArgsException
-
-from .utils.credential import Credential
-from .utils.network_httpx import get_session
-from .utils.danmaku2ass import Danmaku2ASS
-from .utils.json2srt import json2srt
 from .utils.srt2ass import srt2ass
-from .video import Video
-from tempfile import gettempdir
+from .utils.json2srt import json2srt
+from .utils.credential import Credential
+from .utils.danmaku2ass import Danmaku2ASS
+from .utils.network_httpx import get_session
+from .exceptions.ArgsException import ArgsException
 
 
 def export_ass_from_xml(
@@ -279,7 +278,7 @@ async def make_ass_file_danmakus_xml(
             if cid is None:
                 if page is None:
                     raise ArgsException("page_index 和 cid 至少提供一个。")
-                cid = await v.__get_page_id_by_index(page)  # type: ignore
+                cid = await v._Video__get_page_id_by_index(page)  # type: ignore
         try:
             info = await v.get_info()
         except:

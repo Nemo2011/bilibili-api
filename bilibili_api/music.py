@@ -6,11 +6,12 @@ bilibili_api.music
 注意: 目前 B 站的音频并不和 B 站的音乐相关信息互通。这里的 Music 类的数据来源于视频下面的 bgm 标签和全站音乐榜中的每一个 bgm/音乐。get_homepage_recommend 和 get_music_index_info 来源于 https://www.bilibili.com/v/musicplus/
 """
 
-from .utils.network_httpx import request
-from .utils.credential import Credential
-from .utils.utils import get_api
-from typing import Optional
 from enum import Enum
+from typing import Optional
+
+from .utils.utils import get_api
+from .utils.credential import Credential
+from .utils.network_httpx import Api
 
 API_audio = get_api("audio")
 API = get_api("music")
@@ -117,7 +118,7 @@ async def get_homepage_recommend(credential: Optional[Credential] = None):
     """
     credential = credential if credential else Credential()
     api = API_audio["audio_info"]["homepage_recommend"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_music_index_info(
@@ -153,7 +154,7 @@ async def get_music_index_info(
         "pn": page_num,
         "ps": page_size,
     }
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 class Music:
@@ -184,7 +185,7 @@ class Music:
         """
         api = API["info"]["detail"]
         params = {"music_id": self.__music_id}
-        return await request("GET", api["url"], params=params)
+        return await Api(**api).update_params(**params).result
 
     async def get_music_videos(self):
         """
@@ -195,4 +196,4 @@ class Music:
         """
         api = API["info"]["video_recommend_list"]
         params = {"music_id": self.__music_id}
-        return await request("GET", api["url"], params=params)
+        return await Api(**api).update_params(**params).result

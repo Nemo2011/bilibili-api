@@ -32,6 +32,11 @@ request_log: bool = False
 请求 Api 时是否打印 Api 信息
 """
 
+wbi_retry_times: int = 3
+"""
+WBI请求重试次数上限设置, 默认为3次
+"""
+
 logger = logging.getLogger("request")
 if not logger.handlers:
     logger.setLevel(logging.INFO)

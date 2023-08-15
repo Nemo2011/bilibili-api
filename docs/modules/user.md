@@ -375,7 +375,8 @@ from bilibili_api import user
 |------|----------------|---------------------------|
 | pn   | int, optional  | 页码，从 1 开始. Defaults to 1. |
 | ps   | int, optional | 每页的数据量. Defaults to 100. |
-| desc | bool, optional | 倒序排序. Defaults to True.   |
+| order | OrderType, optional | 排序方式. Defaults to OrderType.desc. |
+| attention | bool, optional | 是否采用“最常访问”排序，否则为“关注顺序”排序. Defaults to False. |
 
 获取用户关注列表（不是自己只能访问前5页）
 

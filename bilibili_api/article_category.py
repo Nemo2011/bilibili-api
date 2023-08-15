@@ -4,13 +4,13 @@ bilibili_api.article_category
 专栏分类相关
 """
 import os
-from typing import List, Tuple, Optional
 import copy
 import json
-from .utils.network_httpx import request
-from .utils.utils import get_api
 from enum import Enum
+from typing import List, Tuple, Optional
 
+from .utils.utils import get_api
+from .utils.network_httpx import Api
 
 API = get_api("article-category")
 
@@ -148,4 +148,4 @@ async def get_category_recommend_articles(
     """
     api = API["info"]["recommends"]
     params = {"cid": category_id, "sort": order.value, "pn": page_num, "ps": page_size}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result

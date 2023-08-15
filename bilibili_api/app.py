@@ -4,12 +4,13 @@ bilibili_api.app
 手机 APP 相关
 """
 
+import time
+from hashlib import md5
+from typing import Union
+
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import request
-from hashlib import md5
-import time
-from typing import Union
+from .utils.network_httpx import Api
 
 API = get_api("app")
 
@@ -55,7 +56,7 @@ async def get_loading_images(
         "width": width,
         "birth": birth,
     }
-    return await request("GET", api["url"], params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_loading_images_special(
@@ -119,4 +120,4 @@ async def get_loading_images_special(
         "ts": ts,
         "sign": sign,
     }
-    return await request("GET", api["url"], params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result

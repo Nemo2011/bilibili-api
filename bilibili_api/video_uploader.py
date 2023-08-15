@@ -3,32 +3,29 @@ bilibili_api.video_uploader
 
 视频上传
 """
-import asyncio
-from asyncio.exceptions import CancelledError
-from asyncio.tasks import Task, create_task
 import os
+import json
 import time
+import base64
 import random
+import asyncio
+from enum import Enum
+from typing import List, Union
+from copy import copy, deepcopy
+from asyncio.tasks import Task, create_task
+from asyncio.exceptions import CancelledError
 
 from .video import Video
-from .utils.aid_bvid_transformer import bvid2aid
-from .utils.credential import Credential
-from .utils.picture import Picture
-from copy import copy, deepcopy
-from .exceptions.ResponseCodeException import ResponseCodeException
-import json
-import base64
-from enum import Enum
-
-from .exceptions.ApiException import ApiException
-from .exceptions.NetworkException import NetworkException
-from typing import List, Union
-
-from .utils.AsyncEvent import AsyncEvent
-from .utils.network_httpx import get_session, request
 from .utils.utils import get_api
-
 from .dynamic import upload_image
+from .utils.picture import Picture
+from .utils.AsyncEvent import AsyncEvent
+from .utils.credential import Credential
+from .utils.aid_bvid_transformer import bvid2aid
+from .exceptions.ApiException import ApiException
+from .utils.network_httpx import Api, get_session
+from .exceptions.NetworkException import NetworkException
+from .exceptions.ResponseCodeException import ResponseCodeException
 
 # import ffmpeg
 
@@ -41,7 +38,7 @@ async def _upload_cover(cover: Picture, credential: Credential):
     data = {
         "cover": f'data:image/png;base64,{base64.b64encode(cover.content).decode("utf-8")}'
     }
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 class VideoUploaderPage:
@@ -741,16 +738,13 @@ class VideoUploader(AsyncEvent):
         api = _API["submit"]
 
         try:
-            resp = await request(
-                "POST",
-                api["url"],
-                params={"csrf": self.credential.bili_jct},
-                data=json.dumps(meta),
-                headers={"content-type": "application/json"},
-                credential=self.credential,
-                no_csrf=True,
-            )
-
+            params = {"csrf": self.credential.bili_jct}
+            data = json.dumps(meta)
+            headers = {"content-type": "application/json"}
+            resp = await Api(**api, credential=self.credential, no_csrf=True
+                             ).update_params(**params
+                                             ).update_data(**data
+                                                           ).update_headers(**headers).result
             self.dispatch(VideoUploaderEvents.AFTER_SUBMIT.value, resp)
             return resp
 
@@ -784,7 +778,7 @@ async def get_missions(tid: int = 0, credential: Union[Credential, None] = None)
 
     params = {"tid": tid}
 
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 class VideoEditorEvents(Enum):
@@ -894,9 +888,7 @@ class VideoEditor(AsyncEvent):
         try:
             api = _API["upload_args"]
             params = {"bvid": self.bvid}
-            self.__old_configs = await request(
-                "GET", api["url"], params=params, credential=self.credential
-            )
+            self.__old_configs = await Api(**api, credential=self.credential).update_params(**params).result
         except Exception as e:
             self.dispatch(VideoEditorEvents.PRELOAD_FAILED.value, {"err", e})
             raise e
@@ -934,19 +926,17 @@ class VideoEditor(AsyncEvent):
         datas["csrf"] = self.credential.bili_jct
         self.dispatch(VideoEditorEvents.PRE_SUBMIT.value)
         try:
-            resp = await request(
-                "POST",
-                api["url"],
-                params={"csrf": self.credential.bili_jct, "t": int(time.time())},
-                data=json.dumps(datas),
-                headers={
-                    "content-type": "application/json;charset=UTF-8",
-                    "referer": "https://member.bilibili.com",
-                    "user-agent": "Mozilla/5.0",
-                },
-                credential=self.credential,
-                no_csrf=True,
-            )
+            params={"csrf": self.credential.bili_jct, "t": int(time.time())},
+            data=json.dumps(datas),
+            headers={
+                "content-type": "application/json;charset=UTF-8",
+                "referer": "https://member.bilibili.com",
+                "user-agent": "Mozilla/5.0",
+            }
+            resp = await Api(**api, credential=self.credential, no_csrf=True
+                             ).update_params(**params
+                                             ).update_data(**data
+                                                           ).update_headers(**headers).result
             self.dispatch(VideoEditorEvents.AFTER_SUBMIT.value, resp)
         except Exception as e:
             self.dispatch(VideoEditorEvents.SUBMIT_FAILED.value, {"err", e})

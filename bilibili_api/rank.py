@@ -4,11 +4,12 @@ bilibili_api.rank
 和哔哩哔哩视频排行榜相关的 API
 """
 
+from enum import Enum
 from typing import Union
-from .utils.network_httpx import request
+
 from .utils.utils import get_api
 from .utils.credential import Credential
-from enum import Enum
+from .utils.network_httpx import Api
 
 API = get_api("rank")
 
@@ -201,7 +202,7 @@ async def get_rank(
     else:
         raise Exception("Unknown RankType")
 
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_music_rank_list() -> dict:
@@ -213,7 +214,7 @@ async def get_music_rank_list() -> dict:
     """
     api = API["info"]["music_weakly_series"]
     params = {"list_type": 1}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_music_rank_weakly_detail(week: int = 1) -> dict:
@@ -228,7 +229,7 @@ async def get_music_rank_weakly_detail(week: int = 1) -> dict:
     """
     api = API["info"]["music_weakly_details"]
     params = {"list_id": week}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_music_rank_weakly_musics(week: int = 1) -> dict:
@@ -243,7 +244,7 @@ async def get_music_rank_weakly_musics(week: int = 1) -> dict:
     """
     api = API["info"]["music_weakly_content"]
     params = {"list_id": week}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
@@ -258,7 +259,7 @@ async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
     """
     api = API["info"]["VIP_rank"]
     params = {"rank_id": type_.value}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW) -> dict:
@@ -271,7 +272,7 @@ async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW) -> dict:
     api = API["info"]["manga_rank"]
     params = {"device": "pc", "platform": "web"}
     data = {"id": type_.value}
-    return await request("POST", api["url"], params=params, data=data, no_csrf=True)
+    return await Api(**api, no_csrf=True).update_data(**data).update_params(**params).result
 
 
 async def get_live_hot_rank() -> dict:
@@ -282,7 +283,7 @@ async def get_live_hot_rank() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["info"]["live_hot_rank"]
-    return await request("GET", api["url"])
+    return await Api(**api).result
 
 
 async def get_live_sailing_rank() -> dict:
@@ -293,7 +294,7 @@ async def get_live_sailing_rank() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["info"]["live_sailing_rank"]
-    return await request("GET", api["url"])
+    return await Api(**api).update_params(**{}).result
 
 
 async def get_live_energy_user_rank(
@@ -314,7 +315,7 @@ async def get_live_energy_user_rank(
     """
     api = API["info"]["live_energy_user_rank"]
     params = {"date": date.value, "page": pn, "page_size": ps}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_live_rank(
@@ -341,7 +342,7 @@ async def get_live_rank(
         "is_trend": 1,
         "area_id": None,
     }
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def get_live_user_medal_rank(pn: int = 1, ps: int = 20) -> dict:
@@ -358,12 +359,12 @@ async def get_live_user_medal_rank(pn: int = 1, ps: int = 20) -> dict:
     """
     api = API["info"]["live_medal_level_rank"]
     params = {"page": pn, "page_size": ps}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def subscribe_music_rank(
     status: bool = True, credential: Union[Credential, None] = None
-):
+) -> dict:
     """
     设置关注全站音乐榜
 
@@ -377,10 +378,10 @@ async def subscribe_music_rank(
     credential.raise_for_no_bili_jct()
     api = API["operate"]["subscribe"]
     data = {"list_id": 1, "state": (1 if status else 2)}
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
-async def get_playlet_rank_phases():
+async def get_playlet_rank_phases() -> dict:
     """
     获取全站短剧榜期数
 
@@ -388,10 +389,10 @@ async def get_playlet_rank_phases():
         dict: 调用 API 返回的结果
     """
     api = API["info"]["playlet_rank_phase"]
-    return await request("POST", api["url"], data={}, json_body=True, no_csrf=True)
+    return await Api(**api, json_body=True, no_csrf=True).result
 
 
-async def get_playlet_rank_info(phase_id: int):
+async def get_playlet_rank_info(phase_id: int) -> dict:
     """
     获取全站短剧榜
 
@@ -405,4 +406,4 @@ async def get_playlet_rank_info(phase_id: int):
     """
     api = API["info"]["playlet_rank_info"]
     data = {"phaseID": phase_id}
-    return await request("POST", api["url"], data=data, json_body=True, no_csrf=True)
+    return await Api(**api, json_body=True, no_csrf=True).update_data(**data).result

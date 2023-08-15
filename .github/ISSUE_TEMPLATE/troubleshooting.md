@@ -1,7 +1,7 @@
 ---
 name: 漏洞反馈
 about: 使用该模板进行漏洞反馈
-title: "【漏洞】{这里填写标题}"
+title: "[漏洞] {这里填写标题}"
 labels: 'bug'
 assignees: ''
 
@@ -20,6 +20,8 @@ assignees: ''
 **解释器：** cpython / pypi / jython
 
 **报错信息：**
+
+<!-- 务必提供模块版本并确保为最新版 -->
 
 ```
 这里填写报错信息

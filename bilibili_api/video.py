@@ -6,33 +6,36 @@ bilibili_api.video
 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 """
 
-from enum import Enum
 import re
-import datetime
-import asyncio
-import logging
 import json
 import struct
-import aiohttp
-import httpx
-from typing import Any, List, Union
-from functools import cmp_to_key
-
-from .exceptions import ResponseException
-from .exceptions import NetworkException
-from .exceptions import ArgsException, DanmakuClosedException
-
-from .utils.credential import Credential
-from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
-from .utils.utils import get_api
-from .utils.network_httpx import request, get_session
-from .utils.network import get_session as get_session_aiohttp
-from .utils.danmaku import Danmaku, SpecialDanmaku
-from .utils.BytesReader import BytesReader
-from .utils.AsyncEvent import AsyncEvent
-from dataclasses import dataclass
-from . import settings
+import asyncio
+import logging
+import datetime
+from enum import Enum
 from inspect import isfunction
+from functools import cmp_to_key
+from dataclasses import dataclass
+from typing import Any, List, Union
+
+import httpx
+import aiohttp
+
+from . import settings
+from .utils.aid_bvid_transformer import bvid2aid, aid2bvid
+from .utils.utils import get_api
+from .utils.AsyncEvent import AsyncEvent
+from .utils.credential import Credential
+from .utils.BytesReader import BytesReader
+from .utils.danmaku import Danmaku, SpecialDanmaku
+from .utils.network_httpx import Api, get_session
+from .utils.network import get_session as get_session_aiohttp
+from .exceptions import (
+    ArgsException,
+    NetworkException,
+    ResponseException,
+    DanmakuClosedException,
+)
 
 API = get_api("video")
 
@@ -46,7 +49,7 @@ async def get_cid_info(cid: int):
     """
     api = API["info"]["cid_info"]
     params = {"cid": cid}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 class DanmakuOperatorType(Enum):
@@ -212,9 +215,7 @@ class Video:
         """
         api = API["info"]["detail"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        resp = await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        resp = await Api(**api, credential=self.credential).update_params(**params).result
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
@@ -237,9 +238,9 @@ class Video:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        url = API["info"]["stat"]["url"]
+        api = API["info"]["stat"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        return await request("GET", url, params=params, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_tags(
         self, page_index: Union[int, None] = 0, cid: Union[int, None] = None
@@ -260,9 +261,9 @@ class Video:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.get_cid(page_index=page_index)
-        url = API["info"]["tags"]["url"]
+        api = API["info"]["tags"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid(), "cid": cid}
-        return await request("GET", url, params=params, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_chargers(self) -> dict:
         """
@@ -273,9 +274,9 @@ class Video:
         """
         info = await self.__get_info_cached()
         mid = info["owner"]["mid"]
-        url = API["info"]["chargers"]["url"]
+        api = API["info"]["chargers"]
         params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "mid": mid}
-        return await request("GET", url, params=params, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_pages(self) -> List[dict]:
         """
@@ -284,9 +285,9 @@ class Video:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        url = API["info"]["pages"]["url"]
+        api = API["info"]["pages"]
         params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
-        return await request("GET", url, params=params, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def __get_page_id_by_index(self, page_index: int) -> int:
         """
@@ -332,15 +333,15 @@ class Video:
         """
         params: dict[str, Any] = {"aid": self.get_aid()}
         if pvideo:
-            url = API["info"]["video_snapshot_pvideo"]["url"]
+            api = API["info"]["video_snapshot_pvideo"]
         else:
             params["bvid"] = self.get_bvid()
             if json_index:
                 params["index"] = 1
             if cid:
                 params["cid"] = cid
-            url = API["info"]["video_snapshot"]["url"]
-        return await request("GET", url, params=params)
+            api = API["info"]["video_snapshot"]
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_cid(self, page_index: int) -> int:
         """
@@ -383,7 +384,7 @@ class Video:
 
             cid = await self.__get_page_id_by_index(page_index)
 
-        url = API["info"]["playurl"]["url"]
+        api = API["info"]["playurl"]
         if html5:
             params = {
                 "avid": self.get_aid(),
@@ -403,7 +404,7 @@ class Video:
                 "fnval": 4048,
                 "fourk": 1,
             }
-        result = await request("GET", url, params=params, credential=self.credential)
+        result = await Api(**api, credential=self.credential).update_params(**params).result
         result.update({"is_html5": True} if html5 else {})
         return result
 
@@ -414,9 +415,9 @@ class Video:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        url = API["info"]["related"]["url"]
+        api = API["info"]["related"]
         params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
-        return await request("GET", url, params=params, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def has_liked(self) -> bool:
         """
@@ -427,9 +428,9 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
 
-        url = API["info"]["has_liked"]["url"]
+        api = API["info"]["has_liked"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        return await request("GET", url, params=params, credential=self.credential) == 1
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_pay_coins(self) -> int:
         """
@@ -440,9 +441,9 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
 
-        url = API["info"]["get_pay_coins"]["url"]
+        api = API["info"]["get_pay_coins"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        return (await request("GET", url, params=params, credential=self.credential))[
+        return (await Api(**api, credential=self.credential).update_params(**params).result)[
             "multiply"
         ]
 
@@ -455,9 +456,9 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
 
-        url = API["info"]["has_favoured"]["url"]
+        api = API["info"]["has_favoured"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        return (await request("GET", url, params=params, credential=self.credential))[
+        return (await Api(**api, credential=self.credential).update_params(**params).result)[
             "favoured"
         ]
 
@@ -468,9 +469,9 @@ class Video:
         Returns:
             bool: 是否禁止笔记。
         """
-        url = API["info"]["is_forbid"]["url"]
+        api = API["info"]["is_forbid"]
         params = {"aid": self.get_aid()}
-        return (await request("GET", url, params=params, credential=self.credential))[
+        return (await Api(**api, credential=self.credential).update_params(**params).result)[
             "forbid_note_entrance"
         ]
 
@@ -483,9 +484,9 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
 
-        url = API["info"]["private_notes"]["url"]
+        api = API["info"]["private_notes"]
         params = {"oid": self.get_aid(), "oid_type": 0}
-        return (await request("GET", url, params=params, credential=self.credential))[
+        return (await Api(**api, credential=self.credential).update_params(**params).result)[
             "noteIds"
         ]
 
@@ -502,9 +503,9 @@ class Video:
             dict: 调用 API 返回的结果。
         """
 
-        url = API["info"]["public_notes"]["url"]
+        api = API["info"]["public_notes"]
         params = {"oid": self.get_aid(), "oid_type": 0, "pn": pn, "ps": ps}
-        return await request("GET", url, params=params, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_danmaku_view(
         self, page_index: Union[int, None] = None, cid: Union[int, None] = None
@@ -961,9 +962,7 @@ class Video:
 
         api = API["danmaku"]["get_history_danmaku_index"]
         params = {"oid": cid, "month": date.strftime("%Y-%m"), "type": 1}
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def has_liked_danmakus(
         self,
@@ -997,9 +996,7 @@ class Video:
 
         api = API["danmaku"]["has_liked_danmaku"]
         params = {"oid": cid, "ids": ",".join(ids)}  # type: ignore
-        return await request(
-            "GET", url=api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def send_danmaku(
         self,
@@ -1052,9 +1049,7 @@ class Video:
             "mode": danmaku.mode,
             "plat": 1,
         }
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_danmaku_xml(
         self, page_index: Union[int, None] = None, cid: Union[int, None] = None
@@ -1126,9 +1121,7 @@ class Video:
             "op": 1 if status else 2,
             "platform": "web_player",
         }
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def operate_danmaku(
         self,
@@ -1177,9 +1170,7 @@ class Video:
             "state": type_.value,
         }
 
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def like(self, status: bool = True) -> dict:
         """
@@ -1196,9 +1187,7 @@ class Video:
 
         api = API["operate"]["like"]
         data = {"aid": self.get_aid(), "like": 1 if status else 2}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def pay_coin(self, num: int = 1, like: bool = False) -> dict:
         """
@@ -1225,9 +1214,7 @@ class Video:
             "multiply": num,
             "like": 1 if like else 0,
         }
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def triple(self) -> dict:
         """
@@ -1238,7 +1225,7 @@ class Video:
         """
         api = API["operate"]["yjsl"]
         data = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def add_tag(self, name: str) -> dict:
         """
@@ -1255,9 +1242,7 @@ class Video:
 
         api = API["operate"]["add_tag"]
         data = {"aid": self.get_aid(), "bvid": self.get_bvid(), "tag_name": name}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def delete_tag(self, tag_id: int) -> dict:
         """
@@ -1275,9 +1260,7 @@ class Video:
         api = API["operate"]["del_tag"]
 
         data = {"tag_id": tag_id, "aid": self.get_aid(), "bvid": self.get_bvid()}
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def appeal(self, reason: Any, detail: str):
         """
@@ -1299,7 +1282,7 @@ class Video:
             reason = {"tid": reason}
         data.update(reason)
         # XXX: 暂不支持上传附件
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def set_favorite(
         self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
@@ -1328,9 +1311,7 @@ class Video:
             "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
             "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
         }
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_subtitle(
         self,
@@ -1375,9 +1356,7 @@ class Video:
             "cid": cid,
             "ep_id": epid,
         }
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def submit_subtitle(
         self,
@@ -1449,9 +1428,7 @@ class Video:
             "bvid": self.get_bvid(),
         }
 
-        return await request(
-            "POST", api["url"], data=payload, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_danmaku_snapshot(self) -> dict:
         """
@@ -1464,9 +1441,7 @@ class Video:
 
         params = {"aid": self.get_aid()}
 
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def recall_danmaku(
         self,
@@ -1498,9 +1473,7 @@ class Video:
         api = API["danmaku"]["recall"]
         data = {"dmid": dmid, "cid": cid}
 
-        return await request(
-            "POST", url=api["url"], data=data, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_pbp(
         self, page_index: Union[int, None] = None, cid: Union[int, None] = None
@@ -1549,7 +1522,7 @@ class Video:
         datas = {
             "aid": self.get_aid(),
         }
-        return await request("POST", api["url"], data=datas, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**datas).result
 
     async def delete_from_toview(self) -> dict:
         """
@@ -1562,7 +1535,7 @@ class Video:
         self.credential.raise_for_no_bili_jct()
         api = get_api("toview")["operate"]["del"]
         datas = {"viewed": "false", "aid": self.get_aid()}
-        return await request("POST", api["url"], data=datas, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**datas).result
 
 
 class VideoOnlineMonitor(AsyncEvent):
@@ -1694,11 +1667,9 @@ class VideoOnlineMonitor(AsyncEvent):
         # 获取服务器信息
         self.logger.debug(f"准备连接：{self.__video.get_bvid()}")
         self.logger.debug(f"获取服务器信息中...")
-        resp = await request(
-            "GET",
-            "https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc",
-            credential=self.credential,
-        )
+
+        api = API["video"]["info"]["video_online_broadcast_servers"]
+        resp = await Api(**api, credential=self.credential).result
 
         uri = f"wss://{resp['domain']}:{resp['wss_port']}/sub"
         self.__heartbeat_interval = resp["heartbeat"]

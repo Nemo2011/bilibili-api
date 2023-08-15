@@ -1,6 +1,7 @@
 # bilibili_api.black_room
 
 from bilibili_api import black_room
+
 from . import common
 
 room = black_room.BlackRoom(2656141)

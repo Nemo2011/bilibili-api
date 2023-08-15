@@ -4,25 +4,24 @@ bilibili_api.dynamic
 动态相关
 """
 
-import json
-import re
 import os
+import re
 import sys
-from typing import Any, List, Tuple, Union, Optional
+import json
+import asyncio
 from enum import Enum
+from datetime import datetime
+from typing import Any, List, Tuple, Union, Optional
 
 import httpx
 
-from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
-from .utils.network_httpx import request
-from .utils.credential import Credential
-from .utils.sync import sync
-from . import user, exceptions
 from .utils import utils
+from .utils.sync import sync
 from .utils.picture import Picture
-from . import vote
-from datetime import datetime
-import asyncio
+from . import user, vote, exceptions
+from .utils.credential import Credential
+from .utils.network_httpx import Api
+from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 
 API = utils.get_api("dynamic")
 
@@ -201,14 +200,8 @@ async def upload_image(image: Picture, credential: Credential, data: dict = None
     if data is None:
         data = {"biz": "new_dyn", "category": "daily"}
 
-    return_info = await request(
-        "POST",
-        url=api["url"],
-        data=data,
-        files={"file_up": raw},
-        credential=credential,
-    )
-
+    files={"file_up": raw}
+    return_info = await Api(**api, credential=credential).update_data(**data).request(files=files)
     return return_info
 
 
@@ -612,7 +605,7 @@ async def send_dynamic(info: BuildDynmaic, credential: Credential):
             "publish_time": int(send_time.timestamp()),  # type: ignore
             "request": json.dumps(request_data, ensure_ascii=False),
         }
-        return await request("POST", api["url"], data=data, credential=credential)
+        return await Api(**api, credential=credential).update_data(**data).result
 
     if info.time != None:
         return await schedule(2 if len(info.pics) == 0 else 4)
@@ -637,14 +630,8 @@ async def send_dynamic(info: BuildDynmaic, credential: Credential):
         data["dyn_req"]["attach_card"]["common_card"] = info.get_attach_card()
     else:
         data["dyn_req"]["attach_card"] = None
-    send_result = await request(
-        "POST",
-        api["url"],
-        data=data,
-        credential=credential,
-        params={"csrf": credential.bili_jct},
-        json_body=True,
-    )
+    params = {"csrf": credential.bili_jct}
+    send_result = await Api(**api, credential=credential, json_body=True).update_data(**data).update_params(**params).result
     return send_result
 
 
@@ -664,7 +651,7 @@ async def get_schedules_list(credential: Credential) -> dict:
     credential.raise_for_no_sessdata()
 
     api = API["schedule"]["list"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def send_schedule_now(draft_id: int, credential: Credential) -> dict:
@@ -683,7 +670,7 @@ async def send_schedule_now(draft_id: int, credential: Credential) -> dict:
 
     api = API["schedule"]["publish_now"]
     data = {"draft_id": draft_id}
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def delete_schedule(draft_id: int, credential: Credential) -> dict:
@@ -702,7 +689,7 @@ async def delete_schedule(draft_id: int, credential: Credential) -> dict:
 
     api = API["schedule"]["delete"]
     data = {"draft_id": draft_id}
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 class Dynamic:
@@ -741,9 +728,7 @@ class Dynamic:
             "timezone_offset": -480,
             "features": "itemOpusStyle",
         }
-        data = await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        data = await Api(**api, credential=self.credential).update_params(**params).result
         return data
 
     async def get_reposts(self, offset: str = "0") -> dict:
@@ -760,9 +745,7 @@ class Dynamic:
         params: dict[str, Any] = {"dynamic_id": self.__dynamic_id}
         if offset != "0":
             params["offset"] = offset
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_likes(self, pn: int = 1, ps: int = 30) -> dict:
         """
@@ -778,9 +761,7 @@ class Dynamic:
         """
         api = API["info"]["likes"]
         params = {"dynamic_id": self.__dynamic_id, "pn": pn, "ps": ps}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def set_like(self, status: bool = True) -> dict:
         """
@@ -805,7 +786,7 @@ class Dynamic:
             "up": 1 if status else 2,
             "uid": self_uid,
         }
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def delete(self) -> dict:
         """
@@ -818,7 +799,7 @@ class Dynamic:
 
         api = API["operate"]["delete"]
         data = {"dynamic_id": self.__dynamic_id}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def repost(self, text: str = "转发动态") -> dict:
         """
@@ -835,7 +816,7 @@ class Dynamic:
         api = API["operate"]["repost"]
         data = await _get_text_data(text)
         data["dynamic_id"] = self.__dynamic_id
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
 
 async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> dict:
@@ -851,7 +832,7 @@ async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> d
     credential = credential if credential else Credential()
     credential.raise_for_no_sessdata()
     api = API["info"]["attention_new_dynamic"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_live_users(
@@ -872,7 +853,7 @@ async def get_live_users(
     credential.raise_for_no_sessdata()
     api = API["info"]["attention_live"]
     params = {"size": size}
-    return await request("GET", api["url"], params=params, credential=credential)
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_dynamic_page_UPs_info(credential: Credential) -> dict:
@@ -886,7 +867,7 @@ async def get_dynamic_page_UPs_info(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["info"]["dynamic_page_UPs_info"]
-    return await request("GET", api["url"], credential=credential)
+    return await Api(**api, credential=credential).result
 
 
 async def get_dynamic_page_info(
@@ -930,9 +911,7 @@ async def get_dynamic_page_info(
     elif host_mid:  # 指定 UP 主动态
         params["host_mid"] = host_mid
 
-    dynmaic_data = await request(
-        "GET", api["url"], credential=credential, params=params
-    )
+    dynmaic_data = await Api(**api, credential=credential).update_params(**params).result
     return [
         Dynamic(dynamic_id=int(dynamic["id_str"]), credential=credential)
         for dynamic in dynmaic_data["items"]

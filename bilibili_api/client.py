@@ -4,8 +4,8 @@ bilibili_api.client
 IP 终端相关
 """
 
-from .utils.network_httpx import request
 from .utils.utils import get_api
+from .utils.network_httpx import request, Api
 
 API = get_api("client")
 
@@ -18,7 +18,7 @@ async def get_zone() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["zone"]
-    return await request("GET", api["url"])
+    return await Api(**api).result
 
 
 async def get_client_info() -> dict:
@@ -29,4 +29,4 @@ async def get_client_info() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["info"]
-    return await request("GET", api["url"])
+    return await Api(**api).result

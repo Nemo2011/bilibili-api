@@ -1,4 +1,5 @@
 from bilibili_api import topic
+
 from .common import get_credential
 
 t = topic.Topic(66571, get_credential())
@@ -13,10 +14,12 @@ async def test_b_Topic_get_cards():
 
 
 async def test_c_Topic_like():
+    await t.like(status=False)
     return await t.like(status=True)
 
 
 async def test_d_Topic_set_favorite():
+    await t.set_favorite(status=False)
     return await t.set_favorite(status=True)
 
 
@@ -26,8 +29,3 @@ async def test_e_get_hot_topics():
 
 async def test_f_search_topic():
     return await topic.search_topic("bilibili-api")
-
-
-async def after_all():
-    await t.like(status=False)
-    await t.set_favorite(status=False)

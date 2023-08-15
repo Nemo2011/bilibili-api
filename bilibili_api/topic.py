@@ -4,13 +4,14 @@ bilibili_api.topic
 话题相关
 """
 
-from typing import Union, Optional
 from enum import Enum
-from .utils.network_httpx import request
+from typing import Union, Optional
+
+from . import dynamic
+from .user import get_self_info
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .user import get_self_info
-from . import dynamic
+from .utils.network_httpx import Api
 
 API = get_api("topic")
 
@@ -41,7 +42,7 @@ async def get_hot_topics(numbers: int = 33) -> dict:
     """
     api = API["info"]["dynamic_page_topics"]
     params = {"page_size": numbers}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 async def search_topic(keyword: str, ps: int = 20, pn: int = 1) -> dict:
@@ -62,7 +63,7 @@ async def search_topic(keyword: str, ps: int = 20, pn: int = 1) -> dict:
     """
     api = API["info"]["search"]
     params = {"keywords": keyword, "page_size": ps, "page_num": pn}
-    return await request("GET", api["url"], params=params)
+    return await Api(**api).update_params(**params).result
 
 
 class Topic:
@@ -101,9 +102,7 @@ class Topic:
         """
         api = API["info"]["info"]
         params = {"topic_id": self.get_topic_id()}
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_raw_cards(
         self,
@@ -133,9 +132,7 @@ class Topic:
             "sort_by": sort_by.value,
             "offset": offset,
         }
-        return await request(
-            "GET", api["url"], params=params, credential=self.credential
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_cards(
         self,
@@ -190,7 +187,7 @@ class Topic:
             "business": "topic",
             "up_mid": (await get_self_info(self.credential))["mid"],
         }
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def set_favorite(self, status: bool = True) -> dict:
         """
@@ -204,4 +201,4 @@ class Topic:
         """
         api = API["operate"]["add_favorite" if status else "cancel_favorite"]
         data = {"topic_id": self.get_topic_id()}
-        return await request("POST", api["url"], data=data, credential=self.credential)
+        return await Api(**api, credential=self.credential).update_data(**data).result

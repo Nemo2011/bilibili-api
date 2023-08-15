@@ -4,16 +4,18 @@ bilibili_api.manga
 漫画相关操作
 """
 
-from bilibili_api.utils.network_httpx import request, HEADERS
+import datetime
+from enum import Enum
+from urllib.parse import urlparse
+from typing import Dict, List, Union, Optional
+
+import httpx
+
 from bilibili_api.utils.utils import get_api
-from bilibili_api.utils.credential import Credential
 from bilibili_api.errors import ArgsException
 from bilibili_api.utils.picture import Picture
-from typing import Optional, List, Dict, Union
-from urllib.parse import urlparse
-import httpx
-from enum import Enum
-import datetime
+from bilibili_api.utils.credential import Credential
+from bilibili_api.utils.network_httpx import HEADERS, request, Api
 
 API = get_api("manga")
 
@@ -155,17 +157,15 @@ class Manga:
         """
         api = API["info"]["detail"]
         params = {"comic_id": self.__manga_id}
-        return await request(
-            "POST",
-            api["url"],
-            params=params,
+        return await Api(
+            **api,
             credential=self.credential,
             no_csrf=(
                 False
                 if (self.credential.has_sessdata() and self.credential.has_bili_jct())
                 else True
             ),
-        )
+        ).update_params(**params).result
 
     async def __get_info_cached(self) -> dict:
         """
@@ -245,17 +245,15 @@ class Manga:
             episode_id = await self.get_episode_id(episode_count)
         api = API["info"]["episode_images"]
         params = {"ep_id": episode_id}
-        return await request(
-            "POST",
-            api["url"],
-            params=params,
+        return await Api(
+            **api,
+            credential=self.credential,
             no_csrf=(
                 False
                 if (self.credential.has_sessdata() and self.credential.has_bili_jct())
                 else True
             ),
-            credential=self.credential,
-        )
+        ).update_params(**params).result
 
     async def get_images(
         self,
@@ -285,20 +283,15 @@ class Manga:
         async def get_real_image_url(url: str) -> str:
             token_api = API["info"]["image_token"]
             datas = {"urls": f'["{url}"]'}
-            token_data = await request(
-                "POST",
-                token_api["url"],
-                data=datas,
-                no_csrf=(
-                    False
-                    if (
-                        self.credential.has_sessdata()
-                        and self.credential.has_bili_jct()
-                    )
-                    else True
-                ),
-                credential=self.credential,
-            )
+            token_data = await Api(
+            **token_api,
+            credential=self.credential,
+            no_csrf=(
+                False
+                if (self.credential.has_sessdata() and self.credential.has_bili_jct())
+                else True
+            ),
+        ).update_data(**datas).result
             return token_data[0]["url"] + "?token=" + token_data[0]["token"]
 
         for img in data["images"]:
@@ -336,16 +329,15 @@ async def manga_image_url_turn_to_Picture(
     async def get_real_image_url(url: str) -> str:
         token_api = API["info"]["image_token"]
         datas = {"urls": f'["{url}"]'}
-        token_data = await request(
-            "POST",
-            token_api["url"],
-            data=datas,
+        token_data = await Api(
+            **token_api,
+            credential=credential,
             no_csrf=(
                 False
                 if (credential.has_sessdata() and credential.has_bili_jct())
                 else True
             ),
-        )
+        ).update_data(**datas).result
         return f'{token_data[0]["url"]}?token={token_data[0]["token"]}'
 
     url = await get_real_image_url(url)
@@ -377,7 +369,7 @@ async def set_follow_manga(
     else:
         api = API["operate"]["del_favorite"]
     data = {"comic_ids": str(manga.get_manga_id())}
-    return await request("POST", api["url"], data=data, credential=credential)
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def get_raw_manga_index(
@@ -421,8 +413,7 @@ async def get_raw_manga_index(
         "page_num": pn,
         "page_size": ps,
     }
-    return await request("POST", api["url"], data=data, params=params, no_csrf=True)
-
+    return await Api(**api, no_csrf=True).update_data(**data).update_params(**params).result
 
 async def get_manga_index(
     area: MangaIndexFilter.Area = MangaIndexFilter.Area.ALL,
@@ -479,9 +470,7 @@ async def get_manga_update(
     if isinstance(date, datetime.datetime):
         date = date.strftime("%Y-%m-%d")
     data = {"date": date, "page_num": pn, "page_size": ps}
-    manga_data = await request(
-        "POST", api["url"], no_csrf=True, params=params, data=data
-    )
+    manga_data = await Api(**api, no_csrf=True).update_data(**data).update_params(**params).result
     return [Manga(manga["comic_id"]) for manga in manga_data["list"]]
 
 
@@ -502,7 +491,5 @@ async def get_manga_home_recommend(
     api = API["info"]["home_recommend"]
     params = {"device": "pc", "platform": "web"}
     data = {"page_num": pn, "seed": seed}
-    manga_data = await request(
-        "POST", api["url"], no_csrf=True, params=params, data=data
-    )
+    manga_data = await Api(**api, no_csrf=True).update_data(**data).update_params(**params).result
     return [Manga(manga["comic_id"]) for manga in manga_data["list"]]

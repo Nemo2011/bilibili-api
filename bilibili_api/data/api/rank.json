@@ -183,7 +183,7 @@
   "operate": {
     "subscribe": {
       "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/subscribe/update",
-      "method": "GET",
+      "method": "POST",
       "verify": false,
       "params": {
         "list_id": "int: 1",
