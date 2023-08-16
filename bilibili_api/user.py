@@ -470,7 +470,7 @@ class User:
         params = {"mid": self.__uid, "sort": order.value}
         return await Api(**api, credential=self.credential).update_params(**params).result
 
-    async def get_dynamics(self, offset: int = 0, need_top: bool = False) -> dict:
+    async def get_dynamics(self, offset: int = 0) -> dict:
         """
         获取用户动态。
 
@@ -486,16 +486,15 @@ class User:
                                         0 为从头开始。
                                         Defaults to 0.
 
-            need_top (bool, optional):  显示置顶动态. Defaults to False.
-
         Returns:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["dynamic"]
         params = {
             "host_uid": self.__uid,
-            "offset_dynamic_id": offset,
-            "need_top": 1 if need_top else 0,
+            "offset": offset,
+            "features": "itemOpusStyle",
+            "timezone_offset": -480
         }
         data = await Api(**api, credential=self.credential).update_params(**params).result
         # card 字段自动转换成 JSON。
