@@ -178,7 +178,7 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "host_uid": "int: uid",
+        "host_mid": "int: uid",
         "offset": "int: 动态偏移用，第一页为 0",
         "timezone_offset": "int: -400",
         "features": "str: itemOpusStyle"
