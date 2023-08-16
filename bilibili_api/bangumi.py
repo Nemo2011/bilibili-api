@@ -25,7 +25,7 @@ from .utils.credential import Credential
 from .exceptions.ApiException import ApiException
 from .utils.network_httpx import request, Api, get_session
 from .exceptions.ResponseException import ResponseException
-from .utils.initial_state import get_initial_state, get_initial_state_sync
+from .utils.initial_state import get_initial_state, get_next_data
 
 API = get_api("bangumi")
 
@@ -1008,8 +1008,10 @@ class Bangumi:
                 url=api["url"], params=params, cookies=self.credential.get_cookies()
             )
             meta.raise_for_status()
-            # print(meta.json())
-            self.__ssid = meta.json()["result"]["media"]["season_id"]
+            if meta.json()["code"] == 0:
+                self.__ssid = meta.json()["result"]["media"]["season_id"]
+            else:
+                raise ApiException(msg=meta.json()["message"])
             params["media_id"] = media_id
         # 处理正常情况
         if self.__ssid != -1:
@@ -1292,16 +1294,21 @@ class Episode(Video):
         self.__epid = epid
 
         if not epid in episode_data_cache.keys():
-            content = get_initial_state_sync(
+            content = get_next_data(
                 url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
-                credential=self.credential,
-            )
+                credential=self.credential
+            )["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"]["data"]["mediaInfo"] # 变成 __NEXT_DATA__ 了，又臭又长
         else:
             content = episode_data_cache[epid]["bangumi_meta"]
 
-        bvid = content["epInfo"]["bvid"]
+        for ep_info in content["episodes"]:
+            if ep_info["ep_id"] == epid:
+                bvid = ep_info["bvid"]
+                break
+        # else:
+        #     raise ValueError("未找到对应的 bvid")
         if not epid in episode_data_cache.keys():
-            self.bangumi = Bangumi(ssid=content["mediaInfo"]["season_id"])
+            self.bangumi = Bangumi(ssid=content["season_id"])
         else:
             self.bangumi = episode_data_cache[epid]["bangumi_class"]
 
