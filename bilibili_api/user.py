@@ -491,7 +491,7 @@ class User:
         """
         api = API["info"]["dynamic"]
         params = {
-            "host_uid": self.__uid,
+            "host_mid": self.__uid,
             "offset": offset,
             "features": "itemOpusStyle",
             "timezone_offset": -480
