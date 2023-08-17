@@ -505,7 +505,7 @@ class User:
         获取用户动态。
 
         Args:
-            offset (str, optional):     该值为第一次调用本方法时，数据中会有个 next_offset 字段，
+            offset (str, optional):     该值为第一次调用本方法时，数据中会有个 offset 字段，
 
                                         指向下一动态列表第一条动态（类似单向链表）。
 
