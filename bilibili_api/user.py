@@ -469,32 +469,28 @@ class User:
         api = API["info"]["article_lists"]
         params = {"mid": self.__uid, "sort": order.value}
         return await Api(**api, credential=self.credential).update_params(**params).result
-
-    async def get_dynamics(self, offset: int = 0) -> dict:
+    
+    async def get_dynamics(self, offset: int = 0, need_top: bool = False) -> dict:
         """
         获取用户动态。
-
+        
+        建议使用 user.get_dynamics_new() 新接口。
         Args:
             offset (str, optional):     该值为第一次调用本方法时，数据中会有个 next_offset 字段，
-
                                         指向下一动态列表第一条动态（类似单向链表）。
-
                                         根据上一次获取结果中的 next_offset 字段值，
-
                                         循环填充该值即可获取到全部动态。
-
                                         0 为从头开始。
                                         Defaults to 0.
-
+            need_top (bool, optional):  显示置顶动态. Defaults to False.
         Returns:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["dynamic"]
         params = {
-            "host_mid": self.__uid,
-            "offset": offset,
-            "features": "itemOpusStyle",
-            "timezone_offset": -480
+            "host_uid": self.__uid,
+            "offset_dynamic_id": offset,
+            "need_top": 1 if need_top else 0,
         }
         data = await Api(**api, credential=self.credential).update_params(**params).result
         # card 字段自动转换成 JSON。
@@ -502,6 +498,36 @@ class User:
             for card in data["cards"]:
                 card["card"] = json.loads(card["card"])
                 card["extend_json"] = json.loads(card["extend_json"])
+        return data
+    
+    async def get_dynamics_new(self, offset: int = "") -> dict:
+        """
+        获取用户动态。
+
+        Args:
+            offset (str, optional):     该值为第一次调用本方法时，数据中会有个 offset 字段，
+
+                                        指向下一动态列表第一条动态（类似单向链表）。
+
+                                        根据上一次获取结果中的 next_offset 字段值，
+
+                                        循环填充该值即可获取到全部动态。
+
+                                        空字符串为从头开始。
+                                        Defaults to "".
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        self.credential.raise_for_no_sessdata()
+        api = API["info"]["dynamic_new"]
+        params = {
+            "host_mid": self.__uid,
+            "offset": offset,
+            "features": "itemOpusStyle",
+            "timezone_offset": -480
+        }
+        data = await Api(**api, credential=self.credential).update_params(**params).result
         return data
 
     async def get_subscribed_bangumi(

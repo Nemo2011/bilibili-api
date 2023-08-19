@@ -9,7 +9,7 @@ import time
 import asyncio
 import logging
 import datetime
-from typing import Union
+from typing import Union, Optional
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -129,18 +129,69 @@ async def get_session_detail(
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-async def get_likes(credential: Credential) -> dict:
+async def get_replies(
+    credential: Credential,
+    last_reply_id: Optional[int] = None,
+    reply_time: Optional[int] = None,
+) -> dict:
+    """
+    获取收到的回复
+
+    Args:
+        credential (Credential): 凭据类.
+
+        last_reply_id (Optional, int) 最后一个评论的 ID
+
+        reply_time (Optional, int) 最后一个评论发送时间
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["session"]["replies"]
+    params = {"id": last_reply_id, "reply_time": reply_time}
+    return await Api(**api, credential=credential).update_params(**params).result
+
+
+async def get_likes(
+    credential: Credential, last_id: int = None, like_time: int = None
+) -> dict:
     """
     获取收到的赞
 
     Args:
         credential (Credential): 凭据类.
 
+        last_id (Optional, int) 最后一个 ID
+
+        like_time (Optional, int) 最后一个点赞发送时间
+
     Returns:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["likes"]
-    return await Api(**api, credential=credential).result
+    params = {"id": last_id, "like_time": like_time}
+    return await Api(**api, credential=credential).update_params(**params).result
+
+
+async def get_at(
+    credential: Credential, last_uid: int = None, at_time: int = None
+) -> dict:
+    """
+    获取收到的 AT
+
+    Args:
+        credential (Credential): 凭据类.
+
+        last_id (Optional, int) 最后一个 ID
+
+        at_time (Optional, int) 最后一个点赞发送时间
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["session"]["at"]
+    params = {"id": last_uid, "at_time": at_time}
+    return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_unread_messages(credential: Credential) -> dict:
@@ -154,20 +205,6 @@ async def get_unread_messages(credential: Credential) -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["session"]["unread"]
-    return await Api(**api, credential=credential).result
-
-
-async def get_replies(credential: Credential) -> dict:
-    """
-    获取收到的回复
-
-    Args:
-        credential (Credential): 凭据类.
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    api = API["session"]["replies"]
     return await Api(**api, credential=credential).result
 
 
