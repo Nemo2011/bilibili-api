@@ -51,16 +51,22 @@
         "comment": "获取点赞"
       },
       "unread": {
-        "url": "https://api.bilibili.com/x/msgfeed/unread?build=0&mobi_app=web",
+        "url": "https://api.bilibili.com/x/msgfeed/unread",
         "method": "GET",
         "verify": true,
         "comment": "获取未读的信息"
       },
       "replies": {
-        "url": "https://api.bilibili.com/x/msgfeed/reply?platform=web&build=0&mobi_app=web",
+        "url": "https://api.bilibili.com/x/msgfeed/reply",
         "method": "GET",
         "verify": true,
         "comment": "获取收到的回复"
+      },
+      "at": {
+        "url": "https://api.bilibili.com/x/msgfeed/at",
+        "method": "GET",
+        "verify": true,
+        "comment": "获取未读 AT"
       },
       "system_msg": {
         "url": "https://message.bilibili.com/x/sys-msg/query_user_notify",
