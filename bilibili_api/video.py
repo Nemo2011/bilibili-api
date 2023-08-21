@@ -1216,6 +1216,17 @@ class Video:
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
+    async def share(self) -> int:
+        """
+        分享视频
+
+        Returns:
+            int: 当前分享数
+        """
+        api = API["operate"]["share"]
+        data = {"bvid": self.get_bvid(), "aid": self.get_aid(), "csrf": self.credential.bili_jct}
+        return await Api(**api, credential=self.credential).update_data(**data).result
+
     async def triple(self) -> dict:
         """
         给阿婆主送上一键三连

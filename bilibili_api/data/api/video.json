@@ -229,6 +229,17 @@
       },
       "comment": "给视频投币"
     },
+    "share": {
+      "url": "https://api.bilibili.com/x/web-interface/share/add",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号",
+        "bvid": "string: BV 号",
+        "csrf": "str: csrf"
+      },
+      "comment": "视频分享"
+    },
     "add_tag": {
       "url": "https://api.bilibili.com/x/tag/archive/add",
       "method": "POST",
