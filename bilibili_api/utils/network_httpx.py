@@ -29,10 +29,11 @@ from ..exceptions import ApiException, ResponseCodeException
 __session_pool = {}
 last_proxy = ""
 wbi_mixin_key = ""
+buvid3 = ""
 
 # 使用 Referer 和 UA 请求头以绕过反爬虫机制
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.54",
     "Referer": "https://www.bilibili.com",
 }
 API = get_api("credential")
@@ -259,9 +260,11 @@ class Api:
             self.data["csrf_token"] = self.credential.bili_jct
 
         cookies = self.credential.get_cookies()
-        # cookies["buvid3"] = str(uuid.uuid1())
-        # 直接定值，随机字符串部分接口 -412
-        cookies["buvid3"] = "931081E9D-AE3E-9F5F-9109F-6E1521591018836102infoc"
+        # 
+        global buvid3
+        if buvid3 == "" and self.url != API["info"]["spi"]["url"]:
+            buvid3 = (await get_spi_buvid())["b_3"]
+        cookies["buvid3"] = buvid3
         cookies["Domain"] = ".bilibili.com"
 
         config = {
@@ -347,6 +350,14 @@ async def check_valid(credential: Credential) -> bool:
     data = await get_nav(credential)
     return data["isLogin"]
 
+async def get_spi_buvid() -> dict:
+    """
+    获取 buvid3 / buvid4
+    
+    Returns:
+        dict: 账号相关信息
+    """
+    return await Api(**API["info"]["spi"]).result
 
 async def get_nav(credential: Union[Credential, None] = None):
     """
@@ -490,7 +501,10 @@ async def request_old(
     cookies = credential.get_cookies()
     # cookies["buvid3"] = str(uuid.uuid1())
     # 直接定值，随机字符串部分接口 -412
-    cookies["buvid3"] = "931081E9D-AE3E-9F5F-9109F-6E1521591018836102infoc"
+    global buvid3
+    if buvid3 == "" and url != API["info"]["spi"]["url"]: 
+        cookies["buvid3"] = (await get_spi_buvid())["b_3"]
+    cookies["buvid3"] = buvid3
     cookies["Domain"] = ".bilibili.com"
 
     config = {

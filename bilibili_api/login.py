@@ -29,7 +29,7 @@ from .utils.utils import get_api
 from .utils.credential import Credential
 from .exceptions.LoginError import LoginError
 from .utils.network import to_form_urlencoded
-from .utils.network_httpx import HEADERS, get_session
+from .utils.network_httpx import HEADERS, get_session, get_spi_buvid
 from .utils.captcha import get_result, close_server, start_server
 from .utils.safecenter_captcha import get_result as safecenter_get_result
 from .utils.safecenter_captcha import close_server as safecenter_close_server
@@ -64,7 +64,7 @@ def parse_credential_url(events: dict) -> Credential:
         if cookie[:11].upper() == "DEDEUSERID=":
             dedeuserid = cookie[11:]
     ac_time_value=events["data"]["refresh_token"]
-    buvid3=get_live_buvid()
+    buvid3=sync(get_spi_buvid())["b_3"]
     return Credential(sessdata=sessdata, 
                         bili_jct=bili_jct, 
                         buvid3=buvid3, 
@@ -204,15 +204,7 @@ def login_with_key(key: str) -> dict:
     return events
 
 
-def get_live_buvid():
-    import re
-    url = "https://api.live.bilibili.com/gift/v3/live/gift_config"
-    headers = HEADERS.copy()
-    response = httpx.get(url, headers=headers)
-    response.raise_for_status()
-    set_cookie = response.headers.get("Set-Cookie")
-    live_buvid = re.findall(r"LIVE_BUVID=(AUTO[0-9]+)", set_cookie)[0]
-    return live_buvid
+
 
 # ----------------------------------------------------------------
 # 密码登录
