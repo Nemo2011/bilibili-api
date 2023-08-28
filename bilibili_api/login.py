@@ -29,7 +29,7 @@ from .utils.utils import get_api
 from .utils.credential import Credential
 from .exceptions.LoginError import LoginError
 from .utils.network import to_form_urlencoded
-from .utils.network_httpx import HEADERS, get_session, get_spi_buvid
+from .utils.network_httpx import HEADERS, get_session, get_spi_buvid_sync
 from .utils.captcha import get_result, close_server, start_server
 from .utils.safecenter_captcha import get_result as safecenter_get_result
 from .utils.safecenter_captcha import close_server as safecenter_close_server
@@ -64,7 +64,7 @@ def parse_credential_url(events: dict) -> Credential:
         if cookie[:11].upper() == "DEDEUSERID=":
             dedeuserid = cookie[11:]
     ac_time_value=events["data"]["refresh_token"]
-    buvid3=sync(get_spi_buvid())["b_3"]
+    buvid3=get_spi_buvid_sync()["b_3"]
     return Credential(sessdata=sessdata, 
                         bili_jct=bili_jct, 
                         buvid3=buvid3, 
