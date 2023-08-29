@@ -260,11 +260,14 @@ class Api:
             self.data["csrf_token"] = self.credential.bili_jct
 
         cookies = self.credential.get_cookies()
-        # 
-        global buvid3
-        if buvid3 == "" and self.url != API["info"]["spi"]["url"]:
-            buvid3 = (await get_spi_buvid())["b_3"]
-        cookies["buvid3"] = buvid3
+
+        if self.credential.buvid3 is None:
+            global buvid3
+            if buvid3 == "" and self.url != API["info"]["spi"]["url"]:
+                buvid3 = (await get_spi_buvid())["b_3"]
+            cookies["buvid3"] = buvid3
+        else:
+            cookies["buvid3"] = self.credential.buvid3
         cookies["Domain"] = ".bilibili.com"
 
         config = {
@@ -358,6 +361,15 @@ async def get_spi_buvid() -> dict:
         dict: 账号相关信息
     """
     return await Api(**API["info"]["spi"]).result
+
+def get_spi_buvid_sync() -> dict:
+    """
+    同步获取 buvid3 / buvid4
+    
+    Returns:
+        dict: 账号相关信息
+    """
+    return httpx.get(API["info"]["spi"]["url"], headers=HEADERS).json()["data"]
 
 async def get_nav(credential: Union[Credential, None] = None):
     """
