@@ -47,13 +47,6 @@ class MessageType(Enum):
 
 
 class MessageSegment:
-    """
-    Example:
-        MessageSegment("doge", true) + MessageSegment("2023")
-        这是个错误的例子
-        1. true 语法错误
-        2. 没有实现 __add__() 无法相加
-    """
     def __init__(self, msg: str, is_emoji: bool = False):
         self.msg = msg
         self.msg_type = MessageType.EMOJI if is_emoji else MessageType.PLAIN
@@ -69,10 +62,6 @@ class Message:
     消息集合
     """
     def __init__(self, *messages: Union[MessageSegment, str]):
-        # 有关列表、字典以及其他一切引用类型的变量的初始化
-        # 不可以放在类下或者函数参数处
-        # 这将导致实例化出的对象使用同一个引用变量 也就是值一样
-        # 参考: https://blog.csdn.net/sa726663676/article/details/113899965
         self.msg_list: List[MessageSegment] = []
         for msg in messages:
             if isinstance(msg, str):
@@ -81,8 +70,6 @@ class Message:
                 self.msg_list.append(msg)
 
     def __add__(self, msg: Union[MessageSegment, "Message"]):
-        # 这里应该实例化一个新的 Message 对象
-        # 不然 c = a + b 岂不是 c 和 a 都被修改了吗
         if isinstance(msg, MessageSegment):
             return Message(*self.msg_list, msg)
         elif isinstance(msg, Message):
@@ -100,8 +87,6 @@ class WatchRoom:
     """
     放映室类
     """
-
-    # 为什么不放初始化函数里
     season_id: int
     episode_id: int
 
@@ -116,11 +101,6 @@ class WatchRoom:
         self.room_id = room_id
         self.credential = credential
         self.credential.raise_for_no_buvid3()  # 大部分用户操作都需要与之匹配的 buvid3 值，务必在 credential 传入
-
-    # 这两个方法是不是脱裤子放屁了
-    # 又不是私有变量直接改不就行了
-    # 更何况是内部方法调用了这两个函数有啥必要吗
-    # self.set_season_id(123) / self.season_id = 123
 
     def set_season_id(self, season_id: int):
         self.season_id = season_id
@@ -314,7 +294,7 @@ async def create(season_id: int, episode_id: int, is_open: bool = False, credent
         credential (Credential) 凭据
 
     Returns:
-        Watchroom
+        Watchroom：放映室
     """
     if credential is None:
         credential = Credential()
@@ -343,6 +323,9 @@ async def match(season_id: int, season_type: SeasonType = SeasonType.ANIME, cred
         season_id (int) 季度 ID
 
         season_type (str) 季度类型
+
+    Returns:
+        Watchroom：放映室
     """
     if credential is None:
         credential = Credential()
