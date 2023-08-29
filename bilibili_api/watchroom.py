@@ -217,7 +217,7 @@ class WatchRoom:
         data = {
             "room_id": self.room_id,
             "content_type": 0,
-            "content": '{"text":"msg"}'.replace("msg", str(msg)),
+            "content": '{"text":"%s"}' % msg,
             "req_id": int(time.time()) * 1000,
             "platform": "web",
             "csrf": self.credential.bili_jct,
