@@ -8,9 +8,10 @@ bilibili_api.watchroom
 import time
 from enum import Enum
 from typing import List, Union
+
+from .credential import Credential
 from .utils.network_httpx import Api
 from .utils.utils import get_api
-from .credential import Credential
 
 API = get_api("watchroom")
 
@@ -26,14 +27,21 @@ class SeasonType(Enum):
     + TV: 电视剧
     + VARIETY: 综艺
     """
-
     ANIME = 1
     MOVIE = 2
     DOCUMENTARY = 3
     GUOCHUANG = 4
     TV = 5
     VARIETY = 7
+
+
 class MessageType(Enum):
+    """
+    消息类型
+
+    + PLAIN: 纯文本
+    + EMOJI: 表情
+    """
     PLAIN = "plain"
     EMOJI = "emoji"
 
@@ -42,41 +50,50 @@ class MessageSegment:
     """
     Example:
         MessageSegment("doge", true) + MessageSegment("2023")
+        这是个错误的例子
+        1. true 语法错误
+        2. 没有实现 __add__() 无法相加
     """
-    msg: str
-    msg_type: MessageType
-
     def __init__(self, msg: str, is_emoji: bool = False):
-        self.msg, self.msg_type = msg, MessageType.EMOJI if is_emoji else MessageType.PLAIN
+        self.msg = msg
+        self.msg_type = MessageType.EMOJI if is_emoji else MessageType.PLAIN
 
-    def convert(self) -> str:
+    def __repr__(self) -> str:
         if self.msg_type == MessageType.EMOJI:
             return f"[{self.msg}]"
         return self.msg
 
 
 class Message:
-    msg_list: List[MessageSegment] = []
-
-    def to_msg_segment(self, msg: Union[MessageSegment, str]) -> MessageSegment:
-        return MessageSegment(msg) if isinstance(msg, str) else msg
-
-    def __init__(self, *messages: List[Union[MessageSegment, str]]):
+    """
+    消息集合
+    """
+    def __init__(self, *messages: Union[MessageSegment, str]):
+        # 有关列表、字典以及其他一切引用类型的变量的初始化
+        # 不可以放在类下或者函数参数处
+        # 这将导致实例化出的对象使用同一个引用变量 也就是值一样
+        # 参考: https://blog.csdn.net/sa726663676/article/details/113899965
+        self.msg_list: List[MessageSegment] = []
         for msg in messages:
-            self.msg_list.append(self.to_msg_segment(msg))
+            if isinstance(msg, str):
+                self.msg_list.append(MessageSegment(msg))
+            else:
+                self.msg_list.append(msg)
 
     def __add__(self, msg: Union[MessageSegment, "Message"]):
+        # 这里应该实例化一个新的 Message 对象
+        # 不然 c = a + b 岂不是 c 和 a 都被修改了吗
         if isinstance(msg, MessageSegment):
-            self.msg_list.append(self.to_msg_segment(msg))
-        elif self.__class__ is msg:
-            self.msg_list.extend(msg.msg_list)
-        return self
+            return Message(*self.msg_list, msg)
+        elif isinstance(msg, Message):
+            return Message(*self.msg_list, *msg.msg_list)
+        raise TypeError
 
     def __str__(self) -> str:
-        return "".join([msg.convert() for msg in self.msg_list])
+        return "".join(str(msg) for msg in self.msg_list)
 
     def __repr__(self) -> str:
-        return self.msg_list
+        return str(self.msg_list)
 
 
 class WatchRoom:
@@ -84,6 +101,7 @@ class WatchRoom:
     放映室类
     """
 
+    # 为什么不放初始化函数里
     season_id: int
     episode_id: int
 
@@ -95,9 +113,14 @@ class WatchRoom:
 
             room_id (int)       : 放映室 id
         """
-        self.room_id: int = room_id
-        self.credential: Credential = credential
+        self.room_id = room_id
+        self.credential = credential
         self.credential.raise_for_no_buvid3()  # 大部分用户操作都需要与之匹配的 buvid3 值，务必在 credential 传入
+
+    # 这两个方法是不是脱裤子放屁了
+    # 又不是私有变量直接改不就行了
+    # 更何况是内部方法调用了这两个函数有啥必要吗
+    # self.set_season_id(123) / self.season_id = 123
 
     def set_season_id(self, season_id: int):
         self.season_id = season_id
@@ -176,7 +199,7 @@ class WatchRoom:
             .result
         )
 
-    async def join(self, token: str = None) -> dict:
+    async def join(self, token: str = "") -> dict:
         """
         加入放映室
 
@@ -217,7 +240,7 @@ class WatchRoom:
         data = {
             "room_id": self.room_id,
             "content_type": 0,
-            "content": '{"text":"msg"}'.replace("msg", str(msg)),
+            "content": '{"text":"%s"}' % msg,
             "req_id": int(time.time()) * 1000,
             "platform": "web",
             "csrf": self.credential.bili_jct,
@@ -252,7 +275,7 @@ class WatchRoom:
             .update_data(**data)
             .result
         )
-    
+
     async def share(self) -> str:
         """
         获取邀请 Token
@@ -274,8 +297,9 @@ class WatchRoom:
             .result
         )
         return res["room_info"]["share_url"].split("&token=")[-1]
-    
-async def create(season_id: int, episode_id: int, is_open: bool = False, credential: Credential = Credential()) -> WatchRoom:
+
+
+async def create(season_id: int, episode_id: int, is_open: bool = False, credential: Credential = None) -> WatchRoom:
     """
     创建放映室
 
@@ -292,6 +316,9 @@ async def create(season_id: int, episode_id: int, is_open: bool = False, credent
     Returns:
         Watchroom
     """
+    if credential is None:
+        credential = Credential()
+
     api = API["operate"]["create"]
     data = {
         "season_id": season_id,
@@ -307,7 +334,7 @@ async def create(season_id: int, episode_id: int, is_open: bool = False, credent
     )
 
 
-async def match(season_id: int, season_type: SeasonType = SeasonType.ANIME, credential: Credential = Credential()) -> WatchRoom:
+async def match(season_id: int, season_type: SeasonType = SeasonType.ANIME, credential: Credential = None) -> WatchRoom:
     """
     匹配放映室
 
@@ -317,6 +344,9 @@ async def match(season_id: int, season_type: SeasonType = SeasonType.ANIME, cred
 
         season_type (str) 季度类型
     """
+    if credential is None:
+        credential = Credential()
+
     api = API["operate"]["match"]
     data = {
         "season_id": season_id,
