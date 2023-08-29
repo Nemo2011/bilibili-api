@@ -2195,19 +2195,20 @@ class VideoDownloadURLDataDetecter:
                     video_codecs=video_stream_codecs,  # type: ignore
                 )
                 streams.append(video_stream)
-            for audio_data in audios_data:
-                audio_stream_url = audio_data["baseUrl"]
-                audio_stream_quality = AudioQuality(audio_data["id"])
-                if audio_stream_quality.value > audio_max_quality.value:
-                    continue
-                if audio_stream_quality.value < audio_min_quality.value:
-                    continue
-                if not audio_stream_quality in audio_accepted_qualities:
-                    continue
-                audio_stream = AudioStreamDownloadURL(
-                    url=audio_stream_url, audio_quality=audio_stream_quality
-                )
-                streams.append(audio_stream)
+            if audios_data:
+                for audio_data in audios_data:
+                    audio_stream_url = audio_data["baseUrl"]
+                    audio_stream_quality = AudioQuality(audio_data["id"])
+                    if audio_stream_quality.value > audio_max_quality.value:
+                        continue
+                    if audio_stream_quality.value < audio_min_quality.value:
+                        continue
+                    if not audio_stream_quality in audio_accepted_qualities:
+                        continue
+                    audio_stream = AudioStreamDownloadURL(
+                        url=audio_stream_url, audio_quality=audio_stream_quality
+                    )
+                    streams.append(audio_stream)
             if flac_data and (not no_hires):
                 if flac_data["audio"]:
                     flac_stream_url = flac_data["audio"]["baseUrl"]

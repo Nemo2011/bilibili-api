@@ -7,7 +7,7 @@ try:
 except:
     credential = None
     print("导入凭据未成功")
-    
+
 season_id = 113
 episode_id = 1678
 room: watchroom.WatchRoom
@@ -54,4 +54,3 @@ async def test_g_send():
         + watchroom.MessageSegment("测试3")
         + watchroom.MessageSegment("doge", True)
     )
-
