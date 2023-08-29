@@ -13,7 +13,6 @@ import httpx
 from yarl import URL
 
 from ..game import Game
-from ..album import Album
 from ..manga import Manga
 from ..topic import Topic
 from ..video import Video
@@ -29,7 +28,6 @@ from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
 from ..article import Article, ArticleList
 from ..cheese import CheeseList, CheeseVideo
-from .initial_state import get_initial_state
 from ..interactive_video import InteractiveVideo
 from ..favorite_list import FavoriteList, FavoriteListType
 from ..user import User, ChannelSeries, ChannelSeriesType, get_self_info
@@ -55,7 +53,6 @@ class ResourceType(Enum):
     + GAME: 游戏
     + TOPIC: 话题
     + MANGA: 漫画
-    + ALBUM: 相簿
     + NOTE: 笔记
     + FAILED: 错误
     """
@@ -78,7 +75,6 @@ class ResourceType(Enum):
     GAME = "game"
     TOPIC = "topic"
     MANGA = "manga"
-    ALBUM = "album"
     NOTE = "note"
     FAILED = "failed"
 
@@ -104,7 +100,6 @@ async def parse_link(
     Tuple[Game, Literal[ResourceType.GAME]],
     Tuple[Topic, Literal[ResourceType.TOPIC]],
     Tuple[Manga, Literal[ResourceType.MANGA]],
-    Tuple[Album, Literal[ResourceType.ALBUM]],
     Tuple[Note, Literal[ResourceType.NOTE]],
     Tuple[Literal[-1], Literal[ResourceType.FAILED]],
 ]:
@@ -222,9 +217,6 @@ async def parse_link(
         manga = parse_manga(url, credential)  # type: ignore
         if not manga == -1:
             obj = (manga, ResourceType.MANGA)
-        album = parse_album(url, credential)  # type: ignore
-        if not album == -1:
-            obj = (album, ResourceType.ALBUM)
         opus_dynamic = parse_opus_dynamic(url, credential) # type: ignore
         if not opus_dynamic == -1:
             obj = (opus_dynamic, ResourceType.DYNAMIC)
@@ -356,10 +348,18 @@ async def parse_episode(url: URL, credential: Credential) -> Union[Episode, int]
                 epid = int(video_short_id[2:])
                 return Episode(epid=epid)
             elif video_short_id[:2].upper() == "SS":
-                content = await get_initial_state(str(url), credential=credential)
-                epid = content["epInfo"]["id"]
-                return Episode(epid=epid, credential=credential)
+                sess = httpx.AsyncClient()
+                html_text = (await sess.get(str(url))).text
+                if "__INITIAL_STATE__" in html_text:
+                    pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
+                    match = re.search(pattern, html_text)
+                    content = json.loads(match.group(1))
+                    epid = content["epInfo"]["id"] if "id" in content["epInfo"] else content["epInfo"]["ep_id"]
+                else:
+                    epid = re.search(r'<link rel="canonical" href="//www.bilibili.com/bangumi/play/ep(\d+)"/>', html_text).group(1)
+                    return Episode(epid=epid, credential=credential)
     return -1
+
 
 
 def parse_favorite_list(url: URL, credential: Credential) -> Union[FavoriteList, int]:
@@ -621,12 +621,6 @@ def parse_topic(url: URL, credential: Credential) -> Union[Topic, int]:
 def parse_manga(url: URL, credential: Credential) -> Union[Manga, int]:
     if url.host == "manga.bilibili.com" and url.parts[1] == "detail":
         return Manga(int(url.parts[2][2:]), credential=credential)
-    return -1
-
-
-def parse_album(url: URL, credential: Credential) -> Union[Album, int]:
-    if url.host == "h.bilibili.com":
-        return Album(int(url.parts[1]), credential=credential)
     return -1
 
 
