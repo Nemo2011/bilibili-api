@@ -25,7 +25,7 @@ from .utils.credential import Credential
 from .exceptions.ApiException import ApiException
 from .utils.network_httpx import request, Api, get_session
 from .exceptions.ResponseException import ResponseException
-from .utils.initial_state import get_initial_state_sync, InitialDataType
+from .utils.initial_state import get_initial_state, get_initial_state_sync, InitialDataType
 
 API = get_api("bangumi")
 
@@ -1181,7 +1181,7 @@ class Bangumi:
         credential = self.credential if self.credential else Credential()
         content_type = None
         while content_type != InitialDataType.INITIAL_STATE:
-            bangumi_meta, content_type = get_initial_state_sync(
+            bangumi_meta, content_type = await get_initial_state(
                 url=f"https://www.bilibili.com/bangumi/play/ep{first_epid}",
                 credential=credential)
         bangumi_meta["media_id"] = self.get_media_id()
@@ -1363,15 +1363,17 @@ class Episode(Video):
             HTML 中的数据
         """
         if self.__ep_info is None:
-            content = get_next_data(
+            res, content_type = get_initial_state(
                 url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
                 credential=self.credential
-            )["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"]["data"]["mediaInfo"]
-            for ep_info in content["episodes"]:
-                if ep_info["ep_id"] == self.get_epid():
-                    return ep_info
+            )
+            if content_type == InitialDataType.NEXT_DATA:
+                content = res["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"]["data"]["mediaInfo"]
+                for ep_info in content["episodes"]:
+                    if int(ep_info["id"] if "id" in ep_info else ep_info["ep_id"]) == int(self.get_epid()):
+                        return ep_info
             else:
-                raise ApiException("未找到相关信息")
+                return res["epInfo"]
         else:
             return self.__ep_info
 
