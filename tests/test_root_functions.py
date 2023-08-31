@@ -47,7 +47,6 @@ parse_link_urls = [
     "https://www.biligame.com/detail/?id=103009",
     "https://www.bilibili.com/v/topic/detail/?topic_id=57290",
     "https://manga.bilibili.com/detail/mc32020",
-    "https://h.bilibili.com/1198098",
     "https://www.bilibili.com/h5/note-app/view?cvid=21385583",
     "https://www.bilibili.com/opus/767674573455884292",
 ]
