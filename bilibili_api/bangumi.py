@@ -12,6 +12,7 @@ bilibili_api.bangumi
 
 import datetime
 from enum import Enum
+import json
 from typing import Any, List, Tuple, Union, Optional
 
 import requests
@@ -1180,7 +1181,7 @@ class Bangumi:
         first_epid = episode_list["main_section"]["episodes"][0]["id"]
         credential = self.credential if self.credential else Credential()
         content_type = None
-        while content_type != InitialDataType.INITIAL_STATE:
+        while content_type != InitialDataType.NEXT_DATA:
             bangumi_meta, content_type = await get_initial_state(
                 url=f"https://www.bilibili.com/bangumi/play/ep{first_epid}",
                 credential=credential)
@@ -1300,7 +1301,7 @@ class Episode(Video):
                 credential=self.credential
             ) # 随机 __NEXT_DATA__ 见 https://github.com/Nemo2011/bilibili-api/issues/433
             if content_type == InitialDataType.NEXT_DATA:
-                content = res["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"]["data"]["mediaInfo"] 
+                content = res["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"]["data"]["mediaInfo"]
                 self.bangumi = Bangumi(ssid=content["season_id"]) if not epid in episode_data_cache.keys() else episode_data_cache[epid]["bangumi_class"]
                 for ep_info in content["episodes"]:
                     if int(ep_info["id"] if "id" in ep_info else ep_info["ep_id"]) == int(epid):
@@ -1313,7 +1314,10 @@ class Episode(Video):
                 bvid = res["epInfo"]["bvid"]
         else:
             content = episode_data_cache[epid]["bangumi_meta"]
-            bvid = content["epInfo"]["bvid"]
+            bvid = None
+            for einfo in content["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"]["data"]["mediaInfo"]["episodes"]:
+                if einfo["ep_id"] == epid:
+                    bvid = einfo["bvid"]
             self.bangumi = episode_data_cache[epid]["bangumi_class"]
             self.__ep_info: dict = episode_data_cache[epid]
 
