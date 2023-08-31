@@ -304,3 +304,35 @@ async def get_comments(
     api = API["comment"]["get"]
     params = {"pn": page_index, "type": type_.value, "oid": oid, "sort": order.value}
     return await Api(**api, credential=credential).update_params(**params).result
+
+async def get_comments_lazy(
+    oid: int,
+    type_: CommentResourceType,
+    pagination_str: str = "",
+    order: OrderType = OrderType.TIME,
+    credential: Union[Credential, None] = None,
+) -> dict:
+    """
+    新版获取资源评论列表。
+
+    Args:
+        oid        (int)                 : 资源 ID。
+
+        type_      (CommentsResourceType)        : 资源类枚举。
+
+        pagination_str (str, optional)       : 分页依据 Defaults to `{"offset":""}`.
+
+        order      (OrderType, optional) : 排序方式枚举. Defaults to OrderType.TIME.
+
+        credential (Credential, optional): 凭据。Defaults to None.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["comment"]["reply_by_session_id"]
+    params = {"oid": oid,
+              "type": type_.value,
+              "mode": order.value,
+              "pagination_str": '{"offset": "%s"}' %pagination_str.replace('"', r'\"'),
+              }
+    return await Api(**api, credential=credential).update_params(**params).result

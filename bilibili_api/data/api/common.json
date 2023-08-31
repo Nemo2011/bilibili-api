@@ -109,6 +109,19 @@
         "mode": "int: 默认为 3。0 3：仅按热度 1：按热度+按时间 2：仅按时间"
       },
       "comment": "获取评论的主评论，慢加载模式"
+    },
+    "reply_by_session_id": {
+      "url": "https://api.bilibili.com/x/v2/reply/wbi/main",
+      "method": "GET",
+      "verify": false,
+      "wbi": true,
+      "params": {
+        "oid": "int: id",
+        "type": "",
+        "mode": "int: 默认为 3。0 3：仅按热度 1：按热度+按时间 2：仅按时间",
+        "pagination_str": "str: 分页依据"
+      },
+      "comment": "新版评论区"
     }
   },
   "dynamic_share": {
