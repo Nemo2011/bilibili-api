@@ -145,7 +145,7 @@ class Picture:
         obj.__set_picture_meta_from_bytes(format)
         return obj
 
-    async def upload_file(self, credential: Credential) -> "Picture":
+    async def upload_file(self, credential: Credential, data: dict = None) -> "Picture":
         """
         上传图片至 B 站。
 
@@ -157,7 +157,7 @@ class Picture:
         """
         from ..dynamic import upload_image
 
-        res = await upload_image(self, credential, data={"biz": "im"})
+        res = await upload_image(self, credential, data)
         self.height = res["image_height"]
         self.width = res["image_width"]
         self.url = res["image_url"]
