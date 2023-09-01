@@ -7,13 +7,16 @@ bilibili_api.watchroom
 """
 import time
 from enum import Enum
-from typing import List, Union
+from typing import Dict, List, Union
 
 from .credential import Credential
 from .utils.network_httpx import Api
 from .utils.utils import get_api
 
 API = get_api("watchroom")
+
+
+watch_room_bangumi_cache: Dict[int, List[int]] = {}
 
 
 class SeasonType(Enum):
@@ -91,26 +94,48 @@ class WatchRoom:
     放映室类
     """
 
-    season_id: int
-    episode_id: int
+    __season_id: int
+    __episode_id: int
 
-    def __init__(self, room_id: int, credential: Credential):
+    def __init__(self, room_id: int, credential: Credential = None):
         """
-        Agrs:
+        Args:
 
-            credential      (Credential): 凭据类
+            credential      (Credential): 凭据类 (大部分用户操作都需要与之匹配的 buvid3 值，务必在 credential 传入)
 
-            room_id (int)       : 放映室 id
+            room_id         (int)       : 放映室 id
         """
-        self.room_id = room_id
+        credential = credential if credential else Credential()
+        self.__room_id = room_id
         self.credential = credential
-        self.credential.raise_for_no_buvid3()  # 大部分用户操作都需要与之匹配的 buvid3 值，务必在 credential 传入
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+        self.credential.raise_for_no_buvid3()
+        if room_id in watch_room_bangumi_cache.keys():
+            self.set_season_id(watch_room_bangumi_cache[room_id][0])
+            self.set_episode_id(watch_room_bangumi_cache[room_id][1])
+        else:
+            params = {"room_id": self.get_room_id(), "platform": "web"}
+            info: dict = Api(
+                credential=self.credential, **API["info"]["info"]
+            ).update_params(**params).thread_result
+            self.set_season_id(info["status"]["season_id"])
+            self.set_episode_id(info["status"]["episode_id"])
 
     def set_season_id(self, season_id: int):
-        self.season_id = season_id
+        self.__season_id = season_id
 
     def set_episode_id(self, episode_id: int):
-        self.episode_id = episode_id
+        self.__episode_id = episode_id
+
+    def get_season_id(self):
+        return self.__season_id
+
+    def get_episode_id(self):
+        return self.__episode_id
+
+    def get_room_id(self):
+        return self.__room_id
 
     async def get_info(self) -> dict:
         """
@@ -120,7 +145,7 @@ class WatchRoom:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["info"]
-        params = {"room_id": self.room_id, "platform": "web"}
+        params = {"room_id": self.get_room_id(), "platform": "web"}
         return (
             await Api(credential=self.credential, **api).update_params(**params).result
         )
@@ -131,7 +156,7 @@ class WatchRoom:
         """
         api = API["operate"]["open"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "is_open": 1,
             "csrf": self.credential.bili_jct,
             "platform": "web",
@@ -148,7 +173,7 @@ class WatchRoom:
         """
         api = API["operate"]["open"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "is_open": 0,
             "csrf": self.credential.bili_jct,
             "platform": "web",
@@ -171,7 +196,7 @@ class WatchRoom:
         """
         api = API["operate"]["progress"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "progress": progress,
             "status": status if status in [1, 2, 0] else 1,
             "csrf": self.credential.bili_jct,
@@ -196,7 +221,7 @@ class WatchRoom:
         """
         api = API["operate"]["join"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "token": token,
             "csrf": self.credential.bili_jct,
             "platform": "web",
@@ -222,7 +247,7 @@ class WatchRoom:
             dict: 调用 API 返回的结果
         """
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "content_type": 0,
             "content": '{"text":"%s"}' % msg,
             "req_id": int(time.time()) * 1000,
@@ -249,7 +274,7 @@ class WatchRoom:
         """
         api = API["operate"]["kickout"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "mid": uid,
             "csrf": self.credential.bili_jct,
             "platform": "web",
@@ -269,9 +294,9 @@ class WatchRoom:
         """
         api = API["info"]["season"]
         params = {
-            "room_id": self.room_id,
-            "season_id": self.season_id,
-            "ep_id": self.episode_id,
+            "room_id": self.get_room_id(),
+            "season_id": self.get_season_id(),
+            "ep_id": self.get_episode_id(),
             "csrf": self.credential.bili_jct,
             "platform": "web",
         }
@@ -305,6 +330,8 @@ async def create(
     Returns:
         Watchroom：放映室
     """
+    global watch_room_bangumi_cache
+
     if credential is None:
         credential = Credential()
 
@@ -316,14 +343,11 @@ async def create(
         "csrf": credential.bili_jct,
         "platform": "web",
     }
-    return WatchRoom(
-        (
-            await Api(credential=credential, no_csrf=True, **api)
-            .update_data(**data)
-            .result
-        )["room_id"],
-        credential=credential,
-    )
+    room_id = (
+        await Api(credential=credential, no_csrf=True, **api).update_data(**data).result
+    )["room_id"]
+    watch_room_bangumi_cache[room_id] = [season_id, episode_id]
+    return WatchRoom(room_id=room_id, credential=credential)
 
 
 async def match(
