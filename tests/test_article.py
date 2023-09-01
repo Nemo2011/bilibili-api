@@ -29,7 +29,7 @@ async def test_c_Article_set_like():
         await ar.set_like()
         return await ar.set_like(False)
     except ResponseCodeException as e:
-        if e.code not in (65006):
+        if e.code not in (65006,):
             raise e
         else:
             return e.raw

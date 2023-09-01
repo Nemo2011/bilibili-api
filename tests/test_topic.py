@@ -19,7 +19,7 @@ async def test_c_Topic_like():
         await t.like(status=False)
         return await t.like(status=True)
     except ResponseCodeException as e:
-        if e.code not in (65004):
+        if e.code not in (65004,):
             raise e
         else:
             return e.raw
