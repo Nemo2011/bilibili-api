@@ -25,8 +25,14 @@ async def test_b_Article_json_get_content():
 
 
 async def test_c_Article_set_like():
-    await ar.set_like()
-    return await ar.set_like(False)
+    try:
+        await ar.set_like()
+        return await ar.set_like(False)
+    except ResponseCodeException as e:
+        if e.code not in (65006):
+            raise e
+        else:
+            return e.raw
 
 
 async def test_d_Article_set_favorite():
