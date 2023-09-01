@@ -226,7 +226,7 @@ async def test_zd_video_snapshot():
 
 
 async def test_zf_get_subtitle():
-    videos = video_m.Video(aid=288571926)
+    videos = video_m.Video(aid=288571926, credential=get_credential())
     return await videos.get_subtitle(cid=281031471)
 
 
