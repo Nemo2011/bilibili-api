@@ -1373,7 +1373,7 @@ class Video:
         cid: Union[int, None] = None,
     ) -> dict:
         """
-        获取字幕信息
+        获取视频上一次播放的记录，字幕和地区信息。需要分集的 cid, 返回数据中含有json字幕的链接
 
         Args:
             cid (int | None): 分 P ID,从视频信息中获取
