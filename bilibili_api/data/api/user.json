@@ -455,6 +455,16 @@
         "up_mid": "int: uid 号"
       },
       "comment": "获取空间充电公示列表"
+    },
+    "uplikeimg": {
+      "url": "https://api.bilibili.com/x/web-interface/view/uplikeimg",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "aid":"int: av 号",
+        "vmid": "int: up uid 号"
+      },
+      "comment": "视频三连特效"
     }
   },
   "operate": {

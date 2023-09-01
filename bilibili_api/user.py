@@ -928,6 +928,18 @@ class User:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def get_uplikeimg(self) -> dict:
+        """
+        视频三联特效
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        api = API["info"]["uplikeimg"]
+        params = {"vmid": self.get_uid()}
+        return (
+            await Api(**api).update_params(**params).result
+        )
 
 async def get_self_info(credential: Credential) -> dict:
     """
