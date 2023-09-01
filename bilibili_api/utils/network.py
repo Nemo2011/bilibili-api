@@ -247,6 +247,10 @@ class Api:
         Returns:
             接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
         """
+        # 如果接口需要 Credential 且未传入则报错 (默认值为 Credential())
+        if self.verify:
+            self.credential.raise_for_no_sessdata()
+
         # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
         if self.method != "GET" and not self.no_csrf:
             self.credential.raise_for_no_bili_jct()
