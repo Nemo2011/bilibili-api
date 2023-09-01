@@ -40,6 +40,7 @@
     + [IP 终端](/examples/client.md)
     + [表情包](/examples/emoji.md)
     + [游戏](/examples/game.md)
+    + [放映室](/examples/watchroom.md)
 + API 文档
   + [根模块](/modules/bilibili_api.md)
   + [video.py - 视频](/modules/video.md)
@@ -76,4 +77,5 @@
   + [client.py - IP 终端](/modules/client.md)
   + [emoji.py - 表情包](/modules/emoji.md)
   + [game.py - 游戏](/modules/game.md)
+  + [watchroom.py - 放映室](/modules/watchroom.md)
 + [历史文档](/history.md)
