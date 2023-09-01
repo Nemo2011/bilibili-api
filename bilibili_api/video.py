@@ -232,19 +232,18 @@ class Video:
         if self.__info is None:
             return await self.get_info()
         return self.__info
+    
+    # get_stat 403/404 https://github.com/SocialSisterYi/bilibili-API-collect/issues/797 等恢复
+    # async def get_stat(self) -> dict:
+    #     """
+    #     获取视频统计数据（播放量，点赞数等）。
 
-    async def get_stat(self) -> dict:
-        """
-        获取视频统计数据（播放量，点赞数等）。
-
-        Returns:
-            dict: 调用 API 返回的结果。
-        """
-        api = API["info"]["stat"]
-        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        return (
-            await Api(**api, credential=self.credential).update_params(**params).result
-        )
+    #     Returns:
+    #         dict: 调用 API 返回的结果。
+    #     """
+    #     api = API["info"]["stat"]
+    #     params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+    #     return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_tags(
         self, page_index: Union[int, None] = 0, cid: Union[int, None] = None
