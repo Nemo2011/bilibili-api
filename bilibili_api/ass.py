@@ -154,9 +154,7 @@ async def make_ass_file_danmakus_protobuf(
     static_time=5,
 ) -> None:
     """
-    生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
-
-    强烈推荐 PotPlayer, 电影与电视全部都是静态的，不能滚动。
+    生成视频弹幕文件
 
     来源：protobuf
 
@@ -245,9 +243,7 @@ async def make_ass_file_danmakus_xml(
     static_time=5,
 ) -> None:
     """
-    生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
-
-    强烈推荐 PotPlayer, 电影与电视全部都是静态的，不能滚动。
+    生成视频弹幕文件
 
     来源：xml
 

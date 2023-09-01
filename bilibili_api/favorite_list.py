@@ -110,7 +110,9 @@ class FavoriteList:
         api = API["info"]["info"]
         params = {"media_id": self.__media_id}
 
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_content_video(
         self,
@@ -175,7 +177,9 @@ class FavoriteList:
         api = API["info"]["list_content_id_list"]
         params = {"media_id": self.__media_id}
 
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
 
 async def get_video_favorite_list(

@@ -132,7 +132,11 @@ class Comment:
         self.credential.raise_for_no_bili_jct()
 
         api = API["comment"]["like"]
-        return await Api(**api, credential=self.credential).update_data(**self.__get_data(status)).result
+        return (
+            await Api(**api, credential=self.credential)
+            .update_data(**self.__get_data(status))
+            .result
+        )
 
     async def hate(self, status: bool = True) -> dict:
         """
@@ -149,7 +153,11 @@ class Comment:
         self.credential.raise_for_no_bili_jct()
 
         api = API["comment"]["hate"]
-        return await Api(**api, credential=self.credential).update_data(**self.__get_data(status)).result
+        return (
+            await Api(**api, credential=self.credential)
+            .update_data(**self.__get_data(status))
+            .result
+        )
 
     async def pin(self, status: bool = True) -> dict:
         """
@@ -165,7 +173,11 @@ class Comment:
         self.credential.raise_for_no_bili_jct()
 
         api = API["comment"]["pin"]
-        return await Api(**api, credential=self.credential).update_data(**self.__get_data(status)).result
+        return (
+            await Api(**api, credential=self.credential)
+            .update_data(**self.__get_data(status))
+            .result
+        )
 
     async def delete(self) -> dict:
         """
@@ -204,7 +216,9 @@ class Comment:
             "root": self.__rpid,
         }
 
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
 
 async def send_comment(
@@ -305,6 +319,7 @@ async def get_comments(
     params = {"pn": page_index, "type": type_.value, "oid": oid, "sort": order.value}
     return await Api(**api, credential=credential).update_params(**params).result
 
+
 async def get_comments_lazy(
     oid: int,
     type_: CommentResourceType,
@@ -330,9 +345,10 @@ async def get_comments_lazy(
         dict: 调用 API 返回的结果
     """
     api = API["comment"]["reply_by_session_id"]
-    params = {"oid": oid,
-              "type": type_.value,
-              "mode": order.value,
-              "pagination_str": '{"offset": "%s"}' %pagination_str.replace('"', r'\"'),
-              }
+    params = {
+        "oid": oid,
+        "type": type_.value,
+        "mode": order.value,
+        "pagination_str": '{"offset": "%s"}' % pagination_str.replace('"', r"\""),
+    }
     return await Api(**api, credential=credential).update_params(**params).result

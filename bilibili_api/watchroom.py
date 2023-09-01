@@ -7,12 +7,16 @@ bilibili_api.watchroom
 """
 import time
 from enum import Enum
-from typing import List, Union
+from typing import Dict, List, Union
+
+from .credential import Credential
 from .utils.network_httpx import Api
 from .utils.utils import get_api
-from .credential import Credential
 
 API = get_api("watchroom")
+
+
+watch_room_bangumi_cache: Dict[int, List[int]] = {}
 
 
 class SeasonType(Enum):
@@ -33,50 +37,56 @@ class SeasonType(Enum):
     GUOCHUANG = 4
     TV = 5
     VARIETY = 7
+
+
 class MessageType(Enum):
+    """
+    消息类型
+
+    + PLAIN: 纯文本
+    + EMOJI: 表情
+    """
+
     PLAIN = "plain"
     EMOJI = "emoji"
 
 
 class MessageSegment:
-    """
-    Example:
-        MessageSegment("doge", true) + MessageSegment("2023")
-    """
-    msg: str
-    msg_type: MessageType
-
     def __init__(self, msg: str, is_emoji: bool = False):
-        self.msg, self.msg_type = msg, MessageType.EMOJI if is_emoji else MessageType.PLAIN
+        self.msg = msg
+        self.msg_type = MessageType.EMOJI if is_emoji else MessageType.PLAIN
 
-    def convert(self) -> str:
+    def __repr__(self) -> str:
         if self.msg_type == MessageType.EMOJI:
             return f"[{self.msg}]"
         return self.msg
 
 
 class Message:
-    msg_list: List[MessageSegment] = []
+    """
+    消息集合
+    """
 
-    def to_msg_segment(self, msg: Union[MessageSegment, str]) -> MessageSegment:
-        return MessageSegment(msg) if isinstance(msg, str) else msg
-
-    def __init__(self, *messages: List[Union[MessageSegment, str]]):
+    def __init__(self, *messages: Union[MessageSegment, str]):
+        self.msg_list: List[MessageSegment] = []
         for msg in messages:
-            self.msg_list.append(self.to_msg_segment(msg))
+            if isinstance(msg, str):
+                self.msg_list.append(MessageSegment(msg))
+            else:
+                self.msg_list.append(msg)
 
     def __add__(self, msg: Union[MessageSegment, "Message"]):
         if isinstance(msg, MessageSegment):
-            self.msg_list.append(self.to_msg_segment(msg))
-        elif self.__class__ is msg:
-            self.msg_list.extend(msg.msg_list)
-        return self
+            return Message(*self.msg_list, msg)
+        elif isinstance(msg, Message):
+            return Message(*self.msg_list, *msg.msg_list)
+        raise TypeError
 
     def __str__(self) -> str:
-        return "".join([msg.convert() for msg in self.msg_list])
+        return "".join(str(msg) for msg in self.msg_list)
 
     def __repr__(self) -> str:
-        return self.msg_list
+        return str(self.msg_list)
 
 
 class WatchRoom:
@@ -84,26 +94,48 @@ class WatchRoom:
     放映室类
     """
 
-    season_id: int
-    episode_id: int
+    __season_id: int
+    __episode_id: int
 
-    def __init__(self, room_id: int, credential: Credential):
+    def __init__(self, room_id: int, credential: Credential = None):
         """
-        Agrs:
+        Args:
 
-            credential      (Credential): 凭据类
+            credential      (Credential): 凭据类 (大部分用户操作都需要与之匹配的 buvid3 值，务必在 credential 传入)
 
-            room_id (int)       : 放映室 id
+            room_id         (int)       : 放映室 id
         """
-        self.room_id: int = room_id
-        self.credential: Credential = credential
-        self.credential.raise_for_no_buvid3()  # 大部分用户操作都需要与之匹配的 buvid3 值，务必在 credential 传入
+        credential = credential if credential else Credential()
+        self.__room_id = room_id
+        self.credential = credential
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+        self.credential.raise_for_no_buvid3()
+        if room_id in watch_room_bangumi_cache.keys():
+            self.set_season_id(watch_room_bangumi_cache[room_id][0])
+            self.set_episode_id(watch_room_bangumi_cache[room_id][1])
+        else:
+            params = {"room_id": self.get_room_id(), "platform": "web"}
+            info: dict = Api(
+                credential=self.credential, **API["info"]["info"]
+            ).update_params(**params).thread_result
+            self.set_season_id(info["status"]["season_id"])
+            self.set_episode_id(info["status"]["episode_id"])
 
     def set_season_id(self, season_id: int):
-        self.season_id = season_id
+        self.__season_id = season_id
 
     def set_episode_id(self, episode_id: int):
-        self.episode_id = episode_id
+        self.__episode_id = episode_id
+
+    def get_season_id(self):
+        return self.__season_id
+
+    def get_episode_id(self):
+        return self.__episode_id
+
+    def get_room_id(self):
+        return self.__room_id
 
     async def get_info(self) -> dict:
         """
@@ -113,7 +145,7 @@ class WatchRoom:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["info"]
-        params = {"room_id": self.room_id, "platform": "web"}
+        params = {"room_id": self.get_room_id(), "platform": "web"}
         return (
             await Api(credential=self.credential, **api).update_params(**params).result
         )
@@ -124,7 +156,7 @@ class WatchRoom:
         """
         api = API["operate"]["open"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "is_open": 1,
             "csrf": self.credential.bili_jct,
             "platform": "web",
@@ -141,7 +173,7 @@ class WatchRoom:
         """
         api = API["operate"]["open"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "is_open": 0,
             "csrf": self.credential.bili_jct,
             "platform": "web",
@@ -164,7 +196,7 @@ class WatchRoom:
         """
         api = API["operate"]["progress"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "progress": progress,
             "status": status if status in [1, 2, 0] else 1,
             "csrf": self.credential.bili_jct,
@@ -176,12 +208,12 @@ class WatchRoom:
             .result
         )
 
-    async def join(self, token: str = None) -> dict:
+    async def join(self, token: str = "") -> dict:
         """
         加入放映室
 
         Args:
-            
+
             token (str, Optional) 邀请 Token
 
         Returns:
@@ -189,7 +221,7 @@ class WatchRoom:
         """
         api = API["operate"]["join"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "token": token,
             "csrf": self.credential.bili_jct,
             "platform": "web",
@@ -215,7 +247,7 @@ class WatchRoom:
             dict: 调用 API 返回的结果
         """
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "content_type": 0,
             "content": '{"text":"%s"}' % msg,
             "req_id": int(time.time()) * 1000,
@@ -242,7 +274,7 @@ class WatchRoom:
         """
         api = API["operate"]["kickout"]
         data = {
-            "room_id": self.room_id,
+            "room_id": self.get_room_id(),
             "mid": uid,
             "csrf": self.credential.bili_jct,
             "platform": "web",
@@ -252,7 +284,7 @@ class WatchRoom:
             .update_data(**data)
             .result
         )
-    
+
     async def share(self) -> str:
         """
         获取邀请 Token
@@ -262,20 +294,26 @@ class WatchRoom:
         """
         api = API["info"]["season"]
         params = {
-            "room_id": self.room_id,
-            "season_id": self.season_id,
-            "ep_id": self.episode_id,
+            "room_id": self.get_room_id(),
+            "season_id": self.get_season_id(),
+            "ep_id": self.get_episode_id(),
             "csrf": self.credential.bili_jct,
             "platform": "web",
         }
-        res =  (
+        res = (
             await Api(credential=self.credential, no_csrf=True, **api)
             .update_params(**params)
             .result
         )
         return res["room_info"]["share_url"].split("&token=")[-1]
-    
-async def create(season_id: int, episode_id: int, is_open: bool = False, credential: Credential = Credential()) -> WatchRoom:
+
+
+async def create(
+    season_id: int,
+    episode_id: int,
+    is_open: bool = False,
+    credential: Credential = None,
+) -> WatchRoom:
     """
     创建放映室
 
@@ -290,8 +328,13 @@ async def create(season_id: int, episode_id: int, is_open: bool = False, credent
         credential (Credential) 凭据
 
     Returns:
-        Watchroom
+        Watchroom：放映室
     """
+    global watch_room_bangumi_cache
+
+    if credential is None:
+        credential = Credential()
+
     api = API["operate"]["create"]
     data = {
         "season_id": season_id,
@@ -300,14 +343,18 @@ async def create(season_id: int, episode_id: int, is_open: bool = False, credent
         "csrf": credential.bili_jct,
         "platform": "web",
     }
-    return WatchRoom(
-        (await Api(credential=credential, no_csrf=True, **api)
-        .update_data(**data)
-        .result)["room_id"], credential=credential
-    )
+    room_id = (
+        await Api(credential=credential, no_csrf=True, **api).update_data(**data).result
+    )["room_id"]
+    watch_room_bangumi_cache[room_id] = [season_id, episode_id]
+    return WatchRoom(room_id=room_id, credential=credential)
 
 
-async def match(season_id: int, season_type: SeasonType = SeasonType.ANIME, credential: Credential = Credential()) -> WatchRoom:
+async def match(
+    season_id: int,
+    season_type: SeasonType = SeasonType.ANIME,
+    credential: Credential = None,
+) -> WatchRoom:
     """
     匹配放映室
 
@@ -316,7 +363,13 @@ async def match(season_id: int, season_type: SeasonType = SeasonType.ANIME, cred
         season_id (int) 季度 ID
 
         season_type (str) 季度类型
+
+    Returns:
+        Watchroom：放映室
     """
+    if credential is None:
+        credential = Credential()
+
     api = API["operate"]["match"]
     data = {
         "season_id": season_id,
@@ -325,7 +378,10 @@ async def match(season_id: int, season_type: SeasonType = SeasonType.ANIME, cred
         "platform": "web",
     }
     return WatchRoom(
-        (await Api(credential=credential, no_csrf=True, **api)
-        .update_data(**data)
-        .result)["room_id"], credential=credential
+        (
+            await Api(credential=credential, no_csrf=True, **api)
+            .update_data(**data)
+            .result
+        )["room_id"],
+        credential=credential,
     )

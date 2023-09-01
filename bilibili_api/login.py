@@ -50,6 +50,7 @@ credential = Credential()
 is_destroy = False
 id_ = 0  # 事件 id,用于取消 after 绑定
 
+
 def parse_credential_url(events: dict) -> Credential:
     url = events["data"]["url"]
     cookies_list = url.split("?")[1].split("&")
@@ -63,14 +64,17 @@ def parse_credential_url(events: dict) -> Credential:
             bili_jct = cookie[9:]
         if cookie[:11].upper() == "DEDEUSERID=":
             dedeuserid = cookie[11:]
-    ac_time_value=events["data"]["refresh_token"]
-    buvid3=get_spi_buvid_sync()["b_3"]
-    return Credential(sessdata=sessdata, 
-                        bili_jct=bili_jct, 
-                        buvid3=buvid3, 
-                        dedeuserid=dedeuserid, 
-                        ac_time_value=ac_time_value)
-    
+    ac_time_value = events["data"]["refresh_token"]
+    buvid3 = get_spi_buvid_sync()["b_3"]
+    return Credential(
+        sessdata=sessdata,
+        bili_jct=bili_jct,
+        buvid3=buvid3,
+        dedeuserid=dedeuserid,
+        ac_time_value=ac_time_value,
+    )
+
+
 def make_qrcode(url) -> str:
     qr = qrcode.QRCode()
     qr.add_data(url)
@@ -79,9 +83,10 @@ def make_qrcode(url) -> str:
     print("二维码已保存至", os.path.join(tempfile.gettempdir(), "qrcode.png"))
     return os.path.join(tempfile.gettempdir(), "qrcode.png")
 
+
 def update_qrcode_data() -> dict:
     api = API["qrcode"]["get_qrcode_and_token"]
-    qrcode_data = httpx.get(api["url"], follow_redirects=True).json()['data']
+    qrcode_data = httpx.get(api["url"], follow_redirects=True).json()["data"]
     return qrcode_data
 
 
@@ -132,10 +137,10 @@ def login_with_qrcode(root=None) -> Credential:
             elif events["data"]["code"] == 0:
                 log.configure(text="成功！", fg="green", font=big_font)
                 credential = parse_credential_url(events)
-                root.after(1000, destroy) 
+                root.after(1000, destroy)
                 return 0
             id_ = root.after(500, update_events)
-            if time.perf_counter() - start > 120: # 刷新
+            if time.perf_counter() - start > 120:  # 刷新
                 qrcode_data = update_qrcode_data()
                 login_key = qrcode_data["qrcode_key"]
                 qrcode_image = make_qrcode(qrcode_data["url"])
@@ -156,6 +161,7 @@ def login_with_qrcode(root=None) -> Credential:
     root.after_cancel(id_)  # type: ignore
     return credential
 
+
 def login_with_qrcode_term() -> Credential:
     """
     终端扫描二维码登录
@@ -166,6 +172,7 @@ def login_with_qrcode_term() -> Credential:
         Credential: 凭据
     """
     import qrcode_terminal
+
     qrcode_data = update_qrcode_data()
     qrcode_url = qrcode_data["url"]
     login_key = qrcode_data["qrcode_key"]
@@ -174,10 +181,10 @@ def login_with_qrcode_term() -> Credential:
         events = login_with_key(login_key)
         if "code" in events.keys() and events["code"] == 0:
             if events["data"]["code"] == 86101:
-                sys.stdout.write('\r 请扫描二维码↑') 
+                sys.stdout.write("\r 请扫描二维码↑")
                 sys.stdout.flush()
             elif events["data"]["code"] == 86090:
-                sys.stdout.write('\r 点下确认啊！') 
+                sys.stdout.write("\r 点下确认啊！")
                 sys.stdout.flush()
             elif events["data"]["code"] == 86038:
                 print("二维码过期，请扫新二维码！")
@@ -185,7 +192,7 @@ def login_with_qrcode_term() -> Credential:
                 qrcode_url = qrcode_data["url"]
                 print(qrcode_terminal.qr_terminal_str(qrcode_url) + "\n")
             elif events["data"]["code"] == 0:
-                sys.stdout.write('\r 成功！') 
+                sys.stdout.write("\r 成功！")
                 sys.stdout.flush()
                 return parse_credential_url(events)
             elif "code" in events.keys():
@@ -197,13 +204,11 @@ def login_with_key(key: str) -> dict:
     params = {"qrcode_key": key, "source": "main-fe-header"}
     events_api = API["qrcode"]["get_events"]
     events = httpx.get(
-            events_api["url"],
-            params=params,
-            cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
-        ).json()
+        events_api["url"],
+        params=params,
+        cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
+    ).json()
     return events
-
-
 
 
 # ----------------------------------------------------------------

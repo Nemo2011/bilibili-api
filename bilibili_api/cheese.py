@@ -92,7 +92,9 @@ class CheeseList:
         """
         api = API["info"]["meta"]
         params = {"season_id": self.__season_id, "ep_id": self.__ep_id}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_list_raw(self):
         """
@@ -103,7 +105,9 @@ class CheeseList:
         """
         api = API["info"]["list"]
         params = {"season_id": self.__season_id, "pn": 1, "ps": 1000}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_list(self) -> List["CheeseVideo"]:
         """
@@ -115,7 +119,9 @@ class CheeseList:
         global cheese_video_meta_cache
         api = API["info"]["list"]
         params = {"season_id": self.__season_id, "pn": 1, "ps": 1000}
-        lists = await Api(**api, credential=self.credential).update_params(**params).result
+        lists = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         cheese_videos = []
         for c in lists["items"]:
             c["ssid"] = self.get_season_id()
@@ -214,7 +220,9 @@ class CheeseVideo:
             "fnval": 4048,
             "fourk": 1,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_stat(self) -> dict:
         """
@@ -225,7 +233,9 @@ class CheeseVideo:
         """
         api = API_video["info"]["stat"]
         params = {"aid": self.get_aid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_pages(self) -> dict:
         """
@@ -236,7 +246,9 @@ class CheeseVideo:
         """
         api = API_video["info"]["pages"]
         params = {"aid": self.get_aid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_danmaku_view(self) -> dict:
         """
@@ -637,9 +649,12 @@ class CheeseVideo:
         """
         self.credential.raise_for_no_sessdata()
 
-        api =API_video["info"]["has_liked"]
+        api = API_video["info"]["has_liked"]
         params = {"aid": self.get_aid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result == 1
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+            == 1
+        )
 
     async def get_pay_coins(self):
         """
@@ -650,11 +665,11 @@ class CheeseVideo:
         """
         self.credential.raise_for_no_sessdata()
 
-        api =API_video["info"]["get_pay_coins"]
+        api = API_video["info"]["get_pay_coins"]
         params = {"aid": self.get_aid()}
-        return (await Api(**api, credential=self.credential).update_params(**params).result)[
-            "multiply"
-        ]
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )["multiply"]
 
     async def has_favoured(self):
         """
@@ -665,11 +680,11 @@ class CheeseVideo:
         """
         self.credential.raise_for_no_sessdata()
 
-        api =API_video["info"]["has_favoured"]
+        api = API_video["info"]["has_favoured"]
         params = {"aid": self.get_aid()}
-        return (await Api(**api, credential=self.credential).update_params(**params).result)[
-            "favoured"
-        ]
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )["favoured"]
 
     async def like(self, status: bool = True):
         """

@@ -102,7 +102,9 @@ class Topic:
         """
         api = API["info"]["info"]
         params = {"topic_id": self.get_topic_id()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_raw_cards(
         self,
@@ -132,7 +134,9 @@ class Topic:
             "sort_by": sort_by.value,
             "offset": offset,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_cards(
         self,
