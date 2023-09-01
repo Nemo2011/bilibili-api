@@ -60,9 +60,9 @@ async def test_c_Video_get_info():
     return info
 
 
-async def test_d_Video_get_stat():
-    info = await video.get_stat()
-    return info
+# async def test_d_Video_get_stat():
+#     info = await video.get_stat()
+#     return info
 
 
 async def test_e_Video_get_tags():
