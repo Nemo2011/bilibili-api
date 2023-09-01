@@ -21,7 +21,7 @@ from .utils.utils import get_api
 from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
-from .utils.network_httpx import Api
+from .utils.network import Api
 
 API = get_api("session")
 
@@ -269,7 +269,8 @@ async def send_msg(
     elif msg_type == Event.WITHDRAW:
         real_content = str(content)
     elif msg_type == Event.PICTURE or msg_type == Event.GROUPS_PICTURE:
-        assert isinstance(content, Picture)
+        assert isinstance(content, Picture), TypeError
+        await content.upload_file(credential=credential, data={"biz": "im"})
         real_content = json.dumps(
             {
                 "url": content.url,

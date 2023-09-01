@@ -9,6 +9,19 @@
                 "platform": "str: web"
             },
             "comment": "放映室信息"
+        },
+        "season": {
+            "url": "https://api.bilibili.com/pgc/view/web/freya/season",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "season_id":"int: 番剧的 season_id",
+                "ep_id": "int: 剧集的 ep_id",
+                "room_id":"int: 放映室id",
+                "platform": "str: web",
+                "csrf": "str: csrf"
+            },
+            "comment": "获取正在放映的影片"
         }
     },
     "operate": {
@@ -46,7 +59,8 @@
             "data": {
                 "room_id": "int: 放映室id",
                 "platform": "str: web",
-                "csrf": "str: csrf"
+                "csrf": "str: csrf",
+                "token": "str: 分享时的 token"
             },
             "comment": "加入放映室"
         },

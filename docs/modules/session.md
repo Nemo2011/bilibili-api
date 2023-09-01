@@ -116,6 +116,18 @@ from bilibili_api import session
 
 ---
 
+#### async def get_at()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| credential | Credential | 凭据类 |
+| last_id | int, optional | 最后一个 ID |
+| at_time | int, optional | 最后一个点赞发送时间 |
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
 #### async def get_session_settings()
 
 | name | type | description |

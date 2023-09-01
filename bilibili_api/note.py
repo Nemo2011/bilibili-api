@@ -14,11 +14,13 @@ import yaml
 import httpx
 from yarl import URL
 
+from bilibili_api.utils.initial_state import get_initial_state
+
 from .utils.utils import get_api
 from .utils.picture import Picture
 from .utils.credential import Credential
 from .exceptions import ApiException, ArgsException
-from .utils.network_httpx import Api, get_session
+from .utils.network import Api, get_session
 
 API = get_api("note")
 API_ARTICLE = get_api("article")
@@ -130,7 +132,9 @@ class Note:
         api = API["private"]["detail"]
         # oid 为 0 时指 avid
         params = {"oid": self.get_aid(), "note_id": self.get_note_id(), "oid_type": 0}
-        resp = await Api(**api, credential=self.credential).update_params(**params).result
+        resp = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
@@ -147,7 +151,9 @@ class Note:
 
         api = API["public"]["detail"]
         params = {"cvid": self.get_cvid()}
-        resp = await Api(**api, credential=self.credential).update_params(**params).result
+        resp = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
@@ -193,19 +199,7 @@ class Note:
             dict: 调用 API 返回的结果
         """
         assert self.__type == NoteType.PUBLIC
-
-        sess = get_session()
-        resp = await sess.get(f"https://www.bilibili.com/read/cv{self.__cvid}")
-        html = resp.text
-
-        match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", html, re.I)  # type: ignore
-
-        if not match:
-            raise ApiException("找不到信息")
-
-        data = json.loads(match[1])
-
-        return data
+        return await get_initial_state(f"https://www.bilibili.com/read/cv{self.__cvid}")
 
     async def set_like(self, status: bool = True) -> dict:
         """

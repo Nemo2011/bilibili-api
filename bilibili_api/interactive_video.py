@@ -25,7 +25,7 @@ from .video import Video
 from .utils.utils import get_api
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
-from .utils.network_httpx import Api
+from .utils.network import Api
 
 API = get_api("interactive_video")
 
@@ -501,9 +501,13 @@ class InteractiveVideo(Video):
             "Accept": "application/json, text/plain, */*",
         }
         data = parse.urlencode(form_data)
-        return await Api(**api, credential=credential, no_csrf=True
-                         ).update_data(**data).update_headers(**headers).result
-    
+        return (
+            await Api(**api, credential=credential, no_csrf=True)
+            .update_data(**data)
+            .update_headers(**headers)
+            .result
+        )
+
     async def get_graph_version(self) -> int:
         """
         获取剧情图版本号，仅供 `get_edge_info()` 使用。
@@ -522,7 +526,11 @@ class InteractiveVideo(Video):
         url = "https://api.bilibili.com/x/player/v2"
         params = {"bvid": bvid, "cid": cid}
 
-        resp = await Api(method="GET", url=url, credential=credential).update_params(**params).result
+        resp = (
+            await Api(method="GET", url=url, credential=credential)
+            .update_params(**params)
+            .result
+        )
         return resp["interaction"]["graph_version"]
 
     async def get_edge_info(self, edge_id: Union[int, None] = None):

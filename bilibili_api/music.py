@@ -11,7 +11,7 @@ from typing import Optional
 
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import Api
+from .utils.network import Api
 
 API_audio = get_api("audio")
 API = get_api("music")

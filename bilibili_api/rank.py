@@ -9,7 +9,7 @@ from typing import Union
 
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import Api
+from .utils.network import Api
 
 API = get_api("rank")
 
@@ -272,7 +272,12 @@ async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW) -> dict:
     api = API["info"]["manga_rank"]
     params = {"device": "pc", "platform": "web"}
     data = {"id": type_.value}
-    return await Api(**api, no_csrf=True).update_data(**data).update_params(**params).result
+    return (
+        await Api(**api, no_csrf=True)
+        .update_data(**data)
+        .update_params(**params)
+        .result
+    )
 
 
 async def get_live_hot_rank() -> dict:

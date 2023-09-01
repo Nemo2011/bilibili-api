@@ -10,7 +10,7 @@ from enum import Enum
 from typing import List, Tuple, Optional
 
 from .utils.utils import get_api
-from .utils.network_httpx import Api
+from .utils.network import Api
 
 API = get_api("article-category")
 

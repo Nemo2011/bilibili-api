@@ -11,7 +11,7 @@ from . import user
 from .video import Video
 from .utils.utils import join, get_api
 from .utils.credential import Credential
-from .utils.network_httpx import Api
+from .utils.network import Api
 from .exceptions.ArgsException import ArgsException
 
 API = get_api("favorite-list")
@@ -110,7 +110,9 @@ class FavoriteList:
         api = API["info"]["info"]
         params = {"media_id": self.__media_id}
 
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_content_video(
         self,
@@ -175,7 +177,9 @@ class FavoriteList:
         api = API["info"]["list_content_id_list"]
         params = {"media_id": self.__media_id}
 
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
 
 async def get_video_favorite_list(

@@ -10,7 +10,7 @@
       },
       "comment": "视频数据"
     },
-    "detail": {
+    "info": {
       "url": "https://api.bilibili.com/x/web-interface/view",
       "method": "GET",
       "verify": false,
@@ -19,6 +19,17 @@
         "bvid": "string: BV 号"
       },
       "comment": "视频详细信息"
+    },
+    "detail": {
+      "url": "https://api.bilibili.com/x/web-interface/wbi/view/detail",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "aid": "int: av 号",
+        "bvid": "string: BV 号",
+        "need_operation_card": "int: 0",
+        "need_elec": "int: 0"
+      }
     },
     "cid_info": {
       "url": "https://hd.biliplus.com/api/cidinfo",
@@ -228,6 +239,17 @@
         "select_like": "int bool: 是否同时点赞"
       },
       "comment": "给视频投币"
+    },
+    "share": {
+      "url": "https://api.bilibili.com/x/web-interface/share/add",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号",
+        "bvid": "string: BV 号",
+        "csrf": "str: csrf"
+      },
+      "comment": "视频分享"
     },
     "add_tag": {
       "url": "https://api.bilibili.com/x/tag/archive/add",

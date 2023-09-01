@@ -18,10 +18,9 @@ from aiohttp.client_ws import ClientWebSocketResponse
 
 from .utils.utils import get_api
 from .utils.danmaku import Danmaku
-from .utils.network import get_session
+from .utils.network import get_aiohttp_session, Api, HEADERS
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
-from .utils.network_httpx import Api, HEADERS
 from .exceptions.LiveException import LiveException
 
 API = get_api("live")
@@ -141,7 +140,9 @@ class LiveRoom:
             "room_id": self.room_display_id,
             "platform": "pc",
         }
-        resp = await Api(**api, credential=self.credential).update_params(**params).result
+        resp = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         return resp
 
     async def stop(self) -> dict:
@@ -155,7 +156,9 @@ class LiveRoom:
         params = {
             "room_id": self.room_display_id,
         }
-        resp = await Api(**api, credential=self.credential).update_params(**params).result
+        resp = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         return resp
 
     async def get_room_play_info(self) -> dict:
@@ -169,7 +172,9 @@ class LiveRoom:
         params = {
             "room_id": self.room_display_id,
         }
-        resp = await Api(**api, credential=self.credential).update_params(**params).result
+        resp = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
         # 缓存真实房间 ID
         self.__ruid = resp["uid"]
@@ -199,7 +204,9 @@ class LiveRoom:
         """
         api = API["info"]["chat_conf"]
         params = {"room_id": self.room_display_id}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_room_info(self) -> dict:
         """
@@ -210,7 +217,9 @@ class LiveRoom:
         """
         api = API["info"]["room_info"]
         params = {"room_id": self.room_display_id}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_fan_model(
         self,
@@ -246,7 +255,9 @@ class LiveRoom:
             params["roomId"] = roomId
         if target_id:
             params["target_id"] = target_id
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_user_info_in_room(self) -> dict:
         """
@@ -259,7 +270,9 @@ class LiveRoom:
 
         api = API["info"]["user_info_in_room"]
         params = {"room_id": self.room_display_id}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_dahanghai(self, page: int = 1) -> dict:
         """
@@ -278,7 +291,9 @@ class LiveRoom:
             "page_size": 30,
             "page": page,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_gaonengbang(self, page: int = 1) -> dict:
         """
@@ -297,7 +312,9 @@ class LiveRoom:
             "pageSize": 50,
             "page": page,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_seven_rank(self) -> dict:
         """
@@ -311,7 +328,9 @@ class LiveRoom:
             "roomid": self.room_display_id,
             "ruid": await self.__get_ruid(),
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_fans_medal_rank(self) -> dict:
         """
@@ -322,7 +341,9 @@ class LiveRoom:
         """
         api = API["info"]["fans_medal_rank"]
         params = {"roomid": self.room_display_id, "ruid": await self.__get_ruid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_black_list(self) -> dict:
         """
@@ -334,7 +355,9 @@ class LiveRoom:
         api = API["info"]["black_list"]
         params = {"room_id": self.room_display_id, "ps": 1}
 
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_room_play_url(
         self, screen_resolution: ScreenResolution = ScreenResolution.ORIGINAL
@@ -356,7 +379,9 @@ class LiveRoom:
             "https_url_req": "1",
             "ptype": "16",
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_room_play_info_v2(
         self,
@@ -390,7 +415,9 @@ class LiveRoom:
             "codec": live_codec.value,
             "qn": live_qn.value,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def ban_user(self, uid: int) -> dict:
         """
@@ -563,7 +590,9 @@ class LiveRoom:
             "roomId": self.room_display_id,
             "uid": await self.__get_ruid(),
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_gift_common(self) -> dict:
         """
@@ -576,10 +605,11 @@ class LiveRoom:
         params_room_info = {
             "room_id": self.room_display_id,
         }
-        res_room_info = await Api(
-            **api_room_info,
-            credential=self.credential
-            ).update_params(**params_room_info).result
+        res_room_info = (
+            await Api(**api_room_info, credential=self.credential)
+            .update_params(**params_room_info)
+            .result
+        )
         area_id, area_parent_id = (
             res_room_info["room_info"]["area_id"],
             res_room_info["room_info"]["parent_area_id"],
@@ -593,7 +623,9 @@ class LiveRoom:
             "platform": "pc",
             "source": "live",
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_gift_special(self, tab_id: int) -> dict:
         """
@@ -609,10 +641,11 @@ class LiveRoom:
         params_room_info = {
             "room_id": self.room_display_id,
         }
-        res_room_info = await Api(
-            **api_room_info,
-            credential=self.credential
-            ).update_params(**params_room_info).result
+        res_room_info = (
+            await Api(**api_room_info, credential=self.credential)
+            .update_params(**params_room_info)
+            .result
+        )
         area_id, area_parent_id = (
             res_room_info["room_info"]["area_id"],
             res_room_info["room_info"]["parent_area_id"],
@@ -629,7 +662,9 @@ class LiveRoom:
             "platform": "pc",
             "build": 1,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def send_gift_gold(
         self, uid: int, gift_id: int, gift_num: int, price: int, storm_beat_id: int = 0
@@ -878,7 +913,7 @@ class LiveDanmaku(AsyncEvent):
 
         # 连接直播间
         self.logger.debug("准备连接直播间")
-        session = get_session()
+        session = get_aiohttp_session()
         available_hosts: List[dict] = conf["host_server_list"]
         retry = self.max_retry
         host = None
@@ -1043,7 +1078,9 @@ class LiveDanmaku(AsyncEvent):
                     base64.b64encode(f"60|{self.room_display_id}|1|0".encode("utf-8")),
                     "utf-8",
                 )
-                await Api(method="GET", url=heartbeat_url, json_body=True).update_params(**{"hb": hb, "pf": "web"}).result
+                await Api(
+                    method="GET", url=heartbeat_url, json_body=True
+                ).update_params(**{"hb": hb, "pf": "web"}).result
             elif self.__heartbeat_timer <= -30:
                 # 视为已异常断开连接，发布 TIMEOUT 事件
                 self.dispatch("TIMEOUT")

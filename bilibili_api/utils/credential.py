@@ -151,8 +151,9 @@ class Credential:
             bool: cookies 是否有效
         """
 
-    def generate_buvid3(self):
-        """
-        生成 buvid3
-        """
-        self.buvid3 = str(uuid.uuid1()) + "infoc"
+    # def generate_buvid3(self):
+    #     """
+    #     生成 buvid3
+    #     """
+    #     self.buvid3 = str(uuid.uuid1()) + "infoc"
+    # 长度都不同了...用 credential.get_spi_buvid

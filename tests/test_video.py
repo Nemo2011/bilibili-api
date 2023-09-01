@@ -60,9 +60,9 @@ async def test_c_Video_get_info():
     return info
 
 
-async def test_d_Video_get_stat():
-    info = await video.get_stat()
-    return info
+# async def test_d_Video_get_stat():
+#     info = await video.get_stat()
+#     return info
 
 
 async def test_e_Video_get_tags():
@@ -226,7 +226,7 @@ async def test_zd_video_snapshot():
 
 
 async def test_zf_get_subtitle():
-    videos = video_m.Video(aid=288571926)
+    videos = video_m.Video(aid=288571926, credential=get_credential())
     return await videos.get_subtitle(cid=281031471)
 
 

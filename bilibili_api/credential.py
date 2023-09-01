@@ -15,7 +15,7 @@ from Cryptodome.PublicKey import RSA
 from Cryptodome.Cipher import PKCS1_OAEP
 
 from .utils.credential import Credential as _Credential
-from .utils.network_httpx import Api, get_api, get_session
+from .utils.network import Api, get_api, get_session
 
 key = RSA.importKey(
     """\
