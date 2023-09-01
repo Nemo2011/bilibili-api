@@ -240,6 +240,10 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_uplikeimg()
+
+获取`up`主三连专属动图特效信息
+
 #### async def get_videos()
 
 | name    | type                 | description                          |
