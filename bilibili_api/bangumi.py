@@ -26,7 +26,11 @@ from .utils.credential import Credential
 from .exceptions.ApiException import ApiException
 from .utils.network_httpx import request, Api, get_session
 from .exceptions.ResponseException import ResponseException
-from .utils.initial_state import get_initial_state, get_initial_state_sync, InitialDataType
+from .utils.initial_state import (
+    get_initial_state,
+    get_initial_state_sync,
+    InitialDataType,
+)
 
 API = get_api("bangumi")
 
@@ -1168,7 +1172,9 @@ class Bangumi:
             )
             api = API["info"]["episodes_list"]
             params = {"season_id": self.__ssid}
-            return await Api(**api, credential=credential).update_params(**params).result
+            return (
+                await Api(**api, credential=credential).update_params(**params).result
+            )
 
     async def get_episodes(self) -> List["Episode"]:
         """
@@ -1184,7 +1190,8 @@ class Bangumi:
         while content_type != InitialDataType.NEXT_DATA:
             bangumi_meta, content_type = await get_initial_state(
                 url=f"https://www.bilibili.com/bangumi/play/ep{first_epid}",
-                credential=credential)
+                credential=credential,
+            )
         bangumi_meta["media_id"] = self.get_media_id()
 
         episodes = []
@@ -1298,24 +1305,38 @@ class Episode(Video):
         if not epid in episode_data_cache.keys():
             res, content_type = get_initial_state_sync(
                 url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
-                credential=self.credential
-            ) # 随机 __NEXT_DATA__ 见 https://github.com/Nemo2011/bilibili-api/issues/433
+                credential=self.credential,
+            )  # 随机 __NEXT_DATA__ 见 https://github.com/Nemo2011/bilibili-api/issues/433
             if content_type == InitialDataType.NEXT_DATA:
-                content = res["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"]["data"]["mediaInfo"]
-                self.bangumi = Bangumi(ssid=content["season_id"]) if not epid in episode_data_cache.keys() else episode_data_cache[epid]["bangumi_class"]
+                content = res["props"]["pageProps"]["dehydratedState"]["queries"][0][
+                    "state"
+                ]["data"]["mediaInfo"]
+                self.bangumi = (
+                    Bangumi(ssid=content["season_id"])
+                    if not epid in episode_data_cache.keys()
+                    else episode_data_cache[epid]["bangumi_class"]
+                )
                 for ep_info in content["episodes"]:
-                    if int(ep_info["id"] if "id" in ep_info else ep_info["ep_id"]) == int(epid):
+                    if int(
+                        ep_info["id"] if "id" in ep_info else ep_info["ep_id"]
+                    ) == int(epid):
                         bvid = ep_info["bvid"]
                         self.__ep_info: dict = ep_info
                         break
-            else: # InitialDataType.INITIAL_STATE
+            else:  # InitialDataType.INITIAL_STATE
                 self.__ep_info: dict = res["epInfo"]
-                self.bangumi = Bangumi(ssid=res["mediaInfo"]["season_id"]) if not epid in episode_data_cache.keys() else episode_data_cache[epid]["bangumi_class"]
+                self.bangumi = (
+                    Bangumi(ssid=res["mediaInfo"]["season_id"])
+                    if not epid in episode_data_cache.keys()
+                    else episode_data_cache[epid]["bangumi_class"]
+                )
                 bvid = res["epInfo"]["bvid"]
         else:
             content = episode_data_cache[epid]["bangumi_meta"]
             bvid = None
-            for einfo in content["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"]["data"]["mediaInfo"]["episodes"]:
+            for einfo in content["props"]["pageProps"]["dehydratedState"]["queries"][0][
+                "state"
+            ]["data"]["mediaInfo"]["episodes"]:
                 if einfo["ep_id"] == epid:
                     bvid = einfo["bvid"]
             self.bangumi = episode_data_cache[epid]["bangumi_class"]
@@ -1369,12 +1390,16 @@ class Episode(Video):
         if self.__ep_info is None:
             res, content_type = get_initial_state(
                 url=f"https://www.bilibili.com/bangumi/play/ep{self.__epid}",
-                credential=self.credential
+                credential=self.credential,
             )
             if content_type == InitialDataType.NEXT_DATA:
-                content = res["props"]["pageProps"]["dehydratedState"]["queries"][0]["state"]["data"]["mediaInfo"]
+                content = res["props"]["pageProps"]["dehydratedState"]["queries"][0][
+                    "state"
+                ]["data"]["mediaInfo"]
                 for ep_info in content["episodes"]:
-                    if int(ep_info["id"] if "id" in ep_info else ep_info["ep_id"]) == int(self.get_epid()):
+                    if int(
+                        ep_info["id"] if "id" in ep_info else ep_info["ep_id"]
+                    ) == int(self.get_epid()):
                         return ep_info
             else:
                 return res["epInfo"]
@@ -1409,7 +1434,9 @@ class Episode(Video):
                 "fnval": 4048,
                 "fourk": 1,
             }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_danmaku_xml(self) -> str:
         """

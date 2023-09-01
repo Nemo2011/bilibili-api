@@ -27,6 +27,7 @@ class SeasonType(Enum):
     + TV: 电视剧
     + VARIETY: 综艺
     """
+
     ANIME = 1
     MOVIE = 2
     DOCUMENTARY = 3
@@ -42,6 +43,7 @@ class MessageType(Enum):
     + PLAIN: 纯文本
     + EMOJI: 表情
     """
+
     PLAIN = "plain"
     EMOJI = "emoji"
 
@@ -61,6 +63,7 @@ class Message:
     """
     消息集合
     """
+
     def __init__(self, *messages: Union[MessageSegment, str]):
         self.msg_list: List[MessageSegment] = []
         for msg in messages:
@@ -87,6 +90,7 @@ class WatchRoom:
     """
     放映室类
     """
+
     season_id: int
     episode_id: int
 
@@ -184,7 +188,7 @@ class WatchRoom:
         加入放映室
 
         Args:
-            
+
             token (str, Optional) 邀请 Token
 
         Returns:
@@ -271,7 +275,7 @@ class WatchRoom:
             "csrf": self.credential.bili_jct,
             "platform": "web",
         }
-        res =  (
+        res = (
             await Api(credential=self.credential, no_csrf=True, **api)
             .update_params(**params)
             .result
@@ -279,7 +283,12 @@ class WatchRoom:
         return res["room_info"]["share_url"].split("&token=")[-1]
 
 
-async def create(season_id: int, episode_id: int, is_open: bool = False, credential: Credential = None) -> WatchRoom:
+async def create(
+    season_id: int,
+    episode_id: int,
+    is_open: bool = False,
+    credential: Credential = None,
+) -> WatchRoom:
     """
     创建放映室
 
@@ -308,13 +317,20 @@ async def create(season_id: int, episode_id: int, is_open: bool = False, credent
         "platform": "web",
     }
     return WatchRoom(
-        (await Api(credential=credential, no_csrf=True, **api)
-        .update_data(**data)
-        .result)["room_id"], credential=credential
+        (
+            await Api(credential=credential, no_csrf=True, **api)
+            .update_data(**data)
+            .result
+        )["room_id"],
+        credential=credential,
     )
 
 
-async def match(season_id: int, season_type: SeasonType = SeasonType.ANIME, credential: Credential = None) -> WatchRoom:
+async def match(
+    season_id: int,
+    season_type: SeasonType = SeasonType.ANIME,
+    credential: Credential = None,
+) -> WatchRoom:
     """
     匹配放映室
 
@@ -338,7 +354,10 @@ async def match(season_id: int, season_type: SeasonType = SeasonType.ANIME, cred
         "platform": "web",
     }
     return WatchRoom(
-        (await Api(credential=credential, no_csrf=True, **api)
-        .update_data(**data)
-        .result)["room_id"], credential=credential
+        (
+            await Api(credential=credential, no_csrf=True, **api)
+            .update_data(**data)
+            .result
+        )["room_id"],
+        credential=credential,
     )

@@ -741,10 +741,13 @@ class VideoUploader(AsyncEvent):
             params = {"csrf": self.credential.bili_jct}
             data = json.dumps(meta)
             headers = {"content-type": "application/json"}
-            resp = await Api(**api, credential=self.credential, no_csrf=True
-                             ).update_params(**params
-                                             ).update_data(**data
-                                                           ).update_headers(**headers).result
+            resp = (
+                await Api(**api, credential=self.credential, no_csrf=True)
+                .update_params(**params)
+                .update_data(**data)
+                .update_headers(**headers)
+                .result
+            )
             self.dispatch(VideoUploaderEvents.AFTER_SUBMIT.value, resp)
             return resp
 
@@ -888,7 +891,11 @@ class VideoEditor(AsyncEvent):
         try:
             api = _API["upload_args"]
             params = {"bvid": self.bvid}
-            self.__old_configs = await Api(**api, credential=self.credential).update_params(**params).result
+            self.__old_configs = (
+                await Api(**api, credential=self.credential)
+                .update_params(**params)
+                .result
+            )
         except Exception as e:
             self.dispatch(VideoEditorEvents.PRELOAD_FAILED.value, {"err", e})
             raise e
@@ -926,17 +933,20 @@ class VideoEditor(AsyncEvent):
         datas["csrf"] = self.credential.bili_jct
         self.dispatch(VideoEditorEvents.PRE_SUBMIT.value)
         try:
-            params={"csrf": self.credential.bili_jct, "t": int(time.time())},
-            data=json.dumps(datas),
-            headers={
+            params = ({"csrf": self.credential.bili_jct, "t": int(time.time())},)
+            data = (json.dumps(datas),)
+            headers = {
                 "content-type": "application/json;charset=UTF-8",
                 "referer": "https://member.bilibili.com",
                 "user-agent": "Mozilla/5.0",
             }
-            resp = await Api(**api, credential=self.credential, no_csrf=True
-                             ).update_params(**params
-                                             ).update_data(**data
-                                                           ).update_headers(**headers).result
+            resp = (
+                await Api(**api, credential=self.credential, no_csrf=True)
+                .update_params(**params)
+                .update_data(**data)
+                .update_headers(**headers)
+                .result
+            )
             self.dispatch(VideoEditorEvents.AFTER_SUBMIT.value, resp)
         except Exception as e:
             self.dispatch(VideoEditorEvents.SUBMIT_FAILED.value, {"err", e})

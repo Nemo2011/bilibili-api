@@ -603,7 +603,9 @@ class Article:
 
         api = API["info"]["view"]
         params = {"id": self.__cvid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_all(self) -> dict:
         """
@@ -612,7 +614,9 @@ class Article:
         Returns:
             dict: 调用 API 返回的结果
         """
-        return (await get_initial_state(f"https://www.bilibili.com/read/cv{self.__cvid}"))[0]
+        return (
+            await get_initial_state(f"https://www.bilibili.com/read/cv{self.__cvid}")
+        )[0]
 
     async def set_like(self, status: bool = True) -> dict:
         """
