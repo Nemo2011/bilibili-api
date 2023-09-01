@@ -938,7 +938,7 @@ class User:
         api = API["info"]["uplikeimg"]
         params = {"vmid": self.get_uid()}
         return (
-            await Api(**api).update_params(**params).result
+            await Api(**api, credential=self.credential).update_params(**params).result
         )
 
 async def get_self_info(credential: Credential) -> dict:
