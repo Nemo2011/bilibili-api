@@ -18,6 +18,8 @@ import httpx
 from yarl import URL
 from bs4 import BeautifulSoup, element
 
+from bilibili_api.utils.initial_state import get_initial_state
+
 from .note import Note, NoteType
 from .utils.utils import get_api
 from .utils.credential import Credential
@@ -610,25 +612,7 @@ class Article:
         Returns:
             dict: 调用 API 返回的结果
         """
-        sess = get_session()
-        resp = await sess.get(
-            f"https://www.bilibili.com/read/cv{self.__cvid}",
-            headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.62",
-                "cookie": "opus-goback=1",
-            },
-        )
-        if resp.status_code == 200:
-            html = resp.text
-
-            match = re.search("window\.__INITIAL_STATE__=(\{.+?\});", html, re.I)  # type: ignore
-
-            if not match:
-                raise ApiException("找不到信息")
-
-            data = json.loads(match[1])
-
-            return data
+        return (await get_initial_state(f"https://www.bilibili.com/read/cv{self.__cvid}"))[0]
 
     async def set_like(self, status: bool = True) -> dict:
         """
