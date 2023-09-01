@@ -133,6 +133,12 @@ class WatchRoom:
             self.set_season_id(info["status"]["season_id"])
             self.set_episode_id(info["status"]["episode_id"])
 
+    def set_season_id(self, season_id: int):
+        self.__season_id = season_id
+
+    def set_episode_id(self, episode_id: int):
+        self.__episode_id = episode_id
+        
     def get_season_id(self):
         return self.__season_id
 
