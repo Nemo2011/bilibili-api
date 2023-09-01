@@ -211,7 +211,7 @@ class Api:
         self.files = kwargs
         self.__result = None
         return self
-    
+
     def update_headers(self, **kwargs) -> "Api":
         """
         毫无亮点的更新 headers
@@ -237,6 +237,10 @@ class Api:
         Returns:
             接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
         """
+        # 如果接口需要 Credential 且未传入则报错 (默认值为 Credential())
+        if self.verify:
+            self.credential.raise_for_no_sessdata()
+
         # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
         if self.method != "GET" and not self.no_csrf:
             self.credential.raise_for_no_bili_jct()
@@ -356,7 +360,7 @@ async def check_valid(credential: Credential) -> bool:
 async def get_spi_buvid() -> dict:
     """
     获取 buvid3 / buvid4
-    
+
     Returns:
         dict: 账号相关信息
     """
@@ -365,7 +369,7 @@ async def get_spi_buvid() -> dict:
 def get_spi_buvid_sync() -> dict:
     """
     同步获取 buvid3 / buvid4
-    
+
     Returns:
         dict: 账号相关信息
     """
@@ -514,7 +518,7 @@ async def request_old(
     # cookies["buvid3"] = str(uuid.uuid1())
     # 直接定值，随机字符串部分接口 -412
     global buvid3
-    if buvid3 == "" and url != API["info"]["spi"]["url"]: 
+    if buvid3 == "" and url != API["info"]["spi"]["url"]:
         cookies["buvid3"] = (await get_spi_buvid())["b_3"]
     cookies["buvid3"] = buvid3
     cookies["Domain"] = ".bilibili.com"
