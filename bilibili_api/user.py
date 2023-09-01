@@ -136,6 +136,7 @@ class BangumiFollowStatus(Enum):
     WATCHING = 2
     WATCHED = 3
 
+
 class HistoryType(Enum):
     """
     历史记录分类
@@ -169,6 +170,7 @@ class HistoryBusinessType(Enum):
     article_list = "article-list"
     article = "article"
 
+
 class OrderType(Enum):
     """
     排序字段
@@ -176,8 +178,10 @@ class OrderType(Enum):
     + desc：倒序
     + asc：正序
     """
+
     desc = "desc"
     asc = "asc"
+
 
 async def name2uid(names: Union[str, List[str]]):
     """
@@ -228,7 +232,11 @@ class User:
         params = {
             "mid": self.__uid,
         }
-        return await Api(**API["info"]["info"], credential=self.credential).update_params(**params).result
+        return (
+            await Api(**API["info"]["info"], credential=self.credential)
+            .update_params(**params)
+            .result
+        )
 
     async def __get_self_info(self) -> dict:
         """
@@ -264,8 +272,10 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["user_tag"]
-        params = {"vmid": self.__uid}#, "pn": pn, "ps": ps}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        params = {"vmid": self.__uid}  # , "pn": pn, "ps": ps}
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_space_notice(self) -> dict:
         """
@@ -276,7 +286,9 @@ class User:
         """
         api = API["info"]["space_notice"]
         params = {"mid": self.__uid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def set_space_notice(self, content: str = "") -> dict:
         """
@@ -305,7 +317,9 @@ class User:
         """
         api = API["info"]["relation"]
         params = {"vmid": self.__uid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_up_stat(self) -> dict:
         """
@@ -318,7 +332,9 @@ class User:
 
         api = API["info"]["upstat"]
         params = {"mid": self.__uid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_top_videos(self) -> dict:
         """
@@ -329,7 +345,9 @@ class User:
         """
         api = API["info"]["user_top_videos"]
         params = {"vmid": self.get_uid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_user_medal(self) -> dict:
         """
@@ -342,7 +360,9 @@ class User:
         # self.credential.raise_for_no_bili_jct()
         api = API["info"]["user_medal"]
         params = {"target_id": self.__uid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_live_info(self) -> dict:
         """
@@ -353,7 +373,9 @@ class User:
         """
         api = API["info"]["live"]
         params = {"mid": self.__uid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_videos(
         self,
@@ -389,7 +411,9 @@ class User:
             "keyword": keyword,
             "order": order.value,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_audios(
         self, order: AudioOrder = AudioOrder.PUBDATE, pn: int = 1, ps: int = 30
@@ -407,7 +431,9 @@ class User:
         """
         api = API["info"]["audio"]
         params = {"uid": self.__uid, "ps": ps, "pn": pn, "order": order.value}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_album(
         self, biz: AlbumType = AlbumType.ALL, page_num: int = 1, page_size: int = 30
@@ -432,7 +458,9 @@ class User:
             "page_size": page_size,
             "biz": biz.value,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_articles(
         self, pn: int = 1, order: ArticleOrder = ArticleOrder.PUBDATE, ps: int = 30
@@ -452,7 +480,11 @@ class User:
         """
         api = API["info"]["article"]
         params = {"mid": self.__uid, "ps": ps, "pn": pn, "sort": order.value}
-        return await Api(**api, credential=self.credential, wbi=True).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential, wbi=True)
+            .update_params(**params)
+            .result
+        )
 
     async def get_article_list(
         self, order: ArticleListOrder = ArticleListOrder.LATEST
@@ -468,12 +500,14 @@ class User:
         """
         api = API["info"]["article_lists"]
         params = {"mid": self.__uid, "sort": order.value}
-        return await Api(**api, credential=self.credential).update_params(**params).result
-    
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
     async def get_dynamics(self, offset: int = 0, need_top: bool = False) -> dict:
         """
         获取用户动态。
-        
+
         建议使用 user.get_dynamics_new() 新接口。
         Args:
             offset (str, optional):     该值为第一次调用本方法时，数据中会有个 next_offset 字段，
@@ -492,20 +526,22 @@ class User:
             "offset_dynamic_id": offset,
             "need_top": 1 if need_top else 0,
         }
-        data = await Api(**api, credential=self.credential).update_params(**params).result
+        data = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         # card 字段自动转换成 JSON。
         if "cards" in data:
             for card in data["cards"]:
                 card["card"] = json.loads(card["card"])
                 card["extend_json"] = json.loads(card["extend_json"])
         return data
-    
+
     async def get_dynamics_new(self, offset: int = "") -> dict:
         """
         获取用户动态。
 
         Args:
-            offset (str, optional):     该值为第一次调用本方法时，数据中会有个 next_offset 字段，
+            offset (str, optional):     该值为第一次调用本方法时，数据中会有个 offset 字段，
 
                                         指向下一动态列表第一条动态（类似单向链表）。
 
@@ -525,9 +561,11 @@ class User:
             "host_mid": self.__uid,
             "offset": offset,
             "features": "itemOpusStyle",
-            "timezone_offset": -480
+            "timezone_offset": -480,
         }
-        data = await Api(**api, credential=self.credential).update_params(**params).result
+        data = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         return data
 
     async def get_subscribed_bangumi(
@@ -560,10 +598,16 @@ class User:
             "type": type_.value,
             "follow_status": follow_status.value,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_followings(
-        self, pn: int = 1, ps: int = 100, attention: bool = False, order: OrderType = OrderType.desc
+        self,
+        pn: int = 1,
+        ps: int = 100,
+        attention: bool = False,
+        order: OrderType = OrderType.desc,
     ) -> dict:
         """
         获取用户关注列表（不是自己只能访问前 5 页）
@@ -586,9 +630,11 @@ class User:
             "ps": ps,
             "pn": pn,
             "order_type": "attention" if attention else "",
-            "order": order.value
+            "order": order.value,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_all_followings(self) -> dict:
         """
@@ -632,7 +678,9 @@ class User:
             "pn": pn,
             "order": "desc" if desc else "asc",
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_self_same_followers(self, pn: int = 1, ps: int = 50) -> dict:
         """
@@ -649,7 +697,9 @@ class User:
         self.credential.raise_for_no_sessdata()
         api = API["info"]["get_same_followings"]
         params = {"vmid": self.get_uid(), "pn": pn, "ps": ps}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def top_followers(self, since=None) -> dict:
         """
@@ -664,7 +714,9 @@ class User:
         params = {}
         if since:
             params["t"] = int(since)
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_overview_stat(self) -> dict:
         """
@@ -675,7 +727,9 @@ class User:
         """
         api = API["info"]["overview"]
         params = {"mid": self.__uid, "jsonp": "jsonp"}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     # 操作用户
 
@@ -727,7 +781,11 @@ class User:
             "ps": ps,
             "sort": "asc" if ChannelOrder.CHANGE else "desc",
         }
-        return await Api(**api, wbi=True, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, wbi=True, credential=self.credential)
+            .update_params(**params)
+            .result
+        )
 
     async def get_channel_videos_season(
         self,
@@ -759,7 +817,11 @@ class User:
             "page_num": pn,
             "page_size": ps,
         }
-        return await Api(**api, wbi=True,credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, wbi=True, credential=self.credential)
+            .update_params(**params)
+            .result
+        )
 
     async def get_channel_list(self) -> dict:
         """
@@ -774,13 +836,21 @@ class User:
         """
         api = API["info"]["channel_list"]
         params = {"mid": self.__uid, "page_num": 1, "page_size": 1}
-        res = await Api(**api, wbi=True, credential=self.credential).update_params(**params).result
+        res = (
+            await Api(**api, wbi=True, credential=self.credential)
+            .update_params(**params)
+            .result
+        )
         items = res["items_lists"]["page"]["total"]
         time.sleep(0.5)
         if items == 0:
             items = 1
         params["page_size"] = items
-        return await Api(**api, wbi=True,credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, wbi=True, credential=self.credential)
+            .update_params(**params)
+            .result
+        )
 
     async def get_channels(self) -> List["ChannelSeries"]:
         """
@@ -826,7 +896,11 @@ class User:
         """
         api = API["info"]["pugv"]
         params = {"mid": self.__uid}
-        return await Api(**api, wbi=True, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, wbi=True, credential=self.credential)
+            .update_params(**params)
+            .result
+        )
 
     async def get_reservation(self) -> dict:
         """
@@ -837,7 +911,9 @@ class User:
         """
         api = API["info"]["reservation"]
         params = {"vmid": self.get_uid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_elec_user_monthly(self) -> dict:
         """
@@ -848,7 +924,9 @@ class User:
         """
         api = API["info"]["elec_user_monthly"]
         params = {"up_mid": self.get_uid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
 
 async def get_self_info(credential: Credential) -> dict:

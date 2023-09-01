@@ -215,7 +215,9 @@ class Video:
         """
         api = API["info"]["detail"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        resp = await Api(**api, credential=self.credential).update_params(**params).result
+        resp = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
@@ -264,7 +266,9 @@ class Video:
             cid = await self.get_cid(page_index=page_index)
         api = API["info"]["tags"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid(), "cid": cid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_chargers(self) -> dict:
         """
@@ -277,7 +281,9 @@ class Video:
         mid = info["owner"]["mid"]
         api = API["info"]["chargers"]
         params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "mid": mid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_pages(self) -> List[dict]:
         """
@@ -288,7 +294,9 @@ class Video:
         """
         api = API["info"]["pages"]
         params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def __get_page_id_by_index(self, page_index: int) -> int:
         """
@@ -342,7 +350,9 @@ class Video:
             if cid:
                 params["cid"] = cid
             api = API["info"]["video_snapshot"]
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_cid(self, page_index: int) -> int:
         """
@@ -405,7 +415,9 @@ class Video:
                 "fnval": 4048,
                 "fourk": 1,
             }
-        result = await Api(**api, credential=self.credential).update_params(**params).result
+        result = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         result.update({"is_html5": True} if html5 else {})
         return result
 
@@ -418,7 +430,9 @@ class Video:
         """
         api = API["info"]["related"]
         params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def has_liked(self) -> bool:
         """
@@ -431,7 +445,9 @@ class Video:
 
         api = API["info"]["has_liked"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_pay_coins(self) -> int:
         """
@@ -444,9 +460,9 @@ class Video:
 
         api = API["info"]["get_pay_coins"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        return (await Api(**api, credential=self.credential).update_params(**params).result)[
-            "multiply"
-        ]
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )["multiply"]
 
     async def has_favoured(self) -> bool:
         """
@@ -459,9 +475,9 @@ class Video:
 
         api = API["info"]["has_favoured"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
-        return (await Api(**api, credential=self.credential).update_params(**params).result)[
-            "favoured"
-        ]
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )["favoured"]
 
     async def is_forbid_note(self) -> bool:
         """
@@ -472,9 +488,9 @@ class Video:
         """
         api = API["info"]["is_forbid"]
         params = {"aid": self.get_aid()}
-        return (await Api(**api, credential=self.credential).update_params(**params).result)[
-            "forbid_note_entrance"
-        ]
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )["forbid_note_entrance"]
 
     async def get_private_notes_list(self) -> list:
         """
@@ -487,9 +503,9 @@ class Video:
 
         api = API["info"]["private_notes"]
         params = {"oid": self.get_aid(), "oid_type": 0}
-        return (await Api(**api, credential=self.credential).update_params(**params).result)[
-            "noteIds"
-        ]
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )["noteIds"]
 
     async def get_public_notes_list(self, pn: int, ps: int) -> dict:
         """
@@ -506,7 +522,9 @@ class Video:
 
         api = API["info"]["public_notes"]
         params = {"oid": self.get_aid(), "oid_type": 0, "pn": pn, "ps": ps}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_danmaku_view(
         self, page_index: Union[int, None] = None, cid: Union[int, None] = None
@@ -963,7 +981,9 @@ class Video:
 
         api = API["danmaku"]["get_history_danmaku_index"]
         params = {"oid": cid, "month": date.strftime("%Y-%m"), "type": 1}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def has_liked_danmakus(
         self,
@@ -997,7 +1017,9 @@ class Video:
 
         api = API["danmaku"]["has_liked_danmaku"]
         params = {"oid": cid, "ids": ",".join(ids)}  # type: ignore
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def send_danmaku(
         self,
@@ -1225,7 +1247,11 @@ class Video:
             int: 当前分享数
         """
         api = API["operate"]["share"]
-        data = {"bvid": self.get_bvid(), "aid": self.get_aid(), "csrf": self.credential.bili_jct}
+        data = {
+            "bvid": self.get_bvid(),
+            "aid": self.get_aid(),
+            "csrf": self.credential.bili_jct,
+        }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def triple(self) -> dict:
@@ -1368,7 +1394,9 @@ class Video:
             "cid": cid,
             "ep_id": epid,
         }
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def submit_subtitle(
         self,
@@ -1453,7 +1481,9 @@ class Video:
 
         params = {"aid": self.get_aid()}
 
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def recall_danmaku(
         self,

@@ -209,7 +209,9 @@ class BlackRoom:
         """
         api = API["black_room"]["detail"]
         params = {"id": self.__id}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_reason(self) -> BlackReasonType:
         """
@@ -247,7 +249,9 @@ class JuryCase:
         """
         api = API["jury"]["detail"]
         params = {"case_id": self.case_id}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_opinions(self, pn: int = 1, ps: int = 20) -> dict:
         """
@@ -263,7 +267,9 @@ class JuryCase:
         """
         api = API["jury"]["opinion"]
         params = {"case_id": self.case_id, "pn": pn, "ps": ps}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def vote(
         self,

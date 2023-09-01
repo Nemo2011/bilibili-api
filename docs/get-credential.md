@@ -54,10 +54,6 @@ credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct", 
 
 ---
 
-`ac_time_value` 相对特殊，仅用于刷新 Cookies，可以选择不获取，在 localStorage 中的ac_time_value 字段
+`ac_time_value` 相对特殊，仅用于刷新 Cookies，可以选择不获取，在 localStorage 中的ac_time_value 字段。
 
-按照上方的方法打开 **应用程序** 或 **Application** 选项卡后，找到 **存储/Local Storage** 或 **存储/本地存储**，并选中 https://www.bilibili.com/，在右侧找到对应字段即可。
-
-以 Microsoft Edge 为例：
-
-![](https://cdn.img.z0z0r4.top/2023/06/06/647e88325d3e8.png)
+只需要打开 B 站，打开开发者工具，进入控制台，输入`window.localStorage.ac_time_value`即可获取值。

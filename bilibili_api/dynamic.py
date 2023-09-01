@@ -178,7 +178,9 @@ async def _get_draw_data(
     return data
 
 
-async def upload_image(image: Picture, credential: Credential, data: dict = None) -> dict:
+async def upload_image(
+    image: Picture, credential: Credential, data: dict = None
+) -> dict:
     """
     上传动态图片
 
@@ -200,8 +202,10 @@ async def upload_image(image: Picture, credential: Credential, data: dict = None
     if data is None:
         data = {"biz": "new_dyn", "category": "daily"}
 
-    files={"file_up": raw}
-    return_info = await Api(**api, credential=credential).update_data(**data).request(files=files)
+    files = {"file_up": raw}
+    return_info = (
+        await Api(**api, credential=credential).update_data(**data).request(files=files)
+    )
     return return_info
 
 
@@ -631,7 +635,12 @@ async def send_dynamic(info: BuildDynmaic, credential: Credential):
     else:
         data["dyn_req"]["attach_card"] = None
     params = {"csrf": credential.bili_jct}
-    send_result = await Api(**api, credential=credential, json_body=True).update_data(**data).update_params(**params).result
+    send_result = (
+        await Api(**api, credential=credential, json_body=True)
+        .update_data(**data)
+        .update_params(**params)
+        .result
+    )
     return send_result
 
 
@@ -728,7 +737,9 @@ class Dynamic:
             "timezone_offset": -480,
             "features": "itemOpusStyle",
         }
-        data = await Api(**api, credential=self.credential).update_params(**params).result
+        data = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
         return data
 
     async def get_reposts(self, offset: str = "0") -> dict:
@@ -745,7 +756,9 @@ class Dynamic:
         params: dict[str, Any] = {"dynamic_id": self.__dynamic_id}
         if offset != "0":
             params["offset"] = offset
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_likes(self, pn: int = 1, ps: int = 30) -> dict:
         """
@@ -761,7 +774,9 @@ class Dynamic:
         """
         api = API["info"]["likes"]
         params = {"dynamic_id": self.__dynamic_id, "pn": pn, "ps": ps}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def set_like(self, status: bool = True) -> dict:
         """
@@ -911,7 +926,9 @@ async def get_dynamic_page_info(
     elif host_mid:  # 指定 UP 主动态
         params["host_mid"] = host_mid
 
-    dynmaic_data = await Api(**api, credential=credential).update_params(**params).result
+    dynmaic_data = (
+        await Api(**api, credential=credential).update_params(**params).result
+    )
     return [
         Dynamic(dynamic_id=int(dynamic["id_str"]), credential=credential)
         for dynamic in dynmaic_data["items"]

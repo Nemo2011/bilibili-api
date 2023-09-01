@@ -20,8 +20,7 @@ from bilibili_api import ass
 | fly_time  |  float, optional                  | 滚动弹幕持续时间. Defaults to 7. | 
 | static_time | float, optional                  | 静态弹幕持续时间. Defaults to 5. |
 
-生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
-强烈推荐 PotPlayer, 电影与电视加载后全部都是静态弹幕，不能滚动。
+生成视频弹幕文件
 
 **采用 protobuf 源**
 
@@ -41,8 +40,7 @@ from bilibili_api import ass
 | fly_time | (float)       | 滚动弹幕持续时间. Defaults to 7.  |
 | static_time | (float)    | 静态弹幕持续时间. Defaults to 5.  |
 
-生成视频弹幕文件 *★,°*:.☆(￣▽￣)/$:*.°★* 。
-强烈推荐 PotPlayer, 电影与电视加载后全部都是静态弹幕，不能滚动。
+生成视频弹幕文件
 
 **采用 xml 源**
 
