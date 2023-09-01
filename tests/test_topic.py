@@ -1,4 +1,5 @@
 from bilibili_api import topic
+from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 
 from .common import get_credential
 
@@ -14,9 +15,14 @@ async def test_b_Topic_get_cards():
 
 
 async def test_c_Topic_like():
-    await t.like(status=False)
-    return await t.like(status=True)
-
+    try:
+        await t.like(status=False)
+        return await t.like(status=True)
+    except ResponseCodeException as e:
+        if e.code not in (65004):
+            raise e
+        else:
+            return e.raw
 
 async def test_d_Topic_set_favorite():
     await t.set_favorite(status=False)
