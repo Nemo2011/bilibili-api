@@ -5,7 +5,7 @@ bilibili_api.emoji
 """
 
 from .utils.utils import get_api
-from .utils.network_httpx import Api
+from .utils.network import Api
 
 API = get_api("emoji")
 

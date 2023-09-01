@@ -23,7 +23,7 @@ from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
 from .utils.aid_bvid_transformer import bvid2aid
 from .exceptions.ApiException import ApiException
-from .utils.network_httpx import Api, get_session
+from .utils.network import Api, get_session
 from .exceptions.NetworkException import NetworkException
 from .exceptions.ResponseCodeException import ResponseCodeException
 

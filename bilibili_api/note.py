@@ -20,7 +20,7 @@ from .utils.utils import get_api
 from .utils.picture import Picture
 from .utils.credential import Credential
 from .exceptions import ApiException, ArgsException
-from .utils.network_httpx import Api, get_session
+from .utils.network import Api, get_session
 
 API = get_api("note")
 API_ARTICLE = get_api("article")

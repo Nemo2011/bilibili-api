@@ -23,7 +23,7 @@ from bilibili_api.utils.initial_state import get_initial_state
 from .note import Note, NoteType
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import Api, get_session
+from .utils.network import Api, get_session
 from .exceptions.NetworkException import ApiException, NetworkException
 
 API = get_api("article")

@@ -20,7 +20,7 @@ from .utils.sync import sync
 from .utils.picture import Picture
 from . import user, vote, exceptions
 from .utils.credential import Credential
-from .utils.network_httpx import Api
+from .utils.network import Api
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 
 API = utils.get_api("dynamic")

@@ -9,7 +9,7 @@ from typing import List, Union, Optional
 
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network_httpx import Api
+from .utils.network import Api
 
 
 class BlackReasonType(Enum):

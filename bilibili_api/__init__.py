@@ -14,13 +14,12 @@ from .utils.short import get_real_url
 from .utils.parse_link import ResourceType, parse_link
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.danmaku import DmMode, Danmaku, DmFontSize, SpecialDanmaku
-from .utils.network_httpx import (
+from .utils.network import (
     HEADERS,
     Api,
     retry,
     enc_wbi,
     get_nav,
-    request,
     check_valid,
     get_session,
     set_session,
@@ -151,7 +150,6 @@ __all__ = [
     "parse_link",
     "platform",
     "rank",
-    "request",
     "retry",
     "search",
     "session",
