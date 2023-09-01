@@ -583,8 +583,10 @@ def __clean() -> None:
         return
 
     async def __clean_task():
-        await __aiohttp_session_pool[loop].close()
-        await __httpx_session_pool[loop].close()
+        if __aiohttp_session_pool.get(loop) is not None:
+            await __aiohttp_session_pool[loop].close()
+        if __httpx_session_pool.get(loop) is not None:
+            await __httpx_session_pool[loop].close()
 
     if loop.is_closed():
         loop.run_until_complete(__clean_task())
