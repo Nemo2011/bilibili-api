@@ -13,7 +13,7 @@ from json.decoder import JSONDecodeError
 from .utils.utils import get_api, join
 from .utils.credential import Credential
 from .exceptions import ResponseCodeException
-from .utils.network_httpx import get_session, Api
+from .utils.network import get_session, Api
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
 
 API = get_api("user")
@@ -938,7 +938,7 @@ class User:
         api = API["info"]["uplikeimg"]
         params = {"vmid": self.get_uid()}
         return (
-            await Api(**api, credential=self.credential).update_params(**params).result
+            await Api(**api).update_params(**params).result
         )
 
 async def get_self_info(credential: Credential) -> dict:

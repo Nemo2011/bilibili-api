@@ -10,7 +10,7 @@ from enum import Enum
 from typing import Dict, List, Union
 
 from .credential import Credential
-from .utils.network_httpx import Api
+from .utils.network import Api
 from .utils.utils import get_api
 
 API = get_api("watchroom")
@@ -52,13 +52,6 @@ class MessageType(Enum):
 
 
 class MessageSegment:
-    """
-    消息片段
-
-    Args:
-        msg      (str) : 信息
-        is_emoji (bool): 是否为表情包
-    """
     def __init__(self, msg: str, is_emoji: bool = False):
         self.msg = msg
         self.msg_type = MessageType.EMOJI if is_emoji else MessageType.PLAIN
@@ -128,6 +121,12 @@ class WatchRoom:
             ).update_params(**params).thread_result
             self.set_season_id(info["status"]["season_id"])
             self.set_episode_id(info["status"]["episode_id"])
+
+    def set_season_id(self, season_id: int):
+        self.__season_id = season_id
+
+    def set_episode_id(self, episode_id: int):
+        self.__episode_id = episode_id
 
     def get_season_id(self):
         return self.__season_id

@@ -28,8 +28,7 @@ from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
 from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku, SpecialDanmaku
-from .utils.network_httpx import Api, get_session
-from .utils.network import get_session as get_session_aiohttp
+from .utils.network import get_aiohttp_session, Api, get_session
 from .exceptions import (
     ArgsException,
     NetworkException,
@@ -1393,7 +1392,7 @@ class Video:
         epid: Union[int, None] = None,
     ) -> dict:
         """
-        获取视频上一次播放的记录，字幕和地区信息。需要 分集的 cid, 返回数据中含有json字幕的链接
+        获取字幕信息
 
         Args:
             cid (int | None): 分 P ID,从视频信息中获取
@@ -1737,7 +1736,7 @@ class VideoOnlineMonitor(AsyncEvent):
 
         # 连接服务器
         self.logger.debug("准备连接服务器...")
-        session = get_session_aiohttp()
+        session = get_aiohttp_session()
         async with session.ws_connect(uri) as ws:
             self.__ws = ws
 

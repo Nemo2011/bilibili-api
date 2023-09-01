@@ -18,10 +18,9 @@ from aiohttp.client_ws import ClientWebSocketResponse
 
 from .utils.utils import get_api
 from .utils.danmaku import Danmaku
-from .utils.network import get_session
+from .utils.network import get_aiohttp_session, Api, HEADERS
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
-from .utils.network_httpx import Api, HEADERS
 from .exceptions.LiveException import LiveException
 
 API = get_api("live")
@@ -914,7 +913,7 @@ class LiveDanmaku(AsyncEvent):
 
         # 连接直播间
         self.logger.debug("准备连接直播间")
-        session = get_session()
+        session = get_aiohttp_session()
         available_hosts: List[dict] = conf["host_server_list"]
         retry = self.max_retry
         host = None

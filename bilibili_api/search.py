@@ -9,7 +9,7 @@ from typing import List, Union, Callable
 
 from .utils.utils import get_api
 from .video_zone import VideoZoneTypes
-from .utils.network_httpx import Api, get_session
+from .utils.network import Api, get_session
 
 API = get_api("search")
 

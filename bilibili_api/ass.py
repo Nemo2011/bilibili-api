@@ -14,7 +14,7 @@ from .utils.srt2ass import srt2ass
 from .utils.json2srt import json2srt
 from .utils.credential import Credential
 from .utils.danmaku2ass import Danmaku2ASS
-from .utils.network_httpx import get_session
+from .utils.network import get_session
 from .exceptions.ArgsException import ArgsException
 
 

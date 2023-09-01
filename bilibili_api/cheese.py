@@ -24,7 +24,7 @@ from .utils.danmaku import Danmaku
 from .utils.credential import Credential
 from .utils.BytesReader import BytesReader
 from .exceptions.ArgsException import ArgsException
-from .utils.network_httpx import Api, get_session
+from .utils.network import Api, get_session
 from .exceptions import NetworkException, ResponseException, DanmakuClosedException
 
 API = get_api("cheese")

@@ -12,7 +12,6 @@ bilibili_api.bangumi
 
 import datetime
 from enum import Enum
-import json
 from typing import Any, List, Tuple, Union, Optional
 
 import requests
@@ -24,8 +23,7 @@ from .video import Video
 from .utils.utils import get_api
 from .utils.credential import Credential
 from .exceptions.ApiException import ApiException
-from .utils.network_httpx import request, Api, get_session
-from .exceptions.ResponseException import ResponseException
+from .utils.network import Api, get_session
 from .utils.initial_state import (
     get_initial_state,
     get_initial_state_sync,

@@ -5,7 +5,7 @@ bilibili_api.hot
 """
 
 from .utils.utils import get_api
-from .utils.network_httpx import Api
+from .utils.network import Api
 
 API_rank = get_api("rank")
 API = get_api("hot")

@@ -5,7 +5,7 @@ IP 终端相关
 """
 
 from .utils.utils import get_api
-from .utils.network_httpx import request, Api
+from .utils.network import Api
 
 API = get_api("client")
 
