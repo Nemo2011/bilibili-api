@@ -213,7 +213,7 @@ class Video:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        api = API["info"]["detail"]
+        api = API["info"]["info"]
         params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
         resp = (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -221,6 +221,24 @@ class Video:
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
+
+    async def get_detail(self) -> dict:
+        """
+        获取视频详细信息
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        api = API["info"]["detail"]
+        params = {
+            "bvid": self.get_bvid(),
+            "aid": self.get_aid(),
+            "need_operation_card": 0,
+            "need_elec": 0,
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def __get_info_cached(self) -> dict:
         """
@@ -232,7 +250,7 @@ class Video:
         if self.__info is None:
             return await self.get_info()
         return self.__info
-    
+
     # get_stat 403/404 https://github.com/SocialSisterYi/bilibili-API-collect/issues/797 等恢复
     # async def get_stat(self) -> dict:
     #     """
