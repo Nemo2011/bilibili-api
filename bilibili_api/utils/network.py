@@ -4,12 +4,6 @@ bilibili_api.utils.network
 与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。
 """
 
-"""
-bilibili_api.utils.network_httpx
-
-复写了 .utils.network，使用 httpx
-"""
-
 import re
 import json
 import time

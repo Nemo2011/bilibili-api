@@ -15,7 +15,7 @@ from bilibili_api.utils.utils import get_api
 from bilibili_api.errors import ArgsException
 from bilibili_api.utils.picture import Picture
 from bilibili_api.utils.credential import Credential
-from bilibili_api.utils.network_httpx import HEADERS, Api
+from bilibili_api.utils.network import HEADERS, Api
 
 API = get_api("manga")
 

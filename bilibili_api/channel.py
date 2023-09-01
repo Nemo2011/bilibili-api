@@ -9,7 +9,7 @@ from typing import List, Union, Optional
 from bilibili_api.utils.utils import get_api
 from bilibili_api.utils.credential import Credential
 from bilibili_api.utils.initial_state import get_initial_state
-from bilibili_api.utils.network_httpx import Api
+from bilibili_api.utils.network import Api
 
 API = get_api("channel")
 

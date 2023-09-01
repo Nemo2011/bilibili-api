@@ -12,7 +12,7 @@ from typing import Union
 from ..exceptions import *
 from .short import get_real_url
 from .credential import Credential
-from .network_httpx import get_session
+from .network import get_session
 
 
 class InitialDataType(Enum):
