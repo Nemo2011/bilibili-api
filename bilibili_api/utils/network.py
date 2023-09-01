@@ -27,7 +27,8 @@ from .utils import get_api
 from .credential import Credential
 from ..exceptions import ApiException, ResponseCodeException
 
-__session_pool = {}
+__httpx_session_pool = {}
+__aiohttp_session_pool = {}
 last_proxy = ""
 wbi_mixin_key = ""
 buvid3 = ""
@@ -505,9 +506,9 @@ def get_session() -> httpx.AsyncClient:
     Returns:
         httpx.AsyncClient
     """
-    global __session_pool, last_proxy
+    global __httpx_session_pool, last_proxy
     loop = asyncio.get_event_loop()
-    session = __session_pool.get(loop, None)
+    session = __httpx_session_pool.get(loop, None)
     if session is None or last_proxy != settings.proxy:
         if settings.proxy != "":
             last_proxy = settings.proxy
@@ -518,7 +519,7 @@ def get_session() -> httpx.AsyncClient:
         else:
             last_proxy = ""
             session = httpx.AsyncClient(timeout=settings.timeout)
-        __session_pool[loop] = session
+        __httpx_session_pool[loop] = session
 
     return session
 
@@ -531,7 +532,7 @@ def set_session(session: httpx.AsyncClient) -> None:
         session (httpx.AsyncClient):  httpx.AsyncClient 实例。
     """
     loop = asyncio.get_event_loop()
-    __session_pool[loop] = session
+    __httpx_session_pool[loop] = session
 
 
 def get_aiohttp_session() -> aiohttp.ClientSession:
@@ -542,12 +543,12 @@ def get_aiohttp_session() -> aiohttp.ClientSession:
         aiohttp.ClientSession
     """
     loop = asyncio.get_event_loop()
-    session = __session_pool.get(loop, None)
+    session = __aiohttp_session_pool.get(loop, None)
     if session is None:
         session = aiohttp.ClientSession(
             loop=loop, connector=aiohttp.TCPConnector(verify_ssl=False)
         )
-        __session_pool[loop] = session
+        __aiohttp_session_pool[loop] = session
 
     return session
 
@@ -560,7 +561,7 @@ def set_aiohttp_session(session: aiohttp.ClientSession) -> None:
         session (aiohttp.ClientSession):  aiohttp.ClientSession 实例。
     """
     loop = asyncio.get_event_loop()
-    __session_pool[loop] = session
+    __aiohttp_session_pool[loop] = session
 
 
 def to_form_urlencoded(data: dict) -> str:
@@ -582,7 +583,8 @@ def __clean() -> None:
         return
 
     async def __clean_task():
-        await __session_pool[loop].close()
+        await __aiohttp_session_pool[loop].close()
+        await __httpx_session_pool[loop].close()
 
     if loop.is_closed():
         loop.run_until_complete(__clean_task())
