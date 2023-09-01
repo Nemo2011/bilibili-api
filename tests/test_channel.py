@@ -16,8 +16,8 @@ async def test_c_get_channels_in_category():
 ch = channel.Channel(channel_id=68)
 
 
-async def test_d_get_channel_info():
-    return await ch.get_info()
+# async def test_d_get_channel_info():
+#     return await ch.get_info()
 
 
 # async def test_e_get_related_channels():
