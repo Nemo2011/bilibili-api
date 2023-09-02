@@ -1046,12 +1046,15 @@ class LiveDanmaku(AsyncEvent):
                 self.logger.warning("检测到未知的数据包类型，无法处理")
 
     async def __send_verify_data(self, ws: ClientWebSocketResponse, token: str) -> None:
-        # 没传入 dedeuserid 可以试图 user.get_self_info
-        if not self.credential.has_dedeuserid():
-            self.credential.raise_for_no_sessdata()
-            self.credential.dedeuserid = (await Api(**get_api("user")["info"]["my_info"], credential=self.credential).result)["mid"]
-        
         self.credential.raise_for_no_buvid3()
+        # 没传入 dedeuserid 可以试图 live.get_self_info
+        if not self.credential.has_dedeuserid():
+            try:
+                info = await get_self_info(self.credential)
+                self.credential.dedeuserid = str(info["uid"])   
+            except:
+                pass  # 留到下面一起抛出错误
+        self.credential.raise_for_no_dedeuserid()
         verifyData = {
             "uid": int(self.credential.dedeuserid),
             "roomid": self.__room_real_id,
