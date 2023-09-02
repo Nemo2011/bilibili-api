@@ -24,6 +24,8 @@ from .utils.network import (
     get_session,
     set_session,
     get_mixin_key,
+    get_aiohttp_session,
+    set_aiohttp_session
 )
 from .errors import (
     LoginError,
