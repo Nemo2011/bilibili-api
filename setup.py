@@ -3,12 +3,15 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
-with open("requirements.txt", "r", encoding="utf8") as f:
+with open("requirements.txt", "r", encoding="utf-8") as f:
     requires = f.read()
 
+with open("github.txt", "r", encoding="utf-8") as f:
+    cfg = f.read().split("|")
+
 setuptools.setup(
-    name="bilibili-api-python",
-    version="16.0.0",
+    name="bilibili-api-python" if "dev" not in cfg[1] else "bilibili-api-dev",
+    version=cfg[0],
     license="GPLv3+",
     author="Nemo2011",
     author_email="yimoxia@outlook.com",
