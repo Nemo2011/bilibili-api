@@ -27,12 +27,17 @@ from .utils import get_api
 from .credential import Credential
 from ..exceptions import ApiException, ResponseCodeException
 
-__httpx_session_pool = {}
-__aiohttp_session_pool = {}
+__httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
+__aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
 last_proxy = ""
 wbi_mixin_key = ""
 buvid3 = ""
 
+# 获取密钥时的申必数组
+OE = [
+    46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41, 13,
+    37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36, 20, 34, 44, 52,
+]
 # 使用 Referer 和 UA 请求头以绕过反爬虫机制
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.54",
@@ -413,73 +418,7 @@ async def get_mixin_key() -> str:
         return wbi_img.get(key).split("/")[-1].split(".")[0]
 
     ae = split("img_url") + split("sub_url")
-    oe = [
-        46,
-        47,
-        18,
-        2,
-        53,
-        8,
-        23,
-        32,
-        15,
-        50,
-        10,
-        31,
-        58,
-        3,
-        45,
-        35,
-        27,
-        43,
-        5,
-        49,
-        33,
-        9,
-        42,
-        19,
-        29,
-        28,
-        14,
-        39,
-        12,
-        38,
-        41,
-        13,
-        37,
-        48,
-        7,
-        16,
-        24,
-        55,
-        40,
-        61,
-        26,
-        17,
-        0,
-        1,
-        60,
-        51,
-        30,
-        4,
-        22,
-        25,
-        54,
-        21,
-        56,
-        59,
-        6,
-        63,
-        57,
-        62,
-        11,
-        36,
-        20,
-        34,
-        44,
-        52,
-    ]
-    le = reduce(lambda s, i: s + (ae[i] if i < len(ae) else ""), oe, "")
+    le = reduce(lambda s, i: s + (ae[i] if i < len(ae) else ""), OE, "")
     return le[:32]
 
 
@@ -583,10 +522,12 @@ def __clean() -> None:
         return
 
     async def __clean_task():
-        if __aiohttp_session_pool.get(loop) is not None:
-            await __aiohttp_session_pool[loop].close()
-        if __httpx_session_pool.get(loop) is not None:
-            await __httpx_session_pool[loop].close()
+        s0 = __aiohttp_session_pool.get(loop, None)
+        if s0 is not None:
+            await s0.close()
+        s1 = __httpx_session_pool.get(loop, None)
+        if s1 is not None:
+            await s1.aclose()
 
     if loop.is_closed():
         loop.run_until_complete(__clean_task())

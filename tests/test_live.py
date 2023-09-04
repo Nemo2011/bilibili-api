@@ -94,7 +94,7 @@ async def test_o_LiveDanmaku():
         print(data)
         await room.disconnect()
 
-    room = live.LiveDanmaku(22544798, True)
+    room = live.LiveDanmaku(22544798, True, credential=get_credential())
     room.add_event_listener("ALL", on_msg)
     await room.connect()
 
