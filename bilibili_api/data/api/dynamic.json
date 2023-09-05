@@ -206,7 +206,7 @@
       "comment": "获取动态页 UP 主信息列表"
     },
     "dynamic_page_info": {
-      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/all?timezone_offset=-480&type=all&page=1&features=itemOpusStyle",
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/all",
       "method": "GET",
       "verify": true,
       "params": {
