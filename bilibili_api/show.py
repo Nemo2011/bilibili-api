@@ -27,7 +27,7 @@ class Ticket:
     """
 
     id: int
-    price: float
+    price: int
     desc: str
     sale_start: str
     sale_end: str
@@ -102,7 +102,7 @@ async def get_available_sessions(project_id: int):
             sess_obj.ticket_list.append(
                 Ticket(
                     id=int(t["id"]),
-                    price=int(t["price"]) / 100,
+                    price=int(t["price"]),
                     desc=t["desc"],
                     sale_start=t["sale_start"],
                     sale_end=t["sale_end"],
@@ -183,7 +183,7 @@ class OrderTicket:
             "count": 1,
             "deviceId": "",
             "order_type": 1,
-            "pay_money": int(self.ticket.price) * 100,
+            "pay_money": self.ticket.price,
             "project_id": self.project_id,
             "screen_id": self.session.id,
             "sku_id": self.ticket.id,

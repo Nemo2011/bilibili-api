@@ -86,13 +86,18 @@ from bilibili_api import show
 
 ## class Ticket
 
-| 属性名        | 类型    | 描述      |
-|------------|-------|---------|
-| id         | int   | 场次id    |
-| price      | float | 价格(RMB) |
-| desc       | str   | 描述      |
-| sale_start | str   | 开售开始时间  |
-| sale_end   | str   | 开售结束时间  |
+| 属性名        | 类型  | 描述           |
+|------------|-----|--------------|
+| id         | int | 场次id         |
+| price      | int | 原价格(RMB)*100 |
+| desc       | str | 描述           |
+| sale_start | str | 开售开始时间       |
+| sale_end   | str | 开售结束时间       |
+
+### 注意
+
+* price属性的值为`(原价格*100)`
+  * 如原价格为`233.33`元, price值则为`23333`
 
 ## class Session
 
