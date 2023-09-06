@@ -8,6 +8,34 @@
         "id": "展出id"
       },
       "comment": "展出信息"
+    },
+    "buyer_info": {
+      "url": "https://show.bilibili.com/api/ticket/buyer/list",
+      "method": "GET",
+      "verify": true,
+      "params": {
+      },
+      "comment": "读取用户所有购买人身份"
+    },
+    "token": {
+      "url": "https://show.bilibili.com/api/ticket/order/prepare",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "id": "展出id"
+      },
+      "comment": "读取用户所有购买人身份"
+    }
+  },
+  "operate": {
+    "order": {
+      "url": "https://show.bilibili.com/api/ticket/order/createV2",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "project_id": "展出id"
+      },
+      "comment": "创建订单"
     }
   }
 }
