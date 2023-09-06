@@ -4,13 +4,14 @@ bilibili_api.show
 展出相关
 """
 import json
+import random
 import time
 from dataclasses import dataclass, field
 from typing import List
 
 from .utils.credential import Credential
 from .utils.network import Api
-from .utils.utils import get_api
+from .utils.utils import get_api, get_deviceid
 
 API = get_api("show")
 
@@ -194,16 +195,19 @@ class OrderTicket:
 
         ticket (Ticket): Ticket 对象
     """
-    def __init__(    
+
+    def __init__(
         self,
         credential: Credential,
         buyer_list: List[BuyerInfo],
+        target_buyer: BuyerInfo,
         project_id: int,
         session: Session,
         ticket: Ticket
     ):
         self.credential = credential
         self.buyer_list = buyer_list
+        self.target_buyer = target_buyer
         self.project_id = project_id
         self.session = session
         self.ticket = ticket
@@ -227,6 +231,21 @@ class OrderTicket:
         return await Api(**api, credential=self.credential).update_data(**payload).result
 
     async def create_order(self):
+        def _generate_clickPosition():
+            # 生成随机的 x 和 y 坐标，以下范围大概是1920x1080屏幕下可能的坐标
+            x = random.randint(1320, 1330)
+            y = random.randint(880, 890)
+            # 生成随机的起始时间和结束时间（或当前时间）
+            origin_timestamp = int(time.time() * 1000)
+            now_timestamp = origin_timestamp + random.randint(5000, 10000)  # 添加一些随机时间差 (5s ~ 10s)
+            click_position = {
+                "x": x,
+                "y": y,
+                "origin": origin_timestamp,
+                "now": now_timestamp
+            }
+            return json.dumps(click_position)
+
         """
         创建购买订单
 
@@ -244,6 +263,11 @@ class OrderTicket:
             "sku_id": self.ticket.id,
             "timestamp": int(time.time() * 1000),
             "token": res["token"],
+            "deviceId": get_deviceid('', True),
+            "clickPosition": _generate_clickPosition(),
+            "tel": self.target_buyer.tel,
+            "buyer": self.target_buyer.name
         }
         api = API["operate"]["order"]
-        return await Api(**api, credential=self.credential).update_params(project_id=self.project_id).update_data(**payload).result
+        return await Api(**api, credential=self.credential).update_params(project_id=self.project_id).update_data(
+            **payload).result
