@@ -1,24 +1,15 @@
 # bilibili_api.show
-import json
 
-from bilibili_api import Credential
-from show import BuyerInfo, Session, Ticket, OrderTicket, get_available_sessions, get_all_buyer_info
+from bilibili_api import show
 
+from .common import get_credential
 
-async def test_get_user_info(project_id, sessdata):
-    cre = Credential(sessdata=sessdata)
-    buyer: BuyerInfo = (await get_all_buyer_info(cre, True))[0]
-    session: Session = (await get_available_sessions(project_id))[0]
-    ticket: Ticket = session.ticket_list[0]
-    ot = OrderTicket(credential=cre, buyer_info=buyer, project_id=project_id, session=session, ticket=ticket)
-    print(json.dumps((await ot.get_token())))
+PROJECT_ID = 75650
 
 
-async def test_create_order(project_id, sessdata):
-    cre = Credential(sessdata=sessdata)
-    buyer: BuyerInfo = (await get_all_buyer_info(cre, True))[0]
-    session: Session = (await get_available_sessions(project_id))[0]
-    ticket: Ticket = session.ticket_list[0]
-    ot = OrderTicket(credential=cre, buyer_info=buyer, project_id=project_id, session=session, ticket=ticket)
-    res = await ot.create_order()
-    print(res)
+async def test_a_get_all_buyer_info():
+    return await show.get_all_buyer_info(get_credential(), True)
+
+
+async def test_b_get_available_sessions():
+    return await show.get_available_sessions(PROJECT_ID)
