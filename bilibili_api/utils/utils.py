@@ -4,8 +4,9 @@ bilibili_api.utils.utils
 通用工具库。
 """
 
-import os
 import json
+import os
+import random
 from typing import List, TypeVar
 
 
@@ -137,7 +138,7 @@ def join(seperator: str, array: list):
 
     Args:
         seperator (str) : 分隔字符
-        
+
         array     (list): 数组
 
     Returns:
@@ -167,3 +168,28 @@ def chunk(arr: ChunkT, size: int) -> List[ChunkT]:
         result.append(temp)
 
     return result
+
+
+def get_deviceid() -> str:
+    """
+    获取随机 deviceid (dev_id)
+
+    参考: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/message/private_msg.md#发送私信web端
+
+    Returns:
+        str: device_id
+    """
+    template = ['xxxxxxxx', 'xxxx', '4xxx', 'yxxx', 'xxxxxxxxxxxx']
+    dev_id = ""
+    for i in range(len(template)):
+        group = template[i]
+        for k in group:
+            rand: int = int(16 * random.random())
+            if k in "xy":
+                if k == 'x':
+                    dev_id += hex(rand)[2:]
+                else:
+                    dev_id += hex(3 & rand | 8)[2:]
+        if i != len(template) - 1:
+            dev_id += '-'
+    return dev_id.upper()
