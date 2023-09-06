@@ -3,6 +3,7 @@ bilibili_api.show
 
 展出相关
 """
+import time
 from dataclasses import dataclass, field
 from typing import List, Union
 
@@ -132,3 +133,62 @@ async def get_all_buyer_info(credential: Credential, rtn_buyer_info=False) -> Un
             )
         return rtn_list
     return result
+
+
+class OrderTicket:
+    """
+    购票类，购票流程所需的必要函数
+    """
+
+    def __init__(self, credential: Credential, buyer_info: BuyerInfo, project_id: int, session: Session,
+                 ticket: Ticket):
+        """
+        Args:
+            credential (Credential): Credential 对象
+            buyer_info (BuyerInfo): BuyerInfo 对象
+            project_id (int): 展出id
+            session (Session): Session 对象
+            ticket (Ticket): Ticket 对象
+
+        """
+        self.credential = credential
+        self.buyer_info = buyer_info
+        self.project_id = project_id
+        self.session = session
+        self.ticket = ticket
+
+    async def get_token(self):
+        """
+        获取购票Token
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        api = API["info"]["token"]
+        payload = {"count": "1", "order_type": 1, "project_id": self.project_id, "screen_id": self.session.id,
+                   "sku_id": self.ticket.id}
+        return await Api(**api, credential=self.credential, ignore_code=True, no_csrf=True).update_data(
+            **payload).result
+
+    async def create_order(self):
+        """
+        创建购买订单
+        """
+        payload = {
+            "buyer_info": [self.buyer_info.org].__str__().replace("'true'", "true").replace("'", '"'),
+            "buyer": self.buyer_info.name,
+            "tel": self.buyer_info.tel,
+            "count": 1,
+            "deviceId": "",
+            "order_type": 1,
+            "pay_money": int(self.ticket.price) * 100,
+            "project_id": self.project_id,
+            "screen_id": self.session.id,
+            "sku_id": self.ticket.id,
+            "timestamp": int(round(time.time() * 1000)),
+            "token": (await self.get_token())["token"],
+        }
+        api = API["operate"]["order"]
+        return await Api(**api, no_csrf=True, ignore_code=True, credential=self.credential).update_data(
+            **payload).result
