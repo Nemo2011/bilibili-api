@@ -1,0 +1,13 @@
+{
+  "info": {
+    "get": {
+      "url": "https://show.bilibili.com/api/ticket/project/get",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "id": "展出id"
+      },
+      "comment": "展出信息"
+    }
+  }
+}
