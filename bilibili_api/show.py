@@ -1,3 +1,9 @@
+"""
+bilibili_api.show
+
+展出相关
+"""
+
 from bilibili_api import Api
 from bilibili_api.utils.utils import get_api
 
