@@ -4,9 +4,9 @@ bilibili_api.show
 展出相关
 """
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Union
 
-from bilibili_api import Api
+from bilibili_api import Api, Credential
 from bilibili_api.utils.utils import get_api
 
 API = get_api("show")
@@ -46,6 +46,25 @@ class Session:
     start_time: int
     formatted_time: str
     ticket_list: List[Ticket] = field(default_factory=list)
+
+
+@dataclass
+class BuyerInfo:
+    """
+    购买人信息
+
+    personal_id (str): 身份证ID
+    name (str): 姓名
+    tel (str): 电话号码
+    is_fault (bool): 是否为默认
+    org (str): 原始数据
+    """
+
+    personal_id: str
+    name: str
+    tel: str
+    is_default: bool
+    org: str
 
 
 async def get_project_info(project_id: int) -> dict:
@@ -89,3 +108,27 @@ async def get_available_sessions(project_id: int):
             )
         rtn_list.append(sess_obj)
     return rtn_list
+
+
+async def get_all_buyer_info(credential: Credential, rtn_buyer_info=False) -> Union[dict, List[BuyerInfo]]:
+    """
+    返回账号的全部身份信息
+
+    Args:
+        credential (Credential): 登录凭证
+        rtn_buyer_info (bool): 是否以BuyerInfo对象返回
+
+    Returns:
+        dict or list[BuyerInfo]: 调用 API 返回的结果 或者 BuyerInfo对象列表
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["buyer_info"]
+    result = await Api(**api, credential=credential, ignore_code=True).result
+    if rtn_buyer_info:
+        rtn_list: List[BuyerInfo] = []
+        for v in result["list"]:
+            rtn_list.append(
+                BuyerInfo(personal_id=v["personal_id"], name=v["name"], tel=v["tel"], is_default=v["is_default"], org=v)
+            )
+        return rtn_list
+    return result
