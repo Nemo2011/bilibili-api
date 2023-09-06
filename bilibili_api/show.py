@@ -180,6 +180,29 @@ async def get_all_buyer_info(credential: Credential) -> List[BuyerInfo]:
     return [BuyerInfo(**v) for v in res["list"]]
 
 
+def generate_clickPosition() -> dict:
+    """
+    生成虚假的点击事件
+
+    Returns:
+        dict: 点击坐标和时间
+    """
+    # 生成随机的 x 和 y 坐标，以下范围大概是1920x1080屏幕下可能的坐标
+    x = random.randint(1320, 1330)
+    y = random.randint(880, 890)
+    # 生成随机的起始时间和结束时间（或当前时间）
+    origin_timestamp = int(time.time() * 1000)
+    # 添加一些随机时间差 (5s ~ 10s)
+    now_timestamp = origin_timestamp + random.randint(5000, 10000)
+    return {
+        "x": x,
+        "y": y,
+        "origin": origin_timestamp,
+        "now": now_timestamp
+    }
+
+
+@dataclass
 class OrderTicket:
     """
     购票类
@@ -187,7 +210,9 @@ class OrderTicket:
     Args:
         credential (Credential): Credential 对象
 
-        buyer_info (BuyerInfo): BuyerInfo 对象
+        buyer_list (List[BuyerInfo]): 需要购票的 BuyerInfo 对象列表
+
+        target_buyer (BuyerInfo): 联系人，仅需提供联系电话和姓名
 
         project_id (int): 展出id
 
@@ -195,22 +220,12 @@ class OrderTicket:
 
         ticket (Ticket): Ticket 对象
     """
-
-    def __init__(
-        self,
-        credential: Credential,
-        buyer_list: List[BuyerInfo],
-        target_buyer: BuyerInfo,
-        project_id: int,
-        session: Session,
-        ticket: Ticket
-    ):
-        self.credential = credential
-        self.buyer_list = buyer_list
-        self.target_buyer = target_buyer
-        self.project_id = project_id
-        self.session = session
-        self.ticket = ticket
+    credential: Credential
+    buyer_list: List[BuyerInfo]
+    target_buyer: BuyerInfo
+    project_id: int
+    session: Session
+    ticket: Ticket
 
     async def get_token(self):
         """
@@ -231,21 +246,6 @@ class OrderTicket:
         return await Api(**api, credential=self.credential).update_data(**payload).result
 
     async def create_order(self):
-        def _generate_clickPosition():
-            # 生成随机的 x 和 y 坐标，以下范围大概是1920x1080屏幕下可能的坐标
-            x = random.randint(1320, 1330)
-            y = random.randint(880, 890)
-            # 生成随机的起始时间和结束时间（或当前时间）
-            origin_timestamp = int(time.time() * 1000)
-            now_timestamp = origin_timestamp + random.randint(5000, 10000)  # 添加一些随机时间差 (5s ~ 10s)
-            click_position = {
-                "x": x,
-                "y": y,
-                "origin": origin_timestamp,
-                "now": now_timestamp
-            }
-            return json.dumps(click_position)
-
         """
         创建购买订单
 
@@ -264,7 +264,7 @@ class OrderTicket:
             "timestamp": int(time.time() * 1000),
             "token": res["token"],
             "deviceId": get_deviceid('', True),
-            "clickPosition": _generate_clickPosition(),
+            "clickPosition": json.dumps(generate_clickPosition()),
             "tel": self.target_buyer.tel,
             "buyer": self.target_buyer.name
         }
