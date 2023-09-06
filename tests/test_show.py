@@ -8,7 +8,7 @@ PROJECT_ID = 75650
 
 
 async def test_a_get_all_buyer_info():
-    return await show.get_all_buyer_info(get_credential(), True)
+    return await show.get_all_buyer_info(get_credential())
 
 
 async def test_b_get_available_sessions():
