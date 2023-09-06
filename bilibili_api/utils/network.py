@@ -107,7 +107,7 @@ class Api:
 
         json_body (bool, optional): 是否使用 json 作为载荷. Defaults to False.
 
-        ignore_code (bool, optional): 是否忽略返回值 code. Defaults to False.
+        ignore_code (bool, optional): 是否忽略返回值 code 的检验. Defaults to False.
 
         data (dict, optional): 请求载荷. Defaults to {}.
 
@@ -324,6 +324,8 @@ class Api:
                 if msg is None:
                     msg = "接口未返回错误信息"
                 raise ResponseCodeException(code, msg, resp_data)
+        elif settings.request_log:
+            settings.logger.info(resp_data)
 
         real_data = resp_data.get("data")
         if real_data is None:
