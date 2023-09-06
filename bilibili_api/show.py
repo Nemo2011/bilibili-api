@@ -7,8 +7,9 @@ import time
 from dataclasses import dataclass, field
 from typing import List, Union
 
-from bilibili_api import Api, Credential
-from bilibili_api.utils.utils import get_api
+from .utils.credential import Credential
+from .utils.network import Api
+from .utils.utils import get_api
 
 API = get_api("show")
 
