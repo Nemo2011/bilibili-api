@@ -210,9 +210,7 @@ class OrderTicket:
     Args:
         credential (Credential): Credential 对象
 
-        buyer_list (List[BuyerInfo]): 需要购票的 BuyerInfo 对象列表
-
-        target_buyer (BuyerInfo): 联系人，仅需提供联系电话和姓名
+        target_buyer (BuyerInfo): 购票人
 
         project_id (int): 展出id
 
@@ -221,11 +219,49 @@ class OrderTicket:
         ticket (Ticket): Ticket 对象
     """
     credential: Credential
-    buyer_list: List[BuyerInfo]
     target_buyer: BuyerInfo
     project_id: int
     session: Session
     ticket: Ticket
+
+    async def _get_create_order_payload(self) -> dict:
+        """
+        获取 create order API 所需的载荷
+
+        Returns:
+            dict: payload
+        """
+        res = await self.get_token()
+        header = {
+            "count": 1,
+            "order_type": 1,
+            "pay_money": self.ticket.price,
+            "project_id": self.project_id,
+            "screen_id": self.session.id,
+            "sku_id": self.ticket.id,
+            "timestamp": int(time.time() * 1000),
+            "token": res["token"],
+            "deviceId": get_deviceid('', True),
+            "clickPosition": json.dumps(generate_clickPosition()),
+        }
+        info = await get_project_info(self.project_id)
+        info = info["performance_desc"]["list"]
+        for element in info:
+            if element["module"] == "base_info":
+                info = element
+                break
+        for detail in info["details"]:
+            content = detail["content"]
+            if "一人一证" in content or "一单一证" in content:
+                header.update({
+                    "buyer_info": json.dumps([self.target_buyer.__dict__])
+                })
+                return header
+        header.update({
+            "buyer": self.target_buyer.name,
+            "tel": self.target_buyer.tel,
+        })
+        return header
 
     async def get_token(self):
         """
@@ -252,22 +288,7 @@ class OrderTicket:
         Returns:
             dict: 调用 API 返回的结果
         """
-        res = await self.get_token()
-        payload = {
-            "buyer_info": json.dumps([b.__dict__ for b in self.buyer_list]),
-            "count": 1,
-            "order_type": 1,
-            "pay_money": self.ticket.price,
-            "project_id": self.project_id,
-            "screen_id": self.session.id,
-            "sku_id": self.ticket.id,
-            "timestamp": int(time.time() * 1000),
-            "token": res["token"],
-            "deviceId": get_deviceid('', True),
-            "clickPosition": json.dumps(generate_clickPosition()),
-            "tel": self.target_buyer.tel,
-            "buyer": self.target_buyer.name
-        }
+        payload = await self._get_create_order_payload()
         api = API["operate"]["order"]
         return await Api(**api, credential=self.credential).update_params(project_id=self.project_id).update_data(
             **payload).result
