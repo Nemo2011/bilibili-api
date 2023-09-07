@@ -170,33 +170,34 @@ def chunk(arr: ChunkT, size: int) -> List[ChunkT]:
     return result
 
 
-def get_deviceid(separator: str = '-', is_lowercase: bool = False) -> str:
+def get_deviceid(separator: str = "-", is_lowercase: bool = False) -> str:
     """
     获取随机 deviceid (dev_id)
 
     Args:
-        separator     (str)  : 分隔符 默认为'-'
-        is_lowercase  (bool) : 是否以小写形式 默认为False
+        separator (str)  : 分隔符 默认为 "-"
+
+        is_lowercase (bool) : 是否以小写形式 默认为False
 
     参考: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/message/private_msg.md#发送私信web端
 
     Returns:
         str: device_id
     """
-    template = ['xxxxxxxx', 'xxxx', '4xxx', 'yxxx', 'xxxxxxxxxxxx']
+    template = ["xxxxxxxx", "xxxx", "4xxx", "yxxx", "xxxxxxxxxxxx"]
     dev_id_group = []
     for i in range(len(template)):
-        s = ''
+        s = ""
         group = template[i]
         for k in group:
             rand: int = int(16 * random.random())
             if k in "xy":
-                if k == 'x':
+                if k == "x":
                     s += hex(rand)[2:]
                 else:
                     s += hex(3 & rand | 8)[2:]
             else:
-                s += '4'
+                s += "4"
         dev_id_group.append(s)
     res = join(separator, dev_id_group)
     return res if is_lowercase else res.upper()
