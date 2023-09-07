@@ -151,7 +151,7 @@ async def get_available_sessions(project_id: int) -> List[Session]:
     return rtn_list
 
 
-async def get_ticket_buyer_list(credential: Credential) -> dict:
+async def get_all_buyer_info(credential: Credential) -> dict:
     """
     返回账号的全部身份信息
 
@@ -166,9 +166,9 @@ async def get_ticket_buyer_list(credential: Credential) -> dict:
     return await Api(**api, credential=credential).result
 
 
-async def get_all_buyer_info(credential: Credential) -> List[BuyerInfo]:
+async def get_all_buyer_info_obj(credential: Credential) -> List[BuyerInfo]:
     """
-    返回账号的全部身份信息
+    以BuyerInfo对象返回账号的全部身份信息
 
     Args:
         credential (Credential): 登录凭证
@@ -176,7 +176,7 @@ async def get_all_buyer_info(credential: Credential) -> List[BuyerInfo]:
     Returns:
         list[BuyerInfo]: BuyerInfo对象列表
     """
-    res = await get_ticket_buyer_list(credential)
+    res = await get_all_buyer_info(credential)
     return [BuyerInfo(**v) for v in res["list"]]
 
 
