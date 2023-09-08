@@ -12,6 +12,7 @@ from ..exceptions import (
     CredentialNoBiliJctException,
     CredentialNoSessdataException,
     CredentialNoDedeUserIDException,
+    CredentialNoAcTimeValueException
 )
 
 
@@ -39,7 +40,7 @@ class Credential:
             buvid3     (str | None, optional): 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None.
 
             dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
-            
+
             ac_time_value (str | None, optional): 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None.
         """
         self.sessdata = sessdata
@@ -141,7 +142,7 @@ class Credential:
         没有提供 ac_time_value 时抛出异常。
         """
         if not self.has_ac_time_value():
-            raise CredentialNoDedeUserIDException()
+            raise CredentialNoAcTimeValueException()
 
     async def check_valid(self):
         """
