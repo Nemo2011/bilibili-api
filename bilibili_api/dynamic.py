@@ -723,9 +723,12 @@ class Dynamic:
     def get_dynamic_id(self) -> int:
         return self.__dynamic_id
 
-    async def get_info(self) -> dict:
+    async def get_info(self, features: str = "itemOpusStyle") -> dict:
         """
         获取动态信息
+
+        Args:
+            features (str, optional): 默认 itemOpusStyle.
 
         Returns:
             dict: 调用 API 返回的结果
@@ -735,7 +738,7 @@ class Dynamic:
         params = {
             "id": self.__dynamic_id,
             "timezone_offset": -480,
-            "features": "itemOpusStyle",
+            "features": features,
         }
         data = (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -889,6 +892,7 @@ async def get_dynamic_page_info(
     credential: Credential,
     _type: Optional[DynamicType] = None,
     host_mid: Optional[int] = None,
+    features: str = "itemOpusStyle",
     pn: int = 1,
     offset: Optional[int] = None,
 ) -> List[Dynamic]:
@@ -906,6 +910,8 @@ async def get_dynamic_page_info(
 
         host_mid   (int, optional): 获取对应 UP 主动态的 mid. Defaults to None.
 
+        features   (str, optional): 默认 itemOpusStyle.
+
         pn         (int, optional): 页码. Defaults to 1.
 
         offset     (int, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None.
@@ -917,7 +923,7 @@ async def get_dynamic_page_info(
     api = API["info"]["dynamic_page_info"]
     params = {
         "timezone_offset": -480,
-        "features": "itemOpusStyle",
+        "features": features,
         "offset": offset,
         "page": pn,
     }

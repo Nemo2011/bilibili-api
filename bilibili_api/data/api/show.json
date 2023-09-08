@@ -1,0 +1,47 @@
+{
+  "info": {
+    "get": {
+      "url": "https://show.bilibili.com/api/ticket/project/get",
+      "method": "GET",
+      "verify": false,
+      "ignore_code": true,
+      "params": {
+        "id": "展出id"
+      },
+      "comment": "展出信息"
+    },
+    "buyer_info": {
+      "url": "https://show.bilibili.com/api/ticket/buyer/list",
+      "method": "GET",
+      "verify": true,
+      "ignore_code": true,
+      "comment": "读取用户所有购买人身份"
+    },
+    "token": {
+      "url": "https://show.bilibili.com/api/ticket/order/prepare",
+      "method": "POST",
+      "verify": true,
+      "ignore_code": true,
+      "no_csrf": true,
+      "data": {
+        "project_id": "项目id",
+        "screen_id": "展出id",
+        "sku_id": "票id"
+      },
+      "comment": "获取购票 token"
+    }
+  },
+  "operate": {
+    "order": {
+      "url": "https://show.bilibili.com/api/ticket/order/createV2",
+      "method": "POST",
+      "verify": true,
+      "no_csrf": true,
+      "ignore_code": true, 
+      "params": {
+        "project_id": "展出id"
+      },
+      "comment": "创建订单"
+    }
+  }
+}
