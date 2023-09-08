@@ -51,6 +51,7 @@ from . import (
     live,
     note,
     rank,
+    show,
     user,
     vote,
     audio,
@@ -83,7 +84,7 @@ from . import (
     interactive_video,
 )
 
-BILIBILI_API_VERSION = "16.0.0"
+BILIBILI_API_VERSION = "16.1.0"
 
 # 如果系统为 Windows，则修改默认策略，以解决代理报错问题
 if "windows" in platform.system().lower():
@@ -136,6 +137,7 @@ __all__ = [
     "emoji",
     "favorite_list",
     "game",
+    "get_aiohttp_session",
     "get_mixin_key",
     "get_nav",
     "get_real_url",
@@ -155,8 +157,10 @@ __all__ = [
     "retry",
     "search",
     "session",
+    "set_aiohttp_session",
     "set_session",
     "settings",
+    "show",
     "sync",
     "topic",
     "user",
