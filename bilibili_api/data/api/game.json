@@ -59,6 +59,25 @@
         "game_base_id": "游戏 id"
       },
       "comment": "获取游戏的评论"
+    },
+    "rank": {
+      "url": "https://le3-api.game.bilibili.com/pc/game/ranking/page_ranking_list",
+      "method": "GET",
+      "params": {
+        "ranking_type": "int: 1 热度榜 5 预约榜 6 新游榜 2 口碑榜 7 B指榜 11 端游榜 ",
+        "page_num": "int: page num",
+        "page_size": "int: page size"
+      },
+      "comment": "游戏榜单"
+    },
+    "start_test": {
+      "url": "https://le3-api.game.bilibili.com/pc/game/ranking/page_start_test_list",
+      "method": "GET",
+      "params": {
+        "x-fix-page-num": "const int: 1",
+        "page_num": "int: page num",
+        "page_size": "int: page size"
+      }
     }
   }
 }

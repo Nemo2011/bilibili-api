@@ -187,6 +187,10 @@ from bilibili_api import dynamic
 
 #### async def get_info()
 
+| name     | type          | description         |
+| -------- | ------------- | ------------------- |
+| features | str, optional | 默认 itemOpusStyle. |
+
 获取动态信息
 
 **Returns:** dict: 调用 API 返回的结果
@@ -284,6 +288,7 @@ from bilibili_api import dynamic
 | credential | Credential | 凭据类. |
 | _type | DynamicType, optional | 动态类型. Defaults to None. |
 | host_mid | int, optional | UP 主 UID. Defaults to None. |
+| features | str, optional | 默认 itemOpusStyle. |
 | offset | int, optional | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None. |
 | pn | int | 页码. Defaults to 1. |
 

@@ -8,7 +8,7 @@
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3+-red)][LICENSE]
 [![Python](https://img.shields.io/badge/python-3.11|3.10|3.9|3.8-blue)](https://www.python.org)
 <!-- [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi] -->
-[![Pre-release Version](https://img.shields.io/github/v/release/Nemo2011/bilibili-api?label=pre-release&include_prereleases&sort=semver)][pypi]
+[![Pre-release Version](https://img.shields.io/github/v/release/Nemo2011/bilibili-api?label=pre-release&include_prereleases&sort=semver)][pypi-dev]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 [![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg?branch=dev)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
 
@@ -187,6 +187,7 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 [issues-new]: https://github.com/Nemo2011/bilibili-api/issues/new/choose
 [get-credential]: https://nemo2011.github.io/bilibili-api/#/get-credential
 [pypi]: https://pypi.org/project/bilibili-api-python
+[pypi-dev]: https://pypi.org/project/bilibili-api-dev
 
 # Star History
 
