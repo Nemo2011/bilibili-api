@@ -739,12 +739,11 @@ class VideoUploader(AsyncEvent):
 
         try:
             params = {"csrf": self.credential.bili_jct}
-            data = json.dumps(meta)
             headers = {"content-type": "application/json"}
             resp = (
                 await Api(**api, credential=self.credential, no_csrf=True)
                 .update_params(**params)
-                .update_data(**data)
+                .update_data(**meta)
                 .update_headers(**headers)
                 .result
             )
@@ -929,12 +928,11 @@ class VideoEditor(AsyncEvent):
 
     async def _submit(self):
         api = _API["edit"]
-        datas = self.meta
-        datas["csrf"] = self.credential.bili_jct
+        data = self.meta
+        data["csrf"] = self.credential.bili_jct
         self.dispatch(VideoEditorEvents.PRE_SUBMIT.value)
         try:
             params = ({"csrf": self.credential.bili_jct, "t": int(time.time())},)
-            data = (json.dumps(datas),)
             headers = {
                 "content-type": "application/json;charset=UTF-8",
                 "referer": "https://member.bilibili.com",
