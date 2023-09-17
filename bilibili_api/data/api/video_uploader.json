@@ -27,7 +27,7 @@
     "comment": "上传封面"
   },
   "submit": {
-    "url": "https://member.bilibili.com/x/vu/web/add",
+    "url": "https://member.bilibili.com/x/vu/web/add/v3",
     "method": "POST",
     "verify": true,
     "data": {
