@@ -18,7 +18,7 @@
             "comment": "获取统计图表数据"
         },
         "num": {
-            "url": "https://member.bilibili.com/x/web/data/v2/overview/stat/num?period=1&s_locale=zh_CN&tab=3&t=1676160967661",
+            "url": "https://member.bilibili.com/x/web/data/v2/overview/stat/num",
             "method": "GET",
             "verify": true,
             "params": {
@@ -29,86 +29,129 @@
             "comment": "获取统计数据"
         }
     },
-    "video": {
-        "survey": {
-            "url": "https://member.bilibili.com/x/web/data/survey",
-            "method": "GET",
-            "verify": true,
-            "params": {
-                "type": "int: 统计类型"
+    "data-up": {
+        "video": {
+            "survey": {
+                "url": "https://member.bilibili.com/x/web/data/survey",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "type": "int: 统计类型"
+                },
+                "comment": "获取各分区中占比排行"
             },
-            "comment": "获取各分区中占比排行"
+            "playanalysis": {
+                "url": "https://member.bilibili.com/x/web/data/playanalysis?copyright=0&t=1676161628464",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "copyright": "int: 版权"
+                },
+                "comment": "获取稿件播放完成率对比数据"
+            },
+            "source": {
+                "url": "https://member.bilibili.com/x/web/data/v2/overview/source",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "s_locale": "str: zh_CN"
+                },
+                "comment": "获取稿件播放来源分布数据"
+            }
         },
-        "playanalysis": {
-            "url": "https://member.bilibili.com/x/web/data/playanalysis?copyright=0&t=1676161628464",
-            "method": "GET",
-            "verify": true,
-            "params": {
-                "copyright": "int: 版权"
+        "fan": {
+            "overview": {
+                "url": "https://member.bilibili.com/x/web/data/v2/fans/stat/num",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "period": "int: 统计周期"
+                },
+                "comment": "获取粉丝数据"
             },
-            "comment": "获取稿件播放完成率对比数据"
+            "graph": {
+                "url": "https://member.bilibili.com/x/web/data/v2/fans/stat/graph?type=all_fans&period=2",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "period": "int: 统计周期",
+                    "type": "str: 统计类型"
+                },
+                "comment": "获取粉丝数据图表"
+            }
         },
-        "source": {
-            "url": "https://member.bilibili.com/x/web/data/v2/overview/source",
-            "method": "GET",
-            "verify": true,
-            "params": {
-                "s_locale": "str: zh_CN"
+        "article": {
+            "overview": {
+                "url": "https://member.bilibili.com/x/web/data/article",
+                "method": "GET",
+                "verify": true,
+                "comment": "获取文章概览信息"
             },
-            "comment": "获取稿件播放来源分布数据"
+            "graph": {
+                "url": "https://member.bilibili.com/x/web/data/article/thirty",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "type": "int: 图表类型"
+                },
+                "comment": "获取文章数据图表"
+            },
+            "rank": {
+                "url": "https://member.bilibili.com/x/web/data/article/rank",
+                "method": "GET",
+                "verify": true,
+                "params": {
+                    "type": "int: 图表类型"
+                },
+                "comment": "获取来源稿件数据"
+            },
+            "source": {
+                "url": "https://member.bilibili.com/x/web/data/article/source",
+                "method": "GET",
+                "verify": true,
+                "comment": "获取文章阅读终端数据"
+            }
         }
     },
-    "fan": {
-        "overview": {
-            "url": "https://member.bilibili.com/x/web/data/v2/fans/stat/num",
+    "upload-manager": {
+        "video_draft": {
+            "url": "https://member.bilibili.com/x/vupre/web/draft/list",
+            "method": "GET",
+            "verify": true,
+            "comment": "获取内容管理视频草稿信息"
+        },
+        "video": {
+            "url": "https://member.bilibili.com/x/web/archives",
             "method": "GET",
             "verify": true,
             "params": {
-                "period": "int: 统计周期"
+                "pn": "int: 页码",
+                "ps": "int: 每页项数",
+                "coop": "int: unknown",
+                "status": "str: is_pubing,pubed,not_pubed",
+                "order": "str: click, stow, senddate, dm_count, scores",
+                "interactive": "int: 1 为视频 2 为 互动视频",
+                "tid": "int: 分区id"
             },
-            "comment": "获取粉丝数据"
+            "comment": "获取内容管理视频信息"
         },
-        "graph": {
-            "url": "https://member.bilibili.com/x/web/data/v2/fans/stat/graph?type=all_fans&period=2",
+        "article": {
+            "url": "https://api.bilibili.com/x/article/creative/article/list?",
             "method": "GET",
             "verify": true,
             "params": {
-                "period": "int: 统计周期",
-                "type": "str: 统计类型"
+                "group": "int: 0 全部 1 进行中 2 已通过 3 未通过",
+                "sort": "int: 1 创建时间 2 点赞 3 评论 5 收藏 6 投币",
+                "pn": "int: 页码",
+                "mobi_app": "str: pc"
             },
-            "comment": "获取粉丝数据图表"
-        }
-    },
-    "article": {
-        "overview": {
-            "url": "https://member.bilibili.com/x/web/data/article",
-            "method": "GET",
-            "verify": true,
-            "comment": "获取文章概览信息"
+            "comment": "获取内容管理文章信息"
         },
-        "graph": {
-            "url": "https://member.bilibili.com/x/web/data/article/thirty",
+        "article_list": {
+            "url": "https://api.bilibili.com/x/article/creative/article/list?",
             "method": "GET",
             "verify": true,
-            "params": {
-                "type": "int: 图表类型"
-            },
-            "comment": "获取文章数据图表"
-        },
-        "rank": {
-            "url": "https://member.bilibili.com/x/web/data/article/rank",
-            "method": "GET",
-            "verify": true,
-            "params": {
-                "type": "int: 图表类型"
-            },
-            "comment": "获取来源稿件数据"
-        },
-        "source": {
-            "url": "https://member.bilibili.com/x/web/data/article/source",
-            "method": "GET",
-            "verify": true,
-            "comment": "获取文章阅读终端数据"
+            "comment": "获取内容管理文集信息"
         }
     }
 }

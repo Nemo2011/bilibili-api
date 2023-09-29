@@ -9,6 +9,7 @@ bilibili_api.creative_center
 from enum import Enum
 from typing import List, Union
 
+from .video_zone import VideoZoneTypes
 from .utils.utils import get_api
 from .utils.credential import Credential
 from .utils.network import Api
@@ -128,6 +129,74 @@ class Copyright(Enum):
     REPRINT = 2
 
 
+class UploadManagerOrder(Enum):
+    """
+    内容管理排序字段。
+
+    + CLICK: 点击
+    + STOW: 收藏
+    + SENDDATE: 上传日期
+    + DM_COUNT: 弹幕数量
+    + COMMENT_COUNT: 评论数量
+    """
+
+    CLICK = "click"
+    STOW = "stow"
+    SENDDATE = "senddate"
+    DM_COUNT = "dm_count"
+    COMMENT_COUNT = "scores"  # wtf the scores means
+
+
+class UploadManagerStatus(Enum):
+    """
+    内容管理稿件状态字段。
+
+    + ALL: 全部稿件
+    + PUBED: 已通过
+    + IS_PUBING: 进行中
+    + NOT_PUBED: 未通过
+    """
+
+    ALL = "is_pubing,pubed,not_pubed"
+    PUBED = "pubed"
+    IS_PUBING = "is_pubing"
+    NOT_PUBED = "not_pubed"
+
+
+class UploadManagerSort(Enum):
+    """
+    内容管理文章排序字段。
+
+    + CREATED_TIME: 创建日期
+    + LIKE: 点赞
+    + COMMENT: 评论
+    + FAV: 收藏
+    + COIN: 投币
+    """
+
+    CREATED_TIME = 1
+    LIKE = 2
+    COMMENT = 3
+    FAV = 5
+    COIN = 6
+
+
+class UploadManagerArticleStatus(Enum):
+    """
+    内容管理文章状态字段。
+
+    + ALL: 全部稿件
+    + PUBED: 已通过
+    + IS_PUBING: 进行中
+    + NOT_PUBED: 未通过
+    """
+
+    ALL = 0
+    PUBED = 2
+    IS_PUBING = 1
+    NOT_PUBED = 3
+
+
 async def get_compare(credential: Credential) -> dict:
     """
     获取对比数据。
@@ -199,7 +268,7 @@ async def get_video_survey(credential: Credential) -> dict:
     Returns:
         dict: 视频分区排行数据。
     """
-    api = API["video"]["survey"]
+    api = API["data-up"]["video"]["survey"]
     params = {"type": 1}
     return await Api(**api, credential=credential).update_params(**params).result
 
@@ -218,7 +287,7 @@ async def get_video_playanalysis(
     Returns:
         dict: 稿件播放完成率对比数据。
     """
-    api = API["video"]["playanalysis"]
+    api = API["data-up"]["video"]["playanalysis"]
     params = {"copyright": copyright.value}
     return await Api(**api, credential=credential).update_params(**params).result
 
@@ -233,7 +302,7 @@ async def get_video_source(credential: Credential) -> dict:
     Returns:
         dict: 视频来源分布数据。
     """
-    api = API["video"]["source"]
+    api = API["data-up"]["video"]["source"]
     params = {"s_locale": "zh_CN"}
     return await Api(**api, credential=credential).update_params(**params).result
 
@@ -252,7 +321,7 @@ async def get_fan_overview(
     Returns:
         dict: 粉丝概览数据。
     """
-    api = API["fan"]["overview"]
+    api = API["data-up"]["fan"]["overview"]
     params = {"period": period.value}
     return await Api(**api, credential=credential).update_params(**params).result
 
@@ -275,7 +344,7 @@ async def get_fan_graph(
     Returns:
         dict: 粉丝图表数据。
     """
-    api = API["fan"]["graph"]
+    api = API["data-up"]["fan"]["graph"]
     params = {"period": period.value, "type": graph_type.value}
     return await Api(**api, credential=credential).update_params(**params).result
 
@@ -290,7 +359,7 @@ async def get_article_overview(credential: Credential) -> dict:
     Returns:
         dict: 文章概览数据。
     """
-    api = API["article"]["overview"]
+    api = API["data-up"]["article"]["overview"]
     return await Api(**api, credential=credential).result
 
 
@@ -309,7 +378,7 @@ async def get_article_graph(
         dict: 文章图表数据。
     """
 
-    api = API["article"]["graph"]
+    api = API["data-up"]["article"]["graph"]
     params = {"type": graph_type.value}
     return await Api(**api, credential=credential).update_params(**params).result
 
@@ -329,7 +398,7 @@ async def get_article_rank(
         dict: 文章排行数据。
     """
 
-    api = API["article"]["rank"]
+    api = API["data-up"]["article"]["rank"]
     params = {"type": rank_type.value}
     return await Api(**api, credential=credential).update_params(**params).result
 
@@ -345,5 +414,105 @@ async def get_article_source(credential: Credential) -> dict:
         dict: 文章阅读终端数据。
     """
 
-    api = API["article"]["source"]
+    api = API["data-up"]["article"]["source"]
+    return await Api(**api, credential=credential).result
+
+
+async def get_video_draft_upload_manager_info(credential: Credential) -> dict:
+    """
+    获取内容管理视频草稿信息
+
+    Args:
+        credentials (Credential): Credential 凭据。
+
+    Returns:
+        dict: 内容管理视频草稿信息。
+    """
+
+    api = API["upload-manager"]["video_draft"]
+    return await Api(**api, credential=credential).result
+
+
+async def get_video_upload_manager_info(
+    credential: Credential,
+    is_interative: bool = False,
+    pn: int = 1,
+    ps: int = 10,
+    order: UploadManagerOrder = UploadManagerOrder.CLICK,
+    tid: Union[VideoZoneTypes, None, int] = None,
+    status: UploadManagerStatus = UploadManagerStatus.ALL,
+) -> dict:
+    """
+    获取内容管理视频信息
+
+    Args:
+        credentials (Credential): Credential 凭据。
+
+        is_interative (bool): 是否为互动视频
+
+        pn (int): 页码
+
+        ps (int): 每页项数
+
+        tid: (VideoZoneTypes, None, int): 分区
+
+        status (UploadManagerStatus): 稿件状态
+
+        order (UploadManagerOrder): 稿件排序
+
+    Returns:
+        dict: 内容管理视频信息。
+    """
+    params = {
+        "pn": pn,
+        "ps": ps,
+        "coop": 1,
+        "status": status.value,
+        "order": order.value,
+        "interactive": 2 if is_interative else 1,
+        "tid": tid.value if isinstance(tid, Enum) else tid,
+    }
+    api = API["upload-manager"]["video"]
+    return await Api(**api, credential=credential).update_params(**params).result
+
+
+async def get_article_upload_manager_info(
+    credential: Credential,
+    status: UploadManagerArticleStatus = UploadManagerArticleStatus.ALL,
+    sort: UploadManagerSort = UploadManagerSort.CREATED_TIME,
+    pn: int = 1,
+) -> dict:
+    """
+    获取内容管理文章信息
+
+    Args:
+        credentials (Credential): Credential 凭据。
+
+        pn (int): 页码
+
+        status (UploadManagerArticleStatus): 稿件状态
+
+        sort (UploadManagerSort): 稿件排序
+
+    Returns:
+        dict: 内容管理文章信息。
+    """
+
+    params = {"pn": pn, "group": status.value, "sort": sort.value, "mobi_app": "pc"}
+    api = API["upload-manager"]["article"]
+    return await Api(**api, credential=credential).update_params(**params).result
+
+
+async def get_article_list_upload_manager_info(credential: Credential) -> dict:
+    """
+    获取内容管理文章信息
+
+    Args:
+        credentials (Credential): Credential 凭据。
+
+    Returns:
+        dict: 内容管理文集信息。
+    """
+
+    api = API["upload-manager"]["article_list"]
     return await Api(**api, credential=credential).result

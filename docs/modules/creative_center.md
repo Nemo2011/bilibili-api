@@ -92,6 +92,61 @@ from bilibili_api import creative_center
 
 ---
 
+## class UploadManagerOrder
+
+**Extends:** enum.Enum
+
+内容管理排序字段。
+
++ CLICK: 点击
++ STOW: 收藏
++ SENDDATE: 上传日期
++ DM_COUNT: 弹幕数量
++ COMMENT_COUNT: 评论数量
+
+---
+
+## class UploadManagerStatus
+
+**Extends:** enum.Enum
+
+内容管理稿件状态字段。
+
++ ALL: 全部稿件
++ PUBED: 已通过
++ IS_PUBING: 进行中
++ NOT_PUBED: 未通过
+
+## class UploadManagerSort
+
+**Extends:** enum.Enum
+
+内容管理文章排序字段。
+
+| 名称          | 值  | 描述            |
+| ------------- | -- | --------------- |
+| CREATED_TIME  | 1  | 创建日期         |
+| LIKE          | 2  | 点赞             |
+| COMMENT       | 3  | 评论             |
+| FAV           | 5  | 收藏             |
+| COIN          | 6  | 投币             |
+
+## class UploadManagerArticleStatus
+
+**Extends:** enum.Enum
+
+内容管理文章状态字段。
+
+| 名称         | 值  | 描述            |
+| ------------ | -- | --------------- |
+| ALL          | 0  | 全部稿件         |
+| PUBED        | 2  | 已通过           |
+| IS_PUBING    | 1  | 进行中           |
+| NOT_PUBED    | 3  | 未通过           |
+
+
+---
+
 ## async def get_compare()
 
 | name | type | description |
@@ -220,3 +275,54 @@ from bilibili_api import creative_center
 获取文章来源分布。
 
 **Returns:** 调用接口返回的内容。
+
+## async def get_video_draft_upload_manager_info
+
+| name       | type      | description                   |
+| ---------- | --------- | ----------------------------- |
+| credential | Credential| 凭据                          |
+
+获取内容管理视频草稿信息。
+
+**Returns:** 内容管理视频草稿信息。
+
+---
+
+## async def get_video_upload_manager_info
+
+| name          | type                            | description                   |
+| ------------- | ------------------------------- | ----------------------------- |
+| credential    | Credential                      | 凭据                          |
+| is_interative | bool (可选)                    | 是否为互动视频                 |
+| pn            | int (可选)                      | 页码                          |
+| ps            | int (可选)                      | 每页项数                       |
+| order         | UploadManagerOrder (可选)      | 稿件排序                       |
+| tid           | VideoZoneTypes, None, int (可选) | 分区                 |
+| status        | UploadManagerStatus (可选)     | 稿件状态                       |
+
+获取内容管理视频信息。
+
+**Returns:** 内容管理视频信息。
+
+## async def get_article_upload_manager_info
+
+| name          | type                                | description        |
+| ------------- | ----------------------------------- | ------------------ |
+| credential    | Credential                          | 凭据               |
+| status        | UploadManagerArticleStatus (可选)  | 稿件状态           |
+| sort          | UploadManagerSort (可选)           | 稿件排序           |
+| pn            | int (可选)                          | 页码               |
+
+获取内容管理文章信息。
+
+**Returns:** 内容管理文章信息。
+
+## async def get_article_list_upload_manager_info
+
+| name       | type       | description |
+| ---------- | ---------- | ----------- |
+| credential | Credential | 凭据        |
+
+获取内容管理文集信息。
+
+**Returns:** 内容管理文集信息。
