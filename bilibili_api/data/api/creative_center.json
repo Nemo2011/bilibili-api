@@ -183,5 +183,65 @@
             },
             "comment": "评论管理删除评论"
         }
+    },
+    "danmaku-manager": {
+        "search": {
+            "url": "https://api.bilibili.com/x/v2/dm/search",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "oid": "str: 稿件oid，用逗号分隔",
+                "type": "int: 稿件类型",
+                "mids": "str: 用户mids，用逗号分隔",
+                "keyword": "str: 关键词",
+                "progress_from": "int: 进度开始",
+                "progress_to": "int: 进度结束",
+                "ctime_from": "str: 创建时间起始",
+                "ctime_to": "str: 创建时间结束",
+                "modes": "int: 弹幕模式",
+                "pool": "int: 弹幕池",
+                "attrs": "str: 弹幕属性",
+                "order": "str: 排序字段",
+                "sort": "str: 排序方式",
+                "pn": "int: 页码",
+                "ps": "int: 每页项数",
+                "cp_filter": "bool: 是否过滤CP弹幕"
+            },
+            "comment": "弹幕搜索"
+        },
+        "recent": {
+            "url": "https://api.bilibili.com/x/v2/dm/recent",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "pn": "int: 页码",
+                "ps": "int: 每页项数"
+            },
+            "comment": "最近弹幕"
+        },
+        "state": {
+            "url": "https://api.bilibili.com/x/v2/dm/edit/state",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "oid":"int: 稿件 oid",
+                "type": "int: 稿件类型 1",
+                "dmids": "str: 弹幕id，用逗号分隔",
+                "state": "int: 1 删除 2 保护 3 取消保护"
+            },
+            "comment": "操作弹幕"
+        },
+        "pool": {
+            "url": "https://api.bilibili.com/x/v2/dm/edit/pool",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "oid":"int: 稿件 oid",
+                "type": "int: 稿件类型 1",
+                "dmids": "str: 弹幕id，用逗号分隔",
+                "pool": "int: 弹幕池 0 普通 1 字幕"
+            },
+            "comment": "操作弹幕池"
+        }
     }
 }

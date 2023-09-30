@@ -8,6 +8,7 @@ bilibili_api.creative_center
 
 from enum import Enum
 from typing import List, Union, Optional
+from datetime import datetime
 
 from .video_zone import VideoZoneTypes
 from .utils.utils import get_api
@@ -199,22 +200,66 @@ class UploadManagerArticleStatus(Enum):
 
 class ArchiveType(Enum):
     """
-    评论管理中的稿件类型
+    评论管理中的稿件类型。
+
+    + VIDEO: 视频
+    + ARTICLE: 文章
+    + AUDIO: 音频
     """
 
-    VIDEO = 1
-    ARTICLE = 12
-    AUDIO = 14
+    VIDEO = 1  # 视频
+    ARTICLE = 12  # 文章
+    AUDIO = 14  # 音频
 
 
 class CommentManagerOrder(Enum):
     """
-    评论管理中的排序字段
+    评论管理中的排序字段。
+
+    + RECENTLY: 最近
+    + LIKE: 点赞
+    + REPLY: 回复
     """
 
-    RECENTLY = 1
-    LIKE = 2
-    REPLY = 3
+    RECENTLY = 1  # 最近
+    LIKE = 2  # 点赞
+    REPLY = 3  # 回复
+
+
+class DanmakuMode(Enum):
+    """
+    弹幕模式。
+
+    + ROLL: 滚动
+    + BOTTOM: 底端
+    + TOP: 顶端
+    + REVERSE: 逆向
+    + ADVANCED: 高级
+    + CODE: 代码
+    + BAS: BAS 补充注释
+    """
+
+    ROLL = 1  # 滚动
+    BOTTOM = 4  # 底端
+    TOP = 5  # 顶端
+    REVERSE = 6  # 逆向
+    ADVANCED = 7  # 高级
+    CODE = 8  # 代码
+    BAS = 9  # BAS
+
+
+class DanmakuPool(Enum):
+    """
+    子弹幕池类型。
+
+    + NORMAL: 普通
+    + SUBTITLE: 字幕
+    + SPECIAL: 特殊
+    """
+
+    NORMAL = 0  # 普通
+    SUBTITLE = 1  # 字幕
+    SPECIAL = 2  # 特殊
 
 
 async def get_compare(credential: Credential) -> dict:
@@ -438,6 +483,13 @@ async def get_article_source(credential: Credential) -> dict:
     return await Api(**api, credential=credential).result
 
 
+"""
+upload manager
+
+https://member.bilibili.com/platform/upload-manager
+"""
+
+
 async def get_video_draft_upload_manager_info(credential: Credential) -> dict:
     """
     获取内容管理视频草稿信息
@@ -538,6 +590,13 @@ async def get_article_list_upload_manager_info(credential: Credential) -> dict:
     return await Api(**api, credential=credential).result
 
 
+"""
+comment manager
+
+https://member.bilibili.com/platform/comment
+"""
+
+
 async def get_comments(
     credential: Credential,
     oid: Optional[int] = None,
@@ -595,8 +654,8 @@ async def get_comments(
 
 async def del_comments(
     credential: Credential,
-    oid: Union[int, List],
-    rpid: Union[int, List],
+    oid: Union[int, List[int]],
+    rpid: Union[int, List[int]],
     archive_type: ArchiveType = ArchiveType.VIDEO,
 ):
     """
@@ -622,4 +681,248 @@ async def del_comments(
     }
 
     api = API["comment-manager"]["del"]
+    return await Api(**api, credential=credential).update_data(**data).result
+
+
+"""
+danmaku manager
+
+https://member.bilibili.com/platform/inter-active/danmu
+"""
+
+
+async def get_recently_danmakus(
+    credential: Credential, pn: int = 1, ps: int = 50
+) -> dict:
+    """
+    最近弹幕
+
+    Args:
+        credential (Credential): Credential 凭据。
+
+        pn (int): 页码。
+
+        ps (int): 每页项数。
+
+    Returns:
+        dict: 弹幕管理最近弹幕信息。
+    """
+
+    params = {"pn": pn, "ps": ps}
+
+    api = API["danmaku-manager"]["recent"]
+    return await Api(**api, credential=credential).update_params(**params).result
+
+
+class DanmakuOrder(Enum):
+    """
+    弹幕排序依据
+
+    + CTIME: 发送时间
+    + LIKE_COUNT: 点赞数
+    """
+
+    CTIME = "ctime"
+    LIKE_COUNT = "like_count"
+
+
+class DanmakuSort(Enum):
+    """
+    弹幕排序顺序
+
+    + DESC: 降序
+    + ASC: 升序
+    """
+
+    DESC = "desc"
+    ASC = "asc"
+
+
+class DanmakuType(Enum):
+    """
+    弹幕筛选类型
+
+    + ALL: 全部
+    + PROTECT: 保护弹幕
+    """
+
+    ALL = 0
+    PROTECT = 2
+
+
+async def get_dammakus(
+    credential: Credential,
+    oid: int,
+    select_type: DanmakuType = DanmakuType.ALL,
+    archive_type: ArchiveType = ArchiveType.VIDEO,
+    mids: Optional[Union[int, List[int]]] = None,
+    keyword: Optional[str] = None,
+    progress_from: Optional[int] = None,
+    progress_to: Optional[int] = None,
+    ctime_from: Optional[datetime] = None,
+    ctime_to: Optional[datetime] = None,
+    modes: Optional[Union[DanmakuMode, List[DanmakuMode]]] = None,
+    pools: Optional[Union[DanmakuPool, List[DanmakuPool]]] = None,
+    attrs=None,  # 未知参数，我在高级筛选里面找不到
+    order: DanmakuOrder = DanmakuOrder.CTIME,
+    sort: DanmakuSort = DanmakuSort.DESC,
+    pn: int = 1,
+    ps: int = 50,
+    cp_filter: bool = False,
+) -> dict:
+    """
+    弹幕搜索
+
+    Args:
+        credential (Credential): Credential 凭据
+
+        oid (int): 稿件oid，用逗号分隔
+
+        select_type (DanmakuType): 弹幕类型
+
+        archive_type (ArchiveType): 稿件类型
+
+        mids (list[int], int): 用户mids，用逗号分隔或者直接 int
+
+        keyword (str): 关键词
+
+        progress_from (int): 进度开始
+
+        progress_to (int): 进度结束
+
+        ctime_from (datetime.datetime): 创建时间起始
+
+        ctime_to (datetime.datetime): 创建时间结束
+
+        modes (DanmakuMode): 弹幕模式。
+
+        pool (DanmakuPool): 弹幕池
+
+        attrs (Unknown): 弹幕属性，未知参数
+
+        order (DanmakuOrder): 排序字段
+
+        sort (DanmakuSort): 排序方式
+
+        pn (int): 页码。
+
+        ps (int): 每页项数。
+
+        cp_filter (bool): 是否过滤CP弹幕。未知参数，默认为 False
+
+    Returns:
+        dict: 弹幕搜索结果
+    """
+    params = {
+        "oid": oid,
+        "type": archive_type.value,
+        "mids": ",".join(mids) if isinstance(mids, list) else mids,
+        "select_type": select_type.value,
+        "keyword": keyword,
+        "progress_from": progress_from,
+        "progress_to": progress_to,
+        "ctime_from": ctime_from.strftime("%d-%m-%Y %H:%M:%S")
+        if ctime_from is not None
+        else None,
+        "ctime_to": ctime_to.strftime("%d-%m-%Y %H:%M:%S")
+        if ctime_to is not None
+        else None,
+        "modes": (
+            ",".join([mode.value for mode in modes])
+            if isinstance(modes, list)
+            else modes.value
+        )
+        if modes is not None
+        else None,
+        "pool": (
+            ",".join([pool.value for pool in pools])
+            if isinstance(pools, list)
+            else pools.value
+        )
+        if pools is not None
+        else None,
+        "attrs": attrs,
+        "order": order.value,
+        "sort": sort.value,
+        "pn": pn,
+        "ps": ps,
+        "cp_filter": cp_filter,
+    }
+
+    api = API["danmaku-manager"]["search"]
+    return await Api(**api, credential=credential).update_params(**params).result
+
+
+async def del_danmaku(
+    credential: Credential, oid: int, dmids: Union[int, List[int]]
+) -> dict:
+    """
+    删除弹幕
+
+    Args:
+        oid (int): 稿件 oid
+
+        dmids (list[int], int): 弹幕 id，可以传入列表和 int
+    """
+
+    return await edit_danmaku_state(credential=credential, oid=oid, dmids=dmids, state=1)
+
+
+async def edit_danmaku_state(
+    credential: Credential,
+    oid: int,
+    dmids: Union[int, List[int]],
+    state: Optional[int] = None,
+) -> dict:
+    """
+    操作弹幕状态
+
+    Args:
+        oid (int): 稿件 oid
+
+        dmids (list[int], int): 弹幕 id，可以传入列表和 int
+
+        state (int, Optional): 弹幕状态 1 删除 2 保护 3 取消保护
+
+    Returns:
+        dict: API 返回信息
+    """
+    data = {
+        "type": 1,
+        "oid": oid,
+        "dmids": ",".join(dmids) if isinstance(dmids, list) else dmids,
+        "state": state,
+    }
+
+    api = API["danmaku-manager"]["state"]
+    return await Api(**api, credential=credential).update_data(**data).result
+
+
+async def edit_danmaku_pool(
+    credential: Credential,
+    oid: int,
+    dmids: Union[int, List[int]],
+    is_subtitle: bool = True,
+) -> dict:
+    """
+    操作弹幕池
+
+    Args:
+        oid (int): 稿件 oid
+
+        dmids (list[int], int): 弹幕 id，可以传入列表和 int
+
+        is_subtitle (bool): 是否为字幕
+
+    Returns:
+        dict: API 返回信息
+    """
+    data = {
+        "type": 1,
+        "oid": oid,
+        "dmids": ",".join(dmids) if isinstance(dmids, list) else dmids,
+        "pool": 1 if is_subtitle else 0,
+    }
+
+    api = API["danmaku-manager"]["pool"]
     return await Api(**api, credential=credential).update_data(**data).result

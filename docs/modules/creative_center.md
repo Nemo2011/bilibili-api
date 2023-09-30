@@ -169,6 +169,40 @@ from bilibili_api import creative_center
 | REPLY     | 3  | 回复    |
 
 
+## class DanmakuOrder
+
+**Extends:** enum.Enum
+
+弹幕排序依据。
+
+| 名称       | 值      | 描述      |
+| ---------- | ------- | --------- |
+| CTIME      | ctime   | 发送时间  |
+| LIKE_COUNT | like_count | 点赞数    |
+
+## class DanmakuSort
+
+**Extends:** enum.Enum
+
+弹幕排序顺序。
+
+| 名称  | 值   | 描述   |
+| ----- | ---- | ------ |
+| DESC  | desc | 降序   |
+| ASC   | asc  | 升序   |
+
+## class DanmakuType
+
+**Extends:** enum.Enum
+
+弹幕筛选类型。
+
+| 名称     | 值  | 描述      |
+| -------- | -- | --------- |
+| ALL      | 0  | 全部      |
+| PROTECT  | 2  | 保护弹幕  |
+
+
 ---
 
 ## async def get_compare()
@@ -382,3 +416,86 @@ from bilibili_api import creative_center
 删除评论。
 
 每个评论对应一个 oid。
+
+
+## async def get_recently_danmakus
+
+| 参数名       | 类型             | 描述                     |
+| ------------ | ---------------- | ------------------------ |
+| credential   | Credential        | 凭据                     |
+| pn (可选)    | int              | 页码                     |
+| ps (可选)    | int              | 每页项数                 |
+
+获取最近弹幕。
+
+**Returns:** dict 弹幕管理最近弹幕信息。
+
+
+## async def del_danmaku
+
+| 参数 | 类型 | 描述 |
+| ---- | ---- | ---- |
+| credential | Credential | 凭据 |
+| oid | int | 稿件 oid |
+| dmids | Union[int, List[int]] | 弹幕 id，可以传入列表或单个整数 |
+
+删除弹幕。
+
+**返回: dict** API 返回信息。
+
+---
+
+## async def edit_danmaku_state
+
+| 参数 | 类型 | 描述 |
+| ---- | ---- | ---- |
+| credential | Credential | 凭据 |
+| oid | int | 稿件 oid |
+| dmids | Union[int, List[int]] | 弹幕 id，可以传入列表或单个整数 |
+| state | Optional[int] | 弹幕状态 (1 删除, 2 保护, 3 取消保护) |
+
+操作弹幕状态。
+
+**返回: dict** API 返回信息。
+
+---
+
+## async def edit_danmaku_pool
+
+| 参数 | 类型 | 描述 |
+| ---- | ---- | ---- |
+| credential | Credential | 凭据 |
+| oid | int | 稿件 oid |
+| dmids | Union[int, List[int]] | 弹幕 id，可以传入列表或单个整数 |
+| is_subtitle | bool | 是否为字幕 |
+
+操作弹幕池。
+
+**返回: dict** API 返回信息。
+
+## async def get_danmakus
+
+| 参数 | 类型 | 描述 |
+| ---- | ---- | ---- |
+| credential | Credential | 凭据 |
+| oid | int | 稿件 oid，用逗号分隔 |
+| select_type | DanmakuType | 弹幕类型 |
+| archive_type | ArchiveType | 稿件类型 |
+| mids (Optional) | Union[int, List[int]] | 用户 mids，用逗号分隔或直接传入整数 |
+| keyword (Optional) | str | 关键词 |
+| progress_from (Optional) | int | 进度开始 |
+| progress_to (Optional) | int | 进度结束 |
+| ctime_from (Optional) | datetime.datetime | 创建时间起始 |
+| ctime_to (Optional) | datetime.datetime | 创建时间结束 |
+| modes (Optional) | Union[DanmakuMode, List[DanmakuMode]] | 弹幕模式 |
+| pools (Optional) | Union[DanmakuPool, List[DanmakuPool]] | 弹幕池 |
+| attrs | Unknown | 弹幕属性，未知参数 |
+| order | DanmakuOrder | 排序字段 |
+| sort | DanmakuSort | 排序方式 |
+| pn | int | 页码 |
+| ps | int | 每页项数 |
+| cp_filter | bool | 是否过滤 CP 弹幕，默认为 False |
+
+弹幕搜索。
+
+**返回: dict** 弹幕搜索结果。
