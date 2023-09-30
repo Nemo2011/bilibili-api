@@ -144,6 +144,30 @@ from bilibili_api import creative_center
 | IS_PUBING    | 1  | 进行中           |
 | NOT_PUBED    | 3  | 未通过           |
 
+## class ArchiveType
+
+**Extends:** enum.Enum
+
+评论管理中的稿件类型。
+
+| 名称     | 值  | 描述    |
+| -------- | -- | ------- |
+| VIDEO    | 1  | 视频    |
+| ARTICLE  | 12 | 文章    |
+| AUDIO    | 14 | 音频    |
+
+## class CommentManagerOrder
+
+**Extends:** enum.Enum
+
+评论管理中的排序字段。
+
+| 名称      | 值  | 描述    |
+| --------- | -- | ------- |
+| RECENTLY  | 1  | 最近    |
+| LIKE      | 2  | 点赞    |
+| REPLY     | 3  | 回复    |
+
 
 ---
 
@@ -326,3 +350,35 @@ from bilibili_api import creative_center
 获取内容管理文集信息。
 
 **Returns:** 内容管理文集信息。
+
+## async def get_comments
+
+| name                | type                                | description                |
+| ------------------- | ----------------------------------- | -------------------------- |
+| credential          | Credential                          | 凭据                       |
+| oid (Optional)      | int (Optional)                      | 指定稿件                   |
+| keyword (Optional)  | str (Optional)                      | 关键词                     |
+| archive_type        | ArchiveType                         | 稿件类型                   |
+| order               | CommentManagerOrder                 | 排序字段                   |
+| filter              | int                                 | 筛选器，作用未知           |
+| pn                  | int                                 | 页码                       |
+| ps                  | int                                 | 每页项数                   |
+| charge_plus_filter  | bool                                | charge_plus_filter         |
+
+获取评论。
+
+**Returns: dict** 评论管理评论信息。
+
+
+## async def del_comments
+
+| name                | type             | description                |
+| ------------------- | ---------------- | -------------------------- |
+| credential          | Credential       | 凭据                       |
+| oid                 | Union[int, List] | 指定稿件                   |
+| rpid                | Union[int, List] | 指定评论                   |
+| archive_type        | ArchiveType      | 稿件类型                   |
+
+删除评论。
+
+每个评论对应一个 oid。

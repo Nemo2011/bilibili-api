@@ -7,7 +7,7 @@ bilibili_api.creative_center
 """
 
 from enum import Enum
-from typing import List, Union
+from typing import List, Union, Optional
 
 from .video_zone import VideoZoneTypes
 from .utils.utils import get_api
@@ -195,6 +195,26 @@ class UploadManagerArticleStatus(Enum):
     PUBED = 2
     IS_PUBING = 1
     NOT_PUBED = 3
+
+
+class ArchiveType(Enum):
+    """
+    评论管理中的稿件类型
+    """
+
+    VIDEO = 1
+    ARTICLE = 12
+    AUDIO = 14
+
+
+class CommentManagerOrder(Enum):
+    """
+    评论管理中的排序字段
+    """
+
+    RECENTLY = 1
+    LIKE = 2
+    REPLY = 3
 
 
 async def get_compare(credential: Credential) -> dict:
@@ -516,3 +536,90 @@ async def get_article_list_upload_manager_info(credential: Credential) -> dict:
 
     api = API["upload-manager"]["article_list"]
     return await Api(**api, credential=credential).result
+
+
+async def get_comments(
+    credential: Credential,
+    oid: Optional[int] = None,
+    keyword: Optional[str] = None,
+    archive_type: ArchiveType = ArchiveType.VIDEO,
+    order: CommentManagerOrder = CommentManagerOrder.RECENTLY,
+    filter: int = -1,
+    pn: int = 1,
+    ps: int = 10,
+    charge_plus_filter: bool = False,
+) -> dict:
+    """
+    获取评论
+
+    Args:
+        credentials (Credential): Credential 凭据。
+
+        oid (Optional, int): 指定稿件
+
+        keyword (Optional, str): 关键词
+
+        archive_type (ArchiveType): 稿件类型
+
+        order (CommentManagerOrder): 排序字段
+
+        filter (int): 筛选器，作用未知
+
+        pn (int): 页码
+
+        ps (int): 每页项数
+
+        charge_plus_filter (bool): charge_plus_filter
+
+    Returns:
+        dict: 评论管理评论信息。
+    """
+
+    params = {
+        "order": order.value,
+        "filter": filter,
+        "type": archive_type.value,
+        "pn": pn,
+        "ps": ps,
+        "charge_plus_filter": charge_plus_filter,
+    }
+
+    if keyword is not None:
+        params["keyword"] = keyword
+    if oid is not None:
+        params["oid"] = oid
+
+    api = API["comment-manager"]["fulllist"]
+    return await Api(**api, credential=credential).update_params(**params).result
+
+
+async def del_comments(
+    credential: Credential,
+    oid: Union[int, List],
+    rpid: Union[int, List],
+    archive_type: ArchiveType = ArchiveType.VIDEO,
+):
+    """
+    删除评论
+
+    每个评论对应一个 oid
+
+    Args:
+        credentials (Credential): Credential 凭据。
+
+        oid (int, lsit): 指定稿件
+
+        rpid (int, lsit): 指定评论
+
+        archive_type (ArchiveType): 稿件类型
+    """
+    data = {
+        "oid": ",".join(oid) if isinstance(oid, list) else oid,
+        "type": archive_type.value,
+        "rpid": ",".join(rpid) if isinstance(rpid, list) else rpid,
+        "jsonp": "jsonp",
+        "csrf": credential.bili_jct,
+    }
+
+    api = API["comment-manager"]["del"]
+    return await Api(**api, credential=credential).update_data(**data).result

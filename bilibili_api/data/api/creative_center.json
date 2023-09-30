@@ -153,5 +153,35 @@
             "verify": true,
             "comment": "获取内容管理文集信息"
         }
+    },
+    "comment-manager": {
+        "fulllist": {
+            "url": "https://api.bilibili.com/x/v2/reply/up/fulllist",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "oid": "int: 稿件 oid",
+                "order": "int: 排序",
+                "pn": "int: 页码",
+                "ps":"int: 每页项数",
+                "type": "int: 稿件类型",
+                "filter": "int: -1",
+                "charge_plus_filter": "bool: false",
+                "keyword": "str: 关键词"
+            },
+            "comment": "获取评论管理评论信息"
+        },
+        "del": {
+            "url": "https://api.bilibili.com/x/v2/reply/del",
+            "method": "POST",
+            "verify": true,
+            "data": {
+                "oid": "str: 稿件 oid，用逗号分隔",
+                "type": "int: 稿件类型",
+                "rpid": "str: 评论 rpid，用逗号分隔",
+                "csrf": "str: csrf"
+            },
+            "comment": "评论管理删除评论"
+        }
     }
 }
