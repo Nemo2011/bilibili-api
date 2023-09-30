@@ -262,6 +262,42 @@ class DanmakuPool(Enum):
     SPECIAL = 2  # 特殊
 
 
+class DanmakuOrder(Enum):
+    """
+    弹幕排序依据
+
+    + CTIME: 发送时间
+    + LIKE_COUNT: 点赞数
+    """
+
+    CTIME = "ctime"
+    LIKE_COUNT = "like_count"
+
+
+class DanmakuSort(Enum):
+    """
+    弹幕排序顺序
+
+    + DESC: 降序
+    + ASC: 升序
+    """
+
+    DESC = "desc"
+    ASC = "asc"
+
+
+class DanmakuType(Enum):
+    """
+    弹幕筛选类型
+
+    + ALL: 全部
+    + PROTECT: 保护弹幕
+    """
+
+    ALL = 0
+    PROTECT = 2
+
+
 async def get_compare(credential: Credential) -> dict:
     """
     获取对比数据。
@@ -714,42 +750,6 @@ async def get_recently_danmakus(
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-class DanmakuOrder(Enum):
-    """
-    弹幕排序依据
-
-    + CTIME: 发送时间
-    + LIKE_COUNT: 点赞数
-    """
-
-    CTIME = "ctime"
-    LIKE_COUNT = "like_count"
-
-
-class DanmakuSort(Enum):
-    """
-    弹幕排序顺序
-
-    + DESC: 降序
-    + ASC: 升序
-    """
-
-    DESC = "desc"
-    ASC = "asc"
-
-
-class DanmakuType(Enum):
-    """
-    弹幕筛选类型
-
-    + ALL: 全部
-    + PROTECT: 保护弹幕
-    """
-
-    ALL = 0
-    PROTECT = 2
-
-
 async def get_dammakus(
     credential: Credential,
     oid: int,
@@ -865,7 +865,9 @@ async def del_danmaku(
         dmids (list[int], int): 弹幕 id，可以传入列表和 int
     """
 
-    return await edit_danmaku_state(credential=credential, oid=oid, dmids=dmids, state=1)
+    return await edit_danmaku_state(
+        credential=credential, oid=oid, dmids=dmids, state=1
+    )
 
 
 async def edit_danmaku_state(
