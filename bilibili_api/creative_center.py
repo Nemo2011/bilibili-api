@@ -261,7 +261,6 @@ class DanmakuPool(Enum):
     SUBTITLE = 1  # 字幕
     SPECIAL = 2  # 特殊
 
-
 class DanmakuOrder(Enum):
     """
     弹幕排序依据
@@ -750,7 +749,10 @@ async def get_recently_danmakus(
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-async def get_dammakus(
+
+
+
+async def get_danmakus(
     credential: Credential,
     oid: int,
     select_type: DanmakuType = DanmakuType.ALL,
@@ -865,9 +867,7 @@ async def del_danmaku(
         dmids (list[int], int): 弹幕 id，可以传入列表和 int
     """
 
-    return await edit_danmaku_state(
-        credential=credential, oid=oid, dmids=dmids, state=1
-    )
+    return await edit_danmaku_state(credential=credential, oid=oid, dmids=dmids, state=1)
 
 
 async def edit_danmaku_state(

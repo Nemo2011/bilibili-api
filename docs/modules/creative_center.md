@@ -498,4 +498,4 @@ from bilibili_api import creative_center
 
 弹幕搜索。
 
-**返回: dict** 弹幕搜索结果。
+**Return: dict** 弹幕搜索结果。
