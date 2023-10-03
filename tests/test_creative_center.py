@@ -51,3 +51,24 @@ async def test_k_get_article_source():
 
 async def test_l_get_article_rank():
     return await creative_center.get_article_rank(credential)
+
+async def test_m_get_video_draft_upload_manager_info():
+    return await creative_center.get_video_draft_upload_manager_info(credential)
+
+async def test_n_get_video_draft_upload_manager_info():
+    return await creative_center.get_video_draft_upload_manager_info(credential)
+
+async def test_o_get_article_upload_manager_info():
+    return await creative_center.get_article_upload_manager_info(credential)
+
+async def test_p_get_article_list_upload_manager_info():
+    return await creative_center.get_article_list_upload_manager_info(credential)
+
+async def test_r_get_comments():
+    return await creative_center.get_comments(credential)
+
+async def test_s_get_recently_danmakus():
+    return await creative_center.get_recently_danmakus(credential)
+
+async def test_t_get_danmakus():
+    return await creative_center.get_danmakus(credential, oid=914350440) # BV1fG4y1g7wE 好像是测试号的视频？
