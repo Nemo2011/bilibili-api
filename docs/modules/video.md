@@ -283,6 +283,13 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 | page_index | int, optional           | 分 P 号，从 0 开始。Defaults to None                      |
 | date       | datetime.Date \| None, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
 | cid        | int \| None, optional           | 分 P 的 ID。Defaults to None                              |
+| from_seg | int \| None, optional | 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None. |
+| to_seg | int \| None, optional | 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None. |
+
+**注意**：
+- 1. 段数可以使用 `get_danmaku_view()["dm_seg"]["total"]` 查询。
+- 2. `from_seg` 和 `to_seg` 仅对 `date == None` 的时候有效果。
+- 3. 例：取前 `12` 分钟的弹幕：`from_seg=0, to_seg=1`
 
 获取弹幕。
 

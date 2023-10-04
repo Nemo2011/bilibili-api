@@ -763,6 +763,8 @@ class Video:
         page_index: int = 0,
         date: Union[datetime.date, None] = None,
         cid: Union[int, None] = None,
+        from_seg: Union[int, None] = None,
+        to_seg: Union[int, None] = None,
     ) -> List[Danmaku]:
         """
         获取弹幕。
@@ -773,6 +775,15 @@ class Video:
             date       (datetime.Date | None, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
 
             cid        (int | None, optional): 分 P 的 ID。Defaults to None
+
+            from_seg (int, optional): 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None.
+
+            to_seg (int, optional): 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None.
+
+            注意：
+            - 1. 段数可以使用 `get_danmaku_view()["dm_seg"]["total"]` 查询。
+            - 2. `from_seg` 和 `to_seg` 仅对 `date == None` 的时候有效果。
+            - 3. 例：取前 `12` 分钟的弹幕：`from_seg=0, to_seg=1`
 
         Returns:
             List[Danmaku]: Danmaku 类的列表。
@@ -794,15 +805,17 @@ class Video:
             api = API["danmaku"]["get_history_danmaku"]
             params["date"] = date.strftime("%Y-%m-%d")
             params["type"] = 1
-            all_seg = 1
         else:
             api = API["danmaku"]["get_danmaku"]
-            view = await self.get_danmaku_view(cid=cid)
-            all_seg = view["dm_seg"]["total"]
+            if from_seg == None:
+                from_seg = 0
+            if to_seg == None:
+                view = await self.get_danmaku_view(cid=cid)
+                to_seg = view["dm_seg"]["total"] - 1
 
         danmakus = []
 
-        for seg in range(all_seg):
+        for seg in range(from_seg, to_seg + 1):
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
                 params["segment_index"] = seg + 1
