@@ -422,6 +422,7 @@ class Video:
                 "fnval": 4048,
                 "fourk": 1,
                 "platform": "html5",
+                "high_quality": "1",
             }
         else:
             params = {
