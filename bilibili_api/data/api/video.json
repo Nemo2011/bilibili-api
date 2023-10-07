@@ -43,7 +43,7 @@
     "tags": {
       "url": "https://api.bilibili.com/x/web-interface/view/detail/tag",
       "method": "GET",
-      "verify": true,
+      "verify": false,
       "params": {
         "aid": "int: av 号",
         "bvid": "string: BV 号"
