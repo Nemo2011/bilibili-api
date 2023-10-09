@@ -12,5 +12,5 @@ rsa~=4.9
 pillow~=10.0.1
 tqdm~=4.66.1
 yarl~=1.9.2
-pycryptodomex~=3.18.0
+pycryptodomex~=3.19.0
 qrcode_terminal~=0.8
