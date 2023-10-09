@@ -1,4 +1,4 @@
-aiohttp~=3.8.5
+aiohttp~=3.8.6
 beautifulsoup4~=4.12.2
 colorama~=0.4.6
 lxml~=4.9.3
