@@ -63,6 +63,15 @@
       "params": {
         "vmid": "int: uid"
       },
+      "comment": "用户置顶视频"
+    },
+    "masterpiece": {
+      "url": "https://api.bilibili.com/x/space/masterpiece",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "vmid":"int: uid"
+      },
       "comment": "用户代表作"
     },
     "relation_stat": {
