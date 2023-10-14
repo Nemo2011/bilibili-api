@@ -349,12 +349,12 @@ class User:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_masterpiece(self) -> dict:
+    async def get_masterpiece(self) -> list:
         """
         获取用户代表作
 
         Returns:
-            dict: 调用接口返回的内容。
+            list: 调用接口返回的内容。
         """
         api = API["info"]["masterpiece"]
         params = {"vmid": self.get_uid()}

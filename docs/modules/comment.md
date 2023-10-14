@@ -28,6 +28,28 @@ from bilibili_api import comment
 + CHEESE: 课程
 + BLACK_ROOM: 小黑屋
 + MANGA: 漫画
+## class ReportReason
+
+举报原因见 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/comment/action.md#%E4%B8%BE%E6%8A%A5%E8%AF%84%E8%AE%BA
+
++ OTHER: 其他
++ SPAM_AD: 垃圾广告
++ PORNOGRAPHY: 色情
++ FLOOD: 刷屏
++ PROVOCATION: 引战
++ SPOILER: 剧透
++ POLITICS: 政治
++ PERSONAL_ATTACK: 人身攻击
++ IRRELEVANT_CONTENT: 内容不相关
++ ILLEGAL: 违法违规
++ VULGAR: 低俗
++ ILLEGAL_WEBSITE: 非法网站
++ GAMBLING_FRAUD: 赌博诈骗
++ SPREADING_FALSE_INFORMATION: 传播不实信息
++ INCITING_INFORMATION: 怂恿教唆信息
++ PRIVACY_VIOLATION: 侵犯隐私
++ FLOOR_TAKING: 抢楼
++ INAPPROPRIATE_CONTENT_FOR_MINORS: 青少年不良信息
 
 ---
 
@@ -115,6 +137,34 @@ from bilibili_api import comment
 #### async def delete()
 
 删除评论
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def report()
+
+| name    | type          | description                                                    |
+| ------- | ------------- | -------------------------------------------------------------- |
+| reason  | ReportReason  | 举报原因                                                       |
+| content | str, optional | 其他举报备注内容仅 reason=ReportReason.OTHER 可用且不能为 None |
+
+举报评论。
+
+Error Code:
+    0: 成功
+    -101: 账号未登录
+    -102: 账号被封停
+    -111: csrf校验失败
+    -400: 请求错误
+    -403: 权限不足
+    -404: 无此项
+    -500: 服务器错误
+    -509: 请求过于频繁
+    12002: 评论区已关闭
+    12006: 没有该评论
+    12008: 已经举报过了
+    12009: 评论主体的type不合法
+    12019: 举报过于频繁
+    12077: 举报理由过长或过短
 
 **Returns:** dict: 调用 API 返回的结果
 

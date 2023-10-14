@@ -114,3 +114,5 @@ async def test_g_delete_comment():
         credential=credential,
     )
     return await cmt.delete()
+
+# 举报评论不测试
