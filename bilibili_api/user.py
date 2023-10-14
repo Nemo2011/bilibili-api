@@ -315,7 +315,7 @@ class User:
         Returns:
             dict: 调用接口返回的内容。
         """
-        api = API["info"]["relation"]
+        api = API["info"]["relation_stat"]
         params = {"vmid": self.__uid}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -731,7 +731,24 @@ class User:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    # 操作用户
+    async def get_relation(self, uid: int) -> dict:
+        """
+        获取与某用户的关系
+
+        Args:
+            uid (int): 用户 UID
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+
+        api = API["info"]["relation"]
+        params = {"mid": uid}
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    # 操作用户关系
 
     async def modify_relation(self, relation: RelationType) -> dict:
         """
@@ -779,7 +796,7 @@ class User:
             "series_id": sid,
             "pn": pn,
             "ps": ps,
-            "sort": "asc" if ChannelOrder.CHANGE else "desc",
+            "sort": "asc" if sort == ChannelOrder.CHANGE else "desc",
         }
         return (
             await Api(**api, wbi=True, credential=self.credential)
@@ -937,9 +954,8 @@ class User:
         """
         api = API["info"]["uplikeimg"]
         params = {"vmid": self.get_uid()}
-        return (
-            await Api(**api).update_params(**params).result
-        )
+        return await Api(**api).update_params(**params).result
+
 
 async def get_self_info(credential: Credential) -> dict:
     """

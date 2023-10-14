@@ -276,3 +276,6 @@ async def test_zv_get_self_special_followings():
 
 async def test_zw_get_self_jury_info():
     return await user.get_self_jury_info(credential)
+
+async def test_zx_get_relation():
+    return await u.get_relation(UID)
