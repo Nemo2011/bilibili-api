@@ -279,3 +279,6 @@ async def test_zw_get_self_jury_info():
 
 async def test_zx_get_relation():
     return await u.get_relation(UID)
+
+async def test_zy_get_masterpiece():
+    return await u.get_masterpiece()
