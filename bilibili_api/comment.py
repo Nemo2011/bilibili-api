@@ -298,8 +298,8 @@ class Comment:
         api = API["comment"]["report"]
         if content is not None and report_reason != ReportReason.OTHER:
             raise ArgsException("content 只能在 report_reason=ReportReason.OTHER 时使用")
-        # elif content is None and report_reason == ReportReason.OTHER:
-        #     raise ArgsException("content 不能为空")
+        elif content is None and report_reason == ReportReason.OTHER:
+            raise ArgsException("report_reason=ReportReason.OTHER 时 content 不能为空")
         data = {
             "oid": self.__oid,
             "type": self.__type.value,
