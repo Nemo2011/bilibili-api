@@ -430,6 +430,16 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的内容。
 
+#### async def get_relation()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| mid | int  | uid 号      |
+
+获取与某用户的关系
+
+**Returns:** 调用接口返回的内容。
+
 #### async def modify_relation()
 
 | name     | type         | description |
