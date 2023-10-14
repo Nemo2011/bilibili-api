@@ -298,6 +298,8 @@ async def get_comments(
     """
     获取资源评论列表。
 
+    第二页以及往后需要提供 `credential` 参数。
+
     Args:
         oid        (int)                 : 资源 ID。
 
@@ -329,6 +331,8 @@ async def get_comments_lazy(
 ) -> dict:
     """
     新版获取资源评论列表。
+
+    第二次以及往后需要提供 `credential` 参数。
 
     Args:
         oid        (int)                 : 资源 ID。
