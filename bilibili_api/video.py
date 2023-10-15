@@ -462,6 +462,20 @@ class Video:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def get_relation(self) -> dict:
+        """
+        获取用户与视频的关系
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        self.credential.raise_for_no_sessdata()
+        api = API["info"]["relation"]
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
     async def has_liked(self) -> bool:
         """
         视频是否点赞过。

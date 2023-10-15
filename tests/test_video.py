@@ -245,3 +245,6 @@ async def test_zh_get_cid_info():
 
 async def test_zi_get_ai_conclusion():
     return await video.get_ai_conclusion(0)
+
+async def test_zj_get_relation():
+    return await video.get_relation()
