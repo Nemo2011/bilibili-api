@@ -242,3 +242,6 @@ async def test_zg_triple():
 
 async def test_zh_get_cid_info():
     return await video_m.get_cid_info(62131)
+
+async def test_zi_get_ai_conclusion():
+    return await video.get_ai_conclusion(0)
