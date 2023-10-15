@@ -224,6 +224,12 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 
 **Returns:** API 调用返回结果。
 
+#### async def get_relation()
+
+获取用户与视频的关系
+
+**Returns:** API 调用返回结果。
+
 #### async def has_liked()
 
 视频是否点赞过。
@@ -264,6 +270,20 @@ Tip:返回的 url 均不带 http 前缀，且只获取封面预览返回的是�
 获取稿件公开笔记列表。
 
 **Returns:** dict: 调用 API 返回的结果
+
+#### async def get_ai_conclusion():
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| page_index | int \| None, optional | 分 P 号，从 0 开始。Defaults to None |
+| cid        | int \| None, optional | 分 P 的 ID。Defaults to None         |
+| up_mid | int \| None, optional | up 主的 mid。Defaults to None         |
+
+获取 AI 总结结果。
+
+page_index 和 cid 必须提供其中之一。
+
+**Returns:** dict: API 调用返回结果。
 
 #### async def get_danmaku_view():
 

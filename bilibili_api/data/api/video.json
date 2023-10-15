@@ -116,6 +116,16 @@
       },
       "comment": "获取关联视频"
     },
+    "relation": {
+      "url": "https://api.bilibili.com/x/web-interface/archive/relation",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "aid": "int: av 号",
+        "bvid": "string: BV 号"
+      },
+      "comment": "获取用户与视频关联的信息"
+    },
     "has_liked": {
       "url": "https://api.bilibili.com/x/web-interface/archive/has/like",
       "method": "GET",
@@ -214,6 +224,18 @@
       "verify": true,
       "url": "https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc",
       "comment": "获取视频在线人数实时监测服务器列表"
+    },
+    "ai_conclusion": {
+      "url": "https://api.bilibili.com/x/web-interface/view/conclusion/get",
+      "method": "GET",
+      "wbi": true,
+      "params": {
+        "aid": "int: av 号",
+        "bvid": "string: BV 号",
+        "cid": "int: cid",
+        "up_mid": "int: up_mid"
+      },
+      "comment": "ai 总结"
     }
   },
   "operate": {
