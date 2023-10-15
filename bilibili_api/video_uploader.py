@@ -174,35 +174,25 @@ class VideoUploader(AsyncEvent):
 
         ```json
         {
-            "act_reserve_create": "const int: 0",
-            "copyright": "int, 投稿类型。1 自制，2 转载。",
-            "source": "str: 视频来源。投稿类型为转载时注明来源，为原创时为空。",
-            "cover": "str: 封面 URL",
-            "desc": "str: 视频简介。",
-            "desc_format_id": "const int: 0",
-            "dynamic": "str: 动态信息。",
-            "interactive": "const int: 0",
-            "no_reprint": "int: 显示未经作者授权禁止转载，仅当为原创视频时有效。1 为启用，0 为关闭。",
-            "open_elec": "int: 是否展示充电信息。1 为是，0 为否。",
-            "origin_state": "const int: 0",
-            "subtitles # 字幕设置": {
-                "lan": "str: 字幕投稿语言，不清楚作用请将该项设置为空",
-                "open": "int: 是否启用字幕投稿，1 or 0"
+            "title": "",
+            "copyright": 1,
+            "tid": 130,
+            "tag": "",
+            "desc_format_id": 9999,
+            "desc": "",
+            "recreate": -1,
+            "dynamic": "",
+            "interactive": 0,
+            "act_reserve_create": 0,
+            "no_disturbance": 0,
+            "no_reprint": 1,
+            "subtitle": {
+                "open": 0,
+                "lan": "",
             },
-            "tag": "str: 视频标签。使用英文半角逗号分隔的标签组。示例：标签 1,标签 1,标签 1",
-            "tid": "int: 分区 ID (不能是主分区)。可以使用 channel 模块进行查询。",
-            "title": "str: 视频标题",
-            "up_close_danmaku": "bool: 是否关闭弹幕。",
-            "up_close_reply": "bool: 是否关闭评论。",
-            "up_selection_reply": "bool: 是否开启评论精选",
-            "videos # 分 P 列表": [
-                {
-                "title": "str: 标题",
-                "desc": "str: 简介",
-                "filename": "str: preupload 时返回的 filename"
-                }
-            ],
-            "dtime": "int?: 可选，定时发布时间戳（秒）"
+            "dolby": 0,
+            "lossless_music": 0,
+            "web_os": 1,
         }
         ```
 
@@ -735,13 +725,17 @@ class VideoUploader(AsyncEvent):
         meta["videos"] = videos
 
         self.dispatch(VideoUploaderEvents.PRE_SUBMIT.value, deepcopy(meta))
+
+        meta["csrf"] = self.credential.bili_jct  # csrf 不需要 print
         api = _API["submit"]
 
         try:
-            params = {"csrf": self.credential.bili_jct}
+            params = {"csrf": self.credential.bili_jct, "t": time.time() * 1000}
             headers = {"content-type": "application/json"}
             resp = (
-                await Api(**api, credential=self.credential, no_csrf=True)
+                await Api(
+                    **api, credential=self.credential, no_csrf=True, json_body=True
+                )
                 .update_params(**params)
                 .update_data(**meta)
                 .update_headers(**headers)

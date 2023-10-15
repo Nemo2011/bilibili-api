@@ -122,6 +122,20 @@
         "pagination_str": "str: 分页依据"
       },
       "comment": "新版评论区"
+    },
+    "report": {
+      "url": "https://api.bilibili.com/x/v2/reply/report",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "type": "num: 评论区类型代码，必要。类型代码见 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/comment/readme.md#%E8%AF%84%E8%AE%BA%E5%8C%BA%E7%B1%BB%E5%9E%8B%E4%BB%A3%E7%A0%81",
+        "oid": "int: 目标评论区id，必要",
+        "rpid": "int: 目标评论rpid，必要",
+        "reason": "int: 举报原因，见 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/comment/action.md#%E4%B8%BE%E6%8A%A5%E8%AF%84%E8%AE%BA",
+        "content": "str: 其他举报备注内容",
+        "csrf": "str: CSRF Token（位于cookie），Cookie方式必要"
+      },
+      "comment": "举报评论"
     }
   },
   "dynamic_share": {

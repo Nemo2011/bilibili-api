@@ -16,7 +16,7 @@ from enum import Enum
 from inspect import isfunction
 from functools import cmp_to_key
 from dataclasses import dataclass
-from typing import Any, List, Union
+from typing import Any, List, Union, Optional
 
 import httpx
 import aiohttp
@@ -262,6 +262,16 @@ class Video:
     #     params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
     #     return await Api(**api, credential=self.credential).update_params(**params).result
 
+    async def get_up_mid(self) -> int:
+        """
+        获取视频 up 主的 mid。
+
+        Returns:
+            int: up_mid
+        """
+        info = await self.__get_info_cached()
+        return info["owner"]["mid"]
+
     async def get_tags(
         self, page_index: Union[int, None] = 0, cid: Union[int, None] = None
     ) -> List[dict]:
@@ -315,15 +325,15 @@ class Video:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def __get_page_id_by_index(self, page_index: int) -> int:
+    async def __get_cid_by_index(self, page_index: int) -> int:
         """
-        根据分 p 号获取 page_id。
+        根据分 p 号获取 cid。
 
         Args:
             page_index (int):   分 P 号，从 0 开始。
 
         Returns:
-            int: 分 P 的唯一 ID。
+            int: cid 分 P 的唯一 ID。
         """
         if page_index < 0:
             raise ArgsException("分 p 号必须大于或等于 0。")
@@ -381,7 +391,7 @@ class Video:
         Returns:
             int: cid
         """
-        return await self.__get_page_id_by_index(page_index)
+        return await self.__get_cid_by_index(page_index)
 
     async def get_download_url(
         self,
@@ -410,7 +420,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         api = API["info"]["playurl"]
         if html5:
@@ -422,6 +432,7 @@ class Video:
                 "fnval": 4048,
                 "fourk": 1,
                 "platform": "html5",
+                "high_quality": "1",
             }
         else:
             params = {
@@ -446,6 +457,20 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         api = API["info"]["related"]
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    async def get_relation(self) -> dict:
+        """
+        获取用户与视频的关系
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        self.credential.raise_for_no_sessdata()
+        api = API["info"]["relation"]
         params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -543,6 +568,34 @@ class Video:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def get_ai_conclusion(self, cid: Optional[int] = None, page_index: Optional[int] = None, up_mid: Optional[int] = None) -> dict:
+        """
+        获取稿件 AI 总结结果。
+
+        cid 和 page_index 至少提供其中一个，其中 cid 优先级最高
+
+        Args:
+            cid (Optional, int): 分 P 的 cid。
+
+            page_index (Optional, int): 分 P 号，从 0 开始。
+
+            up_mid (Optional, int): up 主的 mid。
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        if cid is None:
+            if page_index is None:
+                raise ArgsException("page_index 和 cid 至少提供一个。")
+
+            cid = await self.__get_cid_by_index(page_index)
+
+        api = API["info"]["ai_conclusion"]
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "cid": cid, "up_mid": await self.get_up_mid() if up_mid is None else up_mid}
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
     async def get_danmaku_view(
         self, page_index: Union[int, None] = None, cid: Union[int, None] = None
     ) -> dict:
@@ -561,7 +614,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         session = get_session()
         api = API["danmaku"]["view"]
@@ -763,6 +816,8 @@ class Video:
         page_index: int = 0,
         date: Union[datetime.date, None] = None,
         cid: Union[int, None] = None,
+        from_seg: Union[int, None] = None,
+        to_seg: Union[int, None] = None,
     ) -> List[Danmaku]:
         """
         获取弹幕。
@@ -774,6 +829,15 @@ class Video:
 
             cid        (int | None, optional): 分 P 的 ID。Defaults to None
 
+            from_seg (int, optional): 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None.
+
+            to_seg (int, optional): 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None.
+
+            注意：
+            - 1. 段数可以使用 `get_danmaku_view()["dm_seg"]["total"]` 查询。
+            - 2. `from_seg` 和 `to_seg` 仅对 `date == None` 的时候有效果。
+            - 3. 例：取前 `12` 分钟的弹幕：`from_seg=0, to_seg=1`
+
         Returns:
             List[Danmaku]: Danmaku 类的列表。
         """
@@ -784,7 +848,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         session = get_session()
         aid = self.get_aid()
@@ -794,15 +858,17 @@ class Video:
             api = API["danmaku"]["get_history_danmaku"]
             params["date"] = date.strftime("%Y-%m-%d")
             params["type"] = 1
-            all_seg = 1
         else:
             api = API["danmaku"]["get_danmaku"]
-            view = await self.get_danmaku_view(cid=cid)
-            all_seg = view["dm_seg"]["total"]
+            if from_seg == None:
+                from_seg = 0
+            if to_seg == None:
+                view = await self.get_danmaku_view(cid=cid)
+                to_seg = view["dm_seg"]["total"] - 1
 
         danmakus = []
 
-        for seg in range(all_seg):
+        for seg in range(from_seg, to_seg + 1):
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
                 params["segment_index"] = seg + 1
@@ -922,7 +988,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         view = await self.get_danmaku_view(cid=cid)
         special_dms = view["special_dms"][0]
@@ -994,14 +1060,14 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         api = API["danmaku"]["get_history_danmaku_index"]
         params = {"oid": cid, "month": date.strftime("%Y-%m"), "type": 1}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
-
+    
     async def has_liked_danmakus(
         self,
         page_index: Union[int, None] = None,
@@ -1030,7 +1096,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         api = API["danmaku"]["has_liked_danmaku"]
         params = {"oid": cid, "ids": ",".join(ids)}  # type: ignore
@@ -1068,7 +1134,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         api = API["danmaku"]["send_danmaku"]
 
@@ -1109,7 +1175,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
         url = f"https://comment.bilibili.com/{cid}.xml"
         sess = get_session()
         config: dict[Any, Any] = {"url": url}
@@ -1151,7 +1217,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         api = API["danmaku"]["like_danmaku"]
 
@@ -1199,7 +1265,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         api = API["danmaku"]["edit_danmaku"]
 
@@ -1468,7 +1534,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -1524,7 +1590,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -1552,7 +1618,7 @@ class Video:
             if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
-            cid = await self.__get_page_id_by_index(page_index)
+            cid = await self.__get_cid_by_index(page_index)
 
         api = API["info"]["pbp"]
 

@@ -63,16 +63,25 @@
       "params": {
         "vmid": "int: uid"
       },
+      "comment": "用户置顶视频"
+    },
+    "masterpiece": {
+      "url": "https://api.bilibili.com/x/space/masterpiece",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "vmid":"int: uid"
+      },
       "comment": "用户代表作"
     },
-    "relation": {
+    "relation_stat": {
       "url": "https://api.bilibili.com/x/relation/stat",
       "method": "GET",
       "verify": false,
       "params": {
         "vmid": "int: uid"
       },
-      "comment": "关注数，粉丝数"
+      "comment": "获取用户关系信息（关注数，粉丝数，悄悄关注，黑名单数）"
     },
     "upstat": {
       "url": "https://api.bilibili.com/x/space/upstat",
@@ -461,10 +470,19 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "aid":"int: av 号",
+        "aid": "int: av 号",
         "vmid": "int: up uid 号"
       },
       "comment": "视频三连特效"
+    },
+    "relation": {
+      "url": "https://api.bilibili.com/x/space/wbi/acc/relation",
+      "method": "GET",
+      "params": {
+        "mid": "int: uid"
+      },
+      "verify": true,
+      "comment": "获取与某用户的关系"
     }
   },
   "operate": {

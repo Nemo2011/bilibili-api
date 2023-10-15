@@ -435,9 +435,10 @@ def enc_wbi(params: dict, mixin_key: str):
     """
     params.pop("w_rid", None)  # 重试时先把原有 w_rid 去除
     params["wts"] = int(time.time())
+    # web_location 因为没被列入参数可能炸一些接口 比如 video.get_ai_conclusion
+    params["web_location"] = 1550101
     Ae = urlencode(sorted(params.items()))
     params["w_rid"] = hashlib.md5((Ae + mixin_key).encode(encoding="utf-8")).hexdigest()
-    params["web_location"] = 1550101
 
 
 def get_session() -> httpx.AsyncClient:

@@ -123,6 +123,9 @@ if __name__ == '__main__':
 
 如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
 
+> 注：
+> 目前代码中采用 `WebSocket` 的部分（如视频实时检测、直播）采用 `aiohttp.ClientSession` 请求。其他地方均采用 `httpx.AsyncClient`。
+
 # FA♂Q
 
 **Q: 关于 API 调用的正确姿势是什么？**

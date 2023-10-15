@@ -13,7 +13,7 @@ bilibili_api.comment
 + 小黑屋: ban/{2600321}
 """
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 
 from .utils.utils import get_api
 from .utils.credential import Credential
@@ -59,6 +59,50 @@ class OrderType(Enum):
 
     LIKE = 2
     TIME = 0
+
+
+class ReportReason(Enum):
+    """
+    举报类型枚举
+
+    + OTHER: 其他
+    + SPAM_AD: 垃圾广告
+    + PORNOGRAPHY: 色情
+    + FLOOD: 刷屏
+    + PROVOCATION: 引战
+    + SPOILER: 剧透
+    + POLITICS: 政治
+    + PERSONAL_ATTACK: 人身攻击
+    + IRRELEVANT_CONTENT: 内容不相关
+    + ILLEGAL: 违法违规
+    + VULGAR: 低俗
+    + ILLEGAL_WEBSITE: 非法网站
+    + GAMBLING_FRAUD: 赌博诈骗
+    + SPREADING_FALSE_INFORMATION: 传播不实信息
+    + INCITING_INFORMATION: 怂恿教唆信息
+    + PRIVACY_VIOLATION: 侵犯隐私
+    + FLOOR_TAKING: 抢楼
+    + INAPPROPRIATE_CONTENT_FOR_MINORS: 青少年不良信息
+    """
+
+    OTHER = 0
+    SPAM_AD = 1
+    PORNOGRAPHY = 2
+    FLOOD = 3
+    PROVOCATION = 4
+    SPOILER = 5
+    POLITICS = 6
+    PERSONAL_ATTACK = 7
+    IRRELEVANT_CONTENT = 8
+    ILLEGAL = 9
+    VULGAR = 10
+    ILLEGAL_WEBSITE = 11
+    GAMBLING_FRAUD = 12
+    SPREADING_FALSE_INFORMATION = 13
+    INCITING_INFORMATION = 14
+    PRIVACY_VIOLATION = 15
+    FLOOR_TAKING = 16
+    INAPPROPRIATE_CONTENT_FOR_MINORS = 17
 
 
 class Comment:
@@ -220,6 +264,51 @@ class Comment:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def report(
+        self, report_reason: ReportReason, content: Optional[str] = None
+    ) -> dict:
+        """
+        举报评论
+
+        Args:
+            report_reason (ReportReason): 举报类型枚举
+
+            content (str, optional): 其他举报备注内容仅 reason=ReportReason.OTHER 可用且不能为 None.
+
+        Error Code:
+            0: 成功
+            -101: 账号未登录
+            -102: 账号被封停
+            -111: csrf校验失败
+            -400: 请求错误
+            -403: 权限不足
+            -404: 无此项
+            -500: 服务器错误
+            -509: 请求过于频繁
+            12002: 评论区已关闭
+            12006: 没有该评论
+            12008: 已经举报过了
+            12009: 评论主体的type不合法
+            12019: 举报过于频繁
+            12077: 举报理由过长或过短
+        """
+
+        self.credential.raise_for_no_sessdata()
+
+        api = API["comment"]["report"]
+        if content is not None and report_reason != ReportReason.OTHER:
+            raise ArgsException("content 只能在 report_reason=ReportReason.OTHER 时使用")
+        elif content is None and report_reason == ReportReason.OTHER:
+            raise ArgsException("report_reason=ReportReason.OTHER 时 content 不能为空")
+        data = {
+            "oid": self.__oid,
+            "type": self.__type.value,
+            "rpid": self.__rpid,
+            "reason": report_reason.value,
+            "content": content,
+        }
+        return await Api(**api, credential=self.credential).update_data(**data).result
+
 
 async def send_comment(
     text: str,
@@ -298,6 +387,8 @@ async def get_comments(
     """
     获取资源评论列表。
 
+    第二页以及往后需要提供 `credential` 参数。
+
     Args:
         oid        (int)                 : 资源 ID。
 
@@ -329,6 +420,8 @@ async def get_comments_lazy(
 ) -> dict:
     """
     新版获取资源评论列表。
+
+    第二次以及往后需要提供 `credential` 参数。
 
     Args:
         oid        (int)                 : 资源 ID。

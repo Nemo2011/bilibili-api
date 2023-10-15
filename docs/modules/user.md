@@ -228,6 +228,12 @@ from bilibili_api import user
 
 **Returns:** 调用接口返回的结果
 
+#### async def get_masterpiece()
+
+获取用户代表作
+
+**Returns:** 调用接口返回的结果
+
 #### async def get_user_medal()
 
 读取用户粉丝牌详细列表，如果隐私则不可以,需要登录状态，返回的数据带有 查询者的 uid
@@ -427,6 +433,16 @@ from bilibili_api import user
 #### async def get_overview_stat()
 
 获取用户的简易订阅和投稿信息。
+
+**Returns:** 调用接口返回的内容。
+
+#### async def get_relation()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| mid | int  | uid 号      |
+
+获取与某用户的关系
 
 **Returns:** 调用接口返回的内容。
 
