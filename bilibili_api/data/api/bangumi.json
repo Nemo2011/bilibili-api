@@ -124,7 +124,7 @@
       "url": "https://api.bilibili.com/pgc/web/follow/add",
       "method": "POST",
       "verify": true,
-      "params": {
+      "data": {
         "season_id": "int: 番剧的 season_id"
       },
       "comment": "追番"
@@ -133,7 +133,7 @@
       "url": "https://api.bilibili.com/pgc/web/follow/del",
       "method": "POST",
       "verify": true,
-      "params": {
+      "data": {
         "season_id": "int: 番剧的 season_id"
       },
       "comment": "取消追番"
@@ -142,7 +142,7 @@
       "url": "https://api.bilibili.com/pgc/web/follow/status/update",
       "method": "POST",
       "verify": true,
-      "params": {
+      "data": {
         "season_id": "int: 番剧的 season_id",
         "status": "int: 1 想看 2 在看 3 已看"
       },
