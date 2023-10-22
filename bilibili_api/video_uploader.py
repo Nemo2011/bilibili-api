@@ -7,10 +7,11 @@ import os
 import json
 import time
 import base64
-import random
+import re
 import asyncio
+import httpx
 from enum import Enum
-from typing import List, Union
+from typing import List, Union, Optional
 from copy import copy, deepcopy
 from asyncio.tasks import Task, create_task
 from asyncio.exceptions import CancelledError
@@ -27,8 +28,6 @@ from .utils.network import Api, get_session
 from .exceptions.NetworkException import NetworkException
 from .exceptions.ResponseCodeException import ResponseCodeException
 
-# import ffmpeg
-
 _API = get_api("video_uploader")
 
 
@@ -40,6 +39,84 @@ async def _upload_cover(cover: Picture, credential: Credential):
     }
     return await Api(**api, credential=credential).update_data(**data).result
 
+
+class Lines(Enum):
+    """
+    可选线路
+
+    bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
+
+    + BDA2：百度
+    + QN：七牛
+    + WS：网宿
+    + BLDSA：bldsa
+    """
+
+    BDA2 = "bda2"
+    QN = "qn"
+    WS = "ws"
+    BLDSA = "bldsa"
+
+LINES_INFO = {
+    "bda2": {
+        "os": "upos",
+        "upcdn": "bda2",
+        "probe_version": 20221109,
+        "query": "probe_version=20221109&upcdn=bda2",
+        "probe_url": "//upos-cs-upcdnbda2.bilivideo.com/OK"
+    },
+    "bldsa": {
+        "os": "upos",
+        "upcdn": "bldsa",
+        "probe_version": 20221109,
+        "query": "upcdn=bldsa&probe_version=20221109",
+        "probe_url": "//upos-cs-upcdnbldsa.bilivideo.com/OK"
+    },
+    "qn": {
+        "os": "upos",
+        "upcdn": "qn",
+        "probe_version": 20221109,
+        "query": "probe_version=20221109&upcdn=qn",
+        "probe_url": "//upos-cs-upcdnqn.bilivideo.com/OK"
+    },
+    "ws": {
+        "os": "upos",
+        "upcdn": "ws",
+        "probe_version": 20221109,
+        "query": "upcdn=ws&probe_version=20221109",
+        "probe_url": "//upos-cs-upcdnws.bilivideo.com/OK",
+    }
+}
+
+async def _probe() -> dict:
+    """
+    测试所有线路
+
+    测速网页 https://member.bilibili.com/preupload?r=ping
+    """
+    # api = _API["probe"]
+    # info = await Api(**api).update_params(r="probe").result # 不实时获取线路直接用 LINES_INFO
+    min_cost, fastest_line = 30, None
+    for line in LINES_INFO.values():
+        start = time.perf_counter()
+        data = bytes(int(1024 * 0.1 * 1024))  # post 0.1MB
+        httpx.post(f'https:{line["probe_url"]}', data=data, timeout=30)
+        cost_time = time.perf_counter() - start
+        if cost_time < min_cost:
+            min_cost, fastest_line = cost_time, line
+    return fastest_line
+
+
+async def _choose_line(line: Lines) -> dict:
+    """
+    选择线路，不存在则直接测速自动选择
+    """
+    if isinstance(line, Lines):
+        line_info = LINES_INFO.get(line.value)
+        if line_info is not None:
+            return line_info
+    return await _probe()
+    
 
 class VideoUploaderPage:
     """
@@ -150,6 +227,8 @@ class VideoUploader(AsyncEvent):
         credential   (Credential)             : 凭据
 
         cover_path   (str)                    : 封面路径
+
+        line         (Lines, Optional)        : 线路. Defaults to None. 不选择则自动测速选择
     """
 
     def __init__(
@@ -158,7 +237,7 @@ class VideoUploader(AsyncEvent):
         meta: dict,
         credential: Credential,
         cover: Union[str, Picture] = "",
-        #  ffprobe_path: str = 'ffprobe'
+        line: Optional[Lines] = None,
     ):
         """
         Args:
@@ -169,6 +248,8 @@ class VideoUploader(AsyncEvent):
             credential   (Credential)             : 凭据
 
             cover        (str | Picture)          : 封面路径 / Picture 对象
+
+            line:        (Lines, Optional)        : 线路. Defaults to None.
 
         meta 参数示例：
 
@@ -203,7 +284,7 @@ class VideoUploader(AsyncEvent):
         self.pages = pages
         self.credential = credential
         self.cover_path = cover
-        # self.ffprobe_path = ffprobe_path
+        self.line = line
         self.__task: Union[Task, None] = None
 
     async def _preupload(self, page: VideoUploaderPage) -> dict:
@@ -225,12 +306,12 @@ class VideoUploader(AsyncEvent):
                 "profile": "ugcfx/bup",
                 "name": os.path.basename(page.path),
                 "size": page.get_size(),
-                "r": "upos",
+                "r": self.line["os"],
                 "ssl": "0",
-                "version": "2.10.4",
+                "version": "2.14.0",
                 "build": "2100400",
-                "upcdn": "bda2",
-                "probe_version": "20211012",
+                "upcdn": self.line["upcdn"],
+                "probe_version": self.line["probe_version"],
             },
             cookies=self.credential.get_cookies(),
             headers={
@@ -248,7 +329,7 @@ class VideoUploader(AsyncEvent):
             self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
             raise ApiException(json.dumps(preupload))
 
-        url = self._get_upload_url(preupload)
+        url = self._get_upload_url(self.line, preupload)
 
         # 获取 upload_id
         resp = await session.post(
@@ -431,6 +512,7 @@ class VideoUploader(AsyncEvent):
             dict: 返回带有 bvid 和 aid 的字典。
         """
 
+        self.line = await _choose_line(self.line)
         task = create_task(self._main())
         self.__task = task
 
@@ -527,14 +609,18 @@ class VideoUploader(AsyncEvent):
         return data
 
     @staticmethod
-    def _get_upload_url(preupload: dict) -> str:
+    def _get_upload_url(line: dict, preupload: dict) -> str:
         # 上传目标 URL
-        return (
-            "https:"
-            + random.choice(preupload["endpoints"])
-            + "/"
-            + preupload["upos_uri"].removeprefix("upos://")
-        )
+        if re.match(
+            r"//upos-(sz|cs)-upcdn(bda2|ws|qn)\.bilivideo\.com", preupload["endpoint"]
+        ):
+            new_endpoint = re.sub(
+                r"upcdn(bda2|qn|ws)", f'upcdn{line["upcdn"]}', preupload["endpoint"]
+            )
+            return (
+                f'https:{new_endpoint}/{preupload["upos_uri"].removeprefix("upos://")}'
+            )
+        return f'https:{preupload["endpoint"]}/{preupload["upos_uri"].removeprefix("upos://")}'
 
     async def _upload_chunk(
         self,
@@ -572,7 +658,7 @@ class VideoUploader(AsyncEvent):
         stream.close()
 
         # 上传目标 URL
-        url = self._get_upload_url(preupload)
+        url = self._get_upload_url(self.line, preupload)
 
         err_return = {
             "ok": False,
@@ -670,7 +756,7 @@ class VideoUploader(AsyncEvent):
             "biz_id": preupload["biz_id"],
         }
 
-        url = self._get_upload_url(preupload)
+        url = self._get_upload_url(self.line, preupload)
 
         session = get_session()
 
@@ -758,7 +844,7 @@ class VideoUploader(AsyncEvent):
         self.dispatch(VideoUploaderEvents.ABORTED.value, None)
 
 
-async def get_missions(tid: int = 0, credential: Union[Credential, None] = None):
+async def get_missions(tid: int = 0, credential: Union[Credential, None] = None) -> dict:
     """
     获取活动信息
 
