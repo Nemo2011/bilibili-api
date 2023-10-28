@@ -57,36 +57,10 @@ class Lines(Enum):
     WS = "ws"
     BLDSA = "bldsa"
 
-LINES_INFO = {
-    "bda2": {
-        "os": "upos",
-        "upcdn": "bda2",
-        "probe_version": 20221109,
-        "query": "probe_version=20221109&upcdn=bda2",
-        "probe_url": "//upos-cs-upcdnbda2.bilivideo.com/OK"
-    },
-    "bldsa": {
-        "os": "upos",
-        "upcdn": "bldsa",
-        "probe_version": 20221109,
-        "query": "upcdn=bldsa&probe_version=20221109",
-        "probe_url": "//upos-cs-upcdnbldsa.bilivideo.com/OK"
-    },
-    "qn": {
-        "os": "upos",
-        "upcdn": "qn",
-        "probe_version": 20221109,
-        "query": "probe_version=20221109&upcdn=qn",
-        "probe_url": "//upos-cs-upcdnqn.bilivideo.com/OK"
-    },
-    "ws": {
-        "os": "upos",
-        "upcdn": "ws",
-        "probe_version": 20221109,
-        "query": "upcdn=ws&probe_version=20221109",
-        "probe_url": "//upos-cs-upcdnws.bilivideo.com/OK",
-    }
-}
+with open(
+        os.path.join(os.path.dirname(__file__), "data/video_uploader_lines.json"), encoding="utf8"
+    ) as f:
+        LINES_INFO = json.loads(f.read())
 
 async def _probe() -> dict:
     """
