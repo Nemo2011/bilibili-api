@@ -1,4 +1,33 @@
 {
+  "pre": {
+    "url": "https://member.bilibili.com/x/vupre/web/archive/pre",
+    "method": "GET",
+    "verify": true,
+    "params": {
+      "lang": "const: cn"
+    },
+    "comment": "获取视频上传基本前置信息"
+  },
+  "check_tag_name": {
+    "url": "https://member.bilibili.com/x/vupre/web/topic/tag/check",
+    "method": "GET",
+    "verify": true,
+    "params": {
+      "t": "str: tag_name"
+    },
+    "comment": "检查 tag_name 是否合法"
+  },
+  "available_topics": {
+    "url": "https://member.bilibili.com/x/vupre/web/topic/type",
+    "method": "GET",
+    "verify": true,
+    "params": {
+      "type_id":"int: 分区 ID",
+      "pn": "int: 分页",
+      "ps": "int: 每页项数"
+    },
+    "comment": "根据分区获取可用话题，最多200个可获取"
+  },
   "preupload": {
     "url": "https://member.bilibili.com/preupload",
     "method": "GET",
