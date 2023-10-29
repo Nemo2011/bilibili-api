@@ -48,6 +48,7 @@ async def upload_cover(cover: Picture, credential: Credential) -> str:
     }
     return (await Api(**api, credential=credential).update_data(**data).result)["url"]
 
+
 class Lines(Enum):
     """
     可选线路
@@ -200,17 +201,130 @@ class VideoUploaderEvents(Enum):
     FAILED = "FAILED"
 
 
-
-
-
 async def get_available_topics(tid: int, credential: Credential) -> List[dict]:
     """
     获取可用 topic 列表
     """
     credential.raise_for_no_sessdata()
     api = _API["available_topics"]
-    params = {"type_id": tid, "pn": 0, "ps": 200} # 一次性获取完
-    return (await Api(**api, credential=credential).update_params(**params).result) ["topics"]
+    params = {"type_id": tid, "pn": 0, "ps": 200}  # 一次性获取完
+    return (await Api(**api, credential=credential).update_params(**params).result)[
+        "topics"
+    ]
+
+
+class VideoPorderType:
+    """
+    视频商业类型
+
+    + FIREWORK: 花火
+    + OTHER: 其他
+    """
+
+    FIREWORK = {"flow_id": 1}
+    OTHER = {
+        "flow_id": 1,
+        "industry_id": None,
+        "official": None,
+        "brand_name": None,
+        "show_type": [],
+    }
+
+
+class VideoPorderIndustry(Enum):
+    """
+    商单行业
+
+    + MOBILE_GAME: 手游
+    + CONSOLE_GAME: 主机游戏
+    + WEB_GAME: 网页游戏
+    + PC_GAME: PC单机游戏
+    + PC_NETWORK_GAME: PC网络游戏
+    + SOFTWARE_APPLICATION: 软件应用
+    + DAILY_NECESSITIES_AND_COSMETICS: 日用品化妆品
+    + CLOTHING_SHOES_AND_HATS: 服装鞋帽
+    + LUGGAGE_AND_ACCESSORIES: 箱包饰品
+    + FOOD_AND_BEVERAGE: 食品饮料
+    + PUBLISHING_AND_MEDIA: 出版传媒
+    + COMPUTER_HARDWARE: 电脑硬件
+    + OTHER: 其他
+    + MEDICAL: 医疗类
+    + FINANCE: 金融
+    """
+
+    MOBILE_GAME = 1
+    CONSOLE_GAME = 20
+    WEB_GAME = 21
+    PC_GAME = 22
+    PC_NETWORK_GAME = 23
+    SOFTWARE_APPLICATION = 2
+    DAILY_NECESSITIES_AND_COSMETICS = 3
+    CLOTHING_SHOES_AND_HATS = 4
+    LUGGAGE_AND_ACCESSORIES = 5
+    FOOD_AND_BEVERAGE = 6
+    PUBLISHING_AND_MEDIA = 7
+    COMPUTER_HARDWARE = 8
+    OTHER = 9
+    MEDICAL = 213
+    FINANCE = 214
+
+
+class VideoPorderShowType(Enum):
+    """
+    商单形式
+
+    + LOGO: Logo
+    + OTHER: 其他
+    + SPOKEN_AD: 口播
+    + PATCH: 贴片
+    + TVC_IMBEDDED: TVC植入
+    + CUSTOMIZED_AD: 定制软广
+    + PROGRAM_SPONSORSHIP: 节目赞助
+    + SLOGAN: SLOGAN
+    + QR_CODE: 二维码
+    + SUBTITLE_PROMOTION: 字幕推广
+    """
+
+    LOGO = 15
+    OTHER = 10
+    SPOKEN_AD = 11
+    PATCH = 12
+    TVC_IMBEDDED = 14
+    CUSTOMIZED_AD = 19
+    PROGRAM_SPONSORSHIP = 18
+    SLOGAN = 17
+    QR_CODE = 16
+    SUBTITLE_PROMOTION = 13
+
+
+class VideoPorderMeta:
+    flow_id: int
+    industry_id: Optional[int] = None
+    official: Optional[int] = None
+    brand_name: Optional[str] = None
+    show_types: List[VideoPorderShowType] = []
+
+    __info: dict = None
+
+    def __init__(
+        self,
+        porden_type: VideoPorderType = VideoPorderType.FIREWORK,
+        industry_type: VideoPorderIndustry = None,
+        brand_name: str = None,
+        show_types: List[str] = None,
+    ):
+        self.flow_id = 1
+        self.__info = porden_type.value
+        if porden_type == VideoPorderType.OTHER:
+            self.__info["industry"] = industry_type.value
+            self.__info["brand_name"] = brand_name
+            self.__info["show_types"] = ",".join(
+                [show_type.value for show_type in show_types]
+            )
+
+    def __dict__(self) -> dict:
+        return self.__info
+
 
 class VideoMeta:
     tid: int  # 分区 ID。可以使用 channel 模块进行查询。
@@ -234,6 +348,7 @@ class VideoMeta:
     dynamic: Optional[str] = None  # 可选，动态信息。
     neutral_mark: Optional[str] = None  # 可选，创作者声明。
     delay_time: Optional[Union[int, datetime]] = None  # 可选，定时发布时间戳（秒）。
+    porder: Optional[VideoPorderMeta] = None  # 可选，商业相关参数。
 
     __credential: Credential
     __pre_info = dict
@@ -261,6 +376,7 @@ class VideoMeta:
         dynamic: Optional[str] = None,  # 可选，动态信息。
         neutral_mark: Optional[str] = None,  # 可选，中性化标签。
         delay_time: Optional[Union[int, datetime]] = None,  # 可选，定时发布时间戳（秒）。
+        porder: Optional[VideoPorderMeta] = None,  # 可选，商业相关参数。
     ) -> None:
         """
         基本视频上传参数
@@ -303,12 +419,14 @@ class VideoMeta:
             dolby (Optional[bool]): 是否开启杜比音效. 可选，默认为关闭杜比音效
 
             subtitle (Optional[dict]): 字幕信息，可选
-            
+
             dynamic (Optional[str]): 粉丝动态，可选，最多 233 字
 
             neutral_mark (Optional[str]): 创作者声明，可选
 
             delay_time (Optional[Union[int, datetime]]): 定时发布时间，可选
+
+            porder (Optional[VideoPorderMeta]): 商业相关参数，可选
         """
         if isinstance(tid, int):
             self.tid = tid
@@ -378,6 +496,7 @@ class VideoMeta:
             self.delay_time = delay_time
         elif isinstance(delay_time, datetime):
             self.delay_time = int(delay_time.timestamp())
+        self.porder = porder if isinstance(porder, dict) else None
 
     def __dict__(self) -> dict:
         meta = {
@@ -385,7 +504,7 @@ class VideoMeta:
             "copyright": 1 if self.original else 2,
             "tid": self.tid,
             "tag": ",".join(self.tags),
-            "mission_id": self.mission_id, # 根据 topic 对应任务
+            "mission_id": self.mission_id,  # 根据 topic 对应任务
             "topic_id": self.topic_id,
             "topic_detail": {
                 "from_topic_id": self.topic_id,
@@ -397,40 +516,37 @@ class VideoMeta:
             "recreate": 1 if self.recreate else -1,
             "dynamic": self.dynamic,
             "interactive": 0,
-            "act_reserve_create": 0, # unknown
-            "no_disturbance": 0, # unknown
-            # "porder": {
-            #     "flow_id": 1,
-            #     "industry_id": 9,
-            #     "official": 0,
-            #     "brand_name": "Apiroute",
-            #     "show_type": "10,18",
-            # }, # 太繁琐下次再说
-            "adorder_type": 9, # unknown
+            "act_reserve_create": 0,  # unknown
+            "no_disturbance": 0,  # unknown
+            "porder": self.porder.__dict__(),
+            "adorder_type": 9,  # unknown
             "no_reprint": 1 if self.no_reprint else 0,
-            "subtitle": self.subtitle if self.subtitle is not None else {
+            "subtitle": self.subtitle
+            if self.subtitle is not None
+            else {
                 "open": 0,
                 "lan": "",
-            }, # 莫名其妙没法上传 srt 字幕，显示格式错误，不校验
+            },  # 莫名其妙没法上传 srt 字幕，显示格式错误，不校验
             "subtitle": self.subtitle,
-            "neutral_mark": self.neutral_mark, # 不知道能不能随便写文本
+            "neutral_mark": self.neutral_mark,  # 不知道能不能随便写文本
             "dolby": 1 if self.dolby else 0,
             "lossless_music": 1 if self.lossless_music else 0,
             "up_selection_reply": self.up_close_reply,
             "up_close_reply": self.up_close_reply,
             "up_close_danmu": self.up_close_danmu,
-            "web_os": 1, # const 1
+            "web_os": 1,  # const 1
         }
         for k in copy(meta).keys():
             if meta[k] is None:
                 del meta[k]
         return meta
-    
+
     async def _pre(self) -> dict:
         """
         获取上传参数基本信息
+
+        包括活动等在内，固定信息已经缓存于 bilibili_api\data\video_uploader_meta_pre.json
         """
-        # 里面有商业相关的参数，还有联合投稿的参数，我没法测试，所以就不写了
         api = _API["pre"]
         self.__pre_info = await Api(**api, credential=self.__credential).result
         return self.__pre_info
@@ -439,7 +555,12 @@ class VideoMeta:
         """
         检查 tid 是否合法
         """
-        type_list = self.__pre_info["typelist"]
+        with open(
+            os.path.join(os.path.dirname(__file__), "data/video_uploader_meta_pre.json"),
+            encoding="utf8",
+        ) as f:
+            self.__pre_info = json.load(f)
+        type_list = self.__pre_info["tid_list"]
         for parent_type in type_list:
             for child_type in parent_type["children"]:
                 if child_type["id"] == self.tid:
@@ -464,11 +585,11 @@ class VideoMeta:
         需要登录
         """
         api = _API["check_tag_name"]
-        return ((await Api(**api, credential=credential, ignore_code=True)
+        return (
+            await Api(**api, credential=credential, ignore_code=True)
             .update_params(t=name)
-            .result)["code"]
-            == 0
-        )
+            .result
+        )["code"] == 0
 
     async def _check_tags(self) -> List[str]:
         """
@@ -479,13 +600,15 @@ class VideoMeta:
             for tag in self.tags
             if await self._check_tag_name(tag, self.__credential)
         ]
-        
+
     async def _check_topic_to_mission(self) -> Union[int, bool]:
         """
         检查 topic -> mission 是否存在
         """
         # 只知道能从这里获取...不确定其他地方的 topic -> mission 能否传入
-        all_topic_info = await get_available_topics(tid=self.tid, credential=self.__credential)
+        all_topic_info = await get_available_topics(
+            tid=self.tid, credential=self.__credential
+        )
         for topic in all_topic_info:
             if topic["topic_id"] == self.topic_id:
                 return topic["mission_id"]
@@ -503,23 +626,25 @@ class VideoMeta:
         credential.raise_for_no_sessdata()
         self.__credential = credential
 
-        await self._pre()
+        # await self._pre() # 缓存于 bilibili_api\data\video_uploader_meta_pre.json
         error_tags = await self._check_tags()
         if len(error_tags) != 0:
             raise ValueError(f'以下 tags 不合法: {",".join(error_tags)}')
-        
+
         if not self._check_tid():
             raise ValueError(f"tid {self.tid} 不合法")
-        
+
         topic_to_mission = await self._check_topic_to_mission()
         if isinstance(topic_to_mission, int):
             self.mission_id = topic_to_mission
         elif not topic_to_mission:
-            raise ValueError(f"topic -> mission 不存在: {self.topic_id} -> {self.mission_id}")
-        
+            raise ValueError(
+                f"topic -> mission 不存在: {self.topic_id} -> {self.mission_id}"
+            )
+
         if not await self._check_cover():
             raise ValueError(f"封面不合法 {self.cover.__repr__()}")
-        
+
         if self.delay_time is not None:
             if self.delay_time < int(time.time()) + 7200:
                 raise ValueError("delay_time 不能小于两小时")
@@ -854,9 +979,7 @@ class VideoUploader(AsyncEvent):
         """
         self.dispatch(VideoUploaderEvents.PRE_COVER.value, None)
         try:
-            cover_url = await upload_cover(
-                cover=self.cover, credential=self.credential
-            )
+            cover_url = await upload_cover(cover=self.cover, credential=self.credential)
             self.dispatch(VideoUploaderEvents.AFTER_COVER.value, {"url": cover_url})
             return cover_url
         except Exception as e:
@@ -1121,7 +1244,9 @@ class VideoUploader(AsyncEvent):
         Returns:
             dict: 含 bvid 和 aid 的字典
         """
-        meta = copy(self.meta.__dict__() if isinstance(self.meta, VideoMeta) else self.meta)
+        meta = copy(
+            self.meta.__dict__() if isinstance(self.meta, VideoMeta) else self.meta
+        )
         meta["cover"] = cover_url
         meta["videos"] = videos
 
@@ -1132,7 +1257,7 @@ class VideoUploader(AsyncEvent):
 
         try:
             params = {"csrf": self.credential.bili_jct, "t": time.time() * 1000}
-            # headers = {"content-type": "application/json"} 
+            # headers = {"content-type": "application/json"}
             # 已有 json_body，似乎不需要单独设置 content-type
             resp = (
                 await Api(

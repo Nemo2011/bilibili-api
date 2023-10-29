@@ -30,12 +30,24 @@ async def main():
     #     "up_selection_reply": False,
     #     "dtime": 0
     # }
-    vu_meta = video_uploader.VideoMeta(tid=130, title='title', tags=['音乐综合', '音乐'], desc='', cover="/cover.png", no_reprint=True)
+    # vu_porden_meta = video_uploader.VideoPorderMeta(video_uploader.VideoPorderType.FIREWORK) # 商单参数
+    vu_meta = video_uploader.VideoMeta(tid=130, 
+    title='title', 
+    tags=['音乐综合', '音乐'], 
+    desc='', 
+    cover="/cover.png", 
+    no_reprint=True
+    )
     # await vu_meta.verify(credential=credential) # 本地预检 meta 信息，出错则抛出异常
-    page = video_uploader.VideoUploaderPage(path = 'video.mp4', title = '标题', description='简介', line=video_uploader.Lines.QN) # 选择七牛线路，不选则自动测速选择最优线路
+    page = video_uploader.VideoUploaderPage(
+        path = 'video.mp4',
+        title = '标题',
+        description='简介', 
+        line=video_uploader.Lines.QN
+    ) # 选择七牛线路，不选则自动测速选择最优线路
     uploader = video_uploader.VideoUploader([page], vu_meta, credential)
     # uploader = video_uploader.VideoUploader([page], meta, credential, cover='cover.png') 
-    # # meta 直接传入 dict 则需要手动传入封面
+    # # meta 直接传入 dict 则需要在 video_uploader.VideoUploader 传入封面
 
     @uploader.on("__ALL__")
     async def ev(data):
