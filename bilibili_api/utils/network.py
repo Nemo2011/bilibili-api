@@ -315,10 +315,10 @@ class Api:
         else:
             # JSON
             resp_data: dict = json.loads(resp.text)
-
+        OK = resp_data.get("OK")
         # 检查 code
         if not self.ignore_code:
-            OK = resp_data.get("OK")
+            
             if OK is None:
                 code = resp_data.get("code")
                 if code is None:
