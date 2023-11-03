@@ -309,9 +309,9 @@ class VideoPorderMeta:
     def __init__(
         self,
         porden_type: VideoPorderType = VideoPorderType.FIREWORK,
-        industry_type: VideoPorderIndustry = None,
-        brand_name: str = None,
-        show_types: List[str] = None,
+        industry_type: Optional[VideoPorderIndustry] = None,
+        brand_name: Optional[str] = None,
+        show_types: List[VideoPorderShowType] = [],
     ):
         self.flow_id = 1
         self.__info = porden_type.value
@@ -685,9 +685,9 @@ class VideoUploader(AsyncEvent):
 
             credential   (Credential)             : 凭据
 
-            cover        (Union[str, Picture])    : 封面路径或者封面对象. Defaults to "".
+            cover        (Union[str, Picture])    : 封面路径或者封面对象. Defaults to ""，传入 meta 类型为 VideoMeta 时可不传
 
-            line:        (Lines, Optional)        : 线路. Defaults to None.
+            line:        (Lines, Optional)        : 线路. Defaults to None. 不选择则自动测速选择
 
         建议传入 VideoMeta 对象，避免参数有误
 
