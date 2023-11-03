@@ -269,6 +269,7 @@ from bilibili_api import live
 | name    | type    | description |
 | ------- | ------- | ----------- |
 | danmaku | Danmaku | 弹幕类      |
+| reply_mid | int, optional | @的 UID. Defaults to None |
 
 直播间发送弹幕
 

@@ -459,12 +459,14 @@ class LiveRoom:
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def send_danmaku(self, danmaku: Danmaku) -> dict:
+    async def send_danmaku(self, danmaku: Danmaku, reply_mid: int = None) -> dict:
         """
         直播间发送弹幕
 
         Args:
             danmaku (Danmaku): 弹幕类
+
+            reply_mid (int, optional): @的 UID. Defaults to None.
 
         Returns:
             dict: 调用 API 返回的结果
@@ -483,7 +485,7 @@ class LiveRoom:
             "color": int(danmaku.color, 16),
             "fontsize": danmaku.font_size,
         }
-
+        if reply_mid: data["reply_mid"] = reply_mid
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def sign_up_dahanghai(self, task_id: int = 1447) -> dict:
