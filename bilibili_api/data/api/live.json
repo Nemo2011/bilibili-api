@@ -274,6 +274,7 @@
         "msg": "str: 弹幕信息",
         "rnd": "int: 当前时间戳",
         "bubble": "int: 默认 0，功能不知",
+        "reply_mid": "int: uid",
         "csrf,csrf_token": "str: 要给两个"
       },
       "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
