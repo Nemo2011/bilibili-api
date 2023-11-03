@@ -26,6 +26,19 @@ Web 端视频上传。
 
 **Returns:** int: 文件大小
 
+## class Lines(Enum)
+
+上传线路枚举
+
+可选线路
+
+bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
+
++ BDA2 百度
++ QN 七牛
++ WS 网宿
++ BLDSA bldsa
+
 ## class VideoUploaderEvents(Enum)
 
 上传事件枚举

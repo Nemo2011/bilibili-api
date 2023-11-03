@@ -318,21 +318,24 @@ class Api:
 
         # 检查 code
         if not self.ignore_code:
-            code = resp_data.get("code")
-
-            if code is None:
-                raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
-            if code != 0:
-                msg = resp_data.get("msg")
-                if msg is None:
-                    msg = resp_data.get("message")
-                if msg is None:
-                    msg = "接口未返回错误信息"
-                raise ResponseCodeException(code, msg, resp_data)
+            OK = resp_data.get("OK")
+            if OK is None:
+                code = resp_data.get("code")
+                if code is None:
+                    raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
+                if code != 0:
+                    msg = resp_data.get("msg")
+                    if msg is None:
+                        msg = resp_data.get("message")
+                    if msg is None:
+                        msg = "接口未返回错误信息"
+                    raise ResponseCodeException(code, msg, resp_data)
+            elif OK != 1:
+                raise ResponseCodeException(-1, "API 返回数据 OK 不为 1", resp_data)
         elif settings.request_log:
             settings.logger.info(resp_data)
 
-        real_data = resp_data.get("data")
+        real_data = resp_data.get("data") if OK is None else resp_data
         if real_data is None:
             real_data = resp_data.get("result")
         return real_data

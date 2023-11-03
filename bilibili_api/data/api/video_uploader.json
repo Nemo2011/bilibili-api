@@ -26,6 +26,14 @@
     },
     "comment": "上传封面"
   },
+  "probe": {
+    "url": "https://member.bilibili.com/preupload",
+    "method": "GET",
+    "params": {
+      "r": "const str: probe"
+    },
+    "comment": "获取线路"
+  },
   "submit": {
     "url": "https://member.bilibili.com/x/vu/web/add/v3",
     "method": "POST",

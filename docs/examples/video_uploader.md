@@ -29,7 +29,7 @@ async def main():
         "up_selection_reply": False,
         "dtime": 0
     }
-    page = video_uploader.VideoUploaderPage(path = 'video.mp4', title = '标题', description = '简介')
+    page = video_uploader.VideoUploaderPage(path = 'video.mp4', title = '标题', description = '简介', line=video_uploader.Lines.QN) # 选择七牛线路，不选则自动测速选择最优线路
     uploader = video_uploader.VideoUploader([page], meta, credential, cover = 'cover.png')
 
     @uploader.on("__ALL__")
