@@ -259,15 +259,6 @@
         "pagesize": "每页数量，过多可能报错 默认：30"
       },
       "comment": "获取关注列表中未在直播的直播间信息, 包括上次开播时间, 上次开播的类别, 直播间公告, 是否有录播等."
-    },
-    "get_status_info_by_uids": {
-      "url": "https://api.live.bilibili.com/room/v1/Room/get_status_info_by_uids",
-      "method": "GET",
-      "verify": false,
-      "params": {
-        "uids[]": "str: uids[]={uid1}&uids[]={uid2}"
-      },
-      "comment": "同时获取多个用户的直播状态"
     }
   },
   "operate": {

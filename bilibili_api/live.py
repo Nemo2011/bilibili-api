@@ -1367,17 +1367,3 @@ async def create_live_reserve(
         "from": 1,
     }
     return await Api(**api, credential=credential).update_data(**data).result
-
-async def get_room_status_by_uids(*uids: List[int]) -> dict:
-    """
-    同时获取多个用户的直播状态
-
-    Args:
-        *uids (List[int]): 用户 uid
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    api = API["info"]["get_status_info_by_uids"]
-    params = {f'uids[{i}]': uid for i, uid in enumerate(uids)}
-    return await Api(**api).update_params(**params).result
