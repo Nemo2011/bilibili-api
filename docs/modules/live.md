@@ -483,3 +483,13 @@ Websocket 实时获取直播弹幕
 创建直播预约
 
 **Returns:** dict: 调用 API 返回的结果
+
+## async def get_room_status_by_uids()
+
+| name       | type       | description |
+| ---------- | ---------- | ----------- |
+| *uids      | List[int]        | 用户 UID    |
+
+批量获取用户直播状态
+
+**Returns:** dict: 调用 API 返回的结果

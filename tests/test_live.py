@@ -185,3 +185,6 @@ async def test_ze_get_following_live():
         title="测试",
         start_time=round(time.time()) + (60 * 60 * 4),
     )
+
+async def test_zf_get_room_status_by_uids():
+    return await live.get_room_status_by_uids(546189, 98676136)
