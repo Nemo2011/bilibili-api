@@ -82,6 +82,7 @@ from . import (
     creative_center,
     article_category,
     interactive_video,
+    audio_uploader,
 )
 
 BILIBILI_API_VERSION = "16.1.1"
@@ -169,4 +170,5 @@ __all__ = [
     "video_uploader",
     "video_zone",
     "vote",
+    "audio_uploader",
 ]
