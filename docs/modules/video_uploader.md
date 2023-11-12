@@ -34,10 +34,10 @@ Web 端视频上传。
 
 bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
-- BDA2 百度
-- QN 七牛
-- WS 网宿
-- BLDSA bldsa
++ BDA2 百度
++ QN 七牛
++ WS 网宿
++ BLDSA bldsa
 
 ## class VideoUploaderEvents(Enum)
 

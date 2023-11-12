@@ -315,7 +315,7 @@ class Api:
         else:
             # JSON
             resp_data: dict = json.loads(resp.text)
-
+        OK = resp_data.get("OK")
         # 检查 code
         OK = resp_data.get("OK")
         if not self.ignore_code:
