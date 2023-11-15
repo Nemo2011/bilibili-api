@@ -291,7 +291,7 @@ class LiveRoom:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def popular_rank_free_score_incr(self) -> dict:
+    async def send_popular_ticket(self) -> dict:
         """
         赠送自己在直播间的所有免费人气票
         Returns:
