@@ -192,5 +192,5 @@ async def test_zf_get_get_popular_ticket_num():
 
 
 async def test_zg_popular_rank_free_score_incr():
-    return await l.popular_rank_free_score_incr()
+    return await l.send_popular_ticket()
 
