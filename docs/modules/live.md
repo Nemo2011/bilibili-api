@@ -147,6 +147,18 @@ from bilibili_api import live
 
 **Returns:** dict: 调用 API 返回的结果
 
+#### async def get_popular_ticket_num()
+
+获取自己在该直播间的人气票信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def send_popular_ticket()
+
+在直播间中赠送所有免费人气票
+
+**Returns:** dict: 调用 API 返回的结果
+
 #### async def get_dahanghai()
 
 | name | type          | description         |
