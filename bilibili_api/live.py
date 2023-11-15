@@ -282,7 +282,7 @@ class LiveRoom:
         """
         self.credential.raise_for_no_sessdata()
 
-        api = API["info"]["popular_ticket_num"]
+        api = API["info"]["popular_ticket"]
         params = {
             "ruid": await self.__get_ruid(),
             "surce": 0,
