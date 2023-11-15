@@ -185,3 +185,12 @@ async def test_ze_get_following_live():
         title="测试",
         start_time=round(time.time()) + (60 * 60 * 4),
     )
+
+
+async def test_zf_get_get_popular_ticket_num():
+    return await l.get_popular_ticket_num()
+
+
+async def test_zg_popular_rank_free_score_incr():
+    return await l.popular_rank_free_score_incr()
+
