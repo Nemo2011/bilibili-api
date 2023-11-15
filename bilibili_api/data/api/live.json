@@ -199,6 +199,16 @@
       },
       "comment": "获取房间信息及可用清晰度列表"
     },
+    "popular_ticket": {
+      "url": "https://api.live.bilibili.com/xlive/general-interface/v1/rank/getUserPopularTicketsNum",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "ruid": "int: 全称 room_uid，从 room_play_info 里头的uid可以找到",
+        "source": "const str: live"
+      },
+      "comment": "获取自己在该直播间的人气票信息"
+    },
     "gift_common": {
       "url": "https://api.live.bilibili.com/xlive/web-room/v1/giftPanel/giftData",
       "method": "GET",
@@ -277,6 +287,17 @@
         "csrf,csrf_token": "str: 要给两个"
       },
       "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
+    },
+    "send_popular_ticket": {
+      "url": "https://api.live.bilibili.com/xlive/general-interface/v1/rank/popularRankFreeScoreIncr",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "ruid": "int: 全称 room_uid，从 room_play_info 里头的 uid 可以找到",
+        "csrf,csrf_token": "要给两个"，
+        "visit_id": "str: 空"
+      },
+      "comment": "在直播间中赠送所有免费人气票"
     },
     "add_block": {
       "url": "https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/AddSilentUser",
