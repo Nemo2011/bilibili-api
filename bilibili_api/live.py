@@ -277,6 +277,7 @@ class LiveRoom:
     async def get_popular_ticket_num(self) -> dict:
         """
         获取自己在直播间的人气票数量（付费人气票已赠送的量，免费人气票的持有量）
+        
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -294,6 +295,7 @@ class LiveRoom:
     async def send_popular_ticket(self) -> dict:
         """
         赠送自己在直播间的所有免费人气票
+        
         Returns:
             dict: 调用 API 返回的结果
         """
