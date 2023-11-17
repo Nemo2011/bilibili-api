@@ -382,7 +382,7 @@ class LiveRoom:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_black_list(self, ps : int = 1) -> dict:
+    async def get_black_list(self, page : int = 1) -> dict:
         """
         获取黑名单列表
 
@@ -390,7 +390,7 @@ class LiveRoom:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["black_list"]
-        params = {"room_id": self.room_display_id, "ps": ps}
+        params = {"room_id": self.room_display_id, "ps": page}
 
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
