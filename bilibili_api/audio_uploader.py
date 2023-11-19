@@ -8,26 +8,16 @@ import os
 import json
 import time
 import base64
-import re
-import asyncio
-import httpx
 from enum import Enum
 from typing import List, Union, Optional
-from copy import copy, deepcopy
-from asyncio.tasks import Task, create_task
-from asyncio.exceptions import CancelledError
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from .video import Video
-from .audio import Audio, AudioList
 from . import user
 from .utils.upos import UposFile, UposFileUploader
 from .utils.utils import get_api
-from .dynamic import upload_image
 from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
-from .utils.aid_bvid_transformer import bvid2aid
 from .exceptions.ApiException import ApiException
 from .utils.network import Api, get_session, HEADERS
 from .exceptions.NetworkException import NetworkException
@@ -389,8 +379,6 @@ class AuthorInfo:
 @dataclass
 class SongMeta:
     """
-    path (str): 文件路径
-
     content_type (SongCategories.ContentType): 内容类型
 
     song_type (Union[SongCategories.SongType, SongCategories.AudioType]): 歌曲类型
@@ -412,8 +400,6 @@ class SongMeta:
     tuning (Optional[List[AuthorInfo]]): 调音
 
     lyricist (Optional[List[AuthorInfo]]): 作词
-
-    compilation (Optional[AudioList]): 合集
 
     arranger (List[AuthorInfo]): 编曲
 
@@ -443,39 +429,39 @@ class SongMeta:
 
     tid (Optional[int]): 视频 tid
 
+    compilation_id (Optional[int]): 合辑 ID
+
     lrc (Optional[str]): 歌词
     """
 
-    path: str
-    content_type: SongCategories.ContentType
-    song_type: Union[SongCategories.SongType, SongCategories.AudioType]
-    creation_type: SongCategories.CreationType
-    language: Optional[SongCategories.Language]
-    theme: Optional[SongCategories.Theme]
-    style: Optional[SongCategories.Style]
-    singer: Optional[List[AuthorInfo]]
-    player: Optional[List[AuthorInfo]]
-    sound_source: Optional[List[AuthorInfo]]
-    tuning: Optional[List[AuthorInfo]]
-    lyricist: Optional[List[AuthorInfo]]
-    compilation: Optional[AudioList]
-    arranger: Optional[List[AuthorInfo]]
-    composer: Optional[List[AuthorInfo]]
-    mixer: Optional[AuthorInfo]
-    cover_maker: Optional[List[AuthorInfo]]
-    instrument: Optional[List[str]]
-    origin_url: Optional[str]
-    origin_title: Optional[str]
-    cover: Optional[Picture]
     title: str
     desc: str
     tags: Union[List[str], str]
-    aid: Optional[int]
-    cid: Optional[int]
-    tid: Optional[int]
-    lrc: Optional[str]
+    content_type: SongCategories.ContentType
+    song_type: Union[SongCategories.SongType, SongCategories.AudioType]
+    creation_type: SongCategories.CreationType
+    language: Optional[SongCategories.Language] = None
+    theme: Optional[SongCategories.Theme] = None
+    style: Optional[SongCategories.Style] = None
+    singer: Optional[List[AuthorInfo]] = field(default_factory=list)
+    player: Optional[List[AuthorInfo]] = field(default_factory=list)
+    sound_source: Optional[List[AuthorInfo]] = field(default_factory=list)
+    tuning: Optional[List[AuthorInfo]] = field(default_factory=list)
+    lyricist: Optional[List[AuthorInfo]] = field(default_factory=list)
+    arranger: Optional[List[AuthorInfo]] = field(default_factory=list)
+    composer: Optional[List[AuthorInfo]] = field(default_factory=list)
+    mixer: Optional[List[AuthorInfo]] = field(default_factory=list)
+    cover_maker: Optional[List[AuthorInfo]] = field(default_factory=list)
+    instrument: Optional[List[str]] = field(default_factory=list)
+    origin_url: Optional[str] = None
+    origin_title: Optional[str] = None
+    cover: Optional[Picture] = None
+    aid: Optional[int] = None
+    cid: Optional[int] = None
+    tid: Optional[int] = None
+    lrc: Optional[str] = None
+    compilation_id: Optional[int] = None
     is_bgm: bool = True
-    compilation_id: Optional[int]
 
 
 class AudioUploader(AsyncEvent):
@@ -492,14 +478,20 @@ class AudioUploader(AsyncEvent):
         if self.meta.content_type == SongCategories.ContentType.MUSIC:
             assert self.meta.creation_type is not None
             assert self.meta.song_type is not None
+            assert self.meta.language is not None
+            
             if self.meta.song_type == SongCategories.SongType.HUMAN_SINGING:
                 assert self.meta.singer is not None
+                assert self.meta.language is not None
+            
             elif self.meta.song_type in [
                 SongCategories.SongType.VOCALOID,
                 SongCategories.SongType.HUMAN_GHOST,
             ]:
                 assert self.meta.sound_source is not None
+                assert self.meta.language is not None
                 assert self.meta.tuning is not None
+
             elif self.meta.song_type == SongCategories.SongType.PURE_MUSIC:
                 assert self.meta.player is not None
 
@@ -605,38 +597,26 @@ class AudioUploader(AsyncEvent):
         return preupload
 
     async def upload_cover(self, cover: Picture) -> str:
-        # api = _API["image"]
-        # data = {"file": "data:image/jpeg;base64," + base64.b64encode(cover.content).decode()}
-        # session = get_session()
-        # resp = await session.post(
-        #     api["url"],
-        #     data=data,
-        #     headers=HEADERS.copy(),
-        #     cookies=self.credential.get_cookies(),
-        # )
-
-        # 气死直接用视频投稿的
-        assert cover.width != cover.height  # 600 * 600
-        assert cover.size < 1024 * 1024 * 3  # 3MB
-        api = get_api("video_uploader")["cover_up"]
-        cover = cover.convert_format("png")
-        data = {
-            "cover": f'data:image/png;base64,{base64.b64encode(cover.content).decode("utf-8")}'
-        }
-        return (
-            await Api(**api, credential=self.credential).update_data(**data).result
-        )["url"]
+        # wtf the api
+        assert (
+            cover.width == cover.height
+        ), "width == height, 600 * 600 recommanded"  # 600 * 600
+        assert cover.size < 1024 * 1024 * 3, "3MB size limit"  # 3MB
+        return await upload_cover(cover, self.credential)
 
     async def start(self):
         preupload = await self._preupload()
         await UposFileUploader(file=self.__upos_file, preupload=preupload).upload()
-        lrc_url = await upload_lrc(
-            song_id=self.__song_id, lrc=self.meta.lrc, credential=self.credential
-        )
+        if self.meta.lrc:
+            lrc_url = await upload_lrc(
+                song_id=self.__song_id, lrc=self.meta.lrc, credential=self.credential
+            )
+        else:
+            lrc_url = None
         cover_url = await self.upload_cover(self.meta.cover)
-        await self.submit(lrc_url=lrc_url, cover_url=cover_url)
+        return await self.submit(lrc_url=lrc_url, cover_url=cover_url)
 
-    async def submit(self, lrc_url: str, cover_url: str) -> Audio:
+    async def submit(self, lrc_url: str, cover_url: str) -> int:
         uploader = await user.get_self_info(self.credential)
         data = {
             "lyric_url": lrc_url,
@@ -646,15 +626,15 @@ class AudioUploader(AsyncEvent):
             "cr_type": self.meta.content_type.value,
             "creation_type_id": self.meta.creation_type.value,
             "music_type_id": self.meta.song_type.value,
-            "style_type_id": self.meta.style.value,
-            "theme_type_id": self.meta.theme.value,
-            "language_type_id": self.meta.language.value,
-            "origin_title": self.meta.origin_title,
-            "origin_url": self.meta.origin_url,
-            "avid": self.meta.aid,
-            "tid": self.meta.tid,
-            "cid": self.meta.cid,
-            "compilation_id": self.meta.compilation_id,
+            "style_type_id": self.meta.style.value if self.meta.style else 0,
+            "theme_type_id": self.meta.theme.value if self.meta.theme else 0,
+            "language_type_id": self.meta.language.value if self.meta.language else 0,
+            "origin_title": self.meta.origin_title if self.meta.origin_title else "",
+            "origin_url": self.meta.origin_url if self.meta.origin_url else "",
+            "avid": self.meta.aid if self.meta.aid else "",
+            "tid": self.meta.tid if self.meta.tid else "",
+            "cid": self.meta.cid if self.meta.cid else "",
+            "compilation_id": self.meta.compilation_id if self.meta.compilation_id else "",
             "title": self.meta.title,
             "intro": self.meta.desc,
             "member_with_type": [
@@ -689,7 +669,8 @@ class AudioUploader(AsyncEvent):
                 {
                     "m_type": 5,
                     "members": [
-                        {"name": self.meta.mixer.name, "mid": self.meta.mixer.uid}
+                        {"name": mixer.name, "mid": mixer.uid}
+                        for mixer in self.meta.mixer
                     ],
                 },  # 混音只能填一个人，你问我为什么我不知道
                 {
@@ -743,9 +724,11 @@ class AudioUploader(AsyncEvent):
             "activity_id": 0,
             "is_bgm": 1 if self.meta.is_bgm else 0,
             "source": 0,
+            "album_id": 0
         }
-        api = _API["submit"]
-        return await Api(**api, credential=self.credential).update_data(**data).result
+        api = _API["submit_single_song"]
+        return await Api(**api, credential=self.credential, json_body=True, no_csrf=True).update_data(**data).result
+
 
 async def upload_lrc(lrc: str, song_id: int, credential: Credential) -> str:
     """
@@ -772,4 +755,13 @@ async def get_upinfo(param: Union[int, str], credential: Credential) -> List[dic
     """
     api = _API["upinfo"]
     data = {"param": param}
+    return await Api(**api, credential=credential).update_data(**data).result
+
+
+async def upload_cover(cover: Picture, credential: Credential) -> str:
+    api = _API["image"]
+    cover = cover.convert_format("png")
+    data = {
+        "file": f'data:image/png;base64,{base64.b64encode(cover.content).decode("utf-8")}'
+    }
     return await Api(**api, credential=credential).update_data(**data).result

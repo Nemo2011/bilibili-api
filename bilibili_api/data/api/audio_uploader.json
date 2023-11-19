@@ -57,7 +57,7 @@
     "comment": "提交音频合集"
   },
   "submit_single_song": {
-    "url": "https://bilibili.com/audio/music-service/songs",
+    "url": "https://www.bilibili.com/audio/music-service/songs",
     "method": "POST",
     "verify": true,
     "data": {
@@ -84,7 +84,7 @@
       "is_bgm": "int: 是否为 bgm",
       "source": "int: ?"
     },
-    "comment": "单手音频提交"
+    "comment": "单音频提交"
   },
   "image": {
     "url": "https://www.bilibili.com/audio/music-service/songs/image",
@@ -94,13 +94,13 @@
     "comment": "提交封面"
   },
   "compilation_categories": {
-    "url": "https://bilibili.com/audio/music-service/compilation/compilation_categories",
+    "url": "https://www.bilibili.com/audio/music-service/compilation/compilation_categories",
     "method": "GET",
     "verify": false,
     "comment": "歌单分类"
   },
   "get_video_by_title": {
-    "url": "https://bilibili.com/audio/music-service/users/getvideoinfo/bytitle",
+    "url": "https://www.bilibili.com/audio/music-service/users/getvideoinfo/bytitle",
     "method": "GET",
     "verify": true,
     "params": {

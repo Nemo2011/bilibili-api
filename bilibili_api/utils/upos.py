@@ -24,9 +24,9 @@ class UposFile:
 
     def __init__(self, path: str) -> None:
         self.path = path
-        self.size = self._get_size(self.path)
+        self.size = self._get_size()
 
-    def _get_size(path: str) -> int:
+    def _get_size(self) -> int:
         """
         获取文件大小
 
@@ -35,7 +35,7 @@ class UposFile:
         """
 
         size: int = 0
-        stream = open(path, "rb")
+        stream = open(self.path, "rb")
         while True:
             s: bytes = stream.read(1024)
 
