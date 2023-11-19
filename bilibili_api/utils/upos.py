@@ -7,8 +7,8 @@ import httpx
 import asyncio
 from asyncio.tasks import create_task
 
-from utils import get_api
-from network import get_session
+from .utils import get_api
+from .network import get_session
 from ..exceptions.NetworkException import NetworkException
 from ..exceptions.ResponseCodeException import ResponseCodeException
 from ..exceptions.ApiException import ApiException
@@ -60,42 +60,11 @@ class UposFileUploader:
     def __init__(self, file: UposFile, preupload: dict) -> None:
         self.file = file
         self.preupload = preupload
+        self._upload_id = preupload["upload_id"]
         self._upload_url = f'https:{preupload["endpoint"]}/{preupload["upos_uri"].removeprefix("upos://")}'
+        self._session = get_session()
 
-    async def _get_upload_id(self) -> str:
-        """
-        获取 upload_id
-
-        Returns:
-            str: upload_id
-        """
-        resp = await self._session.post(
-            self._upload_url,
-            headers={
-                "x-upos-auth": self.preupload["auth"],
-                "user-agent": "Mozilla/5.0",
-                "referer": "https://www.bilibili.com",
-            },
-            params={
-                "uploads": "",
-                "output": "json",
-                "profile": "ugcfx/bup",
-                "filesize": self.file.size,
-                "partsize": self.preupload["chunk_size"],
-                "biz_id": self.preupload["biz_id"],
-            },
-        )
-        if resp.status_code >= 400:
-            raise ApiException("获取 upload_id 错误")
-
-        data = json.loads(resp.text)
-
-        if data["OK"] != 1:
-            raise ApiException("获取 upload_id 错误：" + json.dumps(data))
-
-        return data["upload_id"]
-
-    async def upload_file(self) -> dict:
+    async def upload(self) -> dict:
         """
         上传文件
 
@@ -266,16 +235,3 @@ class UposFileUploader:
         if data["OK"] != 1:
             err = ResponseCodeException(-1, f'提交分 P 失败，原因: {data["message"]}')
             raise err
-
-        # return {
-        #     "filename": os.path.splitext(data["key"].removeprefix("/"))[0],
-        #     "cid": self.preupload["biz_id"],
-        # }
-
-    async def upload(self) -> dict:
-        """
-        上传文件
-        """
-        self._session = get_session()
-        self._upload_id = await self._get_upload_id()
-        await self.upload_file(self.file, self.preupload)

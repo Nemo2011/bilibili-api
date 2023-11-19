@@ -1,4 +1,19 @@
 {
+  "preupload": {
+    "url": "https://member.bilibili.com/preupload",
+    "method": "GET",
+    "verify": true,
+    "params": {
+      "profile": "uga/bup",
+      "name": "str: 音频文件名（带后缀）",
+      "size": "int: 音频大小",
+      "r": "const str: upos",
+      "ssl": "const int: 0",
+      "version": "const str: 2.6.4",
+      "build": "const str: 2060400"
+    },
+    "comment": "获取上传配置"
+  },
   "lrc": {
     "url": "https://www.bilibili.com/audio/music-service/songs/lrc",
     "method": "POST",
@@ -72,10 +87,10 @@
     "comment": "单手音频提交"
   },
   "image": {
-    "url": "https://bilibili.com/audio/music-service/songs/image",
+    "url": "https://www.bilibili.com/audio/music-service/songs/image",
     "method": "POST",
     "verify": true,
-    "files": "base64: img",
+    "data": { "file": "base64: img" },
     "comment": "提交封面"
   },
   "compilation_categories": {
@@ -93,5 +108,13 @@
       "pagesize": "int: pagesize"
     },
     "comment": "获取关联视频"
+  },
+  "get_upinfo": {
+    "url": "https://www.bilibili.com/audio/music-service/users/get_upinfo",
+    "method": "GET",
+    "params": {
+      "param": "str: up"
+    },
+    "comment": "根据 UID / id 获取信息"
   }
 }
