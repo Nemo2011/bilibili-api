@@ -274,6 +274,43 @@ class LiveRoom:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def get_popular_ticket_num(self) -> dict:
+        """
+        获取自己在直播间的人气票数量（付费人气票已赠送的量，免费人气票的持有量）
+        
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["info"]["popular_ticket"]
+        params = {
+            "ruid": await self.__get_ruid(),
+            "surce": 0,
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    async def send_popular_ticket(self) -> dict:
+        """
+        赠送自己在直播间的所有免费人气票
+        
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["send_popular_ticket"]
+        params = {
+            "ruid": await self.__get_ruid(),
+            "visit_id": "",
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+        
     async def get_dahanghai(self, page: int = 1) -> dict:
         """
         获取大航海列表
@@ -345,7 +382,7 @@ class LiveRoom:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_black_list(self) -> dict:
+    async def get_black_list(self, page : int = 1) -> dict:
         """
         获取黑名单列表
 
@@ -353,7 +390,7 @@ class LiveRoom:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["black_list"]
-        params = {"room_id": self.room_display_id, "ps": 1}
+        params = {"room_id": self.room_display_id, "ps": page}
 
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
