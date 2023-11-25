@@ -89,8 +89,8 @@
   "image": {
     "url": "https://www.bilibili.com/audio/music-service/songs/image",
     "method": "POST",
-    "verify": true,
-    "data": { "file": "base64: img" },
+    "verify": false,
+    "no_csrf": true,
     "comment": "提交封面"
   },
   "compilation_categories": {

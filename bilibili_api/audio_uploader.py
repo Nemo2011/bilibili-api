@@ -417,7 +417,7 @@ class SongMeta:
 
     title (str): 标题
 
-    cover (Optional[Picture]): 封面
+    cover (Optional[str]): 封面
 
     description (Optional[str]): 描述
 
@@ -455,7 +455,7 @@ class SongMeta:
     instrument: Optional[List[str]] = field(default_factory=list)
     origin_url: Optional[str] = None
     origin_title: Optional[str] = None
-    cover: Optional[Picture] = None
+    cover: Optional[str] = None
     aid: Optional[int] = None
     cid: Optional[int] = None
     tid: Optional[int] = None
@@ -475,15 +475,16 @@ class AudioUploader(AsyncEvent):
     def _check_meta(self):
         assert self.meta.content_type is not None
         assert self.meta.song_type is not None
+        assert self.meta.cover is not None and isinstance(self.meta.cover, str)
         if self.meta.content_type == SongCategories.ContentType.MUSIC:
             assert self.meta.creation_type is not None
             assert self.meta.song_type is not None
             assert self.meta.language is not None
-            
+
             if self.meta.song_type == SongCategories.SongType.HUMAN_SINGING:
                 assert self.meta.singer is not None
                 assert self.meta.language is not None
-            
+
             elif self.meta.song_type in [
                 SongCategories.SongType.VOCALOID,
                 SongCategories.SongType.HUMAN_GHOST,
@@ -596,12 +597,11 @@ class AudioUploader(AsyncEvent):
         self.__song_id = preupload["biz_id"]
         return preupload
 
-    async def upload_cover(self, cover: Picture) -> str:
-        # wtf the api
-        assert (
-            cover.width == cover.height
-        ), "width == height, 600 * 600 recommanded"  # 600 * 600
-        assert cover.size < 1024 * 1024 * 3, "3MB size limit"  # 3MB
+    async def upload_cover(self, cover: str) -> str:
+        # assert (
+        #     cover.width == cover.height
+        # ), "width == height, 600 * 600 recommanded"  # 600 * 600
+        # assert cover.size < 1024 * 1024 * 3, "3MB size limit"  # 3MB
         return await upload_cover(cover, self.credential)
 
     async def start(self):
@@ -634,7 +634,9 @@ class AudioUploader(AsyncEvent):
             "avid": self.meta.aid if self.meta.aid else "",
             "tid": self.meta.tid if self.meta.tid else "",
             "cid": self.meta.cid if self.meta.cid else "",
-            "compilation_id": self.meta.compilation_id if self.meta.compilation_id else "",
+            "compilation_id": self.meta.compilation_id
+            if self.meta.compilation_id
+            else "",
             "title": self.meta.title,
             "intro": self.meta.desc,
             "member_with_type": [
@@ -724,10 +726,14 @@ class AudioUploader(AsyncEvent):
             "activity_id": 0,
             "is_bgm": 1 if self.meta.is_bgm else 0,
             "source": 0,
-            "album_id": 0
+            "album_id": 0,
         }
         api = _API["submit_single_song"]
-        return await Api(**api, credential=self.credential, json_body=True, no_csrf=True).update_data(**data).result
+        return (
+            await Api(**api, credential=self.credential, json_body=True, no_csrf=True)
+            .update_data(**data)
+            .result
+        )
 
 
 async def upload_lrc(lrc: str, song_id: int, credential: Credential) -> str:
@@ -758,10 +764,7 @@ async def get_upinfo(param: Union[int, str], credential: Credential) -> List[dic
     return await Api(**api, credential=credential).update_data(**data).result
 
 
-async def upload_cover(cover: Picture, credential: Credential) -> str:
+async def upload_cover(cover: str, credential: Credential) -> str:
     api = _API["image"]
-    cover = cover.convert_format("png")
-    data = {
-        "file": f'data:image/png;base64,{base64.b64encode(cover.content).decode("utf-8")}'
-    }
-    return await Api(**api, credential=credential).update_data(**data).result
+    files = {"file": open(cover, "rb")}
+    return await Api(**api, credential=credential).update_files(**files).result
