@@ -292,13 +292,12 @@
       "comment": "封禁用户"
     },
     "del_block": {
-      "url": "https://api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user",
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/DelSilentUser",
       "method": "POST",
       "verify": true,
       "params": {
-        "roomid": "int: 真实房间号",
-        "id": "int: 封禁 ID，从 ID.info.black_list 中获取或者 ID.operate.black_list 的返回值获取",
-        "visit_id": "str: 空"
+        "room_id": "str: 真实房间号",
+        "tuid": "str: 封禁 ID，从 ID.info.black_list 中获取或者 ID.operate.black_list 的返回值获取"
       },
       "comment": "解封用户"
     },

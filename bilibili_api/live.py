@@ -453,9 +453,8 @@ class LiveRoom:
         self.credential.raise_for_no_sessdata()
         api = API["operate"]["del_block"]
         data = {
-            "roomid": self.room_display_id,
-            "id": block_id,
-            "visit_id": "",
+            "room_id": self.room_display_id,
+            "tuid": block_id,
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
