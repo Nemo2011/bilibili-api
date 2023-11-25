@@ -269,7 +269,7 @@ class Api:
             enc_wbi(self.params, wbi_mixin_key)
 
         # 自动添加 csrf
-        if not self.no_csrf and self.method in ["POST", "DELETE", "PATCH"]:
+        if not self.no_csrf and self.verify and self.method in ["POST", "DELETE", "PATCH"]:
             self.data["csrf"] = self.credential.bili_jct
             self.data["csrf_token"] = self.credential.bili_jct
 
@@ -317,8 +317,8 @@ class Api:
             resp_data: dict = json.loads(resp.text)
         OK = resp_data.get("OK")
         # 检查 code
+        OK = resp_data.get("OK")
         if not self.ignore_code:
-            
             if OK is None:
                 code = resp_data.get("code")
                 if code is None:
