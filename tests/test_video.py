@@ -248,3 +248,6 @@ async def test_zi_get_ai_conclusion():
 
 async def test_zj_get_relation():
     return await video.get_relation()
+
+async def test_zk_get_online():
+    return await video.get_online()
