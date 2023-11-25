@@ -477,12 +477,12 @@ class LiveRoom:
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def unban_user(self, block_id: int) -> dict:
+    async def unban_user(self, uid: int) -> dict:
         """
         解封用户
 
         Args:
-            block_id (int): 封禁用户时会返回该封禁事件的 ID，使用该值
+            uid (int): 用户 UID
 
         Returns:
             dict: 调用 API 返回的结果
@@ -491,8 +491,7 @@ class LiveRoom:
         api = API["operate"]["del_block"]
         data = {
             "roomid": self.room_display_id,
-            "id": block_id,
-            "visit_id": "",
+            "tuid": uid,
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
