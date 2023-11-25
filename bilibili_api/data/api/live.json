@@ -317,7 +317,7 @@
       "method": "POST",
       "verify": true,
       "params": {
-        "roomid": "int: 真实房间号",
+        "RoomId": "int: 真实房间号",
         "tuid": "int: 封禁用户 UID"
       },
       "comment": "解封用户"
