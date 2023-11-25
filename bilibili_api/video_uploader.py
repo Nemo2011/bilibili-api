@@ -818,7 +818,7 @@ class VideoUploader(AsyncEvent):
         Returns:
             dict: 初始化信息
         """
-        self.dispatch(VideoUploaderEvents.PREUPLOAD.value, {page: page})
+        self.dispatch(VideoUploaderEvents.PREUPLOAD.value, {"page": page})
         api = _API["preupload"]
 
         # 首先获取视频文件预检信息
@@ -844,15 +844,16 @@ class VideoUploader(AsyncEvent):
             },
         )
         if resp.status_code >= 400:
-            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {"page": page})
             raise NetworkException(resp.status_code, resp.reason_phrase)
 
         preupload = resp.json()
 
         if preupload["OK"] != 1:
-            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {"page": page})
             raise ApiException(json.dumps(preupload))
-
+        
+        preupload = self._switch_upload_endpoint(self.line, preupload)
         url = self._get_upload_url(self.line, preupload)
 
         # 获取 upload_id
@@ -873,13 +874,13 @@ class VideoUploader(AsyncEvent):
             },
         )
         if resp.status_code >= 400:
-            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {"page": page})
             raise ApiException("获取 upload_id 错误")
 
         data = json.loads(resp.text)
 
         if data["OK"] != 1:
-            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {page: page})
+            self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {"page": page})
             raise ApiException("获取 upload_id 错误：" + json.dumps(data))
 
         preupload["upload_id"] = data["upload_id"]
@@ -1125,17 +1126,18 @@ class VideoUploader(AsyncEvent):
         return data
 
     @staticmethod
-    def _get_upload_url(line: dict, preupload: dict) -> str:
-        # 上传目标 URL
-        if re.match(
+    def _switch_upload_endpoint(preupload: dict, line: dict = None) -> dict:
+        # 替换线路 endpoint
+        if line is not None and re.match(
             r"//upos-(sz|cs)-upcdn(bda2|ws|qn)\.bilivideo\.com", preupload["endpoint"]
         ):
-            new_endpoint = re.sub(
+            preupload["endpoint"] = re.sub(
                 r"upcdn(bda2|qn|ws)", f'upcdn{line["upcdn"]}', preupload["endpoint"]
             )
-            return (
-                f'https:{new_endpoint}/{preupload["upos_uri"].removeprefix("upos://")}'
-            )
+
+    @staticmethod
+    def _get_upload_url(preupload: dict) -> str:
+        # 上传目标 URL
         return f'https:{preupload["endpoint"]}/{preupload["upos_uri"].removeprefix("upos://")}'
 
     async def _upload_chunk(

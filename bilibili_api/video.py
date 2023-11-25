@@ -1230,6 +1230,19 @@ class Video:
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
+    async def get_online(self, cid: Optional[int] = None, page_index: Optional[int] = 0) -> dict:
+        """
+        获取实时在线人数
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        api = API["info"]["online"]
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "cid": cid if cid is not None else await self.get_cid(page_index=page_index)}
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
     async def operate_danmaku(
         self,
         page_index: Union[int, None] = None,
@@ -1806,7 +1819,7 @@ class VideoOnlineMonitor(AsyncEvent):
         self.logger.debug(f"准备连接：{self.__video.get_bvid()}")
         self.logger.debug(f"获取服务器信息中...")
 
-        api = API["video"]["info"]["video_online_broadcast_servers"]
+        api = API["info"]["video_online_broadcast_servers"]
         resp = await Api(**api, credential=self.credential).result
 
         uri = f"wss://{resp['domain']}:{resp['wss_port']}/sub"
