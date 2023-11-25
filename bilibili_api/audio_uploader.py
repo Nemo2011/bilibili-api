@@ -7,7 +7,6 @@ bilibili_api.audio_uploader
 import os
 import json
 import time
-import base64
 from enum import Enum
 from typing import List, Union, Optional
 from dataclasses import dataclass, field
@@ -21,7 +20,6 @@ from .utils.credential import Credential
 from .exceptions.ApiException import ApiException
 from .utils.network import Api, get_session, HEADERS
 from .exceptions.NetworkException import NetworkException
-from .exceptions.ResponseCodeException import ResponseCodeException
 
 from enum import Enum
 
@@ -598,10 +596,6 @@ class AudioUploader(AsyncEvent):
         return preupload
 
     async def upload_cover(self, cover: str) -> str:
-        # assert (
-        #     cover.width == cover.height
-        # ), "width == height, 600 * 600 recommanded"  # 600 * 600
-        # assert cover.size < 1024 * 1024 * 3, "3MB size limit"  # 3MB
         return await upload_cover(cover, self.credential)
 
     async def start(self):
@@ -612,11 +606,11 @@ class AudioUploader(AsyncEvent):
                 song_id=self.__song_id, lrc=self.meta.lrc, credential=self.credential
             )
         else:
-            lrc_url = None
+            lrc_url = ""
         cover_url = await self.upload_cover(self.meta.cover)
         return await self.submit(lrc_url=lrc_url, cover_url=cover_url)
 
-    async def submit(self, lrc_url: str, cover_url: str) -> int:
+    async def submit(self, cover_url: str, lrc_url: str = "") -> int:
         uploader = await user.get_self_info(self.credential)
         data = {
             "lyric_url": lrc_url,
@@ -766,5 +760,11 @@ async def get_upinfo(param: Union[int, str], credential: Credential) -> List[dic
 
 async def upload_cover(cover: str, credential: Credential) -> str:
     api = _API["image"]
-    files = {"file": open(cover, "rb")}
+    image = open(cover, "rb")
+    # 小于 3MB
+    assert os.path.getsize(cover) < 1024 * 1024 * 3, "3MB size limit"
+    # 宽高比 1:1
+    pic = Picture().from_file(cover)
+    assert pic.width == pic.height, "width == height, 600 * 600 recommanded"
+    files = {"file": image}
     return await Api(**api, credential=credential).update_files(**files).result
