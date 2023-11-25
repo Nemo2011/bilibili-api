@@ -248,9 +248,9 @@ from bilibili_api import live
 
 #### async def unban_user()
 
-| name     | type | description                               |
-| -------- | ---- | ----------------------------------------- |
-| block_id | int  | 封禁事件 ID，使用 `get_black_list()` 获取 |
+| name | type | description |
+| ---- | ---- | ----------- |
+| uid  | int  | 用户 UID    |
 
 解封用户
 
