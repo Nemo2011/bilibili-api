@@ -313,7 +313,7 @@
       "comment": "封禁用户"
     },
     "del_block": {
-      "url": "https://api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user",
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/v1/banned/DelSilentUser",
       "method": "POST",
       "verify": true,
       "params": {
