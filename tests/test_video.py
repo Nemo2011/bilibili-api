@@ -121,7 +121,7 @@ async def test_o_Video_get_danmaku():
 
 
 async def test_p_Video_get_danmaku_history():
-    data = await video.get_danmakus(0, date=datetime.date(2020, 1, 1))
+    data = await video.get_danmakus(0, date=datetime.date(2023, 1, 1))
     return data
 
 
