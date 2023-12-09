@@ -32,7 +32,7 @@ BUVID3 = ""
 self_uid = 0
 # 实例化 Credential 类
 credential = Credential(sessdata=SESSDATA, bili_jct=BILI_JCT, buvid3=BUVID3)
-room = live.LiveRoom(22544798, credential)
+room = live.LiveRoom(22544798, credential=credential)
 
 # 获取礼物列表
 gift_config = sync(live.get_gift_config())
