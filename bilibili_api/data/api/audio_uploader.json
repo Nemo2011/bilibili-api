@@ -1,0 +1,120 @@
+{
+  "preupload": {
+    "url": "https://member.bilibili.com/preupload",
+    "method": "GET",
+    "verify": true,
+    "params": {
+      "profile": "uga/bup",
+      "name": "str: 音频文件名（带后缀）",
+      "size": "int: 音频大小",
+      "r": "const str: upos",
+      "ssl": "const int: 0",
+      "version": "const str: 2.6.4",
+      "build": "const str: 2060400"
+    },
+    "comment": "获取上传配置"
+  },
+  "lrc": {
+    "url": "https://www.bilibili.com/audio/music-service/songs/lrc",
+    "method": "POST",
+    "verify": true,
+    "data": {
+      "song_id": "str: song_id",
+      "lrc": "str: lcr 字幕"
+    },
+    "comment": "lrc 字幕上传"
+  },
+  "submit_songs": {
+    "url": "https://www.bilibili.com/audio/music-service/compilation/commit_songs",
+    "method": "POST",
+    "verify": true,
+    "data": {
+      "lyric_url": "str: lrc 字幕链接",
+      "song_id": "int: song_id",
+      "avid": "str: 关联 av号",
+      "tid": "int: 关联 tid",
+      "cid": "int: 关联 cid",
+      "title": "str: 标题",
+      "member_with_type": "list: 歌曲信息",
+      "song_tags": "list: tags",
+      "mid": "int: up_uid"
+    },
+    "comment": "提交音频"
+  },
+  "submit_compilation": {
+    "url": "https://www.bilibili.com/audio/music-service/compilation/commit_compilation",
+    "method": "POST",
+    "verify": true,
+    "data": {
+      "cover_url": "str: cover url",
+      "intro": "str: 介绍",
+      "is_synch": "const: unknown",
+      "song_counts": "int: 歌曲总数",
+      "song_ids": "list: song_ids",
+      "dict_items": "list: 分类 {'type_id': 125,'type_name': '电子',}",
+      "title": "str: 标题"
+    },
+    "comment": "提交音频合集"
+  },
+  "submit_single_song": {
+    "url": "https://www.bilibili.com/audio/music-service/songs",
+    "method": "POST",
+    "verify": true,
+    "data": {
+      "lyric_url": "str: lrc 字幕链接",
+      "cover_url": "str: cover url",
+      "song_id": "int: song_id",
+      "mid": "int: up_uid",
+      "cr_type": "const: unknown",
+      "music_type_id": "int: ?",
+      "avid": "str: 关联 av号",
+      "tid": "int: 关联 tid",
+      "cid": "int: 关联 cid",
+      "title": "str: 标题",
+      "intro": "str: 介绍",
+      "member_with_type": [
+        {
+          "m_type": 127,
+          "members": [{ "name": "str: up_name", "mid": "int: up_uid" }]
+        }
+      ],
+      "song_tags": [{ "tagName": "str: 标签" }],
+      "create_time": "float: 时间戳 %.3f",
+      "activity_id": "int: activity_id",
+      "is_bgm": "int: 是否为 bgm",
+      "source": "int: ?"
+    },
+    "comment": "单音频提交"
+  },
+  "image": {
+    "url": "https://www.bilibili.com/audio/music-service/songs/image",
+    "method": "POST",
+    "verify": false,
+    "no_csrf": true,
+    "comment": "提交封面"
+  },
+  "compilation_categories": {
+    "url": "https://www.bilibili.com/audio/music-service/compilation/compilation_categories",
+    "method": "GET",
+    "verify": false,
+    "comment": "歌单分类"
+  },
+  "get_video_by_title": {
+    "url": "https://www.bilibili.com/audio/music-service/users/getvideoinfo/bytitle",
+    "method": "GET",
+    "verify": true,
+    "params": {
+      "title": "str: 标题",
+      "pagesize": "int: pagesize"
+    },
+    "comment": "获取关联视频"
+  },
+  "get_upinfo": {
+    "url": "https://www.bilibili.com/audio/music-service/users/get_upinfo",
+    "method": "GET",
+    "params": {
+      "param": "str: up"
+    },
+    "comment": "根据 UID / id 获取信息"
+  }
+}

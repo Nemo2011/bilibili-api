@@ -269,7 +269,7 @@ class Api:
             enc_wbi(self.params, wbi_mixin_key)
 
         # 自动添加 csrf
-        if not self.no_csrf and self.method in ["POST", "DELETE", "PATCH"]:
+        if not self.no_csrf and self.verify and self.method in ["POST", "DELETE", "PATCH"]:
             self.data["csrf"] = self.credential.bili_jct
             self.data["csrf_token"] = self.credential.bili_jct
 
@@ -315,24 +315,27 @@ class Api:
         else:
             # JSON
             resp_data: dict = json.loads(resp.text)
-
+        OK = resp_data.get("OK")
         # 检查 code
+        OK = resp_data.get("OK")
         if not self.ignore_code:
-            code = resp_data.get("code")
-
-            if code is None:
-                raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
-            if code != 0:
-                msg = resp_data.get("msg")
-                if msg is None:
-                    msg = resp_data.get("message")
-                if msg is None:
-                    msg = "接口未返回错误信息"
-                raise ResponseCodeException(code, msg, resp_data)
+            if OK is None:
+                code = resp_data.get("code")
+                if code is None:
+                    raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
+                if code != 0:
+                    msg = resp_data.get("msg")
+                    if msg is None:
+                        msg = resp_data.get("message")
+                    if msg is None:
+                        msg = "接口未返回错误信息"
+                    raise ResponseCodeException(code, msg, resp_data)
+            elif OK != 1:
+                raise ResponseCodeException(-1, "API 返回数据 OK 不为 1", resp_data)
         elif settings.request_log:
             settings.logger.info(resp_data)
 
-        real_data = resp_data.get("data")
+        real_data = resp_data.get("data") if OK is None else resp_data
         if real_data is None:
             real_data = resp_data.get("result")
         return real_data

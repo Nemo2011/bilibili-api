@@ -236,6 +236,17 @@
         "up_mid": "int: up_mid"
       },
       "comment": "ai 总结"
+    },
+    "online": {
+      "url": "https://api.bilibili.com/x/player/online/total",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "aid": "int: av 号",
+        "bvid": "int: bvid",
+        "cid": "int: cid"
+      },
+      "comment": "在线人数检测"
     }
   },
   "operate": {

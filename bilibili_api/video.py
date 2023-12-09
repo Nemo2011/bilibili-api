@@ -7,6 +7,7 @@ bilibili_api.video
 """
 
 import re
+import os
 import json
 import struct
 import asyncio
@@ -1230,6 +1231,19 @@ class Video:
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
+    async def get_online(self, cid: Optional[int] = None, page_index: Optional[int] = 0) -> dict:
+        """
+        获取实时在线人数
+
+        Returns:
+            dict: 调用 API 返回的结果。
+        """
+        api = API["info"]["online"]
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "cid": cid if cid is not None else await self.get_cid(page_index=page_index)}
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
     async def operate_danmaku(
         self,
         page_index: Union[int, None] = None,
@@ -1490,7 +1504,7 @@ class Video:
         sign: bool,
         page_index: Union[int, None] = None,
         cid: Union[int, None] = None,
-    ):
+    ) -> dict:
         """
         上传字幕
 
@@ -1515,7 +1529,7 @@ class Video:
         ```
 
         Args:
-            lan        (str)                 : 字幕语言代码，参考 http://www.lingoes.cn/zh/translator/langcode.htm
+            lan        (str)                 : 字幕语言代码，参考 https://s1.hdslb.com/bfs/subtitle/subtitle_lan.json
 
             data       (dict)                : 字幕数据
 
@@ -1542,6 +1556,18 @@ class Video:
 
         api = API["operate"]["submit_subtitle"]
 
+        # lan check，应该是这里面的语言代码
+        with open(
+            os.path.join(os.path.dirname(__file__), "data/subtitle_lan.json"),
+            encoding="utf-8",
+        ) as f:
+            subtitle_lans = json.load(f)
+            for lan in subtitle_lans:
+                if lan["lan"] == lan:
+                    break
+            else:
+                raise ArgsException("lan 参数错误，请参见 https://s1.hdslb.com/bfs/subtitle/subtitle_lan.json")
+
         payload = {
             "type": 1,
             "oid": cid,
@@ -1552,7 +1578,7 @@ class Video:
             "bvid": self.get_bvid(),
         }
 
-        return await Api(**api, credential=self.credential).update_data(**data).result
+        return await Api(**api, credential=self.credential).update_data(**payload).result
 
     async def get_danmaku_snapshot(self) -> dict:
         """
@@ -1794,7 +1820,7 @@ class VideoOnlineMonitor(AsyncEvent):
         self.logger.debug(f"准备连接：{self.__video.get_bvid()}")
         self.logger.debug(f"获取服务器信息中...")
 
-        api = API["video"]["info"]["video_online_broadcast_servers"]
+        api = API["info"]["video_online_broadcast_servers"]
         resp = await Api(**api, credential=self.credential).result
 
         uri = f"wss://{resp['domain']}:{resp['wss_port']}/sub"
