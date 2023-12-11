@@ -151,7 +151,7 @@ async def refresh_cookies(credential: Credential) -> Credential:
     cookies = credential.get_cookies()
     cookies["buvid3"] = str(uuid.uuid1())
     cookies["Domain"] = ".bilibili.com"
-    resp = await get_session().request("POST", api["url"], cookies=cookies, data=data)
+    resp = await get_session().request("POST", api["url"], cookies=cookies, data=data, headers=HEADERS.copy())
     if resp.status_code != 200 or resp.json()["code"] != 0:
         raise Exception("刷新 Cookies 失败")
     new_credential = Credential(
