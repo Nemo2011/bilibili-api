@@ -86,7 +86,7 @@ def make_qrcode(url) -> str:
 
 def update_qrcode_data() -> dict:
     api = API["qrcode"]["get_qrcode_and_token"]
-    qrcode_data = httpx.get(api["url"], follow_redirects=True).json()["data"]
+    qrcode_data = httpx.get(api["url"], follow_redirects=True, headers=HEADERS).json()["data"]
     return qrcode_data
 
 
@@ -207,6 +207,7 @@ def login_with_key(key: str) -> dict:
         events_api["url"],
         params=params,
         cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
+        headers=HEADERS
     ).json()
     return events
 
