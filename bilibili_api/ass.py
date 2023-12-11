@@ -193,7 +193,7 @@ async def make_ass_file_danmakus_protobuf(
                 if page is None:
                     raise ArgsException("page_index 和 cid 至少提供一个。")
                 # type: ignore
-                cid = await v._Video__get_cid_by_index(page
+                cid = await v._Video__get_cid_by_index(page)
         try:
             info = await v.get_info()
         except:
