@@ -86,7 +86,10 @@ def make_qrcode(url) -> str:
 
 def update_qrcode_data() -> dict:
     api = API["qrcode"]["get_qrcode_and_token"]
-    qrcode_data = httpx.get(api["url"], follow_redirects=True).json()["data"]
+    headers={
+        "User-Agent": "Mozilla/5.0",
+    }
+    qrcode_data = httpx.get(api["url"], headers=headers, follow_redirects=True).json()["data"]
     return qrcode_data
 
 
@@ -110,7 +113,7 @@ def login_with_qrcode(root=None) -> Credential:
 
     from PIL.ImageTk import PhotoImage
 
-    if root == None:
+    if root is None:
         root = tkinter.Tk()
     root.title("扫码登录")
     qrcode_data = update_qrcode_data()
@@ -203,8 +206,12 @@ def login_with_qrcode_term() -> Credential:
 def login_with_key(key: str) -> dict:
     params = {"qrcode_key": key, "source": "main-fe-header"}
     events_api = API["qrcode"]["get_events"]
+    headers={
+        "User-Agent": "Mozilla/5.0",
+    }
     events = httpx.get(
         events_api["url"],
+        headers=headers,
         params=params,
         cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
     ).json()
@@ -507,7 +514,7 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
     global captcha_id
     sess = get_session()
     api = API["sms"]["login"]
-    if captcha_id == None:
+    if captcha_id is None:
         raise LoginError("请申请或重新申请发送验证码")
     return_data = json.loads(
         sync(
