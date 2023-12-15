@@ -10,13 +10,13 @@
       },
       "comment": "小破站的热门视频排行"
     },
-    "weakly_series": {
+    "weekly_series": {
       "url": "https://api.bilibili.com/x/web-interface/popular/series/list",
       "method": "GET",
       "verify": false,
       "comment": "小破站每周必看全部信息（简介）"
     },
-    "weakly_details": {
+    "weekly_details": {
       "url": "https://api.bilibili.com/x/web-interface/popular/series/one",
       "method": "GET",
       "verify": false,
@@ -55,7 +55,7 @@
       },
       "comment": "获取番剧等排行榜"
     },
-    "music_weakly_series": {
+    "music_weekly_series": {
       "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/all_period",
       "method": "GET",
       "verify": false,
@@ -64,7 +64,7 @@
       },
       "comment": "获取全站音乐榜每周信息(不包括具体的音频列表)"
     },
-    "music_weakly_details": {
+    "music_weekly_details": {
       "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/detail",
       "method": "GET",
       "verify": false,
@@ -73,7 +73,7 @@
       },
       "comment": "获取全站音乐榜一周的详细信息(不包括具体的音频列表)"
     },
-    "music_weakly_content": {
+    "music_weekly_content": {
       "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/music_list",
       "method": "GET",
       "verify": false,

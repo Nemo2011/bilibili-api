@@ -118,7 +118,7 @@ from bilibili_api import rank
 
 **Returns:** dict: 调用 API 返回的结果
 
-## async def get_music_rank_weakly_detail()
+## async def get_music_rank_weekly_detail()
 
 | name | type | description |
 | - | - | - |
@@ -128,7 +128,7 @@ from bilibili_api import rank
 
 **Returns:** dict: 调用 API 返回的结果
 
-## async def get_music_rank_weakly_musics()
+## async def get_music_rank_weekly_musics()
 
 | name | type | description |
 | - | - | - |
