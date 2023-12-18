@@ -37,13 +37,13 @@ class MedialistOrder(Enum):
     """
     medialist排序顺序。
 
-    + PUBDATE : 上传日期倒序。
-    + COLLECT : 收藏量倒序。
-    + VIEW    : 播放量倒序。
+    + PUBDATE : 上传日期。
+    + COLLECT : 收藏量。
+    + PLAY    : 播放量。
     """
 
     PUBDATE = 1
-    VIEW = 2
+    PLAY = 2
     COLLECT = 3
 
 
