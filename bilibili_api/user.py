@@ -451,7 +451,7 @@ class User:
         ps: int = 20,
         direction: bool = False,
         desc: bool = True,
-        sort_field: int = MedialistOrder.PUBDATE,
+        sort_field: MedialistOrder = MedialistOrder.PUBDATE,
         tid: int = 0,
         with_current: bool = False
     ) -> dict:
@@ -483,7 +483,7 @@ class User:
             "ps": ps,
             "direction": direction,
             "desc": desc,
-            "sort_field": sort_field,
+            "sort_field": sort_field.value,
             "tid": tid,
             "with_current": with_current
         }
