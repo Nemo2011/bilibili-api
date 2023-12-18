@@ -33,6 +33,20 @@ class VideoOrder(Enum):
     VIEW = "click"
 
 
+class MedialistOrder(Enum):
+    """
+    medialist排序顺序。
+
+    + PUBDATE : 上传日期倒序。
+    + COLLECT : 收藏量倒序。
+    + VIEW    : 播放量倒序。
+    """
+
+    PUBDATE = 1
+    VIEW = 2
+    COLLECT = 3
+
+
 class AudioOrder(Enum):
     """
     音频排序顺序。
@@ -423,6 +437,55 @@ class User:
             "pn": pn,
             "keyword": keyword,
             "order": order.value,
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    async def get_media_list(
+        self,
+        mobi_app: str = 'web',
+        type_: int = 1,
+        oid: int|None = None,
+        otype: int = 2,
+        ps: int = 20,
+        direction: bool = False,
+        desc: bool = True,
+        sort_field: int = MedialistOrder.PUBDATE,
+        tid: int = 0,
+        with_current: bool = False
+    ) -> dict:
+        """
+        以 medialist 形式获取用户投稿信息。
+
+        Args:
+            mobi_app        (str, optional)         : 未知
+            type_           (int)                   : 未知
+            oid             (int, optional)         : 未知
+            otype           (int, optional)         : 未知
+            ps              (int, optional)         : 每一页的番剧数. Defaults to 20. Max 100
+            direction       (bool, optional)        : 未知
+            desc            (bool, optional)        : 倒序排序. Defaults to True.
+            sort_field      (int, optional)         : 用于排序的栏  1 发布时间， 2 播放量
+            tid             (int, optional)         : 分区 ID. Defaults to 0（全部）.
+            with_current    (bool, optional)        : 未知
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["media_list"]
+        params = {
+            "mobi_app": mobi_app,
+            "type": type_,
+            "biz_id": self.__uid,
+            "oid": oid,
+            "otype": otype,
+            "ps": ps,
+            "direction": direction,
+            "desc": desc,
+            "sort_field": sort_field,
+            "tid": tid,
+            "with_current": with_current
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result

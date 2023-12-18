@@ -18,6 +18,18 @@ from bilibili_api import user
 
 ---
 
+## class VideoOrder
+
+**Extends:** enum.Enum
+
+视频排序顺序。
+
++ PUBDATE : 上传日期倒序。
++ COLLECT: 收藏量倒序。
++ VIEW  : 播放量倒序。
+
+---
+
 ## class ChannelOrder
 
 **Extends:** enum.Enum
@@ -259,6 +271,25 @@ from bilibili_api import user
 | ps      | (int, optional)      | 每一页的视频数. Defaults to 30.             |
 | keyword | str, optional        | 搜索关键词. Defaults to "".               |
 | order   | VideoOrder, optional | 排序方式. Defaults to VideoOrder.PUBDATE |
+
+获取用户投稿视频信息。
+
+**Returns:** 调用接口返回的内容。
+
+#### async def get_media_list()
+
+| name         | type           | description                              |
+|--------------|----------------|------------------------------------------|
+| mobi_app     | str, optional  | 未知                                       |
+| type         | int            | int: 未知， 必填                              |
+| oid          | int, optional  | 未知                                       |
+| otype        | int, optional  | 未知                                       |
+| ps           | int, optional  | 每一页的视频数. Defaults to 20.                 |
+| direction    | bool, optional | 未知                                       |
+| desc         | bool, optional | 是否倒序                                     |
+| sort_field   | int, optional  | 排序方式. Defaults to MedialistOrder.PUBDATE |
+| tid          | int, optional  | 分区 ID，0 表示全部                             |
+| with_current | bool, optional | 未知                                       |
 
 获取用户投稿视频信息。
 

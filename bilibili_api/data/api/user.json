@@ -126,6 +126,26 @@
       },
       "comment": "搜索用户视频"
     },
+    "media_list": {
+      "url": "https://api.bilibili.com/x/v2/medialist/resource/list",
+      "method": "GET",
+      "verify": false,
+      "wbi": true,
+      "params": {
+        "mobi_app": "str: 未知",
+        "type": "int: 未知， 必填",
+        "biz_id": "int: uid",
+        "oid": "int: 未知",
+        "otype": "int: 未知",
+        "ps": "int: 每页视频数量， 最大为100",
+        "direction": "bool: 未知",
+        "desc": "bool: 是否逆序排列",
+        "sort_field": "int: 用于排序的栏 1 发布时间，2 播放量，3 收藏量",
+        "tid": "int: 分区 ID，0 表示全部",
+        "with_current": "bool: 未知"
+      },
+      "comment": "以medialist形式获取用户视频列表"
+    },
     "reservation": {
       "url": "https://api.bilibili.com/x/space/reservation",
       "method": "GET",
