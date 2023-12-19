@@ -33,6 +33,20 @@ class VideoOrder(Enum):
     VIEW = "click"
 
 
+class MedialistOrder(Enum):
+    """
+    medialist排序顺序。
+
+    + PUBDATE : 上传日期。
+    + PLAY    : 播放量。
+    + COLLECT : 收藏量。
+    """
+
+    PUBDATE = 1
+    PLAY = 2
+    COLLECT = 3
+
+
 class AudioOrder(Enum):
     """
     音频排序顺序。
@@ -423,6 +437,49 @@ class User:
             "pn": pn,
             "keyword": keyword,
             "order": order.value,
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    async def get_media_list(
+        self,
+        oid: int|None = None,
+        ps: int = 20,
+        direction: bool = False,
+        desc: bool = True,
+        sort_field: MedialistOrder = MedialistOrder.PUBDATE,
+        tid: int = 0,
+        with_current: bool = False
+    ) -> dict:
+        """
+        以 medialist 形式获取用户投稿信息。
+
+        Args:
+            oid             (int, optional)         : 起始视频 aid， 默认为列表开头
+            ps              (int, optional)         : 每一页的视频数. Defaults to 20. Max 100
+            direction       (bool, optional)        : 相对于给定oid的查询方向 True 向列表末尾方向 False 向列表开头方向 Defaults to False.
+            desc            (bool, optional)        : 倒序排序. Defaults to True.
+            sort_field      (int, optional)         : 用于排序的栏  1 发布时间，2 播放量，3 收藏量
+            tid             (int, optional)         : 分区 ID. Defaults to 0（全部）. 1 部分（未知）
+            with_current    (bool, optional)        : 返回的列表中是否包含给定oid自身 Defaults to False.
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["media_list"]
+        params = {
+            "mobi_app": 'web',
+            "type": 1,
+            "biz_id": self.__uid,
+            "oid": oid,
+            "otype": 2,
+            "ps": ps,
+            "direction": direction,
+            "desc": desc,
+            "sort_field": sort_field.value,
+            "tid": tid,
+            "with_current": with_current
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
