@@ -132,17 +132,17 @@
       "verify": false,
       "wbi": true,
       "params": {
-        "mobi_app": "str: 未知",
-        "type": "int: 未知， 必填",
+        "mobi_app": "str: 定值 web",
+        "type": "int: 视频类型，通过uid获取用户视频时为1",
         "biz_id": "int: uid",
-        "oid": "int: 未知",
-        "otype": "int: 未知",
+        "oid": "int: 起始视频 aid， 默认为列表开头",
+        "otype": "int: oid类型， 接受任意值不影响结果",
         "ps": "int: 每页视频数量， 最大为100",
-        "direction": "bool: 未知",
-        "desc": "bool: 是否逆序排列",
+        "direction": "bool: 相对于给定oid的查询方向，true：向列表末尾方向，false：向列表开头方向",
+        "desc": "bool: 列表是否逆序排列",
         "sort_field": "int: 用于排序的栏 1 发布时间，2 播放量，3 收藏量",
-        "tid": "int: 分区 ID，0 表示全部",
-        "with_current": "bool: 未知"
+        "tid": "int: 分区 ID，0 表示全部， 1 部分（未知），不接受2及以上",
+        "with_current": "bool: 返回的列表中是否包含给定oid自身"
       },
       "comment": "以medialist形式获取用户视频列表"
     },
