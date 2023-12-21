@@ -20,6 +20,7 @@ from urllib.parse import quote
 
 import httpx
 import aiohttp
+from fake_useragent import UserAgent
 
 from .sync import sync
 from .. import settings
