@@ -1,0 +1,26 @@
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+name = "bilibili-api-python"
+dependencies = [
+    "aiohttp",
+    "beautifulsoup4",
+    "colorama",
+    "lxml",
+    "pyyaml",
+    "brotli",
+    "httpx",
+    "qrcode",
+    "requests",
+    "APScheduler",
+    "rsa",
+    "pillow",
+    "tqdm",
+    "yarl",
+    "pycryptodomex",
+    "qrcode-terminal",
+    "fake-useragent",
+]
+requires-python = ">=3.8"
