@@ -502,6 +502,7 @@
         "mid": "int: uid"
       },
       "verify": true,
+      "wbi": true,
       "comment": "获取与某用户的关系"
     }
   },
