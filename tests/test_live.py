@@ -48,8 +48,8 @@ async def test_i_get_self_info():
     return await live.get_self_info(get_credential())
 
 
-async def test_j_get_chat_conf():
-    return await l.get_chat_conf()
+async def test_j_get_danmu_info():
+    return await l.get_danmu_info()
 
 
 async def test_k_ban_user():
