@@ -1,4 +1,8 @@
+import os
+
 import setuptools
+
+import bilibili_api
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
@@ -6,8 +10,10 @@ with open("README.md", "r", encoding="utf-8") as f:
 with open("requirements.txt", "r", encoding="utf-8") as f:
     requires = f.read()
 
-with open("github.txt", "r", encoding="utf-8") as f:
-    cfg = f.read().split("|")
+cfg = [bilibili_api.BILIBILI_API_VERSION, "main"]
+if os.path.exists("github.txt"):
+    with open("github.txt", "r", encoding="utf-8") as f:
+        cfg = f.read().split("|")
 
 setuptools.setup(
     name="bilibili-api-python" if "dev" not in cfg[1] else "bilibili-api-dev",
