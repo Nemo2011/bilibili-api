@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bilibili-api-python"
+authors = [
+    { name = "Nemo2011", email = "yimoxia@outlook.com" },
+]
+maintainers = [
+    { name = "MoyuScript" },
+    { name = "Nemo2011" },
+]
+dynamic = ["version", "readme", "dependencies"]
+license = { file = "LICENSE", content-type = "text/plain" }
+description = "The fork of module bilibili-api. 哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。"
+requires-python = ">=3.7"
+keywords = ["bilibili", "api", "spider"]
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: Chinese (Simplified)",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+scripts = { "bilibili-api-docs" = " bilibili_api.tools.opendocs.__main__:main", "ivitools" = "bilibili_api.tools.ivitools.__main__:main" }
+
+[tool.setuptools.dynamic]
+version = { attr = "bilibili_api.BILIBILI_API_VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.packages.find]
+include = ["bilibili_api"]
+exclude = []
