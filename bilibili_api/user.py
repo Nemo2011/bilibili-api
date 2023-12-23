@@ -437,6 +437,12 @@ class User:
             "pn": pn,
             "keyword": keyword,
             "order": order.value,
+            # -352 https://github.com/Nemo2011/bilibili-api/issues/595
+            "dm_img_list": "[]", # 鼠标/键盘操作记录
+            # WebGL 1.0 (OpenGL ES 2.0 Chromium)
+            "dm_img_str": "V2ViR0wgMS4wIChPcGVuR0wgRVMgMi4wIENocm9taXVtKQ",
+            # ANGLE (Intel, Intel(R) UHD Graphics 630 (0x00003E9B) Direct3D11 vs_5_0 ps_5_0, D3D11)Google Inc. (Intel
+            "dm_cover_img_str": "QU5HTEUgKEludGVsLCBJbnRlbChSKSBVSEQgR3JhcGhpY3MgNjMwICgweDAwMDAzRTlCKSBEaXJlY3QzRDExIHZzXzVfMCBwc181XzAsIEQzRDExKUdvb2dsZSBJbmMuIChJbnRlbC",
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
