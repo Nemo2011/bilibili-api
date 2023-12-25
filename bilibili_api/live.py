@@ -277,7 +277,7 @@ class LiveRoom:
     async def get_popular_ticket_num(self) -> dict:
         """
         获取自己在直播间的人气票数量（付费人气票已赠送的量，免费人气票的持有量）
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -295,7 +295,7 @@ class LiveRoom:
     async def send_popular_ticket(self) -> dict:
         """
         赠送自己在直播间的所有免费人气票
-        
+
         Returns:
             dict: 调用 API 返回的结果
         """
@@ -310,7 +310,7 @@ class LiveRoom:
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
-        
+
     async def get_dahanghai(self, page: int = 1) -> dict:
         """
         获取大航海列表
@@ -625,6 +625,28 @@ class LiveRoom:
         api = API["info"]["general_info"]
         params = {
             "actId": act_id,
+            "roomId": self.room_display_id,
+            "uid": await self.__get_ruid(),
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    async def update_news(self, content: str) -> dict:
+        """
+        更新公告
+
+        Args:
+            content: 最多60字符
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["info"]["update_news"]
+        params = {
+            "content": content,
             "roomId": self.room_display_id,
             "uid": await self.__get_ruid(),
         }
@@ -1088,7 +1110,7 @@ class LiveDanmaku(AsyncEvent):
         if not self.credential.has_dedeuserid():
             try:
                 info = await get_self_info(self.credential)
-                self.credential.dedeuserid = str(info["uid"])   
+                self.credential.dedeuserid = str(info["uid"])
             except:
                 pass  # 留到下面一起抛出错误
         self.credential.raise_for_no_dedeuserid()
