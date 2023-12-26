@@ -32,7 +32,7 @@
       },
       "comment": "获取房间信息（真实房间号，封禁情况等）"
     },
-    "chat_conf": {
+    "danmu_info": {
       "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo",
       "method": "GET",
       "verify": true,

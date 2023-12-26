@@ -113,7 +113,7 @@ from bilibili_api import live
 
 **Returns:** 真实房间 id
 
-#### async def get_chat_conf()
+#### async def get_danmu_info()
 
 获取聊天弹幕服务器配置信息(websocket)
 

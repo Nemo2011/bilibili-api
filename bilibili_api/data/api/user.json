@@ -122,9 +122,32 @@
         "tid": "int: 分区 ID，0 表示全部",
         "pn": "int: 页码",
         "keyword": "str: 关键词，可为空",
-        "order": "str: pubdate 上传日期，click 播放量，stow 收藏量"
+        "order": "str: pubdate 上传日期，click 播放量，stow 收藏量",
+        "dm_img_list": "[]",
+        "dm_img_str": "V2ViR0wgMS4wIChPcGVuR0wgRVMgMi4wIENocm9taXVtKQ",
+        "dm_cover_img_str": "QU5HTEUgKEludGVsLCBJbnRlbChSKSBVSEQgR3JhcGhpY3MgNjMwICgweDAwMDAzRTlCKSBEaXJlY3QzRDExIHZzXzVfMCBwc181XzAsIEQzRDExKUdvb2dsZSBJbmMuIChJbnRlbC"
       },
       "comment": "搜索用户视频"
+    },
+    "media_list": {
+      "url": "https://api.bilibili.com/x/v2/medialist/resource/list",
+      "method": "GET",
+      "verify": false,
+      "wbi": true,
+      "params": {
+        "mobi_app": "str: 定值 web",
+        "type": "int: 视频类型，通过uid获取用户视频时为1",
+        "biz_id": "int: uid",
+        "oid": "int: 起始视频 aid， 默认为列表开头",
+        "otype": "int: oid类型， 接受任意值不影响结果",
+        "ps": "int: 每页视频数量， 最大为100",
+        "direction": "bool: 相对于给定oid的查询方向，true：向列表末尾方向，false：向列表开头方向",
+        "desc": "bool: 列表是否逆序排列",
+        "sort_field": "int: 用于排序的栏 1 发布时间，2 播放量，3 收藏量",
+        "tid": "int: 分区 ID，0 表示全部， 1 部分（未知），不接受2及以上",
+        "with_current": "bool: 返回的列表中是否包含给定oid自身"
+      },
+      "comment": "以medialist形式获取用户视频列表"
     },
     "reservation": {
       "url": "https://api.bilibili.com/x/space/reservation",
@@ -482,6 +505,7 @@
         "mid": "int: uid"
       },
       "verify": true,
+      "wbi": true,
       "comment": "获取与某用户的关系"
     }
   },

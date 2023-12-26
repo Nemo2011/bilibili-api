@@ -45,6 +45,10 @@ async def test_e_User_get_videos():
     return await u.get_videos()
 
 
+async def test_e_User_get_media_list():
+    return await u.get_media_list()
+
+
 async def test_f_User_get_audios():
     return await u.get_audios()
 

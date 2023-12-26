@@ -12,11 +12,11 @@ async def test_c_get_85_popular_video():
 
 
 async def test_d_get_weekly_hot_video_list():
-    return await hot.get_weakly_hot_videos_list()
+    return await hot.get_weekly_hot_videos_list()
 
 
 async def test_e_get_weekly_hot_video_content():
-    return await hot.get_weakly_hot_videos(161)
+    return await hot.get_weekly_hot_videos(161)
 
 
 async def test_f_get_hot_buzzwords():
