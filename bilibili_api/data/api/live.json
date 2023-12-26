@@ -149,7 +149,8 @@
         "roomId": "真实房间号",
         "uid": "直播者uid",
         "content": "内容, 最多60字符",
-        "csrf,csrf_token": "要给两个"
+        "csrf": "csrf",
+        "csrf_token": "csrf"
       },
       "comment": "更新房间公告"
     },
