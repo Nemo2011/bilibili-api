@@ -141,6 +141,19 @@
       },
       "comment": "获取自己在当前房间的大航海信息, 是否开通，等级，当前经验，同时可获得自己开通的所有航海日志"
     },
+    "update_news": {
+      "url": "https://api.live.bilibili.com/xlive/app-blink/v1/index/updateRoomNews",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "roomId": "真实房间号",
+        "uid": "直播者uid",
+        "content": "内容, 最多60字符",
+        "csrf": "csrf",
+        "csrf_token": "csrf"
+      },
+      "comment": "更新房间公告"
+    },
     "seven_rank": {
       "url": "https://api.live.bilibili.com/rankdb/v1/RoomRank/webSevenRank",
       "method": "GET",

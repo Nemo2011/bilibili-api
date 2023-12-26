@@ -632,6 +632,28 @@ class LiveRoom:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def update_news(self, content: str) -> dict:
+        """
+        更新公告
+
+        Args:
+            content: 最多60字符
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["info"]["update_news"]
+        params = {
+            "content": content,
+            "roomId": self.room_display_id,
+            "uid": await self.__get_ruid(),
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
     async def get_gift_common(self) -> dict:
         """
         获取当前直播间内的普通礼物列表
