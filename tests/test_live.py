@@ -120,6 +120,10 @@ async def test_s_get_general_info():
     return await l.get_general_info()
 
 
+async def test_update_news():
+    return await l.update_news("hello\nit's me")
+
+
 async def test_t_get_self_live_info():
     return await live.get_self_live_info(get_credential())
 
