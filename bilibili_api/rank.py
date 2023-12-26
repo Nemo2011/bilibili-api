@@ -212,12 +212,12 @@ async def get_music_rank_list() -> dict:
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API["info"]["music_weakly_series"]
+    api = API["info"]["music_weekly_series"]
     params = {"list_type": 1}
     return await Api(**api).update_params(**params).result
 
 
-async def get_music_rank_weakly_detail(week: int = 1) -> dict:
+async def get_music_rank_weekly_detail(week: int = 1) -> dict:
     """
     获取全站音乐榜一周的详细信息(不包括具体的音频列表)
 
@@ -227,12 +227,12 @@ async def get_music_rank_weakly_detail(week: int = 1) -> dict:
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API["info"]["music_weakly_details"]
+    api = API["info"]["music_weekly_details"]
     params = {"list_id": week}
     return await Api(**api).update_params(**params).result
 
 
-async def get_music_rank_weakly_musics(week: int = 1) -> dict:
+async def get_music_rank_weekly_musics(week: int = 1) -> dict:
     """
     获取全站音乐榜一周的音频列表(返回的音乐的 id 对应了 music.Music 类创建实例传入的 id)
 
@@ -242,7 +242,7 @@ async def get_music_rank_weakly_musics(week: int = 1) -> dict:
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API["info"]["music_weakly_content"]
+    api = API["info"]["music_weekly_content"]
     params = {"list_id": week}
     return await Api(**api).update_params(**params).result
 
