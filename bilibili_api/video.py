@@ -2360,8 +2360,9 @@ class VideoDownloadURLDataDetecter:
                     streams.append(flac_stream)
             if dolby_data and (not no_dolby_audio):
                 if dolby_data["audio"]:
-                    dolby_stream_url = dolby_data["audio"]["baseUrl"]
-                    dolby_stream_quality = AudioQuality(dolby_data["audio"]["id"])
+                    dolby_stream_data = dolby_data["audio"][0]
+                    dolby_stream_url = dolby_stream_data["baseUrl"]
+                    dolby_stream_quality = AudioQuality(dolby_stream_data["id"])
                     dolby_stream = AudioStreamDownloadURL(
                         url=dolby_stream_url, audio_quality=dolby_stream_quality
                     )
