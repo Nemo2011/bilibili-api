@@ -40,6 +40,18 @@ from .exceptions import (
 API = get_api("video")
 
 
+async def get_cid_info_sync(cid: int):
+    """
+    获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
+
+    Returns:
+        dict: 调用 https://hd.biliplus.com 的 API 返回的结果
+    """
+    api = API["info"]["cid_info"]
+    params = {"cid": cid}
+    return Api(**api).update_params(**params).result_sync
+
+
 async def get_cid_info(cid: int):
     """
     获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
@@ -569,7 +581,8 @@ class Video:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_ai_conclusion(self, cid: Optional[int] = None, page_index: Optional[int] = None, up_mid: Optional[int] = None) -> dict:
+    async def get_ai_conclusion(self, cid: Optional[int] = None, page_index: Optional[int] = None,
+                                up_mid: Optional[int] = None) -> dict:
         """
         获取稿件 AI 总结结果。
 
@@ -592,7 +605,8 @@ class Video:
             cid = await self.__get_cid_by_index(page_index)
 
         api = API["info"]["ai_conclusion"]
-        params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "cid": cid, "up_mid": await self.get_up_mid() if up_mid is None else up_mid}
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "cid": cid,
+                  "up_mid": await self.get_up_mid() if up_mid is None else up_mid}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -1069,7 +1083,7 @@ class Video:
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
-    
+
     async def has_liked_danmakus(
         self,
         page_index: Union[int, None] = None,
@@ -1239,7 +1253,8 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         api = API["info"]["online"]
-        params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "cid": cid if cid is not None else await self.get_cid(page_index=page_index)}
+        params = {"aid": self.get_aid(), "bvid": self.get_bvid(),
+                  "cid": cid if cid is not None else await self.get_cid(page_index=page_index)}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -1989,13 +2004,13 @@ class VideoOnlineMonitor(AsyncEvent):
         real_data = []
         while offset < len(data):
             region_header = struct.unpack(">IIII", data[:16])
-            region_data = data[offset : offset + region_header[0]]
+            region_data = data[offset: offset + region_header[0]]
             real_data.append(
                 {
                     "type": region_header[2],
                     "number": region_header[3],
                     "data": json.loads(
-                        region_data[offset + 18 : offset + 18 + (region_header[0] - 16)]
+                        region_data[offset + 18: offset + 18 + (region_header[0] - 16)]
                     ),
                 }
             )

@@ -21,6 +21,7 @@ from .utils.picture import Picture
 from .utils.credential import Credential
 from .exceptions import ApiException, ArgsException
 from .utils.network import Api, get_session
+from .video import get_cid_info_sync
 
 API = get_api("note")
 API_ARTICLE = get_api("article")
@@ -276,12 +277,7 @@ class Note:
                 if not isinstance(field["insert"], str):
                     if "tag" in field["insert"].keys():
                         node = VideoCardNode()
-                        node.aid = json.loads(
-                            httpx.get(
-                                "https://hd.biliplus.com/api/cidinfo?cid="
-                                + str(field["insert"]["tag"]["cid"])
-                            ).text
-                        )["data"]["cid"]
+                        node.aid = get_cid_info_sync(field["insert"]["tag"]["cid"])["cid"]
                         self.__children.append(node)
                     elif "imageUpload" in field["insert"].keys():
                         node = ImageNode()

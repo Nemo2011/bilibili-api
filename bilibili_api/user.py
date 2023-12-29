@@ -197,6 +197,24 @@ class OrderType(Enum):
     asc = "asc"
 
 
+async def name2uid_sync(names: Union[str, List[str]]):
+    """
+    将用户名转为 uid
+
+    Args:
+        names (str/List[str]): 用户名
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    if isinstance(names, str):
+        n = names
+    else:
+        n = ",".join(names)
+    params = {"names": n}
+    return Api(**API["info"]["name_to_uid"]).update_params(**params).result_sync
+
+
 async def name2uid(names: Union[str, List[str]]):
     """
     将用户名转为 uid
@@ -233,6 +251,21 @@ class User:
             credential = Credential()
         self.credential = credential
         self.__self_info = None
+
+    def get_user_info_sync(self) -> dict:
+        """
+        获取用户信息（昵称，性别，生日，签名，头像 URL，空间横幅 URL 等）
+
+        Returns:
+            dict: 调用接口返回的内容。
+
+        [用户空间详细信息](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md#%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF)
+        """
+        params = {
+            "mid": self.__uid,
+        }
+        result = Api(**API["info"]["info"], credential=self.credential, params=params).result_sync
+        return result
 
     async def get_user_info(self) -> dict:
         """
@@ -438,7 +471,7 @@ class User:
             "keyword": keyword,
             "order": order.value,
             # -352 https://github.com/Nemo2011/bilibili-api/issues/595
-            "dm_img_list": "[]", # 鼠标/键盘操作记录
+            "dm_img_list": "[]",  # 鼠标/键盘操作记录
             # WebGL 1.0 (OpenGL ES 2.0 Chromium)
             "dm_img_str": "V2ViR0wgMS4wIChPcGVuR0wgRVMgMi4wIENocm9taXVtKQ",
             # ANGLE (Intel, Intel(R) UHD Graphics 630 (0x00003E9B) Direct3D11 vs_5_0 ps_5_0, D3D11)Google Inc. (Intel
@@ -450,7 +483,7 @@ class User:
 
     async def get_media_list(
         self,
-        oid: int|None = None,
+        oid: int | None = None,
         ps: int = 20,
         direction: bool = False,
         desc: bool = True,
@@ -961,7 +994,7 @@ class User:
             meta = item["meta"]
             channel_series.channel_meta_cache[
                 str(ChannelSeriesType.SEASON.value) + "-" + str(id_)
-            ] = meta
+                ] = meta
             channels.append(
                 ChannelSeries(
                     self.__uid, ChannelSeriesType.SEASON, id_, self.credential
@@ -972,7 +1005,7 @@ class User:
             meta = item["meta"]
             channel_series.channel_meta_cache[
                 str(ChannelSeriesType.SERIES.value) + "-" + str(id_)
-            ] = meta
+                ] = meta
             channels.append(
                 ChannelSeries(
                     self.__uid, ChannelSeriesType.SERIES, id_, self.credential

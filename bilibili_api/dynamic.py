@@ -15,6 +15,7 @@ from typing import Any, List, Tuple, Union, Optional
 
 import httpx
 
+from .user import name2uid_sync
 from .utils import utils
 from .utils.sync import sync
 from .utils.picture import Picture
@@ -303,14 +304,7 @@ class BuildDynmaic:
         """
         if isinstance(uid, user.User):
             uid = uid.__uid
-        name = httpx.get(
-            "https://api.bilibili.com/x/space/acc/info",
-            params={"mid": uid},
-            headers={
-                "User-Agent": "Mozilla/5.0",
-                "Referer": "https://www.bilibili.com",
-            },
-        ).json()["data"]["name"]
+        name = user.User(uid).get_user_info_sync().get("name")
         self.contents.append(
             {"biz_id": uid, "type": DynmaicContentType.AT.value, "raw_text": f"@{name}"}
         )
@@ -339,17 +333,12 @@ class BuildDynmaic:
         return self
 
     def add_vote(self, vote: vote.Vote) -> "BuildDynmaic":
-        vote_info = httpx.get(
-            "https://api.vc.bilibili.com/vote_svr/v1/vote_svr/vote_info?vote_id={}".format(
-                vote.get_vote_id()
-            )
-        ).json()
-        title = vote_info["data"]["info"]["title"]
+        vote.get_info_sync()
         self.contents.append(
             {
                 "biz_id": str(vote.get_vote_id()),
                 "type": DynmaicContentType.VOTE.value,
-                "raw_text": title,
+                "raw_text": vote.title,
             }
         )
         return self
@@ -383,11 +372,8 @@ class BuildDynmaic:
             for match in match_result:
                 uname = match.group()
                 try:
-                    name_to_uid_resp = httpx.get(
-                        "https://api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/name_to_uid?",
-                        params={"names": uname},
-                    )
-                    uid = name_to_uid_resp.json()["data"]["uid_list"][0]["uid"]
+                    name_to_uid_resp = name2uid_sync(uname)
+                    uid = name_to_uid_resp["uid_list"][0]["uid"]
                 except KeyError:
                     # 没有此用户
                     continue

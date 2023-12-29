@@ -28,7 +28,7 @@ from .utils.sync import sync
 from .utils.utils import get_api
 from .utils.credential import Credential
 from .exceptions.LoginError import LoginError
-from .utils.network import to_form_urlencoded
+from .utils.network import to_form_urlencoded, Api
 from .utils.network import HEADERS, get_session, get_spi_buvid_sync
 from .utils.captcha import get_result, close_server, start_server
 from .utils.safecenter_captcha import get_result as safecenter_get_result
@@ -86,7 +86,7 @@ def make_qrcode(url) -> str:
 
 def update_qrcode_data() -> dict:
     api = API["qrcode"]["get_qrcode_and_token"]
-    qrcode_data = httpx.get(api["url"], follow_redirects=True, headers=HEADERS).json()["data"]
+    qrcode_data = Api(credential=credential, **api).result_sync
     return qrcode_data
 
 
@@ -203,12 +203,7 @@ def login_with_qrcode_term() -> Credential:
 def login_with_key(key: str) -> dict:
     params = {"qrcode_key": key, "source": "main-fe-header"}
     events_api = API["qrcode"]["get_events"]
-    events = httpx.get(
-        events_api["url"],
-        params=params,
-        cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
-        headers=HEADERS
-    ).json()
+    events = Api(credential=credential, **events_api, params=params).result_sync
     return events
 
 
@@ -602,4 +597,4 @@ class Check:
         api = API["safecenter"]["check_info"]
         self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
         params = {"tmp_code": self.tmp_token}
-        return json.loads(httpx.get(api["url"], params=params).text)["data"]
+        return Api(credential=credential, **api, params=params).result_sync

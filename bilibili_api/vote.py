@@ -101,6 +101,19 @@ class Vote:
     def get_vote_id(self) -> int:
         return self.__vote_id
 
+    def get_info_sync(self) -> dict:
+        """
+        获取投票详情
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["vote_info"]
+        params = {"vote_id": self.get_vote_id()}
+        info = Api(**api, params=params).result_sync
+        self.title = info["info"]["title"]  # 为 dynmaic.BuildDnamic.add_vote 缓存 title
+        return info
+
     async def get_info(self) -> dict:
         """
         获取投票详情
