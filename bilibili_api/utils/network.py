@@ -370,7 +370,7 @@ class Api:
             cookies["buvid3"] = buvid3
         else:
             cookies["buvid3"] = self.credential.buvid3
-        cookies["Domain"] = ".bilibili.com"
+        # cookies["Domain"] = ".bilibili.com"
 
         config = {
             "url": self.url,
@@ -386,16 +386,6 @@ class Api:
         if self.json_body:
             config["headers"]["Content-Type"] = "application/json"
             config["data"] = json.dumps(config["data"])
-
-        if settings.http_client == settings.HTTPClient.AIOHTTP:
-            if config["files"] != {}:
-                data = aiohttp.FormData()
-                for key, val in config["data"].items():
-                    data.add_field(key, val)
-                for key, val in config["files"].items():
-                    data.add_field(key, val)
-                config["data"] = data
-            config.pop("files")
 
         return config
 
@@ -448,7 +438,7 @@ class Api:
             cookies["buvid3"] = buvid3
         else:
             cookies["buvid3"] = self.credential.buvid3
-        cookies["Domain"] = ".bilibili.com"
+        # cookies["Domain"] = ".bilibili.com"
 
         config = {
             "url": self.url,
@@ -466,13 +456,11 @@ class Api:
             config["data"] = json.dumps(config["data"])
 
         if settings.http_client == settings.HTTPClient.AIOHTTP:
-            if config["files"] != {}:
-                data = aiohttp.FormData()
-                for key, val in config["data"].items():
-                    data.add_field(key, val)
-                for key, val in config["files"].items():
-                    data.add_field(key, val)
-                config["data"] = data
+            config["data"].update(config["files"])
+            data = aiohttp.FormData()
+            for key, val in config["data"].items():
+                data.add_field(key, val)
+            config["data"] = data
             config.pop("files")
 
         return config

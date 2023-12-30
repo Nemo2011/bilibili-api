@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import httpx
 from yarl import URL
 from PIL import Image
+import io
 
 from .utils import get_api
 from .credential import Credential
@@ -20,15 +21,15 @@ class Picture:
 
     Args:
         height    (int)  : 高度
-        
+
         imageType (str)  : 格式，例如: png
-        
+
         size      (Any)  : 尺寸
-        
+
         url       (str)  : 图片链接
-        
+
         width     (int)  : 宽度
-        
+
         content   (bytes): 图片内容
 
     可以不实例化，用 `from_url`, `from_content` 或 `from_file` 加载图片。
@@ -133,7 +134,7 @@ class Picture:
 
         Args:
             content (str): 图片内容
-            
+
             format  (str): 图片后缀名，如 `webp`, `jpg`, `ico`
 
         Returns:
@@ -144,6 +145,12 @@ class Picture:
         obj.url = "bytes://" + content.decode("utf-8", errors="ignore")
         obj.__set_picture_meta_from_bytes(format)
         return obj
+
+    def _write_to_temp_file(self):
+        tmp_dir = tempfile.gettempdir()
+        img_path = os.path.join(tmp_dir, "test." + self.imageType)
+        open(img_path, "wb").write(self.content)
+        return img_path
 
     async def upload_file(self, credential: Credential, data: dict = None) -> "Picture":
         """
@@ -174,31 +181,12 @@ class Picture:
         Returns:
             Picture: `self`
         """
-        credential.raise_for_no_sessdata()
-        credential.raise_for_no_bili_jct()
-        api = get_api("dynamic")["send"]["upload_img"]
-        raw = self.content
-        data = {
-            "biz": "new_dyn",
-            "category": "daily",
-            "csrf": credential.bili_jct,
-            "csrf_token": credential.bili_jct,
-        }
-        sess = httpx.Client()
-        upload_info = sess.request(
-            "POST",
-            url=api["url"],
-            data=data,
-            files={"file_up": raw},
-            headers={
-                "Referer": "https://www.bilibili.com",
-                "User-Agent": "Mozilla/5.0",
-            },
-            cookies=credential.get_cookies(),
-        ).json()["data"]
-        self.url = upload_info["image_url"]
-        self.height = upload_info["image_height"]
-        self.width = upload_info["image_width"]
+        from ..dynamic import upload_image_sync
+
+        res = upload_image_sync(self, credential)
+        self.url = res["image_url"]
+        self.height = res["image_height"]
+        self.width = res["image_width"]
         self.content = self.from_url(self.url).content
         return self
 
