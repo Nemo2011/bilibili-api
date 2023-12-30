@@ -26,15 +26,6 @@ from .utils import get_api
 from .credential import Credential
 from ..exceptions import ApiException, ResponseCodeException
 
-# 可自定义 http_client 的类型
-http_client_type: Union[
-    Type[httpx.AsyncClient], Type[aiohttp.ClientSession]
-] = httpx.AsyncClient
-if settings.http_client == settings.HTTPClient.AIOHTTP:
-    http_client_type = aiohttp.ClientSession
-elif settings.http_client == settings.HTTPClient.HTTPX:
-    http_client_type = httpx.AsyncClient
-
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
 __aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
 last_proxy = ""
@@ -43,8 +34,70 @@ buvid3 = ""
 
 # 获取密钥时的申必数组
 OE = [
-    46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41, 13,
-    37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36, 20, 34, 44, 52,
+    46,
+    47,
+    18,
+    2,
+    53,
+    8,
+    23,
+    32,
+    15,
+    50,
+    10,
+    31,
+    58,
+    3,
+    45,
+    35,
+    27,
+    43,
+    5,
+    49,
+    33,
+    9,
+    42,
+    19,
+    29,
+    28,
+    14,
+    39,
+    12,
+    38,
+    41,
+    13,
+    37,
+    48,
+    7,
+    16,
+    24,
+    55,
+    40,
+    61,
+    26,
+    17,
+    0,
+    1,
+    60,
+    51,
+    30,
+    4,
+    22,
+    25,
+    54,
+    21,
+    56,
+    59,
+    6,
+    63,
+    57,
+    62,
+    11,
+    36,
+    20,
+    34,
+    44,
+    52,
 ]
 # 使用 Referer 和 UA 请求头以绕过反爬虫机制
 HEADERS = {
@@ -334,6 +387,16 @@ class Api:
             config["headers"]["Content-Type"] = "application/json"
             config["data"] = json.dumps(config["data"])
 
+        if settings.http_client == settings.HTTPClient.AIOHTTP:
+            if config["files"] != {}:
+                data = aiohttp.FormData()
+                for key, val in config["data"].items():
+                    data.add_field(key, val)
+                for key, val in config["files"].items():
+                    data.add_field(key, val)
+                config["data"] = data
+            config.pop("files")
+
         return config
 
     async def _prepare_request(self, **kwargs) -> dict:
@@ -402,7 +465,26 @@ class Api:
             config["headers"]["Content-Type"] = "application/json"
             config["data"] = json.dumps(config["data"])
 
+        if settings.http_client == settings.HTTPClient.AIOHTTP:
+            if config["files"] != {}:
+                data = aiohttp.FormData()
+                for key, val in config["data"].items():
+                    data.add_field(key, val)
+                for key, val in config["files"].items():
+                    data.add_field(key, val)
+                config["data"] = data
+            config.pop("files")
+
         return config
+
+    def _get_resp_text_sync(self, resp: httpx.Response):
+        return resp.text
+
+    async def _get_resp_text(self, resp: Union[httpx.Response, aiohttp.ClientResponse]):
+        if isinstance(resp, httpx.Response):
+            return resp.text
+        else:
+            return await resp.text()
 
     @retry_sync(times=settings.wbi_retry_times)
     def request_sync(self, raw: bool = False, **kwargs) -> Union[int, str, dict]:
@@ -415,7 +497,9 @@ class Api:
         config = self._prepare_request_sync(**kwargs)
         session = httpx.Client()
         resp = session.request(**config)
-        real_data = self._process_response(resp, raw=raw)
+        real_data = self._process_response(
+            resp, self._get_resp_text_sync(resp), raw=raw
+        )
         return real_data
 
     @retry(times=settings.wbi_retry_times)
@@ -429,16 +513,21 @@ class Api:
         config = await self._prepare_request(**kwargs)
         session: Union[httpx.AsyncClient, aiohttp.ClientSession]
         # 判断http_client的类型
-        if http_client_type == httpx.AsyncClient:
+        if settings.http_client == settings.HTTPClient.HTTPX:
             session = get_session()
-        elif http_client_type == aiohttp.ClientSession:
+        elif settings.http_client == settings.HTTPClient.AIOHTTP:
             session = get_aiohttp_session()
         resp = await session.request(**config)
-        real_data = self._process_response(resp, raw=raw)
+        real_data = self._process_response(
+            resp, await self._get_resp_text(resp), raw=raw
+        )
         return real_data
 
     def _process_response(
-        self, resp: Union[httpx.Response, aiohttp.ClientResponse], raw: bool = False
+        self,
+        resp: Union[httpx.Response, aiohttp.ClientResponse],
+        resp_txt: str,
+        raw: bool = False,
     ) -> Union[int, str, dict]:
         """
         处理接口的响应数据
@@ -451,11 +540,11 @@ class Api:
         if "callback" in self.params:
             # JSONP 请求
             resp_data: dict = json.loads(
-                re.match("^.*?({.*}).*$", resp.text, re.S).group(1)
+                re.match("^.*?({.*}).*$", resp_txt, re.S).group(1)
             )
         else:
             # JSON
-            resp_data: dict = json.loads(resp.text)
+            resp_data: dict = json.loads(resp_txt)
 
         if raw:
             return resp_data

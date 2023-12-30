@@ -24,6 +24,9 @@ e.x.:
 ``` python
 from bilibili_api import settings
 settings.http_client = settings.HTTPClient.AIOHTTP
+```
+
+**Note: 当前模块所有 `Web Socket` 操作强制使用 `aiohttp`**
 """
 
 proxy: str = ""
