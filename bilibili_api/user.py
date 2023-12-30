@@ -483,7 +483,7 @@ class User:
 
     async def get_media_list(
         self,
-        oid: int | None = None,
+        oid: Union[int, None] = None,
         ps: int = 20,
         direction: bool = False,
         desc: bool = True,
