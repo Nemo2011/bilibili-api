@@ -27,7 +27,7 @@ def get_api(field: str, *args) -> dict:
     )
     if os.path.exists(path):
         with open(path, encoding="utf8") as f:
-            data = json.loads(f.read())
+            data = json.load(f)
             for arg in args:
                 data = data[arg]
             return data
