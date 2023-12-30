@@ -27,7 +27,7 @@ from .utils import get_api
 from .credential import Credential
 from ..exceptions import ApiException, ResponseCodeException
 
-# 可自定义http_client的类型
+# 可自定义 http_client 的类型
 http_client_type: Union[Type[httpx.AsyncClient], Type[aiohttp.ClientSession]] = httpx.AsyncClient
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
 __aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
@@ -83,12 +83,6 @@ def retry_sync(times: int = 3):
             raise ApiException("重试达到最大次数")
 
         return inner
-
-    if isAsync(times):
-        # 防呆不防傻 防止有人 @retry() 不打括号
-        func = times
-        times = 3
-        return wrapper(func)
 
     return wrapper
 def retry(times: int = 3):
@@ -224,24 +218,24 @@ class Api:
         """
         return self.request_sync()
 
-    @property
-    def thread_result(self) -> Union[None, dict]:
-        """
-        通过 `threading.Thread` 同步获取请求结果
+    # @property
+    # def thread_result(self) -> Union[None, dict]:
+    #     """
+    #     通过 `threading.Thread` 同步获取请求结果
 
-        一般用于协程内同步获取数据
+    #     一般用于协程内同步获取数据
 
-        为什么协程里不直接 await self.result 呢
+    #     为什么协程里不直接 await self.result 呢
 
-        因为协程内有的地方不让异步
+    #     因为协程内有的地方不让异步
 
-        例如类的 `__init__()` 函数中需要获取请求结果时
-        """
-        job = threading.Thread(target=self.request_sync)
-        job.start()
-        while job.is_alive():
-            time.sleep(0.0167)
-        return self.__result
+    #     例如类的 `__init__()` 函数中需要获取请求结果时
+    #     """
+    #     job = threading.Thread(target=self.request_sync)
+    #     job.start()
+    #     while job.is_alive():
+    #         time.sleep(0.0167)
+    #     return self.__result
 
     def update_data(self, **kwargs) -> "Api":
         """
