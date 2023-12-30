@@ -12,7 +12,7 @@ from typing import Tuple, Union, Literal
 import httpx
 from yarl import URL
 
-from .. import Api
+from .network import Api
 from ..game import Game
 from ..manga import Manga
 from ..topic import Topic
