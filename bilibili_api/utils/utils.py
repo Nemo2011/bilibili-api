@@ -10,7 +10,7 @@ import random
 from typing import List, TypeVar
 
 
-def get_api(field: str) -> dict:
+def get_api(field: str, *args) -> dict:
     """
     获取 API。
 
@@ -27,7 +27,10 @@ def get_api(field: str) -> dict:
     )
     if os.path.exists(path):
         with open(path, encoding="utf8") as f:
-            return json.loads(f.read())
+            data = json.load(f)
+            for arg in args:
+                data = data[arg]
+            return data
     else:
         return {}
 

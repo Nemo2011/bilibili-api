@@ -10,11 +10,10 @@ import time
 import atexit
 import asyncio
 import hashlib
-import threading
 from functools import reduce
 from urllib.parse import urlencode
 from dataclasses import field, dataclass
-from typing import Any, Dict, Union, Coroutine
+from typing import Any, Dict, Union, Coroutine, Type
 from inspect import iscoroutinefunction as isAsync
 from urllib.parse import quote
 
@@ -26,6 +25,15 @@ from .. import settings
 from .utils import get_api
 from .credential import Credential
 from ..exceptions import ApiException, ResponseCodeException
+
+# 可自定义 http_client 的类型
+http_client_type: Union[
+    Type[httpx.AsyncClient], Type[aiohttp.ClientSession]
+] = httpx.AsyncClient
+if settings.http_client == settings.HTTPClient.AIOHTTP:
+    http_client_type = aiohttp.ClientSession
+elif settings.http_client == settings.HTTPClient.HTTPX:
+    http_client_type = httpx.AsyncClient
 
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
 __aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
@@ -44,6 +52,46 @@ HEADERS = {
     "Referer": "https://www.bilibili.com",
 }
 API = get_api("credential")
+
+
+def retry_sync(times: int = 3):
+    """
+    重试装饰器
+
+    Args:
+        times (int): 最大重试次数 默认 3 次 负数则一直重试直到成功
+
+    Returns:
+        Any: 原函数调用结果
+    """
+
+    def wrapper(func: Coroutine):
+        def inner(*args, **kwargs):
+            # 这里必须新建一个变量用来计数！！不能直接对 times 操作！！！
+            nonlocal times
+            loop = times
+            while loop != 0:
+                if loop != times and settings.request_log:
+                    settings.logger.info("第 %d 次重试", times - loop)
+                loop -= 1
+                try:
+                    return func(*args, **kwargs)
+                except json.decoder.JSONDecodeError:
+                    # json 解析错误 说明数据获取有误 再给次机会
+                    continue
+                except ResponseCodeException as e:
+                    # -403 时尝试重新获取 wbi_mixin_key 可能过期了
+                    if e.code == -403:
+                        global wbi_mixin_key
+                        wbi_mixin_key = ""
+                        continue
+                    # 不是 -403 错误直接报错
+                    raise
+            raise ApiException("重试达到最大次数")
+
+        return inner
+
+    return wrapper
 
 
 def retry(times: int = 3):
@@ -171,32 +219,13 @@ class Api:
         return self.__result
 
     @property
-    def sync_result(self) -> Union[None, dict]:
+    def result_sync(self) -> Union[None, dict]:
         """
         通过 `sync` 同步获取请求结果
 
         一般用于非协程内同步获取数据
         """
-        return sync(self.result)
-
-    @property
-    def thread_result(self) -> Union[None, dict]:
-        """
-        通过 `threading.Thread` 同步获取请求结果
-
-        一般用于协程内同步获取数据
-
-        为什么协程里不直接 await self.result 呢
-
-        因为协程内有的地方不让异步
-
-        例如类的 `__init__()` 函数中需要获取请求结果时
-        """
-        job = threading.Thread(target=asyncio.run, args=[self.result])
-        job.start()
-        while job.is_alive():
-            time.sleep(0.0167)
-        return self.__result
+        return self.request_sync()
 
     def update_data(self, **kwargs) -> "Api":
         """
@@ -239,13 +268,83 @@ class Api:
         else:
             return self.update_data(**kwargs)
 
-    @retry(times=settings.wbi_retry_times)
-    async def request(self, **kwargs) -> Any:
+    def _prepare_request_sync(self, **kwargs) -> dict:
         """
-        向接口发送请求。
+        准备请求的配置参数
+
+        Args:
+            **kwargs: 其他额外的请求配置参数
 
         Returns:
-            接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
+            dict: 包含请求的配置参数
+        """
+        # 如果接口需要 Credential 且未传入则报错 (默认值为 Credential())
+        if self.verify:
+            self.credential.raise_for_no_sessdata()
+
+        # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
+        if self.method != "GET" and not self.no_csrf:
+            self.credential.raise_for_no_bili_jct()
+
+        if settings.request_log:
+            settings.logger.info(self)
+
+        # jsonp
+        if self.params.get("jsonp") == "jsonp":
+            self.params["callback"] = "callback"
+
+        if self.wbi:
+            global wbi_mixin_key
+            if wbi_mixin_key == "":
+                wbi_mixin_key = get_mixin_key_sync()
+            enc_wbi(self.params, wbi_mixin_key)
+
+        # 自动添加 csrf
+        if (
+            not self.no_csrf
+            and self.verify
+            and self.method in ["POST", "DELETE", "PATCH"]
+        ):
+            self.data["csrf"] = self.credential.bili_jct
+            self.data["csrf_token"] = self.credential.bili_jct
+
+        cookies = self.credential.get_cookies()
+
+        if self.credential.buvid3 is None:
+            global buvid3
+            if buvid3 == "" and self.url != API["info"]["spi"]["url"]:
+                buvid3 = get_spi_buvid_sync()["b_3"]
+            cookies["buvid3"] = buvid3
+        else:
+            cookies["buvid3"] = self.credential.buvid3
+        cookies["Domain"] = ".bilibili.com"
+
+        config = {
+            "url": self.url,
+            "method": self.method,
+            "data": self.data,
+            "params": self.params,
+            "files": self.files,
+            "cookies": cookies,
+            "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
+        }
+        config.update(kwargs)
+
+        if self.json_body:
+            config["headers"]["Content-Type"] = "application/json"
+            config["data"] = json.dumps(config["data"])
+
+        return config
+
+    async def _prepare_request(self, **kwargs) -> dict:
+        """
+        准备请求的配置参数
+
+        Args:
+            **kwargs: 其他额外的请求配置参数
+
+        Returns:
+            dict: 包含请求的配置参数
         """
         # 如果接口需要 Credential 且未传入则报错 (默认值为 Credential())
         if self.verify:
@@ -269,7 +368,11 @@ class Api:
             enc_wbi(self.params, wbi_mixin_key)
 
         # 自动添加 csrf
-        if not self.no_csrf and self.verify and self.method in ["POST", "DELETE", "PATCH"]:
+        if (
+            not self.no_csrf
+            and self.verify
+            and self.method in ["POST", "DELETE", "PATCH"]
+        ):
             self.data["csrf"] = self.credential.bili_jct
             self.data["csrf_token"] = self.credential.bili_jct
 
@@ -299,9 +402,47 @@ class Api:
             config["headers"]["Content-Type"] = "application/json"
             config["data"] = json.dumps(config["data"])
 
-        session = get_session()
-        resp = await session.request(**config)
+        return config
 
+    @retry_sync(times=settings.wbi_retry_times)
+    def request_sync(self, raw: bool = False, **kwargs) -> Union[int, str, dict]:
+        """
+        向接口发送请求。
+
+        Returns:
+            接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
+        """
+        config = self._prepare_request_sync(**kwargs)
+        session = httpx.Client()
+        resp = session.request(**config)
+        real_data = self._process_response(resp, raw=raw)
+        return real_data
+
+    @retry(times=settings.wbi_retry_times)
+    async def request(self, raw: bool = False, **kwargs) -> Union[int, str, dict]:
+        """
+        向接口发送请求。
+
+        Returns:
+            接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
+        """
+        config = await self._prepare_request(**kwargs)
+        session: Union[httpx.AsyncClient, aiohttp.ClientSession]
+        # 判断http_client的类型
+        if http_client_type == httpx.AsyncClient:
+            session = get_session()
+        elif http_client_type == aiohttp.ClientSession:
+            session = get_aiohttp_session()
+        resp = await session.request(**config)
+        real_data = self._process_response(resp, raw=raw)
+        return real_data
+
+    def _process_response(
+        self, resp: Union[httpx.Response, aiohttp.ClientResponse], raw: bool = False
+    ) -> Union[int, str, dict]:
+        """
+        处理接口的响应数据
+        """
         # 检查响应头 Content-Length
         content_length = resp.headers.get("content-length")
         if content_length and int(content_length) == 0:
@@ -315,9 +456,13 @@ class Api:
         else:
             # JSON
             resp_data: dict = json.loads(resp.text)
+
+        if raw:
+            return resp_data
+
         OK = resp_data.get("OK")
+
         # 检查 code
-        OK = resp_data.get("OK")
         if not self.ignore_code:
             if OK is None:
                 code = resp_data.get("code")
@@ -391,7 +536,20 @@ def get_spi_buvid_sync() -> dict:
     Returns:
         dict: 账号相关信息
     """
-    return httpx.get(API["info"]["spi"]["url"], headers=HEADERS).json()["data"]
+    return Api(**API["info"]["spi"]).result_sync
+
+
+def get_nav_sync(credential: Union[Credential, None] = None):
+    """
+    获取导航
+
+    Args:
+        credential (Credential, Optional): 凭据类. Defaults to None
+
+    Returns:
+        dict: 账号相关信息
+    """
+    return Api(credential=credential, **API["info"]["valid"]).result_sync
 
 
 async def get_nav(credential: Union[Credential, None] = None):
@@ -405,6 +563,26 @@ async def get_nav(credential: Union[Credential, None] = None):
         dict: 账号相关信息
     """
     return await Api(credential=credential, **API["info"]["valid"]).result
+
+
+def get_mixin_key_sync() -> str:
+    """
+    获取混合密钥
+
+    Returns:
+        str: 新获取的密钥
+    """
+    data = get_nav_sync()
+    wbi_img: Dict[str, str] = data["wbi_img"]
+
+    # 为什么要把里的 lambda 表达式换成函数 这不是一样的吗
+    # split = lambda key: wbi_img.get(key).split("/")[-1].split(".")[0]
+    def split(key):
+        return wbi_img.get(key).split("/")[-1].split(".")[0]
+
+    ae = split("img_url") + split("sub_url")
+    le = reduce(lambda s, i: s + (ae[i] if i < len(ae) else ""), OE, "")
+    return le[:32]
 
 
 async def get_mixin_key() -> str:

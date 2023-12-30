@@ -128,7 +128,7 @@ class WatchRoom:
             info: dict = (
                 Api(credential=self.credential, **API["info"]["info"])
                 .update_params(**params)
-                .thread_result
+                .result_sync
             )
             self.set_season_id(info["status"]["season_id"])
             self.set_episode_id(info["status"]["episode_id"])

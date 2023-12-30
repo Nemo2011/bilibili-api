@@ -12,6 +12,7 @@ from typing import Tuple, Union, Literal
 import httpx
 from yarl import URL
 
+from .. import Api
 from ..game import Game
 from ..manga import Manga
 from ..topic import Topic
@@ -132,7 +133,7 @@ async def parse_link(
             url = "https:" + url
 
         # 转换为 yarl
-        url = URL(url) # type: ignore
+        url = URL(url)  # type: ignore
 
         # 排除小黑屋
         black_room = parse_black_room(url, credential)  # type: ignore
@@ -150,7 +151,7 @@ async def parse_link(
                 return (User(info["mid"], credential=credential), ResourceType.USER)
 
         channel = parse_season_series(
-            url, credential # type: ignore
+            url, credential  # type: ignore
         )  # 不需要 real_url，提前处理
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES)  # type: ignore
@@ -217,7 +218,7 @@ async def parse_link(
         manga = parse_manga(url, credential)  # type: ignore
         if not manga == -1:
             obj = (manga, ResourceType.MANGA)
-        opus_dynamic = parse_opus_dynamic(url, credential) # type: ignore
+        opus_dynamic = parse_opus_dynamic(url, credential)  # type: ignore
         if not opus_dynamic == -1:
             obj = (opus_dynamic, ResourceType.DYNAMIC)
 
@@ -244,7 +245,8 @@ async def auto_convert_video(
 
     # check episode
     if "redirect_url" in video_info:
-        reparse_link = await parse_link(await get_real_url(video_info["redirect_url"]), credential=credential)  # type: ignore
+        reparse_link = await parse_link(await get_real_url(video_info["redirect_url"]),
+                                        credential=credential)  # type: ignore
         return reparse_link  # type: ignore
 
     # return video
@@ -356,10 +358,10 @@ async def parse_episode(url: URL, credential: Credential) -> Union[Episode, int]
                     content = json.loads(match.group(1))
                     epid = content["epInfo"]["id"] if "id" in content["epInfo"] else content["epInfo"]["ep_id"]
                 else:
-                    epid = re.search(r'<link rel="canonical" href="//www.bilibili.com/bangumi/play/ep(\d+)"/>', html_text).group(1)
+                    epid = re.search(r'<link rel="canonical" href="//www.bilibili.com/bangumi/play/ep(\d+)"/>',
+                                     html_text).group(1)
                     return Episode(epid=epid, credential=credential)
     return -1
-
 
 
 def parse_favorite_list(url: URL, credential: Credential) -> Union[FavoriteList, int]:
@@ -508,9 +510,7 @@ def parse_space_favorite_list(
                 ):  # query 中不存在 fid 则返回默认收藏夹
                     api = get_api("favorite-list")["info"]["list_list"]
                     params = {"up_mid": uid, "type": 2}
-                    favorite_lists = httpx.get(
-                        api["url"], params=params, cookies=credential.get_cookies()
-                    ).json()["data"]
+                    favorite_lists = Api(**api, params=params, credential=credential).result_sync
 
                     if favorite_lists == None:
                         return -1
@@ -613,7 +613,6 @@ def parse_topic(url: URL, credential: Credential) -> Union[Topic, int]:
             url.parts[:4] == ("/", "v", "topic", "detail")
             and url.query.get("topic_id") is not None
         ):
-
             return Topic(int(url.query["topic_id"]), credential=credential)
     return -1
 

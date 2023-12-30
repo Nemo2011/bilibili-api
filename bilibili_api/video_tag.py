@@ -41,10 +41,7 @@ class Tag:
         if tag_id == None:
             if tag_name == None:
                 raise ArgsException("tag_name 和 tag_id 需要提供一个。")
-            resp = httpx.get(
-                f"https://api.bilibili.com/x/tag/info?tag_name={tag_name}"
-            ).json()
-            self.__tag_id = resp["data"]["tag_id"]
+            self.__tag_id = self.get_tag_info_sync()["tag_id"]
         else:
             self.__tag_id = tag_id
         credential = credential if credential else Credential()
@@ -52,6 +49,17 @@ class Tag:
 
     def get_tag_id(self) -> int:
         return self.__tag_id
+
+    def get_tag_info_sync(self) -> dict:
+        """
+        获取标签信息。
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["tag_info"]
+        params = {"tag_id": self.get_tag_id()}
+        return Api(**api).update_params(**params).result_sync
 
     async def get_tag_info(self) -> dict:
         """
