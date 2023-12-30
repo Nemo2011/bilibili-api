@@ -5,6 +5,26 @@ bilibili_api.settings
 """
 
 import logging
+from enum import Enum
+
+class HTTPClient(Enum):
+    """
+    - AioHttp: aiohttp
+    - Httpx: httpx
+    """
+
+    AIOHTTP = "aiohttp"
+    HTTPX = "httpx"
+
+http_client: HTTPClient = HTTPClient.AIOHTTP
+"""
+用于设置使用的 HTTP 客户端，默认为 Httpx
+
+e.x.:
+``` python
+from bilibili_api import settings
+settings.http_client = settings.HTTPClient.AIOHTTP
+"""
 
 proxy: str = ""
 """

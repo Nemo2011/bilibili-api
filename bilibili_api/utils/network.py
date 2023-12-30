@@ -28,7 +28,14 @@ from .credential import Credential
 from ..exceptions import ApiException, ResponseCodeException
 
 # 可自定义 http_client 的类型
-http_client_type: Union[Type[httpx.AsyncClient], Type[aiohttp.ClientSession]] = httpx.AsyncClient
+http_client_type: Union[
+    Type[httpx.AsyncClient], Type[aiohttp.ClientSession]
+] = httpx.AsyncClient
+if settings.http_client == settings.HTTPClient.AIOHTTP:
+    http_client_type = aiohttp.ClientSession
+elif settings.http_client == settings.HTTPClient.HTTPX:
+    http_client_type = httpx.AsyncClient
+
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
 __aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
 last_proxy = ""
@@ -46,6 +53,7 @@ HEADERS = {
     "Referer": "https://www.bilibili.com",
 }
 API = get_api("credential")
+
 
 def retry_sync(times: int = 3):
     """
@@ -85,6 +93,8 @@ def retry_sync(times: int = 3):
         return inner
 
     return wrapper
+
+
 def retry(times: int = 3):
     """
     重试装饰器
@@ -218,25 +228,6 @@ class Api:
         """
         return self.request_sync()
 
-    # @property
-    # def thread_result(self) -> Union[None, dict]:
-    #     """
-    #     通过 `threading.Thread` 同步获取请求结果
-
-    #     一般用于协程内同步获取数据
-
-    #     为什么协程里不直接 await self.result 呢
-
-    #     因为协程内有的地方不让异步
-
-    #     例如类的 `__init__()` 函数中需要获取请求结果时
-    #     """
-    #     job = threading.Thread(target=self.request_sync)
-    #     job.start()
-    #     while job.is_alive():
-    #         time.sleep(0.0167)
-    #     return self.__result
-
     def update_data(self, **kwargs) -> "Api":
         """
         毫无亮点的更新 data
@@ -310,7 +301,11 @@ class Api:
             enc_wbi(self.params, wbi_mixin_key)
 
         # 自动添加 csrf
-        if not self.no_csrf and self.verify and self.method in ["POST", "DELETE", "PATCH"]:
+        if (
+            not self.no_csrf
+            and self.verify
+            and self.method in ["POST", "DELETE", "PATCH"]
+        ):
             self.data["csrf"] = self.credential.bili_jct
             self.data["csrf_token"] = self.credential.bili_jct
 
@@ -374,7 +369,11 @@ class Api:
             enc_wbi(self.params, wbi_mixin_key)
 
         # 自动添加 csrf
-        if not self.no_csrf and self.verify and self.method in ["POST", "DELETE", "PATCH"]:
+        if (
+            not self.no_csrf
+            and self.verify
+            and self.method in ["POST", "DELETE", "PATCH"]
+        ):
             self.data["csrf"] = self.credential.bili_jct
             self.data["csrf_token"] = self.credential.bili_jct
 
@@ -407,7 +406,7 @@ class Api:
         return config
 
     @retry_sync(times=settings.wbi_retry_times)
-    def request_sync(self, **kwargs) -> Any:
+    def request_sync(self, raw: bool = False, **kwargs) -> Union[int, str, dict]:
         """
         向接口发送请求。
 
@@ -415,17 +414,13 @@ class Api:
             接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
         """
         config = self._prepare_request_sync(**kwargs)
-
         session = httpx.Client()
-
         resp = session.request(**config)
-
-        real_data = self._process_response_sync(resp)
-
+        real_data = self._process_response(resp, raw=raw)
         return real_data
 
     @retry(times=settings.wbi_retry_times)
-    async def request(self, **kwargs) -> Any:
+    async def request(self, raw: bool = False, **kwargs) -> Union[int, str, dict]:
         """
         向接口发送请求。
 
@@ -433,34 +428,26 @@ class Api:
             接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
         """
         config = await self._prepare_request(**kwargs)
-
-        session = None
+        session: Union[httpx.AsyncClient, aiohttp.ClientSession]
         # 判断http_client的类型
         if http_client_type == httpx.AsyncClient:
             session = get_session()
         elif http_client_type == aiohttp.ClientSession:
             session = get_aiohttp_session()
-
         resp = await session.request(**config)
-
-        real_data = await self._process_response(resp)
-
+        real_data = self._process_response(resp, raw=raw)
         return real_data
 
-    def _process_response_sync(self, resp: Any) -> dict:
+    def _process_response(
+        self, resp: Union[httpx.Response, aiohttp.ClientResponse], raw: bool = False
+    ) -> Union[int, str, dict]:
         """
         处理接口的响应数据
-
-        Args:
-            resp (Any): HTTP响应对象
-
-        Returns:
-            dict: 处理后的响应数据
         """
         # 检查响应头 Content-Length
         content_length = resp.headers.get("content-length")
         if content_length and int(content_length) == 0:
-            return {}
+            return None
 
         if "callback" in self.params:
             # JSONP 请求
@@ -470,54 +457,10 @@ class Api:
         else:
             # JSON
             resp_data: dict = json.loads(resp.text)
-        OK = resp_data.get("OK")
 
-        # 检查 code
-        if not self.ignore_code:
-            if OK is None:
-                code = resp_data.get("code")
-                if code is None:
-                    raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
-                if code != 0:
-                    msg = resp_data.get("msg")
-                    if msg is None:
-                        msg = resp_data.get("message")
-                    if msg is None:
-                        msg = "接口未返回错误信息"
-                    raise ResponseCodeException(code, msg, resp_data)
-            elif OK != 1:
-                raise ResponseCodeException(-1, "API 返回数据 OK 不为 1", resp_data)
-        elif settings.request_log:
-            settings.logger.info(resp_data)
+        if raw:
+            return resp_data
 
-        real_data = resp_data.get("data") if OK is None else resp_data
-        if real_data is None:
-            real_data = resp_data.get("result")
-        return real_data
-
-    async def _process_response(self, resp: Any) -> dict:
-        """
-        处理接口的响应数据
-
-        Args:
-            resp (Any): HTTP响应对象
-
-        Returns:
-            dict: 处理后的响应数据
-        """
-        # 检查响应头 Content-Length
-        content_length = resp.headers.get("content-length")
-        if content_length and int(content_length) == 0:
-            return {}
-
-        if "callback" in self.params:
-            # JSONP 请求
-            resp_data: dict = json.loads(
-                re.match("^.*?({.*}).*$", resp.text, re.S).group(1)
-            )
-        else:
-            # JSON
-            resp_data: dict = json.loads(resp.text)
         OK = resp_data.get("OK")
 
         # 检查 code
@@ -597,7 +540,7 @@ def get_spi_buvid_sync() -> dict:
     return Api(**API["info"]["spi"]).result_sync
 
 
-async def get_nav_sync(credential: Union[Credential, None] = None):
+def get_nav_sync(credential: Union[Credential, None] = None):
     """
     获取导航
 
