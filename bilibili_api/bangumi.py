@@ -23,7 +23,7 @@ from .video import Video
 from .utils.utils import get_api
 from .utils.credential import Credential
 from .exceptions.ApiException import ApiException
-from .utils.network import Api, get_session
+from .utils.network import Api, get_session, HEADERS
 from .utils.initial_state import (
     get_initial_state,
     get_initial_state_sync,
@@ -1008,7 +1008,7 @@ class Bangumi:
             api = API["info"]["meta"]
             params = {"media_id": media_id}
             meta = requests.get(
-                url=api["url"], params=params, cookies=self.credential.get_cookies()
+                url=api["url"], params=params, cookies=self.credential.get_cookies(), headers=HEADERS
             )
             meta.raise_for_status()
             if meta.json()["code"] == 0:
@@ -1027,7 +1027,7 @@ class Bangumi:
         else:
             api = API["info"]["collective_info"]
         req = requests.get(
-            url=api["url"], params=params, cookies=self.credential.get_cookies()
+            url=api["url"], params=params, cookies=self.credential.get_cookies(), headers=HEADERS
         )
         req.raise_for_status()
         self.__raw = req.json()
@@ -1308,7 +1308,7 @@ class Episode(Video):
             if content_type == InitialDataType.NEXT_DATA:
                 content = res["props"]["pageProps"]["dehydratedState"]["queries"][0][
                     "state"
-                ]["data"]["mediaInfo"]
+                ]["data"]["seasonInfo"]["mediaInfo"]
                 self.bangumi = (
                     Bangumi(ssid=content["season_id"])
                     if not epid in episode_data_cache.keys()
@@ -1334,7 +1334,7 @@ class Episode(Video):
             bvid = None
             for einfo in content["props"]["pageProps"]["dehydratedState"]["queries"][0][
                 "state"
-            ]["data"]["mediaInfo"]["episodes"]:
+            ]["data"]["seasonInfo"]["mediaInfo"]["episodes"]:
                 if einfo["ep_id"] == epid:
                     bvid = einfo["bvid"]
             self.bangumi = episode_data_cache[epid]["bangumi_class"]
