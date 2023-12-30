@@ -10,7 +10,6 @@ import time
 import atexit
 import asyncio
 import hashlib
-import threading
 from functools import reduce
 from urllib.parse import urlencode
 from dataclasses import field, dataclass
