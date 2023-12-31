@@ -462,6 +462,8 @@ class Api:
                 data.add_field(key, val)
             config["data"] = data
             config.pop("files")
+            if settings.proxy != "":
+                config["proxy"] = settings.proxy
 
         return config
 
@@ -746,7 +748,7 @@ def get_aiohttp_session() -> aiohttp.ClientSession:
     session = __aiohttp_session_pool.get(loop, None)
     if session is None:
         session = aiohttp.ClientSession(
-            loop=loop, connector=aiohttp.TCPConnector(verify_ssl=False)
+            loop=loop, connector=aiohttp.TCPConnector(verify_ssl=False), trust_env=True
         )
         __aiohttp_session_pool[loop] = session
 
