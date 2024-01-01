@@ -10,7 +10,7 @@
             "url": "https://passport.bilibili.com/x/passport-login/web/qrcode/poll",
             "method": "GET",
             "verify": false,
-            "data": {
+            "params": {
                 "qrcode_key": "str: 登陆密钥",
                 "source": "main-fe-header"
             },

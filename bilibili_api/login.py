@@ -20,6 +20,7 @@ from typing import Dict, List, Union
 
 import rsa
 import httpx
+import urllib.parse
 import qrcode
 from yarl import URL
 
@@ -52,19 +53,19 @@ id_ = 0  # 事件 id,用于取消 after 绑定
 
 
 def parse_credential_url(events: dict) -> Credential:
-    url = events["data"]["url"]
+    url = events["url"]
     cookies_list = url.split("?")[1].split("&")
     sessdata = ""
     bili_jct = ""
     dedeuserid = ""
     for cookie in cookies_list:
         if cookie[:8] == "SESSDATA":
-            sessdata = cookie[9:]
+            sessdata = urllib.parse.quote(cookie[9:])
         if cookie[:8] == "bili_jct":
-            bili_jct = cookie[9:]
+            bili_jct = urllib.parse.quote(cookie[9:])
         if cookie[:11].upper() == "DEDEUSERID=":
-            dedeuserid = cookie[11:]
-    ac_time_value = events["data"]["refresh_token"]
+            dedeuserid = urllib.parse.quote(cookie[11:])
+    ac_time_value = events["refresh_token"]
     buvid3 = get_spi_buvid_sync()["b_3"]
     return Credential(
         sessdata=sessdata,
@@ -127,27 +128,27 @@ def login_with_qrcode(root=None) -> Credential:
         global id_
         global start, credential, is_destroy, login_key
         events = login_with_key(login_key)
-        if "code" in events.keys() and events["code"] == 0:
-            if events["data"]["code"] == 86101:
-                log.configure(text="请扫描二维码↑", fg="red", font=big_font)
-            elif events["data"]["code"] == 86090:
-                log.configure(text="点下确认啊！", fg="orange", font=big_font)
-            elif events["data"]["code"] == 86038:
-                raise LoginError("二维码过期，请扫新二维码！")
-            elif events["data"]["code"] == 0:
-                log.configure(text="成功！", fg="green", font=big_font)
-                credential = parse_credential_url(events)
-                root.after(1000, destroy)
-                return 0
-            id_ = root.after(500, update_events)
-            if time.perf_counter() - start > 120:  # 刷新
-                qrcode_data = update_qrcode_data()
-                login_key = qrcode_data["qrcode_key"]
-                qrcode_image = make_qrcode(qrcode_data["url"])
-                photo = PhotoImage(file=qrcode_image)
-                qrcode_label = tkinter.Label(root, image=photo, width=600, height=600)
-                qrcode_label.pack()
-                start = time.perf_counter()
+
+        if events["code"] == 86101:
+            log.configure(text="请扫描二维码↑", fg="red", font=big_font)
+        elif events["code"] == 86090:
+            log.configure(text="点下确认啊！", fg="orange", font=big_font)
+        elif events["code"] == 86038:
+            raise LoginError("二维码过期，请扫新二维码！")
+        elif events["code"] == 0:
+            log.configure(text="成功！", fg="green", font=big_font)
+            credential = parse_credential_url(events)
+            root.after(1000, destroy)
+            return 0
+        id_ = root.after(500, update_events)
+        if time.perf_counter() - start > 120:  # 刷新
+            qrcode_data = update_qrcode_data()
+            login_key = qrcode_data["qrcode_key"]
+            qrcode_image = make_qrcode(qrcode_data["url"])
+            photo = PhotoImage(file=qrcode_image)
+            qrcode_label = tkinter.Label(root, image=photo, width=600, height=600)
+            qrcode_label.pack()
+            start = time.perf_counter()
 
         root.update()
 
@@ -179,31 +180,30 @@ def login_with_qrcode_term() -> Credential:
     print(qrcode_terminal.qr_terminal_str(qrcode_url) + "\n")
     while True:
         events = login_with_key(login_key)
-        if "code" in events.keys() and events["code"] == 0:
-            if events["data"]["code"] == 86101:
-                sys.stdout.write("\r 请扫描二维码↑")
-                sys.stdout.flush()
-            elif events["data"]["code"] == 86090:
-                sys.stdout.write("\r 点下确认啊！")
-                sys.stdout.flush()
-            elif events["data"]["code"] == 86038:
-                print("二维码过期，请扫新二维码！")
-                qrcode_data = update_qrcode_data()
-                qrcode_url = qrcode_data["url"]
-                print(qrcode_terminal.qr_terminal_str(qrcode_url) + "\n")
-            elif events["data"]["code"] == 0:
-                sys.stdout.write("\r 成功！")
-                sys.stdout.flush()
-                return parse_credential_url(events)
-            elif "code" in events.keys():
-                raise LoginError(events["message"])
+        if events["code"] == 86101:
+            sys.stdout.write("\r 请扫描二维码↑")
+            sys.stdout.flush()
+        elif events["code"] == 86090:
+            sys.stdout.write("\r 点下确认啊！")
+            sys.stdout.flush()
+        elif events["code"] == 86038:
+            print("二维码过期，请扫新二维码！")
+            qrcode_data = update_qrcode_data()
+            qrcode_url = qrcode_data["url"]
+            print(qrcode_terminal.qr_terminal_str(qrcode_url) + "\n")
+        elif events["code"] == 0:
+            sys.stdout.write("\r 成功！")
+            sys.stdout.flush()
+            return parse_credential_url(events)
+        elif "code" in events.keys():
+            raise LoginError(events["message"])
         time.sleep(0.5)
 
 
 def login_with_key(key: str) -> dict:
-    params = {"qrcode_key": key, "source": "main-fe-header"}
+    params = {"qrcode_key": key}
     events_api = API["qrcode"]["get_events"]
-    events = Api(credential=credential, **events_api, params=params).result_sync
+    events = Api(credential=credential, **events_api).update_params(**params).result_sync
     return events
 
 

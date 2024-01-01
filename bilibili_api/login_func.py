@@ -5,16 +5,13 @@ bilibili_api.login_func
 """
 
 import enum
-import json
-import uuid
 import threading
 from typing import Tuple, Union
-
-import requests
 
 from . import login
 from .utils.utils import get_api
 from .exceptions import LoginError
+import urllib.parse
 from .utils.picture import Picture
 from .utils.credential import Credential
 
@@ -58,22 +55,13 @@ def check_qrcode_events(login_key) -> Tuple[QrCodeLoginEvents, Union[str, Creden
     Returns:
         Tuple[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
     """
-    events_api = API["qrcode"]["get_events"]
-    params = {"qrcode_key": login_key}
-    events = json.loads(
-        requests.get(
-            events_api["url"],
-            params=params,
-            cookies={"buvid3": str(uuid.uuid1()), "Domain": ".bilibili.com"},
-        ).text
-    )
-    if "code" in events.keys() and events["code"] == -412:
-        raise LoginError(events["message"])
-    if events["data"]["code"] == 86101:
+    events = login.login_with_key(login_key)
+
+    if events["code"] == 86101:
         return QrCodeLoginEvents.SCAN, events["message"]
-    elif events["data"]["code"] == 86090:
+    elif events["code"] == 86090:
         return QrCodeLoginEvents.CONF, events["message"]
-    elif events["data"]["code"] == 0:
+    elif events["code"] == 0:
         url: str = events["data"]["url"]
         cookies_list = url.split("?")[1].split("&")
         sessdata = ""
@@ -81,15 +69,15 @@ def check_qrcode_events(login_key) -> Tuple[QrCodeLoginEvents, Union[str, Creden
         dede = ""
         for cookie in cookies_list:
             if cookie[:8] == "SESSDATA":
-                sessdata = cookie[9:]
+                sessdata = urllib.parse.quote(cookie[9:])
             if cookie[:8] == "bili_jct":
-                bili_jct = cookie[9:]
+                bili_jct = urllib.parse.quote(cookie[9:])
             if cookie[:11].upper() == "DEDEUSERID=":
-                dede = cookie[11:]
+                dede = urllib.parse.quote(cookie[11:])
         c = Credential(sessdata, bili_jct, dedeuserid=dede)
         return QrCodeLoginEvents.DONE, c
     else:
-        raise Exception()
+        raise LoginError(events["message"])
 
 
 def start_geetest_server() -> "ServerThreadModel":
