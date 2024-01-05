@@ -136,7 +136,7 @@ class FavoriteList:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type != FavoriteListType.VIDEO, "此函数仅在收藏夹为视频收藏家时可用"
+        assert self.__type == FavoriteListType.VIDEO, "此函数仅在收藏夹为视频收藏家时可用"
         assert self.__media_id != None, "视频收藏夹需要 media_id"
 
         return await get_video_favorite_list_content(
