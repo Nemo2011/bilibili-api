@@ -87,7 +87,8 @@ class ChannelSeries:
             else:
                 api = API_USER["channel_series"]["info"]
                 params = {"series_id": self.id_}
-            resp = json.loads(httpx.get(api["url"], params=params).text)["data"]
+            headers={"User-Agent": "Mozilla/5.0"}
+            resp = json.loads(httpx.get(api["url"], headers=headers, params=params).text)['data']
             if self.is_new:
                 self.meta = resp["info"]
                 self.meta["mid"] = resp["info"]["upper"]["mid"]
