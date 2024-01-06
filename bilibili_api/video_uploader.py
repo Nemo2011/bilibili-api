@@ -104,23 +104,6 @@ async def _choose_line(line: Lines) -> dict:
     return await _probe()
 
 
-class Lines(Enum):
-    """
-    可选线路
-
-    bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
-
-    + BDA2：百度
-    + QN：七牛
-    + WS：网宿
-    + BLDSA：bldsa
-    """
-
-    BDA2 = "bda2"
-    QN = "qn"
-    WS = "ws"
-    BLDSA = "bldsa"
-
 LINES_INFO = {
     "bda2": {
         "os": "upos",
@@ -180,7 +163,7 @@ async def _choose_line(line: Lines) -> dict:
         if line_info is not None:
             return line_info
     return await _probe()
-    
+
 
 class VideoUploaderPage:
     """
@@ -852,9 +835,9 @@ class VideoUploader(AsyncEvent):
         if preupload["OK"] != 1:
             self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {"page": page})
             raise ApiException(json.dumps(preupload))
-        
-        preupload = self._switch_upload_endpoint(self.line, preupload)
-        url = self._get_upload_url(self.line, preupload)
+
+        preupload = self._switch_upload_endpoint(preupload, self.line)
+        url = self._get_upload_url(preupload)
 
         # 获取 upload_id
         resp = await session.post(
@@ -1134,6 +1117,7 @@ class VideoUploader(AsyncEvent):
             preupload["endpoint"] = re.sub(
                 r"upcdn(bda2|qn|ws)", f'upcdn{line["upcdn"]}', preupload["endpoint"]
             )
+        return preupload  # tbh not needed since it is ref type
 
     @staticmethod
     def _get_upload_url(preupload: dict) -> str:
@@ -1176,7 +1160,8 @@ class VideoUploader(AsyncEvent):
         stream.close()
 
         # 上传目标 URL
-        url = self._get_upload_url(self.line, preupload)
+        preupload = self._switch_upload_endpoint(preupload, self.line)
+        url = self._get_upload_url(preupload)
 
         err_return = {
             "ok": False,
@@ -1274,7 +1259,8 @@ class VideoUploader(AsyncEvent):
             "biz_id": preupload["biz_id"],
         }
 
-        url = self._get_upload_url(self.line, preupload)
+        preupload = self._switch_upload_endpoint(preupload, self.line)
+        url = self._get_upload_url(preupload)
 
         session = get_session()
 
@@ -1533,7 +1519,7 @@ class VideoEditor(AsyncEvent):
         data["csrf"] = self.credential.bili_jct
         self.dispatch(VideoEditorEvents.PRE_SUBMIT.value)
         try:
-            params = ({"csrf": self.credential.bili_jct, "t": int(time.time())},)
+            params = {"csrf": self.credential.bili_jct, "t": int(time.time())}
             headers = {
                 "content-type": "application/json;charset=UTF-8",
                 "referer": "https://member.bilibili.com",

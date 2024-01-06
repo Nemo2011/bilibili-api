@@ -11,7 +11,7 @@ import httpx
 
 from .utils.utils import get_api
 from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, HEADERS
 
 API_USER = get_api("user")
 API = get_api("channel-series")
@@ -87,7 +87,7 @@ class ChannelSeries:
             else:
                 api = API_USER["channel_series"]["info"]
                 params = {"series_id": self.id_}
-            resp = json.loads(httpx.get(api["url"], params=params).text)["data"]
+            resp = json.loads(httpx.get(api["url"], headers=HEADERS, params=params).text)['data']
             if self.is_new:
                 self.meta = resp["info"]
                 self.meta["mid"] = resp["info"]["upper"]["mid"]
