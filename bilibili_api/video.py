@@ -40,7 +40,7 @@ from .exceptions import (
 API = get_api("video")
 
 
-async def get_cid_info_sync(cid: int):
+def get_cid_info_sync(cid: int):
     """
     获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
 
