@@ -1,12 +1,5 @@
 [
   {
-    "name": "首页",
-    "route": "/",
-    "tid": 0,
-    "locid": 23,
-    "sub": []
-  },
-  {
     "channelId": 2,
     "name": "番剧",
     "tid": 13,
@@ -126,7 +119,7 @@
     "name": "综艺",
     "channelId": 6,
     "icon": "ChannelZongyi",
-    "url": "//www.bilibili.com/variety/ "
+    "url": "//www.bilibili.com/variety/"
   },
   {
     "name": "纪录片",
@@ -158,9 +151,16 @@
       },
       {
         "subChannelId": 80003,
-        "name": "短片·手书·配音",
-        "route": "voice",
+        "name": "短片·手书",
+        "route": "handdrawn",
         "tid": 47,
+        "url": "//www.bilibili.com/v/douga/handdrawn/"
+      },
+      {
+        "subChannelId": 80008,
+        "name": "配音",
+        "route": "voice",
+        "tid": 257,
         "url": "//www.bilibili.com/v/douga/voice/"
       },
       {
@@ -414,10 +414,17 @@
       },
       {
         "subChannelId": 100004,
-        "name": "中国舞",
+        "name": "国风舞蹈",
         "route": "china",
         "tid": 200,
         "url": "//www.bilibili.com/v/dance/china/"
+      },
+      {
+        "subChannelId": 100007,
+        "name": "手势·网红舞",
+        "route": "gestures",
+        "tid": 255,
+        "url": "//www.bilibili.com/v/dance/gestures/"
       },
       {
         "subChannelId": 100005,
@@ -459,8 +466,15 @@
       {
         "subChannelId": 250003,
         "name": "小剧场",
-        "route": "shortfilm",
+        "route": "shortplay",
         "tid": 85,
+        "url": "//www.bilibili.com/v/cinephile/shortplay"
+      },
+      {
+        "subChannelId": 250005,
+        "name": "短片",
+        "route": "shortfilm",
+        "tid": 256,
         "url": "//www.bilibili.com/v/cinephile/shortfilm"
       },
       {
@@ -788,7 +802,7 @@
         "subChannelId": 150009,
         "name": "新能源车",
         "route": "newenergyvehicle",
-        "tid": 247,
+        "tid": 246,
         "url": "//www.bilibili.com/v/car/newenergyvehicle"
       },
       {
@@ -1083,52 +1097,52 @@
       {
         "name": "通识科普",
         "subChannelId": 270001,
-        "url": "https://www.bilibili.com/cheese/category?first=95"
-      },
-      {
-        "name": "语言学习",
-        "subChannelId": 270002,
-        "url": "https://www.bilibili.com/cheese/category?first=93"
-      },
-      {
-        "name": "考研",
-        "subChannelId": 270003,
-        "url": "https://www.bilibili.com/cheese/category?first=88"
-      },
-      {
-        "name": "视频制作",
-        "subChannelId": 270004,
-        "url": "https://www.bilibili.com/cheese/category?first=91"
-      },
-      {
-        "name": "考试考证",
-        "subChannelId": 270005,
-        "url": "https://www.bilibili.com/cheese/category?first=87"
-      },
-      {
-        "name": "设计创作",
-        "subChannelId": 270006,
-        "url": "https://www.bilibili.com/cheese/category?first=90"
-      },
-      {
-        "name": "IT培训",
-        "subChannelId": 270007,
-        "url": "https://www.bilibili.com/cheese/category?first=89"
+        "url": "https://www.bilibili.com/cheese/category?first=95&csource=Channel_class"
       },
       {
         "name": "兴趣生活",
         "subChannelId": 270008,
-        "url": "https://www.bilibili.com/cheese/category?first=94"
+        "url": "https://www.bilibili.com/cheese/category?first=94&csource=Channel_class"
       },
       {
-        "name": "职场提升",
+        "name": "语言学习",
+        "subChannelId": 270002,
+        "url": "https://www.bilibili.com/cheese/category?first=93&csource=Channel_class"
+      },
+      {
+        "name": "考研",
+        "subChannelId": 270003,
+        "url": "https://www.bilibili.com/cheese/category?first=88&csource=Channel_class"
+      },
+      {
+        "name": "考试考证",
+        "subChannelId": 270005,
+        "url": "https://www.bilibili.com/cheese/category?first=87&csource=Channel_class"
+      },
+      {
+        "name": "影视·设计",
+        "subChannelId": 270012,
+        "url": "https://www.bilibili.com/cheese/category?first=164&csource=Channel_class"
+      },
+      {
+        "name": "IT互联网",
+        "subChannelId": 270007,
+        "url": "https://www.bilibili.com/cheese/category?first=89&csource=Channel_class"
+      },
+      {
+        "name": "职业职场",
         "subChannelId": 270009,
-        "url": "https://www.bilibili.com/cheese/category?first=92"
+        "url": "https://www.bilibili.com/cheese/category?first=92&csource=Channel_class"
+      },
+      {
+        "name": "个人成长",
+        "subChannelId": 270011,
+        "url": "https://www.bilibili.com/cheese/category?first=181&csource=Channel_class"
       },
       {
         "name": "我的课程",
         "subChannelId": 270010,
-        "url": "https://www.bilibili.com/cheese/mine/list"
+        "url": "https://www.bilibili.com/cheese/mine/list?csource=Channel_class"
       }
     ]
   },
@@ -1142,7 +1156,7 @@
   {
     "name": "新歌热榜",
     "channelId": 24,
-    "url": "//www.bilibili.com/v/musicplus/",
+    "url": "//music.bilibili.com/pc/music-center",
     "icon": "ChannelMusicplus",
     "sideIcon": "SideHotMusicIcon"
   }
