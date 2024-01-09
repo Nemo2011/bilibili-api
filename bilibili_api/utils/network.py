@@ -118,7 +118,7 @@ def retry_sync(times: int = 3):
         Any: 原函数调用结果
     """
 
-    def wrapper(func: Coroutine):
+    def wrapper(func):
         def inner(*args, **kwargs):
             # 这里必须新建一个变量用来计数！！不能直接对 times 操作！！！
             nonlocal times
@@ -261,7 +261,7 @@ class Api:
         return "_Api__result" in self.__dict__
 
     @property
-    async def result(self) -> Union[None, dict]:
+    async def result(self) -> Union[int, str, dict]:
         """
         异步获取请求结果
 
@@ -272,7 +272,7 @@ class Api:
         return self.__result
 
     @property
-    def result_sync(self) -> Union[None, dict]:
+    def result_sync(self) -> Union[int, str, dict]:
         """
         通过 `sync` 同步获取请求结果
 
