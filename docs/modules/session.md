@@ -59,7 +59,7 @@ from bilibili_api import session
 | ----------- | ------------- | ----------- |
 | credential  | Credential    | 凭证        |
 | receiver_id | int           | 接收者 UID  |
-| msg_type    | str           | 信息类型    |
+| msg_type    | EventType     | 信息类型    |
 | content     | str 或 Picture | 信息内容。  |
 
 给用户发送私聊信息。目前支持纯文本、图片、撤回。
@@ -156,7 +156,12 @@ from bilibili_api import session
 + timestamp:     事件时间戳
 + content:       事件内容
 
-**消息类型:**
+
+## class EventType
+
+**Extends:** enum.Enum
+
+消息类型
 
 + TEXT:           纯文字消息
 + PICTURE:        图片消息

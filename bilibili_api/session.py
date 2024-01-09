@@ -9,6 +9,7 @@ import time
 import asyncio
 import logging
 import datetime
+from enum import Enum
 from typing import Union, Optional
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -236,69 +237,28 @@ async def get_session_settings(credential: Credential) -> dict:
     return await Api(**api, credential=credential).result
 
 
-async def send_msg(
-    credential: Credential,
-    receiver_id: int,
-    msg_type: str,
-    content: Union[str, Picture],
-) -> dict:
+class EventType(Enum):
     """
-    给用户发送私聊信息。目前仅支持纯文本。
+    事件类型
 
-    Args:
-        credential  (Credential)   : 凭证
-
-        receiver_id (int)          : 接收者 UID
-
-        msg_type    (str)          : 信息类型，参考 Event 类的时间类型。
-
-        content     (str | Picture): 信息内容。支持文字和图片。
-
-    Returns:
-        dict: 调用 API 返回结果
+    - TEXT:           纯文字消息
+    - PICTURE:        图片消息
+    - WITHDRAW:       撤回消息
+    - GROUPS_PICTURE: 应援团图片，但似乎不常触发，一般使用 PICTURE 即可
+    - SHARE_VIDEO:    分享视频
+    - NOTICE:         系统通知
+    - PUSHED_VIDEO:   UP主推送的视频
+    - WELCOME:        新成员加入应援团欢迎
     """
-    credential.raise_for_no_sessdata()
-    credential.raise_for_no_bili_jct()
 
-    api = API["operate"]["send_msg"]
-    self_info = await get_self_info(credential)
-    sender_uid = self_info["mid"]
-
-    if msg_type == Event.TEXT:
-        real_content = json.dumps({"content": content})
-    elif msg_type == Event.WITHDRAW:
-        real_content = str(content)
-    elif msg_type == Event.PICTURE or msg_type == Event.GROUPS_PICTURE:
-        assert isinstance(content, Picture), TypeError
-        await content.upload_file(credential=credential, data={"biz": "im"})
-        real_content = json.dumps(
-            {
-                "url": content.url,
-                "height": content.height,
-                "width": content.width,
-                "imageType": content.imageType,
-                "original": 1,
-                "size": content.size,
-            }
-        )
-    else:
-        raise ApiException("信息类型不支持。")
-
-    data = {
-        "msg[sender_uid]": sender_uid,
-        "msg[receiver_id]": receiver_id,
-        "msg[receiver_type]": 1,
-        "msg[msg_type]": int(msg_type),
-        "msg[msg_status]": 0,
-        "msg[content]": real_content,
-        "msg[dev_id]": "A6716E9A-7CE3-47AF-994B-F0B34178D28D",
-        "msg[new_face_version]": 0,
-        "msg[timestamp]": int(time.time()),
-        "from_filework": 0,
-        "build": 0,
-        "mobi_app": "web",
-    }
-    return await Api(**api, credential=credential).update_data(**data).result
+    TEXT = 1
+    PICTURE = 2
+    WITHDRAW = 5
+    GROUPS_PICTURE = 6
+    SHARE_VIDEO = 7
+    NOTICE = 10
+    PUSHED_VIDEO = 11
+    WELCOME = 306
 
 
 class Event:
@@ -313,16 +273,6 @@ class Event:
     + msg_key:       事件唯一编号
     + timestamp:     事件时间戳
     + content:       事件内容
-
-    事件类型:
-    + TEXT:           纯文字消息
-    + PICTURE:        图片消息
-    + WITHDRAW:       撤回消息
-    + GROUPS_PICTURE: 应援团图片，但似乎不常触发，一般使用 PICTURE 即可
-    + SHARE_VIDEO:    分享视频
-    + NOTICE:         系统通知
-    + PUSHED_VIDEO:   UP主推送的视频
-    + WELCOME:        新成员加入应援团欢迎
     """
 
     receiver_id: int
@@ -334,15 +284,6 @@ class Event:
     msg_key: int
     timestamp: int
     content: Union[str, int, Picture, Video]
-
-    TEXT = "1"
-    PICTURE = "2"
-    WITHDRAW = "5"
-    GROUPS_PICTURE = "6"
-    SHARE_VIDEO = "7"
-    NOTICE = "10"
-    PUSHED_VIDEO = "11"
-    WELCOME = "306"
 
     def __init__(self, data: dict, self_uid: int):
         """
@@ -387,27 +328,92 @@ class Event:
         content: dict = json.loads(self.content)  # type: ignore
         mt = str(self.msg_type)
 
-        if mt == Event.TEXT:
+        if mt == EventType.TEXT:
             self.content = content.get("content")  # type: ignore
 
-        elif mt == Event.WELCOME:
+        elif mt == EventType.WELCOME:
             self.content = content.get("content") + str(content.get("group_id"))  # type: ignore
 
-        elif mt == Event.WITHDRAW:
+        elif mt == EventType.WITHDRAW:
             self.content = str(content)
 
-        elif mt == Event.PICTURE or mt == Event.GROUPS_PICTURE:
+        elif mt == EventType.PICTURE or mt == EventType.GROUPS_PICTURE:
             content.pop("original")
             self.content = Picture(**content)
 
-        elif mt == Event.SHARE_VIDEO or mt == Event.PUSHED_VIDEO:
+        elif mt == EventType.SHARE_VIDEO or mt == EventType.PUSHED_VIDEO:
             self.content = Video(bvid=content.get("bvid"), aid=content.get("id"))
 
-        elif mt == Event.NOTICE:
+        elif mt == EventType.NOTICE:
             self.content = content["title"] + " " + content["text"]
 
         else:
             print(mt, content)
+
+
+async def send_msg(
+    credential: Credential,
+    receiver_id: int,
+    msg_type: EventType,
+    content: Union[str, Picture],
+) -> dict:
+    """
+    给用户发送私聊信息。目前仅支持纯文本。
+
+    Args:
+        credential  (Credential)   : 凭证
+
+        receiver_id (int)          : 接收者 UID
+
+        msg_type    (EventType)          : 信息类型，参考 Event 类的事件类型。
+
+        content     (str | Picture): 信息内容。支持文字和图片。
+
+    Returns:
+        dict: 调用 API 返回结果
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+
+    api = API["operate"]["send_msg"]
+    self_info = await get_self_info(credential)
+    sender_uid = self_info["mid"]
+
+    if msg_type == EventType.TEXT:
+        real_content = json.dumps({"content": content})
+    elif msg_type == EventType.WITHDRAW:
+        real_content = str(content)
+    elif msg_type == EventType.PICTURE or msg_type == EventType.GROUPS_PICTURE:
+        assert isinstance(content, Picture), TypeError
+        await content.upload_file(credential=credential, data={"biz": "im"})
+        real_content = json.dumps(
+            {
+                "url": content.url,
+                "height": content.height,
+                "width": content.width,
+                "imageType": content.imageType,
+                "original": 1,
+                "size": content.size,
+            }
+        )
+    else:
+        raise ApiException("信息类型不支持。")
+
+    data = {
+        "msg[sender_uid]": sender_uid,
+        "msg[receiver_id]": receiver_id,
+        "msg[receiver_type]": 1,
+        "msg[msg_type]": msg_type.value,
+        "msg[msg_status]": 0,
+        "msg[content]": real_content,
+        "msg[dev_id]": "A6716E9A-7CE3-47AF-994B-F0B34178D28D",
+        "msg[new_face_version]": 0,
+        "msg[timestamp]": int(time.time()),
+        "from_filework": 0,
+        "build": 0,
+        "mobi_app": "web",
+    }
+    return await Api(**api, credential=credential).update_data(**data).result
 
 
 class Session(AsyncEvent):
@@ -511,7 +517,7 @@ class Session(AsyncEvent):
                         continue
                     for message in result.get("messages", [])[::-1]:
                         event = Event(message, self.uid)
-                        if str(event.msg_type) == Event.WITHDRAW:
+                        if str(event.msg_type) == EventType.WITHDRAW:
                             self.logger.info(
                                 str(
                                     self.events.get(
@@ -566,7 +572,9 @@ class Session(AsyncEvent):
         if self.uid == event.sender_uid:
             self.logger.error("不能给自己发送消息哦~")
         else:
-            msg_type = Event.PICTURE if isinstance(content, Picture) else Event.TEXT
+            msg_type = (
+                EventType.PICTURE if isinstance(content, Picture) else EventType.TEXT
+            )
             return await send_msg(self.credential, event.sender_uid, msg_type, content)
 
     def close(self) -> None:
