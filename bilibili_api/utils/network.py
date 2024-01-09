@@ -277,8 +277,12 @@ class Api:
         通过 `sync` 同步获取请求结果
 
         一般用于非协程内同步获取数据
+        
+        `self.__result` 用来暂存数据 参数不变时获取结果不变
         """
-        return self.request_sync()
+        if self.__result is None:
+            self.__result = self.request_sync()
+        return self.__result
 
     def update_data(self, **kwargs) -> "Api":
         """
@@ -516,7 +520,7 @@ class Api:
     def _process_response(
         self,
         resp: Union[httpx.Response, aiohttp.ClientResponse],
-        resp_txt: str,
+        resp_text: str,
         raw: bool = False,
     ) -> Union[int, str, dict]:
         """
@@ -530,11 +534,11 @@ class Api:
         if "callback" in self.params:
             # JSONP 请求
             resp_data: dict = json.loads(
-                re.match("^.*?({.*}).*$", resp_txt, re.S).group(1)
+                re.match("^.*?({.*}).*$", resp_text, re.S).group(1)
             )
         else:
             # JSON
-            resp_data: dict = json.loads(resp_txt)
+            resp_data: dict = json.loads(resp_text)
 
         if raw:
             return resp_data
