@@ -10,6 +10,7 @@ import time
 import atexit
 import asyncio
 import hashlib
+import hmac
 from functools import reduce
 from urllib.parse import urlencode
 from dataclasses import field, dataclass
@@ -277,7 +278,7 @@ class Api:
         通过 `sync` 同步获取请求结果
 
         一般用于非协程内同步获取数据
-        
+
         `self.__result` 用来暂存数据 参数不变时获取结果不变
         """
         if self.__result is None:
@@ -496,7 +497,7 @@ class Api:
         )
         return real_data
 
-    @retry(times=settings.wbi_retry_times)
+    # @retry(times=settings.wbi_retry_times)
     async def request(self, raw: bool = False, **kwargs) -> Union[int, str, dict]:
         """
         向接口发送请求。
@@ -703,6 +704,51 @@ def enc_wbi(params: dict, mixin_key: str):
     params["web_location"] = 1550101
     Ae = urlencode(sorted(params.items()))
     params["w_rid"] = hashlib.md5((Ae + mixin_key).encode(encoding="utf-8")).hexdigest()
+
+
+
+
+
+def hmac_sha256(key: str, message: str) -> str:
+    """
+    使用HMAC-SHA256算法对给定的消息进行加密
+    :param key: 密钥
+    :param message: 要加密的消息
+    :return: 加密后的哈希值
+    """
+    # 将密钥和消息转换为字节串
+    key = key.encode("utf-8")
+    message = message.encode("utf-8")
+
+    # 创建HMAC对象，使用SHA256哈希算法
+    hmac_obj = hmac.new(key, message, hashlib.sha256)
+
+    # 计算哈希值
+    hash_value = hmac_obj.digest()
+
+    # 将哈希值转换为十六进制字符串
+    hash_hex = hash_value.hex()
+
+    return hash_hex
+
+async def get_bili_ticket() -> str:
+    """
+    获取 bili_ticket，但目前没用到，暂时不启用
+
+    https://github.com/SocialSisterYi/bilibili-API-collect/issues/903
+
+    Returns:
+        str: bili_ticket
+    """
+    o = hmac_sha256("XgwSnGZ1p", f"ts{int(time.time())}")
+    url = "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket"
+    params = {
+        "key_id": "ec02",
+        "hexsign": o,
+        "context[ts]": f"{int(time.time())}",
+        "csrf": "",
+    }
+    return (await Api(method="POST", url=url, no_csrf=True).update_params(**params).result)["ticket"]
 
 
 def get_session() -> httpx.AsyncClient:
