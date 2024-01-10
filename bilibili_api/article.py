@@ -526,7 +526,9 @@ class Article:
                 if not isinstance(field["insert"], str):
                     if "tag" in field["insert"].keys():
                         node = VideoCardNode()
-                        node.aid = get_cid_info_sync(field["insert"]["tag"]["cid"])["cid"]
+                        node.aid = get_cid_info_sync(field["insert"]["tag"]["cid"])[
+                            "cid"
+                        ]
                         self.__children.append(node)
                     elif "imageUpload" in field["insert"].keys():
                         node = ImageNode()
@@ -737,7 +739,7 @@ class ItalicNode(Node):
         text = "".join([node.markdown() for node in self.children])
         if len(text) == 0:
             return ""
-        return f" *{text}*"
+        return f" *{text}* "
 
     def json(self):
         return {
@@ -876,7 +878,12 @@ class TextNode(Node):
         self.text = text
 
     def markdown(self):
-        return self.text
+        txt = self.text
+        txt = txt.lstrip()
+        special_chars = ["\\", "*", "$", "<", ">", "|", "[", "]"]
+        for c in special_chars:
+            txt = txt.replace(c, "\\" + c)
+        return txt
 
     def json(self):
         return {"type": "TextNode", "text": self.text}
