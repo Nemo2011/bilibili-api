@@ -880,7 +880,7 @@ class TextNode(Node):
     def markdown(self):
         txt = self.text
         txt = txt.lstrip()
-        special_chars = ["\\", "*", "$", "<", ">", "|", "[", "]"]
+        special_chars = ["\\", "*", "$", "<", ">", "|"]
         for c in special_chars:
             txt = txt.replace(c, "\\" + c)
         return txt
