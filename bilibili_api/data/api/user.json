@@ -1,5 +1,20 @@
 {
   "info": {
+    "login_log": {
+      "url": "https://api.bilibili.com/x/member/web/login/log",
+      "method": "GET",
+      "verify": true
+    },
+    "moral_log": {
+      "url": "https://api.bilibili.com/x/member/web/moral/log",
+      "method": "GET",
+      "verify": true
+    },
+    "exp_log": {
+      "url": "https://api.bilibili.com/x/member/web/exp/log",
+      "method": "GET",
+      "verify": true
+    },
     "name_to_uid": {
       "url": "https://api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/name_to_uid",
       "method": "GET",
@@ -70,7 +85,7 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "vmid":"int: uid"
+        "vmid": "int: uid"
       },
       "comment": "用户代表作"
     },

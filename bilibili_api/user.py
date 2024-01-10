@@ -264,7 +264,9 @@ class User:
         params = {
             "mid": self.__uid,
         }
-        result = Api(**API["info"]["info"], credential=self.credential, params=params).result_sync
+        result = Api(
+            **API["info"]["info"], credential=self.credential, params=params
+        ).result_sync
         return result
 
     async def get_user_info(self) -> dict:
@@ -489,7 +491,7 @@ class User:
         desc: bool = True,
         sort_field: MedialistOrder = MedialistOrder.PUBDATE,
         tid: int = 0,
-        with_current: bool = False
+        with_current: bool = False,
     ) -> dict:
         """
         以 medialist 形式获取用户投稿信息。
@@ -508,7 +510,7 @@ class User:
         """
         api = API["info"]["media_list"]
         params = {
-            "mobi_app": 'web',
+            "mobi_app": "web",
             "type": 1,
             "biz_id": self.__uid,
             "oid": oid,
@@ -518,7 +520,7 @@ class User:
             "desc": desc,
             "sort_field": sort_field.value,
             "tid": tid,
-            "with_current": with_current
+            "with_current": with_current,
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -994,7 +996,7 @@ class User:
             meta = item["meta"]
             channel_series.channel_meta_cache[
                 str(ChannelSeriesType.SEASON.value) + "-" + str(id_)
-                ] = meta
+            ] = meta
             channels.append(
                 ChannelSeries(
                     self.__uid, ChannelSeriesType.SEASON, id_, self.credential
@@ -1005,7 +1007,7 @@ class User:
             meta = item["meta"]
             channel_series.channel_meta_cache[
                 str(ChannelSeriesType.SERIES.value) + "-" + str(id_)
-                ] = meta
+            ] = meta
             channels.append(
                 ChannelSeries(
                     self.__uid, ChannelSeriesType.SERIES, id_, self.credential
@@ -1498,4 +1500,49 @@ async def get_self_jury_info(credential: Credential) -> dict:
     """
     credential.raise_for_no_sessdata()
     api = API["info"]["jury"]
+    return await Api(**api, credential=credential).result
+
+
+async def get_self_login_log(credential: Credential) -> dict:
+    """
+    获取自己的登录记录
+
+    Args:
+        credential (Credential): 凭证。
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["login_log"]
+    return await Api(**api, credential=credential).result
+
+
+async def get_self_moral_log(credential: Credential) -> dict:
+    """
+    获取自己的节操记录
+
+    Args:
+        credential (Credential): 凭证。
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["moral_log"]
+    return await Api(**api, credential=credential).result
+
+
+async def get_self_experience_log(credential: Credential) -> dict:
+    """
+    获取自己的经验记录
+
+    Args:
+        credential (Credential): 凭证。
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["exp_log"]
     return await Api(**api, credential=credential).result
