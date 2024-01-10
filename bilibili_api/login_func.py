@@ -69,11 +69,11 @@ def check_qrcode_events(login_key) -> Tuple[QrCodeLoginEvents, Union[str, Creden
         dede = ""
         for cookie in cookies_list:
             if cookie[:8] == "SESSDATA":
-                sessdata = urllib.parse.quote(cookie[9:])
+                sessdata = cookie[9:]
             if cookie[:8] == "bili_jct":
-                bili_jct = urllib.parse.quote(cookie[9:])
+                bili_jct = cookie[9:]
             if cookie[:11].upper() == "DEDEUSERID=":
-                dede = urllib.parse.quote(cookie[11:])
+                dede = cookie[11:]
         c = Credential(sessdata, bili_jct, dedeuserid=dede)
         return QrCodeLoginEvents.DONE, c
     else:

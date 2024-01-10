@@ -60,11 +60,11 @@ def parse_credential_url(events: dict) -> Credential:
     dedeuserid = ""
     for cookie in cookies_list:
         if cookie[:8] == "SESSDATA":
-            sessdata = urllib.parse.quote(cookie[9:])
+            sessdata = cookie[9:]
         if cookie[:8] == "bili_jct":
-            bili_jct = urllib.parse.quote(cookie[9:])
+            bili_jct = cookie[9:]
         if cookie[:11].upper() == "DEDEUSERID=":
-            dedeuserid = urllib.parse.quote(cookie[11:])
+            dedeuserid = cookie[11:]
     ac_time_value = events["refresh_token"]
     buvid3 = get_spi_buvid_sync()["b_3"]
     return Credential(
