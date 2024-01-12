@@ -858,6 +858,7 @@ class Video:
             api = API["danmaku"]["get_history_danmaku"]
             params["date"] = date.strftime("%Y-%m-%d")
             params["type"] = 1
+            from_seg = to_seg = 0
         else:
             api = API["danmaku"]["get_danmaku"]
             if from_seg == None:
