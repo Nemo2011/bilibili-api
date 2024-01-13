@@ -33,7 +33,7 @@ from ..interactive_video import InteractiveVideo
 from ..favorite_list import FavoriteList, FavoriteListType
 from ..user import User, ChannelSeries, ChannelSeriesType, get_self_info
 
-from .initial_state import get_initial_state_sync
+from .initial_state import get_initial_state
 
 
 class ResourceType(Enum):
@@ -176,6 +176,10 @@ async def parse_link(
         if bnj_video != -1:
             bnj_video.credential = credential  # type: ignore
             return (bnj_video, ResourceType.VIDEO)  # type: ignore
+        festival_video = await parse_festival(url, credential)  # type: ignore
+        if festival_video != -1:
+            festival_video.credential = credential  # type: ignore
+            return (festival_video, ResourceType.VIDEO)  # type: ignore
         note = parse_note(url, credential)  # type: ignore
         if note != -1:
             return (note, ResourceType.NOTE)  # type: ignore
@@ -630,15 +634,12 @@ def parse_bnj(url: URL, credential: Credential) -> Union[Video, int]:
     bvid = url.query.get("bvid")
     if bvid is not None:
         return Video(bvid, credential=credential)
+    return -1
 
-    # 如果是https://www.bilibili.com/festival/2023bnj无bvid, 使用 __INITIAL_STATE__ 来获取信息
-    pattern = re.compile(pattern=r"^https://www\.bilibili\.com/festival/20[2-9][0-9]bnj")
-    match = re.match(pattern=pattern, string=str(url))
-
-    if match:
-        content, content_type = get_initial_state_sync(url=str(url), credential=credential)
-        return Video(content['videoSections'][0]['episodes'][0]['bvid'], credential=credential)
-
+async def parse_festival(url: URL, credential: Credential) -> Union[Video, int]:
+    if url.host == "www.bilibili.com" and url.parts[1] == "festival":
+        content, content_type = await get_initial_state(url=str(url), credential=credential)
+        return Video(content['videoSections'][0]['episodes'][0]['bvid'], credential=credential)  # 返回当前第一个视频
     return -1
 
 
