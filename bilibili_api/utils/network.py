@@ -798,7 +798,7 @@ def get_aiohttp_session() -> aiohttp.ClientSession:
     session = __aiohttp_session_pool.get(loop, None)
     if session is None:
         session = aiohttp.ClientSession(
-            loop=loop, connector=aiohttp.TCPConnector(verify_ssl=False), trust_env=True
+            loop=loop, connector=aiohttp.TCPConnector(), trust_env=True
         )
         __aiohttp_session_pool[loop] = session
 
