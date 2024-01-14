@@ -222,17 +222,17 @@ from bilibili_api import session
 
 #### async def run()
 
-| name        | type           | description                  |
-| ----------- | -------------- | ---------------------------- |
-| except_self | bool, optional | 是否排除自己发出的消息，默认是 |
+| name        | type           | description                     |
+| ----------- | -------------- | ------------------------------- |
+| exclude_self | bool, optional | 是否排除自己发出的消息，默认排除 |
 
 不阻塞开始轮询
 
 #### async def start()
 
-| name        | type           | description                  |
-| ----------- | -------------- | ---------------------------- |
-| except_self | bool, optional | 是否排除自己发出的消息，默认是 |
+| name        | type           | description                     |
+| ----------- | -------------- | ------------------------------- |
+| exclude_self | bool, optional | 是否排除自己发出的消息，默认排除 |
 
 阻塞开始轮询
 

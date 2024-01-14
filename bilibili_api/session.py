@@ -300,7 +300,7 @@ class Event:
         try:
             self.__content()
         except AttributeError:
-            print(data)
+            logging.error(f"解析消息错误：{data}")
 
     def __str__(self):
         if self.receiver_type == 1:
@@ -323,32 +323,33 @@ class Event:
         return f"{msg_type} {user_id} 信息 {self.content}({self.timestamp})"  # type: ignore
 
     def __content(self) -> None:
-        """更新消息内容"""
-
+        """
+        更新消息内容
+        """
         content: dict = json.loads(self.content)  # type: ignore
-        mt = str(self.msg_type)
+        mt = self.msg_type
 
-        if mt == EventType.TEXT:
+        if mt == EventType.TEXT.value:
             self.content = content.get("content")  # type: ignore
 
-        elif mt == EventType.WELCOME:
+        elif mt == EventType.WELCOME.value:
             self.content = content.get("content") + str(content.get("group_id"))  # type: ignore
 
-        elif mt == EventType.WITHDRAW:
+        elif mt == EventType.WITHDRAW.value:
             self.content = str(content)
 
-        elif mt == EventType.PICTURE or mt == EventType.GROUPS_PICTURE:
+        elif mt == EventType.PICTURE.value or mt == EventType.GROUPS_PICTURE.value:
             content.pop("original")
             self.content = Picture(**content)
 
-        elif mt == EventType.SHARE_VIDEO or mt == EventType.PUSHED_VIDEO:
+        elif mt == EventType.SHARE_VIDEO.value or mt == EventType.PUSHED_VIDEO.value:
             self.content = Video(bvid=content.get("bvid"), aid=content.get("id"))
 
-        elif mt == EventType.NOTICE:
+        elif mt == EventType.NOTICE.value:
             self.content = content["title"] + " " + content["text"]
 
         else:
-            print(mt, content)
+            logging.error(f"未知消息类型：{mt}，消息内容：{content}")
 
 
 async def send_msg(
@@ -420,7 +421,6 @@ class Session(AsyncEvent):
     """
     会话类，用来开启消息监听。
     """
-
     def __init__(self, credential: Credential, debug=False):
         super().__init__()
         # 会话状态
@@ -453,6 +453,15 @@ class Session(AsyncEvent):
             )
             self.logger.addHandler(handler)
 
+    def on(self, event_type: EventType):
+        """
+        重载装饰器注册事件监听器
+
+        Args:
+            event_type (EventType): 事件类型
+        """
+        return super().on(event_name=str(event_type.value))
+
     def get_status(self) -> int:
         """
         获取连接状态
@@ -462,12 +471,12 @@ class Session(AsyncEvent):
         """
         return self.__status
 
-    async def run(self, except_self: bool = True) -> None:
+    async def run(self, exclude_self: bool = True) -> None:
         """
         非阻塞异步爬虫 定时发送请求获取消息
 
         Args:
-            except_self: bool 是否排除自己发出的消息，默认是
+            exclude_self: bool 是否排除自己发出的消息，默认排除
         """
 
         # 获取自身UID 用于后续判断消息是发送还是接收
@@ -517,7 +526,7 @@ class Session(AsyncEvent):
                         continue
                     for message in result.get("messages", [])[::-1]:
                         event = Event(message, self.uid)
-                        if str(event.msg_type) == EventType.WITHDRAW:
+                        if event.msg_type == EventType.WITHDRAW.value:
                             self.logger.info(
                                 str(
                                     self.events.get(
@@ -529,11 +538,11 @@ class Session(AsyncEvent):
                         else:
                             self.logger.info(event)
 
-                        # 自己发出的消息不派发任务
-                        if event.sender_uid != self.uid or not except_self:
+                        # 自己发出的消息不发布任务
+                        if event.sender_uid != self.uid or not exclude_self:
                             self.dispatch(str(event.msg_type), event)
 
-                        self.events.update({str(event.msg_key): event})
+                        self.events[str(event.msg_key)] = event
 
             self.logger.debug(f"maxTs = {self.maxTs}")
 
@@ -541,15 +550,15 @@ class Session(AsyncEvent):
         self.sched.start()
         self.logger.info("开始轮询")
 
-    async def start(self, except_self: bool = True) -> None:
+    async def start(self, exclude_self: bool = True) -> None:
         """
         阻塞异步启动 通过调用 self.close() 后可断开连接
 
         Args:
-            except_self: bool 是否排除自己发出的消息，默认是
+            exclude_self: bool 是否排除自己发出的消息，默认排除
         """
 
-        await self.run(except_self)
+        await self.run(exclude_self)
         while self.get_status() < 2:
             await asyncio.sleep(1)
 
