@@ -25,7 +25,7 @@ from .sync import sync
 from .. import settings
 from .utils import get_api
 from .credential import Credential
-from ..exceptions import ApiException, ResponseCodeException
+from ..exceptions import ApiException, ResponseCodeException, NetworkException
 
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
 __aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
@@ -385,7 +385,7 @@ class Api:
             "files": self.files,
             "cookies": cookies,
             "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
-            "timeout": settings.timeout
+            "timeout": settings.timeout,
         }
         config.update(kwargs)
 
@@ -455,6 +455,8 @@ class Api:
             "cookies": cookies,
             "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
             "timeout": settings.timeout
+            if settings.http_client == settings.HTTPClient.HTTPX
+            else aiohttp.ClientTimeout(total=settings.timeout),
         }
         config.update(kwargs)
 
@@ -495,6 +497,10 @@ class Api:
         config = self._prepare_request_sync(**kwargs)
         session = httpx.Client()
         resp = session.request(**config)
+        try:
+            resp.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            raise NetworkException(e.status, e.message)
         real_data = self._process_response(
             resp, self._get_resp_text_sync(resp), raw=raw
         )
@@ -514,6 +520,10 @@ class Api:
         if settings.http_client == settings.HTTPClient.HTTPX:
             session = get_session()
             resp = await session.request(**config)
+            try:
+                resp.raise_for_status()
+            except httpx.HTTPStatusError as e:
+                raise NetworkException(e.status, e.message)
             real_data = self._process_response(
                 resp, await self._get_resp_text(resp), raw=raw
             )
@@ -521,6 +531,10 @@ class Api:
         elif settings.http_client == settings.HTTPClient.AIOHTTP:
             session = get_aiohttp_session()
             async with session.request(**config) as resp:
+                try:
+                    resp.raise_for_status()
+                except aiohttp.ClientResponseError as e:
+                    raise NetworkException(e.status, e.message)
                 real_data = self._process_response(
                     resp, await self._get_resp_text(resp), raw=raw
                 )
