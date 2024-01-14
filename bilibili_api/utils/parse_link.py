@@ -33,6 +33,8 @@ from ..interactive_video import InteractiveVideo
 from ..favorite_list import FavoriteList, FavoriteListType
 from ..user import User, ChannelSeries, ChannelSeriesType, get_self_info
 
+from .initial_state import get_initial_state
+
 
 class ResourceType(Enum):
     """
@@ -170,10 +172,10 @@ async def parse_link(
         if topic != -1:
             topic.credential = credential  # type: ignore
             return (topic, ResourceType.TOPIC)  # type: ignore
-        bnj_video = parse_bnj(url, credential)  # type: ignore
-        if bnj_video != -1:
-            bnj_video.credential = credential  # type: ignore
-            return (bnj_video, ResourceType.VIDEO)  # type: ignore
+        festival_video = await parse_festival(url, credential)  # type: ignore
+        if festival_video != -1:
+            festival_video.credential = credential  # type: ignore
+            return (festival_video, ResourceType.VIDEO)  # type: ignore
         note = parse_note(url, credential)  # type: ignore
         if note != -1:
             return (note, ResourceType.NOTE)  # type: ignore
@@ -623,11 +625,14 @@ def parse_manga(url: URL, credential: Credential) -> Union[Manga, int]:
     return -1
 
 
-def parse_bnj(url: URL, credential: Credential) -> Union[Video, int]:
-    # https://www.bilibili.com/festival/2023bnj?bvid=BV1ZY4y1f79x&spm_id_from=333.999.0.0
+async def parse_festival(url: URL, credential: Credential) -> Union[Video, int]:
     bvid = url.query.get("bvid")
-    if bvid is not None:
+    if bvid is not None:  # get bvid if provided
         return Video(bvid, credential=credential)
+
+    if url.host == "www.bilibili.com" and url.parts[1] == "festival":  # use __initial_state__ to fetch
+        content, content_type = await get_initial_state(url=str(url), credential=credential)
+        return Video(content['videoSections'][0]['episodes'][0]['bvid'], credential=credential)  # 返回当前第一个视频
     return -1
 
 
