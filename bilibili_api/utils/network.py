@@ -385,6 +385,7 @@ class Api:
             "files": self.files,
             "cookies": cookies,
             "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
+            "timeout": settings.timeout
         }
         config.update(kwargs)
 
@@ -453,6 +454,7 @@ class Api:
             "files": self.files,
             "cookies": cookies,
             "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
+            "timeout": settings.timeout
         }
         config.update(kwargs)
 
@@ -460,12 +462,13 @@ class Api:
             config["headers"]["Content-Type"] = "application/json"
             config["data"] = json.dumps(config["data"])
 
-        if settings.http_client == settings.HTTPClient.AIOHTTP:
+        if settings.http_client == settings.HTTPClient.AIOHTTP and not self.json_body:
             config["data"].update(config["files"])
-            data = aiohttp.FormData()
-            for key, val in config["data"].items():
-                data.add_field(key, val)
-            config["data"] = data
+            if config["data"] != {}:
+                data = aiohttp.FormData()
+                for key, val in config["data"].items():
+                    data.add_field(key, val)
+                config["data"] = data
             config.pop("files")
             if settings.proxy != "":
                 config["proxy"] = settings.proxy
@@ -497,7 +500,7 @@ class Api:
         )
         return real_data
 
-    # @retry(times=settings.wbi_retry_times)
+    @retry(times=settings.wbi_retry_times)
     async def request(self, raw: bool = False, **kwargs) -> Union[int, str, dict]:
         """
         向接口发送请求。
@@ -706,9 +709,6 @@ def enc_wbi(params: dict, mixin_key: str):
     params["w_rid"] = hashlib.md5((Ae + mixin_key).encode(encoding="utf-8")).hexdigest()
 
 
-
-
-
 def hmac_sha256(key: str, message: str) -> str:
     """
     使用HMAC-SHA256算法对给定的消息进行加密
@@ -731,6 +731,7 @@ def hmac_sha256(key: str, message: str) -> str:
 
     return hash_hex
 
+
 async def get_bili_ticket() -> str:
     """
     获取 bili_ticket，但目前没用到，暂时不启用
@@ -748,7 +749,9 @@ async def get_bili_ticket() -> str:
         "context[ts]": f"{int(time.time())}",
         "csrf": "",
     }
-    return (await Api(method="POST", url=url, no_csrf=True).update_params(**params).result)["ticket"]
+    return (
+        await Api(method="POST", url=url, no_csrf=True).update_params(**params).result
+    )["ticket"]
 
 
 def get_session() -> httpx.AsyncClient:
@@ -765,12 +768,10 @@ def get_session() -> httpx.AsyncClient:
         if settings.proxy != "":
             last_proxy = settings.proxy
             proxies = {"all://": settings.proxy}
-            session = httpx.AsyncClient(
-                proxies=proxies, timeout=settings.timeout
-            )  # type: ignore
+            session = httpx.AsyncClient(proxies=proxies)  # type: ignore
         else:
             last_proxy = ""
-            session = httpx.AsyncClient(timeout=settings.timeout)
+            session = httpx.AsyncClient()
         __httpx_session_pool[loop] = session
 
     return session
