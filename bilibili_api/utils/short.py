@@ -5,11 +5,9 @@ bilibili_api.utils.short
 """
 from typing import Optional
 
-import httpx
-
 from .. import settings
 from .credential import Credential
-from .network import get_session
+from .network import get_session, get_aiohttp_session
 
 
 async def get_real_url(short_url: str, credential: Optional[Credential] = None) -> str:
@@ -27,29 +25,14 @@ async def get_real_url(short_url: str, credential: Optional[Credential] = None) 
         返回值为原 url 类型
     """
     credential = credential if credential else Credential()
-    config = {}
-    config["method"] = "GET"
-    config["url"] = short_url
-    config["follow_redirects"] = False
-    if settings.proxy:
-        config["proxies"] = {"all://": settings.proxy}
+
     try:
-        resp = await get_session().head(url=str(short_url), follow_redirects=True)
+        if settings.http_client == settings.HTTPClient.HTTPX:
+            resp = await get_session().head(url=str(short_url), follow_redirects=True)
+        else:
+            resp = await get_aiohttp_session().head(url=str(short_url), allow_redirects=True)
         u = resp.url
+
         return str(u)
     except Exception as e:
         raise e
-
-
-async def get_headers(short_url: str) -> httpx.Headers:
-    """
-    获取链接的 headers。
-    """
-    config = {}
-    config["method"] = "GET"
-    config["url"] = short_url
-    config["follow_redirects"] = False
-    if settings.proxy:
-        config["proxies"] = {"all://": settings.proxy}
-    resp = await get_session().head(url=short_url, follow_redirects=False)
-    return resp.headers
