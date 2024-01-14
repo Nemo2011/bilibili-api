@@ -513,13 +513,18 @@ class Api:
         # 判断http_client的类型
         if settings.http_client == settings.HTTPClient.HTTPX:
             session = get_session()
+            resp = await session.request(**config)
+            real_data = self._process_response(
+                resp, await self._get_resp_text(resp), raw=raw
+            )
+            return real_data
         elif settings.http_client == settings.HTTPClient.AIOHTTP:
             session = get_aiohttp_session()
-        resp = await session.request(**config)
-        real_data = self._process_response(
-            resp, await self._get_resp_text(resp), raw=raw
-        )
-        return real_data
+            async with session.request(**config) as resp:
+                real_data = self._process_response(
+                    resp, await self._get_resp_text(resp), raw=raw
+                )
+                return real_data
 
     def _process_response(
         self,
