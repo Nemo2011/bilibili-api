@@ -312,3 +312,7 @@ from bilibili_api import audio_uploader
 #### async def start()
 
 开始上传
+
+#### async def abort()
+
+终止上传
