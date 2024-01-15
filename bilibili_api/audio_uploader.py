@@ -4,6 +4,7 @@ bilibili_api.audio_uploader
 音频上传
 """
 
+import asyncio
 import os
 import json
 import time
@@ -415,7 +416,7 @@ class SongMeta:
 
     title (str): 标题
 
-    cover (Optional[str]): 封面
+    cover (Optional[Picture]): 封面
 
     description (Optional[str]): 描述
 
@@ -453,7 +454,7 @@ class SongMeta:
     instrument: Optional[List[str]] = field(default_factory=list)
     origin_url: Optional[str] = None
     origin_title: Optional[str] = None
-    cover: Optional[str] = None
+    cover: Optional[Picture] = None
     aid: Optional[int] = None
     cid: Optional[int] = None
     tid: Optional[int] = None
@@ -469,6 +470,7 @@ class AudioUploader(AsyncEvent):
 
     __song_id: int
     __upos_file: UposFile
+    __task: asyncio.Task
 
     def _check_meta(self):
         assert self.meta.content_type is not None
@@ -595,10 +597,10 @@ class AudioUploader(AsyncEvent):
         self.__song_id = preupload["biz_id"]
         return preupload
 
-    async def upload_cover(self, cover: str) -> str:
+    async def _upload_cover(self, cover: str) -> str:
         return await upload_cover(cover, self.credential)
 
-    async def start(self):
+    async def _main(self):
         preupload = await self._preupload()
         await UposFileUploader(file=self.__upos_file, preupload=preupload).upload()
         if self.meta.lrc:
@@ -607,10 +609,24 @@ class AudioUploader(AsyncEvent):
             )
         else:
             lrc_url = ""
-        cover_url = await self.upload_cover(self.meta.cover)
-        return await self.submit(lrc_url=lrc_url, cover_url=cover_url)
+        self.dispatch(AudioUploaderEvents.PRE_COVER)
+        if self.meta.cover:
+            try:
+                cover_url = await self._upload_cover(self.meta.cover)
+            except Exception as e:
+                self.dispatch(AudioUploaderEvents.COVER_FAILED, {"err": e})
+                raise e
+            self.dispatch(AudioUploaderEvents.AFTER_COVER.value, cover_url)
+        self.dispatch(AudioUploaderEvents.PRE_SUBMIT.value)
+        try:
+            result = await self._submit(lrc_url=lrc_url, cover_url=cover_url)
+        except Exception as e:
+            self.dispatch(AudioUploaderEvents.SUBMIT_FAILED.value, {"err": e})
+            raise e
+        self.dispatch(AudioUploaderEvents.AFTER_SUBMIT.value, result)
+        return result
 
-    async def submit(self, cover_url: str, lrc_url: str = "") -> int:
+    async def _submit(self, cover_url: str, lrc_url: str = "") -> int:
         uploader = await user.get_self_info(self.credential)
         data = {
             "lyric_url": lrc_url,
@@ -729,6 +745,33 @@ class AudioUploader(AsyncEvent):
             .result
         )
 
+    async def start(self) -> dict:
+        """
+        开始上传
+        """
+        task = asyncio.create_task(self._main())
+        self.__task = task
+
+        try:
+            result = await task
+            self.__task = None
+            return result
+        except asyncio.CancelledError:
+            # 忽略 task 取消异常
+            pass
+        except Exception as e:
+            self.dispatch(AudioUploaderEvents.FAILED.value, {"err": e})
+            raise e
+
+    async def abort(self):
+        """
+        中断更改
+        """
+        if self.__task:
+            self.__task.cancel("用户手动取消")
+
+        self.dispatch(AudioUploaderEvents.ABORTED.value, None)
+
 
 async def upload_lrc(lrc: str, song_id: int, credential: Credential) -> str:
     """
@@ -758,13 +801,11 @@ async def get_upinfo(param: Union[int, str], credential: Credential) -> List[dic
     return await Api(**api, credential=credential).update_data(**data).result
 
 
-async def upload_cover(cover: str, credential: Credential) -> str:
+async def upload_cover(cover: Picture, credential: Credential) -> str:
     api = _API["image"]
-    image = open(cover, "rb")
     # 小于 3MB
     assert os.path.getsize(cover) < 1024 * 1024 * 3, "3MB size limit"
     # 宽高比 1:1
-    pic = Picture().from_file(cover)
-    assert pic.width == pic.height, "width == height, 600 * 600 recommanded"
-    files = {"file": image}
+    assert cover.width == cover.height, "width == height, 600 * 600 recommanded"
+    files = {"file": cover.content}
     return await Api(**api, credential=credential).update_files(**files).result
