@@ -74,6 +74,7 @@
   + [music.py - 音乐](/modules/music.md)
   + [app.py - 手机 APP](/modules/app.md)
   + [video_uploader.py - 视频上传](/modules/video_uploader.md)
+  + [audio_uploader.py - 音频上传](/modules/audio_uploader.md)
   + [client.py - IP 终端](/modules/client.md)
   + [emoji.py - 表情包](/modules/emoji.md)
   + [game.py - 游戏](/modules/game.md)
