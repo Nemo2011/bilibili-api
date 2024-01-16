@@ -782,3 +782,39 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 获取自己风纪委员信息
 
 **Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_login_log()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+获取自己的登录记录
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_moral_log()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+获取自己的节操记录
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_experience_log()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+获取自己的经验记录
+
+**Returns:** dict: 调用 API 返回的结果
