@@ -13,4 +13,4 @@ password = os.getenv("BILI_PASSWORD")
 #     return login.login_with_password(username, password)
 
 
-login_with_qrcode()
+# login_with_qrcode()
