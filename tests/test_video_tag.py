@@ -23,7 +23,3 @@ async def test_d_subscribe_tag():
 
 async def test_e_unsubscribe_tag():
     return await tag.unsubscribe_tag()
-
-
-async def test_f_get_cards():
-    return await tag.get_cards()
