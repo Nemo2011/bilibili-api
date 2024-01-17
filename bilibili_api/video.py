@@ -966,7 +966,7 @@ class Video:
                     elif data_type == 9:
                         dm.weight = dm_reader.varint()
                     elif data_type == 10:
-                        dm.action = str(dm_reader.varint())
+                        dm.action = str(dm_reader.string())
                     elif data_type == 11:
                         dm.pool = dm_reader.varint()
                     elif data_type == 12:
@@ -981,6 +981,12 @@ class Video:
                         dm_reader.bytes_string()
                     elif data_type == 21:
                         dm_reader.bytes_string()
+                    elif data_type == 22:
+                        dm_reader.bytes_string()
+                    elif data_type == 25:
+                        dm_reader.varint()
+                    elif data_type == 26:
+                        dm_reader.varint()
                     else:
                         break
                 danmakus.append(dm)
