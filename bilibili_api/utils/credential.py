@@ -47,7 +47,9 @@ class Credential:
         self.sessdata = (
             None
             if sessdata is None
-            else (sessdata if sessdata.find("%") != -1 else urllib.parse.quote(sessdata))
+            else (
+                sessdata if sessdata.find("%") != -1 else urllib.parse.quote(sessdata)
+            )
         )
         self.bili_jct = bili_jct
         self.buvid3 = buvid3
@@ -61,13 +63,15 @@ class Credential:
         Returns:
             dict: 请求 Cookies 字典
         """
-        return {
+        cookies = {
             "SESSDATA": self.sessdata,
-            "buvid3": self.buvid3 if self.buvid3 else str(uuid.uuid1()) + "infoc",
+            "buvid3": self.buvid3,
             "bili_jct": self.bili_jct,
-            "DedeUserID": self.dedeuserid,
             "ac_time_value": self.ac_time_value,
         }
+        if self.dedeuserid:
+            cookies.update({"DedeUserID": self.dedeuserid})
+        return cookies
 
     def has_dedeuserid(self) -> bool:
         """
