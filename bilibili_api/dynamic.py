@@ -941,13 +941,17 @@ async def get_dynamic_page_info(
     params = {
         "timezone_offset": -480,
         "features": features,
-        "offset": offset,
         "page": pn,
     }
+    params.update({"offset": offset} if offset else {})
     if _type:  # 全部动态
         params["type"] = _type.value
     elif host_mid:  # 指定 UP 主动态
         params["host_mid"] = host_mid
+    elif not _type:
+        api["params"].pop("type")
+    elif not host_mid:
+        api["params"].pop("host_mid")
 
     dynmaic_data = (
         await Api(**api, credential=credential).update_params(**params).result
