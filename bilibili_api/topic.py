@@ -131,9 +131,10 @@ class Topic:
         params = {
             "topic_id": self.get_topic_id(),
             "page_size": ps,
-            "sort_by": sort_by.value,
-            "offset": offset,
+            "sort_by": sort_by.value
         }
+        if offset:
+            params.update({"offset": offset})
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
