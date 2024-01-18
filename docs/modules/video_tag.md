@@ -46,11 +46,11 @@ from bilibili_api import video_tag
 
 **Returns:** dict: 调用 API 返回的结果
 
-#### async def get_cards()
+<!-- #### async def get_cards()
 
 获取标签下的视频/动态
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** dict: 调用 API 返回的结果 -->
 
 
 #### async def subscribe_tag()

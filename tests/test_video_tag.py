@@ -13,8 +13,8 @@ async def test_b_get_similar_tags():
     return await tag.get_similar_tags()
 
 
-async def test_c_get_cards():
-    return await tag.get_cards()
+# async def test_c_get_cards():
+#     return await tag.get_cards()
 
 
 async def test_d_subscribe_tag():

@@ -77,16 +77,16 @@ class Tag:
         params = {"tag_id": self.get_tag_id()}
         return await Api(**api).update_params(**params).result
 
-    async def get_cards(self) -> dict:
-        """
-        获取标签下的视频/动态
+    # async def get_cards(self) -> dict:
+    #     """
+    #     获取标签下的视频/动态
 
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        api = API["info"]["get_list"]
-        params = {"topic_id": self.get_tag_id()}
-        return await Api(**api).update_params(**params).result
+    #     Returns:
+    #         dict: 调用 API 返回的结果
+    #     """
+    #     api = API["info"]["get_list"]
+    #     params = {"topic_id": self.get_tag_id()}
+    #     return await Api(**api).update_params(**params).result
 
     async def get_history_cards(self, offset_dynamic_id: int) -> dict:
         """
