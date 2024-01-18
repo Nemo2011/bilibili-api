@@ -1511,8 +1511,11 @@ class Video:
         params = {
             "aid": self.get_aid(),
             "cid": cid,
-            "ep_id": epid,
         }
+
+        if epid:
+            params["epid"] = epid
+
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )

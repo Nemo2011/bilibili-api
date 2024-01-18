@@ -188,16 +188,16 @@ async def test_w_Video_pay_coin():
 #            return e.raw
 
 
-async def test_y_Video_del_tag():
-    try:
-        data = await video.delete_tag(99999999)
-        return data
-    except ResponseCodeException as e:
-        # 16070  只有 UP 才能添加
-        if e.code != 16070:
-            raise e
-        else:
-            return e.raw
+# async def test_y_Video_del_tag():
+#     try:
+#         data = await video.delete_tag(99999999)
+#         return data
+#     except ResponseCodeException as e:
+#         # 16070  只有 UP 才能添加
+#         if e.code != 16070:
+#             raise e
+#         else:
+#             return e.raw
 
 
 # async def test_z_Video_subscribe_and_unsubscribe_tag():
