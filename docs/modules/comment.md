@@ -28,6 +28,7 @@ from bilibili_api import comment
 + CHEESE: 课程
 + BLACK_ROOM: 小黑屋
 + MANGA: 漫画
+
 ## class ReportReason
 
 举报原因见 https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/comment/action.md#%E4%B8%BE%E6%8A%A5%E8%AF%84%E8%AE%BA

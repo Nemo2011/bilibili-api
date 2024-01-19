@@ -4,11 +4,15 @@
 import bilibili_api
 ```
 
-根模块
+根模块 (默认已导入所有子模块，例如 `bilibili_api.video`, `bilibili_api.user`)
+
+---
 
 ## const dict HEADERS
 
 访问 bilibili 视频下载链接等内部网址用的 HEADERS
+
+---
 
 ## def set_session()
 
@@ -27,6 +31,26 @@ import bilibili_api
 获取当前模块的 httpx.AsyncSession 对象，用于自定义请求
 
 **Returns:** httpx.AsyncSession
+
+---
+
+## def set_aiohttp_session()
+
+| name    | type                  | description                |
+| ------- | --------------------- | -------------------------- |
+| session | aiohttp.ClientSession | aiohttp.ClientSession 实例 |
+
+用户手动设置 Session
+
+**Returns:** None
+
+---
+
+## def get_aiohttp_session()
+
+获取当前模块的 aiohttp.ClientSession 对象，用于自定义请求
+
+**Returns:** aiohttp.ClientSession
 
 ---
 
