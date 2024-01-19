@@ -184,7 +184,7 @@
     "subscribe": {
       "url": "https://api.bilibili.com/x/copyright-music-publicity/toplist/subscribe/update",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "list_id": "int: 1",
         "state": "int: 1 订阅 2 取消"
