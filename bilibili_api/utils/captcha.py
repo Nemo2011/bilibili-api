@@ -7,12 +7,9 @@ import os
 import copy
 import json
 import time
-import webbrowser
-
-import requests
 
 from .utils import get_api
-from .network import HEADERS
+from .network import Api
 
 validate = None
 seccode = None
@@ -52,11 +49,10 @@ def _geetest_urlhandler(url: str, content_type: str):
         return html_source_bytes
     elif url[:7] == "":
         api = API["password"]["captcha"]
-        data = requests.get(api["url"], headers=HEADERS.copy()).text
-        json_data = json.loads(data)
-        gt = json_data["data"]["geetest"]["gt"]
-        challenge = json_data["data"]["geetest"]["challenge"]
-        key = json_data["data"]["token"]
+        json_data = Api(**api).result_sync
+        gt = json_data["geetest"]["gt"]
+        challenge = json_data["geetest"]["challenge"]
+        key = json_data["token"]
         with open(
             os.path.abspath(
                 os.path.join(

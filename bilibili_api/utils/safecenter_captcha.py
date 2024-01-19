@@ -8,9 +8,8 @@ import copy
 import json
 import time
 
-import requests
-
 from .utils import get_api
+from .network import Api
 
 validate = None
 seccode = None
@@ -56,11 +55,10 @@ def _geetest_urlhandler(url: str, content_type: str):
         return html_source_bytes
     elif url[:7] == "":
         api = API["safecenter"]["captcha"]
-        data = requests.post(api["url"]).text
-        json_data = json.loads(data)
-        gt = json_data["data"]["gee_gt"]
-        challenge = json_data["data"]["gee_challenge"]
-        key = json_data["data"]["recaptcha_token"]
+        json_data = Api(**api).result_sync
+        gt = json_data["gee_gt"]
+        challenge = json_data["gee_challenge"]
+        key = json_data["recaptcha_token"]
         with open(
             os.path.abspath(
                 os.path.join(

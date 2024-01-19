@@ -14,8 +14,6 @@ import datetime
 from enum import Enum
 from typing import Any, List, Tuple, Union, Optional
 
-import requests
-
 from bilibili_api.utils.danmaku import Danmaku
 
 from . import settings
@@ -1007,14 +1005,8 @@ class Bangumi:
         if self.__ssid == -1 and epid == -1:
             api = API["info"]["meta"]
             params = {"media_id": media_id}
-            meta = requests.get(
-                url=api["url"], params=params, cookies=self.credential.get_cookies(), headers=HEADERS
-            )
-            meta.raise_for_status()
-            if meta.json()["code"] == 0:
-                self.__ssid = meta.json()["result"]["media"]["season_id"]
-            else:
-                raise ApiException(msg=meta.json()["message"])
+            meta = Api(**api, credential=credential).update_params(**params).result_sync
+            self.__ssid = meta["media"]["season_id"]
             params["media_id"] = media_id
         # 处理正常情况
         if self.__ssid != -1:
@@ -1026,23 +1018,18 @@ class Bangumi:
             api = API["info"]["collective_info_oversea"]
         else:
             api = API["info"]["collective_info"]
-        req = requests.get(
-            url=api["url"], params=params, cookies=self.credential.get_cookies(), headers=HEADERS
-        )
-        req.raise_for_status()
-        self.__raw = req.json()
+        resp = Api(**api, credential=credential).update_params(**params).result_sync
+        self.__raw = resp
         self.__epid = epid
-        if not self.__raw.get("result"):
-            raise ApiException("Api没有返回预期的结果")
         # 确认有结果后，取出数据
-        self.__ssid = req.json()["result"]["season_id"]
-        self.__media_id = req.json()["result"]["media_id"]
-        if "up_info" in req.json()["result"]:
-            self.__up_info = req.json()["result"]["up_info"]
+        self.__ssid = resp["season_id"]
+        self.__media_id = resp["media_id"]
+        if "up_info" in resp:
+            self.__up_info = resp["up_info"]
         else:
             self.__up_info = {}
         # 获取剧集相关
-        self.ep_list = req.json()["result"].get("episodes")
+        self.ep_list = resp.get("episodes")
         self.ep_item = [{}]
         # 出海 Api 和国内的字段有些不同
         if self.ep_list:
