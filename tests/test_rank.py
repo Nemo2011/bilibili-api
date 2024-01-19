@@ -65,7 +65,7 @@ async def test_i_get_vip_rank():
 
 
 async def test_j_get_manga_rank():
-    return [await rank.get_manga_rank(rank_type) for rank_type in MangeRankType]
+    return [await rank.get_manga_rank(rank_type, credential=get_credential()) for rank_type in MangeRankType]
 
 
 async def test_k_get_live_sailing_rank():
