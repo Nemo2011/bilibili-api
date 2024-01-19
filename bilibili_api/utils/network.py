@@ -326,6 +326,16 @@ class Api:
         else:
             return self.update_data(**kwargs)
 
+    def _prepare_params_data(self) -> None:
+        new_params, new_data = {}, {}
+        for key, value in self.params.items():
+            if value:
+                new_params[key] = value
+        for key, value in self.data.items():
+            if value:
+                new_data[key] = value
+        self.params, self.data = new_params, new_data
+
     def _prepare_request_sync(self, **kwargs) -> dict:
         """
         准备请求的配置参数
@@ -474,6 +484,9 @@ class Api:
             config.pop("files")
             if settings.proxy != "":
                 config["proxy"] = settings.proxy
+        elif settings.http_client == settings.HTTPClient.AIOHTTP:
+            # 舍去 files
+            config.pop("files")
 
         return config
 
@@ -494,6 +507,7 @@ class Api:
         Returns:
             接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
         """
+        self._prepare_params_data()
         config = self._prepare_request_sync(**kwargs)
         session = httpx.Client()
         resp = session.request(**config)
@@ -514,6 +528,7 @@ class Api:
         Returns:
             接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
         """
+        self._prepare_params_data()
         config = await self._prepare_request(**kwargs)
         session: Union[httpx.AsyncClient, aiohttp.ClientSession]
         # 判断http_client的类型

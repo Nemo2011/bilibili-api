@@ -77,7 +77,6 @@ from bilibili_api import rank
 - JAPAN: 日漫
 - SOUTHKOREA: 韩漫
 - OFFICAL: 宝藏
-- FREE: 免费
 - FINISH: 完结
 
 ## class LiveRankType
@@ -153,6 +152,7 @@ from bilibili_api import rank
 | name | type | description |
 | - | - | - |
 | type_ | MangaRankType | 漫画排行榜类型. Defaults to MangaRankType.NEW |
+| credential | Credential | 凭据类. Defaults to None. |
 
 获取漫画专属排行榜
 

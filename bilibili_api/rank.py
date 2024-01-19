@@ -129,7 +129,6 @@ class MangeRankType(Enum):
     - JAPAN: 日漫
     - SOUTHKOREA: 韩漫
     - OFFICAL: 宝藏
-    - FREE: 免费
     - FINISH: 完结
     """
 
@@ -140,7 +139,6 @@ class MangeRankType(Enum):
     JAPAN = 0
     SOUTHKOREA = 2
     OFFICAL = 5
-    FREE = 8
     FINISH = 13
 
 
@@ -262,18 +260,24 @@ async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
     return await Api(**api).update_params(**params).result
 
 
-async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW) -> dict:
+async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW, credential: Credential = None) -> dict:
     """
     获取漫画专属排行榜
+
+    Args:
+        credential (Credential): 凭据类
 
     Returns:
         dict: 调用 API 返回的结果
     """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
+
     api = API["info"]["manga_rank"]
     params = {"device": "pc", "platform": "web"}
     data = {"id": type_.value}
     return (
-        await Api(**api, no_csrf=True)
+        await Api(**api, no_csrf=True, credential=credential)
         .update_data(**data)
         .update_params(**params)
         .result
