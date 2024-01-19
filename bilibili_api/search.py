@@ -290,10 +290,9 @@ async def get_suggest_keywords(keyword: str) -> List[str]:
     sess = get_session()
     api = API["search"]["suggest"]
     params = {"term": keyword}
-    data = json.loads((await sess.request("GET", api["url"], params=params)).text)
-    keys = data.keys()
-    for key in keys:
-        keywords.append(data[key]["value"])
+    res = await Api(**api).update_params(**params).result
+    for key in res["tag"]:
+        keywords.append(key["value"])
     return keywords
 
 
