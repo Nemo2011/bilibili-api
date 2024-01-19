@@ -247,8 +247,9 @@ async def auto_convert_video(
 
     # check episode
     if "redirect_url" in video_info:
-        reparse_link = await parse_link(await get_real_url(video_info["redirect_url"]),
-                                        credential=credential)  # type: ignore
+        reparse_link = await parse_link(
+            await get_real_url(video_info["redirect_url"]), credential=credential
+        )  # type: ignore
         return reparse_link  # type: ignore
 
     # return video
@@ -352,17 +353,9 @@ async def parse_episode(url: URL, credential: Credential) -> Union[Episode, int]
                 epid = int(video_short_id[2:])
                 return Episode(epid=epid)
             elif video_short_id[:2].upper() == "SS":
-                sess = httpx.AsyncClient()
-                html_text = (await sess.get(str(url))).text
-                if "__INITIAL_STATE__" in html_text:
-                    pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
-                    match = re.search(pattern, html_text)
-                    content = json.loads(match.group(1))
-                    epid = content["epInfo"]["id"] if "id" in content["epInfo"] else content["epInfo"]["ep_id"]
-                else:
-                    epid = re.search(r'<link rel="canonical" href="//www.bilibili.com/bangumi/play/ep(\d+)"/>',
-                                     html_text).group(1)
-                    return Episode(epid=epid, credential=credential)
+                bangumi = Bangumi(ssid=int(video_short_id[2:]))
+                epid = (await bangumi.get_episodes())[0].get_epid()
+                return Episode(epid=epid)
     return -1
 
 
@@ -512,7 +505,11 @@ def parse_space_favorite_list(
                 ):  # query 中不存在 fid 则返回默认收藏夹
                     api = get_api("favorite-list")["info"]["list_list"]
                     params = {"up_mid": uid, "type": 2}
-                    favorite_lists = Api(**api, params=params, credential=credential).result_sync
+                    favorite_lists = (
+                        Api(**api, credential=credential)
+                        .update_params(**params)
+                        .result_sync
+                    )
 
                     if favorite_lists == None:
                         return -1
@@ -630,9 +627,15 @@ async def parse_festival(url: URL, credential: Credential) -> Union[Video, int]:
     if bvid is not None:  # get bvid if provided
         return Video(bvid, credential=credential)
 
-    if url.host == "www.bilibili.com" and url.parts[1] == "festival":  # use __initial_state__ to fetch
-        content, content_type = await get_initial_state(url=str(url), credential=credential)
-        return Video(content['videoSections'][0]['episodes'][0]['bvid'], credential=credential)  # 返回当前第一个视频
+    if (
+        url.host == "www.bilibili.com" and url.parts[1] == "festival"
+    ):  # use __initial_state__ to fetch
+        content, content_type = await get_initial_state(
+            url=str(url), credential=credential
+        )
+        return Video(
+            content["videoSections"][0]["episodes"][0]["bvid"], credential=credential
+        )  # 返回当前第一个视频
     return -1
 
 
