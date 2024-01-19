@@ -2,6 +2,8 @@
 bilibili_api.channel
 
 频道相关，与视频分区不互通。
+
+已停运
 """
 from enum import Enum
 from typing import List, Union, Optional
