@@ -405,6 +405,7 @@ async def get_raw_manga_index(
     style: MangaIndexFilter.Style = MangaIndexFilter.Style.ALL,
     pn: int = 1,
     ps: int = 18,
+    credential: Credential = None,
 ) -> list:
     """
     获取漫画索引
@@ -424,9 +425,12 @@ async def get_raw_manga_index(
 
         ps      (int)                     : 每页数量。Defaults to 18.
 
+        credential (Credential)           : 凭据类. Defaults to None.
+
     Returns:
         list: 调用 API 返回的结果
     """
+    credential = credential if credential else Credential()
     api = API["info"]["index"]
     params = {"device": "pc", "platform": "web"}
     data = {
@@ -439,7 +443,7 @@ async def get_raw_manga_index(
         "page_size": ps,
     }
     return (
-        await Api(**api, no_csrf=True)
+        await Api(**api, credential=credential, no_csrf=True)
         .update_data(**data)
         .update_params(**params)
         .result
@@ -454,6 +458,7 @@ async def get_manga_index(
     style: MangaIndexFilter.Style = MangaIndexFilter.Style.ALL,
     pn: int = 1,
     ps: int = 18,
+    credential: Credential = None,
 ) -> List[Manga]:
     """
     获取漫画索引
@@ -470,12 +475,18 @@ async def get_manga_index(
 
         style   (MangaIndexFilter.Style)  : 风格。Defaults to MangaIndexFilter.Style.ALL.
 
+        pn      (int)                     : 页码。Defaults to 1.
+
         ps      (int)                     : 每页数量。Defaults to 18.
+
+        credential (Credential)           : 凭据类. Defaults to None.
 
     Returns:
         List[Manga]: 漫画索引
     """
-    data = await get_raw_manga_index(area, order, status, payment, style, pn, ps)
+    data = await get_raw_manga_index(
+        area, order, status, payment, style, pn, ps, credential
+    )
     return [Manga(manga_data["season_id"]) for manga_data in data]
 
 
@@ -483,6 +494,7 @@ async def get_manga_update(
     date: Union[str, datetime.datetime] = datetime.datetime.now(),
     pn: int = 1,
     ps: int = 8,
+    credential: Credential = None,
 ) -> List[Manga]:
     """
     获取更新推荐的漫画
@@ -493,16 +505,20 @@ async def get_manga_update(
         pn   (int)                          : 页码。Defaults to 1.
 
         ps   (int)                          : 每页数量。Defaults to 8.
+
+        credential (Credential)           : 凭据类. Defaults to None.
+
     Returns:
         List[Manga]: 漫画列表
     """
+    credential = credential if credential else Credential()
     api = API["info"]["update"]
     params = {"device": "pc", "platform": "web"}
     if isinstance(date, datetime.datetime):
         date = date.strftime("%Y-%m-%d")
     data = {"date": date, "page_num": pn, "page_size": ps}
     manga_data = (
-        await Api(**api, no_csrf=True)
+        await Api(**api, credential=credential, no_csrf=True)
         .update_data(**data)
         .update_params(**params)
         .result
@@ -511,7 +527,7 @@ async def get_manga_update(
 
 
 async def get_manga_home_recommend(
-    pn: int = 1, seed: Optional[str] = "0"
+    pn: int = 1, seed: Optional[str] = "0", credential: Credential = None
 ) -> List[Manga]:
     """
     获取首页推荐的漫画
@@ -521,14 +537,17 @@ async def get_manga_home_recommend(
 
         seed (Optional[str])                : Unknown param，无需传入.
 
+        credential (Credential)           : 凭据类. Defaults to None.
+
     Returns:
         List[Manga]: 漫画列表
     """
+    credential = credential if credential else Credential()
     api = API["info"]["home_recommend"]
     params = {"device": "pc", "platform": "web"}
     data = {"page_num": pn, "seed": seed}
     manga_data = (
-        await Api(**api, no_csrf=True)
+        await Api(**api, credential=credential, no_csrf=True)
         .update_data(**data)
         .update_params(**params)
         .result
