@@ -121,7 +121,7 @@ class RelationType(Enum):
 
     + SUBSCRIBE         : 关注。
     + UNSUBSCRIBE       : 取关。
-    + SUBSCRIBE_SECRETLY: 悄悄关注。
+    + SUBSCRIBE_SECRETLY: 悄悄关注。已失效
     + BLOCK             : 拉黑。
     + UNBLOCK           : 取消拉黑。
     + REMOVE_FANS       : 移除粉丝。
@@ -129,7 +129,7 @@ class RelationType(Enum):
 
     SUBSCRIBE = 1
     UNSUBSCRIBE = 2
-    SUBSCRIBE_SECRETLY = 3
+    # SUBSCRIBE_SECRETLY = 3
     BLOCK = 5
     UNBLOCK = 6
     REMOVE_FANS = 7
