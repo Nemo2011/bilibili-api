@@ -171,9 +171,7 @@ class Article:
         self.__has_parsed: bool = False
         api = API["info"]["view"]
         params = {"id": self.__cvid}
-        resp = httpx.request(
-            "GET", api["url"], params=params, cookies=self.credential.get_cookies()
-        ).json()
+        resp = Api(**api).update_params(**params).request_sync(raw=True)
 
         # 设置专栏类别
         if resp["code"] != 0:
