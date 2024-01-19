@@ -331,12 +331,12 @@ class Api:
         for key, value in self.params.items():
             if isinstance(value, bool):
                 new_params[key] = int(value)
-            elif value:
+            elif value != None:
                 new_params[key] = value
         for key, value in self.data.items():
             if isinstance(value, bool):
                 new_params[key] = int(value)
-            elif value:
+            elif value != None:
                 new_data[key] = value
         self.params, self.data = new_params, new_data
 
