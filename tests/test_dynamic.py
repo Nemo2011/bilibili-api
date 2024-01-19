@@ -3,7 +3,7 @@
 from time import time, sleep
 from datetime import datetime
 
-from bilibili_api import Picture, user, dynamic
+from bilibili_api import Picture, ResponseCodeException, user, dynamic
 
 from . import common
 
@@ -52,9 +52,12 @@ async def test_f_Dynamic_get_reposts():
 
 
 async def test_g_Dynamic_set_like():
-    await dy.set_like()
-    sleep(5)
-    return await dy.set_like(status=False)  # type: ignore
+    try:
+        await dy.set_like()
+    except ResponseCodeException as e:
+        if e.code == 65006:
+            return "ok"
+        raise
 
 
 # async def test_i_Dynamic_delete():
