@@ -61,7 +61,7 @@
     "manga": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/Search?device=pc&platform=web",
       "method": "POST",
-      "verify": false,
+      "verify":true,
       "data": {
         "key_word": "str: 搜索用的关键词",
         "page_num": "int: 页码",

@@ -170,6 +170,7 @@ from bilibili_api import search
 | keyword | str | 搜索关键词 |
 | page_num | int | 页码. Defaults to 1. |
 | page_size | int | 每一页的数据大小. Defaults to 9. |
+| credential | Credential | 凭据类. Defaults to None. |
 
 搜索漫画特用函数
 

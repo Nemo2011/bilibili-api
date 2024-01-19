@@ -10,6 +10,7 @@ from typing import List, Union, Callable
 from .utils.utils import get_api
 from .video_zone import VideoZoneTypes
 from .utils.network import Api, get_session
+from .credential import Credential
 
 API = get_api("search")
 
@@ -311,7 +312,9 @@ async def search_games(keyword: str) -> dict:
     return await Api(**api).update_params(**params).result
 
 
-async def search_manga(keyword: str, page_num: int = 1, page_size: int = 9):
+async def search_manga(
+    keyword: str, page_num: int = 1, page_size: int = 9, credential: Credential = None
+):
     """
     搜索漫画特用函数
 
@@ -322,12 +325,17 @@ async def search_manga(keyword: str, page_num: int = 1, page_size: int = 9):
 
         page_size (int): 每一页的数据大小. Defaults to 9.
 
+        credential (Credential): 凭据类. Defaults to None.
+
     Returns:
         dict: 调用 API 返回的结果
     """
+    credential = credential if credential else Credential()
     api = API["search"]["manga"]
     data = {"key_word": keyword, "page_num": page_num, "page_size": page_size}
-    return await Api(**api, no_csrf=True).update_data(**data).result
+    return (
+        await Api(**api, credential=credential, no_csrf=True).update_data(**data).result
+    )
 
 
 async def search_cheese(

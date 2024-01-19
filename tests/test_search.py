@@ -1,6 +1,7 @@
 # bilibili_api.search
 
 from bilibili_api import search, video_zone
+from .common import get_credential
 
 
 async def test_a_search():
@@ -40,7 +41,7 @@ async def test_g_search_game():
 
 
 async def test_h_search_manga():
-    return await search.search_manga("来自深渊")
+    return await search.search_manga("来自深渊", credential=get_credential())
 
 
 async def test_i_search_cheese():
