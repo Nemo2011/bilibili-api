@@ -30,7 +30,9 @@ async def get_real_url(short_url: str, credential: Optional[Credential] = None) 
         if settings.http_client == settings.HTTPClient.HTTPX:
             resp = await get_session().head(url=str(short_url), follow_redirects=True)
         else:
-            resp = await get_aiohttp_session().head(url=str(short_url), allow_redirects=True)
+            resp = await get_aiohttp_session().head(
+                url=str(short_url), allow_redirects=True
+            )
         u = resp.url
 
         return str(u)

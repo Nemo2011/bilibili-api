@@ -9,7 +9,7 @@ import time
 from enum import Enum
 from typing import Dict, List, Union
 
-from .credential import Credential
+from .utils.credential import Credential
 from .utils.network import Api
 from .utils.utils import get_api
 
@@ -54,10 +54,10 @@ class MessageType(Enum):
 class MessageSegment:
     """
     消息片段
-    
+
     Args:
         msg      (str) : 信息
-        
+
         is_emoji (bool): 是否为表情包
     """
 
@@ -138,7 +138,7 @@ class WatchRoom:
 
     def set_episode_id(self, episode_id: int):
         self.__episode_id = episode_id
-        
+
     def get_season_id(self):
         return self.__season_id
 

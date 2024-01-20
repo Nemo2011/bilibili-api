@@ -8,7 +8,7 @@ import asyncio
 import platform
 
 from .utils.sync import sync
-from .credential import Credential
+from .utils.credential_refresh import Credential
 from .utils.picture import Picture
 from .utils.short import get_real_url
 from .utils.parse_link import ResourceType, parse_link
@@ -126,7 +126,6 @@ __all__ = [
     "client",
     "comment",
     "creative_center",
-    "credential",
     "dynamic",
     "emoji",
     "favorite_list",

@@ -74,9 +74,7 @@ class Picture:
         session = httpx.AsyncClient()
         resp = await session.get(
             url,
-            headers={
-                "User-Agent": "Mozilla/5.0"
-            },
+            headers={"User-Agent": "Mozilla/5.0"},
         )
         obj.content = resp.read()
         obj.url = url
@@ -100,9 +98,7 @@ class Picture:
         session = httpx.Client()
         resp = session.get(
             url,
-            headers={
-                "User-Agent": "Mozilla/5.0"
-            },
+            headers={"User-Agent": "Mozilla/5.0"},
         )
         obj.content = resp.read()
         obj.url = url

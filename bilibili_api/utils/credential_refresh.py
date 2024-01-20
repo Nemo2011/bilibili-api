@@ -14,8 +14,8 @@ from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
 from Cryptodome.Cipher import PKCS1_OAEP
 
-from .utils.credential import Credential as _Credential
-from .utils.network import Api, get_api, get_session, HEADERS
+from .credential import Credential as _Credential
+from .network import Api, get_api, get_session, HEADERS
 
 key = RSA.importKey(
     """\
@@ -116,7 +116,10 @@ async def get_refresh_csrf(credential: Credential) -> str:
     cookies["buvid3"] = str(uuid.uuid1())
     cookies["Domain"] = ".bilibili.com"
     resp = await get_session().request(
-        "GET", api["url"].replace("{correspondPath}", correspond_path), cookies=cookies, headers=HEADERS.copy()
+        "GET",
+        api["url"].replace("{correspondPath}", correspond_path),
+        cookies=cookies,
+        headers=HEADERS.copy(),
     )
     if resp.status_code == 404:
         raise Exception("correspondPath 过期或错误。")
@@ -151,7 +154,9 @@ async def refresh_cookies(credential: Credential) -> Credential:
     cookies = credential.get_cookies()
     cookies["buvid3"] = str(uuid.uuid1())
     cookies["Domain"] = ".bilibili.com"
-    resp = await get_session().request("POST", api["url"], cookies=cookies, data=data, headers=HEADERS.copy())
+    resp = await get_session().request(
+        "POST", api["url"], cookies=cookies, data=data, headers=HEADERS.copy()
+    )
     if resp.status_code != 200 or resp.json()["code"] != 0:
         raise Exception("刷新 Cookies 失败")
     new_credential = Credential(

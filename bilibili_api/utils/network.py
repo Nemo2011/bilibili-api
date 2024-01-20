@@ -518,7 +518,7 @@ class Api:
         try:
             resp.raise_for_status()
         except httpx.HTTPStatusError as e:
-            raise NetworkException(e.status, e.message)
+            raise NetworkException(resp.status_code, str(resp.status_code))
         real_data = self._process_response(
             resp, self._get_resp_text_sync(resp), raw=raw
         )
@@ -542,7 +542,7 @@ class Api:
             try:
                 resp.raise_for_status()
             except httpx.HTTPStatusError as e:
-                raise NetworkException(e.status, e.message)
+                raise NetworkException(resp.status_code, str(resp.status_code))
             real_data = self._process_response(
                 resp, await self._get_resp_text(resp), raw=raw
             )
