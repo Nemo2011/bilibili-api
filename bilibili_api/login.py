@@ -14,6 +14,7 @@ import json
 import time
 import uuid
 import base64
+import hashlib
 import tempfile
 import webbrowser
 from typing import Dict, List, Union
@@ -86,7 +87,7 @@ def make_qrcode(url) -> str:
 
 
 def update_qrcode_data() -> dict:
-    api = API["qrcode"]["get_qrcode_and_token"]
+    api = API["qrcode"]["web"]["get_qrcode_and_token"]
     qrcode_data = Api(credential=credential, **api).result_sync
     return qrcode_data
 
@@ -202,9 +203,104 @@ def login_with_qrcode_term() -> Credential:
 
 def login_with_key(key: str) -> dict:
     params = {"qrcode_key": key}
-    events_api = API["qrcode"]["get_events"]
-    events = Api(credential=credential, **events_api).update_params(**params).result_sync
+    events_api = API["qrcode"]["web"]["get_events"]
+    events = (
+        Api(credential=credential, **events_api).update_params(**params).result_sync
+    )
     return events
+
+
+# ----------------------------------------------------------------
+# TV 二维码登录
+# ----------------------------------------------------------------
+
+
+def app_signature(params: dict) -> dict:
+    # 这个 APP 签名应该是放在 network 才对的，但暂时没空做 APP 签名，先凑合，咕咕咕
+    appkey = "4409e2ce8ffd12b8"
+    appsec = "59b43e04ad6965f34319062b478f83dd"
+    params["appkey"] = appkey
+    params = dict(sorted(params.items()))
+    params["sign"] = hashlib.md5(
+        (urllib.parse.urlencode(params) + appsec).encode("utf-8")
+    ).hexdigest()
+    return params
+
+
+def update_tv_qrcode_data():
+    api = API["qrcode"]["tv"]["get_qrcode_and_auth_code"]
+    data = app_signature(
+        {
+            "local_id": "0",
+            "ts": int(time.time()),
+        }
+    )
+    qrcode_data = Api(credential=credential, no_csrf=True, **api).update_data(**data).result_sync
+    return qrcode_data
+
+
+def verify_tv_login_status(auth_code: str) -> dict:
+    data = app_signature(
+        {
+            "auth_code": auth_code,
+            "ts": int(time.time()),
+            "local_id": "0",
+        }
+    )
+    events_api = API["qrcode"]["tv"]["get_events"]
+    events = Api(credential=credential, no_csrf=True, **events_api).update_data(**data).request_sync(raw=True)
+    return events
+
+
+def parse_tv_resp(events: dict) -> Credential:
+    cookies = {}
+    for cookie in events["cookie_info"]["cookies"]:
+        if cookie["name"] == "SESSDATA":
+            cookies["sessdata"] = cookie["value"]
+        elif cookie["name"] == "bili_jct":
+            cookies["bili_jct"] = cookie["value"]
+        elif cookie["name"] == "DedeUserID":
+            cookies["dedeuserid"] = cookie["value"]
+    
+    return Credential(**cookies)
+
+
+def login_with_tv_qrcode_term() -> Credential:
+    """
+    终端扫描 TV 二维码登录
+
+    Args:
+
+    Returns:
+        Credential: 凭据
+    """
+    import qrcode_terminal
+
+    qrcode_data = update_tv_qrcode_data()
+    qrcode_url = qrcode_data["url"]
+    auth_code = qrcode_data["auth_code"]
+    print(qrcode_terminal.qr_terminal_str(qrcode_url) + "\n")
+    while True:
+        events = verify_tv_login_status(auth_code=auth_code)
+        if events["code"] == 86039:
+            sys.stdout.write("\r 请扫描二维码↑")
+            sys.stdout.flush()
+        # elif events["code"] == 86090: # 根本没捕捉到这个 code
+        #     sys.stdout.write("\r 点下确认啊！")
+        #     sys.stdout.flush()
+        elif events["code"] == 86038:
+            print("二维码过期，请扫新二维码！")
+            qrcode_data = update_tv_qrcode_data()
+            qrcode_url = qrcode_data["url"]
+            auth_code = qrcode_data["auth_code"]
+            print(qrcode_terminal.qr_terminal_str(qrcode_url) + "\n")
+        elif events["code"] == 0:
+            sys.stdout.write("\r 成功！")
+            sys.stdout.flush()
+            return parse_tv_resp(events["data"])
+        elif "code" in events.keys():
+            raise LoginError(events["message"])
+        time.sleep(0.5)
 
 
 # ----------------------------------------------------------------
