@@ -307,31 +307,6 @@ async def get_article_favorite_list(
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-async def get_album_favorite_list(
-    page: int = 1, credential: Union[None, Credential] = None
-) -> dict:
-    """
-    获取自己的相簿收藏夹内容。
-
-    Args:
-        page       (int, optional)              : 页码. Defaults to 1.
-
-        credential (Credential | None, optional): Credential. Defaults to None.
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    if credential is None:
-        credential = Credential()
-
-    credential.raise_for_no_sessdata()
-
-    api = API["info"]["list_albums"]
-    params = {"page": page, "pagesize": 30, "biz_type": 2}
-
-    return await Api(**api, credential=credential).update_params(**params).result
-
-
 async def get_course_favorite_list(
     page: int = 1, credential: Union[None, Credential] = None
 ) -> dict:

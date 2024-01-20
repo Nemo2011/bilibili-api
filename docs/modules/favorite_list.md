@@ -185,19 +185,6 @@ mode 参数见 SearchFavoriteListMode 枚举。
 
 ---
 
-## async def get_album_favorite_list()
-
-| name       | type                 | description             |
-| ---------- | -------------------- | :---------------------- |
-| page       | int, optional        | 页码. Defaults to 1.    |
-| credential | Credential \| None, optional | 凭据. Defaults to None. |
-
-获取自己的相簿收藏夹内容。
-
-**Returns:** dict: 调用 API 返回的结果
-
----
-
 ## async def get_course_favorite_list()
 
 | name       | type                 | description             |
