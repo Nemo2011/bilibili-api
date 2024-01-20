@@ -176,10 +176,12 @@ async def search_by_type(
     order_sort: Union[int, None] = None,
     category_id: Union[CategoryTypeArticle, CategoryTypePhoto, int, None] = None,
     page: int = 1,
+    page_size: int = 42,
     debug_param_func: Union[Callable, None] = None,
 ) -> dict:
     """
     指定分区，类型，视频长度等参数进行搜索，返回未经处理的字典
+
     类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、直播用户(liveuser)、专栏(article)、话题(topic)、用户(bili_user)
 
     Args:
@@ -191,7 +193,7 @@ async def search_by_type(
 
         time_range       (int, optional)                                                         : 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
 
-        video_zone_type        (int | ZoneTypes | None, optional)                                : 话题类型，指定 tid (可使用 channel 模块查询)
+        video_zone_type  (int | ZoneTypes | None, optional)                                      : 话题类型，指定 tid (可使用 channel 模块查询)
 
         order_type       (OrderUser | OrderLiveRoom | OrderArticle | OrderVideo | None, optional): 排序分类类型
 
@@ -201,10 +203,12 @@ async def search_by_type(
 
         page             (int, optional)                                                         : 页码
 
+        page_size        (int, optional)                                                         : 每一页的数据大小
+
     Returns:
         dict: 调用 API 返回的结果
     """
-    params = {"keyword": keyword, "page": page}
+    params = {"keyword": keyword, "page": page, "page_size": page_size}
     if search_type:
         params["search_type"] = search_type.value
     else:
