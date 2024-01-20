@@ -1007,6 +1007,8 @@ class LiveDanmaku(AsyncEvent):
                     @self.on("VERIFICATION_SUCCESSFUL")
                     async def on_verification_successful(data):
                         # 新建心跳任务
+                        while len(self.__tasks) > 0:
+                            self.__tasks.pop().cancel()
                         self.__tasks.append(asyncio.create_task(self.__heartbeat(ws)))
 
                     self.__ws = ws
@@ -1040,6 +1042,7 @@ class LiveDanmaku(AsyncEvent):
                     break
 
             except Exception as e:
+                await ws.close()
                 self.logger.warning(e)
                 if retry <= 0 or len(available_hosts) == 0:
                     self.logger.error("无法连接服务器")
