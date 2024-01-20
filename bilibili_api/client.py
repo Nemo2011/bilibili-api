@@ -21,12 +21,12 @@ async def get_zone() -> dict:
     return await Api(**api).result
 
 
-async def get_client_info() -> dict:
-    """
-    获取 IP 信息
+# async def get_client_info() -> dict:
+#     """
+#     获取 IP 信息
 
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    api = API["info"]
-    return await Api(**api).result
+#     Returns:
+#         dict: 调用 API 返回的结果
+#     """
+#     api = API["info"]
+#     return await Api(**api).result
