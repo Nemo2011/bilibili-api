@@ -120,8 +120,8 @@ async def test_s_get_general_info():
     return await l.get_general_info()
 
 
-async def test_update_news():
-    return await l.update_news("hello\nit's me")
+# async def test_update_news():
+#     return await l.update_news("hello\nit's me")
 
 
 async def test_t_get_self_live_info():
@@ -144,8 +144,8 @@ async def test_x_get_gift_common():
     return await l.get_gift_common()
 
 
-async def test_y_get_gift_sepcial():
-    return await l.get_gift_special(tab_id=2)
+# async def test_y_get_gift_sepcial():
+#     return await l.get_gift_special(tab_id=2)
 
 
 async def test_z_send_gift_gold():

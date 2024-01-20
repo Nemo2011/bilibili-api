@@ -689,6 +689,8 @@ class LiveRoom:
 
     async def get_gift_special(self, tab_id: int) -> dict:
         """
+        注：此 API 已失效，请使用 live.get_gift_config
+
         获取当前直播间内的特殊礼物列表
 
         Args:
