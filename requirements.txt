@@ -1,5 +1,5 @@
 aiohttp~=3.9.1
-beautifulsoup4~=4.12.2
+beautifulsoup4~=4.12.3
 colorama~=0.4.6
 lxml~=5.1.0
 pyyaml~=6.0
