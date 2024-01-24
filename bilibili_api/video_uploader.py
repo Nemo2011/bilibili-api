@@ -110,21 +110,21 @@ LINES_INFO = {
         "upcdn": "bda2",
         "probe_version": 20221109,
         "query": "probe_version=20221109&upcdn=bda2",
-        "probe_url": "//upos-cs-upcdnbda2.bilivideo.com/OK"
+        "probe_url": "//upos-cs-upcdnbda2.bilivideo.com/OK",
     },
     "bldsa": {
         "os": "upos",
         "upcdn": "bldsa",
         "probe_version": 20221109,
         "query": "upcdn=bldsa&probe_version=20221109",
-        "probe_url": "//upos-cs-upcdnbldsa.bilivideo.com/OK"
+        "probe_url": "//upos-cs-upcdnbldsa.bilivideo.com/OK",
     },
     "qn": {
         "os": "upos",
         "upcdn": "qn",
         "probe_version": 20221109,
         "query": "probe_version=20221109&upcdn=qn",
-        "probe_url": "//upos-cs-upcdnqn.bilivideo.com/OK"
+        "probe_url": "//upos-cs-upcdnqn.bilivideo.com/OK",
     },
     "ws": {
         "os": "upos",
@@ -132,8 +132,9 @@ LINES_INFO = {
         "probe_version": 20221109,
         "query": "upcdn=ws&probe_version=20221109",
         "probe_url": "//upos-cs-upcdnws.bilivideo.com/OK",
-    }
+    },
 }
+
 
 async def _probe() -> dict:
     """
@@ -606,7 +607,7 @@ class VideoMeta:
         """
         获取上传参数基本信息
 
-        包括活动等在内，固定信息已经缓存于 bilibili_api\data\video_uploader_meta_pre.json
+        包括活动等在内，固定信息已经缓存于 data/video_uploader_meta_pre.json
         """
         api = _API["pre"]
         self.__pre_info = await Api(**api, credential=self.__credential).result
@@ -617,7 +618,9 @@ class VideoMeta:
         检查 tid 是否合法
         """
         with open(
-            os.path.join(os.path.dirname(__file__), "data/video_uploader_meta_pre.json"),
+            os.path.join(
+                os.path.dirname(__file__), "data/video_uploader_meta_pre.json"
+            ),
             encoding="utf8",
         ) as f:
             self.__pre_info = json.load(f)
@@ -1351,7 +1354,9 @@ class VideoUploader(AsyncEvent):
         self.dispatch(VideoUploaderEvents.ABORTED.value, None)
 
 
-async def get_missions(tid: int = 0, credential: Union[Credential, None] = None) -> dict:
+async def get_missions(
+    tid: int = 0, credential: Union[Credential, None] = None
+) -> dict:
     """
     获取活动信息
 

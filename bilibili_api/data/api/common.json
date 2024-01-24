@@ -119,7 +119,9 @@
         "oid": "int: id",
         "type": "",
         "mode": "int: 默认为 3。0 3：仅按热度 1：按热度+按时间 2：仅按时间",
-        "pagination_str": "str: 分页依据"
+        "pagination_str": "str: 分页依据",
+        "next": "int: 页码 0 第一页",
+        "ps": "const int: 1~30"
       },
       "comment": "新版评论区"
     },
