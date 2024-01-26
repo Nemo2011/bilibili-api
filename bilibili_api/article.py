@@ -790,6 +790,12 @@ class UnderlineNode(Node):
             return ""
         return " $\\underline{" + text + "}$ "
 
+    def json(self):
+        return {
+            "type": "UnderlineNode",
+            "children": list(map(lambda x: x.json(), self.children)),
+        }
+
 
 class UlNode(Node):
     def __init__(self):
