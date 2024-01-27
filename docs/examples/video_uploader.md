@@ -43,9 +43,8 @@ async def main():
         path = 'video.mp4',
         title = '标题',
         description='简介', 
-        line=video_uploader.Lines.QN
-    ) # 选择七牛线路，不选则自动测速选择最优线路
-    uploader = video_uploader.VideoUploader([page], vu_meta, credential)
+    )
+    uploader = video_uploader.VideoUploader([page], vu_meta, credential, line=video_uploader.Lines.QN) # 选择七牛线路，不选则自动测速选择最优线路
     # uploader = video_uploader.VideoUploader([page], meta, credential, cover='cover.png') 
     # # meta 直接传入 dict 则需要在 video_uploader.VideoUploader 传入封面
 
