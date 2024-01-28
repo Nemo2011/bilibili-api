@@ -20,6 +20,8 @@ from .utils.network import (
     set_session,
     get_aiohttp_session,
     set_aiohttp_session,
+    get_httpx_sync_session,
+    set_httpx_sync_session
 )
 from .errors import (
     LoginError,

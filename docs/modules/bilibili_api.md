@@ -18,7 +18,7 @@ import bilibili_api
 
 | name    | type                  | description                |
 | ------- | --------------------- | -------------------------- |
-| session | httpx.AsyncSession | httpx.AsyncSession 实例 |
+| session | httpx.AsyncClient | httpx.AsyncClient 实例 |
 
 用户手动设置 Session
 
@@ -28,9 +28,9 @@ import bilibili_api
 
 ## def get_session()
 
-获取当前模块的 httpx.AsyncSession 对象，用于自定义请求
+获取当前模块的 httpx.AsyncClient 对象，用于自定义请求
 
-**Returns:** httpx.AsyncSession
+**Returns:** httpx.AsyncClient
 
 ---
 
@@ -51,6 +51,26 @@ import bilibili_api
 获取当前模块的 aiohttp.ClientSession 对象，用于自定义请求
 
 **Returns:** aiohttp.ClientSession
+
+---
+
+## def set_httpx_sync_session()
+
+| name    | type                  | description                |
+| ------- | --------------------- | -------------------------- |
+| session | httpx.Client | httpx.Client 实例 |
+
+用户手动设置 Session
+
+**Returns:** None
+
+---
+
+## def get_httpx_sync_session()
+
+获取当前模块的 httpx.Client 对象，用于自定义请求
+
+**Returns:** httpx.Client
 
 ---
 

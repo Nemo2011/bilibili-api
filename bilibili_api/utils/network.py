@@ -29,6 +29,7 @@ from ..exceptions import ApiException, ResponseCodeException, NetworkException
 
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
 __aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
+__httpx_sync_session: httpx.Client = None
 last_proxy = ""
 wbi_mixin_key = ""
 buvid3 = ""
@@ -513,7 +514,7 @@ class Api:
         """
         self._prepare_params_data()
         config = self._prepare_request_sync(**kwargs)
-        session = httpx.Client()
+        session = get_httpx_sync_session()
         resp = session.request(**config)
         try:
             resp.raise_for_status()
@@ -790,6 +791,39 @@ async def get_bili_ticket() -> str:
     return (
         await Api(method="POST", url=url, no_csrf=True).update_params(**params).result
     )["ticket"]
+
+
+def get_httpx_sync_session() -> httpx.Client:
+    """
+    获取当前模块的 httpx.Client 对象，用于自定义请求
+
+    Returns:
+        httpx.Client
+    """
+    global __httpx_sync_session
+
+    if __httpx_sync_session is None or last_proxy != settings.proxy:
+        if settings.proxy != "":
+            last_proxy = settings.proxy
+            proxies = {"all://": settings.proxy}
+            session = httpx.AsyncClient(proxies=proxies)  # type: ignore
+        else:
+            last_proxy = ""
+            session = httpx.AsyncClient()
+        __httpx_sync_session = session
+
+    return __httpx_sync_session
+
+
+def set_httpx_sync_session(session: httpx.Client) -> None:
+    """
+    用户手动设置 Session
+
+    Args:
+        session (httpx.Client):  httpx.Client 实例。
+    """
+    global __httpx_sync_session
+    __httpx_sync_session = session
 
 
 def get_session() -> httpx.AsyncClient:

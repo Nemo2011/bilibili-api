@@ -31,7 +31,7 @@ from .utils.utils import get_api
 from .utils.credential import Credential
 from .exceptions.LoginError import LoginError
 from .utils.network import to_form_urlencoded, Api
-from .utils.network import HEADERS, get_session, get_spi_buvid_sync
+from .utils.network import HEADERS, get_session, get_spi_buvid_sync, get_httpx_sync_session
 from .utils.captcha import get_result, close_server, start_server
 from .utils.safecenter_captcha import get_result as safecenter_get_result
 from .utils.safecenter_captcha import close_server as safecenter_close_server
@@ -261,7 +261,7 @@ def parse_tv_resp(events: dict) -> Credential:
             cookies["bili_jct"] = cookie["value"]
         elif cookie["name"] == "DedeUserID":
             cookies["dedeuserid"] = cookie["value"]
-    
+
     return Credential(**cookies)
 
 
@@ -348,7 +348,7 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
     """
     api_token = API["password"]["get_token"]
     geetest_data = get_geetest()
-    sess = httpx.Client()
+    sess = get_httpx_sync_session()
     token_data = json.loads(sess.get(api_token["url"]).text)
     hash_ = token_data["data"]["hash"]
     key = token_data["data"]["key"]
