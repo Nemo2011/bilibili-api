@@ -801,15 +801,16 @@ def get_httpx_sync_session() -> httpx.Client:
         httpx.Client
     """
     global __httpx_sync_session
+    global last_proxy
 
     if __httpx_sync_session is None or last_proxy != settings.proxy:
         if settings.proxy != "":
             last_proxy = settings.proxy
             proxies = {"all://": settings.proxy}
-            session = httpx.AsyncClient(proxies=proxies)  # type: ignore
+            session = httpx.Client(proxies=proxies)  # type: ignore
         else:
             last_proxy = ""
-            session = httpx.AsyncClient()
+            session = httpx.Client()
         __httpx_sync_session = session
 
     return __httpx_sync_session

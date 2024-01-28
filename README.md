@@ -128,10 +128,11 @@ if __name__ == '__main__':
 
 以下为 `API` 关于异步请求库使用的详细信息：
 
-| Feature | aiohttp | httpx | 备注 |
-| ------ | ---- | ------ | ------ | ---- |
-| `LiveDanmaku` & `VideoOnlineMonitor` | [x] | [ ] | httpx 暂不支持 `WebSocket` |
-| other | [x] | [x] | |
+| Feature | 同步 | 异步 | aiohttp | httpx | 备注 |
+| ------ | ---- | ----- | ------ | ------ | ---- |
+| `LiveDanmaku` & `VideoOnlineMonitor` | [] | [x] | [x] | [ ] | httpx 暂不支持 `WebSocket` |
+| `login` | [x] | [ ] | [ ] | [x] | 目前暂时仅支持同步请求 |
+| other | [] | [x] | [x] | [x] | |
 
 # FA♂Q
 

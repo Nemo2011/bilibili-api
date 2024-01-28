@@ -31,7 +31,12 @@ from .utils.utils import get_api
 from .utils.credential import Credential
 from .exceptions.LoginError import LoginError
 from .utils.network import to_form_urlencoded, Api
-from .utils.network import HEADERS, get_session, get_spi_buvid_sync, get_httpx_sync_session
+from .utils.network import (
+    HEADERS,
+    get_session,
+    get_spi_buvid_sync,
+    get_httpx_sync_session,
+)
 from .utils.captcha import get_result, close_server, start_server
 from .utils.safecenter_captcha import get_result as safecenter_get_result
 from .utils.safecenter_captcha import close_server as safecenter_close_server
@@ -235,7 +240,9 @@ def update_tv_qrcode_data():
             "ts": int(time.time()),
         }
     )
-    qrcode_data = Api(credential=credential, no_csrf=True, **api).update_data(**data).result_sync
+    qrcode_data = (
+        Api(credential=credential, no_csrf=True, **api).update_data(**data).result_sync
+    )
     return qrcode_data
 
 
@@ -248,7 +255,11 @@ def verify_tv_login_status(auth_code: str) -> dict:
         }
     )
     events_api = API["qrcode"]["tv"]["get_events"]
-    events = Api(credential=credential, no_csrf=True, **events_api).update_data(**data).request_sync(raw=True)
+    events = (
+        Api(credential=credential, no_csrf=True, **events_api)
+        .update_data(**data)
+        .request_sync(raw=True)
+    )
     return events
 
 
@@ -349,7 +360,7 @@ def login_with_password(username: str, password: str) -> Union[Credential, "Chec
     api_token = API["password"]["get_token"]
     geetest_data = get_geetest()
     sess = get_httpx_sync_session()
-    token_data = json.loads(sess.get(api_token["url"]).text)
+    token_data = json.loads(sess.get(api_token["url"], headers=HEADERS).text)
     hash_ = token_data["data"]["hash"]
     key = token_data["data"]["key"]
     final_password = encrypt(hash_, key, password)
@@ -554,29 +565,27 @@ def send_sms(phonenumber: PhoneNumber) -> None:
     code = phonenumber.code
     tell = phonenumber.number
     geetest_data = get_geetest()
-    sess = get_session()
+    sess = get_httpx_sync_session()
     return_data = json.loads(
-        sync(
-            sess.post(
-                url=api["url"],
-                data=to_form_urlencoded(
-                    {
-                        "source": "main-fe-header",
-                        "tel": tell,
-                        "cid": code,
-                        "validate": geetest_data["validate"],  # type: ignore
-                        "token": geetest_data["token"],  # type: ignore
-                        "seccode": geetest_data["seccode"],  # type: ignore
-                        "challenge": geetest_data["challenge"],  # type: ignore
-                    }
-                ),
-                headers={
-                    "User-Agent": "Mozilla/5.0",
-                    "Referer": "https://www.bilibili.com",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                cookies={"buvid3": "E9BAB99E-FE1E-981E-F772-958B7F572FF487330infoc"},
-            )
+        sess.post(
+            url=api["url"],
+            data=to_form_urlencoded(
+                {
+                    "source": "main-fe-header",
+                    "tel": tell,
+                    "cid": code,
+                    "validate": geetest_data["validate"],  # type: ignore
+                    "token": geetest_data["token"],  # type: ignore
+                    "seccode": geetest_data["seccode"],  # type: ignore
+                    "challenge": geetest_data["challenge"],  # type: ignore
+                }
+            ),
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://www.bilibili.com",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            cookies={"buvid3": "E9BAB99E-FE1E-981E-F772-958B7F572FF487330infoc"},
         ).text
     )
     if return_data["code"] == 0:
@@ -597,25 +606,23 @@ def login_with_sms(phonenumber: PhoneNumber, code: str) -> Credential:
         Credential: 凭据类
     """
     global captcha_id
-    sess = get_session()
+    sess = get_httpx_sync_session()
     api = API["sms"]["login"]
     if captcha_id == None:
         raise LoginError("请申请或重新申请发送验证码")
     return_data = json.loads(
-        sync(
-            sess.request(
-                "POST",
-                url=api["url"],
-                data={
-                    "tel": phonenumber.number,
-                    "cid": phonenumber.code,
-                    "code": code,
-                    "source": "main_web",
-                    "captcha_key": captcha_id,
-                    "keep": "true",
-                },
-                headers=HEADERS,
-            )
+        sess.request(
+            "POST",
+            url=api["url"],
+            data={
+                "tel": phonenumber.number,
+                "cid": phonenumber.code,
+                "code": code,
+                "source": "main_web",
+                "captcha_key": captcha_id,
+                "keep": "true",
+            },
+            headers=HEADERS,
         ).text
     )
     # return_data["status"] 已改为 return_data["data"]["status"]
