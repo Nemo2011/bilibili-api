@@ -1,4 +1,4 @@
-![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo.png)
+![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo-newYear.jpg)
 
 <div align="center">
 
@@ -118,7 +118,7 @@ if __name__ == '__main__':
 
 # 异步迁移
 
-由于从 v5 版本开始，全部改为异步，如果你不会异步，可以参考 [asyncio](https://docs.python.org/zh-cn/3/library/asyncio.html)
+由于从 v5 版本开始，基本全部改为异步，如果你不会异步，可以参考 [asyncio](https://docs.python.org/zh-cn/3/library/asyncio.html)
 
 异步可以进行并发请求，性能更高，不过如果请求过快仍然会导致被屏蔽。
 
@@ -126,8 +126,12 @@ if __name__ == '__main__':
 
 如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
 
-> 注：
-> 目前代码中采用 `WebSocket` 的部分（如视频实时检测、直播）采用 `aiohttp.ClientSession` 请求。其他地方均采用 `httpx.AsyncClient`。
+以下为 `API` 关于异步请求库使用的详细信息：
+
+| Feature | aiohttp | httpx | 备注 |
+| ------ | ---- | ------ | ------ | ---- |
+| `LiveDanmaku` & `VideoOnlineMonitor` | [x] | [ ] | httpx 暂不支持 `WebSocket` |
+| other | [x] | [x] | |
 
 # FA♂Q
 
