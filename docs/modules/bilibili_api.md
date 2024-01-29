@@ -176,6 +176,17 @@ import bilibili_api
 
 **Returns:** bool: cookies 是否需要刷新
 
+**@staticmethod**
+#### def from_cookies()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| cookies | dict | Cookies. Defaults to {}. |
+
+从 Cookies 中新建 Credential
+
+**Returns:** Credential: 凭据类
+
 ---
 
 **@dataclasses.dataclass**

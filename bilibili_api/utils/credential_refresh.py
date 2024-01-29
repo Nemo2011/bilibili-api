@@ -66,6 +66,25 @@ class Credential(_Credential):
         ).result
         return data["isLogin"]
 
+    @staticmethod
+    def from_cookies(cookies: dict={}) -> "Credential":
+        """
+        从 cookies 新建 Credential
+
+        Args:
+            cookies (dict, optional): Cookies. Defaults to {}.
+
+        Returns:
+            Credential: 凭据类
+        """
+        c = Credential()
+        c.sessdata = cookies.get("SESSDATA")
+        c.bili_jct = cookies.get("bili_jct")
+        c.buvid3 = cookies.get("buvid3")
+        c.dedeuserid = cookies.get("DedeUserID")
+        c.ac_time_value = cookies.get("ac_time_value")
+        return c
+
 
 """
 Cookies 刷新相关
