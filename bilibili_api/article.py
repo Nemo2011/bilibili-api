@@ -904,6 +904,9 @@ class TextNode(Node):
 
     def markdown(self):
         txt = self.text
+        txt = txt.replace("\t", " ")
+        txt = txt.replace(" ", "&emsp;")
+        txt = txt.replace(chr(160), "&emsp;")
         special_chars = ["\\", "*", "$", "<", ">", "|"]
         for c in special_chars:
             txt = txt.replace(c, "\\" + c)
