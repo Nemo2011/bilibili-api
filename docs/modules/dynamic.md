@@ -185,6 +185,18 @@ from bilibili_api import dynamic
 
 获取 dynamic_id
 
+#### def is_special_article()
+
+是否为部分的特殊专栏。此部分专栏与动态完全兼容。
+
+**Returns:** bool: 是否为特殊专栏
+
+#### def turn_to_article()
+
+对于部分的特殊专栏，将 Dynamic 对象转换为 Article 对象。
+
+**Returns:** Article: Article 对象
+
 #### async def get_info()
 
 | name     | type          | description         |
@@ -194,6 +206,12 @@ from bilibili_api import dynamic
 **(不建议使用此旧版 API，请转到新版 get_info_opus)**
 
 获取动态信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_info_opus()
+
+新版获取动态信息
 
 **Returns:** dict: 调用 API 返回的结果
 

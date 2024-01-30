@@ -100,6 +100,12 @@ class Note:
         return self.__note_id
 
     def turn_to_article(self) -> "article.Article":
+        """
+        将笔记类转为专栏类。需要保证笔记是公开笔记。
+
+        Returns:
+            Note: 专栏类
+        """
         assert self.__type == NoteType.PUBLIC
         return article.Article(cvid=self.get_cvid(), credential=self.credential)
 

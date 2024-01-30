@@ -23,6 +23,7 @@ from . import user, vote, exceptions
 from .utils.credential import Credential
 from .utils.network import Api
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
+from . import article
 
 API = utils.get_api("dynamic")
 
@@ -736,9 +737,38 @@ class Dynamic:
         """
         self.__dynamic_id = dynamic_id
         self.credential = credential if credential is not None else Credential()
+        api = API["info"]["detail_new"]
+        params = {
+            "id": self.__dynamic_id,
+            "timezone_offset": -480,
+        }
+        data = (
+            Api(**api, credential=self.credential).update_params(**params).result_sync
+        )
+        self.__special_article = data["item"]["type"] == 1
+        self.__rid_str = int(data["item"]["basic"]["rid_str"])
+
+    def is_special_article(self) -> bool:
+        """
+        是否为部分的特殊专栏。此部分专栏与动态完全兼容。
+
+        Returns:
+            bool: 是否为特殊专栏
+        """
+        return self.__special_article
 
     def get_dynamic_id(self) -> int:
         return self.__dynamic_id
+
+    def turn_to_article(self) -> "article.Article":
+        """
+        对于部分的特殊专栏，将 Dynamic 对象转换为 Article 对象。
+
+        Returns:
+            Article: Article 对象
+        """
+        assert self.__special_article
+        return article.Article(self.__rid_str, credential=self.credential)
 
     async def get_info(self, features: str = "itemOpusStyle") -> dict:
         """
@@ -771,7 +801,15 @@ class Dynamic:
         Returns:
             dict: 调用 API 返回的结果
         """
-        pass
+
+        api = API["info"]["detail_new"]
+        params = {
+            "id": self.__dynamic_id,
+            "timezone_offset": -480,
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_reposts(self, offset: str = "0") -> dict:
         """

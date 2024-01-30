@@ -18,8 +18,8 @@ import httpx
 from yarl import URL
 from bs4 import BeautifulSoup, element
 
-from .utils.initial_state import get_initial_state
-
+from . import dynamic
+from .utils.initial_state import get_initial_state, get_initial_state_sync
 from .utils.utils import get_api
 from .utils.credential import Credential
 from .utils.network import Api, get_session
@@ -66,9 +66,9 @@ class ArticleType(Enum):
     """
     专栏类型
 
-    - ARTICLE        : 普通专栏
-    - NOTE           : 笔记专栏
-    - SPECIAL_ARTICLE: 特殊专栏，采用笔记格式
+    - ARTICLE        : 普通专栏，不与 opus 动态兼容。
+    - NOTE           : 公开笔记
+    - SPECIAL_ARTICLE: 特殊专栏，采用笔记格式，且与 opus 动态完全兼容。
     """
 
     ARTICLE = 0
@@ -183,6 +183,21 @@ class Article:
         else:
             self.__type = ArticleType.SPECIAL_ARTICLE
 
+        initial_state = get_initial_state_sync(
+            f"https://www.bilibili.com/read/cv{self.__cvid}"
+        )
+        self.__dyn_id = int(initial_state[0]["readInfo"]["dyn_id_str"])
+
+    def turn_to_dynamic(self) -> "dynamic.Dynamic":
+        """
+        对于完全与 opus 兼容的部分的特殊专栏，将 Article 对象转换为 Dynamic 对象。
+
+        Returns:
+            Dynamic: Dynamic 对象
+        """
+        assert self.__type == ArticleType.SPECIAL_ARTICLE
+        return dynamic.Dynamic(self.__dyn_id, credential=self.credential)
+
     def get_cvid(self) -> int:
         return self.__cvid
 
@@ -205,6 +220,12 @@ class Article:
         return self.__type == ArticleType.NOTE
 
     def turn_to_note(self) -> "note.Note":
+        """
+        对于完全与 opus 兼容的部分的特殊专栏，将 Article 对象转换为 Dynamic 对象。
+
+        Returns:
+            Note: 笔记类
+        """
         assert self.__type == ArticleType.NOTE
         return note.Note(
             cvid=self.__cvid, note_type=note.NoteType.PUBLIC, credential=self.credential

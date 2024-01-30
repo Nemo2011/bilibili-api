@@ -8,6 +8,7 @@ import json
 import os
 import random
 from typing import List, TypeVar
+from ..exceptions import StatementException
 
 
 def get_api(field: str, *args) -> dict:
@@ -204,3 +205,8 @@ def get_deviceid(separator: str = "-", is_lowercase: bool = False) -> str:
         dev_id_group.append(s)
     res = join(separator, dev_id_group)
     return res if is_lowercase else res.upper()
+
+
+def raise_for_statement(statement: bool, msg: str) -> None:
+    if not statement:
+        raise StatementException(msg=msg)

@@ -200,7 +200,7 @@
       "comment": "动态详细信息"
     },
     "detail_new": {
-      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail",
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/opus/detail",
       "method": "GET",
       "verify": false,
       "params": {
