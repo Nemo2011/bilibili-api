@@ -199,15 +199,15 @@
       },
       "comment": "动态详细信息"
     },
-    "detail_new": {
-      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/opus/detail",
+    "reaction": {
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail/reaction",
       "method": "GET",
       "verify": false,
       "params": {
-        "timezone_offset": "int: 时区偏移量",
-        "id": "int: 动态 ID"
-      },
-      "comment": "动态详细信息"
+        "web_location": "str: 333.1369",
+        "id": "int: 动态 ID",
+        "offset": "str: 空"
+      }
     },
     "dynamic_page_UPs_info": {
       "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/portal",

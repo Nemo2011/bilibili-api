@@ -43,9 +43,9 @@ from bilibili_api import article
 
 **Extends:** enum.Enum
 
-- ARTICLE        : 普通专栏
+- ARTICLE        : 普通专栏，不与 opus 图文兼容。
 - NOTE           : 笔记专栏
-- SPECIAL_ARTICLE: 特殊专栏，采用笔记格式，且与 opus 动态完全兼容。
+- SPECIAL_ARTICLE: 特殊专栏，采用笔记格式，且与 opus 图文完全兼容。
 
 ## class ArticleList
 
@@ -114,12 +114,6 @@ from bilibili_api import article
 将专栏转换为笔记类（公开笔记）。需要保证专栏是公开笔记。
 
 **Returns:** Note: 笔记类
-
-#### def turn_to_dynamic()
-
-对于完全与 opus 兼容的部分的特殊专栏，将 Article 对象转换为 Dynamic 对象。
-
-**Returns:** Dynamic: Dynamic 对象
 
 #### def markdown()
 

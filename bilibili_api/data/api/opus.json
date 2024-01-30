@@ -1,0 +1,35 @@
+{
+  "info": {
+    "detail_new": {
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/opus/detail",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "timezone_offset": "int: 时区偏移量",
+        "id": "int: 动态 ID"
+      },
+      "comment": "动态详细信息"
+    }
+  },
+  "operate": {
+    "simple_action": {
+      "url": "https://api.bilibili.com/x/community/cosmo/interface/simple_action",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "meta": {
+          "spmid": "444.42.0.0",
+          "from_spmid": "333.1365.0.0",
+          "from": "unknown"
+        },
+        "entity": {
+          "object_id_str": "890484395664736288",
+          "type": { "biz": 2 }
+        },
+        "action": 4
+      },
+      "json_body": true,
+      "comment": "收藏/取消收藏"
+    }
+  }
+}
