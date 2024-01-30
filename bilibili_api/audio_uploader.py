@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 from . import user
 from .utils.upos import UposFile, UposFileUploader
-from .utils.utils import get_api
+from .utils.utils import get_api, raise_for_statement
 from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
@@ -473,36 +473,36 @@ class AudioUploader(AsyncEvent):
     __task: asyncio.Task
 
     def _check_meta(self):
-        assert self.meta.content_type is not None
-        assert self.meta.song_type is not None
-        assert self.meta.cover is not None and isinstance(self.meta.cover, str)
+        raise_for_statement(self.meta.content_type is not None)
+        raise_for_statement(self.meta.song_type is not None)
+        raise_for_statement(self.meta.cover is not None and isinstance(self.meta.cover, str))
         if self.meta.content_type == SongCategories.ContentType.MUSIC:
-            assert self.meta.creation_type is not None
-            assert self.meta.song_type is not None
-            assert self.meta.language is not None
+            raise_for_statement(self.meta.creation_type is not None)
+            raise_for_statement(self.meta.song_type is not None)
+            raise_for_statement(self.meta.language is not None)
 
             if self.meta.song_type == SongCategories.SongType.HUMAN_SINGING:
-                assert self.meta.singer is not None
-                assert self.meta.language is not None
+                raise_for_statement(self.meta.singer is not None)
+                raise_for_statement(self.meta.language is not None)
 
             elif self.meta.song_type in [
                 SongCategories.SongType.VOCALOID,
                 SongCategories.SongType.HUMAN_GHOST,
             ]:
-                assert self.meta.sound_source is not None
-                assert self.meta.language is not None
-                assert self.meta.tuning is not None
+                raise_for_statement(self.meta.sound_source is not None)
+                raise_for_statement(self.meta.language is not None)
+                raise_for_statement(self.meta.tuning is not None)
 
             elif self.meta.song_type == SongCategories.SongType.PURE_MUSIC:
-                assert self.meta.player is not None
+                raise_for_statement(self.meta.player is not None)
 
         if isinstance(self.meta.tags, str):
             self.meta.tags = self.meta.tags.split(",")
-        assert len(self.meta.tags != 0)
+        raise_for_statement(len(self.meta.tags != 0))
 
-        assert self.meta.title is not None
-        assert self.meta.cover is not None
-        assert self.meta.desc is not None
+        raise_for_statement(self.meta.title is not None)
+        raise_for_statement(self.meta.cover is not None)
+        raise_for_statement(self.meta.desc is not None)
 
     def __init__(self, path: str, meta: SongMeta, credential: Credential):
         """
@@ -804,8 +804,8 @@ async def get_upinfo(param: Union[int, str], credential: Credential) -> List[dic
 async def upload_cover(cover: Picture, credential: Credential) -> str:
     api = _API["image"]
     # 小于 3MB
-    assert os.path.getsize(cover) < 1024 * 1024 * 3, "3MB size limit"
+    raise_for_statement(os.path.getsize(cover) < 1024 * 1024 * 3, "3MB size limit")
     # 宽高比 1:1
-    assert cover.width == cover.height, "width == height, 600 * 600 recommanded"
+    raise_for_statement(cover.width == cover.height, "width == height, 600 * 600 recommanded")
     files = {"file": cover.content}
     return await Api(**api, credential=credential).update_files(**files).result

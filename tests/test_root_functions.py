@@ -57,7 +57,7 @@ async def test_a_parse_link():
     for url in parse_link_urls:
         print(f"正在测试 {url} ...")
         result = await parse_link(url, get_credential())
-        assert result[0] != -1
+        raise_for_statement(result[0] != -1
         print(f"结果: {result}")
 
 

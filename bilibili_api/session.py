@@ -18,7 +18,7 @@ from bilibili_api.exceptions import ApiException
 
 from .video import Video
 from .user import get_self_info
-from .utils.utils import get_api
+from .utils.utils import get_api, raise_for_statement
 from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
@@ -385,7 +385,7 @@ async def send_msg(
     elif msg_type == EventType.WITHDRAW:
         real_content = str(content)
     elif msg_type == EventType.PICTURE or msg_type == EventType.GROUPS_PICTURE:
-        assert isinstance(content, Picture), TypeError
+        raise_for_statement(isinstance(content, Picture), "TypeError")
         await content.upload_file(credential=credential, data={"biz": "im"})
         real_content = json.dumps(
             {

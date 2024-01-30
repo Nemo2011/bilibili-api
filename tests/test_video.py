@@ -28,13 +28,13 @@ video = video_m.Video(aid=AID, credential=crd)
 async def test_a_Video_set_bvid():
     # 设置正确 bvid
     video.set_bvid(BVID)
-    assert video.get_bvid() == BVID, "bvid 应该被修改"
-    assert video.get_aid() == AID, "aid 应该从 bvid 转换"
+    raise_for_statement(video.get_bvid() == BVID, "bvid 应该被修改"
+    raise_for_statement(video.get_aid() == AID, "aid 应该从 bvid 转换"
 
     # 设置错误 bvid
     try:
         video.set_bvid("BVajsdoiajinsodn")
-        assert False, "设置了错误 bvid 但未报错"
+        raise_for_statement(False, "设置了错误 bvid 但未报错"
     except exceptions.ArgsException:
         video.set_bvid(BVID)
 
@@ -42,14 +42,14 @@ async def test_a_Video_set_bvid():
 async def test_b_Video_set_aid():
     # 设置正确 aid
     video.set_aid(AID)
-    assert video.get_aid() == AID, "aid 应该被修改"
-    assert video.get_bvid() == BVID, "bvid 应该从 aid 转换"
+    raise_for_statement(video.get_aid() == AID, "aid 应该被修改"
+    raise_for_statement(video.get_bvid() == BVID, "bvid 应该从 aid 转换"
 
     # 设置错误 aid
     # 设置错误 bvid
     try:
         video.set_aid(-1)
-        assert False, "设置了错误 aid 但未报错"
+        raise_for_statement(False, "设置了错误 aid 但未报错"
     except exceptions.ArgsException:
         video.set_aid(AID)
         pass

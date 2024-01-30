@@ -9,7 +9,7 @@ from typing import List, Union, Optional
 
 from . import user
 from .video import Video
-from .utils.utils import join, get_api
+from .utils.utils import join, get_api, raise_for_statement
 from .utils.credential import Credential
 from .utils.network import Api
 from .exceptions.ArgsException import ArgsException
@@ -105,7 +105,7 @@ class FavoriteList:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__media_id != None, "视频收藏夹需要 media_id"
+        raise_for_statement(self.__media_id != None, "视频收藏夹需要 media_id")
 
         api = API["info"]["info"]
         params = {"media_id": self.__media_id}
@@ -136,8 +136,8 @@ class FavoriteList:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type == FavoriteListType.VIDEO, "此函数仅在收藏夹为视频收藏家时可用"
-        assert self.__media_id != None, "视频收藏夹需要 media_id"
+        raise_for_statement(self.__type == FavoriteListType.VIDEO, "此函数仅在收藏夹为视频收藏家时可用")
+        raise_for_statement(self.__media_id != None, "视频收藏夹需要 media_id")
 
         return await get_video_favorite_list_content(
             self.__media_id, page, keyword, order, tid, self.credential
@@ -158,7 +158,7 @@ class FavoriteList:
         elif self.__type == FavoriteListType.CHEESE:
             return await get_course_favorite_list(page, self.credential)
         elif self.__type == FavoriteListType.VIDEO:
-            assert self.__media_id != None, "视频收藏夹需要 media_id"
+            raise_for_statement(self.__media_id != None, "视频收藏夹需要 media_id")
             return await get_video_favorite_list_content(
                 self.__media_id, page, credential=self.credential
             )
@@ -172,7 +172,7 @@ class FavoriteList:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__media_id != None, "视频收藏夹需要 media_id"
+        raise_for_statement(self.__media_id != None, "视频收藏夹需要 media_id")
 
         api = API["info"]["list_content_id_list"]
         params = {"media_id": self.__media_id}

@@ -20,7 +20,7 @@ from bs4 import BeautifulSoup, element
 
 from . import dynamic
 from .utils.initial_state import get_initial_state, get_initial_state_sync
-from .utils.utils import get_api
+from .utils.utils import get_api, raise_for_statement
 from .utils.credential import Credential
 from .utils.network import Api, get_session
 from .exceptions.NetworkException import ApiException, NetworkException
@@ -195,7 +195,7 @@ class Article:
         Returns:
             Dynamic: Dynamic 对象
         """
-        assert self.__type == ArticleType.SPECIAL_ARTICLE
+        raise_for_statement(self.__type == ArticleType.SPECIAL_ARTICLE, "仅支持特殊专栏 (ArticleType.SPECIAL_ARTICLE)")
         return dynamic.Dynamic(self.__dyn_id, credential=self.credential)
 
     def get_cvid(self) -> int:
@@ -226,7 +226,7 @@ class Article:
         Returns:
             Note: 笔记类
         """
-        assert self.__type == ArticleType.NOTE
+        raise_for_statement(self.__type == ArticleType.NOTE, "仅支持公开笔记 (ArticleType.NOTE)")
         return note.Note(
             cvid=self.__cvid, note_type=note.NoteType.PUBLIC, credential=self.credential
         )

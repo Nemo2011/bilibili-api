@@ -10,7 +10,7 @@ from enum import Enum
 from typing import List, Union, Tuple
 from json.decoder import JSONDecodeError
 
-from .utils.utils import get_api, join
+from .utils.utils import get_api, join, raise_for_statement
 from .utils.credential import Credential
 from .exceptions import ResponseCodeException
 from .utils.network import get_session, Api
@@ -1457,8 +1457,8 @@ async def get_self_notes_info(
         dict: 调用 API 返回的结果
     """
 
-    assert page_num > 0
-    assert page_size > 0
+    raise_for_statement(page_num > 0)
+    raise_for_statement(page_size > 0)
 
     credential.raise_for_no_sessdata()
 
@@ -1484,8 +1484,8 @@ async def get_self_public_notes_info(
         dict: 调用 API 返回的结果
     """
 
-    assert page_num > 0
-    assert page_size > 0
+    raise_for_statement(page_num > 0)
+    raise_for_statement(page_size > 0)
 
     credential.raise_for_no_sessdata()
 

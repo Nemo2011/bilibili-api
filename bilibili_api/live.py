@@ -16,7 +16,7 @@ import brotli
 import aiohttp
 from aiohttp.client_ws import ClientWebSocketResponse
 
-from .utils.utils import get_api
+from .utils.utils import get_api, raise_for_statement
 from .utils.danmaku import Danmaku
 from .utils.network import get_aiohttp_session, Api, HEADERS
 from .utils.AsyncEvent import AsyncEvent
@@ -1183,9 +1183,9 @@ class LiveDanmaku(AsyncEvent):
         """
         sendData = bytearray()
         sendData += struct.pack(">H", 16)
-        assert 0 <= protocol_version <= 2, LiveException("数据包协议版本错误，范围 0~2")
+        raise_for_statement(0 <= protocol_version <= 2, LiveException("数据包协议版本错误，范围 0~2"))
         sendData += struct.pack(">H", protocol_version)
-        assert datapack_type in [2, 7], LiveException("数据包类型错误，可用类型：2, 7")
+        raise_for_statement(datapack_type in [2, 7], LiveException("数据包类型错误，可用类型：2, 7"))
         sendData += struct.pack(">I", datapack_type)
         sendData += struct.pack(">I", 1)
         sendData += data

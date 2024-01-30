@@ -26,6 +26,7 @@ from .exceptions.DynamicExceedImagesException import DynamicExceedImagesExceptio
 from . import article
 
 API = utils.get_api("dynamic")
+raise_for_statement = utils.raise_for_statement
 
 
 class DynamicType(Enum):
@@ -767,7 +768,7 @@ class Dynamic:
         Returns:
             Article: Article 对象
         """
-        assert self.__special_article
+        raise_for_statement(self.__special_article, "仅支持特殊专栏")
         return article.Article(self.__rid_str, credential=self.credential)
 
     async def get_info(self, features: str = "itemOpusStyle") -> dict:

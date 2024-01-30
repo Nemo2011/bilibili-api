@@ -16,7 +16,7 @@ from yarl import URL
 
 from .utils.initial_state import get_initial_state
 
-from .utils.utils import get_api
+from .utils.utils import get_api, raise_for_statement
 from .utils.picture import Picture
 from .utils.credential import Credential
 from .exceptions import ApiException, ArgsException
@@ -106,7 +106,7 @@ class Note:
         Returns:
             Note: 专栏类
         """
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
         return article.Article(cvid=self.get_cvid(), credential=self.credential)
 
     async def get_info(self) -> dict:
@@ -139,7 +139,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        assert self.__type == NoteType.PRIVATE
+        raise_for_statement(self.__type == NoteType.PRIVATE)
 
         api = API["private"]["detail"]
         # oid 为 0 时指 avid
@@ -159,7 +159,7 @@ class Note:
             dict: 调用 API 返回的结果。
         """
 
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
 
         api = API["public"]["detail"]
         params = {"cvid": self.get_cvid()}
@@ -210,7 +210,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
         return await get_initial_state(f"https://www.bilibili.com/read/cv{self.__cvid}")
 
     async def set_like(self, status: bool = True) -> dict:
@@ -225,7 +225,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
 
         self.credential.raise_for_no_sessdata()
 
@@ -245,7 +245,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
 
         self.credential.raise_for_no_sessdata()
 
@@ -267,7 +267,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
 
         self.credential.raise_for_no_sessdata()
 

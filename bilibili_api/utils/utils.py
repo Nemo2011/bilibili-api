@@ -207,6 +207,6 @@ def get_deviceid(separator: str = "-", is_lowercase: bool = False) -> str:
     return res if is_lowercase else res.upper()
 
 
-def raise_for_statement(statement: bool, msg: str) -> None:
+def raise_for_statement(statement: bool, msg: str="未满足条件") -> None:
     if not statement:
         raise StatementException(msg=msg)
