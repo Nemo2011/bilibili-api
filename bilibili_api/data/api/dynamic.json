@@ -199,6 +199,16 @@
       },
       "comment": "动态详细信息"
     },
+    "detail_new": {
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "timezone_offset": "int: 时区偏移量",
+        "id": "int: 动态 ID"
+      },
+      "comment": "动态详细信息"
+    },
     "dynamic_page_UPs_info": {
       "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/portal",
       "method": "GET",

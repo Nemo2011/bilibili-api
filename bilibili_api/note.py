@@ -14,7 +14,7 @@ import yaml
 import httpx
 from yarl import URL
 
-from bilibili_api.utils.initial_state import get_initial_state
+from .utils.initial_state import get_initial_state
 
 from .utils.utils import get_api
 from .utils.picture import Picture
@@ -22,6 +22,7 @@ from .utils.credential import Credential
 from .exceptions import ApiException, ArgsException
 from .utils.network import Api, get_session
 from .video import get_cid_info_sync
+from . import article
 
 API = get_api("note")
 API_ARTICLE = get_api("article")
@@ -97,6 +98,10 @@ class Note:
 
     def get_note_id(self) -> int:
         return self.__note_id
+
+    def turn_to_article(self) -> "article.Article":
+        assert self.__type == NoteType.PUBLIC
+        return article.Article(cvid=self.get_cvid(), credential=self.credential)
 
     async def get_info(self) -> dict:
         """
@@ -277,7 +282,9 @@ class Note:
                 if not isinstance(field["insert"], str):
                     if "tag" in field["insert"].keys():
                         node = VideoCardNode()
-                        node.aid = get_cid_info_sync(field["insert"]["tag"]["cid"])["cid"]
+                        node.aid = get_cid_info_sync(field["insert"]["tag"]["cid"])[
+                            "cid"
+                        ]
                         self.__children.append(node)
                     elif "imageUpload" in field["insert"].keys():
                         node = ImageNode()

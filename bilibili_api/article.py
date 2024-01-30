@@ -18,14 +18,14 @@ import httpx
 from yarl import URL
 from bs4 import BeautifulSoup, element
 
-from bilibili_api.utils.initial_state import get_initial_state
+from .utils.initial_state import get_initial_state
 
-from .note import Note, NoteType
 from .utils.utils import get_api
 from .utils.credential import Credential
 from .utils.network import Api, get_session
 from .exceptions.NetworkException import ApiException, NetworkException
 from .video import get_cid_info_sync
+from . import note
 
 API = get_api("article")
 
@@ -204,10 +204,10 @@ class Article:
         """
         return self.__type == ArticleType.NOTE
 
-    def turn_to_note(self) -> Note:
+    def turn_to_note(self) -> "note.Note":
         assert self.__type == ArticleType.NOTE
-        return Note(
-            cvid=self.__cvid, note_type=NoteType.PUBLIC, credential=self.credential
+        return note.Note(
+            cvid=self.__cvid, note_type=note.NoteType.PUBLIC, credential=self.credential
         )
 
     def markdown(self) -> str:
@@ -883,7 +883,6 @@ class TextNode(Node):
 
     def markdown(self):
         txt = self.text
-        txt = txt.lstrip()
         special_chars = ["\\", "*", "$", "<", ">", "|"]
         for c in special_chars:
             txt = txt.replace(c, "\\" + c)

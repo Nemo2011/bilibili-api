@@ -191,6 +191,8 @@ from bilibili_api import dynamic
 | -------- | ------------- | ------------------- |
 | features | str, optional | 默认 itemOpusStyle. |
 
+**(不建议使用此旧版 API，请转到新版 get_info_opus)**
+
 获取动态信息
 
 **Returns:** dict: 调用 API 返回的结果

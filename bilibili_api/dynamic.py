@@ -742,6 +742,8 @@ class Dynamic:
 
     async def get_info(self, features: str = "itemOpusStyle") -> dict:
         """
+        (不建议使用此旧版 API，请转到新版 get_info_opus)
+
         获取动态信息
 
         Args:
@@ -761,6 +763,15 @@ class Dynamic:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
         return data
+
+    async def get_info_opus(self) -> dict:
+        """
+        新版获取动态信息
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        pass
 
     async def get_reposts(self, offset: str = "0") -> dict:
         """
