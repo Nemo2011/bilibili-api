@@ -85,7 +85,11 @@ async def test_m_get_dynamic_page_info_by_type():
     )
 
 
-async def test_m_get_dynamic_page_info_by_mid():
+async def test_n_get_dynamic_page_info_by_mid():
     return await dynamic.get_dynamic_page_info(
         credential=common.get_credential(), host_mid=12434430
     )
+
+
+async def test_o_get_dynamic_info_opus():
+    return await dy.get_info_opus()
