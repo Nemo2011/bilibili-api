@@ -1,6 +1,6 @@
 {
   "info": {
-    "detail_new": {
+    "detail": {
       "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/opus/detail",
       "method": "GET",
       "verify": false,
