@@ -762,11 +762,12 @@ class Dynamic:
                 "features": "itemOpusStyle",
             }
             data = (
-                Api(**api, credential=self.credential).update_params(**params).result_sync
+                Api(**api, credential=self.credential)
+                .update_params(**params)
+                .result_sync
             )
-            self.__opus = data["item"]["basic"]["comment_type"] == 11
+            self.__opus = data["item"]["basic"]["comment_type"] != 11
             cache_pool.dynamic_is_opus[self.__dynamic_id] = self.__opus
-
 
     def get_dynamic_id(self) -> int:
         return self.__dynamic_id
