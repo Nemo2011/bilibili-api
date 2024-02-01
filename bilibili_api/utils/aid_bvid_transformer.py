@@ -17,6 +17,13 @@ BV_LEN = 12
 PREFIX = "BV1"
 
 def bvid2aid(bvid: str) -> int:
+    """
+    BV 号转 AV 号。
+    Args:
+        bvid (str):  BV 号。
+    Returns:
+        int: AV 号。
+    """
     bvid = list(bvid)
     bvid[3], bvid[9] = bvid[9], bvid[3]
     bvid[4], bvid[7] = bvid[7], bvid[4]
@@ -28,6 +35,13 @@ def bvid2aid(bvid: str) -> int:
     return (tmp & MASK_CODE) ^ XOR_CODE
 
 def aid2bvid(aid: int) -> str:
+    """
+    AV 号转 BV 号。
+    Args:
+        aid (int):  AV 号。
+    Returns:
+        str: BV 号。
+    """
     bytes = [b'B', b'V', b'1', b'0', b'0', b'0', b'0', b'0', b'0', b'0', b'0', b'0']
     bv_idx = BV_LEN - 1
     tmp = (MAX_AID | aid) ^ XOR_CODE
