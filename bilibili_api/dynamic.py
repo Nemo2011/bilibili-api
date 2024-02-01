@@ -22,8 +22,9 @@ from .utils.picture import Picture
 from . import user, vote, exceptions
 from .utils.credential import Credential
 from .utils.network import Api
+from .utils import cache_pool
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
-from . import article
+from . import opus
 
 API = utils.get_api("dynamic")
 raise_for_statement = utils.raise_for_statement
@@ -751,16 +752,21 @@ class Dynamic:
         self.__dynamic_id = dynamic_id
         self.credential = credential if credential is not None else Credential()
 
-        api = API["info"]["detail"]
-        params = {
-            "id": self.__dynamic_id,
-            "timezone_offset": -480,
-            "features": "itemOpusStyle",
-        }
-        data = (
-            Api(**api, credential=self.credential).update_params(**params).result_sync
-        )
-        self.__opus = data["item"]["basic"]["comment_type"] == 11
+        if cache_pool.dynamic_is_opus.get(self.__dynamic_id):
+            self.__opus = cache_pool.dynamic_is_opus[self.__dynamic_id]
+        else:
+            api = API["info"]["detail"]
+            params = {
+                "id": self.__dynamic_id,
+                "timezone_offset": -480,
+                "features": "itemOpusStyle",
+            }
+            data = (
+                Api(**api, credential=self.credential).update_params(**params).result_sync
+            )
+            self.__opus = data["item"]["basic"]["comment_type"] == 11
+            cache_pool.dynamic_is_opus[self.__dynamic_id] = self.__opus
+
 
     def get_dynamic_id(self) -> int:
         return self.__dynamic_id
@@ -773,6 +779,13 @@ class Dynamic:
             DynamicType: 动态类型
         """
         return DynamicType.OPUS if self.__opus else DynamicType.NORMAL
+
+    def turn_to_opus(self) -> "opus.Opus":
+        """
+        对 opus 动态，将其转换为图文
+        """
+        raise_for_statement(self.__opus, "仅支持图文动态")
+        return opus.Opus(self.__dynamic_id, credential=self.credential)
 
     async def get_info(self, features: str = "itemOpusStyle") -> dict:
         """

@@ -12,6 +12,7 @@ from . import dynamic
 from .utils.credential import Credential
 from .utils.network import Api
 from .utils.utils import get_api, raise_for_statement
+from .utils import cache_pool
 
 
 API = get_api("opus")
@@ -41,12 +42,20 @@ class Opus:
         self.__id = opus_id
         self.credential = credential if credential else Credential()
 
-        api = API["info"]["detail"]
-        params = {"timezone_offset": -480, "id": self.__id}
-        self.__info = (
-            Api(**api, credential=self.credential).update_params(**params).result_sync
-        )["item"]
-        self.__type = OpusType(self.__info["type"])
+        if cache_pool.opus_type.get(self.__id):
+            self.__info = cache_pool.opus_info[self.__id]
+            self.__type = OpusType(cache_pool.opus_type[self.__id])
+        else:
+            api = API["info"]["detail"]
+            params = {"timezone_offset": -480, "id": self.__id}
+            self.__info = (
+                Api(**api, credential=self.credential)
+                .update_params(**params)
+                .result_sync
+            )["item"]
+            self.__type = OpusType(self.__info["type"])
+            cache_pool.opus_info[self.__id] = self.__info
+            cache_pool.opus_type[self.__id] = self.__type.value
 
     def get_opus_id(self):
         return self.__id
@@ -59,6 +68,23 @@ class Opus:
             OpusType: 图文类型
         """
         return self.__type
+
+    def turn_to_article(self) -> "article.Article":
+        """
+        对专栏图文，转换为专栏
+        """
+        raise_for_statement(self.__type == OpusType.ARTICLE, "仅支持专栏图文")
+        cvid = int(self.__info["basic"]["rid_str"])
+        cache_pool.article_is_opus[cvid] = 1
+        cache_pool.article_dyn_id[cvid] = self.__id
+        return article.Article(cvid=cvid, credential=self.credential)
+
+    def turn_to_dynamic(self) -> "dynamic.Dynamic":
+        """
+        转为动态
+        """
+        cache_pool.dynamic_is_opus[self.__id] = 1
+        return dynamic.Dynamic(dynamic_id=self.__id, credential=self.credential)
 
     async def get_info(self):
         """
