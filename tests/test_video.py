@@ -28,13 +28,13 @@ video = video_m.Video(aid=AID, credential=crd)
 async def test_a_Video_set_bvid():
     # 设置正确 bvid
     video.set_bvid(BVID)
-    raise_for_statement(video.get_bvid() == BVID, "bvid 应该被修改"
-    raise_for_statement(video.get_aid() == AID, "aid 应该从 bvid 转换"
+    assert video.get_bvid() == BVID, "bvid 应该被修改"
+    assert video.get_aid() == AID, "aid 应该从 bvid 转换"
 
     # 设置错误 bvid
     try:
         video.set_bvid("BVajsdoiajinsodn")
-        raise_for_statement(False, "设置了错误 bvid 但未报错"
+        assert False, "设置了错误 bvid 但未报错"
     except exceptions.ArgsException:
         video.set_bvid(BVID)
 
@@ -42,14 +42,14 @@ async def test_a_Video_set_bvid():
 async def test_b_Video_set_aid():
     # 设置正确 aid
     video.set_aid(AID)
-    raise_for_statement(video.get_aid() == AID, "aid 应该被修改"
-    raise_for_statement(video.get_bvid() == BVID, "bvid 应该从 aid 转换"
+    assert video.get_aid() == AID, "aid 应该被修改"
+    assert video.get_bvid() == BVID, "bvid 应该从 aid 转换"
 
     # 设置错误 aid
     # 设置错误 bvid
     try:
         video.set_aid(-1)
-        raise_for_statement(False, "设置了错误 aid 但未报错"
+        assert False, "设置了错误 aid 但未报错"
     except exceptions.ArgsException:
         video.set_aid(AID)
         pass
@@ -243,11 +243,14 @@ async def test_zg_triple():
 async def test_zh_get_cid_info():
     return await video_m.get_cid_info(62131)
 
+
 async def test_zi_get_ai_conclusion():
     return await video.get_ai_conclusion(0)
 
+
 async def test_zj_get_relation():
     return await video.get_relation()
+
 
 async def test_zk_get_online():
     return await video.get_online()

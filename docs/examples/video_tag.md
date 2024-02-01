@@ -19,5 +19,5 @@ second_di = cards[1]["desc"]["dynamic_id"]
 # tag.get_history_cards 得到的是以指定dynamic_id的视频/动态的*后一个视频/动态*作为起始的cards
 history_cards = sync(tag.get_history_cards(first_di))["cards"]
 
-raise_for_statement(second_di == history_cards[0]["desc"]["dynamic_id"]
+assert second_di == history_cards[0]["desc"]["dynamic_id"]
 ```
