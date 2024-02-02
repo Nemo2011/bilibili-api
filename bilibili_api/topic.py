@@ -106,14 +106,14 @@ class Topic:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_raw_cards(
+    async def get_cards(
         self,
         ps: int = 100,
         offset: Optional[str] = None,
         sort_by: TopicCardsSortBy = TopicCardsSortBy.HOT,
     ) -> dict:
         """
-        获取话题下的原始内容
+        获取话题下的内容
 
         未登录无法使用热门排序字段即 TopicCardsSortBy.RECOMMEND
 
@@ -139,41 +139,6 @@ class Topic:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_cards(
-        self,
-        ps: int = 100,
-        offset: Optional[str] = None,
-        sort_by: TopicCardsSortBy = TopicCardsSortBy.HOT,
-    ) -> list:
-        """
-        获取话题下的内容，返回列表
-
-        自动处理并转换成动态类
-
-        未登录无法使用热门排序字段即 TopicCardsSortBy.RECOMMEND
-
-        Args:
-            ps (int): 数据数量. Defaults to 100.
-
-            offset (Optional[str]): 偏移量. 生成格式为 f'{页码}_{页码*数据量]}' 如'2_40' Defaults to None.
-
-            sort_by (TopicCardsSortBy): 排序方式. Defaults to TopicCardsSortBy.HOT.
-
-        Returns:
-            list: 内容列表
-        """
-        topic_cards, cards = (
-            await self.get_raw_cards(ps=ps, offset=offset, sort_by=sort_by),
-            [],
-        )
-        for card in topic_cards["topic_card_list"]["items"]:
-            if card["topic_type"] == "DYNAMIC":  # 我只看到这一个类型...没找到其他的
-                cards.append(
-                    dynamic.Dynamic(dynamic_id=int(card["dynamic_card_item"]["id_str"]))
-                )
-            else:
-                cards.append(card)
-        return cards
 
     async def like(self, status: bool = True) -> dict:
         """
