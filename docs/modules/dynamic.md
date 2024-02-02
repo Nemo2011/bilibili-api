@@ -186,11 +186,11 @@ from bilibili_api import dynamic
 
 获取 dynamic_id
 
-#### def get_dynamic_type()
+#### def is_opus()
 
-获取动态类型
+判断是否为 opus 动态
 
-**Returns:** DynamicType: 动态类型
+**Returns:** bool: 是否为 opus 动态
 
 #### async def get_info()
 

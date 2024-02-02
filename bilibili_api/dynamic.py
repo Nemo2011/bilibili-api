@@ -75,18 +75,6 @@ class DynamicContentType(Enum):
     VOTE = 4
 
 
-class DynamicType(Enum):
-    """
-    动态类型
-
-    + NORMAL: 普通动态 (链接为 https://t.bilibili.com/***)
-    + OPUS: 图文动态 (链接为 https://www.bilibili.com/opus/***)
-    """
-
-    NORMAL = "normal"
-    OPUS = "opus"
-
-
 async def _parse_at(text: str) -> Tuple[str, str, str]:
     """
     @人格式：“@用户名 ”(注意最后有空格）
@@ -772,14 +760,14 @@ class Dynamic:
     def get_dynamic_id(self) -> int:
         return self.__dynamic_id
 
-    def get_dynamic_type(self) -> DynamicType:
+    def is_opus(self) -> DynamicType:
         """
-        获取动态类型
+        判断是否为 opus 动态
 
         Returns:
-            DynamicType: 动态类型
+            bool: 是否为 opus 动态
         """
-        return DynamicType.OPUS if self.__opus else DynamicType.NORMAL
+        return self.__opus
 
     def turn_to_opus(self) -> "opus.Opus":
         """
