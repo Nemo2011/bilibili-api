@@ -42,7 +42,7 @@ parse_link_urls = [
     "https://www.bilibili.com/list/471723540?sid=849191&spm_id_from=333.999.0.0&desc=1",
     "https://space.bilibili.com/558830935/favlist?fid=56245&ftype=collect&ctype=21",
     "https://www.bilibili.com/read/readlist/rl207146",
-    "https://t.bilibili.com/747943493670797385",
+    "https://t.bilibili.com/892599074330509334",
     "https://www.bilibili.com/blackroom/ban/2670821",
     "https://www.biligame.com/detail/?id=103009",
     "https://www.bilibili.com/v/topic/detail/?topic_id=57290",

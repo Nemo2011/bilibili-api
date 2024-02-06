@@ -129,7 +129,6 @@ class MangeRankType(Enum):
     - JAPAN: 日漫
     - SOUTHKOREA: 韩漫
     - OFFICAL: 宝藏
-    - FREE: 免费
     - FINISH: 完结
     """
 
@@ -140,7 +139,6 @@ class MangeRankType(Enum):
     JAPAN = 0
     SOUTHKOREA = 2
     OFFICAL = 5
-    FREE = 8
     FINISH = 13
 
 
@@ -212,12 +210,12 @@ async def get_music_rank_list() -> dict:
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API["info"]["music_weakly_series"]
+    api = API["info"]["music_weekly_series"]
     params = {"list_type": 1}
     return await Api(**api).update_params(**params).result
 
 
-async def get_music_rank_weakly_detail(week: int = 1) -> dict:
+async def get_music_rank_weekly_detail(week: int = 1) -> dict:
     """
     获取全站音乐榜一周的详细信息(不包括具体的音频列表)
 
@@ -227,12 +225,12 @@ async def get_music_rank_weakly_detail(week: int = 1) -> dict:
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API["info"]["music_weakly_details"]
+    api = API["info"]["music_weekly_details"]
     params = {"list_id": week}
     return await Api(**api).update_params(**params).result
 
 
-async def get_music_rank_weakly_musics(week: int = 1) -> dict:
+async def get_music_rank_weekly_musics(week: int = 1) -> dict:
     """
     获取全站音乐榜一周的音频列表(返回的音乐的 id 对应了 music.Music 类创建实例传入的 id)
 
@@ -242,7 +240,7 @@ async def get_music_rank_weakly_musics(week: int = 1) -> dict:
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API["info"]["music_weakly_content"]
+    api = API["info"]["music_weekly_content"]
     params = {"list_id": week}
     return await Api(**api).update_params(**params).result
 
@@ -262,18 +260,24 @@ async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
     return await Api(**api).update_params(**params).result
 
 
-async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW) -> dict:
+async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW, credential: Credential = None) -> dict:
     """
     获取漫画专属排行榜
+
+    Args:
+        credential (Credential): 凭据类
 
     Returns:
         dict: 调用 API 返回的结果
     """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
+
     api = API["info"]["manga_rank"]
     params = {"device": "pc", "platform": "web"}
     data = {"id": type_.value}
     return (
-        await Api(**api, no_csrf=True)
+        await Api(**api, no_csrf=True, credential=credential)
         .update_data(**data)
         .update_params(**params)
         .result

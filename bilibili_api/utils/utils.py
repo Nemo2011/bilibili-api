@@ -8,9 +8,10 @@ import json
 import os
 import random
 from typing import List, TypeVar
+from ..exceptions import StatementException
 
 
-def get_api(field: str) -> dict:
+def get_api(field: str, *args) -> dict:
     """
     获取 API。
 
@@ -27,7 +28,10 @@ def get_api(field: str) -> dict:
     )
     if os.path.exists(path):
         with open(path, encoding="utf8") as f:
-            return json.loads(f.read())
+            data = json.load(f)
+            for arg in args:
+                data = data[arg]
+            return data
     else:
         return {}
 
@@ -201,3 +205,8 @@ def get_deviceid(separator: str = "-", is_lowercase: bool = False) -> str:
         dev_id_group.append(s)
     res = join(separator, dev_id_group)
     return res if is_lowercase else res.upper()
+
+
+def raise_for_statement(statement: bool, msg: str="未满足条件") -> None:
+    if not statement:
+        raise StatementException(msg=msg)

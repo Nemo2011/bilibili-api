@@ -1,12 +1,12 @@
 # 示例：获取视频标签下的视频
 
-``` python
+```python
 from bilibili_api import video_tag, sync
 tag = video_tag.Tag(tag_name="空难")
 print(sync(tag.get_cards()))
 ```
 
-``` python
+```python
 # 获取从第二个视频开始的视频/动态
 from bilibili_api import video_tag, sync
 tag = video_tag.Tag(tag_name="空难")

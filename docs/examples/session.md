@@ -2,17 +2,17 @@
 
 ```python
 from bilibili_api import Credential, sync
-from bilibili_api.session import Session, Event
-from bilibili_api.utils.Picture import Picture
+from bilibili_api.session import Session, Event, EventType
+from bilibili_api.utils.picture import Picture
 
 session = Session(Credential(...))
 
-@session.on(Event.PICTURE)
+@session.on(EventType.PICTURE)
 async def pic(event: Event):
     img: Picture = event.content
     img.download("./")
 
-@session.on(Event.TEXT)
+@session.on(EventType.TEXT)
 async def reply(event: Event):
     if event.content == "/close":
         session.close()

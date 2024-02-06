@@ -6,13 +6,14 @@ bilibili_api.utils.Credential
 
 import uuid
 from typing import Union
+import urllib.parse
 
 from ..exceptions import (
     CredentialNoBuvid3Exception,
     CredentialNoBiliJctException,
     CredentialNoSessdataException,
     CredentialNoDedeUserIDException,
-    CredentialNoAcTimeValueException
+    CredentialNoAcTimeValueException,
 )
 
 
@@ -43,7 +44,13 @@ class Credential:
 
             ac_time_value (str | None, optional): 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None.
         """
-        self.sessdata = sessdata
+        self.sessdata = (
+            None
+            if sessdata is None
+            else (
+                sessdata if sessdata.find("%") != -1 else urllib.parse.quote(sessdata)
+            )
+        )
         self.bili_jct = bili_jct
         self.buvid3 = buvid3
         self.dedeuserid = dedeuserid
@@ -56,13 +63,15 @@ class Credential:
         Returns:
             dict: 请求 Cookies 字典
         """
-        return {
+        cookies = {
             "SESSDATA": self.sessdata,
-            "buvid3": self.buvid3 if self.buvid3 else str(uuid.uuid1()) + "infoc",
+            "buvid3": self.buvid3,
             "bili_jct": self.bili_jct,
-            "DedeUserID": self.dedeuserid,
             "ac_time_value": self.ac_time_value,
         }
+        if self.dedeuserid:
+            cookies.update({"DedeUserID": self.dedeuserid})
+        return cookies
 
     def has_dedeuserid(self) -> bool:
         """

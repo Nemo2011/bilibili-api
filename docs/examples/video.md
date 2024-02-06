@@ -25,7 +25,9 @@ if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(main())
 ```
 
-# 示例：视频在线人数监测
+**以下两个方式接口不同，数据略有偏差**
+
+# 示例：视频在线人数监测 WebSocket
 
 ```python
 from bilibili_api import video
@@ -52,6 +54,24 @@ async def on_danmaku(event):
 if __name__ == '__main__':
     # 主入口，v.connect() 为连接服务器
     asyncio.get_event_loop().run_until_complete(v.connect())
+```
+
+# 示例：获取视频在线人数 HTTP
+
+```python
+from bilibili_api import video
+import asyncio
+
+# 实例化
+v = video.Video(bvid="BV1AV411x7Gs")
+
+async def main():
+    # 获取在线人数
+    online = await v.get_online()
+    print(f'总共 {online["total"]} 人在观看，其中 {online["count"]} 人在网页端观看')
+
+if __name__ == '__main__':
+    asyncio.run(main())
 ```
 
 # 示例：获取视频弹幕

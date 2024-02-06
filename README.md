@@ -1,13 +1,13 @@
-![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo.png)
+![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo-newYear.jpg)
 
 <div align="center">
 
 # bilibili-api
 
-[![API 数量](https://img.shields.io/badge/API%20数量-300+-blue)][api.json]
+[![API 数量](https://img.shields.io/badge/API%20数量-400+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3+-red)][LICENSE]
-[![Python](https://img.shields.io/badge/python-3.11|3.10|3.9|3.8-blue)](https://www.python.org)
-<!-- [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi] -->
+[![Python](https://img.shields.io/badge/python-3.12(dev)|3.11|3.10|3.9|3.8-blue)](https://www.python.org)
+[![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]
 [![Pre-release Version](https://img.shields.io/github/v/release/Nemo2011/bilibili-api?label=pre-release&include_prereleases&sort=semver)][pypi-dev]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
 [![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg?branch=dev)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
@@ -55,6 +55,7 @@ $ pip3 install bilibili-api-python
 import asyncio
 from bilibili_api import video
 
+
 async def main() -> None:
     # 实例化 Video 类
     v = video.Video(bvid="BV1uv411q7Mv")
@@ -63,8 +64,10 @@ async def main() -> None:
     # 打印信息
     print(info)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
+
 ```
 
 输出（已格式化，已省略部分）：
@@ -115,7 +118,7 @@ if __name__ == '__main__':
 
 # 异步迁移
 
-由于从 v5 版本开始，全部改为异步，如果你不会异步，可以参考 [asyncio](https://docs.python.org/zh-cn/3/library/asyncio.html)
+由于从 v5 版本开始，基本全部改为异步，如果你不会异步，可以参考 [asyncio](https://docs.python.org/zh-cn/3/library/asyncio.html)
 
 异步可以进行并发请求，性能更高，不过如果请求过快仍然会导致被屏蔽。
 
@@ -123,8 +126,13 @@ if __name__ == '__main__':
 
 如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
 
-> 注：
-> 目前代码中采用 `WebSocket` 的部分（如视频实时检测、直播）采用 `aiohttp.ClientSession` 请求。其他地方均采用 `httpx.AsyncClient`。
+以下为 `API` 关于异步请求库使用的详细信息：
+
+| Feature | 同步 | 异步 | aiohttp | httpx | 备注 |
+| ------ | ---- | ----- | ------ | ------ | ---- |
+| `LiveDanmaku` & `VideoOnlineMonitor` | [] | [x] | [x] | [ ] | httpx 暂不支持 `WebSocket` |
+| `login` | [x] | [ ] | [ ] | [x] | 目前暂时仅支持同步请求 |
+| other | [] | [x] | [x] | [x] | |
 
 # FA♂Q
 

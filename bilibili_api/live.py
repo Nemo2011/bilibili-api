@@ -16,7 +16,7 @@ import brotli
 import aiohttp
 from aiohttp.client_ws import ClientWebSocketResponse
 
-from .utils.utils import get_api
+from .utils.utils import get_api, raise_for_statement
 from .utils.danmaku import Danmaku
 from .utils.network import get_aiohttp_session, Api, HEADERS
 from .utils.AsyncEvent import AsyncEvent
@@ -195,14 +195,14 @@ class LiveRoom:
     async def get_ruid(self) -> int:
         return await self.__get_ruid()
 
-    async def get_chat_conf(self) -> dict:
+    async def get_danmu_info(self) -> dict:
         """
         获取聊天弹幕服务器配置信息(websocket)
 
         Returns:
             dict: 调用 API 返回的结果
         """
-        api = API["info"]["chat_conf"]
+        api = API["info"]["danmu_info"]
         params = {"id": self.room_display_id}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -270,6 +270,43 @@ class LiveRoom:
 
         api = API["info"]["user_info_in_room"]
         params = {"room_id": self.room_display_id}
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    async def get_popular_ticket_num(self) -> dict:
+        """
+        获取自己在直播间的人气票数量（付费人气票已赠送的量，免费人气票的持有量）
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["info"]["popular_ticket"]
+        params = {
+            "ruid": await self.__get_ruid(),
+            "surce": 0,
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    async def send_popular_ticket(self) -> dict:
+        """
+        赠送自己在直播间的所有免费人气票
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["send_popular_ticket"]
+        params = {
+            "ruid": await self.__get_ruid(),
+            "visit_id": "",
+        }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -345,7 +382,7 @@ class LiveRoom:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_black_list(self) -> dict:
+    async def get_black_list(self, page: int = 1) -> dict:
         """
         获取黑名单列表
 
@@ -353,7 +390,7 @@ class LiveRoom:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["black_list"]
-        params = {"room_id": self.room_display_id, "ps": 1}
+        params = {"room_id": self.room_display_id, "ps": page}
 
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -440,12 +477,12 @@ class LiveRoom:
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def unban_user(self, block_id: int) -> dict:
+    async def unban_user(self, uid: int) -> dict:
         """
         解封用户
 
         Args:
-            block_id (int): 封禁用户时会返回该封禁事件的 ID，使用该值
+            uid (int): 用户 UID
 
         Returns:
             dict: 调用 API 返回的结果
@@ -453,18 +490,19 @@ class LiveRoom:
         self.credential.raise_for_no_sessdata()
         api = API["operate"]["del_block"]
         data = {
-            "roomid": self.room_display_id,
-            "id": block_id,
-            "visit_id": "",
+            "room_id": self.room_display_id,
+            "tuid": uid,
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def send_danmaku(self, danmaku: Danmaku) -> dict:
+    async def send_danmaku(self, danmaku: Danmaku, reply_mid: int = None) -> dict:
         """
         直播间发送弹幕
 
         Args:
             danmaku (Danmaku): 弹幕类
+
+            reply_mid (int, optional): @的 UID. Defaults to None.
 
         Returns:
             dict: 调用 API 返回的结果
@@ -483,7 +521,7 @@ class LiveRoom:
             "color": int(danmaku.color, 16),
             "fontsize": danmaku.font_size,
         }
-
+        if reply_mid: data["reply_mid"] = reply_mid
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def sign_up_dahanghai(self, task_id: int = 1447) -> dict:
@@ -594,6 +632,28 @@ class LiveRoom:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def update_news(self, content: str) -> dict:
+        """
+        更新公告
+
+        Args:
+            content: 最多60字符
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["info"]["update_news"]
+        params = {
+            "content": content,
+            "roomId": self.room_display_id,
+            "uid": await self.__get_ruid(),
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
     async def get_gift_common(self) -> dict:
         """
         获取当前直播间内的普通礼物列表
@@ -629,6 +689,8 @@ class LiveRoom:
 
     async def get_gift_special(self, tab_id: int) -> dict:
         """
+        注：此 API 已失效，请使用 live.get_gift_config
+
         获取当前直播间内的特殊礼物列表
 
         Args:
@@ -907,7 +969,7 @@ class LiveDanmaku(AsyncEvent):
 
         # 获取直播服务器配置
         self.logger.debug("正在获取聊天服务器配置")
-        conf = await room.get_chat_conf()
+        conf = await room.get_danmu_info()
         self.logger.debug("聊天服务器配置获取成功")
 
         # 连接直播间
@@ -947,6 +1009,8 @@ class LiveDanmaku(AsyncEvent):
                     @self.on("VERIFICATION_SUCCESSFUL")
                     async def on_verification_successful(data):
                         # 新建心跳任务
+                        while len(self.__tasks) > 0:
+                            self.__tasks.pop().cancel()
                         self.__tasks.append(asyncio.create_task(self.__heartbeat(ws)))
 
                     self.__ws = ws
@@ -980,6 +1044,7 @@ class LiveDanmaku(AsyncEvent):
                     break
 
             except Exception as e:
+                await ws.close()
                 self.logger.warning(e)
                 if retry <= 0 or len(available_hosts) == 0:
                     self.logger.error("无法连接服务器")
@@ -1050,7 +1115,7 @@ class LiveDanmaku(AsyncEvent):
         if not self.credential.has_dedeuserid():
             try:
                 info = await get_self_info(self.credential)
-                self.credential.dedeuserid = str(info["uid"])   
+                self.credential.dedeuserid = str(info["uid"])
             except:
                 pass  # 留到下面一起抛出错误
         self.credential.raise_for_no_dedeuserid()
@@ -1118,9 +1183,9 @@ class LiveDanmaku(AsyncEvent):
         """
         sendData = bytearray()
         sendData += struct.pack(">H", 16)
-        assert 0 <= protocol_version <= 2, LiveException("数据包协议版本错误，范围 0~2")
+        raise_for_statement(0 <= protocol_version <= 2, LiveException("数据包协议版本错误，范围 0~2"))
         sendData += struct.pack(">H", protocol_version)
-        assert datapack_type in [2, 7], LiveException("数据包类型错误，可用类型：2, 7")
+        raise_for_statement(datapack_type in [2, 7], LiveException("数据包类型错误，可用类型：2, 7"))
         sendData += struct.pack(">I", datapack_type)
         sendData += struct.pack(">I", 1)
         sendData += data
@@ -1155,14 +1220,14 @@ class LiveDanmaku(AsyncEvent):
             return ret
 
         while offset < len(realData):
-            header = struct.unpack(">IHHII", realData[offset : offset + 16])
+            header = struct.unpack(">IHHII", realData[offset: offset + 16])
             length = header[0]
             recvData = {
                 "protocol_version": header[2],
                 "datapack_type": header[3],
                 "data": None,
             }
-            chunkData = realData[(offset + 16) : (offset + length)]
+            chunkData = realData[(offset + 16): (offset + length)]
             if header[2] == 0:
                 recvData["data"] = json.loads(chunkData.decode())
             elif header[2] == 2:

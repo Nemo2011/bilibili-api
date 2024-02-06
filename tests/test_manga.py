@@ -28,12 +28,12 @@ async def test_d_set_follow_manga():
 
 
 async def test_e_get_manga_index():
-    return await manga.get_manga_index()
+    return await manga.get_manga_index(credential=get_credential())
 
 
 async def test_f_get_manga_update():
-    return await manga.get_manga_update()
+    return await manga.get_manga_update(credential=get_credential())
 
 
 async def test_g_get_manga_home_recommend():
-    return await manga.get_manga_home_recommend()
+    return await manga.get_manga_home_recommend(credential=get_credential())

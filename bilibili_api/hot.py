@@ -28,18 +28,18 @@ async def get_hot_videos(pn: int = 1, ps: int = 20) -> dict:
     return await Api(**api).update_params(**params).result
 
 
-async def get_weakly_hot_videos_list() -> dict:
+async def get_weekly_hot_videos_list() -> dict:
     """
     获取每周必看列表(仅概述)
 
     Returns:
         调用 API 返回的结果
     """
-    api = API_rank["info"]["weakly_series"]
+    api = API_rank["info"]["weekly_series"]
     return await Api(**api).result
 
 
-async def get_weakly_hot_videos(week: int = 1) -> dict:
+async def get_weekly_hot_videos(week: int = 1) -> dict:
     """
     获取一周的每周必看视频列表
 
@@ -49,7 +49,7 @@ async def get_weakly_hot_videos(week: int = 1) -> dict:
     Returns:
         dict: 调用 API 返回的结果
     """
-    api = API_rank["info"]["weakly_details"]
+    api = API_rank["info"]["weekly_details"]
     params = {"number": week}
     return await Api(**api).update_params(**params).result
 

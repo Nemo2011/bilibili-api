@@ -64,17 +64,6 @@
       },
       "comment": "获取自己的专栏收藏夹内容。"
     },
-    "list_albums": {
-      "url": "https://api.vc.bilibili.com/user_plus/v1/Fav/getMyFav",
-      "method": "GET",
-      "verify": true,
-      "params": {
-        "page": "int: 页码。",
-        "pagesize": "int: 每页数量，固定 30。",
-        "biz_type": "const int: 2"
-      },
-      "comment": "获取自己的相簿收藏夹内容。"
-    },
     "list_courses": {
       "url": "https://api.bilibili.com/pugv/app/web/favorite/page",
       "method": "GET",

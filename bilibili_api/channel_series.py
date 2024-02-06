@@ -9,9 +9,9 @@ from typing import List, Union, Optional
 
 import httpx
 
-from .utils.utils import get_api
+from .utils.utils import get_api, raise_for_statement
 from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, HEADERS
 
 API_USER = get_api("user")
 API = get_api("channel-series")
@@ -70,8 +70,8 @@ class ChannelSeries:
             credential(Credential)  : 凭证. Defaults to None.
         """
         global channel_meta_cache
-        assert id_ != -1
-        assert type_ != None
+        raise_for_statement(id_ != -1)
+        raise_for_statement(type_ != None)
         from .user import User
 
         self.__uid = uid
@@ -87,7 +87,7 @@ class ChannelSeries:
             else:
                 api = API_USER["channel_series"]["info"]
                 params = {"series_id": self.id_}
-            resp = json.loads(httpx.get(api["url"], params=params).text)["data"]
+            resp = Api(**api).update_params(**params).result_sync
             if self.is_new:
                 self.meta = resp["info"]
                 self.meta["mid"] = resp["info"]["upper"]["mid"]

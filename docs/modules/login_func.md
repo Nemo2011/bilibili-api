@@ -36,6 +36,7 @@ from bilibili_api import login_func
 
 + SCAN: 未扫描二维码
 + CONF: 未确认登录
++ TIMEOUT: 二维码过期
 + DONE: 成功
 
 ### def get_qrcode()
@@ -51,6 +52,22 @@ from bilibili_api import login_func
 | login_key | str | 登录密钥（get_qrcode 的返回值第二项) |
 
 检查登录状态。（建议频率 1s，这个 API 也有风控！）
+
+**returns:** Tuple[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
+
+### def get_tv_qrcode()
+
+获取二维码及登录密钥（后面有用）
+
+**returns:** Tuple[Picture, str]: 第一项是二维码图片地址（本地缓存）和登录密钥。登录密钥需要保存。
+
+### def check_tv_qrcode_events()
+
+| name | type | description |
+| - | - | - |
+| auth_code | str | 登录密钥（get_qrcode 的返回值第二项) |
+
+检查登录状态。
 
 **returns:** Tuple[QrCodeLoginEvents, str|Credential]: 状态(第一项）和信息（第二项）（如果成功登录信息为凭据类）
 

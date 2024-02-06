@@ -215,7 +215,8 @@ class VideoZoneTypes(enum.Enum):
     - DOUGA: 动画
         - DOUGA_MAD: MAD·AMV
         - DOUGA_MMD: MMD·3D
-        - DOUGA_VOICE: 短片·手书·配音
+        - DOUGA_HANDDRAWN: 短片·手书
+        - DOUGA_VOICE: 配音
         - DOUGA_GARAGE_KIT: 手办·模玩
         - DOUGA_TOKUSATSU: 特摄
         - DOUGA_ACGNTALKS: 动漫杂谈
@@ -252,10 +253,12 @@ class VideoZoneTypes(enum.Enum):
         - DANCE_CHINA: 中国舞
         - DANCE_THREE_D: 舞蹈综合
         - DANCE_DEMO: 舞蹈教程
+        - DANGE_GESTURES: 手势·网红舞
     - CINEPHILE: 影视
         - CINEPHILE_CINECISM: 影视杂谈
         - CINEPHILE_MONTAGE: 影视剪辑
-        - CINEPHILE_SHORTFILM: 小剧场
+        - CINEPHILE_SHORTFILM: 短片
+        - CINEPHILE_SHORTPLAY: 小剧场
         - CINEPHILE_TRAILER_INFO: 预告·资讯
     - ENT: 娱乐
         - ENT_VARIETY: 综艺
@@ -349,7 +352,8 @@ class VideoZoneTypes(enum.Enum):
     DOUGA = 1
     DOUGA_MAD = 24
     DOUGA_MMD = 25
-    DOUGA_VOICE = 47
+    DOUGA_HANDDRAWN = 47
+    DOUGA_VOICE = 257
     DOUGA_GARAGE_KIT = 210
     DOUGA_TOKUSATSU = 86
     DOUGA_ACGNTALKS = 253
@@ -390,11 +394,13 @@ class VideoZoneTypes(enum.Enum):
     DANCE_CHINA = 200
     DANCE_THREE_D = 154
     DANCE_DEMO = 156
+    DANCE_GESTURES = 255
 
     CINEPHILE = 181
     CINEPHILE_CINECISM = 182
     CINEPHILE_MONTAGE = 183
-    CINEPHILE_SHORTFILM = 85
+    CINEPHILE_SHORTPLAY = 85
+    CINEPHILE_SHORTFILM = 256
     CINEPHILE_TRAILER_INFO = 184
 
     ENT = 5
@@ -444,7 +450,7 @@ class VideoZoneTypes(enum.Enum):
     CAR = 223
     CAR_RACING = 245
     CAR_MODIFIEDVEHICLE = 246
-    CAR_NEWENERGYVEHICLE = 247
+    CAR_NEWENERGYVEHICLE = 246
     CAR_TOURINGCAR = 248
     CAR_MOTORCYCLE = 240
     CAR_STRATEGY = 227

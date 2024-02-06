@@ -196,8 +196,26 @@ from bilibili_api import manga
 | style | MangaIndexFilter.Style | 风格。Defaults to MangaIndexFilter.Style.ALL. |
 | pn | int | 页数。Defaults to 1. |
 | ps | int | 每页数量。Defaults to 18. |
+| credential | Credential \| None | 凭据类. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
+
+## async def get_manga_index()
+
+获取漫画索引
+
+| name | type | description |
+| - | - | - |
+| area | MangaIndexFilter.Area | 地区。Defaults to MangaIndexFilter.Area.ALL. |
+| status | MangaIndexFilter.Status | 状态。Defaults to MangaIndexFilter.Status.ALL. |
+| payment | MangaIndexFilter.Payment | 付费。Defaults to MangaIndexFilter.Payment.ALL. |
+| order | MangaIndexFilter.Order | 排序。Defaults to MangaIndexFilter.Order.HOT. |
+| style | MangaIndexFilter.Style | 风格。Defaults to MangaIndexFilter.Style.ALL. |
+| pn | int | 页数。Defaults to 1. |
+| ps | int | 每页数量。Defaults to 18. |
+| credential | Credential \| None | 凭据类. Defaults to None. |
+
+**Returns:** List[Manga]: 漫画索引
 
 ## async def get_manga_update()
 
@@ -208,6 +226,7 @@ from bilibili_api import manga
 | date | str, datetime.datetime | 日期，默认为今日。|
 | pn | int | 页数。Defaults to 1. |
 | ps | int | 每页数量。Defaults to 8. |
+| credential | Credential \| None | 凭据类. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -219,3 +238,4 @@ from bilibili_api import manga
 | - | - | - |
 | pn | int | 页数。Defaults to 1. |
 | seed | str, optional | Unknown param，无需传入 |
+| credential | Credential \| None | 凭据类. Defaults to None. |

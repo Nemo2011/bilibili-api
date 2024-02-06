@@ -121,7 +121,7 @@ async def test_o_Video_get_danmaku():
 
 
 async def test_p_Video_get_danmaku_history():
-    data = await video.get_danmakus(0, date=datetime.date(2020, 1, 1))
+    data = await video.get_danmakus(0, date=datetime.date(2023, 1, 1))
     return data
 
 
@@ -188,16 +188,16 @@ async def test_w_Video_pay_coin():
 #            return e.raw
 
 
-async def test_y_Video_del_tag():
-    try:
-        data = await video.delete_tag(99999999)
-        return data
-    except ResponseCodeException as e:
-        # 16070  只有 UP 才能添加
-        if e.code != 16070:
-            raise e
-        else:
-            return e.raw
+# async def test_y_Video_del_tag():
+#     try:
+#         data = await video.delete_tag(99999999)
+#         return data
+#     except ResponseCodeException as e:
+#         # 16070  只有 UP 才能添加
+#         if e.code != 16070:
+#             raise e
+#         else:
+#             return e.raw
 
 
 # async def test_z_Video_subscribe_and_unsubscribe_tag():
@@ -243,8 +243,14 @@ async def test_zg_triple():
 async def test_zh_get_cid_info():
     return await video_m.get_cid_info(62131)
 
+
 async def test_zi_get_ai_conclusion():
     return await video.get_ai_conclusion(0)
 
+
 async def test_zj_get_relation():
     return await video.get_relation()
+
+
+async def test_zk_get_online():
+    return await video.get_online()

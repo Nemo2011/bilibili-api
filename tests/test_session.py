@@ -19,7 +19,7 @@ async def test_c_get_new_sessions():
 async def test_d_send_msg():
     try:
         return await session.send_msg(
-            get_credential(), 1666311555, session.Event.TEXT, "THIS IS A TEST MSG. "
+            get_credential(), 1666311555, session.EventType.TEXT, "THIS IS A TEST MSG. "
         )
         # 660303135 表示有意见[doge]
     except ResponseCodeException as e:

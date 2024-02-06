@@ -8,7 +8,7 @@ import asyncio
 import platform
 
 from .utils.sync import sync
-from .credential import Credential
+from .utils.credential_refresh import Credential
 from .utils.picture import Picture
 from .utils.short import get_real_url
 from .utils.parse_link import ResourceType, parse_link
@@ -16,16 +16,12 @@ from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.danmaku import DmMode, Danmaku, DmFontSize, SpecialDanmaku
 from .utils.network import (
     HEADERS,
-    Api,
-    retry,
-    enc_wbi,
-    get_nav,
-    check_valid,
     get_session,
     set_session,
-    get_mixin_key,
     get_aiohttp_session,
-    set_aiohttp_session
+    set_aiohttp_session,
+    get_httpx_sync_session,
+    set_httpx_sync_session
 )
 from .errors import (
     LoginError,
@@ -58,6 +54,7 @@ from . import (
     emoji,
     login,
     manga,
+    music,
     topic,
     video,
     cheese,
@@ -65,12 +62,13 @@ from . import (
     search,
     article,
     bangumi,
-    channel,
     comment,
     dynamic,
     session,
+    festival,
     homepage,
     settings,
+    watchroom,
     live_area,
     video_tag,
     black_room,
@@ -82,20 +80,19 @@ from . import (
     creative_center,
     article_category,
     interactive_video,
+    audio_uploader,
 )
 
-BILIBILI_API_VERSION = "16.1.1"
+BILIBILI_API_VERSION = "16.1.2"
 
 # 如果系统为 Windows，则修改默认策略，以解决代理报错问题
 if "windows" in platform.system().lower():
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore
 
 __all__ = [
-    "Api",
     "ApiException",
     "ArgsException",
     "BILIBILI_API_VERSION",
-    "check_valid",
     "Credential",
     "CredentialNoBiliJctException",
     "CredentialNoBuvid3Exception",
@@ -106,7 +103,6 @@ __all__ = [
     "DmFontSize",
     "DmMode",
     "DynamicExceedImagesException",
-    "enc_wbi",
     "HEADERS",
     "LiveException",
     "LoginError",
@@ -122,12 +118,11 @@ __all__ = [
     "article",
     "article_category",
     "ass",
-    "asyncio",
     "audio",
+    "audio_uploader",
     "bangumi",
     "black_room",
     "bvid2aid",
-    "channel",
     "channel_series",
     "cheese",
     "client",
@@ -136,10 +131,9 @@ __all__ = [
     "dynamic",
     "emoji",
     "favorite_list",
+    "festival",
     "game",
     "get_aiohttp_session",
-    "get_mixin_key",
-    "get_nav",
     "get_real_url",
     "get_session",
     "homepage",
@@ -150,11 +144,10 @@ __all__ = [
     "login",
     "login_func",
     "manga",
+    "music",
     "note",
     "parse_link",
-    "platform",
     "rank",
-    "retry",
     "search",
     "session",
     "set_aiohttp_session",
@@ -169,4 +162,5 @@ __all__ = [
     "video_uploader",
     "video_zone",
     "vote",
+    "watchroom",
 ]

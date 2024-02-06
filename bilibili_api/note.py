@@ -14,13 +14,15 @@ import yaml
 import httpx
 from yarl import URL
 
-from bilibili_api.utils.initial_state import get_initial_state
+from .utils.initial_state import get_initial_state
 
-from .utils.utils import get_api
+from .utils.utils import get_api, raise_for_statement
 from .utils.picture import Picture
 from .utils.credential import Credential
 from .exceptions import ApiException, ArgsException
 from .utils.network import Api, get_session
+from .video import get_cid_info_sync
+from . import article
 
 API = get_api("note")
 API_ARTICLE = get_api("article")
@@ -97,6 +99,16 @@ class Note:
     def get_note_id(self) -> int:
         return self.__note_id
 
+    def turn_to_article(self) -> "article.Article":
+        """
+        将笔记类转为专栏类。需要保证笔记是公开笔记。
+
+        Returns:
+            Note: 专栏类
+        """
+        raise_for_statement(self.__type == NoteType.PUBLIC)
+        return article.Article(cvid=self.get_cvid(), credential=self.credential)
+
     async def get_info(self) -> dict:
         """
         获取笔记信息
@@ -127,7 +139,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果。
         """
-        assert self.__type == NoteType.PRIVATE
+        raise_for_statement(self.__type == NoteType.PRIVATE)
 
         api = API["private"]["detail"]
         # oid 为 0 时指 avid
@@ -147,7 +159,7 @@ class Note:
             dict: 调用 API 返回的结果。
         """
 
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
 
         api = API["public"]["detail"]
         params = {"cvid": self.get_cvid()}
@@ -198,7 +210,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
         return await get_initial_state(f"https://www.bilibili.com/read/cv{self.__cvid}")
 
     async def set_like(self, status: bool = True) -> dict:
@@ -213,7 +225,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
 
         self.credential.raise_for_no_sessdata()
 
@@ -233,7 +245,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
 
         self.credential.raise_for_no_sessdata()
 
@@ -255,7 +267,7 @@ class Note:
         Returns:
             dict: 调用 API 返回的结果
         """
-        assert self.__type == NoteType.PUBLIC
+        raise_for_statement(self.__type == NoteType.PUBLIC)
 
         self.credential.raise_for_no_sessdata()
 
@@ -276,12 +288,9 @@ class Note:
                 if not isinstance(field["insert"], str):
                     if "tag" in field["insert"].keys():
                         node = VideoCardNode()
-                        node.aid = json.loads(
-                            httpx.get(
-                                "https://hd.biliplus.com/api/cidinfo?cid="
-                                + str(field["insert"]["tag"]["cid"])
-                            ).text
-                        )["data"]["cid"]
+                        node.aid = get_cid_info_sync(field["insert"]["tag"]["cid"])[
+                            "cid"
+                        ]
                         self.__children.append(node)
                     elif "imageUpload" in field["insert"].keys():
                         node = ImageNode()

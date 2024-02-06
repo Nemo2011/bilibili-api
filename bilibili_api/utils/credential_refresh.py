@@ -14,8 +14,8 @@ from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
 from Cryptodome.Cipher import PKCS1_OAEP
 
-from .utils.credential import Credential as _Credential
-from .utils.network import Api, get_api, get_session
+from .credential import Credential as _Credential
+from .network import Api, get_api, get_session, HEADERS
 
 key = RSA.importKey(
     """\
@@ -65,6 +65,25 @@ class Credential(_Credential):
             credential=self, **get_api("credential")["info"]["valid"]
         ).result
         return data["isLogin"]
+
+    @staticmethod
+    def from_cookies(cookies: dict={}) -> "Credential":
+        """
+        从 cookies 新建 Credential
+
+        Args:
+            cookies (dict, optional): Cookies. Defaults to {}.
+
+        Returns:
+            Credential: 凭据类
+        """
+        c = Credential()
+        c.sessdata = cookies.get("SESSDATA")
+        c.bili_jct = cookies.get("bili_jct")
+        c.buvid3 = cookies.get("buvid3")
+        c.dedeuserid = cookies.get("DedeUserID")
+        c.ac_time_value = cookies.get("ac_time_value")
+        return c
 
 
 """
@@ -116,7 +135,10 @@ async def get_refresh_csrf(credential: Credential) -> str:
     cookies["buvid3"] = str(uuid.uuid1())
     cookies["Domain"] = ".bilibili.com"
     resp = await get_session().request(
-        "GET", api["url"].replace("{correspondPath}", correspond_path), cookies=cookies
+        "GET",
+        api["url"].replace("{correspondPath}", correspond_path),
+        cookies=cookies,
+        headers=HEADERS.copy(),
     )
     if resp.status_code == 404:
         raise Exception("correspondPath 过期或错误。")
@@ -151,7 +173,11 @@ async def refresh_cookies(credential: Credential) -> Credential:
     cookies = credential.get_cookies()
     cookies["buvid3"] = str(uuid.uuid1())
     cookies["Domain"] = ".bilibili.com"
-    resp = await get_session().request("POST", api["url"], cookies=cookies, data=data)
+    resp = await get_session().request(
+        "POST", api["url"], cookies=cookies, data=data, headers=HEADERS.copy()
+    )
+    if resp.status_code != 200 or resp.json()["code"] != 0:
+        raise Exception("刷新 Cookies 失败")
     new_credential = Credential(
         sessdata=resp.cookies["SESSDATA"],
         bili_jct=resp.cookies["bili_jct"],

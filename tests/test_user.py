@@ -45,6 +45,10 @@ async def test_e_User_get_videos():
     return await u.get_videos()
 
 
+async def test_e_User_get_media_list():
+    return await u.get_media_list()
+
+
 async def test_f_User_get_audios():
     return await u.get_audios()
 
@@ -282,3 +286,12 @@ async def test_zx_get_relation():
 
 async def test_zy_get_masterpiece():
     return await u.get_masterpiece()
+
+async def test_zz_get_login_log():
+    return await user.get_self_login_log(credential)
+
+async def test_zza_get_moral_log():
+    return await user.get_self_moral_log(credential)
+
+async def test_zzb_get_exp_log():
+    return await user.get_self_experience_log(credential)

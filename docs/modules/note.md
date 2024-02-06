@@ -13,7 +13,7 @@ from bilibili_api import note
 
 笔记类型枚举
 
-## class Video
+## class Note
 
 笔记类，各种对笔记的操作都在里面
 
@@ -93,6 +93,14 @@ from bilibili_api import note
 获取 note_id。
 
 **Returns:** str: note_id
+
+---
+
+#### def turn_to_article()
+
+将笔记类转为专栏类。需要保证笔记是公开笔记。
+
+**Returns:** Note: 专栏类
 
 ---
 

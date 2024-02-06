@@ -48,8 +48,8 @@ async def test_i_get_self_info():
     return await live.get_self_info(get_credential())
 
 
-async def test_j_get_chat_conf():
-    return await l.get_chat_conf()
+async def test_j_get_danmu_info():
+    return await l.get_danmu_info()
 
 
 async def test_k_ban_user():
@@ -120,6 +120,10 @@ async def test_s_get_general_info():
     return await l.get_general_info()
 
 
+# async def test_update_news():
+#     return await l.update_news("hello\nit's me")
+
+
 async def test_t_get_self_live_info():
     return await live.get_self_live_info(get_credential())
 
@@ -140,8 +144,8 @@ async def test_x_get_gift_common():
     return await l.get_gift_common()
 
 
-async def test_y_get_gift_sepcial():
-    return await l.get_gift_special(tab_id=2)
+# async def test_y_get_gift_sepcial():
+#     return await l.get_gift_special(tab_id=2)
 
 
 async def test_z_send_gift_gold():
@@ -185,3 +189,12 @@ async def test_ze_get_following_live():
         title="测试",
         start_time=round(time.time()) + (60 * 60 * 4),
     )
+
+
+async def test_zf_get_get_popular_ticket_num():
+    return await l.get_popular_ticket_num()
+
+
+async def test_zg_popular_rank_free_score_incr():
+    return await l.send_popular_ticket()
+

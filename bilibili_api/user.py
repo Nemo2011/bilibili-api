@@ -10,7 +10,7 @@ from enum import Enum
 from typing import List, Union, Tuple
 from json.decoder import JSONDecodeError
 
-from .utils.utils import get_api, join
+from .utils.utils import get_api, join, raise_for_statement
 from .utils.credential import Credential
 from .exceptions import ResponseCodeException
 from .utils.network import get_session, Api
@@ -31,6 +31,20 @@ class VideoOrder(Enum):
     PUBDATE = "pubdate"
     FAVORITE = "stow"
     VIEW = "click"
+
+
+class MedialistOrder(Enum):
+    """
+    medialist排序顺序。
+
+    + PUBDATE : 上传日期。
+    + PLAY    : 播放量。
+    + COLLECT : 收藏量。
+    """
+
+    PUBDATE = 1
+    PLAY = 2
+    COLLECT = 3
 
 
 class AudioOrder(Enum):
@@ -107,7 +121,7 @@ class RelationType(Enum):
 
     + SUBSCRIBE         : 关注。
     + UNSUBSCRIBE       : 取关。
-    + SUBSCRIBE_SECRETLY: 悄悄关注。
+    + SUBSCRIBE_SECRETLY: 悄悄关注。已失效
     + BLOCK             : 拉黑。
     + UNBLOCK           : 取消拉黑。
     + REMOVE_FANS       : 移除粉丝。
@@ -115,7 +129,7 @@ class RelationType(Enum):
 
     SUBSCRIBE = 1
     UNSUBSCRIBE = 2
-    SUBSCRIBE_SECRETLY = 3
+    # SUBSCRIBE_SECRETLY = 3
     BLOCK = 5
     UNBLOCK = 6
     REMOVE_FANS = 7
@@ -183,6 +197,24 @@ class OrderType(Enum):
     asc = "asc"
 
 
+async def name2uid_sync(names: Union[str, List[str]]):
+    """
+    将用户名转为 uid
+
+    Args:
+        names (str/List[str]): 用户名
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    if isinstance(names, str):
+        n = names
+    else:
+        n = ",".join(names)
+    params = {"names": n}
+    return Api(**API["info"]["name_to_uid"]).update_params(**params).result_sync
+
+
 async def name2uid(names: Union[str, List[str]]):
     """
     将用户名转为 uid
@@ -219,6 +251,23 @@ class User:
             credential = Credential()
         self.credential = credential
         self.__self_info = None
+
+    def get_user_info_sync(self) -> dict:
+        """
+        获取用户信息（昵称，性别，生日，签名，头像 URL，空间横幅 URL 等）
+
+        Returns:
+            dict: 调用接口返回的内容。
+
+        [用户空间详细信息](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md#%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF)
+        """
+        params = {
+            "mid": self.__uid,
+        }
+        result = Api(
+            **API["info"]["info"], credential=self.credential, params=params
+        ).result_sync
+        return result
 
     async def get_user_info(self) -> dict:
         """
@@ -423,6 +472,55 @@ class User:
             "pn": pn,
             "keyword": keyword,
             "order": order.value,
+            # -352 https://github.com/Nemo2011/bilibili-api/issues/595
+            "dm_img_list": "[]",  # 鼠标/键盘操作记录
+            # WebGL 1.0 (OpenGL ES 2.0 Chromium)
+            "dm_img_str": "V2ViR0wgMS4wIChPcGVuR0wgRVMgMi4wIENocm9taXVtKQ",
+            # ANGLE (Intel, Intel(R) UHD Graphics 630 (0x00003E9B) Direct3D11 vs_5_0 ps_5_0, D3D11)Google Inc. (Intel
+            "dm_cover_img_str": "QU5HTEUgKEludGVsLCBJbnRlbChSKSBVSEQgR3JhcGhpY3MgNjMwICgweDAwMDAzRTlCKSBEaXJlY3QzRDExIHZzXzVfMCBwc181XzAsIEQzRDExKUdvb2dsZSBJbmMuIChJbnRlbC",
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    async def get_media_list(
+        self,
+        oid: Union[int, None] = None,
+        ps: int = 20,
+        direction: bool = False,
+        desc: bool = True,
+        sort_field: MedialistOrder = MedialistOrder.PUBDATE,
+        tid: int = 0,
+        with_current: bool = False,
+    ) -> dict:
+        """
+        以 medialist 形式获取用户投稿信息。
+
+        Args:
+            oid             (int, optional)         : 起始视频 aid， 默认为列表开头
+            ps              (int, optional)         : 每一页的视频数. Defaults to 20. Max 100
+            direction       (bool, optional)        : 相对于给定oid的查询方向 True 向列表末尾方向 False 向列表开头方向 Defaults to False.
+            desc            (bool, optional)        : 倒序排序. Defaults to True.
+            sort_field      (int, optional)         : 用于排序的栏  1 发布时间，2 播放量，3 收藏量
+            tid             (int, optional)         : 分区 ID. Defaults to 0（全部）. 1 部分（未知）
+            with_current    (bool, optional)        : 返回的列表中是否包含给定oid自身 Defaults to False.
+
+        Returns:
+            dict: 调用接口返回的内容。
+        """
+        api = API["info"]["media_list"]
+        params = {
+            "mobi_app": "web",
+            "type": 1,
+            "biz_id": self.__uid,
+            "oid": oid,
+            "otype": 2,
+            "ps": ps,
+            "direction": direction,
+            "desc": desc,
+            "sort_field": sort_field.value,
+            "tid": tid,
+            "with_current": with_current,
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -1359,8 +1457,8 @@ async def get_self_notes_info(
         dict: 调用 API 返回的结果
     """
 
-    assert page_num > 0
-    assert page_size > 0
+    raise_for_statement(page_num > 0)
+    raise_for_statement(page_size > 0)
 
     credential.raise_for_no_sessdata()
 
@@ -1386,8 +1484,8 @@ async def get_self_public_notes_info(
         dict: 调用 API 返回的结果
     """
 
-    assert page_num > 0
-    assert page_size > 0
+    raise_for_statement(page_num > 0)
+    raise_for_statement(page_size > 0)
 
     credential.raise_for_no_sessdata()
 
@@ -1402,4 +1500,49 @@ async def get_self_jury_info(credential: Credential) -> dict:
     """
     credential.raise_for_no_sessdata()
     api = API["info"]["jury"]
+    return await Api(**api, credential=credential).result
+
+
+async def get_self_login_log(credential: Credential) -> dict:
+    """
+    获取自己的登录记录
+
+    Args:
+        credential (Credential): 凭证。
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["login_log"]
+    return await Api(**api, credential=credential).result
+
+
+async def get_self_moral_log(credential: Credential) -> dict:
+    """
+    获取自己的节操记录
+
+    Args:
+        credential (Credential): 凭证。
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["moral_log"]
+    return await Api(**api, credential=credential).result
+
+
+async def get_self_experience_log(credential: Credential) -> dict:
+    """
+    获取自己的经验记录
+
+    Args:
+        credential (Credential): 凭证。
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    api = API["info"]["exp_log"]
     return await Api(**api, credential=credential).result

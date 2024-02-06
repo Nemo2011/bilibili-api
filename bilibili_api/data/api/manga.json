@@ -39,7 +39,7 @@
     "index": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ClassPage",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "device": "str: 设备",
         "platform": "str: 平台"
@@ -58,13 +58,13 @@
     "index_params": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/AllLabel?device=pc&platform=web",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "comment": "获取漫画索引的参数"
     },
     "update": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetDailyPush",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "device": "str: 设备",
         "platform": "str: 平台"
@@ -79,7 +79,7 @@
     "home_recommend": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/HomeRecommend",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "device": "str: 设备",
         "platform": "str: 平台"

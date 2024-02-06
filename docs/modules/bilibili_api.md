@@ -4,17 +4,21 @@
 import bilibili_api
 ```
 
-根模块
+根模块 (默认已导入所有子模块，例如 `bilibili_api.video`, `bilibili_api.user`)
+
+---
 
 ## const dict HEADERS
 
 访问 bilibili 视频下载链接等内部网址用的 HEADERS
 
+---
+
 ## def set_session()
 
 | name    | type                  | description                |
 | ------- | --------------------- | -------------------------- |
-| session | httpx.AsyncSession | httpx.AsyncSession 实例 |
+| session | httpx.AsyncClient | httpx.AsyncClient 实例 |
 
 用户手动设置 Session
 
@@ -24,9 +28,49 @@ import bilibili_api
 
 ## def get_session()
 
-获取当前模块的 httpx.AsyncSession 对象，用于自定义请求
+获取当前模块的 httpx.AsyncClient 对象，用于自定义请求
 
-**Returns:** httpx.AsyncSession
+**Returns:** httpx.AsyncClient
+
+---
+
+## def set_aiohttp_session()
+
+| name    | type                  | description                |
+| ------- | --------------------- | -------------------------- |
+| session | aiohttp.ClientSession | aiohttp.ClientSession 实例 |
+
+用户手动设置 Session
+
+**Returns:** None
+
+---
+
+## def get_aiohttp_session()
+
+获取当前模块的 aiohttp.ClientSession 对象，用于自定义请求
+
+**Returns:** aiohttp.ClientSession
+
+---
+
+## def set_httpx_sync_session()
+
+| name    | type                  | description                |
+| ------- | --------------------- | -------------------------- |
+| session | httpx.Client | httpx.Client 实例 |
+
+用户手动设置 Session
+
+**Returns:** None
+
+---
+
+## def get_httpx_sync_session()
+
+获取当前模块的 httpx.Client 对象，用于自定义请求
+
+**Returns:** httpx.Client
 
 ---
 
@@ -131,6 +175,17 @@ import bilibili_api
 检查 cookies 是否需要刷新
 
 **Returns:** bool: cookies 是否需要刷新
+
+**@staticmethod**
+#### def from_cookies()
+
+| name | type | description |
+| ---- | ---- | ----------- |
+| cookies | dict | Cookies. Defaults to {}. |
+
+从 Cookies 中新建 Credential
+
+**Returns:** Credential: 凭据类
 
 ---
 

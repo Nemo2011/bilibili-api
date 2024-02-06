@@ -43,9 +43,9 @@ from bilibili_api import article
 
 **Extends:** enum.Enum
 
-- ARTICLE        : 普通专栏
+- ARTICLE        : 普通专栏，不与 opus 图文兼容。
 - NOTE           : 笔记专栏
-- SPECIAL_ARTICLE: 特殊专栏，采用笔记格式
+- SPECIAL_ARTICLE: 特殊专栏，采用笔记格式，且与 opus 图文完全兼容。
 
 ## class ArticleList
 

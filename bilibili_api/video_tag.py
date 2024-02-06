@@ -41,10 +41,7 @@ class Tag:
         if tag_id == None:
             if tag_name == None:
                 raise ArgsException("tag_name 和 tag_id 需要提供一个。")
-            resp = httpx.get(
-                f"https://api.bilibili.com/x/tag/info?tag_name={tag_name}"
-            ).json()
-            self.__tag_id = resp["data"]["tag_id"]
+            self.__tag_id = self.__get_tag_info_sync(tag_name)["tag_id"]
         else:
             self.__tag_id = tag_id
         credential = credential if credential else Credential()
@@ -52,6 +49,11 @@ class Tag:
 
     def get_tag_id(self) -> int:
         return self.__tag_id
+
+    def __get_tag_info_sync(self, tag_name: str) -> dict:
+        api = API["info"]["tag_info"]
+        params = {"tag_name": tag_name}
+        return Api(**api).update_params(**params).result_sync
 
     async def get_tag_info(self) -> dict:
         """
@@ -75,16 +77,16 @@ class Tag:
         params = {"tag_id": self.get_tag_id()}
         return await Api(**api).update_params(**params).result
 
-    async def get_cards(self) -> dict:
-        """
-        获取标签下的视频/动态
+    # async def get_cards(self) -> dict:
+    #     """
+    #     获取标签下的视频/动态
 
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        api = API["info"]["get_list"]
-        params = {"topic_id": self.get_tag_id()}
-        return await Api(**api).update_params(**params).result
+    #     Returns:
+    #         dict: 调用 API 返回的结果
+    #     """
+    #     api = API["info"]["get_list"]
+    #     params = {"topic_id": self.get_tag_id()}
+    #     return await Api(**api).update_params(**params).result
 
     async def get_history_cards(self, offset_dynamic_id: int) -> dict:
         """

@@ -1,14 +1,8 @@
 {
     "zone": {
-        "url": "https://api.bilibili.com/x/web-interface/zone", 
-        "method": "GET", 
+        "url": "https://api.bilibili.com/x/web-interface/zone",
+        "method": "GET",
         "verify": false,
         "comment": "通过 IP 获取地理位置"
-    }, 
-    "info": {
-        "url": "https://api.bilibili.com/client_info", 
-        "method": "GET", 
-        "verify": false,
-        "comment": "获取终端信息"
     }
 }

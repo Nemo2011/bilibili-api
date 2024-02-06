@@ -18,7 +18,7 @@ from random import randint as rand
 from asyncio import CancelledError, create_task
 from typing import List, Tuple, Union, Callable, Coroutine
 
-import requests
+import httpx
 
 from . import settings
 from .video import Video
@@ -668,7 +668,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.__mode = downloader_mode
 
     async def __download(self, url: str, out: str) -> None:
-        resp = requests.get(
+        resp = httpx.get(
             url,
             headers={
                 "User-Agent": "Mozilla/5.0",
@@ -694,7 +694,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         start_time = time.perf_counter()
 
         with open(out, "wb") as f:
-            for chunk in resp.iter_content(1024):
+            for chunk in resp.iter_bytes(1024):
                 cnt += 1
                 self.dispatch(
                     "DOWNLOAD_PART",

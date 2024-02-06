@@ -36,9 +36,9 @@ async def test_d_get_article_favorite_list():
     return data
 
 
-async def test_e_get_album_favorite_list():
-    data = await favorite_list.get_album_favorite_list(credential=credential)
-    return data
+# async def test_e_get_album_favorite_list():
+#     data = await favorite_list.get_album_favorite_list(credential=credential)
+#     return data
 
 
 async def test_f_get_course_favorite_list():

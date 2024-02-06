@@ -16,8 +16,6 @@ import json
 import datetime
 from typing import Any, List, Union
 
-import requests
-
 from . import settings
 from .utils.utils import get_api
 from .utils.danmaku import Danmaku
@@ -68,11 +66,8 @@ class CheeseList:
             # self.season_id = str(sync(self.get_meta())["season_id"])
             api = API["info"]["meta"]
             params = {"season_id": self.__season_id, "ep_id": self.__ep_id}
-            meta = requests.get(
-                url=api["url"], params=params, cookies=self.credential.get_cookies()
-            )
-            meta.raise_for_status()
-            self.__season_id = int(meta.json()["data"]["season_id"])
+            meta = Api(**api, credential=self.credential).update_params(**params).result_sync
+            self.__season_id = int(meta["season_id"])
 
     def set_season_id(self, season_id: int) -> None:
         self.__init__(season_id=season_id)
@@ -159,12 +154,8 @@ class CheeseVideo:
         if meta == None:
             api = API["info"]["meta"]
             params = {"season_id": self.cheese.get_season_id(), "ep_id": self.__epid}
-            metar = requests.get(
-                url=api["url"], params=params, cookies=self.credential.get_cookies()
-            )
-            metar.raise_for_status()
-            metadata = metar.json()
-            for v in metadata["data"]["episodes"]:
+            metadata = Api(**api).update_params(**params).result_sync
+            for v in metadata["episodes"]:
                 if v["id"] == epid:
                     self.__aid = v["aid"]
                     self.__cid = v["cid"]

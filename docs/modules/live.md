@@ -113,7 +113,7 @@ from bilibili_api import live
 
 **Returns:** 真实房间 id
 
-#### async def get_chat_conf()
+#### async def get_danmu_info()
 
 获取聊天弹幕服务器配置信息(websocket)
 
@@ -144,6 +144,18 @@ from bilibili_api import live
 #### async def get_user_info_in_room()
 
 获取自己在直播间的信息（粉丝勋章等级，直播用户等级等）
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_popular_ticket_num()
+
+获取自己在该直播间的人气票信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def send_popular_ticket()
+
+在直播间中赠送所有免费人气票
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -236,9 +248,9 @@ from bilibili_api import live
 
 #### async def unban_user()
 
-| name     | type | description                               |
-| -------- | ---- | ----------------------------------------- |
-| block_id | int  | 封禁事件 ID，使用 `get_black_list()` 获取 |
+| name | type | description |
+| ---- | ---- | ----------- |
+| uid  | int  | 用户 UID    |
 
 解封用户
 
@@ -269,6 +281,7 @@ from bilibili_api import live
 | name    | type    | description |
 | ------- | ------- | ----------- |
 | danmaku | Danmaku | 弹幕类      |
+| reply_mid | int, optional | @的 UID. Defaults to None |
 
 直播间发送弹幕
 

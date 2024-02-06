@@ -128,6 +128,7 @@ from bilibili_api import search
 | category_id      | int,CategoryTypePhoto,CategoryTypeArticle,None    | 专栏/相册专用类型                                                  |
 | debug_param_func | Callable,None                                           | 参数回调器，用来存储或者什么的                                            |
 | page             | int                                             | 页数，defaults to 1                                           |
+| page_size        | int                    |  每一页的数据大小 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -170,6 +171,7 @@ from bilibili_api import search
 | keyword | str | 搜索关键词 |
 | page_num | int | 页码. Defaults to 1. |
 | page_size | int | 每一页的数据大小. Defaults to 9. |
+| credential | Credential | 凭据类. Defaults to None. |
 
 搜索漫画特用函数
 

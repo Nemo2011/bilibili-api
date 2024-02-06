@@ -10,12 +10,14 @@
             "comment": "获取话题简介"
         },
         "cards": {
-            "url": "https://app.bilibili.com/x/topic/web/details/cards",
+            "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/topic",
             "method": "GET",
             "params": {
                 "topic_id": "int: 话题 id",
                 "page_size": "int: 数据数量",
-                "sort_by": "int: 排序方式 1推荐 2热门 3最新"
+                "sort_by": "int: 排序方式 1推荐 2热门 3最新",
+                "source": "Web",
+                "features": "opusBigCover"
             },
             "verify": false,
             "comment": "获取话题详情"
@@ -47,8 +49,9 @@
       "like": {
         "url": "https://app.bilibili.com/x/topic/like",
         "method": "POST",
-        "params": {
-          "topic_id":"int: 话题 id",
+        "verify": true,
+        "data": {
+          "topic_id": "int: 话题 id",
           "action": "str: like / cancel_like",
           "business": "str: topic",
           "up_mid": "int: 自己的 uid"
@@ -58,7 +61,8 @@
       "add_favorite": {
         "url": "https://app.bilibili.com/x/topic/fav/sub/add",
         "method": "POST",
-        "params": {
+        "verify": true,
+        "data": {
           "topic_id": "int: 话题 id"
         },
         "comment": "收藏话题"
@@ -66,6 +70,7 @@
       "cancel_favorite": {
         "url": "https://app.bilibili.com/x/topic/fav/sub/cancel",
         "method": "POST",
+        "verify": true,
         "params": {
           "topic_id": "int: 话题 id"
         },

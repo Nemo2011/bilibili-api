@@ -18,6 +18,18 @@ from bilibili_api import user
 
 ---
 
+## class MedialistOrder
+
+**Extends:** enum.Enum
+
+medialist排序顺序。
+
++ PUBDATE : 上传日期。
++ PLAY  : 播放量。
++ COLLECT: 收藏量。
+
+---
+
 ## class ChannelOrder
 
 **Extends:** enum.Enum
@@ -96,7 +108,7 @@ from bilibili_api import user
 
 + SUBSCRIBE: 关注。
 + UNSUBSCRIBE: 取关。
-+ SUBSCRIBE_SECRETLY: 悄悄关注。
++ SUBSCRIBE_SECRETLY: 悄悄关注。已失效
 + BLOCK: 拉黑。
 + UNBLOCK: 取消拉黑。
 + REMOVE_FANS: 移除粉丝。
@@ -259,6 +271,22 @@ from bilibili_api import user
 | ps      | (int, optional)      | 每一页的视频数. Defaults to 30.             |
 | keyword | str, optional        | 搜索关键词. Defaults to "".               |
 | order   | VideoOrder, optional | 排序方式. Defaults to VideoOrder.PUBDATE |
+
+获取用户投稿视频信息。
+
+**Returns:** 调用接口返回的内容。
+
+#### async def get_media_list()
+
+| name         | type           | description                              |
+|--------------|----------------|------------------------------------------|
+| oid          | int, optional  | 起始视频 aid， 默认为列表开头                        |
+| ps           | int, optional  | 每一页的视频数. Defaults to 20.                 |
+| direction    | bool, optional | 相对于给定oid的查询方向，true：向列表末尾方向，false：向列表开头方向 |
+| desc         | bool, optional | 是否倒序                                     |
+| sort_field   | int, optional  | 排序方式. Defaults to MedialistOrder.PUBDATE |
+| tid          | int, optional  | 分区 ID，0 表示全部                             |
+| with_current | bool, optional | 返回的列表中是否包含给定oid自身                        |
 
 获取用户投稿视频信息。
 
@@ -752,5 +780,41 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 | credential | Credential | 凭据类 |
 
 获取自己风纪委员信息
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_login_log()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+获取自己的登录记录
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_moral_log()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+获取自己的节操记录
+
+**Returns:** dict: 调用 API 返回的结果
+
+---
+
+## async def get_self_experience_log()
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+获取自己的经验记录
 
 **Returns:** dict: 调用 API 返回的结果
