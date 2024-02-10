@@ -15,6 +15,8 @@
 **:warning: 接口可能改动，请及时更新最新版 [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]**
 </div>
 
+**注意事项：使用此模块时请仅用于学习和测试，禁止用于非法用途及其他恶劣的社区行为如：恶意刷屏、辱骂黄暴、各种形式的滥用等，违规此模块许可证 `GNU General Public License Version 3` 及此条注意事项而产生的任何后果自负，模块的所有贡献者不负任何责任。**
+
 开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github]) <!-- ([Gitee][docs-gitee]) -->
 
 原仓库地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
@@ -29,8 +31,6 @@ Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/ne
 
 这是一个用 Python 写的调用 [Bilibili](https://www.bilibili.com) 各种 API 的库，
 范围涵盖视频、音频、直播、动态、专栏、用户、番剧等[[1]](#脚注)。
-
-**注意：使用此模块时请仅用于学习和测试，违规此模块许可证及此条注意事项而产生的后果自负。**
 
 ## 特色
 
