@@ -1,26 +1,29 @@
-![bilibili-api logo](./logo.png)
+![bilibili-api logo](https://raw.githubusercontent.com/Nemo2011/bilibili-api/main/design/logo-newYear.jpg)
 
 <div align="center">
 
 # bilibili-api
 
-[![API 数量](https://img.shields.io/badge/API%20数量-300+-blue)][api.json]
+[![API 数量](https://img.shields.io/badge/API%20数量-400+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3+-red)][LICENSE]
-[![Python](https://img.shields.io/badge/python-3.11|3.10|3.9|3.8-blue)](https://www.python.org)
+[![Python](https://img.shields.io/badge/python-3.12(dev)|3.11|3.10|3.9|3.8-blue)](https://www.python.org)
 [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]
-[![Pre-release Version](https://img.shields.io/github/v/release/Nemo2011/bilibili-api?label=pre-release&include_prereleases&sort=semver)][pypi]
+[![Pre-release Version](https://img.shields.io/github/v/release/Nemo2011/bilibili-api?label=pre-release&include_prereleases&sort=semver)][pypi-dev]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
-[![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
+[![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg?branch=dev)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
 
+**:warning: 接口可能改动，请及时更新最新版 [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]**
 </div>
 
-开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github])([Gitee][docs-gitee])
+**注意事项：使用此模块时请仅用于学习和测试，禁止用于非法用途及其他恶劣的社区行为如：恶意刷屏、辱骂黄暴、各种形式的滥用等，违规此模块许可证 `GNU General Public License Version 3` 及此条注意事项而产生的任何后果自负，模块的所有贡献者不负任何责任。**
+
+开发文档: [bilibili_api 开发文档][docs] ([GitHub][docs-github]) <!-- ([Gitee][docs-gitee]) -->
 
 原仓库地址：[https://github.com/MoyuScript/bilibili-api](https://github.com/MoyuScript/bilibili-api)
 
 Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/nemo2011/bilibili-api)
 
-Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2011/bilibili-api)
+<!-- Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2011/bilibili-api) 长期未同步... -->
 
 > 此仓库是对原仓库 `bilibili-api` 的继续的维护。更多相关的信息请前往原仓库地址进行查看。
 
@@ -28,8 +31,6 @@ Gitee 仓库：[https://gitee.com/nemo2011/bilibili-api](https://gitee.com/nemo2
 
 这是一个用 Python 写的调用 [Bilibili](https://www.bilibili.com) 各种 API 的库，
 范围涵盖视频、音频、直播、动态、专栏、用户、番剧等[[1]](#脚注)。
-
-**注意：使用此模块时请仅用于学习和测试，违规此模块许可证及此条注意事项而产生的后果自负。**
 
 ## 特色
 
@@ -54,6 +55,7 @@ $ pip3 install bilibili-api-python
 import asyncio
 from bilibili_api import video
 
+
 async def main() -> None:
     # 实例化 Video 类
     v = video.Video(bvid="BV1uv411q7Mv")
@@ -62,8 +64,10 @@ async def main() -> None:
     # 打印信息
     print(info)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
+
 ```
 
 输出（已格式化，已省略部分）：
@@ -110,17 +114,25 @@ if __name__ == '__main__':
 
 如果没有报错，就代表调用 API 成功，你可以到视频页面确认是不是调用成功了。
 
-!> 注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！
+> **Warning** 注意，请不要泄露这两个值给他人，否则你的账号将可能遭受盗号的风险！
 
 # 异步迁移
 
-由于从 v5 版本开始，全部改为异步，如果你不会异步，可以参考 [asyncio](https://docs.python.org/zh-cn/3/library/asyncio.html)
+由于从 v5 版本开始，基本全部改为异步，如果你不会异步，可以参考 [asyncio](https://docs.python.org/zh-cn/3/library/asyncio.html)
 
 异步可以进行并发请求，性能更高，不过如果请求过快仍然会导致被屏蔽。
 
 总的来说，异步比同步更有优势，所以不会的话可以去学一下，会发现新天地（误
 
 如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
+
+以下为 `API` 关于异步请求库使用的详细信息：
+
+| Feature | 同步 | 异步 | aiohttp | httpx | 备注 |
+| ------ | ---- | ----- | ------ | ------ | ---- |
+| `LiveDanmaku` & `VideoOnlineMonitor` | [] | [x] | [x] | [ ] | httpx 暂不支持 `WebSocket` |
+| `login` | [x] | [ ] | [ ] | [x] | 目前暂时仅支持同步请求 |
+| other | [] | [x] | [x] | [x] | |
 
 # FA♂Q
 
@@ -186,3 +198,8 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 [issues-new]: https://github.com/Nemo2011/bilibili-api/issues/new/choose
 [get-credential]: https://nemo2011.github.io/bilibili-api/#/get-credential
 [pypi]: https://pypi.org/project/bilibili-api-python
+[pypi-dev]: https://pypi.org/project/bilibili-api-dev
+
+# Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Nemo2011/bilibili-api&type=Date)](https://star-history.com/#Nemo2011/bilibili-api&Date)
