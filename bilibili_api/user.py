@@ -5,6 +5,7 @@ bilibili_api.user
 """
 
 import json
+import random
 import time
 from enum import Enum
 from typing import List, Union, Tuple
@@ -465,6 +466,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["video"]
+        dm_rand = 'ABCDEFGHIJK'
         params = {
             "mid": self.__uid,
             "ps": ps,
@@ -474,10 +476,9 @@ class User:
             "order": order.value,
             # -352 https://github.com/Nemo2011/bilibili-api/issues/595
             "dm_img_list": "[]",  # 鼠标/键盘操作记录
-            # WebGL 1.0 (OpenGL ES 2.0 Chromium)
-            "dm_img_str": "V2ViR0wgMS4wIChPcGVuR0wgRVMgMi4wIENocm9taXVtKQ",
-            # ANGLE (Intel, Intel(R) UHD Graphics 630 (0x00003E9B) Direct3D11 vs_5_0 ps_5_0, D3D11)Google Inc. (Intel
-            "dm_cover_img_str": "QU5HTEUgKEludGVsLCBJbnRlbChSKSBVSEQgR3JhcGhpY3MgNjMwICgweDAwMDAzRTlCKSBEaXJlY3QzRDExIHZzXzVfMCBwc181XzAsIEQzRDExKUdvb2dsZSBJbmMuIChJbnRlbC",
+            'dm_img_str': ''.join(random.sample(dm_rand, 2)),
+            'dm_cover_img_str': ''.join(random.sample(dm_rand, 2)),
+            'dm_img_inter': '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}'
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -1103,7 +1104,8 @@ async def edit_self_info(
     credential.raise_for_no_bili_jct()
 
     api = API["info"]["edit_my_info"]
-    data = {"birthday": birthday, "sex": sex, "uname": uname, "usersign": usersign}
+    data = {"birthday": birthday, "sex": sex,
+            "uname": uname, "usersign": usersign}
 
     return await Api(**api, credential=credential).update_data(**data).result
 
