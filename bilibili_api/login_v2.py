@@ -126,7 +126,7 @@ class Check:
         self.geetest_result = None
         self.captcha_key = None
 
-    def fetch_info(self) -> dict:
+    async def fetch_info(self) -> dict:
         """
         获取验证信息
 
@@ -136,4 +136,4 @@ class Check:
         api = API["safecenter"]["check_info"]
         self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
         params = {"tmp_code": self.tmp_token}
-        return Api(**api, params=params).result_sync
+        return Api(**api, params=params).result
