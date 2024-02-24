@@ -666,7 +666,6 @@ class User:
         Returns:
             dict: 调用接口返回的内容。
         """
-        self.credential.raise_for_no_sessdata()
         api = API["info"]["dynamic_new"]
         params = {
             "host_mid": self.__uid,

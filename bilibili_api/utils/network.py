@@ -25,7 +25,7 @@ from .sync import sync
 from .. import settings
 from .utils import get_api
 from .credential import Credential
-from ..exceptions import ApiException, ResponseCodeException, NetworkException
+from ..exceptions import ApiException, ResponseCodeException, NetworkException, ExClimbWuzhiException
 from .exclimbwuzhi import *
 
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
@@ -695,7 +695,15 @@ async def active_buvid(buvid3: str, buvid4: str) -> dict:
             "_uuid": uuid
         },
     )
-    print(resp.text)
+    if settings.http_client == settings.HTTPClient.HTTPX:
+        text = resp.text
+    else:
+        text = await resp.text()
+    text = json.loads(text)
+    if text["code"] != 0:
+        raise ExClimbWuzhiException(text["code"], text["msg"])
+    settings.logger.info("激活 buvid3 成功")
+
 
 
 def get_nav_sync(credential: Union[Credential, None] = None):
