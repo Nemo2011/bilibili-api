@@ -680,7 +680,7 @@ async def active_buvid(buvid3: str, buvid4: str) -> dict:
         else get_aiohttp_session()
     )
     uuid = gen_uuid_infoc()
-    payload = get_payload()
+    payload = get_payload(uuid)
     headers = HEADERS.copy()
     headers["Content-Type"] = "application/json"
     resp = await sess.request(

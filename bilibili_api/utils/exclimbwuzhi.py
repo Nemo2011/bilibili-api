@@ -119,7 +119,7 @@ def fmix64(k: int) -> int:
     return tmp
 
 
-def get_payload() -> str:
+def get_payload(uuid: str) -> str:
     content = {
         "3064": 1,
         "5062": get_time_milli(),
@@ -282,7 +282,7 @@ def get_payload() -> str:
         },
         "54ef": '{"in_new_ab":true,"ab_version":{"remove_back_version":"REMOVE","login_dialog_version":"V_PLAYER_PLAY_TOAST","open_recommend_blank":"SELF","storage_back_btn":"HIDE","call_pc_app":"FORBID","clean_version_old":"GO_NEW","optimize_fmp_version":"LOADED_METADATA","for_ai_home_version":"V_OTHER","bmg_fallback_version":"DEFAULT","ai_summary_version":"SHOW","weixin_popup_block":"ENABLE","rcmd_tab_version":"DISABLE","in_new_ab":true},"ab_split_num":{"remove_back_version":11,"login_dialog_version":43,"open_recommend_blank":90,"storage_back_btn":87,"call_pc_app":47,"clean_version_old":46,"optimize_fmp_version":28,"for_ai_home_version":38,"bmg_fallback_version":86,"ai_summary_version":466,"weixin_popup_block":45,"rcmd_tab_version":90,"in_new_ab":0},"pageVersion":"new_video","videoGoOldVersion":-1}',
         "8b94": "https%3A%2F%2Fwww.bilibili.com%2F",
-        "df35": "2D9BA3CF-B1ED-1674-2492-CF103D9EFACFE46196infoc",
+        "df35": uuid,
         "07a4": "en-US",
         "5f45": None,
         "db46": 0,
