@@ -589,7 +589,6 @@ class VideoMeta:
                 "open": 0,
                 "lan": "",
             },  # 莫名其妙没法上传 srt 字幕，显示格式错误，不校验
-            "subtitle": self.subtitle,
             "neutral_mark": self.neutral_mark,  # 不知道能不能随便写文本
             "dolby": 1 if self.dolby else 0,
             "lossless_music": 1 if self.lossless_music else 0,
