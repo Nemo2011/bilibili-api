@@ -589,7 +589,6 @@ class VideoMeta:
                 "open": 0,
                 "lan": "",
             },  # 莫名其妙没法上传 srt 字幕，显示格式错误，不校验
-            "subtitle": self.subtitle,
             "neutral_mark": self.neutral_mark,  # 不知道能不能随便写文本
             "dolby": 1 if self.dolby else 0,
             "lossless_music": 1 if self.lossless_music else 0,
@@ -597,6 +596,7 @@ class VideoMeta:
             "up_close_reply": self.up_close_reply,
             "up_close_danmu": self.up_close_danmu,
             "web_os": 1,  # const 1
+            "source": self.source
         }
         for k in copy(meta).keys():
             if meta[k] is None:
