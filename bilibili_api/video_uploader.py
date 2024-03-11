@@ -580,7 +580,7 @@ class VideoMeta:
             "interactive": 0,
             "act_reserve_create": 0,  # unknown
             "no_disturbance": 0,  # unknown
-            "porder": None if self.proder is None else self.porder.__dict__(),
+            "porder": None if self.porder is None else self.porder.__dict__(),
             "adorder_type": 9,  # unknown
             "no_reprint": 1 if self.no_reprint else 0,
             "subtitle": self.subtitle
