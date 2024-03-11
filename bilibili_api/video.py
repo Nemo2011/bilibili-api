@@ -1586,8 +1586,8 @@ class Video:
             encoding="utf-8",
         ) as f:
             subtitle_lans = json.load(f)
-            for lan in subtitle_lans:
-                if lan["lan"] == lan:
+            for lan_template in subtitle_lans:
+                if lan_template["lan"] == lan:
                     break
             else:
                 raise ArgsException("lan 参数错误，请参见 https://s1.hdslb.com/bfs/subtitle/subtitle_lan.json")
