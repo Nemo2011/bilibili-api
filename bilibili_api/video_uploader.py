@@ -597,6 +597,7 @@ class VideoMeta:
             "up_close_reply": self.up_close_reply,
             "up_close_danmu": self.up_close_danmu,
             "web_os": 1,  # const 1
+            "source": self.source
         }
         for k in copy(meta).keys():
             if meta[k] is None:
