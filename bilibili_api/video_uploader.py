@@ -86,70 +86,12 @@ async def _probe() -> dict:
     for line in LINES_INFO.values():
         start = time.perf_counter()
         data = bytes(int(1024 * 0.1 * 1024))  # post 0.1MB
-        httpx.post(f'https:{line["probe_url"]}', data=data, timeout=30)
-        cost_time = time.perf_counter() - start
-        if cost_time < min_cost:
-            min_cost, fastest_line = cost_time, line
-    return fastest_line
-
-
-async def _choose_line(line: Lines) -> dict:
-    """
-    选择线路，不存在则直接测速自动选择
-    """
-    if isinstance(line, Lines):
-        line_info = LINES_INFO.get(line.value)
-        if line_info is not None:
-            return line_info
-    return await _probe()
-
-
-LINES_INFO = {
-    "bda2": {
-        "os": "upos",
-        "upcdn": "bda2",
-        "probe_version": 20221109,
-        "query": "probe_version=20221109&upcdn=bda2",
-        "probe_url": "//upos-cs-upcdnbda2.bilivideo.com/OK",
-    },
-    "bldsa": {
-        "os": "upos",
-        "upcdn": "bldsa",
-        "probe_version": 20221109,
-        "query": "upcdn=bldsa&probe_version=20221109",
-        "probe_url": "//upos-cs-upcdnbldsa.bilivideo.com/OK",
-    },
-    "qn": {
-        "os": "upos",
-        "upcdn": "qn",
-        "probe_version": 20221109,
-        "query": "probe_version=20221109&upcdn=qn",
-        "probe_url": "//upos-cs-upcdnqn.bilivideo.com/OK",
-    },
-    "ws": {
-        "os": "upos",
-        "upcdn": "ws",
-        "probe_version": 20221109,
-        "query": "upcdn=ws&probe_version=20221109",
-        "probe_url": "//upos-cs-upcdnws.bilivideo.com/OK",
-    },
-}
-
-
-async def _probe() -> dict:
-    """
-    测试所有线路
-
-    测速网页 https://member.bilibili.com/preupload?r=ping
-    """
-    # api = _API["probe"]
-    # info = await Api(**api).update_params(r="probe").result # 不实时获取线路直接用 LINES_INFO
-    min_cost, fastest_line = 30, None
-    for line in LINES_INFO.values():
-        start = time.perf_counter()
-        data = bytes(int(1024 * 0.1 * 1024))  # post 0.1MB
-        httpx.post(f'https:{line["probe_url"]}', data=data, timeout=30)
-        cost_time = time.perf_counter() - start
+        timeout = 30
+        try:
+            httpx.post(f'https:{line["probe_url"]}', data=data, timeout=timeout)
+            cost_time = time.perf_counter() - start
+        except httpx.ReadTimeout:
+            cost_time = timeout
         if cost_time < min_cost:
             min_cost, fastest_line = cost_time, line
     return fastest_line
@@ -1531,7 +1473,7 @@ class VideoEditor(AsyncEvent):
                 "user-agent": "Mozilla/5.0",
             }
             resp = (
-                await Api(**api, credential=self.credential, no_csrf=True)
+                await Api(**api, credential=self.credential, no_csrf=True, json_body=True)
                 .update_params(**params)
                 .update_data(**data)
                 .update_headers(**headers)
