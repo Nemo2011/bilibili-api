@@ -66,7 +66,7 @@ def check_qrcode_events(login_key: str) -> Tuple[QrCodeLoginEvents, Union[str, C
     elif events["code"] == 86038:
         return QrCodeLoginEvents.TIMEOUT, events["message"]
     elif events["code"] == 0:
-        url: str = events["data"]["url"]
+        url: str = events["url"]
         cookies_list = url.split("?")[1].split("&")
         sessdata = ""
         bili_jct = ""

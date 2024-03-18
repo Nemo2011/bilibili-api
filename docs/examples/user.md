@@ -51,6 +51,8 @@ async def main():
         if 'cards' in page:
           	# 若存在 cards 字段（即动态数据），则将该字段列表扩展到 dynamics
             dynamics.extend(page['cards'])
+        else:
+            break
 		
         if page['has_more'] != 1:
         		# 如果没有更多动态，跳出循环

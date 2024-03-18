@@ -25,7 +25,8 @@ from .sync import sync
 from .. import settings
 from .utils import get_api
 from .credential import Credential
-from ..exceptions import ApiException, ResponseCodeException, NetworkException
+from ..exceptions import ApiException, ResponseCodeException, NetworkException, ExClimbWuzhiException
+from .exclimbwuzhi import *
 
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
 __aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
@@ -455,7 +456,9 @@ class Api:
         if self.credential.buvid3 is None:
             global buvid3
             if buvid3 == "" and self.url != API["info"]["spi"]["url"]:
-                buvid3 = (await get_spi_buvid())["b_3"]
+                resp = await get_spi_buvid()
+                buvid3 = resp["b_3"]
+                await active_buvid(buvid3, resp["b_4"])
             cookies["buvid3"] = buvid3
         else:
             cookies["buvid3"] = self.credential.buvid3
@@ -469,9 +472,11 @@ class Api:
             "files": self.files,
             "cookies": cookies,
             "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
-            "timeout": settings.timeout
-            if settings.http_client == settings.HTTPClient.HTTPX
-            else aiohttp.ClientTimeout(total=settings.timeout),
+            "timeout": (
+                settings.timeout
+                if settings.http_client == settings.HTTPClient.HTTPX
+                else aiohttp.ClientTimeout(total=settings.timeout)
+            ),
         }
         config.update(kwargs)
 
@@ -593,7 +598,9 @@ class Api:
             if OK is None:
                 code = resp_data.get("code")
                 if code is None:
-                    raise ResponseCodeException(-1, "API 返回数据未含 code 字段", resp_data)
+                    raise ResponseCodeException(
+                        -1, "API 返回数据未含 code 字段", resp_data
+                    )
                 if code != 0:
                     msg = resp_data.get("msg")
                     if msg is None:
@@ -663,6 +670,40 @@ def get_spi_buvid_sync() -> dict:
         dict: 账号相关信息
     """
     return Api(**API["info"]["spi"]).result_sync
+
+
+async def active_buvid(buvid3: str, buvid4: str) -> dict:
+    api = API["operate"]["active"]
+    sess = (
+        get_session()
+        if settings.http_client == settings.HTTPClient.HTTPX
+        else get_aiohttp_session()
+    )
+    uuid = gen_uuid_infoc()
+    payload = get_payload(uuid)
+    headers = HEADERS.copy()
+    headers["Content-Type"] = "application/json"
+    resp = await sess.request(
+        "POST",
+        api["url"],
+        data=payload,
+        headers=headers,
+        cookies={
+            "buvid3": buvid3,
+            "buvid4": buvid4,
+            "buvid_fp": gen_buvid_fp(payload, 31),
+            "_uuid": uuid
+        },
+    )
+    if settings.http_client == settings.HTTPClient.HTTPX:
+        text = resp.text
+    else:
+        text = await resp.text()
+    text = json.loads(text)
+    if text["code"] != 0:
+        raise ExClimbWuzhiException(text["code"], text["msg"])
+    settings.logger.info("激活 buvid3 成功")
+
 
 
 def get_nav_sync(credential: Union[Credential, None] = None):

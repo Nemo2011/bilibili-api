@@ -183,6 +183,7 @@ async def refresh_cookies(credential: Credential) -> Credential:
         bili_jct=resp.cookies["bili_jct"],
         dedeuserid=resp.cookies["DedeUserID"],
         ac_time_value=resp.json()["data"]["refresh_token"],
+        **credential.__dict__.items(),
     )
     await confirm_refresh(credential, new_credential)
     return new_credential

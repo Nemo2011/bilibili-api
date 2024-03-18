@@ -86,70 +86,12 @@ async def _probe() -> dict:
     for line in LINES_INFO.values():
         start = time.perf_counter()
         data = bytes(int(1024 * 0.1 * 1024))  # post 0.1MB
-        httpx.post(f'https:{line["probe_url"]}', data=data, timeout=30)
-        cost_time = time.perf_counter() - start
-        if cost_time < min_cost:
-            min_cost, fastest_line = cost_time, line
-    return fastest_line
-
-
-async def _choose_line(line: Lines) -> dict:
-    """
-    选择线路，不存在则直接测速自动选择
-    """
-    if isinstance(line, Lines):
-        line_info = LINES_INFO.get(line.value)
-        if line_info is not None:
-            return line_info
-    return await _probe()
-
-
-LINES_INFO = {
-    "bda2": {
-        "os": "upos",
-        "upcdn": "bda2",
-        "probe_version": 20221109,
-        "query": "probe_version=20221109&upcdn=bda2",
-        "probe_url": "//upos-cs-upcdnbda2.bilivideo.com/OK",
-    },
-    "bldsa": {
-        "os": "upos",
-        "upcdn": "bldsa",
-        "probe_version": 20221109,
-        "query": "upcdn=bldsa&probe_version=20221109",
-        "probe_url": "//upos-cs-upcdnbldsa.bilivideo.com/OK",
-    },
-    "qn": {
-        "os": "upos",
-        "upcdn": "qn",
-        "probe_version": 20221109,
-        "query": "probe_version=20221109&upcdn=qn",
-        "probe_url": "//upos-cs-upcdnqn.bilivideo.com/OK",
-    },
-    "ws": {
-        "os": "upos",
-        "upcdn": "ws",
-        "probe_version": 20221109,
-        "query": "upcdn=ws&probe_version=20221109",
-        "probe_url": "//upos-cs-upcdnws.bilivideo.com/OK",
-    },
-}
-
-
-async def _probe() -> dict:
-    """
-    测试所有线路
-
-    测速网页 https://member.bilibili.com/preupload?r=ping
-    """
-    # api = _API["probe"]
-    # info = await Api(**api).update_params(r="probe").result # 不实时获取线路直接用 LINES_INFO
-    min_cost, fastest_line = 30, None
-    for line in LINES_INFO.values():
-        start = time.perf_counter()
-        data = bytes(int(1024 * 0.1 * 1024))  # post 0.1MB
-        httpx.post(f'https:{line["probe_url"]}', data=data, timeout=30)
-        cost_time = time.perf_counter() - start
+        timeout = 30
+        try:
+            httpx.post(f'https:{line["probe_url"]}', data=data, timeout=timeout)
+            cost_time = time.perf_counter() - start
+        except httpx.ReadTimeout:
+            cost_time = timeout
         if cost_time < min_cost:
             min_cost, fastest_line = cost_time, line
     return fastest_line
@@ -580,7 +522,7 @@ class VideoMeta:
             "interactive": 0,
             "act_reserve_create": 0,  # unknown
             "no_disturbance": 0,  # unknown
-            "porder": self.porder.__dict__(),
+            "porder": None if self.porder is None else self.porder.__dict__(),
             "adorder_type": 9,  # unknown
             "no_reprint": 1 if self.no_reprint else 0,
             "subtitle": self.subtitle
@@ -589,7 +531,6 @@ class VideoMeta:
                 "open": 0,
                 "lan": "",
             },  # 莫名其妙没法上传 srt 字幕，显示格式错误，不校验
-            "subtitle": self.subtitle,
             "neutral_mark": self.neutral_mark,  # 不知道能不能随便写文本
             "dolby": 1 if self.dolby else 0,
             "lossless_music": 1 if self.lossless_music else 0,
@@ -597,6 +538,7 @@ class VideoMeta:
             "up_close_reply": self.up_close_reply,
             "up_close_danmu": self.up_close_danmu,
             "web_os": 1,  # const 1
+            "source": self.source
         }
         for k in copy(meta).keys():
             if meta[k] is None:
@@ -1531,7 +1473,7 @@ class VideoEditor(AsyncEvent):
                 "user-agent": "Mozilla/5.0",
             }
             resp = (
-                await Api(**api, credential=self.credential, no_csrf=True)
+                await Api(**api, credential=self.credential, no_csrf=True, json_body=True)
                 .update_params(**params)
                 .update_data(**data)
                 .update_headers(**headers)
