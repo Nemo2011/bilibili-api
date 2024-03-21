@@ -2318,9 +2318,9 @@ class VideoDownloadURLDataDetecter:
             # 正常情况
             streams = []
             videos_data = self.__data["dash"]["video"]
-            audios_data = self.__data["dash"]["audio"]
-            flac_data = self.__data["dash"]["flac"]
-            dolby_data = self.__data["dash"]["dolby"]
+            audios_data = self.__data["dash"].get("audio")
+            flac_data = self.__data["dash"].get("flac")
+            dolby_data = self.__data["dash"].get("dolby")
             for video_data in videos_data:
                 video_stream_url = video_data["baseUrl"]
                 video_stream_quality = VideoQuality(video_data["id"])
@@ -2507,7 +2507,6 @@ class VideoDownloadURLDataDetecter:
                 if s2.audio_quality == AudioQuality.HI_RES and (not no_hires):
                     return -1
                 return s1.audio_quality.value - s2.audio_quality.value
-
             video_streams.sort(key=cmp_to_key(video_stream_cmp), reverse=True)
             audio_streams.sort(key=cmp_to_key(audio_stream_cmp), reverse=True)
             if len(video_streams) == 0:
