@@ -7,7 +7,7 @@ from typing import Optional
 
 from .. import settings
 from .credential import Credential
-from .network import get_session, get_aiohttp_session, HEADERS
+from .network import get_session, get_aiohttp_session, get_spi_buvid, HEADERS
 from ..exceptions import ApiException, ArgsException
 
 import re
@@ -15,9 +15,9 @@ import random
 import string
 
 
-def acquire_buvid(credential: Optional[Credential] = None) -> str:
+async def acquire_buvid(credential: Optional[Credential] = None) -> str:
     """
-    从Credential中取出buvid3，若不存在则生成一个随机的buvid3。
+    从Credential中取出buvid3，若不存在则通过spi获取buvid，若都不存在则随机生成一个的buvid3。
 
     Args:
         credential(Credential \| None): 凭据类。
@@ -33,7 +33,14 @@ def acquire_buvid(credential: Optional[Credential] = None) -> str:
         if buvid3 is not None:
             return buvid3
 
-    # random generation
+    # use spi to get buvid3
+    try:
+        return (await get_spi_buvid())['data']['b_3']
+
+    except KeyError:  # if data or b_3 does not exist by spi
+        pass
+
+    # random generation if spi is not possible
     buvid3_pattern = '8-4-4-4-17'  # current buvid3 char-length pattern, might be changed later
     parts = buvid3_pattern.split('-')
 
@@ -69,13 +76,13 @@ async def get_short_url(real_url: str, credential: Optional[Credential] = None) 
     # POST request
     try:
         post_data = {
-            'build': str(random.randint(6000000, 10000000)),
-            'buvid': acquire_buvid(credential=credential),
+            'build': 999999999,  # number > 5.5M should work
+            'buvid': await acquire_buvid(credential=credential),
             'oid': real_url,
             'platform': random.choice(['android', 'ios']),
             'share_channel': 'COPY',
             'share_id': 'public.webview.0.0.pv',
-            'share_mode': str(random.randint(1, 10))
+            'share_mode': 3
         }
 
         api_url = 'https://api.biliapi.net/x/share/click'
