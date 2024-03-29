@@ -119,6 +119,7 @@ class FavoriteList:
         page: int = 1,
         keyword: Union[str, None] = None,
         order: FavoriteListContentOrder = FavoriteListContentOrder.MTIME,
+        mode: SearchFavoriteListMode = SearchFavoriteListMode.ONLY,
         tid=0,
     ) -> dict:
         """
@@ -131,6 +132,8 @@ class FavoriteList:
 
             order   (FavoriteListContentOrder, optional): 排序方式. Defaults to FavoriteListContentOrder.MTIME.
 
+            mode    (SearchFavoriteListMode, optional)  : 搜索模式，默认仅当前收藏夹.
+
             tid     (int, optional)                     : 分区 ID. Defaults to 0.
 
         Returns:
@@ -140,7 +143,7 @@ class FavoriteList:
         raise_for_statement(self.__media_id != None, "视频收藏夹需要 media_id")
 
         return await get_video_favorite_list_content(
-            self.__media_id, page, keyword, order, tid, self.credential
+            self.__media_id, page, keyword, order, tid, mode, self.credential
         )
 
     async def get_content(self, page: int = 1) -> dict:
