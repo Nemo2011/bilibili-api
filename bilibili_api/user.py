@@ -474,11 +474,12 @@ class User:
             "pn": pn,
             "keyword": keyword,
             "order": order.value,
-            # -352 https://github.com/Nemo2011/bilibili-api/issues/595
+            # -352 https://github.com/Nemo2011/bilibili-api/issues/595 需要跟进
             "dm_img_list": "[]",  # 鼠标/键盘操作记录
             'dm_img_str': ''.join(random.sample(dm_rand, 2)),
             'dm_cover_img_str': ''.join(random.sample(dm_rand, 2)),
-            'dm_img_inter': '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}'
+            'dm_img_inter': '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
+            'order_avoided': True
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
