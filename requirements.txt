@@ -1,7 +1,7 @@
 aiohttp~=3.9.3
 beautifulsoup4~=4.12.3
 colorama~=0.4.6
-lxml~=5.2.0
+lxml~=5.2.1
 pyyaml~=6.0
 brotli~=1.1.0
 httpx~=0.26.0
