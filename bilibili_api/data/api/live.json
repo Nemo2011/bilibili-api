@@ -3,7 +3,7 @@
     "start": {
       "url": "https://api.live.bilibili.com/room/v1/Room/startLive",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "room_id": "int: 房间号",
         "platform": "pc/web/...",
@@ -15,7 +15,7 @@
     "stop": {
       "url": "https://api.live.bilibili.com/room/v1/Room/stopLive",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "room_id": "int: 房间号",
         "platform": "pc/web/...",

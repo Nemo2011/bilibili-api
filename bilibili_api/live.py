@@ -135,13 +135,13 @@ class LiveRoom:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["start"]
-        params = {
+        data = {
             "area_v2": area_id,
             "room_id": self.room_display_id,
             "platform": "pc",
         }
         resp = (
-            await Api(**api, credential=self.credential).update_params(**params).result
+            await Api(**api, credential=self.credential).update_data(**data).result
         )
         return resp
 
@@ -153,11 +153,11 @@ class LiveRoom:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["stop"]
-        params = {
+        data = {
             "room_id": self.room_display_id,
         }
         resp = (
-            await Api(**api, credential=self.credential).update_params(**params).result
+            await Api(**api, credential=self.credential).update_data(**data).result
         )
         return resp
 
