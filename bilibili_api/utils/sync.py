@@ -13,7 +13,7 @@ def sync(coroutine: Coroutine) -> Any:
     同步执行异步函数，使用可参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
 
     Args:
-        coroutine (Coroutine): 执行协程函数所创建的协程对象
+        coroutine (Coroutine): 执行异步函数所创建的协程对象
 
     Returns:
         该协程对象的返回值
