@@ -24,4 +24,4 @@ def sync(coroutine: Coroutine) -> Any:
         return asyncio.run(coroutine)
     else:
         with ThreadPoolExecutor() as executor:
-            return executor.submit(lambda: asyncio.run(coroutine)).result()
+            return executor.submit(asyncio.run, coroutine).result()
