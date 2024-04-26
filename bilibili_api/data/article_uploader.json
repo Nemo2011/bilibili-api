@@ -1,0 +1,89 @@
+{
+  "para_type": [
+    {
+      "para_type": 1,
+      "text": {
+        "nodes": "array: node的数组"
+      },
+      "comment": "文字段落"
+    },
+    {
+      "para_type": 2,
+      "pic": {
+        "style": 1,
+        "pics": ""
+      },
+      "comment": "图片段落"
+    },
+    {
+      "para_type": 3,
+      "format": {
+        "align": 1
+      },
+      "line": {
+        "url": "string: 分割线图片链接",
+        "height": "int: eg: 64"
+      },
+      "comment": "分割线段落"
+    }
+  ],
+  "node_type": [
+    {
+      "node_type": 1,
+      "word": {
+        "words": "string: 文本小节",
+        "font_size": "int: 17 正文 22 标题二",
+        "style": {
+          "bold": "bool: 粗体 false",
+          "italic": "bool: 斜体 false"
+        },
+        "color": "string: #18191c #00aeec #4fd3d1 #2ac864 #ffb027 #f85a54 #ff6699"
+      }
+    }
+  ],
+  "insert_type": [
+    {
+      "insert": "string: 文本",
+      "comment": "正文纯文本"
+    },
+    {
+      "attributes": {
+        "header": "int: 1 标题一 2 标题二",
+        "blockquote": "bool: 引用",
+        "color": "string: color",
+        "bold": "bool: 粗体",
+        "italic": "bool: 斜体"
+      },
+      "insert": "string: 文本",
+      "comment": "标题"
+    },
+    {
+      "attributes": {
+        "class": "normal-img"
+      },
+      "insert": {
+        "native-image": {
+          "alt": "read-normal-img",
+          "url": "string: 插入图片链接",
+          "width": 426,
+          "height": 240,
+          "size": "int: 图片大小KB",
+          "status": "loaded"
+        }
+      },
+      "comment": "插入的图片"
+    },
+    {
+      "attributes": {
+        "class": "cut-off"
+      },
+      "insert": {
+        "cut-off": {
+          "type": "4",
+          "url": "string: 分割线图片链接"
+        }
+      },
+      "comment": "分割线"
+    }
+  ]
+}
