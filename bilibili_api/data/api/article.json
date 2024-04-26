@@ -68,5 +68,115 @@
       },
       "comment": "专栏投币"
     }
+  },
+  "create": {
+    "create": {
+      "url": "https://api.bilibili.com/x/dynamic/feed/create/opus",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "csrf": "string: csrf",
+        "gaia_source": "main_web",
+        "w_rid": "string: w_rid",
+        "wts": "int: wts"
+      },
+      "data": {
+        "raw_content": "string: {ops: insert_type[]}",
+        "opus_req": {
+          "upload_id": "string: {UID}_{秒时间戳}_{随机四位数字}",
+          "opus": {
+            "opus_source": "int: 类型",
+            "title": "string: 标题",
+            "content": {
+              "paragraphs": "para_type[]: para_type按顺序组成的数组"
+            },
+            "article": {
+              "category_id": "int: article_category的id",
+              "list_id": 0,
+              "originality": 0,
+              "reproduced": 0,
+              "biz_tags": "array: 标签的数组"
+            },
+            "pub_info": {
+            }
+          },
+          "scene": 12,
+          "meta": {
+            "app_meta": {
+              "from": "create.article.web",
+              "mobi_app": "web"
+            }
+          },
+          "option": {
+          }
+        }
+      },
+      "json_body": true,
+      "comment": "创建专栏"
+    },
+    "draft": {
+      "url": "https://api.bilibili.com/x/article/creative/draft/addupdate",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "type": "int: 3",
+        "aid": "int: 草稿id，可空",
+        "title": "string: 标题",
+        "banner_url": "封面url",
+        "content": "string: {ops: insert_type[]}",
+        "summary": "",
+        "words": "int: content内insert字段的字符总数-1",
+        "category": "int: article_category的id",
+        "list_id": "int: 文集id",
+        "tid": 3,
+        "reprint": "int: 允许转载 0",
+        "tags": "string: eg: tag1,tag2",
+        "image_urls": "string: 封面url",
+        "origin_image_urls": "string: 封面url",
+        "media_id": "",
+        "spoiler": "",
+        "original": "int: 声明原创 0",
+        "top_video_bvid": "string: 封面视频bvid",
+        "up_reply_closed": "int: 关闭评论区",
+        "comment_selected": "int: 精选评论",
+        "csrf": "string: csrf"
+      },
+      "comment": "保存专栏草稿"
+    },
+    "upcover": {
+      "url": "https://api.bilibili.com/x/article/creative/article/upcover",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "binary": "binary: 二进制图片",
+        "filename": "read-editor-{当前13位时间戳}",
+        "csrf": "string: csrf"
+      },
+      "comment": "上传图片"
+    },
+    "upload_bfs": {
+      "url": "https://api.bilibili.com/x/dynamic/feed/draw/upload_bfs",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "file_up": "binary: 二进制图片",
+        "biz": "article",
+        "category": "daily",
+        "csrf": "string: csrf"
+      },
+      "comment": "上传封面"
+    }
+  },
+  "list": {
+    "add": {
+      "url": "https://api.bilibili.com/x/article/creative/list/add",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "name": "string: 文集名",
+        "csrf": "string: csrf"
+      },
+      "comment": "创建新文集"
+    }
   }
 }
