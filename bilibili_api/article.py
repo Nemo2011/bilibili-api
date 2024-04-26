@@ -143,7 +143,7 @@ class ArticleList:
         """
         credential = self.credential if self.credential is not None else Credential()
 
-        api = API["info"]["list"]
+        api = API["list"]["get"]
         params = {"id": self.__rlid}
         return await Api(**api, credential=credential).update_params(**params).result
 

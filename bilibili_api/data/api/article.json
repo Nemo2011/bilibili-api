@@ -9,15 +9,6 @@
       },
       "comment": "专栏信息数据"
     },
-    "list": {
-      "url": "https://api.bilibili.com/x/article/list/web/articles",
-      "method": "GET",
-      "verify": false,
-      "params": {
-        "id": "int: id"
-      },
-      "comment": "获取文集文章列表"
-    },
     "rank": {
       "url": "https://api.bilibili.com/x/article/rank/list",
       "method": "GET",
@@ -177,6 +168,15 @@
         "csrf": "string: csrf"
       },
       "comment": "创建新文集"
+    },
+    "get": {
+      "url": "https://api.bilibili.com/x/article/list/web/articles",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "id": "int: id"
+      },
+      "comment": "获取文集文章列表"
     }
   }
 }
