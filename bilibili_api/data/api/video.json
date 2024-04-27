@@ -93,7 +93,7 @@
       "comment": "分 P 列表"
     },
     "playurl": {
-      "url": "https://api.bilibili.com/x/player/playurl",
+      "url": "https://api.bilibili.com/x/player/wbi/playurl",
       "method": "GET",
       "verify": false,
       "params": {

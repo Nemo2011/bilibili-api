@@ -457,7 +457,9 @@ class Video:
                 "fourk": 1,
             }
         result = (
-            await Api(**api, credential=self.credential).update_params(**params).result
+            await Api(
+                **api, credential=self.credential, wbi=True
+            ).update_params(**params).result
         )
         result.update({"is_html5": True} if html5 else {})
         return result
