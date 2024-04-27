@@ -165,7 +165,7 @@ async def search(keyword: str, page: int = 1) -> dict:
     """
     api = API["search"]["web_search"]
     params = {"keyword": keyword, "page": page}
-    return await Api(**api).update_params(**params).result
+    return await Api(**api, wbi=True).update_params(**params).result
 
 
 async def search_by_type(
@@ -255,7 +255,7 @@ async def search_by_type(
     if debug_param_func:
         debug_param_func(params)
     api = API["search"]["web_search_by_type"]
-    return await Api(**api).update_params(**params).result
+    return await Api(**api, wbi=True).update_params(**params).result
 
 
 async def get_default_search_keyword() -> dict:
@@ -266,7 +266,7 @@ async def get_default_search_keyword() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["search"]["default_search_keyword"]
-    return await Api(**api).result
+    return await Api(**api, wbi=True).result
 
 
 async def get_hot_search_keywords() -> dict:
