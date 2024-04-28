@@ -1,7 +1,7 @@
 {
   "search": {
     "web_search": {
-      "url": "https://api.bilibili.com/x/web-interface/search/all/v2",
+      "url": "https://api.bilibili.com/x/web-interface/wbi/search/all/v2",
       "method": "GET",
       "verify": false,
       "params": {
@@ -11,7 +11,7 @@
       "comment": "在首页以关键字搜索，只指定关键字，其他参数不指定"
     },
     "web_search_by_type": {
-      "url": "https://api.bilibili.com/x/web-interface/search/type",
+      "url": "https://api.bilibili.com/x/web-interface/wbi/search/type",
       "method": "GET",
       "verify": false,
       "params": {
@@ -22,7 +22,7 @@
       "comment": "搜索关键字时限定类型,可以指定排序号"
     },
     "default_search_keyword": {
-      "url": "https://api.bilibili.com/x/web-interface/search/default",
+      "url": "https://api.bilibili.com/x/web-interface/wbi/search/default",
       "method": "GET",
       "verify": false,
       "comment": "获取默认的搜索内容"
@@ -33,8 +33,7 @@
       "verify": false,
       "comment": "获取热搜"
     },
-    "app_hot_search_keywords":
-    {
+    "app_hot_search_keywords": {
       "url": "https://app.bilibili.com/x/v2/search/trending/ranking?limit=30",
       "method": "GET",
       "verify": false,
@@ -61,7 +60,7 @@
     "manga": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/Search?device=pc&platform=web",
       "method": "POST",
-      "verify":true,
+      "verify": true,
       "data": {
         "key_word": "str: 搜索用的关键词",
         "page_num": "int: 页码",
