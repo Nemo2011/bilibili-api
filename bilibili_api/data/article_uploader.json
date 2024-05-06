@@ -1,9 +1,12 @@
 {
   "para_type": [
     {
-      "para_type": 1,
+      "para_type": "int: 1 普通段落 4 引用段落",
       "text": {
         "nodes": "array: node的数组"
+      },
+      "format": {
+        "align": "int: 1 居中 2 靠右"
       },
       "comment": "文字段落"
     },
@@ -11,7 +14,7 @@
       "para_type": 2,
       "pic": {
         "style": 1,
-        "pics": ""
+        "pics": "array: cover 数组"
       },
       "comment": "图片段落"
     },
@@ -25,6 +28,19 @@
         "height": "int: eg: 64"
       },
       "comment": "分割线段落"
+    },
+    {
+      "para_type": "int: 6 无序 5 有序",
+      "text": {
+        "nodes": "array: node的数组"
+      },
+      "format": {
+        "list_format": {
+          "level": 1,
+          "order": "int: 次序"
+        }
+      },
+      "comment": "列表"
     }
   ],
   "node_type": [
@@ -32,30 +48,39 @@
       "node_type": 1,
       "word": {
         "words": "string: 文本小节",
-        "font_size": "int: 17 正文 22 标题二",
+        "font_size": "int: 17 正文 24 标题一 22 标题二",
         "style": {
-          "bold": "bool: 粗体 false",
-          "italic": "bool: 斜体 false"
+          "bold": "bool: 粗体",
+          "italic": "bool: 斜体",
+          "strikethrough": "bool: 删除线"
         },
         "color": "string: #18191c #00aeec #4fd3d1 #2ac864 #ffb027 #f85a54 #ff6699"
+      }
+    },
+    {
+      "node_type": 4,
+      "link": {
+        "link_type": 16,
+        "style": {},
+        "show_text": "string: 显示文本",
+        "link": "string: 链接"
       }
     }
   ],
   "insert_type": [
-    {
-      "insert": "string: 文本",
-      "comment": "正文纯文本"
-    },
     {
       "attributes": {
         "header": "int: 1 标题一 2 标题二",
         "blockquote": "bool: 引用",
         "color": "string: color",
         "bold": "bool: 粗体",
-        "italic": "bool: 斜体"
+        "italic": "bool: 斜体",
+        "strike": "bool: 删除线",
+        "link": "string: 链接",
+        "list": "string: bullet ordered"
       },
       "insert": "string: 文本",
-      "comment": "标题"
+      "comment": "文本类型"
     },
     {
       "attributes": {
@@ -71,7 +96,7 @@
           "status": "loaded"
         }
       },
-      "comment": "插入的图片"
+      "comment": "图片类型"
     },
     {
       "attributes": {
@@ -85,5 +110,11 @@
       },
       "comment": "分割线"
     }
-  ]
+  ],
+  "cover": {
+    "url": "string: 上传图片返回的图片链接",
+    "width": "int: 宽",
+    "height": "int: 高",
+    "size": "int: 图片占用大小 KB"
+  }
 }

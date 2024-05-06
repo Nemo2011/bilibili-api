@@ -60,11 +60,10 @@
       "comment": "专栏投币"
     }
   },
-  "create": {
+  "send": {
     "create": {
       "url": "https://api.bilibili.com/x/dynamic/feed/create/opus",
       "method": "POST",
-      "verify": true,
       "params": {
         "csrf": "string: csrf",
         "gaia_source": "main_web",
@@ -76,19 +75,21 @@
         "opus_req": {
           "upload_id": "string: {UID}_{秒时间戳}_{随机四位数字}",
           "opus": {
-            "opus_source": "int: 类型",
+            "opus_source": "int: 类型 2",
             "title": "string: 标题",
             "content": {
               "paragraphs": "para_type[]: para_type按顺序组成的数组"
             },
             "article": {
               "category_id": "int: article_category的id",
-              "list_id": 0,
-              "originality": 0,
-              "reproduced": 0,
+              "list_id": "int: 文集id 0 不属于文集",
+              "originality": "int: 是否原创",
+              "reproduced": "int: 是否允许转载",
+              "cover": "array: cover 数组",
               "biz_tags": "array: 标签的数组"
             },
             "pub_info": {
+
             }
           },
           "scene": 12,
@@ -99,11 +100,21 @@
             }
           },
           "option": {
+            "up_reply_closed": "int: 关闭评论区",
+            "comment_selected": "int: 精选评论",
+            "timer_pub_time": "int: 定时发布时间 秒时间戳"
+          },
+          "topic": {
+            "id": "int: 话题id",
+            "name": "string: 话题",
+            "from_source": "article.web.search"
           }
-        }
+        },
+        "bv_id": "string: 头部视频buvid",
+        "draft_id_str": "string: 草稿id"
       },
       "json_body": true,
-      "comment": "创建专栏"
+      "comment": "创建专栏（图文动态）"
     },
     "draft": {
       "url": "https://api.bilibili.com/x/article/creative/draft/addupdate",
@@ -115,7 +126,7 @@
         "title": "string: 标题",
         "banner_url": "封面url",
         "content": "string: {ops: insert_type[]}",
-        "summary": "",
+        "summary": "string: 所有文字内容组成的字符串 新版编辑器留空",
         "words": "int: content内insert字段的字符总数-1",
         "category": "int: article_category的id",
         "list_id": "int: 文集id",
@@ -124,9 +135,11 @@
         "tags": "string: eg: tag1,tag2",
         "image_urls": "string: 封面url",
         "origin_image_urls": "string: 封面url",
-        "media_id": "",
-        "spoiler": "",
+        "media_id": "int: 0",
+        "spoiler": "int: 0",
+        "action": "int: 1",
         "original": "int: 声明原创 0",
+        "dynamic_intro": "",
         "top_video_bvid": "string: 封面视频bvid",
         "up_reply_closed": "int: 关闭评论区",
         "comment_selected": "int: 精选评论",
@@ -156,6 +169,16 @@
         "csrf": "string: csrf"
       },
       "comment": "上传封面"
+    },
+    "upwatermark": {
+      "url": "https://api.bilibili.com/x/article/creative/article/upwatermark",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "binary": "图片",
+        "csrf": "string: csrf"
+      },
+      "comment": "获取带水印图片的链接"
     }
   },
   "list": {
