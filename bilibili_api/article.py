@@ -1399,8 +1399,6 @@ class TextParagraph(BaseParagraph):
             nodes (List[BaseNode2]) : BaseNode2 组成的列表
             align (Align) : 段落对齐方向
         """
-        if len(nodes) == 0:
-            raise ApiException()
 
         raise_for_statement(
             len(nodes) != 0,
