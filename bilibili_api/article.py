@@ -1212,7 +1212,7 @@ class LinkNode2(BaseNode2):
                  bold: bool = None,
                  italic: bool = None,
                  strikethrough: bool = None,
-                 font_size: FontSize = None):
+                 font_size: FontSize = FontSize.Text):
         """
         Args:
             show_text (str) : 超链接显示文本
