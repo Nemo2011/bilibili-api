@@ -233,6 +233,7 @@ class Api:
     no_csrf: bool = False
     json_body: bool = False
     ignore_code: bool = False
+    ensure_ascii: bool = True
     data: dict = field(default_factory=dict)
     params: dict = field(default_factory=dict)
     files: dict = field(default_factory=dict)
@@ -407,7 +408,7 @@ class Api:
 
         if self.json_body:
             config["headers"]["Content-Type"] = "application/json"
-            config["data"] = json.dumps(config["data"])
+            config["data"] = json.dumps(config["data"], ensure_ascii=self.ensure_ascii)
 
         return config
 
@@ -482,7 +483,7 @@ class Api:
 
         if self.json_body:
             config["headers"]["Content-Type"] = "application/json"
-            config["data"] = json.dumps(config["data"])
+            config["data"] = json.dumps(config["data"], ensure_ascii=self.ensure_ascii)
 
         if settings.http_client == settings.HTTPClient.AIOHTTP and not self.json_body:
             config["data"].update(config["files"])
