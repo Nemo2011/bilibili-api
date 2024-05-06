@@ -1225,7 +1225,7 @@ class LinkNode2(BaseNode2):
 
         self.link_type = 16
         self.show_text = show_text
-        self.link = link,
+        self.link = link
         self.bold = bold
         self.italic = italic
         self.strikethrough = strikethrough
