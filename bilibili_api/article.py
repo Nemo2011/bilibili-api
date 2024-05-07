@@ -15,11 +15,10 @@ from typing import List, Union, TypeVar, overload
 from urllib.parse import unquote
 
 import yaml
-from PIL import Image
 from bs4 import BeautifulSoup, element
 from yarl import URL
 
-from . import note
+from . import note, Picture
 from . import opus
 from .exceptions import ApiException
 from .utils import cache_pool
@@ -1256,24 +1255,49 @@ class LinkNode2(BaseNode2):
         return result
 
 
-class Cover:
-    """通用图片类
+async def upwatermark(image: Picture, credential: Credential) -> dict:
+    """上传获取带水印专栏段落图片
 
-    封面图片和段落图片不建议混用
+    Args:
+        image (Picture)   : 图片流. 有格式要求.
+        credential (Credential): 凭据
+    Returns:
+        dict: 调用 API 返回的结果
     """
+    credential.raise_for_no_bili_jct()
+    credential.raise_for_no_sessdata()
+    api = API["send"]["upwatermark"]
 
-    def __init__(self, url: str, width: int = None, height: int = None, size: float = None):
-        """
-        Args:
-            url (str) : 图片链接
-            width (int) : 图片宽度
-            height (int) : 图片高度
-            size (float) : 图片大小 KB
-        """
-        self.url = url
-        self.width = width
-        self.height = height
-        self.size = size
+    files = {"binary": open(image._write_to_temp_file(), "rb")}
+
+    return_info = await Api(**api, credential=credential, wbi=True).request(files=files)
+    return return_info
+
+
+async def upcover(image: Picture, credential: Credential) -> dict:
+    """上传专栏段落图片
+
+    Args:
+        image (Picture)   : 图片流. 有格式要求.
+        credential (Credential): 凭据
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_bili_jct()
+    credential.raise_for_no_sessdata()
+    api = API["send"]["upcover"]
+
+    data = {"filename": f"read-editor-{int(time.time() * 1000)}"}
+    files = {"binary": open(image._write_to_temp_file(), "rb")}
+
+    return_info = await Api(**api, credential=credential, wbi=True).update_data(**data).request(files=files)
+    return return_info
+
+
+class Cover(Picture):
+    """封面图片
+
+    """
 
     def json2(self):
         """转化为新版编辑器上传所需的数据格式
@@ -1309,60 +1333,37 @@ class Cover:
             "comment": "插入的图片"
         }
 
-    @classmethod
-    async def upcover(cls, image_path: str, credential: Credential):
+    async def upcover(self, credential: Credential):
         """上传专栏段落图片
+
         Args:
-            image_path (str) : 二进制图片
             credential (Credential) : 凭据类
         """
-        credential.raise_for_no_bili_jct()
-        api = API["send"]["upcover"]
-        with open(image_path, "rb") as fp:
-            data = {
-                "binary": fp.read(),
-                "filename": f"read-editor-{int(time.time() * 1000)}"
-            }
-            result = await Api(**api, credential=credential, wbi=True).update_data(**data).result
+        res = await upcover(self, credential)
+        self.url = res["url"]
+        self.size = res["size"]
+        self.content = self.from_url(self.url).content
+        return self
 
-            img = Image.open(fp)
-            return cls(result["url"], img.width, img.height, result["size"])
+    async def upwatermark(self, credential: Credential):
+        """上传获取带水印专栏段落图片
 
-    @classmethod
-    async def upwatermark(cls, image_path: str, credential: Credential):
-        """上传专栏段落图片
         Args:
-            image_path (str) : 二进制图片
             credential (Credential) : 凭据类
         """
-        credential.raise_for_no_bili_jct()
-        api = API["send"]["upwatermark"]
-        with open(image_path, "rb") as fp:
-            data = {
-                "binary": fp.read()
-            }
-            result = await Api(**api, credential=credential, wbi=True).update_data(**data).result
+        res = await upwatermark(self, credential)
+        self.url = res["url"]
+        self.size = res["size"]
+        self.content = self.from_url(self.url).content
+        return self
 
-            img = Image.open(fp)
-            return cls(result["url"], img.width, img.height, result["size"])
-
-    @classmethod
-    async def upload_bfs(cls, image_path: str, credential: Credential):
+    async def upload_bfs(self, credential: Credential):
         """上传封面图片
+
         Args:
-            image_path (str) : 二进制图片
             credential (Credential) : 凭据类
         """
-        credential.raise_for_no_bili_jct()
-        api = API["send"]["upload_bfs"]
-        with open(image_path, "rb") as fp:
-            data = {
-                "file_up": fp.read(),
-                "biz": "article",
-                "category": "daily"
-            }
-            result = await Api(**api, credential=credential, wbi=True).update_data(**data).result
-            return cls(result["image_url"], result["image_width"], result["image_height"], result["img_size"])
+        return await self.upload_file(credential, data={"biz": "article", "category": "daily"})
 
 
 class BaseParagraph:
