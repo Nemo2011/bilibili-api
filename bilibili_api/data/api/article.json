@@ -142,8 +142,7 @@
         "dynamic_intro": "",
         "top_video_bvid": "string: 封面视频bvid",
         "up_reply_closed": "int: 关闭评论区",
-        "comment_selected": "int: 精选评论",
-        "csrf": "string: csrf"
+        "comment_selected": "int: 精选评论"
       },
       "comment": "保存专栏草稿"
     },
@@ -152,31 +151,19 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "binary": "binary: 二进制图片",
-        "filename": "read-editor-{当前13位时间戳}",
-        "csrf": "string: csrf"
+        "filename": "read-editor-{当前13位时间戳}"
+      },
+      "files": {
+        "binary": "binary: 二进制图片"
       },
       "comment": "上传图片"
-    },
-    "upload_bfs": {
-      "url": "https://api.bilibili.com/x/dynamic/feed/draw/upload_bfs",
-      "method": "POST",
-      "verify": true,
-      "data": {
-        "file_up": "binary: 二进制图片",
-        "biz": "article",
-        "category": "daily",
-        "csrf": "string: csrf"
-      },
-      "comment": "上传封面"
     },
     "upwatermark": {
       "url": "https://api.bilibili.com/x/article/creative/article/upwatermark",
       "method": "POST",
       "verify": true,
       "data": {
-        "binary": "图片",
-        "csrf": "string: csrf"
+        "binary": "图片"
       },
       "comment": "获取带水印图片的链接"
     }
@@ -187,8 +174,7 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "name": "string: 文集名",
-        "csrf": "string: csrf"
+        "name": "string: 文集名"
       },
       "comment": "创建新文集"
     },
