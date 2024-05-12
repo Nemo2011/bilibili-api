@@ -350,6 +350,8 @@ class Article:
                             node_list.append(node)
 
                             node.children = await parse(e)
+                        if e.text != "":
+                            node_list += await parse(e)
 
                     elif "class" in e.attrs:
                         className = e.attrs["class"][0]
@@ -373,12 +375,7 @@ class Article:
                             node.children = await parse(e)
                         else:
                             if e.text != "":
-                                # print(e.text.replace("\n", ""))
-                                # print()
-                                node = TextNode(e.text)
-                                # print("Add a text node: ", e.text)
-                                node_list.append(node)
-                                node.children = parse(e)  # type: ignore
+                                node_list += (await parse(e))
 
                 elif e.name == "blockquote":
                     # 引用块
@@ -458,6 +455,19 @@ class Article:
                                         node_list.append(node)
 
                                         node.room_id = int(aid)
+
+                                if "seamless" in className:
+                                    # 图片节点
+                                    node = ImageNode()
+                                    node_list.append(node)
+
+                                    node.url = "https:" + e.find("img").attrs["data-src"]  # type: ignore
+
+                                    figcaption_el: BeautifulSoup = e.find("figcaption")  # type: ignore
+
+                                    if figcaption_el:
+                                        if figcaption_el.contents:
+                                            node.alt = figcaption_el.contents[0]  # type: ignore
                             else:
                                 # 图片节点
                                 node = ImageNode()
