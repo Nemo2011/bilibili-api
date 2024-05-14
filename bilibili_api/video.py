@@ -2084,7 +2084,7 @@ class AudioQuality(Enum):
 
     _64K = 30216
     _132K = 30232
-    DOLBY = 30250
+    DOLBY = 30255
     HI_RES = 30251
     _192K = 30280
 
@@ -2378,7 +2378,7 @@ class VideoDownloadURLDataDetecter:
                     streams.append(audio_stream)
             if flac_data and (not no_hires):
                 if flac_data["audio"]:
-                    flac_stream_url = flac_data["audio"]["baseUrl"]
+                    flac_stream_url = flac_data["audio"]["base_url"]
                     flac_stream_quality = AudioQuality(flac_data["audio"]["id"])
                     flac_stream = AudioStreamDownloadURL(
                         url=flac_stream_url, audio_quality=flac_stream_quality
@@ -2387,7 +2387,7 @@ class VideoDownloadURLDataDetecter:
             if dolby_data and (not no_dolby_audio):
                 if dolby_data["audio"]:
                     dolby_stream_data = dolby_data["audio"][0]
-                    dolby_stream_url = dolby_stream_data["baseUrl"]
+                    dolby_stream_url = dolby_stream_data["base_url"]
                     dolby_stream_quality = AudioQuality(dolby_stream_data["id"])
                     dolby_stream = AudioStreamDownloadURL(
                         url=dolby_stream_url, audio_quality=dolby_stream_quality
@@ -2468,6 +2468,10 @@ class VideoDownloadURLDataDetecter:
                 video_accepted_qualities=video_accepted_qualities,
                 audio_accepted_qualities=audio_accepted_qualities,
                 codecs=codecs,
+                no_dolby_video=no_dolby_video,
+                no_dolby_audio=no_dolby_audio,
+                no_hires=no_hires,
+                no_hdr=no_hdr
             )
             video_streams = []
             audio_streams = []
