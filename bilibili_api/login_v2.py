@@ -10,6 +10,8 @@ import threading
 import uuid
 import base64
 import webbrowser
+
+from .exceptions import GeetestUndoneException
 from .utils.network import get_aiohttp_session, get_session
 import rsa
 import os
@@ -22,74 +24,10 @@ from .utils.utils import get_api
 from .utils.credential import Credential
 from .exceptions.LoginError import LoginError
 from .utils.network import HEADERS, Api
-from .utils.captcha import get_result, close_server, start_server, get_info
+from .utils.geetest import Geetest
 
 
 API = get_api("login")
-
-
-def start_geetest_server() -> "ServerThreadModel":
-    """
-    验证码服务打开服务器
-
-    Returns:
-        ServerThread: 服务进程，将自动开启
-
-    返回值内函数及属性:
-        (继承：threading.Thread)
-        - url   (str)     : 验证码服务地址
-        - start (Callable): 开启进程
-        - stop  (Callable): 结束进程
-
-    ``` python
-    print(start_geetest_server().url)
-    ```
-    """
-    return start_server()  # type: ignore
-
-
-def close_geetest_server() -> None:
-    """
-    关闭极验验证服务（打开极验验证服务后务必关闭掉它，否则会卡住）
-    """
-    return close_server()
-
-
-def get_geetest_info() -> "GeetestMeta":
-    """
-    返回极验验证码信息。
-
-    Returns:
-        GeetestMeta: 极验验证码信息
-    """
-    result = get_info()
-    return GeetestMeta(
-        gt=result["gt"],
-        challenge=result["challenge"],
-        token=result["token"]
-    )
-
-
-def get_geetest_result() -> Union[None, "GeetestMeta"]:
-    """
-    返回极验验证码基本&完成信息。
-
-    如果没有完成极验验证码返回 None.
-
-    Returns:
-        None | GeetestMeta: 极验验证码信息
-    """
-    result = get_result()
-    if result != -1:
-        return GeetestMeta(
-            gt=result["gt"],
-            token=result["token"],
-            challenge=result["challenge"],
-            seccode=result["seccode"],
-            validate=result["validate"],
-        )
-    else:
-        return None
 
 
 def encrypt(_hash, key, password) -> str:
@@ -102,7 +40,7 @@ def encrypt(_hash, key, password) -> str:
 
 
 async def login_with_password(
-    username: str, password: str, geetest: "GeetestMeta"
+    username: str, password: str, geetest: Geetest
 ) -> Union[Credential, "Check"]:
     """
     密码登录。
@@ -112,11 +50,13 @@ async def login_with_password(
 
         password (str): 密码
 
-        geetest  (GeetestMeta): 极验验证码基本&完成信息 (`get_geetest_result` 获取)
+        geetest  (Geetest): 极验验证码实例，须完成
 
     Returns:
         Union[Credential, Check]: 如果需要验证，会返回 `Check` 类，否则返回 `Credential` 类。
     """
+    if not geetest.has_done():
+        raise GeetestUndoneException()
     api_token = API["password"]["get_token"]
     token_data = await Api(**api_token).result
     hash_ = token_data["hash"]
@@ -127,7 +67,7 @@ async def login_with_password(
         "username": username,
         "password": final_password,
         "keep": True,
-        "token": geetest.token,
+        "token": geetest.key,
         "challenge": geetest.challenge,
         "validate": geetest.validate,
         "seccode": geetest.seccode,
@@ -344,34 +284,3 @@ class Check:
         self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
         params = {"tmp_code": self.tmp_token}
         return Api(**api, params=params).result
-
-
-class ServerThreadModel(threading.Thread):
-    """
-    A simple model for bilibili_api.utils.captcha._start_server.ServerThread.
-    """
-
-    """
-    验证码服务链接
-    """
-    url: str
-
-    def __init__(self, *args, **kwargs): ...
-
-    def stop(self):
-        """Stop the server and this thread nicely"""
-
-
-@dataclass
-class GeetestMeta:
-    """
-    极验验证码完成信息
-
-    NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate` 为完成验证码后可得字段。
-    """
-
-    gt: str
-    challenge: str
-    token: str
-    seccode: str = ""
-    validate: str = ""

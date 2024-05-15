@@ -23,6 +23,7 @@ from .utils.network import (
     get_httpx_sync_session,
     set_httpx_sync_session
 )
+from .utils.geetest import Geetest
 from .errors import (
     LoginError,
     ApiException,
@@ -104,6 +105,7 @@ __all__ = [
     "DmFontSize",
     "DmMode",
     "DynamicExceedImagesException",
+    "Geetest",
     "HEADERS",
     "LiveException",
     "LoginError",
