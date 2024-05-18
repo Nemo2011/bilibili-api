@@ -453,7 +453,7 @@ class Api:
 
         cookies = self.credential.get_cookies()
 
-        if self.credential.buvid3 is None:
+        if self.credential.buvid3 is None or self.credential.buvid3 == "":
             global buvid3
             if buvid3 == "" and self.url != API["info"]["spi"]["url"]:
                 resp = await get_spi_buvid()
