@@ -298,7 +298,9 @@
         "rnd": "int: 当前时间戳",
         "bubble": "int: 默认 0，功能不知",
         "reply_mid": "int: uid",
-        "csrf,csrf_token": "str: 要给两个"
+        "csrf,csrf_token": "str: 要给两个",
+        "dm_type": "int: 弹幕类型，文字无此项，表情包1",
+        "emoticonOptions": "str: 文字无此项，表情包固定为'[object Object]'"
       },
       "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
     },
