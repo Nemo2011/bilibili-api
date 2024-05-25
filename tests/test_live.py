@@ -91,6 +91,9 @@ async def test_n_send_danmaku():
 async def test_n_send_emoticon():
     return await l.send_emoticon(Danmaku("official_332"))
 
+async def test_n_get_emoticon():
+    return await l.get_emoticon()
+
 async def test_o_LiveDanmaku():
     async def on_msg(data):
         print(data)

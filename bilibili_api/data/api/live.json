@@ -320,6 +320,16 @@
       },
       "comment": "发送直播间表情包，接口同弹幕，参数不同"
     },
+    "get_emoticon": {
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/v2/emoticon/GetEmoticons",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "roomid": "int: 真实房间号",
+        "platform": "str: 设备信息 pc android ios"
+      },
+      "comment": "获取可用表情包，此方法获取不到充电表情，可能需要修改referer?"
+    },
      "send_popular_ticket": {
       "url": "https://api.live.bilibili.com/xlive/general-interface/v1/rank/popularRankFreeScoreIncr",
       "method": "POST",

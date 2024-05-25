@@ -530,11 +530,11 @@ class LiveRoom:
 
         Args:
             danmaku (Danmaku): 弹幕类， text 为表情包 id
-            
+
                 房间表情形如 room_23596840_10003
-                
+
                 充电表情形如 upower_[UPOWER_36265198_震惊]
-                
+
                 装扮表情形如 upower_[幼年沐表情包25张_比心]
 
         Returns:
@@ -555,6 +555,23 @@ class LiveRoom:
             "fontsize": danmaku.font_size,
             "emoticonOptions": '[object Object]',
             "dm_type": 1
+        }
+        return await Api(**api, credential=self.credential).update_data(**data).result
+
+    async def get_emoticon(self) -> dict:
+        """
+        获取表情包
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+
+        api = API["operate"]["get_emoticon"]
+        room_id = (await self.get_room_play_info())["room_id"]
+
+        data = {
+            "roomid": room_id,
+            "platform": 'android'
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
