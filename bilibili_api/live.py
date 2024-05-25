@@ -495,7 +495,7 @@ class LiveRoom:
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def send_danmaku(self, danmaku: Danmaku, reply_mid: int = None, emoticon: bool = False) -> dict:
+    async def send_danmaku(self, danmaku: Danmaku, reply_mid: int = None) -> dict:
         """
         直播间发送弹幕
 
@@ -504,7 +504,32 @@ class LiveRoom:
 
             reply_mid (int, optional): @的 UID. Defaults to None.
 
-            emoticon (bool, optional): 是否为表情包
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["operate"]["send_danmaku"]
+        room_id = (await self.get_room_play_info())["room_id"]
+
+        data = {
+            "mode": danmaku.mode,
+            "msg": danmaku.text,
+            "roomid": room_id,
+            "bubble": 0,
+            "rnd": int(time.time()),
+            "color": int(danmaku.color, 16),
+            "fontsize": danmaku.font_size,
+        }
+        if reply_mid: data["reply_mid"] = reply_mid
+        return await Api(**api, credential=self.credential).update_data(**data).result
+
+    async def send_emoticon(self, danmaku: Danmaku) -> dict:
+        """
+        直播间发送表情包
+
+        Args:
+            danmaku (Danmaku): 弹幕类， text为表情包 id
 
         Returns:
             dict: 调用 API 返回的结果
