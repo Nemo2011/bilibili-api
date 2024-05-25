@@ -571,7 +571,7 @@ class LiveRoom:
 
         data = {
             "roomid": room_id,
-            "platform": 'android'
+            "platform": 'pc'
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
