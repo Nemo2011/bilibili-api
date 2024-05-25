@@ -524,7 +524,9 @@ class LiveRoom:
             "fontsize": danmaku.font_size,
         }
         if reply_mid: data["reply_mid"] = reply_mid
-        if emoticon: data["emoticonOptions"] = '[object Object]'
+        if emoticon:
+            data["emoticonOptions"] = '[object Object]'
+            data['dm_type'] = 1
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def sign_up_dahanghai(self, task_id: int = 1447) -> dict:
