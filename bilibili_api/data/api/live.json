@@ -325,7 +325,7 @@
       "method": "GET",
       "verify": true,
       "params": {
-        "roomid": "int: 真实房间号",
+        "room_id": "int: 真实房间号",
         "platform": "const str: pc"
       },
       "comment": "获取可用表情包，此方法获取不到充电表情，可能需要修改referer?"
