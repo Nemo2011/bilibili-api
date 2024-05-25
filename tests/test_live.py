@@ -88,6 +88,8 @@ async def test_m_unban_user():
 async def test_n_send_danmaku():
     return await l.send_danmaku(Danmaku(f"test_{random.randint(10000, 99999)}"))
 
+async def test_n_send_emoticon():
+    return await l.send_emoticon(Danmaku("official_332"))
 
 async def test_o_LiveDanmaku():
     async def on_msg(data):
