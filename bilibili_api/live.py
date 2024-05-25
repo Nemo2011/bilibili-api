@@ -570,7 +570,7 @@ class LiveRoom:
         room_id = (await self.get_room_play_info())["room_id"]
 
         params = {
-            "roomid": room_id,
+            "room_id": room_id,
             "platform": 'pc'
         }
         return await Api(**api, credential=self.credential).update_params(**params).result
