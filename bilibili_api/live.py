@@ -530,6 +530,8 @@ class LiveRoom:
 
         Args:
             danmaku (Danmaku): 弹幕类， text为表情包 id
+                房间表情形如 room_23596840_10003
+                充电表情形如 upower_[UPOWER_36265198_震惊]
 
         Returns:
             dict: 调用 API 返回的结果
