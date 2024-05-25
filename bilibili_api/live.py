@@ -511,7 +511,7 @@ class LiveRoom:
         """
         self.credential.raise_for_no_sessdata()
 
-        api = API["operate"]["send_danmaku"]
+        api = API["operate"]["send_emoticon"]
         room_id = (await self.get_room_play_info())["room_id"]
 
         data = {
@@ -522,11 +522,9 @@ class LiveRoom:
             "rnd": int(time.time()),
             "color": int(danmaku.color, 16),
             "fontsize": danmaku.font_size,
+            "emoticonOptions": '[object Object]',
+            "dm_type": 1
         }
-        if reply_mid: data["reply_mid"] = reply_mid
-        if emoticon:
-            data["emoticonOptions"] = '[object Object]'
-            data['dm_type'] = 1
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def sign_up_dahanghai(self, task_id: int = 1447) -> dict:
