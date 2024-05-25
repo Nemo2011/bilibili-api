@@ -322,7 +322,7 @@
     },
     "get_emoticon": {
       "url": "https://api.live.bilibili.com/xlive/web-ucenter/v2/emoticon/GetEmoticons",
-      "method": "POST",
+      "method": "GET",
       "verify": true,
       "params": {
         "roomid": "int: 真实房间号",
