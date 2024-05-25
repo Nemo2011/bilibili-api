@@ -529,10 +529,14 @@ class LiveRoom:
         直播间发送表情包
 
         Args:
-            danmaku (Danmaku): 弹幕类， text为表情包 id
+            danmaku (Danmaku): 弹幕类， text 为表情包 id
+            
                 房间表情形如 room_23596840_10003
+                
                 充电表情形如 upower_[UPOWER_36265198_震惊]
+                
                 装扮表情形如 upower_[幼年沐表情包25张_比心]
+
         Returns:
             dict: 调用 API 返回的结果
         """
