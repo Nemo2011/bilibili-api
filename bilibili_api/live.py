@@ -569,11 +569,11 @@ class LiveRoom:
         api = API["operate"]["get_emoticon"]
         room_id = (await self.get_room_play_info())["room_id"]
 
-        data = {
+        params = {
             "roomid": room_id,
             "platform": 'pc'
         }
-        return await Api(**api, credential=self.credential).update_data(**data).result
+        return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def sign_up_dahanghai(self, task_id: int = 1447) -> dict:
         """
