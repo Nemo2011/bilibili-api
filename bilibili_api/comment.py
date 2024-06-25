@@ -238,12 +238,13 @@ class Comment:
         del data["action"]
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def get_sub_comments(self, page_index: int = 1) -> dict:
+    async def get_sub_comments(self, page_index: int = 1, page_size: int = 10) -> dict:
         """
         获取子评论。即评论下的评论。
 
         Args:
             page_index (int, optional):  页码索引，从 1 开始。Defaults to 1.
+            page_size (int, optional):  每页评论数。设置大于20的数值不会起作用。Defaults to 10.
 
         Returns:
             dict: 调用 API 返回的结果
@@ -254,7 +255,7 @@ class Comment:
         api = API["comment"]["sub_reply"]
         params = {
             "pn": page_index,
-            "ps": 10,
+            "ps": page_size,
             "type": self.__type.value,
             "oid": self.__oid,
             "root": self.__rpid,
