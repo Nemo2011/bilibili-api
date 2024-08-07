@@ -245,6 +245,7 @@ class IndexFilter:
         + PARAMOUNT: 派拉蒙
         + WARNER: 华纳
         + DISNEY: 迪士尼
+        + HBO: HBO
         + DOMESTIC_OTHER: 国内其他
         + FOREIGN_OTHER: 国外其他
         """
@@ -269,6 +270,7 @@ class IndexFilter:
         PARAMOUNT = 17
         WARNER = 18
         DISNEY = 19
+        HBO = 20
 
     class Payment(Enum):
         """
@@ -582,7 +584,9 @@ class IndexFilter:
             + PLOT: 剧情
             + FAMILY: 家庭
             + HISTORY: 历史
+            + EMOTION: 情感
             + ARMY: 军旅
+            + SCIENCE_FICTION: 科幻
             """
 
             ALL = -1
@@ -607,7 +611,9 @@ class IndexFilter:
             PLOT = 10050
             FAMILY = 10061
             HISTORY = 10033
+            EMOTION = 10084
             ARMY = 10089
+            SCIENCE_FICTION = 10023
 
         class Documentary(Enum):
             """

@@ -100,6 +100,7 @@ from bilibili_api import bangumi
 + + PARAMOUNT: 派拉蒙
 + + WARNER: 华纳
 + + DISNEY: 迪士尼
++ + HBO: HBO
 + + DOMESTIC_OTHER: 国内其他
 + + FOREIGN_OTHER: 国外其他
 + **class Payment**: 付费条件
@@ -252,6 +253,8 @@ from bilibili_api import bangumi
 + + + FAMILY: 家庭
 + + + HISTORY: 历史
 + + + ARMY: 军旅
++ + + EMOTION: 情感
++ + + SCIENCE_FICTION: 科幻
 + + **class Dcoumentary**: 纪录片
 + + + ALL: 全部
 + + + HISTORY: 历史
