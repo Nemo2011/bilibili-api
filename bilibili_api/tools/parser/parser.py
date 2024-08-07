@@ -1,9 +1,7 @@
 import re
 from enum import Enum
-from inspect import isclass
-from inspect import isfunction as isFn
-from inspect import iscoroutinefunction as isAsync
-from typing import Any, Dict, List, Tuple, Optional
+from inspect import isclass, iscoroutinefunction, isfunction
+from typing import Any, Dict, List, Optional, Tuple
 
 import bilibili_api
 
@@ -35,8 +33,8 @@ class Parser:
         for key, val in self.params.items():
             obj, err = await self.parse(val)
             if err is None:
-                if isinstance(obj, bilibili_api.Credential):
-                    self.valid = await bilibili_api.check_valid(obj)
+                if isinstance(obj, bilibili_api.Credential):     
+                    self.valid = await obj.check_valid()
                 self.params[key] = obj
         return self
 
@@ -125,9 +123,9 @@ class Parser:
                 position = getattr(position, func, None)
 
             # 赋值参数
-            if isAsync(position):
+            if iscoroutinefunction(position):
                 position = await position(*args, **kwargs)
-            elif isFn(position):
+            elif isfunction(position):
                 position = position(*args, **kwargs)
             elif isclass(position) and not issubclass(position, Enum):
                 position = position(*args, **kwargs)
