@@ -10,7 +10,7 @@ import platform
 from .utils.sync import sync
 from .utils.credential_refresh import Credential
 from .utils.picture import Picture
-from .utils.short import get_real_url
+from .utils.short import get_real_url, get_short_url
 from .utils.parse_link import ResourceType, parse_link
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.danmaku import DmMode, Danmaku, DmFontSize, SpecialDanmaku
@@ -135,6 +135,7 @@ __all__ = [
     "game",
     "get_aiohttp_session",
     "get_real_url",
+    "get_short_url",
     "get_session",
     "homepage",
     "hot",
