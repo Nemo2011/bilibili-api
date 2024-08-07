@@ -14,8 +14,15 @@ async def main():
     while True:
         # 获取评论
         c = await comment.get_comments(418788911, comment.CommentResourceType.VIDEO, page)
+
+        replies = c['replies']
+        if replies is None:
+            # 未登陆时只能获取到前20条评论
+            # 此时增加页码会导致c为空字典
+            break
+
         # 存储评论
-        comments.extend(c['replies'])
+        comments.extend(replies)
         # 增加已获取数量
         count += c['page']['size']
         # 增加页码
