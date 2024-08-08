@@ -4,26 +4,21 @@ bilibili_api.login
 登录
 """
 
-from dataclasses import dataclass
 import json
-import threading
 import uuid
 import base64
-import webbrowser
 
 from .exceptions import GeetestUndoneException
-from .utils.network import get_aiohttp_session, get_session
+from .utils.network import get_aiohttp_session, get_session, to_form_urlencoded
 import rsa
 import os
 from typing import Union, List, Dict
-from yarl import URL
 
 from . import settings
-from .utils.sync import sync
 from .utils.utils import get_api
 from .utils.credential import Credential
 from .exceptions.LoginError import LoginError
-from .utils.network import HEADERS, Api
+from .utils.network import Api
 from .utils.geetest import Geetest
 
 
@@ -41,7 +36,7 @@ def encrypt(_hash, key, password) -> str:
 
 async def login_with_password(
     username: str, password: str, geetest: Geetest
-) -> Union[Credential, "Check"]:
+) -> Credential:
     """
     密码登录。
 
@@ -96,7 +91,7 @@ async def login_with_password(
     )
     if login_data["code"] == 0:
         if login_data["data"]["status"] == 1:
-            return Check(login_data["data"]["url"])
+            raise LoginError("需要手机号进一步验证码验证，请直接通过验证码登录")
         elif login_data["data"]["status"] == 2:
             raise LoginError("需要手机号进一步验证码验证，请直接通过验证码登录")
         return Credential(
@@ -257,30 +252,116 @@ class PhoneNumber:
         return f"+{self.code} {self.number} (bilibili 地区 id {self.id_})"
 
 
-class Check:
+async def send_sms(phonenumber: PhoneNumber, geetest: Geetest) -> str:
     """
-    验证类，如果密码登录需要验证会返回此类
+    发送验证码
 
-    Attributes:
-        check_url (str): 验证 url
-        tmp_token (str): 验证 token
+    Args:
+        phonenumber (PhoneNumber): 手机号类
+        geetest     (Geetest)    : 极验验证码实例，须完成
+
+    Returns:
+        str: captcha_id，需传入 `login_with_sms`
     """
+    if not geetest.has_done():
+        raise GeetestUndoneException()
+    api = API["sms"]["send"]
+    data = to_form_urlencoded(
+        {
+            "source": "main-fe-header",
+            "tel": phonenumber.number,
+            "cid": phonenumber.code,
+            "validate": geetest.validate,
+            "token": geetest.key,
+            "seccode": geetest.seccode,
+            "challenge": geetest.challenge,
+        }
+    )
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://www.bilibili.com",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    sess = (
+        get_session()
+        if settings.http_client == settings.HTTPClient.HTTPX
+        else get_aiohttp_session()
+    )
+    res = await sess.request(
+        "POST",
+        api["url"],
+        data=data,
+        headers=headers,
+        cookies={"buvid3": str(uuid.uuid1())},
+    )
+    return_data = res.json()
+    if return_data["code"] == 0:
+        return return_data["data"]["captcha_key"]
+    else:
+        raise LoginError(return_data["message"])
 
-    def __init__(self, check_url):
-        self.check_url = check_url
-        self.yarl_url = URL(self.check_url)
-        self.tmp_token = self.yarl_url.query.get("tmp_token")
-        self.geetest_result = None
-        self.captcha_key = None
 
-    async def fetch_info(self) -> dict:
-        """
-        获取验证信息
+async def login_with_sms(
+    phonenumber: PhoneNumber, code: str, captcha_id: str
+) -> Credential:
+    """
+    验证码登录
 
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        api = API["safecenter"]["check_info"]
-        self.tmp_token = self.check_url.split("?")[1].split("&")[0][10:]
-        params = {"tmp_code": self.tmp_token}
-        return Api(**api, params=params).result
+    Args:
+        phonenumber (str): 手机号类
+        code        (str): 验证码
+        captcha_id  (str): captcha_id，为 `send_sms` 调用返回结果
+
+    Returns:
+        Credential: 凭据类
+    """
+    api = API["sms"]["login"]
+    data = {
+        "tel": phonenumber.number,
+        "cid": phonenumber.code,
+        "code": code,
+        "source": "main_web",
+        "captcha_key": captcha_id,
+        "keep": "true",
+    }
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://www.bilibili.com",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    sess = (
+        get_session()
+        if settings.http_client == settings.HTTPClient.HTTPX
+        else get_aiohttp_session()
+    )
+    res = await sess.request(
+        "POST",
+        api["url"],
+        data=data,
+        headers=headers,
+    )
+    return_data = res.json()
+    if return_data["code"] == 0 and return_data["data"]["status"] != 5:
+        url = return_data["data"]["url"]
+        cookies_list = url.split("?")[1].split("&")
+        sessdata = ""
+        bili_jct = ""
+        dede = ""
+        for cookie in cookies_list:
+            if cookie[:8] == "SESSDATA":
+                sessdata = cookie[9:]
+            if cookie[:8] == "bili_jct":
+                bili_jct = cookie[9:]
+            if cookie[:11].upper() == "DEDEUSERID=":
+                dede = cookie[11:]
+        c = Credential(
+            sessdata=sessdata,
+            bili_jct=bili_jct,
+            dedeuserid=dede,
+            ac_time_value=return_data["data"]["refresh_token"],
+        )
+        return c
+    elif return_data["code"] == 0 and return_data["data"]["status"] == 5:
+        raise LoginError("需要验证 请使用二维码方式登录")
+    else:
+        raise LoginError(return_data["message"])
