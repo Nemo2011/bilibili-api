@@ -611,7 +611,6 @@ class IndexFilter:
             PLOT = 10050
             FAMILY = 10061
             HISTORY = 10033
-            EMOTION = 10084
             ARMY = 10089
             SCIENCE_FICTION = 10023
 
