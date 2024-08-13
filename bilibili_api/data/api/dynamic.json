@@ -192,6 +192,7 @@
       "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail",
       "method": "GET",
       "verify": false,
+      "wbi": true,
       "params": {
         "timezone_offset":"int: 时区偏移量",
         "dynamic_id": "int: 动态 ID",

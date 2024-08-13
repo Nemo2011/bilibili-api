@@ -520,6 +520,7 @@ class Api:
         self._prepare_params_data()
         config = self._prepare_request_sync(**kwargs)
         session = get_httpx_sync_session()
+        session.cookies = config.pop("cookies")
         resp = session.request(**config)
         try:
             resp.raise_for_status()
@@ -544,6 +545,7 @@ class Api:
         # 判断http_client的类型
         if settings.http_client == settings.HTTPClient.HTTPX:
             session = get_session()
+            session.cookies = config.pop("cookies")
             resp = await session.request(**config)
             try:
                 resp.raise_for_status()
@@ -703,7 +705,6 @@ async def active_buvid(buvid3: str, buvid4: str) -> dict:
     if text["code"] != 0:
         raise ExClimbWuzhiException(text["code"], text["msg"])
     settings.logger.info("激活 buvid3 成功")
-
 
 
 def get_nav_sync(credential: Union[Credential, None] = None):

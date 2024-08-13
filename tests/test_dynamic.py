@@ -9,7 +9,7 @@ from . import common
 
 credential = common.get_credential()
 
-dy: dynamic.Dynamic = dynamic.Dynamic(761008818532384867, credential=credential)
+dy: dynamic.Dynamic = dynamic.Dynamic(959229822831165446, credential=credential)
 
 draft_ids = []
 

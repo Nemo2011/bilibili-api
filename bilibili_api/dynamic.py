@@ -747,7 +747,12 @@ class Dynamic:
             params = {
                 "id": self.__dynamic_id,
                 "timezone_offset": -480,
-                "features": "itemOpusStyle",
+                "platform": "web",
+                "gaia_source": "main_web",
+                "features": "itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete",
+                "web_location": "333.1368",
+                "x-bili-device-req-json": '{"platform":"web","device":"pc"}',
+                "x-bili-web-req-json": '{"spm_id":"333.1368"}',
             }
             data = (
                 Api(**api, credential=self.credential)

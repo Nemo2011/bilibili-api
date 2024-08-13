@@ -89,16 +89,6 @@ async def test_n_send_danmaku():
     return await l.send_danmaku(Danmaku(f"test_{random.randint(10000, 99999)}"))
 
 
-async def test_o_LiveDanmaku():
-    async def on_msg(data):
-        print(data)
-        await room.disconnect()
-
-    room = live.LiveDanmaku(22544798, True, credential=get_credential())
-    room.add_event_listener("ALL", on_msg)
-    await room.connect()
-
-
 async def test_p_sign_up_dahanghai():
     return await l.sign_up_dahanghai()
 

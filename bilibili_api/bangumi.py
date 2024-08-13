@@ -1300,19 +1300,16 @@ class Episode(Video):
             if content_type == InitialDataType.NEXT_DATA:
                 content = res["props"]["pageProps"]["dehydratedState"]["queries"][0][
                     "state"
-                ]["data"]["seasonInfo"]["mediaInfo"]
+                ]["data"]["result"]["play_view_business_info"]
+                print(content)
                 self.bangumi = (
-                    Bangumi(ssid=content["season_id"])
+                    Bangumi(ssid=content["season_info"]["season_id"])
                     if not epid in episode_data_cache.keys()
                     else episode_data_cache[epid]["bangumi_class"]
                 )
-                for ep_info in content["episodes"]:
-                    if int(
-                        ep_info["id"] if "id" in ep_info else ep_info["ep_id"]
-                    ) == int(epid):
-                        bvid = ep_info["bvid"]
-                        self.__ep_info: dict = ep_info
-                        break
+                ep_info = content["episode_info"]
+                bvid = ep_info["bvid"]
+                self.__ep_info: dict = ep_info
             else:  # InitialDataType.INITIAL_STATE
                 self.__ep_info: dict = res["epInfo"]
                 self.bangumi = (
