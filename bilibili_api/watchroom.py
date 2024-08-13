@@ -119,7 +119,6 @@ class WatchRoom:
         self.credential = credential
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
-        self.credential.raise_for_no_buvid3()
         if room_id in watch_room_bangumi_cache.keys():
             self.set_season_id(watch_room_bangumi_cache[room_id][0])
             self.set_episode_id(watch_room_bangumi_cache[room_id][1])
