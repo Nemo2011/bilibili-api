@@ -1203,6 +1203,7 @@ class Video:
         url = f"https://comment.bilibili.com/{cid}.xml"
         sess = get_session()
         config: dict[Any, Any] = {"url": url}
+        config["headers"] = {"User-Agent": "Mozilla/5.0"}
         # 代理
         if settings.proxy:
             config["proxies"] = {"all://", settings.proxy}
