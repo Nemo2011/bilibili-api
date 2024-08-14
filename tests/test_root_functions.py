@@ -34,7 +34,6 @@ parse_link_urls = [
     "https://www.bilibili.com/read/cv17809055",
     "uid558830935",
     "UID558830935",
-    "https://space.bilibili.com",
     "https://space.bilibili.com/558830935",
     "https://live.bilibili.com/558830935",
     "https://space.bilibili.com/19319172/channel/collectiondetail?sid=250818",

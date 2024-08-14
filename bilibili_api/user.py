@@ -14,7 +14,7 @@ from json.decoder import JSONDecodeError
 from .utils.utils import get_api, join, raise_for_statement
 from .utils.credential import Credential
 from .exceptions import ResponseCodeException
-from .utils.network import get_session, Api
+from .utils.network import get_session, Api, HEADERS
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
 
 API = get_api("user")
@@ -466,7 +466,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["video"]
-        dm_rand = 'ABCDEFGHIJK'
+        dm_rand = "ABCDEFGHIJK"
         params = {
             "mid": self.__uid,
             "ps": ps,
@@ -476,10 +476,10 @@ class User:
             "order": order.value,
             # -352 https://github.com/Nemo2011/bilibili-api/issues/595 需要跟进
             "dm_img_list": "[]",  # 鼠标/键盘操作记录
-            'dm_img_str': ''.join(random.sample(dm_rand, 2)),
-            'dm_cover_img_str': ''.join(random.sample(dm_rand, 2)),
-            'dm_img_inter': '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
-            'order_avoided': True
+            "dm_img_str": "".join(random.sample(dm_rand, 2)),
+            "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
+            "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
+            "order_avoided": True,
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -761,7 +761,10 @@ class User:
         data = json.loads(
             (
                 await sess.get(
-                    url=api["url"], params=params, cookies=self.credential.get_cookies()
+                    url=api["url"],
+                    params=params,
+                    cookies=self.credential.get_cookies(),
+                    headers=HEADERS,
                 )
             ).text
         )
@@ -1104,8 +1107,7 @@ async def edit_self_info(
     credential.raise_for_no_bili_jct()
 
     api = API["info"]["edit_my_info"]
-    data = {"birthday": birthday, "sex": sex,
-            "uname": uname, "usersign": usersign}
+    data = {"birthday": birthday, "sex": sex, "uname": uname, "usersign": usersign}
 
     return await Api(**api, credential=credential).update_data(**data).result
 
