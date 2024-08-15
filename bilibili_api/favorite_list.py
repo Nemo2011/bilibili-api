@@ -143,7 +143,7 @@ class FavoriteList:
         raise_for_statement(self.__media_id != None, "视频收藏夹需要 media_id")
 
         return await get_video_favorite_list_content(
-            self.__media_id, page, keyword, order, tid, mode, self.credential
+            self.__media_id, page=page, keyword=keyword, order=order, tid=tid, mode=mode, credential=self.credential
         )
 
     async def get_content(self, page: int = 1) -> dict:
