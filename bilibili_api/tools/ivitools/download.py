@@ -6,14 +6,14 @@ ivitools.download
 import os
 
 import tqdm
-import requests
+import httpx
 from colorama import Fore
 
 from bilibili_api import sync, interactive_video
 
 
 async def download_file(url: str, out: str):
-    resp = requests.get(
+    resp = httpx.get(
         url,
         headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"},
         stream=True,
