@@ -17,6 +17,7 @@
       "url": "https://app.bilibili.com/x/v2/splash/brand/list",
       "method": "GET",
       "verify": false,
+      "sign": true,
       "params": {
         "mobi_app": "str: android, iphone, ipad",
         "platform": "str: android, ios",
