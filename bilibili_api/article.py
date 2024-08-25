@@ -68,13 +68,13 @@ class ArticleType(Enum):
     专栏类型
 
     - ARTICLE        : 普通专栏，不与 opus 图文兼容。
-    - NOTE           : 公开笔记
-    - SPECIAL_ARTICLE: 特殊专栏，采用笔记格式，且与 opus 图文完全兼容。
+    - OPUS           : opus。
+    - SPECIAL_ARTICLE: 特殊专栏，与 opus 兼容。
     """
 
-    ARTICLE = 0
-    NOTE = 2
-    SPECIAL_ARTICLE = 3
+    ARTICLE = 3
+    OPUS = 4
+    SPECIAL_ARTICLE = 5
 
 
 class ArticleRankingType(Enum):
@@ -170,31 +170,20 @@ class Article:
         self.__meta = None
         self.__cvid = cvid
         self.__has_parsed: bool = False
+        self.__is_note = False
 
         # 设置专栏类别
         if cache_pool.article_is_opus.get(self.__cvid):
             self.__type = ArticleType.SPECIAL_ARTICLE
+            self.__is_note = cache_pool.article_is_note[self.__cvid]
         else:
-            api = API["info"]["view"]
-            params = {"id": self.__cvid}
-            resp = Api(**api).update_params(**params).request_sync(raw=True)
-
-            if resp["code"] != 0:
-                self.__type = ArticleType.ARTICLE
-            elif resp["data"]["type"] == 0:
-                self.__type = ArticleType.ARTICLE
-            elif resp["data"]["type"] == 2:
-                self.__type = ArticleType.NOTE
-            else:
-                self.__type = ArticleType.SPECIAL_ARTICLE
+            resp = get_initial_state_sync(f"https://www.bilibili.com/read/cv{self.__cvid}")[0]
+            self.__dyn_id = int(resp["readInfo"]["dyn_id_str"])
+            self.__type = ArticleType(resp["readInfo"]["template_id"])
+            self.__is_note = resp["readInfo"]["type"] == 2
 
         if cache_pool.article_dyn_id.get(self.__cvid):
             self.__dyn_id = cache_pool.article_dyn_id[self.__cvid]
-        else:
-            initial_state = get_initial_state_sync(
-                f"https://www.bilibili.com/read/cv{self.__cvid}"
-            )
-            self.__dyn_id = int(initial_state[0]["readInfo"]["dyn_id_str"])
 
     def get_cvid(self) -> int:
         return self.__cvid
@@ -215,7 +204,7 @@ class Article:
         Returns:
             bool: 是否笔记
         """
-        return self.__type == ArticleType.NOTE
+        return self.__is_note
 
     def turn_to_note(self) -> "note.Note":
         """
@@ -225,7 +214,7 @@ class Article:
             Note: 笔记类
         """
         raise_for_statement(
-            self.__type == ArticleType.NOTE, "仅支持公开笔记 (ArticleType.NOTE)"
+            self.is_note(), "仅支持公开笔记"
         )
         return note.Note(
             cvid=self.__cvid, note_type=note.NoteType.PUBLIC, credential=self.credential
@@ -236,10 +225,11 @@ class Article:
         对于 SPECIAL_ARTICLE，将其转为图文
         """
         raise_for_statement(
-            self.__type == ArticleType.SPECIAL_ARTICLE, "仅支持图文专栏"
+            self.__type != ArticleType.ARTICLE, "仅支持图文专栏"
         )
         cache_pool.opus_type[self.__dyn_id] = 1
-        cache_pool.opus_info[self.__dyn_id] = {"basic": {"rid_str": str(self.__cvid)}}
+        cache_pool.opus_is_note[self.__dyn_id] = self.is_note()
+        cache_pool.opus_cvid[self.__dyn_id] = self.__cvid
         return opus.Opus(self.__dyn_id, credential=self.credential)
 
     def markdown(self) -> str:
@@ -620,13 +610,7 @@ class Article:
         self.__meta = copy(resp["readInfo"])
         del self.__meta["content"]
 
-        # 解析正文
-        if self.__type != ArticleType.SPECIAL_ARTICLE:
-            self.__children = await parse(document.find("div"))  # type: ignore
-        else:
-            s = resp["readInfo"]["content"]
-            s = unescape(s)
-            parse_note(json.loads(s)["ops"])
+        self.__children = await parse(document.find("div"))
 
         self.__has_parsed = True
 
