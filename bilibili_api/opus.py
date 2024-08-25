@@ -9,6 +9,7 @@ import yaml
 from typing import Optional
 from . import article
 from . import dynamic
+from . import note
 from .utils.credential import Credential
 from .utils.network import Api
 from .utils.utils import get_api, raise_for_statement
@@ -86,6 +87,22 @@ class Opus:
         cache_pool.dynamic_is_opus[self.__id] = 1
         return dynamic.Dynamic(dynamic_id=self.__id, credential=self.credential)
 
+    def is_note(self) -> bool:
+        """
+        是否为笔记
+        """
+        return bool(self.__info["modules"][0].get("module_top"))
+
+    def turn_to_note(self) -> "note.Note":
+        """
+        转为笔记
+        """
+        raise_for_statement(self.is_note(), "仅支持笔记")
+        cvid = int(self.__info["basic"]["rid_str"])
+        cache_pool.article_is_opus[cvid] = 1
+        cache_pool.article_dyn_id[cvid] = self.__id
+        return note.Note(cvid=cvid, credential=self.credential)
+
     async def get_info(self):
         """
         获取图文基本信息
@@ -106,6 +123,8 @@ class Opus:
         Returns:
             str: markdown 内容
         """
+        if self.is_note():
+            top, title, author, content = self.__info["modules"][:4]
         title, author, content = self.__info["modules"][:3]
 
         markdown = f'# {title["module_title"]["text"]}\n\n'

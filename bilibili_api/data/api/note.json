@@ -17,7 +17,7 @@
         "detail":{
             "url": "https://api.bilibili.com/x/note/publish/info",
             "method": "GET",
-            "verify": true,
+            "verify": false,
             "params": {
                 "cvid": "cvid"
             },

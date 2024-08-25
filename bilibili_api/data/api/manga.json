@@ -3,7 +3,7 @@
     "detail": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ComicDetail?device=pc&platform=web",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "comic_id": "int: 漫画 id"
       },
@@ -12,7 +12,7 @@
     "episode_info": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetEpisode?device=pc&platform=web",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "id": "int: 章节 id"
       },
@@ -21,7 +21,7 @@
     "episode_images": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/GetImageIndex?device=pc&platform=web",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "ep_id": "int: 章节 id"
       },
@@ -30,7 +30,7 @@
     "image_token": {
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ImageToken?device=pc&platform=web",
       "method": "POST",
-      "verify": false,
+      "verify": true,
       "params": {
         "urls": "str: 内容如下：[\"图片链接\"]"
       },
