@@ -389,9 +389,10 @@
   },
   "danmaku": {
     "get_danmaku": {
-      "url": "https://api.bilibili.com/x/v2/dm/web/seg.so",
+      "url": "https://api.bilibili.com/x/v2/dm/wbi/web/seg.so",
       "method": "GET",
       "verify": false,
+      "wbi": true,
       "params": {
         "oid": "int: video_info 中的 cid，即分 P 的编号",
         "type": "const int: 1",

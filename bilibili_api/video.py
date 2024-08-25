@@ -29,7 +29,7 @@ from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
 from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku, SpecialDanmaku
-from .utils.network import get_aiohttp_session, Api, get_session
+from .utils.network import get_aiohttp_session, Api, get_session, get_mixin_key, enc_wbi
 from .exceptions import (
     ArgsException,
     NetworkException,
@@ -638,7 +638,7 @@ class Video:
 
         config = {}
         config["url"] = api["url"]
-        config["params"] = {"type": 1, "oid": cid, "pid": self.get_aid()}
+        config["params"] = {"type": 1, "oid": cid, "pid": self.get_aid(), "duration": (await self.__get_info_cached())["duration"]}
         config["cookies"] = self.credential.get_cookies()
         config["headers"] = {
             "Referer": "https://www.bilibili.com",
@@ -867,7 +867,6 @@ class Video:
 
             cid = await self.__get_cid_by_index(page_index)
 
-        session = get_session()
         aid = self.get_aid()
         params: dict[str, Any] = {"oid": cid, "type": 1, "pid": aid}
         if date is not None:
@@ -882,7 +881,10 @@ class Video:
                 from_seg = 0
             if to_seg == None:
                 view = await self.get_danmaku_view(cid=cid)
-                to_seg = view["dm_seg"]["total"] - 1
+                if view["dm_seg"].get("total"):
+                    to_seg = view["dm_seg"]["total"] - 1
+                else:
+                    to_seg = (await self.__get_info_cached())["duration"] // 360 + 1
 
         danmakus = []
 
@@ -890,30 +892,12 @@ class Video:
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
                 params["segment_index"] = seg + 1
-
-            config = {}
-            config["url"] = api["url"]
-            config["params"] = params
-            config["headers"] = {
-                "Referer": "https://www.bilibili.com",
-                "User-Agent": "Mozilla/5.0",
-            }
-            config["cookies"] = self.credential.get_cookies()
-
             try:
-                req = await session.get(**config)
+                data = await Api(**api, credential=self.credential).update_params(**params).request(byte=True)
             except Exception as e:
+                raise e
                 raise NetworkException(-1, str(e))
 
-            if "content-type" not in req.headers.keys():
-                break
-            else:
-                content_type = req.headers["content-type"]
-                if content_type != "application/octet-stream":
-                    raise ResponseException("返回数据类型错误：")
-
-            # 解析二进制流数据
-            data = req.read()
             if data == b"\x10\x01":
                 # 视频弹幕被关闭
                 raise DanmakuClosedException()

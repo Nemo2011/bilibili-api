@@ -439,7 +439,7 @@ class Api:
         if self.wbi:
             global wbi_mixin_key
             if wbi_mixin_key == "":
-                wbi_mixin_key = await get_mixin_key()
+                wbi_mixin_key = await get_mixin_key(credential=self.credential)
             enc_wbi(self.params, wbi_mixin_key)
 
         # 自动添加 csrf
@@ -532,7 +532,7 @@ class Api:
         return real_data
 
     @retry(times=settings.wbi_retry_times)
-    async def request(self, raw: bool = False, **kwargs) -> Union[int, str, dict]:
+    async def request(self, raw: bool = False, byte: bool = False, **kwargs) -> Union[int, str, dict]:
         """
         向接口发送请求。
 
@@ -551,6 +551,8 @@ class Api:
                 resp.raise_for_status()
             except httpx.HTTPStatusError as e:
                 raise NetworkException(resp.status_code, str(resp.status_code))
+            if byte:
+                return resp.read()
             real_data = self._process_response(
                 resp, await self._get_resp_text(resp), raw=raw
             )
@@ -562,6 +564,8 @@ class Api:
                     resp.raise_for_status()
                 except aiohttp.ClientResponseError as e:
                     raise NetworkException(e.status, e.message)
+                if byte:
+                    return await resp.read()
                 real_data = self._process_response(
                     resp, await self._get_resp_text(resp), raw=raw
                 )
@@ -753,14 +757,14 @@ def get_mixin_key_sync() -> str:
     return le[:32]
 
 
-async def get_mixin_key() -> str:
+async def get_mixin_key(credential: Credential = Credential()) -> str:
     """
     获取混合密钥
 
     Returns:
         str: 新获取的密钥
     """
-    data = await get_nav()
+    data = await get_nav(credential=credential)
     wbi_img: Dict[str, str] = data["wbi_img"]
 
     # 为什么要把里的 lambda 表达式换成函数 这不是一样的吗
