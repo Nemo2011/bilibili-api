@@ -78,7 +78,7 @@ class ChannelSeries:
         self.is_new = type_.value
         self.id_ = id_
         self.owner = User(self.__uid, credential=credential)
-        self.credential = credential
+        self.credential: Credential = credential
         self.meta = None
         if not f"{type_.value}-{id_}" in channel_meta_cache.keys():
             if self.is_new:

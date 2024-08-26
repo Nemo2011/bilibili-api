@@ -118,9 +118,9 @@ class LiveRoom:
         self.room_display_id = room_display_id
 
         if credential is None:
-            self.credential = Credential()
+            self.credential: Credential = Credential()
         else:
-            self.credential = credential
+            self.credential: Credential = credential
 
         self.__ruid = None
 
@@ -884,17 +884,17 @@ class LiveDanmaku(AsyncEvent):
         """
         super().__init__()
 
-        self.credential = credential if credential is not None else Credential()
-        self.room_display_id = room_display_id
-        self.max_retry = max_retry
-        self.retry_after = retry_after
+        self.credential: Credential = credential if credential is not None else Credential()
+        self.room_display_id: int = room_display_id
+        self.max_retry: int = max_retry
+        self.retry_after: float = retry_after
         self.__room_real_id = None
         self.__status = 0
         self.__ws = None
         self.__tasks = []
         self.__debug = debug
         self.__heartbeat_timer = 60.0
-        self.err_reason = ""
+        self.err_reason: str = ""
 
         # logging
         self.logger = logging.getLogger(f"LiveDanmaku_{self.room_display_id}")

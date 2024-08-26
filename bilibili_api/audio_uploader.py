@@ -516,9 +516,9 @@ class AudioUploader(AsyncEvent):
             credential (Credential): 账号信息
         """
         super().__init__()
-        self.path = path
-        self.meta = meta
-        self.credential = credential
+        self.path: str = path
+        self.meta: str = meta
+        self.credential: Credential = credential
         self.__upos_file = UposFile(path)
 
     async def _preupload(self) -> dict:

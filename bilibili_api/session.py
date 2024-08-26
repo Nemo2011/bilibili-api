@@ -433,7 +433,7 @@ class Session(AsyncEvent):
         self.maxSeqno = dict()
 
         # 凭证
-        self.credential = credential
+        self.credential: Credential = credential
 
         # 异步定时任务框架
         self.sched = AsyncIOScheduler(timezone="Asia/Shanghai")

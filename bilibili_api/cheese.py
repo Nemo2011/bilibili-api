@@ -61,7 +61,7 @@ class CheeseList:
             raise ValueError("season id 和 ep id 必须选一个")
         self.__season_id = season_id
         self.__ep_id = ep_id
-        self.credential = credential if credential else Credential()
+        self.credential: Credential = credential if credential else Credential()
         if self.__season_id == -1:
             # self.season_id = str(sync(self.get_meta())["season_id"])
             api = API["info"]["meta"]
@@ -150,7 +150,7 @@ class CheeseVideo:
             self.cheese = CheeseList(ep_id=self.__epid)
         else:
             self.cheese = CheeseList(season_id=meta["ssid"])
-        self.credential = credential if credential else Credential()
+        self.credential: Credential = credential if credential else Credential()
         if meta == None:
             api = API["info"]["meta"]
             params = {"season_id": self.cheese.get_season_id(), "ep_id": self.__epid}

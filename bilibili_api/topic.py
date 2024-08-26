@@ -82,7 +82,7 @@ class Topic:
             credential (Credential): 凭据类
         """
         self.__topic_id = topic_id
-        self.credential = credential if credential else Credential()
+        self.credential: Credential = credential if credential else Credential()
 
     def get_topic_id(self) -> int:
         """

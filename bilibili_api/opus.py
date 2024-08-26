@@ -43,7 +43,7 @@ class Opus:
         self.__id = opus_id
         self.__is_note = False
         self.__info = None
-        self.credential = credential if credential else Credential()
+        self.credential: Credential = credential if credential else Credential()
 
         if cache_pool.opus_type.get(self.__id):
             self.__is_note = cache_pool.opus_is_note[self.__id]

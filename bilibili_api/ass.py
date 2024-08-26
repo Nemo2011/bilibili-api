@@ -91,7 +91,7 @@ async def make_ass_file_subtitle(
     out: Optional[str] = "test.ass",
     lan_name: Optional[str] = "中文（自动生成）",
     lan_code: Optional[str] = "ai-zh",
-    credential: Credential = Credential(),
+    credential: Optional[Credential] = None,
 ) -> None:
     """
     生成视频字幕文件
@@ -109,7 +109,7 @@ async def make_ass_file_subtitle(
 
         lan_code   (str, optional)       : 字幕语言代码，如 ”中文（自动翻译）” 和 ”中文（自动生成）“ 为 "ai-zh"
 
-        credential (Credential)          : Credential 类. 必须在此处或传入的视频 obj 中传入凭据，两者均存在则优先此处
+        credential (Credential, optional): Credential 类. 必须在此处或传入的视频 obj 中传入凭据，两者均存在则优先此处
     """
     # 目测必须得有 Credential 才能获取字幕
     if credential.has_sessdata():

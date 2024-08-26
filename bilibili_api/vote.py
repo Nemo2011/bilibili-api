@@ -87,7 +87,7 @@ class Vote:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, vote_id: int, credential: Credential = Credential()) -> None:
+    def __init__(self, vote_id: int, credential: Optional[Credential] = None) -> None:
         """
         Args:
             vote_id (int): vote_id, 获取：https://nemo2011.github.io/bilibili-api/#/vote_id
@@ -95,7 +95,7 @@ class Vote:
             credential (Credential): 凭据类，非必要.
         """
         self.__vote_id = vote_id
-        self.credential = credential
+        self.credential: Credential = credential if credential else Credential()
         self.title: Optional[str] = None
 
     def get_vote_id(self) -> int:

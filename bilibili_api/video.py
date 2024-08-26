@@ -1777,7 +1777,7 @@ class VideoOnlineMonitor(AsyncEvent):
             debug      (bool, optional)             : 调试模式，将输出更详细信息. Defaults to False.
         """
         super().__init__()
-        self.credential = credential
+        self.credential: Credential = credential if credential else Credential()
         self.__video = Video(bvid, aid, credential=credential)
 
         # 智能选择在 log 中展示的 ID。

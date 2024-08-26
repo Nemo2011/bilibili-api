@@ -45,7 +45,7 @@ class Tag:
         else:
             self.__tag_id = tag_id
         credential = credential if credential else Credential()
-        self.credential = credential
+        self.credential: Credential = credential
 
     def get_tag_id(self) -> int:
         return self.__tag_id

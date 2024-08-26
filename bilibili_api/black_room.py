@@ -198,7 +198,7 @@ class BlackRoom:
             credential    (Credential | None, optional): 凭据类. Defaults to None.
         """
         self.__id = black_room_id
-        self.credential = credential if credential else Credential()
+        self.credential: Credential = credential if credential else Credential()
 
     async def get_details(self) -> dict:
         """
@@ -238,7 +238,7 @@ class JuryCase:
             credential (Credential)                    : 凭据类
         """
         self.case_id = case_id
-        self.credential = credential
+        self.credential: Credential = credential
 
     async def get_details(self) -> dict:
         """

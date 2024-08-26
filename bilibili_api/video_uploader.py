@@ -728,7 +728,7 @@ class VideoUploader(AsyncEvent):
         super().__init__()
         self.meta = meta
         self.pages = pages
-        self.credential = credential
+        self.credential: Credential = credential
         self.cover = (
             self.meta.cover
             if isinstance(self.meta, VideoMeta)
@@ -1410,7 +1410,7 @@ class VideoEditor(AsyncEvent):
         super().__init__()
         self.bvid = bvid
         self.meta = meta
-        self.credential = credential if credential else Credential()
+        self.credential: Credential = credential if credential else Credential()
         self.cover_path = cover
         self.__old_configs = {}
         self.meta["aid"] = bvid2aid(bvid)

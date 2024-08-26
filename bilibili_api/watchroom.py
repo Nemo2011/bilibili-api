@@ -116,7 +116,7 @@ class WatchRoom:
         """
         credential = credential if credential else Credential()
         self.__room_id = room_id
-        self.credential = credential
+        self.credential: Credential = credential
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
         if room_id in watch_room_bangumi_cache.keys():

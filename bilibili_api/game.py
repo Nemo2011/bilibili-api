@@ -35,7 +35,7 @@ class Game:
             credential (Credential): 凭据类. Defaults to None.
         """
         self.__game_id = game_id
-        self.credential = credential if credential else Credential()
+        self.credential: Credential = credential if credential else Credential()
 
     def get_game_id(self) -> int:
         return self.__game_id

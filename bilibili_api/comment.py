@@ -133,7 +133,7 @@ class Comment:
         self.__oid = oid
         self.__rpid = rpid
         self.__type = type_
-        self.credential = credential if credential else Credential()
+        self.credential: Credential = credential if credential else Credential()
 
     def __get_data(self, status: bool) -> dict:
         """

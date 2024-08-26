@@ -142,7 +142,7 @@ class Manga:
         """
         credential = credential if credential else Credential()
         self.__manga_id = manga_id
-        self.credential = credential
+        self.credential: Credential = credential
         self.__info: Optional[Dict] = None
 
     def get_manga_id(self) -> int:

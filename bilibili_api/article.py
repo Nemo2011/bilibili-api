@@ -129,7 +129,7 @@ class ArticleList:
             credential (Credential | None, optional): 凭据类. Defaults to None.
         """
         self.__rlid = rlid
-        self.credential = credential
+        self.credential: Credential = credential
 
     def get_rlid(self) -> int:
         return self.__rlid

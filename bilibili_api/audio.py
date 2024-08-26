@@ -29,7 +29,7 @@ class Audio:
 
             credential (Credential | None, optional): 凭据. Defaults to None
         """
-        self.credential = credential if credential is not None else Credential()
+        self.credential: Credential = credential if credential is not None else Credential()
         self.__auid = auid
 
     def get_auid(self) -> int:
@@ -111,7 +111,7 @@ class AudioList:
             credential (Credential | None, optional): 凭据. Defaults to None.
         """
         self.__amid = amid
-        self.credential = credential if credential is not None else Credential()
+        self.credential: Credential = credential if credential is not None else Credential()
 
     def get_amid(self) -> int:
         return self.__amid

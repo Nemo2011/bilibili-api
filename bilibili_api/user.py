@@ -250,7 +250,7 @@ class User:
 
         if credential is None:
             credential = Credential()
-        self.credential = credential
+        self.credential: Credential = credential
         self.__self_info = None
 
     def get_user_info_sync(self) -> dict:

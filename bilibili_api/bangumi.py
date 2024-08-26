@@ -1003,7 +1003,7 @@ class Bangumi:
         """
         if media_id == -1 and ssid == -1 and epid == -1:
             raise ValueError("需要 Media_id 或 Season_id 或 epid 中的一个 !")
-        self.credential = credential if credential else Credential()
+        self.credential: Credential = credential if credential else Credential()
         # 处理极端情况
         params = {}
         self.__ssid = ssid
