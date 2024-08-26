@@ -287,6 +287,22 @@ from bilibili_api import live
 
 **Returns:** dict: 调用 API 返回的结果
 
+#### async def send_emoticon()
+
+| name    | type    | description              |
+| ------- | ------- |--------------------------|
+| danmaku | Danmaku | 弹幕类，text为表情包 id      |
+
+直播间发送表情包
+
+**Returns:** dict: 调用 API 返回的结果
+
+#### async def get_emoticon()
+
+获取可用表情包
+
+**Returns:** dict: 调用 API 返回的结果
+
 #### asyc def send_gift_from_bag()
 
 | name          | type          | description             |
