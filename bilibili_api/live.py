@@ -139,6 +139,8 @@ class LiveRoom:
             "area_v2": area_id,
             "room_id": self.room_display_id,
             "platform": "pc",
+            "csrf": self.credential.bili_jct,
+            "csrf_token": self.credential.bili_jct
         }
         resp = (
             await Api(**api, credential=self.credential).update_data(**data).result
@@ -507,7 +509,7 @@ class LiveRoom:
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def send_danmaku(self, danmaku: Danmaku, reply_mid: int = None) -> dict:
+    async def send_danmaku(self, danmaku: Danmaku, room_id: int = None, reply_mid: int = None) -> dict:
         """
         直播间发送弹幕
 
@@ -522,7 +524,8 @@ class LiveRoom:
         self.credential.raise_for_no_sessdata()
 
         api = API["operate"]["send_danmaku"]
-        room_id = (await self.get_room_play_info())["room_id"]
+        if not room_id:
+            room_id = (await self.get_room_play_info())["room_id"]
 
         data = {
             "mode": danmaku.mode,
