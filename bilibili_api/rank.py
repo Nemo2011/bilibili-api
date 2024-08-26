@@ -181,8 +181,7 @@ async def get_rank(
     Args:
         type_ (RankType): 排行榜类型. Defaults to RankType.All
 
-        day (RankDayType): 排行榜时间. Defaults to RankDayType.THREE_DAY
-                           仅对 api_type 为 RankAPIType.PGC 有效
+        day (RankDayType): 排行榜时间. Defaults to RankDayType.THREE_DAY. 仅对 api_type 为 RankAPIType.PGC 有效
 
     Returns:
         dict: 调用 API 返回的结果

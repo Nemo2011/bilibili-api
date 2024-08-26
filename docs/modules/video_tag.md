@@ -1,66 +1,87 @@
 # Module video_tag.py
 
+
+bilibili_api.video_tag
+
+视频标签相关，部分的标签的 id 与同名的频道的 id 一模一样。
+
+
 ``` python
 from bilibili_api import video_tag
 ```
 
-视频标签相关，部分的标签的 id 与同名的频道的 id 一模一样。
-
 ## class Tag
+
+**Extend: builtins.object**
 
 标签类
 
-### Attributes
 
-| name | type | description |
-| ---- | ---- | ----------- |
-| credential | Credential | 凭据类 |
 
-### Functions
 
-#### def \_\_init\_\_()
+### async def get_history_cards()
 
-| name | type | description |
-| ---- | ---- | ----------- |
-| tag_name | str \| None | 标签名. Defaults to None. |
-| tag_id | int \| None | 标签 id. Defaults to None. |
-| credential | Credential \| None | 凭据类. Defaults to None. |
+获取标签下，指定dynamic_id的视频的后一个视频/动态作为起始的视频/动态
 
-**注意：tag_name 和 tag_id 任选一个传入即可。tag_id 优先使用。**
 
-#### def get_tag_id()
-
-获取标签 id
-
-**Returns:** int: 标签 id
-
-#### async def get_tag_info()
-
-获取标签信息
 
 **Returns:** dict: 调用 API 返回的结果
 
-#### async def get_simulir_tags()
+
+
+
+### async def get_similar_tags()
 
 获取相关的标签
 
+
+
 **Returns:** dict: 调用 API 返回的结果
 
-<!-- #### async def get_cards()
-
-获取标签下的视频/动态
-
-**Returns:** dict: 调用 API 返回的结果 -->
 
 
-#### async def subscribe_tag()
+
+### def get_tag_id()
+
+获取标签 id
+
+
+
+**Returns:** int: 标签 id
+
+
+
+
+### async def get_tag_info()
+
+获取标签信息。
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def subscribe_tag()
 
 关注标签。
 
-**Returns:** API 调用返回结果。
 
-#### async def unsubscribe_tag()
+
+**Returns:** dict: 调用 API 返回的结果。
+
+
+
+
+### async def unsubscribe_tag()
 
 取关标签。
 
-**Returns:** API 调用返回结果。
+
+
+**Returns:** dict: 调用 API 返回的结果。
+
+
+
+

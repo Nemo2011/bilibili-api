@@ -141,9 +141,9 @@ async def get_replies(
     Args:
         credential (Credential): 凭据类.
 
-        last_reply_id (Optional, int) 最后一个评论的 ID
+        last_reply_id (Optional, int): 最后一个评论的 ID
 
-        reply_time (Optional, int) 最后一个评论发送时间
+        reply_time (Optional, int): 最后一个评论发送时间
 
     Returns:
         dict: 调用 API 返回的结果
@@ -162,9 +162,9 @@ async def get_likes(
     Args:
         credential (Credential): 凭据类.
 
-        last_id (Optional, int) 最后一个 ID
+        last_id (Optional, int): 最后一个 ID
 
-        like_time (Optional, int) 最后一个点赞发送时间
+        like_time (Optional, int): 最后一个点赞发送时间
 
     Returns:
         dict: 调用 API 返回的结果
@@ -183,9 +183,9 @@ async def get_at(
     Args:
         credential (Credential): 凭据类.
 
-        last_id (Optional, int) 最后一个 ID
+        last_id (Optional, int): 最后一个 ID
 
-        at_time (Optional, int) 最后一个点赞发送时间
+        at_time (Optional, int): 最后一个点赞发送时间
 
     Returns:
         dict: 调用 API 返回的结果

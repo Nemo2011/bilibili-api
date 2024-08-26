@@ -100,7 +100,7 @@ class LiveRoom:
     """
     直播类，获取各种直播间的操作均在里边。
 
-    AttributesL
+    Attributes:
         credential      (Credential): 凭据类
 
         room_display_id (int)       : 房间展示 id
@@ -181,6 +181,12 @@ class LiveRoom:
         return resp
 
     async def get_room_id(self) -> int:
+        """
+        获取直播间 id
+
+        Returns:
+            int: 直播间 id
+        """
         return (await self.get_room_play_info())["room_id"]
 
     async def __get_ruid(self) -> int:
@@ -193,6 +199,12 @@ class LiveRoom:
         return self.__ruid  # type: ignore
 
     async def get_ruid(self) -> int:
+        """
+        获取真实房间 id
+
+        Returns:
+            int: 真实房间 id
+        """
         return await self.__get_ruid()
 
     async def get_danmu_info(self) -> dict:
@@ -1279,6 +1291,9 @@ async def get_self_dahanghai_info(
 
         page_size (int, optional): 每页数量. Defaults to 10.
 
+    Returns:
+        dict: 调用 API 返回的结果
+
     总页数取得方法:
 
     ```python
@@ -1287,9 +1302,6 @@ async def get_self_dahanghai_info(
     info = live.get_self_live_info(credential)
     pages = math.ceil(info['data']['guards'] / 10)
     ```
-
-    Returns:
-        dict: 调用 API 返回的结果
     """
     if credential is None:
         credential = Credential()

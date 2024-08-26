@@ -8,6 +8,34 @@ import bilibili_api
 
 ---
 
+## Exceptions
+
+- LoginError: 登陆问题
+- ApiException: 错误基类
+- ArgsException: 参数错误
+- LiveException: 直播错误
+- NetworkException: 网络错误
+- ResponseException: 响应错误
+- VideoUploadException: 视频上传错误
+- ResponseCodeException: 响应代码错误
+- DanmakuClosedException: 弹幕关闭错误
+- CredentialNoBuvid3Exception: 凭据未提供 buvid3
+- CredentialNoBiliJctException: 凭据未提供 bili_jct
+- DynamicExceedImagesException: 动态图片达到上限
+- CredentialNoSessdataException: 凭据未提供 SESSDATA
+- CredentialNoDedeUserIDException: 凭据未提供 DedeUserID
+- ExClimbWuzhiException: ExClimbWuzhi 封控处理错误
+- StatementException: 设定条件未满足抛出的错误，如公开笔记使用私有笔记获取信息的借口
+- CredentialNoAcTimeValueException: 凭据未提供 ac_time_value
+
+---
+
+## const str BILIBILI_API_VERSION
+
+模块版本
+
+---
+
 ## const dict HEADERS
 
 访问 bilibili 视频下载链接等内部网址用的 HEADERS

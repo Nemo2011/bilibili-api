@@ -70,12 +70,30 @@ class CheeseList:
             self.__season_id = int(meta["season_id"])
 
     def set_season_id(self, season_id: int) -> None:
+        """
+        设置季度 id
+
+        Args:
+            season_id (int): 季度 id
+        """
         self.__init__(season_id=season_id)
 
     def set_ep_id(self, ep_id: int) -> None:
+        """
+        设置 epid 并通过 epid 找到课程
+
+        Args:
+            ep_id (int): epid
+        """
         self.__init__(ep_id=ep_id)
 
     def get_season_id(self) -> int:
+        """
+        获取季度 id
+
+        Returns:
+            int: 季度 id
+        """
         return self.__season_id
 
     async def get_meta(self) -> dict:
@@ -166,9 +184,21 @@ class CheeseVideo:
             self.__cid = meta["cid"]
 
     def get_aid(self) -> int:
+        """
+        获取 aid
+
+        Returns:
+            int: aid
+        """
         return self.__aid
 
     def get_cid(self) -> int:
+        """
+        获取 cid
+
+        Returns:
+            int: cid
+        """
         return self.__cid
 
     def get_meta(self) -> dict:
@@ -190,9 +220,21 @@ class CheeseVideo:
         return self.cheese
 
     def set_epid(self, epid: int) -> None:
+        """
+        设置 epid
+
+        Args:
+            epid (int): epid
+        """
         self.__init__(epid, self.credential)
 
     def get_epid(self) -> int:
+        """
+        获取 epid
+
+        Returns:
+            int: epid
+        """
         return self.__epid
 
     async def get_download_url(self) -> dict:

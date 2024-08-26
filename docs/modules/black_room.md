@@ -1,16 +1,33 @@
-# Module bilibili_api.black_room
+# Module black_room.py
 
-```
+
+bilibili_api.black_room
+
+小黑屋
+
+
+``` python
 from bilibili_api import black_room
 ```
 
+## class BlackFrom
+
+**Extend: enum.Enum**
+
+违规来源
+
+- SYSTEM: 系统封禁
+- ADMIN: 风纪仲裁
+- ALL: 全部
+
+
+
+
 ## class BlackReasonType
 
-**Extends: enum.Enum**
+**Extend: enum.Enum**
 
-违规类型代码
-
-违规原因类型枚举 (英语翻译错误请忽略/提 issue/发起 PR) 
+违规原因类型枚举 (英语翻译错误请忽略/提 issue/发起 PR)
 
 - ALL: 全部
 - FLOOD_SCREEN: 刷屏
@@ -44,9 +61,70 @@ from bilibili_api import black_room
 - CREATE_ILLEGAL_LUCKY_DRAW: 发布违规抽奖
 - PRETEND_OTHER: 冒充他人
 
----
+
+
+
+## class BlackRoom
+
+**Extend: builtins.object**
+
+小黑屋
+
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+
+
+### async def get_details()
+
+获取小黑屋详细信息
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def get_id()
+
+获取小黑屋 id
+
+
+
+**Returns:** int: 小黑屋 id
+
+
+
+
+### async def get_reason()
+
+获取小黑屋的封禁原因
+
+
+
+**Returns:** BlackReasonType: 封禁原因枚举类
+
+
+
+
+### async def set_id()
+
+设置小黑屋 id
+
+
+| name | type | description |
+| - | - | - |
+| id_ | int | 小黑屋 id |
+
+**Returns:** None
+
+
 
 ## class BlackType
+
+**Extend: enum.Enum**
 
 违规类型枚举
 
@@ -61,145 +139,125 @@ from bilibili_api import black_room
 - DYNAMIC: 动态
 - ALBUM: 相簿
 
----
+
+
+
+## class JuryCase
+
+**Extend: builtins.object**
+
+案件仲裁
+
+
+
+
+### async def get_details()
+
+获取案件详细信息
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def get_opinions()
+
+获取案件的观点列表
+
+
+| name | type | description |
+| - | - | - |
+| pn | Union[int, None] | 页数. Defaults to 1. |
+| ps | Union[int, None] | 每页数量. Defaults to 20. |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def vote()
+
+进行仲裁投票
+
+
+| name | type | description |
+| - | - | - |
+| opinion | JuryVoteOpinion | 投票选项类型 |
+| is_insider | bool | 是否观看此类视频 |
+| is_anonymous | bool | 是否匿名投票 |
+| reason | Union[str, None] | 投票理由. Defaults to None. |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
 
 ## class JuryVoteOpinion
 
+**Extend: enum.Enum**
+
 仲裁投票类型枚举，选择对应案件类型的观点
 
-    单条评论（弹幕）
-    - SUITABLE: 合适
-    - AVERAGE: 一般
-    - UNSUITABLE: 不合适
-    - UNKNOW: 无法判断
+单条评论（弹幕）
+- SUITABLE: 合适
+- AVERAGE: 一般
+- UNSUITABLE: 不合适
+- UNKNOW: 无法判断
 
-    评论（弹幕）氛围
-    - ENV_GREAT: 评论环境好
-    - ENV_AVERAGE: 评论环境一般
-    - ENV_BAD: 评论环境差
-    - ENV_UNKNOW: 无法判断评论环境
+评论（弹幕）氛围
+- ENV_GREAT: 评论环境好
+- ENV_AVERAGE: 评论环境一般
+- ENV_BAD: 评论环境差
+- ENV_UNKNOW: 无法判断评论环境
 
----
 
-## class BlackFrom
 
-**Extends: enum.Enum**
-
-违规来源
-
-- SYSTEM: 系统封禁
-- ADMIN: 风纪仲裁
-- ALL: 全部
-
----
 
 ## async def get_blocked_list()
 
-获取小黑屋名单
+获取小黑屋中的违规列表
+
 
 | name | type | description |
 | - | - | - |
 | from_ | BlackFrom | 违规来源. Defaults to BlackFrom.ALL. |
-| type_ | int | 违规类型. 查看 black_room.BLACK_TYPE。Defaults to 0 (ALL). |
+| type_ | int | 违规类型. Defaults to BlackType.ALL. |
 | pn | int | 页数. Defaults to 1. |
-| credential | Credential \| None | 凭据, Defaults to None. |
+| credential | Credential \| None | 凭据. Defaults to None. |
 
----
+**Returns:** None
 
-## class BlackRoom()
 
-### Attributes
-
-| name | type | description |
-| - | - | - |
-| credential | Credential \| None | 凭据类 ｜
-
-### Functions
-
-## def \_\_init\_\_()
-
-| name | type | description |
-| - | - | - |
-| black_room_id | int | 小黑屋 id |
-| credential | Credential \| None | 凭据类. Defaults to None. |
-
-## async def get_details()
-
-获取小黑屋详细信息
-
-**Returns:** dict: 调用 API 返回的结果
-
-## async def get_reason()
-
-获取小黑屋违规原因
-
-**Returns:** dict: 调用 API 返回的结果
-
----
-
-## class JuryCase
-
-### Attributes
-
-| name | type | description |
-| - | - | - |
-| case_id | int | 案件 id |
-| credential | Credential \| None | 凭据类 ｜
-
-### Functions
-
-#### def \_\_init\_\_()
-
-| name | type | description |
-| - | - | - |
-| case_id | int | 案件 id |
-| credential | Credential | 凭据类 |
-
-#### async def get_details()
-
-获取案件详细信息
-
-**Returns:** dict: 调用 API 返回的结果
-
-#### async def get_opinions()
-
-获取案件观点列表
-
-**Returns:** dict: 调用 API 返回的结果
-
-#### async def vote()
-
-| name | type | description |
-| - | - | - |
-| opinion | JuryVoteOpinion | 仲裁投票类型枚举，选择对应案件类型的观点 |
-| is_insider | bool | 是否观看此类视频 |
-| is_anonymous | bool | 是否匿名投票 |
-| reason | str, optional | 投票理由. Defaults to None. |
-
-进行仲裁投票
-
-**Returns:** dict: 调用 API 返回的结果
-
----
-
-## async def get_next_jury_case()
-
-| name | type | description |
-| - | - | - |
-| credential | Credential | 凭据 |
-
-获取下一个仲裁案件
-
-**Returns:** JuryCase: JuryCase 类
-
----
 
 ## async def get_jury_case_list()
 
-| name | type | description |
-| - | - | - |
-| credential | Credential | 凭据 |
-
 获取仲裁案件列表
 
-**Returns:** list: JuryCase 类列表
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
+| pn | Union[int, None] | 页数. Defaults to 1. |
+| ps | Union[int, None] | 每页数量. Defaults to 20. |
+
+**Returns:** List[JuryCase]: 仲裁案件列表
+
+
+
+
+## async def get_next_jury_case()
+
+获取下一个待审理的案件
+
+
+| name | type | description |
+| - | - | - |
+| credential | Union[Credential, None] | 凭据类. Defaults to None. |
+
+**Returns:** JuryCase: 案件类
+
+
+
+

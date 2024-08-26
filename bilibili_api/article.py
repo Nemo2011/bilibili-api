@@ -132,6 +132,12 @@ class ArticleList:
         self.credential: Credential = credential
 
     def get_rlid(self) -> int:
+        """
+        获取 rlid
+
+        Returns:
+            int: rlid
+        """
         return self.__rlid
 
     async def get_content(self) -> dict:
@@ -186,6 +192,12 @@ class Article:
             self.__dyn_id = cache_pool.article_dyn_id[self.__cvid]
 
     def get_cvid(self) -> int:
+        """
+        获取 cvid
+
+        Returns:
+            int: cvid
+        """
         return self.__cvid
 
     def get_type(self) -> ArticleType:

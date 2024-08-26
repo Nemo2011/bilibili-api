@@ -146,6 +146,12 @@ class Manga:
         self.__info: Optional[Dict] = None
 
     def get_manga_id(self) -> int:
+        """
+        获取漫画的 id
+
+        Returns:
+            int: 漫画的 id
+        """
         return self.__manga_id
 
     async def get_info(self) -> dict:
@@ -195,10 +201,10 @@ class Manga:
 
             episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
-        **注意：episode_count 和 episode_id 中必须提供一个参数。**
-
         Returns:
             dict: 对应的话的详细信息
+
+        **注意：episode_count 和 episode_id 中必须提供一个参数。**
         """
         info = await self.__get_info_cached()
         for ep in info["ep_list"]:
@@ -241,10 +247,10 @@ class Manga:
 
             episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
-        **注意：episode_count 和 episode_id 中必须提供一个参数。**
-
         Returns:
             dict: 调用 API 返回的结果
+
+        **注意：episode_count 和 episode_id 中必须提供一个参数。**
         """
         if episode_id == None:
             if episode_count == None:
@@ -277,17 +283,17 @@ class Manga:
         """
         获取某一话的所有图片
 
-        # 注意事项：此函数速度非常慢并且失败率高
-
         Args:
             episode_count (int | float | None): 第几话.
 
             episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
-        **注意：episode_count 和 episode_id 中必须提供一个参数。**
-
         Returns:
             List[Picture]: 所有的图片
+
+        **注意：episode_count 和 episode_id 中必须提供一个参数。**
+
+        注意事项：此函数速度非常慢并且失败率高
         """
         data = await self.get_images_url(
             episode_count=episode_count, episode_id=episode_id
@@ -535,7 +541,7 @@ async def get_manga_home_recommend(
     Args:
         pn   (int)                          : 页码。Defaults to 1.
 
-        seed (Optional[str])                : Unknown param，无需传入.
+        seed (Optional, str)                : Unknown param，无需传入.
 
         credential (Credential)           : 凭据类. Defaults to None.
 

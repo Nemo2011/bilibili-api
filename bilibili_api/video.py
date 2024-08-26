@@ -850,13 +850,13 @@ class Video:
 
             to_seg (int, optional): 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None.
 
-            注意：
-            - 1. 段数可以使用 `get_danmaku_view()["dm_seg"]["total"]` 查询。
-            - 2. `from_seg` 和 `to_seg` 仅对 `date == None` 的时候有效果。
-            - 3. 例：取前 `12` 分钟的弹幕：`from_seg=0, to_seg=1`
-
         Returns:
             List[Danmaku]: Danmaku 类的列表。
+
+        注意：
+            - 1. 段数可以通过视频时长计算。6分钟为一段。
+            - 2. `from_seg` 和 `to_seg` 仅对 `date == None` 的时候有效果。
+            - 3. 例：取前 `12` 分钟的弹幕：`from_seg=0, to_seg=1`
         """
         if date is not None:
             self.credential.raise_for_no_sessdata()
@@ -1577,7 +1577,9 @@ class Video:
                 if lan_template["lan"] == lan:
                     break
             else:
-                raise ArgsException("lan 参数错误，请参见 https://s1.hdslb.com/bfs/subtitle/subtitle_lan.json")
+                raise ArgsException(
+                    "lan 参数错误，请参见 https://s1.hdslb.com/bfs/subtitle/subtitle_lan.json"
+                )
 
         payload = {
             "type": 1,
@@ -2263,8 +2265,6 @@ class VideoDownloadURLDataDetecter:
         解析数据
 
         Args:
-            **以下参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
-
             video_max_quality       (VideoQuality, optional)      : 设置提取的视频流清晰度最大值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._8K.
 
             audio_max_quality       (AudioQuality, optional)      : 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K.
@@ -2289,6 +2289,8 @@ class VideoDownloadURLDataDetecter:
 
         Returns:
             List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 提取出来的视频/音频流
+
+        **参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
         """
         if "durl" in self.__data.keys():
             if self.__data["format"].startswith("flv"):
@@ -2411,8 +2413,6 @@ class VideoDownloadURLDataDetecter:
         提取出分辨率、音质等信息最好的音视频流。
 
         Args:
-            **以下参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
-
             video_max_quality       (VideoQuality)                : 设置提取的视频流清晰度最大值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._8K.
 
             audio_max_quality       (AudioQuality)                : 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K.
@@ -2437,6 +2437,8 @@ class VideoDownloadURLDataDetecter:
 
         Returns:
             List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | None]: FLV 视频流 / HTML5 MP4 视频流 / 番剧或课程试看 MP4 视频流返回 `[FLVStreamDownloadURL | HTML5MP4StreamDownloadURL | EpisodeTryMP4DownloadURL]`, 否则为 `[VideoStreamDownloadURL, AudioStreamDownloadURL]`, 如果未匹配上任何合适的流则对应的位置位 `None`
+
+        **以上参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
         """
         if self.check_flv_stream():
             return self.detect_all()  # type: ignore

@@ -109,6 +109,12 @@ class InteractiveVariable:
         self.__random = random
 
     def get_id(self) -> str:
+        """
+        获取变量 id
+
+        Returns:
+            str: 变量 id
+        """
         return self.__var_id
 
     def refresh_value(self) -> None:
@@ -119,15 +125,39 @@ class InteractiveVariable:
             self.__var_value = int(rand(0, 100))
 
     def get_value(self) -> int:
+        """
+        获取变量对应的值
+
+        Returns:
+            int: 变量对应的值
+        """
         return self.__var_value
 
     def is_show(self) -> bool:
+        """
+        变量是否显示
+
+        Returns:
+            bool: 变量是否显示
+        """
         return self.__is_show
 
     def is_random(self) -> bool:
+        """
+        变量是否随机生成
+
+        Returns:
+            bool: 变量是否随机生成
+        """
         return self.__random
 
     def get_name(self) -> str:
+        """
+        获取变量的名字
+
+        Returns:
+            str: 变量的名字
+        """
         return self.__name
 
     def __str__(self):
@@ -163,12 +193,30 @@ class InteractiveButton:
         self.__align = align
 
     def get_text(self) -> str:
+        """
+        获取按钮文字
+
+        Returns:
+            str: 按钮文字
+        """
         return self.__text
 
     def get_align(self) -> int:
+        """
+        获取按钮文字布局
+
+        Returns:
+            int: 按钮文字布局
+        """
         return self.__align  # type: ignore
 
     def get_pos(self) -> Tuple[int, int]:
+        """
+        获取按钮位置
+
+        Returns:
+            Tuple[int, int]: 按钮位置
+        """
         return self.__pos
 
     def __str__(self):
@@ -358,6 +406,12 @@ class InteractiveNode:
         return nodes
 
     def is_default(self) -> bool:
+        """
+        节点是否为跳转中默认节点
+
+        Returns:
+            bool: 是否为跳转中默认节点
+        """
         return self.__is_default
 
     async def get_jumping_type(self) -> int:
@@ -368,20 +422,50 @@ class InteractiveNode:
         return edge_info["edges"]["questions"][0]["type"]
 
     def get_node_id(self) -> int:
+        """
+        获取节点 id
+
+        Returns:
+            int: 节点 id
+        """
         return self.__id
 
     def get_cid(self) -> int:
+        """
+        获取节点 cid
+
+        Returns:
+            int: 节点 cid
+        """
         return self.__cid
 
     def get_self_button(self) -> "InteractiveButton":
+        """
+        获取该节点所对应的按钮
+
+        Returns:
+            InteractiveButton: 所对应的按钮
+        """
         if self.__button == None:
             return InteractiveButton("", -1, -1)
         return self.__button
 
     def get_jumping_condition(self) -> "InteractiveJumpingCondition":
+        """
+        获取跳转条件
+
+        Returns:
+            InteractiveJumpingCondition: 跳转条件
+        """
         return self.__jumping_command
 
     def get_video(self) -> "InteractiveVideo":
+        """
+        获取节点对应视频
+
+        Returns:
+            InteractiveVideo: 对应视频
+        """
         return self.__parent
 
     async def get_info(self) -> dict:
@@ -414,9 +498,21 @@ class InteractiveGraph:
         self.__node = InteractiveNode(self.__parent, 1, root_cid, [])
 
     def get_video(self) -> "InteractiveVideo":
+        """
+        获取视频
+
+        Returns:
+            InteractiveVideo: 视频
+        """
         return self.__parent
 
     def get_skin(self) -> dict:
+        """
+        获取按钮样式
+
+        Returns:
+            dict: 按钮样式
+        """
         return self.__skin
 
     async def get_root_node(self) -> "InteractiveNode":

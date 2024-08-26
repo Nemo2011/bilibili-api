@@ -1,162 +1,209 @@
 # Module login.py
 
-登录。
+
+bilibili_api.login
+
+登录
+
+**虽然可能有其他函数，但是请忽略他们，这些并不重要**
+
+**login_with_qrcode 用到了 tkinter，linux 的小伙伴请注意安装**
+
 
 ``` python
 from bilibili_api import login
 ```
 
----
-**注意：**
+## class Check
 
-建议 `linux` 的用户使用 `login_with_qrcode_term` 通过终端扫码登录，或者在使用 `login_with_qrcode` 时先装一下 `python3-tk` 吧。
-
-``` bash
-$ sudo apt-get install python3-tk
-```
-
-如果想将登录功能嵌入你自己的应用，可以参考[这里](/modules/login_func.md)。
----
-
-## def get_contries_list()
-
-获取国家（地区）列表
-
-**Returns:** List[dict]: 包含国家及地区的列表。
-
-举个例子：下面是 `津巴布韦` 对应的字典
-
-``` python
-{
-    'name': '津巴布韦', # 就像 `中国大陆`
-    'id': 98, # 貌似是 B 站自己的 id
-    'code': 263 # 对应的代码，就像中国大陆的 +86
-}
-```
-
-## def search_countries()
-
-| name | type | description |
-| - | - | - |
-| keyword | str | 关键词 |
-
-搜索一个地区及其国际地区代码
-
-**Returns:** List[dict]: 地区列表
-
-## def have_country()
-
-| name | type | description |
-| - | - | - |
-| keyword | str | 关键词 |
-
-是否有地区
-
-**Returns:** bool: 是否存在
-
-## def have_code()
-
-| name | type | description |
-| - | - | - |
-| code | Union[str, int]) | 代码 |
-
-是否存在地区代码
-
-**Returns:** bool: 是否存在
-
-## class PhoneNumber()
-
-手机号类
-
-### Functions
-
-#### def \_\_init\_\_()
-
-| name | type | description |
-| - | - | - |
-| number | str | 号码 |
-| country | Union[str, int] | 地区（代码）如 `中国大陆` 或 `+86` |
-
----
-
-## def login_with_qrcode_term()
-
-**推荐方式** 扫描终端二维码登录。
-
-**Returns:** Credential 凭据类。
-
----
-
-## def login_with_qrcode()
-
-| name | type | description |
-| - | - | - |
-| root | Union[tkinter.Tk(), tkinter.Toplevel()] | 窗口 |
-
-**注意：** 这里自定义窗口是因为有的时候写 `tkinter` 程序不能出现两个主窗口 `tkinter.Tk`(如使用 `ImageTK`)，所以特地设置了窗口参数，大家可以设置成 `tkinter.Toplevel`
-
-扫描二维码登录。
-
-**Returns:** Credential 凭据类。
-
----
-
-## def login_with_password()
-
-| name | type | description |
-| - | - | - |
-| username | str | 手机号、邮箱 |
-| password | str | 密码 |
-
-密码登录。
-
-**Returns:** Union[Credential, Check]: 如果需要验证，会返回 [`Check`](#check) 类，否则返回 `Credential` 类。
-
-**如果返回错误：验证码错误，请尝试再次完成极验验证码（极验验证码结果一个只能用一次）**
-
-## def send_sms()
-
-**需要经过极验验证**
-
-| name | type | description |
-| - | - | - |
-| phonenumber | PhoneNumber | 手机号类 |
-
-发送验证码。
-
-**Returns:** None
-
-## def login_with_sms()
-
-| name | type | description |
-| - | - | - |
-| phonenumber | PhoneNumber | 手机号类 |
-| code | str | 验证码 |
-
-验证码登录
-
-**Returns:** Credential 凭据类
-
-**如果返回错误：验证码错误，请尝试再次完成极验验证码（极验验证码结果一个只能用一次）**
-
----
-
-## <span id="check"> class Check </span>
+**Extend: builtins.object**
 
 验证类，如果密码登录需要验证会返回此类
 
-### Functions
-
-#### def \_\_init\_\_()
 
 | name | type | description |
 | - | - | - |
-| check_url | str | 验证网址 |
+| check_url | str | 验证 url |
+| tmp_token | str | 验证 token |
 
-#### def fetch_info()
+
+### def fetch_info()
 
 获取验证信息
 
+
+
 **Returns:** dict: 调用 API 返回的结果
 
----
+
+
+
+## class PhoneNumber
+
+**Extend: builtins.object**
+
+手机号类
+
+
+
+
+## def get_code_by_country()
+
+获取地区对应代码
+
+
+| name | type | description |
+| - | - | - |
+| country | str | 地区名 |
+
+**Returns:** int: 对应的代码，没有返回 -1
+
+
+
+
+## def get_countries_list()
+
+获取国际地区代码列表
+
+
+
+**Returns:** List[dict]: 地区列表
+
+
+
+
+## def get_id_by_code()
+
+获取地区码对应的地区 id
+
+
+| name | type | description |
+| - | - | - |
+| code | int | 地区吗 |
+
+**Returns:** int: 对应的代码，没有返回 -1
+
+
+
+
+## def have_code()
+
+是否存在地区代码
+
+
+| name | type | description |
+| - | - | - |
+| code | Union[str, int] | 代码 |
+
+**Returns:** bool: 是否存在
+
+
+
+
+## def have_country()
+
+是否有地区
+
+
+| name | type | description |
+| - | - | - |
+| keyword | str | 关键词 |
+
+**Returns:** bool: 是否存在
+
+
+
+
+## def login_with_password()
+
+密码登录。
+
+
+| name | type | description |
+| - | - | - |
+| username | str | 用户手机号、邮箱 |
+| password | str | 密码 |
+
+**Returns:** Union[Credential, Check]: 如果需要验证，会返回 `Check` 类，否则返回 `Credential` 类。
+
+
+
+
+## def login_with_qrcode()
+
+扫描二维码登录
+
+
+| name | type | description |
+| - | - | - |
+| root | Union[tkinter.Tk, None] | 根窗口，默认为 tkinter.Tk()，如果有需要可以换成 tkinter.Toplevel(). Defaults to None. |
+
+**Returns:** Credential: 凭据
+
+
+
+
+## def login_with_qrcode_term()
+
+终端扫描二维码登录
+
+
+
+**Returns:** Credential: 凭据
+
+
+
+
+## def login_with_sms()
+
+验证码登录
+
+
+| name | type | description |
+| - | - | - |
+| phonenumber | str | 手机号类 |
+| code | str | 验证码 |
+
+**Returns:** Credential: 凭据类
+
+
+
+
+## def login_with_tv_qrcode_term()
+
+终端扫描 TV 二维码登录
+
+
+
+**Returns:** Credential: 凭据
+
+
+
+
+## def search_countries()
+
+搜索一个地区及其国际地区代码
+
+
+| name | type | description |
+| - | - | - |
+| keyword | str | 关键词 |
+
+**Returns:** List[dict]: 地区列表
+
+
+
+
+## def send_sms()
+
+发送验证码
+
+
+| name | type | description |
+| - | - | - |
+| phonenumber | PhoneNumber | 手机号类 |
+
+**Returns:** None
+
+
+

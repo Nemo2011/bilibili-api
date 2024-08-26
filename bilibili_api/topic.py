@@ -120,7 +120,7 @@ class Topic:
         Args:
             ps (int): 数据数量. Defaults to 100.
 
-            offset (Optional[str]): 偏移量. 生成格式为 f'{页码}_{页码*数据量]}' 如'2_40' Defaults to None.
+            offset (Optional, str): 偏移量. 生成格式为 f'{页码}_{页码*数据量]}' 如'2_40' Defaults to None.
 
             sort_by (TopicCardsSortBy): 排序方式. Defaults to TopicCardsSortBy.HOT.
 

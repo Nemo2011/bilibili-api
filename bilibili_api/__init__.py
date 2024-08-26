@@ -38,6 +38,9 @@ from .errors import (
     DynamicExceedImagesException,
     CredentialNoSessdataException,
     CredentialNoDedeUserIDException,
+    ExClimbWuzhiException,
+    StatementException,
+    CredentialNoAcTimeValueException,
 )
 from . import (
     app,
@@ -167,4 +170,7 @@ __all__ = [
     "video_zone",
     "vote",
     "watchroom",
+    "ExClimbWuzhiException",
+    "StatementException",
+    "CredentialNoAcTimeValueException",
 ]

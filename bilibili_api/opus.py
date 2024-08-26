@@ -61,7 +61,13 @@ class Opus:
             cache_pool.opus_is_note[self.__id] = self.__is_note
             cache_pool.opus_type[self.__id] = self.__type.value
 
-    def get_opus_id(self):
+    def get_opus_id(self) -> int:
+        """
+        获取图文 id
+
+        Returns:
+            int: 图文 idd
+        """
         return self.__id
 
     def get_type(self):

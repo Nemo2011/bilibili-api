@@ -29,6 +29,9 @@ API_ARTICLE = get_api("article")
 
 
 class NoteType(Enum):
+    """
+    笔记类型
+    """
     PUBLIC = "public"
     PRIVATE = "private"
 
@@ -91,12 +94,30 @@ class Note:
         self.__meta: dict = {}
 
     def get_cvid(self) -> int:
+        """
+        获取公开笔记 cvid
+
+        Returns:
+            int: 公开笔记 cvid
+        """
         return self.__cvid
 
     def get_aid(self) -> int:
+        """
+        获取私有笔记对应视频 aid
+
+        Returns:
+            int: aid
+        """
         return self.__oid
 
     def get_note_id(self) -> int:
+        """
+        获取私有笔记 note_id
+
+        Returns:
+            int: note_id
+        """
         return self.__note_id
 
     def turn_to_article(self) -> "article.Article":

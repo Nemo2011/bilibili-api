@@ -1,118 +1,171 @@
 # Module audio.py
 
-```python
-from bilibili_api import audio
-```
+
+bilibili_api.audio
 
 音频相关
 
----
+
+``` python
+from bilibili_api import audio
+```
 
 ## class Audio
 
-音频类。
+**Extend: builtins.object**
 
-### Attributes
+音频
+
 
 | name | type | description |
-| ---- | ---- | ----------- |
-| credential | Credential | 凭据 |
+| - | - | - |
+| credential | Credential | 凭据类 |
 
-### Functions
 
-#### def \_\_init\_\_()
-
-| name       | type                 | description            |
-| ---------- | -------------------- | ---------------------- |
-| auid       | int                  | 音频 AU 号             |
-| credential | Credential \| None, optional | 凭据. Defaults to None |
-
-#### def get_auid()
-
-获取 auid
-
-**Returns:** auid
-
-#### async def get_info()
-
-获取音频信息
-
-**Returns:** 调用 API 返回的结果
-
-#### async def get_tags()
-
-获取音频 tags
-
-**Returns:** 调用 API 返回的结果
-
-#### async def get_download_url()
-
-获取音频下载链接
-
-**Returns:** 调用 API 返回的结果
-
-#### async def add_coins()
-
-| name | type          | description              |
-| ---- | ------------- | ------------------------ |
-| num  | int, optional | 投币数量。Defaults to 2. |
+### async def add_coins()
 
 投币
 
-**Returns:** 调用 API 返回的结果
 
----
+| name | type | description |
+| - | - | - |
+| num | Union[int, None] | 投币数量。Defaults to 2. |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### def get_auid()
+
+获取 auid
+
+
+
+**Returns:** int: auid
+
+
+
+
+### async def get_download_url()
+
+获取音频下载链接
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def get_info()
+
+获取音频信息
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def get_tags()
+
+获取音频 tags
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
 
 ## class AudioList
 
+**Extend: builtins.object**
+
 歌单
 
-### Functions
 
-#### def \_\_init\_\_()
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 |
 
-| name       | type                 | description            |
-| ---------- | -------------------- | ---------------------- |
-| amid       | int                  | 歌单 ID                |
-| credential | Credential \| None, optional | 凭据. Defaults to None |
 
-#### def get_amid()
+### def get_amid()
 
-获取歌单 amid
+获取 amid
 
-**Returns:** amid
 
-#### async def get_info()
+
+**Returns:** int: amid
+
+
+
+
+### async def get_info()
 
 获取歌单信息
 
-**Returns:** 调用 API 返回的结果
 
-#### async def get_tags()
 
-获取歌单 tags
+**Returns:** dict: 调用 API 返回的结果
 
-**Returns:** 调用 API 返回的结果
 
-#### async def get_song_list()
 
-| name | type          | description         |
-| ---- | ------------- | ------------------- |
-| pn   | int, optional | 页码。Defaults to 1 |
+
+### async def get_song_list()
 
 获取歌单歌曲列表
 
-**Returns:** 调用 API 返回的结果
 
----
+| name | type | description |
+| - | - | - |
+| pn | Union[int, None] | 页码. Defaults to 1 |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def get_tags()
+
+获取歌单 tags
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+## async def get_hot_song_list()
+
+获取热门歌单
+
+
+| name | type | description |
+| - | - | - |
+| pn | Union[int, None] | 页数. Defaults to 1 |
+| credential | Union[Credential, None] | 凭据. Defaults to None |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
 
 ## async def get_user_stat()
 
-| name       | type                 | description            |
-| ---------- | -------------------- | ---------------------- |
-| uid        | int                  | 用户 UID               |
-| credential | Credential \| None, optional | 凭据. Defaults to None |
-
 获取用户数据（收听数，粉丝数等）
 
-**Returns:** 调用 API 返回的结果
+
+| name | type | description |
+| - | - | - |
+| uid | int | 用户 UID |
+| credential | Union[Credential, None] | 凭据. Defaults to None |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+

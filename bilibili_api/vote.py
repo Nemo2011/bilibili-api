@@ -99,6 +99,12 @@ class Vote:
         self.title: Optional[str] = None
 
     def get_vote_id(self) -> int:
+        """
+        获取投票 id
+
+        Returns:
+            int: 投票 id
+        """
         return self.__vote_id
 
     def get_info_sync(self) -> dict:

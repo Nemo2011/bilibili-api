@@ -173,7 +173,13 @@ class Music:
         """
         self.__music_id = music_id
 
-    def get_music_id(self):
+    def get_music_id(self) -> str:
+        """
+        获取音乐 id
+
+        Returns:
+            str: 音乐 id
+        """
         return self.__music_id
 
     async def get_info(self):

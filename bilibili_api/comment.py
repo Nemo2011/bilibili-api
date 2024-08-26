@@ -153,12 +153,30 @@ class Comment:
         }
 
     def get_rpid(self) -> int:
+        """
+        获取评论 rpid
+
+        Returns:
+            int: rpid
+        """
         return self.__rpid
 
     def get_type(self) -> CommentResourceType:
+        """
+        获取评论资源类型
+
+        Returns:
+            CommentResourceType: 资源类型
+        """
         return self.__type
 
     def get_oid(self) -> int:
+        """
+        获取评论对应 oid
+
+        Returns:
+            int: oid
+        """
         return self.__oid
 
     async def like(self, status: bool = True) -> dict:

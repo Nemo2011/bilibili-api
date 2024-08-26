@@ -1,94 +1,171 @@
 # Module vote.py
 
-```python
+
+bilibili_api.vote
+
+投票相关操作。
+
+需要 vote_id,获取 vote_id: https://nemo2011.github.io/bilibili-api/#/vote_id
+
+
+``` python
 from bilibili_api import vote
 ```
 
-vote_id，投票 ID，可通过 [vote_id](https://nemo2011.github.io/bilibili-api/#/vote_id) 获取
+## class Vote
+
+**Extend: builtins.object**
+
+投票类
+
+
+| name | type | description |
+| - | - | - |
+| vote_id | int | vote_id, 获取：https |
+| credential | Credential | 凭据类 |
+
+
+### async def get_info()
+
+获取投票详情
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### def get_info_sync()
+
+获取投票详情
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def get_title()
+
+快速获取投票标题
+
+
+
+**Returns:** str: 投票标题
+
+
+
+
+### def get_vote_id()
+
+获取投票 id
+
+
+
+**Returns:** int: 投票 id
+
+
+
+
+### async def update_vote()
+
+更新投票内容
+
+
+| name | type | description |
+| - | - | - |
+| vote_id | int | vote_id |
+| title | str | 投票标题 |
+| _type | VoteType | 投票类型 |
+| choice_cnt | int | 最多几项 |
+| duration | int | 投票持续秒数 常用 |
+| choices | VoteChoices | 投票选项 |
+| credential | Credential | Credential 枚举类 |
+| desc | Union[optional, None] | 投票描述. Defaults to None. |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+## class VoteChoices
+
+**Extend: builtins.object**
+
+投票选项类
+
+
+
+
+### def add_choice()
+
+往 VoteChoices 添加选项
+
+
+| name | type | description |
+| - | - | - |
+| desc | str | 选项描述 |
+| image | Union[str, None] | 选项的图片链接，用于图片投票。支持 Picture 类. Defaults to None. |
+
+**Returns:** None
+
+
+
+### def get_choices()
+
+获取 VoteChoices 的 choices
+
+
+
+**Returns:** dict: choices
+
+
+
+
+### def remove_choice()
+
+从 VoteChoices 移除选项
+
+
+| name | type | description |
+| - | - | - |
+| index | int | 选项索引 |
+
+**Returns:** None
+
+
 
 ## class VoteType
 
-**Extends:** enum.Enum
+**Extend: enum.Enum**
 
 投票类型枚举类
 
 + TEXT: 文字投票
 + IMAGE: 图片投票
 
-## class VoteChoices
 
-投票选项类
-
-### def add_choice()
-
-| name | type | description |
-| - | - | - |
-| desc | str | 选项描述 |
-| image | str, Picture | 选项图片链接或图片类，用于图片投票 |
-
-添加选项
-
-### def remove_choice()
-
-| name | type | description |
-| - | - | - |
-| index | int | 选项索引 |
-
-删除选项
-
-### def get_choices()
-
-获取选项列表
-
-**Returns:** dict: 选项信息
-
-## class Vote
-
-投票类
-
-### \_\_init\_\_()
-
-| name | type | description |
-| - | - | - |
-| vote_id | int | 投票 ID |
-| credential | Credential | Credential 类，非必要 |
-
-### async def get_info()
-
-获取投票详情
-
-**Returns:** dict: 调用 API 返回的结果
-
-### async def update_vote()
-
-| name | type | description |
-| - | - | - |
-| title | str | 投票标题 |
-| desc | str, optional | 投票描述 |
-| duration | int | 投票持续时秒数 |
-| choice_cnt | int | 最多选几项 |
-| _type | VoteType | 投票类型 |
-| choices | VoteChoices | 投票选项 |
-| credential | Credential | Credential 枚举类 |
-| vote_id | int | 投票 ID |
-
-更新投票内容
-
-**Returns:** dict: 调用 API 返回的结果
 
 
 ## async def create_vote()
 
+创建投票
+
+
 | name | type | description |
 | - | - | - |
 | title | str | 投票标题 |
-| desc | str, optional | 投票描述 |
-| duration | int | 投票持续时秒数 |
-| choice_cnt | int | 最多选几项 |
 | _type | VoteType | 投票类型 |
+| choice_cnt | int | 最多几项 |
+| duration | int | 投票持续秒数 常用 |
 | choices | VoteChoices | 投票选项 |
-| credential | Credential | Credential 枚举类 |
+| credential | Credential | Credential |
+| desc | Union[optional, None] | 投票描述. Defaults to None. |
 
-创建投票
+**Returns:** Vote: Vote 类
 
-**Returns:** Vote: 投票类
+
+
+

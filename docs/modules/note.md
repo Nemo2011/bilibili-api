@@ -1,195 +1,225 @@
 # Module note.py
 
-```python
+
+bilibili_api.note
+
+笔记相关
+
+
+``` python
 from bilibili_api import note
 ```
 
-笔记相关操作
-
-?> 注意，笔记分为私有笔记和公开笔记...公开笔记实质为专栏
-?> 公有笔记不限数量，私有笔记每稿件只能写一篇
-
-## const dict NoteType
-
-笔记类型枚举
-
 ## class Note
 
-笔记类，各种对笔记的操作都在里面
+**Extend: builtins.object**
 
-### Attributes
+笔记相关
 
-| name | type | description|
-| ---- | ---- | ---------- |
-| credential | Credential | 凭据 |
 
-### Funcitions
 
-#### def \_\_init\_\_()
-| name | type | description|
-| ---- | ---- | ---------- |
-| type | str | 笔记类型 |
-| oid | int | 稿件 id |
-| oid_type | int | 稿件 id 类型 |
-| note_id | int | 笔记 id |
-| credential | Credential \| None, optional | Credential 类 |
 
----
+### async def add_coins()
 
-#### def set_oid()
+(仅供公开笔记)
 
-| name | type | description |
-| ---- | ---- | ----------- |
-| oid | int  | av 号。     |
+给笔记投币，目前只能投一个。
 
-设置 oid。
 
-**Returns:** None
 
----
+**Returns:** dict: 调用 API 返回的结果
 
-#### def set_note_id()
 
-| name | type | description |
-| ---- | ---- | ----------- |
-| note_id | int  | note_id。 |
 
-设置 note_id。
+
+### async def fetch_content()
+
+获取并解析笔记内容
+
+该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
+
+
 
 **Returns:** None
 
----
 
-#### def set_cvid()
 
-| name | type | description |
-| ---- | ---- | ----------- |
-| cvid | int  | cvid 专栏号。 |
+### def get_aid()
 
-设置 cvid。
+获取私有笔记对应视频 aid
 
-**Returns:** None
 
----
 
-#### def get_oid()
+**Returns:** int: aid
 
-获取 oid。
 
-**Returns:** str: oid
 
----
 
-#### def get_cvid()
+### async def get_all()
 
-获取 cvid。
+(仅供公开笔记)
 
-**Returns:** str: cvid
+一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等
 
----
 
-#### def get_note_id()
 
-获取 note_id。
+**Returns:** dict: 调用 API 返回的结果
 
-**Returns:** str: note_id
 
----
 
-#### def turn_to_article()
 
-将笔记类转为专栏类。需要保证笔记是公开笔记。
+### def get_cvid()
 
-**Returns:** Note: 专栏类
+获取公开笔记 cvid
 
----
 
-#### async def get_info()
 
-获取笔记信息。
+**Returns:** int: 公开笔记 cvid
 
-**Returns:** API 调用返回结果。
 
----
 
-#### async def get_images_raw_info()
 
-获取笔记所有图片原始信息。
+### async def get_images()
 
-**Returns:** API 调用返回结果。
+获取笔记所有图片并转为 Picture 类
 
----
 
-#### async def get_images()
 
-获取笔记所有图片并转为 Picture 类。
+**Returns:** list: 图片信息
 
-**Returns:** List[Picture]
 
----
 
-#### async def get_all()
 
-一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等。
+### async def get_images_raw_info()
 
-**Returns:** API 调用返回结果。
+获取笔记所有图片原始信息
 
----
 
-#### async def fetch_content()
 
-加载专栏内容。该方法不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json() `来获取你需要的值。
+**Returns:** list: 图片信息
 
-**Returns:** None
 
----
 
-#### def markdown()
 
-转换为 Markdown
+### async def get_info()
 
-请先调用 fetch_content()
+获取笔记信息
 
-**Returns:** str: Markdown 内容
 
----
 
-#### def json()
+**Returns:** dict: 笔记信息
+
+
+
+
+### def get_note_id()
+
+获取私有笔记 note_id
+
+
+
+**Returns:** int: note_id
+
+
+
+
+### async def get_private_note_info()
+
+获取私有笔记信息。
+
+
+
+**Returns:** dict: 调用 API 返回的结果。
+
+
+
+
+### async def get_public_note_info()
+
+获取公有笔记信息。
+
+
+
+**Returns:** dict: 调用 API 返回的结果。
+
+
+
+
+### def json()
 
 转换为 JSON 数据
 
 请先调用 fetch_content()
 
+
+
 **Returns:** dict: JSON 数据
 
----
 
-#### async def set_like()
 
-| name   | type           | description                |
-| ------ | -------------- | -------------------------- |
-| status | bool, optional | 点赞状态. Defaults to True |
 
-设置专栏点赞状态
+### def markdown()
 
-**Returns:** API 调用返回结果。
+转换为 Markdown
 
----
+请先调用 fetch_content()
 
-#### async def set_favorite()
 
-| name   | type           | description                |
-| ------ | -------------- | -------------------------- |
-| status | bool, optional | 收藏状态. Defaults to True |
+
+**Returns:** str: Markdown 内容
+
+
+
+
+### async def set_favorite()
+
+(仅供公开笔记)
 
 设置专栏收藏状态
 
-**Returns:** API 调用返回结果。
 
----
+| name | type | description |
+| - | - | - |
+| status | Union[bool, None] | 收藏状态. Defaults to True |
 
-#### async def add_coins()
+**Returns:** dict: 调用 API 返回的结果
 
-给专栏投币，目前只能投一个
 
-**Returns:** API 调用返回结果。
+
+
+### async def set_like()
+
+(仅供公开笔记)
+
+设置专栏点赞状态
+
+
+| name | type | description |
+| - | - | - |
+| status | Union[bool, None] | 点赞状态. Defaults to True |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### def turn_to_article()
+
+将笔记类转为专栏类。需要保证笔记是公开笔记。
+
+
+
+**Returns:** Note: 专栏类
+
+
+
+
+## class NoteType
+
+**Extend: enum.Enum**
+
+笔记类型
+
+
+
+

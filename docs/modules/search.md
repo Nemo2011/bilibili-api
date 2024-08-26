@@ -1,17 +1,116 @@
 # Module search.py
 
-```python
+
+bilibili_api.search
+
+搜索
+
+
+``` python
 from bilibili_api import search
 ```
 
-各种杂类操作（主页搜索 API）
+## class CategoryTypeArticle
+
+**Extend: enum.Enum**
+
+文章分类
++ All 全部
++ Anime 动画
++ Game 游戏
++ TV 电视
++ Life 生活
++ Hobby 兴趣
++ LightNovel 轻小说
++ Technology 科技
+
+
+
+
+## class CategoryTypePhoto
+
+**Extend: enum.Enum**
+
+相册分类
++ All 全部
++ DrawFriend 画友
++ PhotoFriend 摄影
+
+
+
+
+## class OrderArticle
+
+**Extend: enum.Enum**
+
+文章的排序类型
++ TOTALRANK : 综合排序
++ CLICK : 最多点击
++ PUBDATE : 最新发布
++ ATTENTION : 最多喜欢
++ SCORES : 最多评论
+
+
+
+
+## class OrderCheese
+
+**Extend: enum.Enum**
+
+课程搜索排序类型
+
++ RECOMMEND: 综合
++ SELL : 销量最高
++ NEW  : 最新上架
++ CHEEP: 售价最低
+
+
+
+
+## class OrderLiveRoom
+
+**Extend: enum.Enum**
+
+直播间搜索类型
++ NEWLIVE 最新开播
++ ONLINE 综合排序
+
+
+
+
+## class OrderUser
+
+**Extend: enum.Enum**
+
+搜索用户的排序类型
++ FANS : 按照粉丝数量排序
++ LEVEL : 按照等级排序
+
+
+
+
+## class OrderVideo
+
+**Extend: enum.Enum**
+
+视频搜索类型
++ TOTALRANK : 综合排序
++ CLICK : 最多点击
++ PUBDATE : 最新发布
++ DM : 最多弹幕
++ STOW : 最多收藏
++ SCORES : 最多评论
+Ps: Api 中 的 order_sort 字段决定顺序还是倒序
+
+
+
+
 
 ## class SearchObjectType
 
-**Extends:** enum.Enum
+**Extend: enum.Enum**
 
 搜索对象。
-
 + VIDEO : 视频
 + BANGUMI : 番剧
 + FT : 影视
@@ -19,152 +118,122 @@ from bilibili_api import search
 + ARTICLE : 专栏
 + TOPIC : 话题
 + USER : 用户
-
-## class CategoryTypeArticle
-
-**Extends:** enum.Enum
-
-文章分类
-
-+ All 全部
-+ Anime
-+ Game
-+ TV
-+ Life
-+ Hobby
-+ LightNovel
-+ Technology
-
-## class CategoryTypePhoto
-
-**Extends:** enum.Enum
-
-相册分类
-
-+ All 全部
-+ DrawFriend 画友
-+ PhotoFriend 摄影
-
-## class OrderUser
-
-**Extends:** enum.Enum
-
-搜索用户的排序类型
-
-+ FANS : 按照粉丝数量排序
-+ LEVEL : 按照等级排序
-
-## class OrderArticle
-
-**Extends:** enum.Enum
-
-文章的排序类型
-
-+ TOTALRANK : 综合排序
-+ CLICK : 最多点击
-+ PUBDATE : 最新发布
-+ ATTENTION : 最多喜欢
-+ SCORES : 最多评论
-
-## class OrderLiveRoom
-
-**Extends:** enum.Enum
-
-直播间搜索类型
-
-+ NEWLIVE 最新开播
-+ ONLINE 综合排序
-
-## class OrderVideo
-
-**Extends:** enum.Enum
-
-视频搜索类型
-
-+ TOTALRANK : 综合排序
-+ CLICK : 最多点击
-+ PUBDATE : 最新发布
-+ DM : 最多弹幕
-+ STOW : 最多收藏
-+ SCORES : 最多评论
-  Ps: Api 中 的 order_sort 字段决定顺序还是倒序
++ LIVEUSER : 直播间用户
 
 
-## class OrderCheese
 
-**Extends:** enum.Enum
 
-课程搜索排序类型
+## async def get_default_search_keyword()
 
-+ RECOMMEND: 综合
-+ SELL     : 销量最高
-+ NEW      : 最新上架
-+ CHEEP    : 售价最低
+获取默认的搜索内容
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+## async def get_hot_search_keywords()
+
+获取热搜
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+## async def get_suggest_keywords()
+
+通过一些文字输入获取搜索建议。类似搜索词的联想。
+
+
+| name | type | description |
+| - | - | - |
+| keyword | str | 搜索关键词 |
+
+**Returns:** List[str]: 关键词列表
+
+
 
 
 ## async def search()
 
 只指定关键字在 web 进行搜索，返回未经处理的字典
 
-| name    | type   | description      |
-|---------|--------|------------------|
-| keyword | str | 搜索关键词            |
-| page    | int    | 页数. Defaults to 1 |
+
+| name | type | description |
+| - | - | - |
+| keyword | str | 搜索关键词 |
+| page | int | 页码. Defaults to 1. |
 
 **Returns:** dict: 调用 API 返回的结果
+
+
+
 
 ## async def search_by_type()
 
-指定关键字和类型进行搜索，返回未经处理的字典
+指定分区，类型，视频长度等参数进行搜索，返回未经处理的字典
 
-| name             | type                                            | description                                                |
-|------------------|-------------------------------------------------|------------------------------------------------------------|
-| keyword          | str                                          | 搜索关键词                                                      |
-| search_type      | SearchObjectType, None                                | 搜索类别                                                       |
-| order_type       | UserOrder,VideoOrder,ArticleOrder,LiveRoomOrder,None | 排序分类类型                                                     |
-| time_range       | int                                             | 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上 |
-| video_zone_type       | int , video_zone.VideoZoneTypes                                 | 视频分区 tid                                                    |
-| order_sort       | int                                             | 仅用于用户用户，设置粉丝数及等级排序顺序,默认,由高到低:0 ,由低到高：1                     |
-| category_id      | int,CategoryTypePhoto,CategoryTypeArticle,None    | 专栏/相册专用类型                                                  |
-| debug_param_func | Callable,None                                           | 参数回调器，用来存储或者什么的                                            |
-| page             | int                                             | 页数，defaults to 1                                           |
-| page_size        | int                    |  每一页的数据大小 |
+类型：视频(video)、番剧(media_bangumi)、影视(media_ft)、直播(live)、直播用户(liveuser)、专栏(article)、话题(topic)、用户(bili_user)
 
-**Returns:** dict: 调用 API 返回的结果
 
-## async def get_default_search_keyword()
-
-获取默认的搜索内容
+| name | type | description |
+| - | - | - |
+| debug_param_func | Union[Callable, None] | 参数回调器，用来存储或者什么的 |
+| order_sort | Union[int, None] | 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1 |
+| category_id | Union[CategoryTypeArticle, None] | 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效 |
+| time_range | Union[int, None] | 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上 |
+| video_zone_type | Union[int, None] | 话题类型，指定 tid (可使用 channel 模块查询) |
+| order_type | Union[OrderUser, None] | 排序分类类型 |
+| keyword | str | 搜索关键词 |
+| search_type | Union[SearchObjectType, None] | 搜索类型 |
+| page | Union[int, None] | 页码 |
+| page_size | Union[int, None] | 每一页的数据大小 |
 
 **Returns:** dict: 调用 API 返回的结果
 
-## async def get_hot_search_keywords()
 
-获取热搜
 
-**Returns:** dict: 调用 API 返回的结果
 
-## async def get_suggest_keywords()
+## async def search_cheese()
+
+搜索课程特用函数
+
 
 | name | type | description |
 | - | - | - |
 | keyword | str | 搜索关键词 |
+| page_num | int | 页码. Defaults to 1. |
+| page_size | int | 每一页的数据大小. Defaults to 30. |
+| order | OrderCheese | 排序方式. Defaults to OrderCheese.RECOMMEND |
 
-通过一些文字输入获取搜索建议。类似搜索词的联想。
+**Returns:** dict: 调用 API 返回的结果
 
-**Returns:** List[str]: 关键词列表
+
+
 
 ## async def search_games()
 
+搜索游戏特用函数
+
+
 | name | type | description |
 | - | - | - |
 | keyword | str | 搜索关键词 |
 
-搜索游戏特用函数
-
 **Returns:** dict: 调用 API 返回的结果
 
+
+
+
 ## async def search_manga()
+
+搜索漫画特用函数
+
 
 | name | type | description |
 | - | - | - |
@@ -173,19 +242,8 @@ from bilibili_api import search
 | page_size | int | 每一页的数据大小. Defaults to 9. |
 | credential | Credential | 凭据类. Defaults to None. |
 
-搜索漫画特用函数
-
 **Returns:** dict: 调用 API 返回的结果
 
-## async def search_cheese()
 
-| name | type | description |
-| - | - | - |
-| keyword | str | 搜索关键词 |
-| page_num | int | 页码. Defaults to 1. |
-| page_size | int | 每一页的数据大小. Defaults to 50. |
-| order | OrderCheese | 排序方式. Defaults to OrderCheese.RECOMMEND |
 
-搜索课程特用函数
 
-**Returns:** dict: 调用 API 返回的结果

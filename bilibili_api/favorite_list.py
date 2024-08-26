@@ -93,9 +93,21 @@ class FavoriteList:
         return self.__type == FavoriteListType.VIDEO
 
     def get_media_id(self) -> Union[int, None]:
+        """
+        获取收藏夹 media_id，仅视频收藏夹存在此属性
+
+        Returns:
+            Union[int, None]: media_id
+        """
         return self.__media_id
 
     def get_favorite_list_type(self) -> FavoriteListType:
+        """
+        获取收藏夹类型
+
+        Returns:
+            FavoriteListType: 收藏夹类型
+        """
         return self.__type
 
     async def get_info(self):

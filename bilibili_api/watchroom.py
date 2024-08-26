@@ -106,7 +106,7 @@ class WatchRoom:
     __season_id: int
     __episode_id: int
 
-    def __init__(self, room_id: int, credential: Credential = None):
+    def __init__(self, room_id: int, credential: Credential = None) -> None:
         """
         Args:
 
@@ -132,19 +132,49 @@ class WatchRoom:
             self.set_season_id(info["status"]["season_id"])
             self.set_episode_id(info["status"]["episode_id"])
 
-    def set_season_id(self, season_id: int):
+    def set_season_id(self, season_id: int) -> None:
+        """
+        设置番剧季度 id
+
+        Args:
+            season_id (int): 季度 id
+        """
         self.__season_id = season_id
 
-    def set_episode_id(self, episode_id: int):
+    def set_episode_id(self, episode_id: int) -> None:
+        """
+        设置番剧剧集 id
+
+        Args:
+            episode_id (int): 番剧剧集 id
+        """
         self.__episode_id = episode_id
 
-    def get_season_id(self):
+    def get_season_id(self) -> int:
+        """
+        获取番剧季度 id
+
+        Returns:
+            int: 番剧季度 id
+        """
         return self.__season_id
 
-    def get_episode_id(self):
+    def get_episode_id(self) -> int:
+        """
+        获取番剧剧集 id
+
+        Returns:
+            int: 番剧剧集 id
+        """
         return self.__episode_id
 
-    def get_room_id(self):
+    def get_room_id(self) -> int:
+        """
+        获取放映室 id
+
+        Returns:
+            int: 放映室 id
+        """
         return self.__room_id
 
     async def get_info(self) -> dict:
@@ -200,9 +230,9 @@ class WatchRoom:
 
         Args:
 
-            progress (int, None) 进度，单位为秒
+            progress (int, None): 进度，单位为秒
 
-            status (bool, None) 播放状态 1 播放中 0 暂停中 2 已结束
+            status (bool, None): 播放状态 1 播放中 0 暂停中 2 已结束
         """
         api = API["operate"]["progress"]
         data = {
@@ -224,7 +254,7 @@ class WatchRoom:
 
         Args:
 
-            token (str, Optional) 邀请 Token
+            token (str, Optional): 邀请 Token
 
         Returns:
             dict: 调用 API 返回的结果
@@ -251,7 +281,7 @@ class WatchRoom:
 
         Args:
 
-            msg (Message) 消息
+            msg (Message): 消息
 
         Returns:
             dict: 调用 API 返回的结果
@@ -277,7 +307,7 @@ class WatchRoom:
 
         Args:
 
-            uid (int) 用户 uid
+            uid (int): 用户 uid
 
         Returns:
             dict: 调用 API 返回的结果
@@ -329,13 +359,13 @@ async def create(
 
     Args:
 
-        season_id (int) 每季度的 ID
+        season_id (int): 每季度的 ID
 
-        ep_id (int) 剧集 ID
+        ep_id (int): 剧集 ID
 
-        is_open (bool) 是否公开
+        is_open (bool): 是否公开
 
-        credential (Credential) 凭据
+        credential (Credential): 凭据
 
     Returns:
         Watchroom：放映室
@@ -370,9 +400,9 @@ async def match(
 
     Args:
 
-        season_id (int) 季度 ID
+        season_id (int): 季度 ID
 
-        season_type (str) 季度类型
+        season_type (str): 季度类型
 
     Returns:
         Watchroom：放映室

@@ -367,6 +367,12 @@ class BuildDynamic:
         return self
 
     def add_vote(self, vote: vote.Vote) -> "BuildDynamic":
+        """
+        添加投票
+
+        Args:
+            vote (vote.Vote): 投票对象
+        """
         vote.get_info_sync()
         self.contents.append(
             {
@@ -570,23 +576,59 @@ class BuildDynamic:
         return self
 
     def get_dynamic_type(self) -> SendDynamicType:
+        """
+        获取动态类型
+
+        Returns:
+            SendDynamicType: 动态类型
+        """
         if len(self.pics) != 0:
             return SendDynamicType.IMAGE
         return SendDynamicType.TEXT
 
     def get_contents(self) -> list:
+        """
+        获取动态内容
+
+        Returns:
+            list: 动态内容
+        """
         return self.contents
 
     def get_pics(self) -> list:
+        """
+        获取动态图片
+
+        Returns:
+            list: 动态图片
+        """
         return self.pics
 
     def get_attach_card(self) -> Optional[dict]:
+        """
+        获取动态预约
+
+        Returns:
+            Optional[dict]: 动态预约
+        """
         return self.attach_card
 
     def get_topic(self) -> Optional[dict]:
+        """
+        获取动态话题
+
+        Returns:
+            Optional[dict]: 动态话题
+        """
         return self.topic
 
     def get_options(self) -> dict:
+        """
+        获取动态选项
+
+        Returns:
+            dict: 动态选项
+        """
         return self.options
 
 
@@ -763,6 +805,12 @@ class Dynamic:
             cache_pool.dynamic_is_opus[self.__dynamic_id] = self.__opus
 
     def get_dynamic_id(self) -> int:
+        """
+        获取动态 id
+
+        Returns:
+            int: _description_
+        """
         return self.__dynamic_id
 
     def is_opus(self) -> DynamicType:
