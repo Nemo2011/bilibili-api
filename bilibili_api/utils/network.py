@@ -27,6 +27,7 @@ from .utils import get_api
 from .credential import Credential
 from ..exceptions import ApiException, ResponseCodeException, NetworkException, ExClimbWuzhiException
 from .exclimbwuzhi import *
+from ..settings import timeout
 
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
 __aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
@@ -882,10 +883,10 @@ def get_session() -> httpx.AsyncClient:
         if settings.proxy != "":
             last_proxy = settings.proxy
             proxies = {"all://": settings.proxy}
-            session = httpx.AsyncClient(proxies=proxies)  # type: ignore
+            session = httpx.AsyncClient(proxies=proxies, timeout=settings.timeout)  # type: ignore
         else:
             last_proxy = ""
-            session = httpx.AsyncClient()
+            session = httpx.AsyncClient(timeout=settings.timeout)
         __httpx_session_pool[loop] = session
 
     return session
