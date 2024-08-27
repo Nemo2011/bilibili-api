@@ -27,7 +27,6 @@ from .utils import get_api
 from .credential import Credential
 from ..exceptions import ApiException, ResponseCodeException, NetworkException, ExClimbWuzhiException
 from .exclimbwuzhi import *
-from ..settings import timeout
 
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
 __aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
