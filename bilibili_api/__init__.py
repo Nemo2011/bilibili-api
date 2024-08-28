@@ -21,7 +21,8 @@ from .utils.network import (
     get_aiohttp_session,
     set_aiohttp_session,
     get_httpx_sync_session,
-    set_httpx_sync_session
+    set_httpx_sync_session,
+    get_buvid3
 )
 from .errors import (
     LoginError,
@@ -173,4 +174,5 @@ __all__ = [
     "ExClimbWuzhiException",
     "StatementException",
     "CredentialNoAcTimeValueException",
+    "get_buvid3",
 ]

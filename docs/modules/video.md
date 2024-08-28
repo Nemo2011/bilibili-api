@@ -324,7 +324,6 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | - | - | - |
 | page_index | Union[int, None] | 分 P 号，从 0 开始。Defaults to None |
 | cid | Union[int, None] | 分 P 的 ID。Defaults to None |
-| html5 | Union[bool, None] | 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。 |
 
 **Returns:** dict: 调用 API 返回的结果。
 

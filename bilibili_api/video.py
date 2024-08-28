@@ -410,7 +410,6 @@ class Video:
         self,
         page_index: Union[int, None] = None,
         cid: Union[int, None] = None,
-        html5: bool = False,
     ) -> dict:
         """
         获取视频下载信息。
@@ -424,8 +423,6 @@ class Video:
 
             cid        (int | None, optional) : 分 P 的 ID。Defaults to None
 
-            html5      (bool, optional): 是否以 html5 平台访问，这样子能直接在网页中播放，但是链接少。
-
         Returns:
             dict: 调用 API 返回的结果。
         """
@@ -436,33 +433,20 @@ class Video:
             cid = await self.__get_cid_by_index(page_index)
 
         api = API["info"]["playurl"]
-        if html5:
-            params = {
-                "avid": self.get_aid(),
-                "cid": cid,
-                "qn": "127",
-                "otype": "json",
-                "fnval": 4048,
-                "fourk": 1,
-                "platform": "html5",
-                "high_quality": "1",
-            }
-        else:
-            params = {
-                "avid": self.get_aid(),
-                "cid": cid,
-                "qn": "127",
-                "otype": "json",
-                "fnval": 4048,
-                "fourk": 1,
-            }
-        result = (
-            await Api(
-                **api, credential=self.credential, wbi=True
-            ).update_params(**params).result
-        )
-        result.update({"is_html5": True} if html5 else {})
-        return result
+        params = {
+            "avid": self.get_aid(),
+            "bvid": self.get_bvid(),
+            "cid": cid,
+            "qn": "127",
+            "fnver": 0,
+            "fnval": 4048,
+            "fourk": 1,
+            "gaia_source": "",
+            "isGaiaAvoided": "true",
+            "web_location": 1315873,
+            "voice_balance": 1
+        }
+        return await Api(**api, credential=self.credential, wbi=True).update_params(**params).result
 
     async def get_related(self) -> dict:
         """
@@ -607,8 +591,13 @@ class Video:
             cid = await self.__get_cid_by_index(page_index)
 
         api = API["info"]["ai_conclusion"]
-        params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "cid": cid,
-                  "up_mid": await self.get_up_mid() if up_mid is None else up_mid}
+        params = {
+            "aid": self.get_aid(),
+            "bvid": self.get_bvid(),
+            "cid": cid,
+            "up_mid": await self.get_up_mid() if up_mid is None else up_mid,
+            "web_location": "333.788",
+        }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )

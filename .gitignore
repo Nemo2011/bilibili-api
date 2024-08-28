@@ -28,3 +28,4 @@ virtualenv/
 .vscode/launch.json
 # Doc Generater
 .doc_cache/
+.mypy_cache/

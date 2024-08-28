@@ -454,12 +454,8 @@ class Api:
         cookies = self.credential.get_cookies()
 
         if self.credential.buvid3 is None or self.credential.buvid3 == "":
-            global buvid3
-            if buvid3 == "" and self.url != API["info"]["spi"]["url"]:
-                resp = await get_spi_buvid()
-                buvid3 = resp["b_3"]
-                await active_buvid(buvid3, resp["b_4"])
-            cookies["buvid3"] = buvid3
+            if self.url != API["info"]["spi"]["url"]:
+                cookies["buvid3"] = await get_buvid3()
         else:
             cookies["buvid3"] = self.credential.buvid3
         # cookies["Domain"] = ".bilibili.com"
@@ -708,7 +704,7 @@ async def active_buvid(buvid3: str, buvid4: str) -> dict:
     text = json.loads(text)
     if text["code"] != 0:
         raise ExClimbWuzhiException(text["code"], text["msg"])
-    settings.logger.info("激活 buvid3 成功")
+    settings.logger.info(f"激活 buvid3: [{buvid3}] 成功")
 
 
 def get_nav_sync(credential: Union[Credential, None] = None):
@@ -789,7 +785,9 @@ def enc_wbi(params: dict, mixin_key: str):
     params.pop("w_rid", None)  # 重试时先把原有 w_rid 去除
     params["wts"] = int(time.time())
     # web_location 因为没被列入参数可能炸一些接口 比如 video.get_ai_conclusion
-    params["web_location"] = 1550101
+    # 但 video.get_download_url 的 web_location 不是这东西
+    if not params.get("web_location"):
+        params["web_location"] = 1550101
     Ae = urlencode(sorted(params.items()))
     params["w_rid"] = hashlib.md5((Ae + mixin_key).encode(encoding="utf-8")).hexdigest()
 
@@ -942,6 +940,25 @@ def to_form_urlencoded(data: dict) -> str:
         temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
 
     return "&".join(temp)
+
+
+async def generate_buvid3() -> None:
+    global buvid3
+    resp = await get_spi_buvid()
+    buvid3 = resp["b_3"]
+    await active_buvid(buvid3, resp["b_4"])
+
+
+async def get_buvid3() -> str:
+    """
+    获取已激活的生成的 buvid3
+
+    Returns:
+        str: buvid3
+    """
+    if buvid3 == "":
+        await generate_buvid3()
+    return buvid3
 
 
 @atexit.register

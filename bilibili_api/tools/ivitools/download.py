@@ -9,33 +9,12 @@ import tqdm
 import httpx
 from colorama import Fore
 
-from bilibili_api import sync, interactive_video
-
-
-async def download_file(url: str, out: str):
-    resp = httpx.get(
-        url,
-        headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.bilibili.com"},
-        stream=True,
-    )
-    headers = resp.headers
-    CHUNK_SIZE = 1024
-    parts = int(headers["Content-Length"]) // CHUNK_SIZE
-    if int(headers["Content-Length"]) % CHUNK_SIZE != 0:
-        parts += 1
-    fp = open(out, "wb")
-    bar = tqdm.tqdm(range(parts))
-    bar.set_description("DOWNLOADING...")
-    bar.display()
-    for chunk in resp.iter_content(CHUNK_SIZE):
-        fp.write(chunk)
-        bar.update(1)
-
+from bilibili_api import sync, interactive_video, Credential
 
 def download_interactive_video(bvid: str, out: str):
     ivideo = interactive_video.InteractiveVideo(bvid)
     downloader = interactive_video.InteractiveVideoDownloader(
-        ivideo, out, download_file
+        ivideo, out
     )
 
     @downloader.on("START")
@@ -54,7 +33,7 @@ def download_interactive_video(bvid: str, out: str):
 
     @downloader.on("PACKAGING")
     async def on_packaing(data):
-        print("Almost!!! It's packaging your interactive video now! ")
+        print("Packaging your file ...")
 
     @downloader.on("SUCCESS")
     async def on_success(data):

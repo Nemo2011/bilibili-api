@@ -21,11 +21,11 @@ from typing import List, Tuple, Union, Callable, Coroutine
 import httpx
 
 from . import settings
-from .video import Video
+from .video import Video, VideoDownloadURLDataDetecter
 from .utils.utils import get_api
 from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, get_session, get_buvid3
 
 API = get_api("interactive_video")
 
@@ -346,6 +346,12 @@ class InteractiveNode:
         self.__vars = vars
         self.__command = native_command
         self.__vars = self.__command.run_command()
+        self.__info = None
+
+    async def __get_cached_edge_info(self) -> dict:
+        if not self.__info:
+            self.__info = await self.__parent.get_edge_info(self.__id)
+        return self.__info
 
     async def get_vars(self) -> List[InteractiveVariable]:
         """
@@ -363,7 +369,7 @@ class InteractiveNode:
         Returns:
             List[InteractiveNode]: 所有子节点
         """
-        edge_info = await self.__parent.get_edge_info(self.__id)
+        edge_info = await self.__get_cached_edge_info()
         nodes = []
         if edge_info["edges"].get("questions") == None:
             return []
@@ -475,7 +481,7 @@ class InteractiveNode:
         Returns:
             dict: 调用 API 返回的结果
         """
-        return await self.__parent.get_edge_info(self.__id)
+        return await self.__get_cached_edge_info()
 
     def __str__(self):
         return f"{self.get_node_id()}"
@@ -495,7 +501,7 @@ class InteractiveGraph:
         """
         self.__parent = video
         self.__skin = skin
-        self.__node = InteractiveNode(self.__parent, 1, root_cid, [])
+        self.__node = self.__node = InteractiveNode(self.__parent, 0, root_cid, [])
 
     def get_video(self) -> "InteractiveVideo":
         """
@@ -522,6 +528,8 @@ class InteractiveGraph:
         Returns:
             InteractiveNode: 根节点
         """
+        if self.__node.get_node_id() != 0:
+            return self.__node
         edge_info = await self.__parent.get_edge_info(None)
         if "hidden_vars" in edge_info.keys():
             node_vars = edge_info["hidden_vars"]
@@ -544,6 +552,7 @@ class InteractiveGraph:
             var_list
         )
         self.__node._InteractiveNode__vars = var_list  # type: ignore
+        self.__node._InteractiveNode__id = edge_info["edge_id"]
         return self.__node
 
     async def get_children(self) -> List["InteractiveNode"]:
@@ -563,6 +572,8 @@ class InteractiveVideo(Video):
 
     def __init__(self, bvid=None, aid=None, credential=None):
         super().__init__(bvid, aid, credential)
+        self.__graph = None
+        self.__version = None
 
     async def up_get_ivideo_pages(self) -> dict:
         """
@@ -611,23 +622,21 @@ class InteractiveVideo(Video):
         Returns:
             int: 剧情图版本号
         """
-        # 取得初始顶点 cid
-        bvid = self.get_bvid()
-        credential = self.credential if self.credential else Credential()
-        v = Video(bvid=bvid, credential=credential)
-        page_list = await v.get_pages()
-        cid = page_list[0]["cid"]
+        if not self.__version:
+            # 取得初始顶点 cid
+            cid = await self.get_cid()
 
-        # 获取剧情图版本号
-        url = "https://api.bilibili.com/x/player/v2"
-        params = {"bvid": bvid, "cid": cid}
+            # 获取剧情图版本号
+            url = "https://api.bilibili.com/x/player/v2"
+            params = {"bvid": self.get_bvid(), "cid": cid}
 
-        resp = (
-            await Api(method="GET", url=url, credential=credential)
-            .update_params(**params)
-            .result
-        )
-        return resp["interaction"]["graph_version"]
+            resp = (
+                await Api(method="GET", url=url, credential=self.credential)
+                .update_params(**params)
+                .result
+            )
+            self.__version = resp["interaction"]["graph_version"]
+        return self.__version
 
     async def get_edge_info(self, edge_id: Union[int, None] = None):
         """
@@ -639,12 +648,19 @@ class InteractiveVideo(Video):
         Returns:
             dict: 调用 API 返回的结果
         """
-        bvid = self.get_bvid()
+        aid = self.get_aid()
         credential = self.credential if self.credential is not None else Credential()
 
         api = API["info"]["edge_info"]
-        params = {"bvid": bvid, "graph_version": (await self.get_graph_version())}
-
+        params = {
+            "aid": aid,
+            "graph_version": (await self.get_graph_version()),
+            "portal": 0,
+            "screen": 0,
+            "platform": "pc",
+            "choices": "",
+            "buvid": await get_buvid3(),
+        }
         if edge_id is not None:
             params["edge_id"] = edge_id
 
@@ -679,9 +695,11 @@ class InteractiveVideo(Video):
         Returns:
             InteractiveGraph: 情节树
         """
-        edge_info = await self.get_edge_info(1)
-        cid = await self.get_cid()
-        return InteractiveGraph(self, edge_info["edges"]["skin"], cid)
+        if not self.__graph:
+            edge_info = await self.get_edge_info(None)
+            cid = await self.get_cid()
+            self.__graph = InteractiveGraph(self, edge_info["edges"]["skin"], cid)
+        return self.__graph
 
 
 class InteractiveVideoDownloaderEvents(enum.Enum):
@@ -740,6 +758,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         out: str = "",
         self_download_func: Union[Coroutine, None] = None,
         downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI,
+        stream_detecting_params: dict = {},
     ):
         """
         Args:
@@ -750,6 +769,8 @@ class InteractiveVideoDownloader(AsyncEvent):
             self_download_func (Coroutine | None)              : 自定义下载函数（需 async 函数）
 
             downloader_mode    (InteractiveVideoDownloaderMode): 下载模式
+
+            stream_detecting_params (dict)                     : `VideoDownloadURLDataDetecter` 提取最佳流时传入的参数，可控制视频及音频品质
 
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
         """
@@ -762,47 +783,48 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.__task = None
         self.__out = out
         self.__mode = downloader_mode
+        self.__detect_params = stream_detecting_params
 
     async def __download(self, url: str, out: str) -> None:
-        resp = httpx.get(
+        sess = get_session()
+        async with sess.stream(
+            "GET",
             url,
             headers={
                 "User-Agent": "Mozilla/5.0",
                 "Referer": "https://www.bilibili.com",
             },
-            proxies={"all://": settings.proxy},
-            stream=True,
-        )
-        resp.raise_for_status()
+        ) as resp:
+            resp.raise_for_status()
 
-        if os.path.exists(out):
-            os.remove(out)
+            if os.path.exists(out):
+                os.remove(out)
 
-        parent = os.path.dirname(out)
-        if not os.path.exists(parent):
-            os.mkdir(parent)
+            parent = os.path.dirname(out)
+            if not os.path.exists(parent):
+                os.mkdir(parent)
 
-        self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
+            # self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
 
-        all_length = int(resp.headers["Content-Length"])
-        parts = all_length // 1024 + (1 if all_length % 1024 != 0 else 0)
-        cnt = 0
-        start_time = time.perf_counter()
+            all_length = int(resp.headers["Content-Length"])
+            parts = all_length // 1024 + (1 if all_length % 1024 != 0 else 0)
+            cnt = 0
+            start_time = time.perf_counter()
 
-        with open(out, "wb") as f:
-            for chunk in resp.iter_bytes(1024):
-                cnt += 1
-                self.dispatch(
-                    "DOWNLOAD_PART",
-                    {
-                        "done": cnt,
-                        "total": parts,
-                        "time": int(time.perf_counter() - start_time),
-                    },
-                )
-                f.write(chunk)
+            with open(out, "wb") as f:
+                async for chunk in resp.aiter_bytes(1024):
+                    cnt += 1
+                    self.dispatch(
+                        "DOWNLOAD_PART",
+                        {
+                            "done": cnt,
+                            "total": parts,
+                            "time": int(time.perf_counter() - start_time),
+                        },
+                    )
+                    f.write(chunk)
 
-        self.dispatch("DOWNLOAD_SUCCESS")
+            self.dispatch("DOWNLOAD_SUCCESS")
 
     async def __main(self) -> None:
         # 初始化
@@ -862,7 +884,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         edges_info[n.get_node_id()]["vars"] = [
             var2dict(var) for var in (await n.get_vars())
         ]
-        edges_info[n.get_node_id()]["condition"] = (n.get_jumping_condition()._InteractiveJumpingCondition__command,)  # type: ignore
+        edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
         edges_info[n.get_node_id()]["jump_type"] = 0
         edges_info[n.get_node_id()]["is_default"] = True
         edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
@@ -887,7 +909,11 @@ class InteractiveVideoDownloader(AsyncEvent):
                     subs = await now_node.get_children()
                     self.dispatch(
                         "GET",
-                        {"title": node["title"], "node_id": now_node.get_node_id()},
+                        {
+                            "title": node["title"],
+                            "node_id": node["edge_id"],
+                            "cid": now_node.get_cid(),
+                        },
                     )
                     break
                 except Exception as e:
@@ -949,6 +975,9 @@ class InteractiveVideoDownloader(AsyncEvent):
             {
                 "bvid": self.__video.get_bvid(),
                 "title": (await self.__video.get_info())["title"],
+                "root_id": (
+                    await (await self.__video.get_graph()).get_root_node()
+                ).get_node_id(),
             },
             open(tmp_dir_name + "/bilivideo.json", "w+", encoding="utf-8"),
             indent=2,
@@ -960,21 +989,18 @@ class InteractiveVideoDownloader(AsyncEvent):
             if not cid in cid_set:
                 self.dispatch("PREPARE_DOWNLOAD", {"cid": item["cid"]})
                 cid_set.add(cid)
-                url = await self.__video.get_download_url(cid=cid, html5=True)
+                url = await self.__video.get_download_url(cid=cid)
+                streams = VideoDownloadURLDataDetecter(url).detect_best_streams(
+                    **self.__detect_params
+                )
                 await self.__download_func(
-                    url["durl"][0]["url"],
-                    tmp_dir_name + "/" + str(cid) + ".mp4",
+                    streams[0].url,
+                    tmp_dir_name + "/" + str(cid) + ".video.mp4",
                 )  # type: ignore
-
-        root_cid = await self.__video.get_cid()
-        if not root_cid in cid_set:
-            self.dispatch("PREPARE_DOWNLOAD", {"cid": root_cid})
-            cid = await self.__video.get_cid()
-            url = await self.__video.get_download_url(cid=cid, html5=True)
-            title = (await self.__video.get_info())["title"]
-            await self.__download_func(
-                url["durl"][0]["url"], tmp_dir_name + "/" + str(cid) + ".mp4"
-            )  # type: ignore
+                await self.__download_func(
+                    streams[1].url,
+                    tmp_dir_name + "/" + str(cid) + ".audio.mp4",
+                )  # type: ignore
 
         self.dispatch("PACKAGING")
         zip = zipfile.ZipFile(
@@ -1042,7 +1068,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         edges_info[n.get_node_id()]["vars"] = [
             var2dict(var) for var in (await n.get_vars())
         ]
-        edges_info[n.get_node_id()]["condition"] = (n.get_jumping_condition()._InteractiveJumpingCondition__command,)  # type: ignore
+        edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
         edges_info[n.get_node_id()]["jump_type"] = 0
         edges_info[n.get_node_id()]["is_default"] = True
         edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
@@ -1126,21 +1152,19 @@ class InteractiveVideoDownloader(AsyncEvent):
             if not cid in cid_set:
                 self.dispatch("PREPARE_DOWNLOAD", {"cid": item["cid"]})
                 cid_set.add(cid)
-                url = await self.__video.get_download_url(cid=cid, html5=True)
+                url = await self.__video.get_download_url(cid=cid)
+                streams = VideoDownloadURLDataDetecter(url).detect_best_streams(
+                    **self.__detect_params
+                )
                 await self.__download_func(
-                    url["durl"][0]["url"],
-                    tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4",
+                    streams[0].url,
+                    tmp_dir_name + "/" + str(cid) + " " + item["title"] + ".video.mp4",
+                )  # type: ignore
+                await self.__download_func(
+                    streams[1].url,
+                    tmp_dir_name + "/" + str(cid) + " " + item["title"] + ".audio.mp4",
                 )  # type: ignore
 
-        root_cid = await self.__video.get_cid()
-        if not root_cid in cid_set:
-            self.dispatch("PREPARE_DOWNLOAD", {"cid": root_cid})
-            cid = await self.__video.get_cid()
-            url = await self.__video.get_download_url(cid=cid, html5=True)
-            title = (await self.__video.get_info())["title"]
-            await self.__download_func(
-                url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
-            )  # type: ignore
         self.dispatch("SUCCESS")
 
     async def __dot_graph_main(self) -> None:
@@ -1218,7 +1242,9 @@ class InteractiveVideoDownloader(AsyncEvent):
                         queue.append(cur_node_child)
                     fetched_nodes_info.append(cur_node_info_class)
                 else:
-                    node_info_dict[cur_node.get_node_id()] = f"跳转至 {back_to_node_title}"
+                    node_info_dict[cur_node.get_node_id()] = (
+                        f"跳转至 {back_to_node_title}"
+                    )
         graph_content = "digraph {\nfontname=FangSong\nnode [fontname=FangSong]\n"
         for script in scripts:
             graph_content += f'\t{script["from"]} -> {script["to"]}'
@@ -1300,7 +1326,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         edges_info[n.get_node_id()]["vars"] = [
             var2dict(var) for var in (await n.get_vars())
         ]
-        edges_info[n.get_node_id()]["condition"] = (n.get_jumping_condition()._InteractiveJumpingCondition__command,)  # type: ignore
+        edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
         edges_info[n.get_node_id()]["jump_type"] = 0
         edges_info[n.get_node_id()]["is_default"] = True
         edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
@@ -1387,6 +1413,9 @@ class InteractiveVideoDownloader(AsyncEvent):
             {
                 "bvid": self.__video.get_bvid(),
                 "title": (await self.__video.get_info())["title"],
+                "root_id": (
+                    await (await self.__video.get_graph()).get_root_node()
+                ).get_node_id(),
             },
             open(tmp_dir_name + "/bilivideo.json", "w+", encoding="utf-8"),
             indent=2,
@@ -1398,21 +1427,18 @@ class InteractiveVideoDownloader(AsyncEvent):
             if not cid in cid_set:
                 self.dispatch("PREPARE_DOWNLOAD", {"cid": item["cid"]})
                 cid_set.add(cid)
-                url = await self.__video.get_download_url(cid=cid, html5=True)
+                url = await self.__video.get_download_url(cid=cid)
+                streams = VideoDownloadURLDataDetecter(url).detect_best_streams(
+                    **self.__detect_params
+                )
                 await self.__download_func(
-                    url["durl"][0]["url"],
-                    tmp_dir_name + "/" + str(key) + " " + item["title"] + ".mp4",
+                    streams[0].url,
+                    tmp_dir_name + "/" + str(cid) + ".video.mp4",
                 )  # type: ignore
-
-        root_cid = await self.__video.get_cid()
-        if not root_cid in cid_set:
-            self.dispatch("PREPARE_DOWNLOAD", {"cid": root_cid})
-            cid = await self.__video.get_cid()
-            url = await self.__video.get_download_url(cid=cid, html5=True)
-            title = (await self.__video.get_info())["title"]
-            await self.__download_func(
-                url["durl"][0]["url"], tmp_dir_name + "/1 " + title + ".mp4"
-            )  # type: ignore
+                await self.__download_func(
+                    streams[1].url,
+                    tmp_dir_name + "/" + str(cid) + ".audio.mp4",
+                )  # type: ignore
 
         self.dispatch("SUCCESS")
 
