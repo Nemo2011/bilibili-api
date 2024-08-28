@@ -289,8 +289,9 @@ class MPlayer(object):
         self.player = QtMultimediaWidgets.QVideoWidget(Form)
         self.player.setGeometry(QtCore.QRect(0, 0, 800, 450))
         self.player.setObjectName("player")
+        self.videoplayer = QtMultimedia.QMediaPlayer()
+        self.videoplayer.setVideoOutput(self.player)
         self.mediaplayer = QtMultimedia.QMediaPlayer()
-        self.mediaplayer.setVideoOutput(self.player)
         self.audio_output = QtMultimedia.QAudioOutput()
         self.audio_output.setVolume(0.0)
         self.mediaplayer.setAudioOutput(self.audio_output)
@@ -514,6 +515,7 @@ class MPlayer(object):
             ) and (not self.has_end):
                 self.has_end = True
                 self.mediaplayer.pause()
+                self.videoplayer.pause()
                 self.final_position = self.mediaplayer.position()
                 self.mediaplayer.setAudioOutput(
                     QtMultimedia.QAudioOutput().setVolume(0)
@@ -540,6 +542,7 @@ class MPlayer(object):
                 self.mediaplayer.setAudioOutput(
                     QtMultimedia.QAudioOutput().setVolume(0)
                 )
+                self.videoplayer.setPosition(self.final_position)
                 duration = self.mediaplayer.duration() // 1000
                 duration_sec = duration % 60
                 duration_min = duration // 60
@@ -621,14 +624,17 @@ class MPlayer(object):
         self.win.mouseReleaseEvent = mouseReleaseEvent
 
     def start_playing(self):
+        self.videoplayer.play()
         self.mediaplayer.play()
         self.is_stoping = False
 
     def stop_playing(self):
+        self.videoplayer.stop()
         self.mediaplayer.stop()
         self.is_stoping = True
 
     def pause_playing(self):
+        self.videoplayer.pause()
         self.mediaplayer.pause()
         self.is_stoping = True
 
@@ -661,11 +667,16 @@ class MPlayer(object):
         )
         self.stop_playing()
         self.pp.setText("Pause")
-        dest = self.temp_dir + str(cid) + ".mp4"
+        dest = self.temp_dir + str(cid) + ".audio.mp4"
+        dest_v = self.temp_dir + str(cid) + ".video.mp4"
         self.mediaplayer.setSource(QtCore.QUrl(dest))
         self.mediaplayer.setPosition(0)
         if self.mediaplayer.duration() <= 7:
             self.mediaplayer.setPosition(self.mediaplayer.duration())
+        self.videoplayer.setSource(QtCore.QUrl(dest_v))
+        self.videoplayer.setPosition(0)
+        if self.videoplayer.duration() <= 7:
+            self.videoplayer.setPosition(self.videoplayer.duration())
         self.start_playing()
 
     def extract_ivi(self, path: str):
@@ -693,15 +704,17 @@ class MPlayer(object):
         self.graph = json.load(
             open(self.temp_dir + "ivideo.json", "r", encoding="utf-8")
         )
-        self.current_node = 1
-        variables = self.graph["1"]["vars"]
+        self.current_node = bilivideo_parser.decode(
+            open(self.temp_dir + "bilivideo.json", "r", encoding="utf-8").read()
+        )["root_id"]
+        variables = self.graph[str(self.current_node)]["vars"]
         for var in variables:
             self.variables.append(
                 InteractiveVariable(
                     var["name"], var["id"], var["value"], var["show"], var["random"]
                 )
             )
-        self.set_source(self.graph["1"]["cid"])
+        self.set_source(self.graph[str(self.current_node)]["cid"])
         self.volume_change_event()
 
     def close_ivi(self):
@@ -722,10 +735,12 @@ class MPlayer(object):
         self.pp.setText("Pause")
         self.has_end = False
         self.mediaplayer = QtMultimedia.QMediaPlayer()  # Clear the multimedia source
-        self.mediaplayer.setVideoOutput(self.player)
         self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput())
+        self.videoplayer = QtMultimedia.QMediaPlayer()
+        self.videoplayer.setVideoOutput(self.player)
         self.volume_change_event()
-        shutil.rmtree(self.temp_dir)
+        if os.path.exists(self.temp_dir):
+            shutil.rmtree(self.temp_dir)
         while True:
             if not os.path.exists(self.temp_dir):
                 break
@@ -781,10 +796,12 @@ class MPlayer(object):
             pass
         else:
             self.mediaplayer.setPosition(position)
+            self.videoplayer.setPosition(position)
             self.start_playing()
 
     def position_start_change_event(self):
         self.mediaplayer.pause()
+        self.videoplayer.pause()
         self.is_draging_slider = True
 
     def position_change_event(self):
@@ -793,6 +810,7 @@ class MPlayer(object):
             self.slider.setValue(100)
             return
         self.mediaplayer.setPosition(int(self.mediaplayer.duration() * volume / 100))
+        self.videoplayer.setPosition(int(self.videoplayer.duration() * volume / 100))
         if not self.is_stoping:
             self.start_playing()
         self.is_draging_slider = False

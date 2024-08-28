@@ -44,10 +44,11 @@ def scan_ivi_file(path: str):
         bar.set_description("Scanning node ")
         if not ("cid" in graph[str(item)].keys()):
             raise Exception(f"Missing CID in the node {item}")
-            return
         else:
             cid = graph[str(item)]["cid"]
-        if not (os.path.exists(os.path.join(extract_dir, str(cid) + ".mp4"))):
+        if not (os.path.exists(os.path.join(extract_dir, str(cid) + ".video.mp4"))):
+            raise Exception(f"Missing video source of the node {item}")
+        if not (os.path.exists(os.path.join(extract_dir, str(cid) + ".audio.mp4"))):
             raise Exception(f"Missing video source of the node {item}")
         time.sleep(0.01)
     print(Fore.GREEN + "Congratulation! Your file is OK. ", Fore.RESET)
