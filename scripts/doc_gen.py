@@ -134,23 +134,37 @@ def parse(data: dict, indent: int = 0):
         if data["node"]["defn"]["name"] in ignored_classes:
             return
         funcs.append(
-            (
+            [
                 data["node"]["defn"]["name"],
                 data["node"]["defn"]["fullname"],
-                f'class({data["node"]["bases"][0]})',
+                "class",
+                data["node"]["bases"][0],
                 indent,
-            )
+            ]
         )
+        if data["node"]["metadata"].get("dataclass"):
+            funcs[-1][3] = "@dataclasses.dataclass"
     elif data["node"][".class"] == "FuncDef":
         if data["node"]["name"] in ignored_funcs:
             return
         funcs.append(
-            (
+            [
                 data["node"]["name"],
                 data["node"]["fullname"],
                 "async def" if "is_coroutine" in data["node"]["flags"] else "def",
+                "",
                 indent,
-            )
+            ]
+        )
+    elif data["node"][".class"] == "Decorator" and "is_static" in data["node"]["func"]["flags"]:
+        funcs.append(
+            [
+                data["node"]["func"]["name"],
+                data["node"]["func"]["fullname"],
+                "async def" if "is_coroutine" in data["node"]["func"]["flags"] else "def",
+                "@staticmethod",
+                indent,
+            ]
         )
     elif (
         data["node"][".class"] == "Var"
@@ -160,7 +174,7 @@ def parse(data: dict, indent: int = 0):
             return
         if indent != 1:
             return
-        funcs.append((data["node"]["name"], data["node"]["fullname"], "const", indent))
+        funcs.append((data["node"]["name"], data["node"]["fullname"], "const", "", indent))
     else:
         return
     if not "names" in data["node"]:
@@ -177,6 +191,8 @@ modules = os.listdir(
 )
 modules.sort()
 for module in modules:
+    if module.find("settings") != -1:
+        continue
     if module.find("data.json") != -1 and module != "__init__.data.json":
         funcs = []
         data = json.load(
@@ -308,14 +324,16 @@ for module in all_funcs:
     )
     for func in module[1:]:
         print("PROCESS", func[1])
-        file.write("#" * func[3] + " ")
-        if func[2].find("class") != -1:
-            file.write(
-                f"class {func[0]}\n\n**Extend: {func[2].split('(')[1][:-1]}**\n\n"
-            )
+        if func[4] == 2:
+            file.write("--\n\n")
+        if func[3].startswith("@"):
+            file.write(f"**{func[3]}** \n\n")
+        file.write("#" * func[4] + f" {func[2]} {func[0]}()\n\n")
+        if func[2] == "class":
+            if not func[3].startswith("@") and func[3] != "builtins.object":
+                file.write(f"**Extend: {func[3]}**\n\n")
             file.write(parse_docstring1(eval(f"{func[1]}.__doc__")))
         else:
-            file.write(f"{func[2]} {func[0]}()\n\n")
             file.write(parse_docstring(eval(f"{func[1]}.__doc__")))
     file.close()
     print("DONE", docs_dir)

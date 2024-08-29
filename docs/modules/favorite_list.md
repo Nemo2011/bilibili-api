@@ -10,9 +10,9 @@ bilibili_api.favorite_list
 from bilibili_api import favorite_list
 ```
 
-## class FavoriteList
+--
 
-**Extend: builtins.object**
+## class FavoriteList()
 
 收藏夹类
 
@@ -109,7 +109,9 @@ from bilibili_api import favorite_list
 
 
 
-## class FavoriteListContentOrder
+--
+
+## class FavoriteListContentOrder()
 
 **Extend: enum.Enum**
 
@@ -122,7 +124,9 @@ from bilibili_api import favorite_list
 
 
 
-## class FavoriteListType
+--
+
+## class FavoriteListType()
 
 **Extend: enum.Enum**
 
@@ -135,7 +139,9 @@ from bilibili_api import favorite_list
 
 
 
-## class SearchFavoriteListMode
+--
+
+## class SearchFavoriteListMode()
 
 **Extend: enum.Enum**
 
@@ -146,6 +152,8 @@ from bilibili_api import favorite_list
 
 
 
+
+--
 
 ## async def clean_video_favorite_list_content()
 
@@ -161,6 +169,8 @@ from bilibili_api import favorite_list
 
 
 
+
+--
 
 ## async def copy_video_favorite_list_content()
 
@@ -179,6 +189,8 @@ from bilibili_api import favorite_list
 
 
 
+--
+
 ## async def create_video_favorite_list()
 
 新建视频收藏夹列表。
@@ -196,6 +208,8 @@ from bilibili_api import favorite_list
 
 
 
+--
+
 ## async def delete_video_favorite_list()
 
 删除视频收藏夹，可批量删除。
@@ -210,6 +224,8 @@ from bilibili_api import favorite_list
 
 
 
+
+--
 
 ## async def delete_video_favorite_list_content()
 
@@ -227,6 +243,8 @@ from bilibili_api import favorite_list
 
 
 
+--
+
 ## async def get_article_favorite_list()
 
 获取自己的专栏收藏夹内容。
@@ -242,6 +260,8 @@ from bilibili_api import favorite_list
 
 
 
+--
+
 ## async def get_course_favorite_list()
 
 获取自己的课程收藏夹内容。
@@ -256,6 +276,8 @@ from bilibili_api import favorite_list
 
 
 
+
+--
 
 ## async def get_favorite_collected()
 
@@ -273,6 +295,8 @@ from bilibili_api import favorite_list
 
 
 
+--
+
 ## async def get_note_favorite_list()
 
 获取自己的笔记收藏夹内容。
@@ -287,6 +311,8 @@ from bilibili_api import favorite_list
 
 
 
+
+--
 
 ## async def get_topic_favorite_list()
 
@@ -303,6 +329,8 @@ from bilibili_api import favorite_list
 
 
 
+--
+
 ## async def get_video_favorite_list()
 
 获取视频收藏夹列表。
@@ -318,6 +346,8 @@ from bilibili_api import favorite_list
 
 
 
+
+--
 
 ## async def get_video_favorite_list_content()
 
@@ -341,6 +371,8 @@ mode 参数见 SearchFavoriteListMode 枚举。
 
 
 
+--
+
 ## async def modify_video_favorite_list()
 
 修改视频收藏夹信息。
@@ -358,6 +390,8 @@ mode 参数见 SearchFavoriteListMode 枚举。
 
 
 
+
+--
 
 ## async def move_video_favorite_list_content()
 

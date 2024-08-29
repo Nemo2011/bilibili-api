@@ -10,6 +10,8 @@ bilibili_api.ass
 from bilibili_api import ass
 ```
 
+--
+
 ## async def make_ass_file_danmakus_protobuf()
 
 生成视频弹幕文件
@@ -35,6 +37,8 @@ from bilibili_api import ass
 
 
 
+--
+
 ## async def make_ass_file_danmakus_xml()
 
 生成视频弹幕文件
@@ -57,6 +61,8 @@ from bilibili_api import ass
 **Returns:** None
 
 
+
+--
 
 ## async def make_ass_file_subtitle()
 

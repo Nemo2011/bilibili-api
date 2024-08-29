@@ -12,9 +12,9 @@ bilibili_api.vote
 from bilibili_api import vote
 ```
 
-## class Vote
+--
 
-**Extend: builtins.object**
+## class Vote()
 
 投票类
 
@@ -90,9 +90,9 @@ from bilibili_api import vote
 
 
 
-## class VoteChoices
+--
 
-**Extend: builtins.object**
+## class VoteChoices()
 
 投票选项类
 
@@ -137,7 +137,9 @@ from bilibili_api import vote
 
 
 
-## class VoteType
+--
+
+## class VoteType()
 
 **Extend: enum.Enum**
 
@@ -148,6 +150,8 @@ from bilibili_api import vote
 
 
 
+
+--
 
 ## async def create_vote()
 

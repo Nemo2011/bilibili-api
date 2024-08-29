@@ -12,18 +12,18 @@ bilibili_api.watchroom
 from bilibili_api import watchroom
 ```
 
-## class Message
+--
 
-**Extend: builtins.object**
+## class Message()
 
 消息集合
 
 
 
 
-## class MessageSegment
+--
 
-**Extend: builtins.object**
+## class MessageSegment()
 
 消息片段
 
@@ -34,7 +34,9 @@ from bilibili_api import watchroom
 | is_emoji | bool | 是否为表情包 |
 
 
-## class MessageType
+--
+
+## class MessageType()
 
 **Extend: enum.Enum**
 
@@ -46,7 +48,9 @@ from bilibili_api import watchroom
 
 
 
-## class SeasonType
+--
+
+## class SeasonType()
 
 **Extend: enum.Enum**
 
@@ -62,9 +66,9 @@ from bilibili_api import watchroom
 
 
 
-## class WatchRoom
+--
 
-**Extend: builtins.object**
+## class WatchRoom()
 
 放映室类
 
@@ -228,6 +232,8 @@ from bilibili_api import watchroom
 
 
 
+--
+
 ## async def create()
 
 创建放映室
@@ -244,6 +250,8 @@ from bilibili_api import watchroom
 
 
 
+
+--
 
 ## async def match()
 

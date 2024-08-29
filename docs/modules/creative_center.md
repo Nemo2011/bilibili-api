@@ -12,7 +12,9 @@ bilibili_api.creative_center
 from bilibili_api import creative_center
 ```
 
-## class ArchiveType
+--
+
+## class ArchiveType()
 
 **Extend: enum.Enum**
 
@@ -25,7 +27,9 @@ from bilibili_api import creative_center
 
 
 
-## class ArticleInfoType
+--
+
+## class ArticleInfoType()
 
 **Extend: enum.Enum**
 
@@ -41,7 +45,9 @@ from bilibili_api import creative_center
 
 
 
-## class CommentManagerOrder
+--
+
+## class CommentManagerOrder()
 
 **Extend: enum.Enum**
 
@@ -54,7 +60,9 @@ from bilibili_api import creative_center
 
 
 
-## class Copyright
+--
+
+## class Copyright()
 
 **Extend: enum.Enum**
 
@@ -67,7 +75,9 @@ from bilibili_api import creative_center
 
 
 
-## class DanmakuMode
+--
+
+## class DanmakuMode()
 
 **Extend: enum.Enum**
 
@@ -84,7 +94,9 @@ from bilibili_api import creative_center
 
 
 
-## class DanmakuOrder
+--
+
+## class DanmakuOrder()
 
 **Extend: enum.Enum**
 
@@ -96,7 +108,9 @@ from bilibili_api import creative_center
 
 
 
-## class DanmakuPool
+--
+
+## class DanmakuPool()
 
 **Extend: enum.Enum**
 
@@ -109,7 +123,9 @@ from bilibili_api import creative_center
 
 
 
-## class DanmakuSort
+--
+
+## class DanmakuSort()
 
 **Extend: enum.Enum**
 
@@ -121,7 +137,9 @@ from bilibili_api import creative_center
 
 
 
-## class DanmakuType
+--
+
+## class DanmakuType()
 
 **Extend: enum.Enum**
 
@@ -133,7 +151,9 @@ from bilibili_api import creative_center
 
 
 
-## class FanGraphPeriod
+--
+
+## class FanGraphPeriod()
 
 **Extend: enum.Enum**
 
@@ -147,7 +167,9 @@ from bilibili_api import creative_center
 
 
 
-## class FanGraphType
+--
+
+## class FanGraphType()
 
 **Extend: enum.Enum**
 
@@ -161,7 +183,9 @@ from bilibili_api import creative_center
 
 
 
-## class GraphPeriod
+--
+
+## class GraphPeriod()
 
 **Extend: enum.Enum**
 
@@ -176,7 +200,9 @@ from bilibili_api import creative_center
 
 
 
-## class GraphType
+--
+
+## class GraphType()
 
 **Extend: enum.Enum**
 
@@ -196,7 +222,9 @@ from bilibili_api import creative_center
 
 
 
-## class UploadManagerArticleStatus
+--
+
+## class UploadManagerArticleStatus()
 
 **Extend: enum.Enum**
 
@@ -210,7 +238,9 @@ from bilibili_api import creative_center
 
 
 
-## class UploadManagerOrder
+--
+
+## class UploadManagerOrder()
 
 **Extend: enum.Enum**
 
@@ -225,7 +255,9 @@ from bilibili_api import creative_center
 
 
 
-## class UploadManagerSort
+--
+
+## class UploadManagerSort()
 
 **Extend: enum.Enum**
 
@@ -240,7 +272,9 @@ from bilibili_api import creative_center
 
 
 
-## class UploadManagerStatus
+--
+
+## class UploadManagerStatus()
 
 **Extend: enum.Enum**
 
@@ -253,6 +287,8 @@ from bilibili_api import creative_center
 
 
 
+
+--
 
 ## async def del_comments()
 
@@ -272,6 +308,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def del_danmaku()
 
 删除弹幕
@@ -285,6 +323,8 @@ from bilibili_api import creative_center
 **Returns:** None
 
 
+
+--
 
 ## async def edit_danmaku_pool()
 
@@ -302,6 +342,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def edit_danmaku_state()
 
 操作弹幕状态
@@ -318,6 +360,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_article_graph()
 
 获取文章图表数据。
@@ -333,6 +377,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_article_list_upload_manager_info()
 
 获取内容管理文章信息
@@ -347,6 +393,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_article_overview()
 
 获取文章概览数据。
@@ -360,6 +408,8 @@ from bilibili_api import creative_center
 
 
 
+
+--
 
 ## async def get_article_rank()
 
@@ -376,6 +426,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_article_source()
 
 获取文章阅读终端数据
@@ -389,6 +441,8 @@ from bilibili_api import creative_center
 
 
 
+
+--
 
 ## async def get_article_upload_manager_info()
 
@@ -406,6 +460,8 @@ from bilibili_api import creative_center
 
 
 
+
+--
 
 ## async def get_comments()
 
@@ -429,6 +485,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_compare()
 
 获取对比数据。
@@ -442,6 +500,8 @@ from bilibili_api import creative_center
 
 
 
+
+--
 
 ## async def get_danmakus()
 
@@ -474,6 +534,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_fan_graph()
 
 获取粉丝图表数据。
@@ -490,6 +552,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_fan_overview()
 
 获取粉丝概览数据。
@@ -504,6 +568,8 @@ from bilibili_api import creative_center
 
 
 
+
+--
 
 ## async def get_graph()
 
@@ -521,6 +587,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_overview()
 
 获取概览数据。
@@ -535,6 +603,8 @@ from bilibili_api import creative_center
 
 
 
+
+--
 
 ## async def get_recently_danmakus()
 
@@ -552,6 +622,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_video_draft_upload_manager_info()
 
 获取内容管理视频草稿信息
@@ -565,6 +637,8 @@ from bilibili_api import creative_center
 
 
 
+
+--
 
 ## async def get_video_playanalysis()
 
@@ -581,6 +655,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_video_source()
 
 获取稿件播放来源分布。
@@ -595,6 +671,8 @@ from bilibili_api import creative_center
 
 
 
+--
+
 ## async def get_video_survey()
 
 获取视频各分区中占比排行。
@@ -608,6 +686,8 @@ from bilibili_api import creative_center
 
 
 
+
+--
 
 ## async def get_video_upload_manager_info()
 

@@ -10,7 +10,9 @@ bilibili_api.live_area
 from bilibili_api import live_area
 ```
 
-## class LiveRoomOrder
+--
+
+## class LiveRoomOrder()
 
 **Extend: enum.Enum**
 
@@ -21,6 +23,8 @@ from bilibili_api import live_area
 
 
 
+
+--
 
 ## def get_area_info_by_id()
 
@@ -36,6 +40,8 @@ from bilibili_api import live_area
 
 
 
+--
+
 ## def get_area_info_by_name()
 
 根据频道名称获取频道信息。
@@ -50,6 +56,8 @@ from bilibili_api import live_area
 
 
 
+--
+
 ## def get_area_list()
 
 获取所有分区的数据
@@ -60,6 +68,8 @@ from bilibili_api import live_area
 
 
 
+
+--
 
 ## def get_area_list_sub()
 
@@ -72,6 +82,8 @@ from bilibili_api import live_area
 
 
 
+
+--
 
 ## async def get_list_by_area()
 

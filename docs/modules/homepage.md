@@ -10,6 +10,8 @@ bilibili_api.homepage
 from bilibili_api import homepage
 ```
 
+--
+
 ## async def get_links()
 
 获取主页左面的链接。
@@ -24,6 +26,8 @@ from bilibili_api import homepage
 
 
 
+
+--
 
 ## async def get_popularize()
 
@@ -40,6 +44,8 @@ from bilibili_api import homepage
 
 
 
+--
+
 ## async def get_top_photo()
 
 获取主页最上方的图像。
@@ -51,6 +57,8 @@ from bilibili_api import homepage
 
 
 
+
+--
 
 ## async def get_videos()
 

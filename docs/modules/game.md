@@ -10,9 +10,9 @@ bilibili_api.game
 from bilibili_api import game
 ```
 
-## class Game
+--
 
-**Extend: builtins.object**
+## class Game()
 
 游戏类
 
@@ -88,7 +88,9 @@ from bilibili_api import game
 
 
 
-## class GameRankType
+--
+
+## class GameRankType()
 
 **Extend: enum.Enum**
 
@@ -104,6 +106,8 @@ from bilibili_api import game
 
 
 
+--
+
 ## async def game_name2id()
 
 将游戏名转换为游戏的编码
@@ -117,6 +121,8 @@ from bilibili_api import game
 
 
 
+
+--
 
 ## async def get_game_rank()
 
@@ -134,6 +140,8 @@ from bilibili_api import game
 
 
 
+--
+
 ## async def get_start_test_list()
 
 获取游戏公测时间线
@@ -148,6 +156,8 @@ from bilibili_api import game
 
 
 
+
+--
 
 ## def get_wiki_api_root()
 

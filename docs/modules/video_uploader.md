@@ -10,7 +10,9 @@ bilibili_api.video_uploader
 from bilibili_api import video_uploader
 ```
 
-## class Lines
+--
+
+## class Lines()
 
 **Extend: enum.Enum**
 
@@ -26,7 +28,9 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-## class VideoEditor
+--
+
+## class VideoEditor()
 
 **Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
 
@@ -51,7 +55,9 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-## class VideoEditorEvents
+--
+
+## class VideoEditorEvents()
 
 **Extend: enum.Enum**
 
@@ -73,9 +79,9 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-## class VideoMeta
+--
 
-**Extend: builtins.object**
+## class VideoMeta()
 
 视频源数据
 
@@ -96,7 +102,9 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-## class VideoPorderIndustry
+--
+
+## class VideoPorderIndustry()
 
 **Extend: enum.Enum**
 
@@ -121,16 +129,18 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-## class VideoPorderMeta
+--
 
-**Extend: builtins.object**
+## class VideoPorderMeta()
 
 视频商业相关参数
 
 
 
 
-## class VideoPorderShowType
+--
+
+## class VideoPorderShowType()
 
 **Extend: enum.Enum**
 
@@ -150,9 +160,9 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-## class VideoPorderType
+--
 
-**Extend: builtins.object**
+## class VideoPorderType()
 
 视频商业类型
 
@@ -162,7 +172,9 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-## class VideoUploader
+--
+
+## class VideoUploader()
 
 **Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
 
@@ -188,7 +200,9 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-## class VideoUploaderEvents
+--
+
+## class VideoUploaderEvents()
 
 **Extend: enum.Enum**
 
@@ -218,9 +232,9 @@ Events:
 
 
 
-## class VideoUploaderPage
+--
 
-**Extend: builtins.object**
+## class VideoUploaderPage()
 
 分 P 对象
 
@@ -238,6 +252,8 @@ Events:
 
 
 
+--
+
 ## async def get_available_topics()
 
 获取可用 topic 列表
@@ -247,6 +263,8 @@ Events:
 **Returns:** None
 
 
+
+--
 
 ## async def get_missions()
 
@@ -262,6 +280,8 @@ Events:
 
 
 
+
+--
 
 ## async def upload_cover()
 

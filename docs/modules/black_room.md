@@ -10,7 +10,9 @@ bilibili_api.black_room
 from bilibili_api import black_room
 ```
 
-## class BlackFrom
+--
+
+## class BlackFrom()
 
 **Extend: enum.Enum**
 
@@ -23,7 +25,9 @@ from bilibili_api import black_room
 
 
 
-## class BlackReasonType
+--
+
+## class BlackReasonType()
 
 **Extend: enum.Enum**
 
@@ -64,9 +68,9 @@ from bilibili_api import black_room
 
 
 
-## class BlackRoom
+--
 
-**Extend: builtins.object**
+## class BlackRoom()
 
 小黑屋
 
@@ -122,7 +126,9 @@ from bilibili_api import black_room
 
 
 
-## class BlackType
+--
+
+## class BlackType()
 
 **Extend: enum.Enum**
 
@@ -142,9 +148,9 @@ from bilibili_api import black_room
 
 
 
-## class JuryCase
+--
 
-**Extend: builtins.object**
+## class JuryCase()
 
 案件仲裁
 
@@ -194,7 +200,9 @@ from bilibili_api import black_room
 
 
 
-## class JuryVoteOpinion
+--
+
+## class JuryVoteOpinion()
 
 **Extend: enum.Enum**
 
@@ -215,6 +223,8 @@ from bilibili_api import black_room
 
 
 
+--
+
 ## async def get_blocked_list()
 
 获取小黑屋中的违规列表
@@ -231,6 +241,8 @@ from bilibili_api import black_room
 
 
 
+--
+
 ## async def get_jury_case_list()
 
 获取仲裁案件列表
@@ -246,6 +258,8 @@ from bilibili_api import black_room
 
 
 
+
+--
 
 ## async def get_next_jury_case()
 

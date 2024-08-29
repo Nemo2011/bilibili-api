@@ -10,9 +10,11 @@ bilibili_api.show
 from bilibili_api import show
 ```
 
-## class BuyerInfo
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class BuyerInfo()
 
 购买人信息
 
@@ -49,9 +51,11 @@ isBuyerValid (bool): 默认为 True
 
 
 
-## class OrderTicket
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class OrderTicket()
 
 购票类
 
@@ -87,9 +91,11 @@ isBuyerValid (bool): 默认为 True
 
 
 
-## class Session
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class Session()
 
 场次对象
 
@@ -104,9 +110,11 @@ ticket_list (list[Ticket]): 存放Ticket对象的list
 
 
 
-## class Ticket
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class Ticket()
 
 票对象
 
@@ -123,6 +131,8 @@ sale_end (str): 开售结束时间
 
 
 
+--
+
 ## async def get_all_buyer_info()
 
 返回账号的全部身份信息
@@ -136,6 +146,8 @@ sale_end (str): 开售结束时间
 
 
 
+
+--
 
 ## async def get_all_buyer_info_obj()
 
@@ -151,6 +163,8 @@ sale_end (str): 开售结束时间
 
 
 
+--
+
 ## async def get_available_sessions()
 
 返回该项目的所有可用场次
@@ -164,6 +178,8 @@ sale_end (str): 开售结束时间
 
 
 
+
+--
 
 ## async def get_project_info()
 

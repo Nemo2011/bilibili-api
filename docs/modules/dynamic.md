@@ -10,9 +10,9 @@ bilibili_api.dynamic
 from bilibili_api import dynamic
 ```
 
-## class BuildDynamic
+--
 
-**Extend: builtins.object**
+## class BuildDynamic()
 
 构建动态内容. 提供两种 API.
 
@@ -104,6 +104,38 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | name | type | description |
 | - | - | - |
 | vote | vote.Vote | 投票对象 |
+
+**Returns:** None
+
+
+
+**@staticmethod** 
+
+### def create_by_args()
+
+通过参数构建动态
+
+
+| name | type | description |
+| - | - | - |
+| text | Union[str, None] | 动态文字. Defaults to "". |
+| pics | Union[List[Picture], None] | 动态图片列表. Defaults to []. |
+| topic_id | Union[int, None] | 动态话题 id. Defaults to -1. |
+| vote_id | Union[int, None] | 动态中的投票的 id. 将放在整个动态的最后面. Defaults to -1. |
+| live_reserve_id | Union[int, None] | 直播预约 oid. 通过 `live.create_live_reserve` 获取. Defaults to -1. |
+| send_time | Union[datetime, None] | 发送时间. Defaults to None. |
+
+**Returns:** None
+
+
+
+**@staticmethod** 
+
+### def empty()
+
+新建空的动态以链式逐步构建
+
+
 
 **Returns:** None
 
@@ -230,9 +262,9 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
-## class Dynamic
+--
 
-**Extend: builtins.object**
+## class Dynamic()
 
 动态类
 
@@ -372,7 +404,9 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
-## class DynamicContentType
+--
+
+## class DynamicContentType()
 
 **Extend: enum.Enum**
 
@@ -386,7 +420,9 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
-## class DynamicType
+--
+
+## class DynamicType()
 
 **Extend: enum.Enum**
 
@@ -400,7 +436,9 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
-## class SendDynamicType
+--
+
+## class SendDynamicType()
 
 **Extend: enum.Enum**
 
@@ -412,6 +450,8 @@ scene 参数
 
 
 
+
+--
 
 ## async def delete_schedule()
 
@@ -428,6 +468,8 @@ scene 参数
 
 
 
+--
+
 ## async def get_dynamic_page_UPs_info()
 
 获取动态页 UP 主列表
@@ -441,6 +483,8 @@ scene 参数
 
 
 
+
+--
 
 ## async def get_dynamic_page_info()
 
@@ -465,6 +509,8 @@ scene 参数
 
 
 
+--
+
 ## async def get_live_users()
 
 获取正在直播的关注者
@@ -480,6 +526,8 @@ scene 参数
 
 
 
+--
+
 ## async def get_new_dynamic_users()
 
 获取更新动态的关注者
@@ -494,6 +542,8 @@ scene 参数
 
 
 
+--
+
 ## async def get_schedules_list()
 
 获取待发送定时动态列表
@@ -507,6 +557,8 @@ scene 参数
 
 
 
+
+--
 
 ## async def send_dynamic()
 
@@ -523,6 +575,8 @@ scene 参数
 
 
 
+--
+
 ## async def send_schedule_now()
 
 立即发送定时动态
@@ -537,6 +591,8 @@ scene 参数
 
 
 
+
+--
 
 ## async def upload_image()
 
@@ -553,6 +609,8 @@ scene 参数
 
 
 
+
+--
 
 ## def upload_image_sync()
 

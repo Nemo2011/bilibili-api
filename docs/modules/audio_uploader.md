@@ -10,7 +10,9 @@ bilibili_api.audio_uploader
 from bilibili_api import audio_uploader
 ```
 
-## class AudioUploader
+--
+
+## class AudioUploader()
 
 **Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
 
@@ -29,7 +31,9 @@ from bilibili_api import audio_uploader
 
 
 
-## class AudioUploaderEvents
+--
+
+## class AudioUploaderEvents()
 
 **Extend: enum.Enum**
 
@@ -54,24 +58,26 @@ Events:
 
 
 
-## class AuthorInfo
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class AuthorInfo()
 
 AuthorInfo(name: str, uid: int = 0)
 
 
 
-## class CompilationCategories
+--
 
-**Extend: builtins.object**
+## class CompilationCategories()
 
 专辑分类
 
 
 
 
-### class AudioType
+### class AudioType()
 
 **Extend: enum.Enum**
 
@@ -85,7 +91,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class ContentType
+### class ContentType()
 
 **Extend: enum.Enum**
 
@@ -97,7 +103,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class CreationType
+### class CreationType()
 
 **Extend: enum.Enum**
 
@@ -110,7 +116,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class Language
+### class Language()
 
 **Extend: enum.Enum**
 
@@ -126,7 +132,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class SongType
+### class SongType()
 
 **Extend: enum.Enum**
 
@@ -140,7 +146,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class Style
+### class Style()
 
 **Extend: enum.Enum**
 
@@ -176,7 +182,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class Theme
+### class Theme()
 
 **Extend: enum.Enum**
 
@@ -192,16 +198,16 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-## class SongCategories
+--
 
-**Extend: builtins.object**
+## class SongCategories()
 
 歌曲分类
 
 
 
 
-### class AudioType
+### class AudioType()
 
 **Extend: enum.Enum**
 
@@ -214,7 +220,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class ContentType
+### class ContentType()
 
 **Extend: enum.Enum**
 
@@ -226,7 +232,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class CreationType
+### class CreationType()
 
 **Extend: enum.Enum**
 
@@ -239,7 +245,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class Language
+### class Language()
 
 **Extend: enum.Enum**
 
@@ -255,7 +261,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class SongType
+### class SongType()
 
 **Extend: enum.Enum**
 
@@ -269,7 +275,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class Style
+### class Style()
 
 **Extend: enum.Enum**
 
@@ -304,7 +310,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### class Theme
+### class Theme()
 
 **Extend: enum.Enum**
 
@@ -320,9 +326,11 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-## class SongMeta
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class SongMeta()
 
 content_type (SongCategories.ContentType): 内容类型
 
@@ -381,6 +389,8 @@ lrc (Optional[str]): 歌词
 
 
 
+--
+
 ## async def get_upinfo()
 
 获取 UP 信息
@@ -394,6 +404,8 @@ lrc (Optional[str]): 歌词
 **Returns:** None
 
 
+
+--
 
 ## async def upload_cover()
 
@@ -409,6 +421,8 @@ lrc (Optional[str]): 歌词
 
 
 
+
+--
 
 ## async def upload_lrc()
 

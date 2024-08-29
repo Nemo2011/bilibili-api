@@ -10,9 +10,9 @@ bilibili_api.note
 from bilibili_api import note
 ```
 
-## class Note
+--
 
-**Extend: builtins.object**
+## class Note()
 
 笔记相关
 
@@ -214,7 +214,9 @@ from bilibili_api import note
 
 
 
-## class NoteType
+--
+
+## class NoteType()
 
 **Extend: enum.Enum**
 

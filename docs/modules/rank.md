@@ -10,7 +10,9 @@ bilibili_api.rank
 from bilibili_api import rank
 ```
 
-## class LiveEnergyRankType
+--
+
+## class LiveEnergyRankType()
 
 **Extend: enum.Enum**
 
@@ -22,7 +24,9 @@ from bilibili_api import rank
 
 
 
-## class LiveRankType
+--
+
+## class LiveRankType()
 
 **Extend: enum.Enum**
 
@@ -37,7 +41,9 @@ from bilibili_api import rank
 
 
 
-## class MangeRankType
+--
+
+## class MangeRankType()
 
 **Extend: enum.Enum**
 
@@ -55,7 +61,9 @@ from bilibili_api import rank
 
 
 
-## class RankAPIType
+--
+
+## class RankAPIType()
 
 **Extend: enum.Enum**
 
@@ -67,7 +75,9 @@ from bilibili_api import rank
 
 
 
-## class RankDayType
+--
+
+## class RankDayType()
 
 **Extend: enum.Enum**
 
@@ -79,7 +89,9 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
-## class RankType
+--
+
+## class RankType()
 
 **Extend: enum.Enum**
 
@@ -114,7 +126,9 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
-## class VIPRankType
+--
+
+## class VIPRankType()
 
 **Extend: enum.Enum**
 
@@ -130,6 +144,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+
+--
 
 ## async def get_live_energy_user_rank()
 
@@ -147,6 +163,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+--
+
 ## async def get_live_hot_rank()
 
 获取直播首页人气排行榜
@@ -157,6 +175,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+
+--
 
 ## async def get_live_rank()
 
@@ -174,6 +194,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+--
+
 ## async def get_live_sailing_rank()
 
 获取首页直播大航海排行榜
@@ -184,6 +206,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+
+--
 
 ## async def get_live_user_medal_rank()
 
@@ -200,6 +224,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+--
+
 ## async def get_manga_rank()
 
 获取漫画专属排行榜
@@ -214,6 +240,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+--
+
 ## async def get_music_rank_list()
 
 获取全站音乐榜每周信息(不包括具体的音频列表)
@@ -224,6 +252,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+
+--
 
 ## async def get_music_rank_weekly_detail()
 
@@ -239,6 +269,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+--
+
 ## async def get_music_rank_weekly_musics()
 
 获取全站音乐榜一周的音频列表(返回的音乐的 id 对应了 music.Music 类创建实例传入的 id)
@@ -252,6 +284,8 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
+
+--
 
 ## async def get_playlet_rank_info()
 
@@ -269,6 +303,8 @@ https://www.bilibili.com/v/popular/drama/
 
 
 
+--
+
 ## async def get_playlet_rank_phases()
 
 获取全站短剧榜期数
@@ -279,6 +315,8 @@ https://www.bilibili.com/v/popular/drama/
 
 
 
+
+--
 
 ## async def get_rank()
 
@@ -295,6 +333,8 @@ https://www.bilibili.com/v/popular/drama/
 
 
 
+--
+
 ## async def get_vip_rank()
 
 获取大会员中心的排行榜
@@ -308,6 +348,8 @@ https://www.bilibili.com/v/popular/drama/
 
 
 
+
+--
 
 ## async def subscribe_music_rank()
 

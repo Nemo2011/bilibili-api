@@ -10,7 +10,9 @@ bilibili_api.article_category
 from bilibili_api import article_category
 ```
 
-## class ArticleOrder
+--
+
+## class ArticleOrder()
 
 **Extend: enum.Enum**
 
@@ -25,6 +27,8 @@ from bilibili_api import article_category
 
 
 
+--
+
 ## def get_categories_list()
 
 获取所有的分类的数据
@@ -35,6 +39,8 @@ from bilibili_api import article_category
 
 
 
+
+--
 
 ## def get_categories_list_sub()
 
@@ -48,6 +54,8 @@ from bilibili_api import article_category
 
 
 
+
+--
 
 ## def get_category_info_by_id()
 
@@ -63,6 +71,8 @@ from bilibili_api import article_category
 
 
 
+--
+
 ## def get_category_info_by_name()
 
 获取专栏分类信息
@@ -76,6 +86,8 @@ from bilibili_api import article_category
 
 
 
+
+--
 
 ## async def get_category_recommend_articles()
 

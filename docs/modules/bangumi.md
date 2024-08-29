@@ -16,9 +16,9 @@ bilibili_api.bangumi
 from bilibili_api import bangumi
 ```
 
-## class Bangumi
+--
 
-**Extend: builtins.object**
+## class Bangumi()
 
 番剧类
 
@@ -182,7 +182,9 @@ from bilibili_api import bangumi
 
 
 
-## class BangumiCommentOrder
+--
+
+## class BangumiCommentOrder()
 
 **Extend: enum.Enum**
 
@@ -194,7 +196,9 @@ from bilibili_api import bangumi
 
 
 
-## class BangumiType
+--
+
+## class BangumiType()
 
 **Extend: enum.Enum**
 
@@ -207,7 +211,9 @@ from bilibili_api import bangumi
 
 
 
-## class Episode
+--
+
+## class Episode()
 
 **Extend: bilibili_api.video.Video**
 
@@ -349,16 +355,16 @@ from bilibili_api import bangumi
 
 
 
-## class IndexFilter
+--
 
-**Extend: builtins.object**
+## class IndexFilter()
 
 番剧索引相关固定参数以及值
 
 
 
 
-### class Area
+### class Area()
 
 **Extend: enum.Enum**
 
@@ -386,7 +392,7 @@ from bilibili_api import bangumi
 
 
 
-### class Copyright
+### class Copyright()
 
 **Extend: enum.Enum**
 
@@ -399,7 +405,7 @@ from bilibili_api import bangumi
 
 
 
-### class Finish_Status
+### class Finish_Status()
 
 **Extend: enum.Enum**
 
@@ -412,7 +418,7 @@ from bilibili_api import bangumi
 
 
 
-### class Order
+### class Order()
 
 **Extend: enum.Enum**
 
@@ -429,7 +435,7 @@ from bilibili_api import bangumi
 
 
 
-### class Payment
+### class Payment()
 
 **Extend: enum.Enum**
 
@@ -443,7 +449,7 @@ from bilibili_api import bangumi
 
 
 
-### class Producer
+### class Producer()
 
 **Extend: enum.Enum**
 
@@ -474,7 +480,7 @@ from bilibili_api import bangumi
 
 
 
-### class Season
+### class Season()
 
 **Extend: enum.Enum**
 
@@ -489,7 +495,7 @@ from bilibili_api import bangumi
 
 
 
-### class Sort
+### class Sort()
 
 **Extend: enum.Enum**
 
@@ -501,7 +507,7 @@ from bilibili_api import bangumi
 
 
 
-### class Spoken_Language
+### class Spoken_Language()
 
 **Extend: enum.Enum**
 
@@ -514,16 +520,14 @@ from bilibili_api import bangumi
 
 
 
-### class Style
-
-**Extend: builtins.object**
+### class Style()
 
 风格，根据索引不同，可选的风格也不同
 
 
 
 
-#### class Anime
+#### class Anime()
 
 **Extend: enum.Enum**
 
@@ -572,7 +576,7 @@ from bilibili_api import bangumi
 
 
 
-#### class Documentary
+#### class Documentary()
 
 **Extend: enum.Enum**
 
@@ -601,7 +605,7 @@ from bilibili_api import bangumi
 
 
 
-#### class GuoChuang
+#### class GuoChuang()
 
 **Extend: enum.Enum**
 
@@ -651,7 +655,7 @@ from bilibili_api import bangumi
 
 
 
-#### class Movie
+#### class Movie()
 
 **Extend: enum.Enum**
 
@@ -684,7 +688,7 @@ from bilibili_api import bangumi
 
 
 
-#### class TV
+#### class TV()
 
 **Extend: enum.Enum**
 
@@ -719,7 +723,7 @@ from bilibili_api import bangumi
 
 
 
-#### class Variety
+#### class Variety()
 
 **Extend: enum.Enum**
 
@@ -747,7 +751,7 @@ from bilibili_api import bangumi
 
 
 
-### class Type
+### class Type()
 
 **Extend: enum.Enum**
 
@@ -763,7 +767,7 @@ from bilibili_api import bangumi
 
 
 
-### class Version
+### class Version()
 
 **Extend: enum.Enum**
 
@@ -777,9 +781,34 @@ from bilibili_api import bangumi
 
 
 
-## class IndexFilterMeta
+**@staticmethod** 
 
-**Extend: builtins.object**
+### def make_time_filter()
+
+生成番剧索引所需的时间条件
+
+番剧、国创直接传入年份，为 int 或者 str 类型，如 `make_time_filter(start=2019, end=2020)`
+
+影视、纪录片、电视剧传入 datetime.datetime，如 `make_time_filter(start=datetime.datetime(2019, 1, 1), end=datetime.datetime(2020, 1, 1))`
+
+start 或 end 为 None 时则表示不设置开始或结尾
+
+
+| name | type | description |
+| - | - | - |
+| start | datetime, str, int | 开始时间. 如果是 None 则不设置开头. |
+| end | datetime, str, int | 结束时间. 如果是 None 则不设置结尾. |
+| include_start | bool | 是否包含开始时间. 默认为 True. |
+| include_end | bool | 是否包含结束时间. 默认为 False. |
+
+**Returns:** str: 年代条件
+
+
+
+
+--
+
+## class IndexFilterMeta()
 
 IndexFilter 元数据
 
@@ -788,59 +817,49 @@ IndexFilter 元数据
 
 
 
-### class Anime
-
-**Extend: builtins.object**
+### class Anime()
 
 动画
 
 
 
 
-### class Documentary
-
-**Extend: builtins.object**
+### class Documentary()
 
 纪录片
 
 
 
 
-### class GuoChuang
-
-**Extend: builtins.object**
+### class GuoChuang()
 
 国创
 
 
 
 
-### class Movie
-
-**Extend: builtins.object**
+### class Movie()
 
 电影
 
 
 
 
-### class TV
-
-**Extend: builtins.object**
+### class TV()
 
 TV
 
 
 
 
-### class Variety
-
-**Extend: builtins.object**
+### class Variety()
 
 综艺
 
 
 
+
+--
 
 ## async def get_index_info()
 
@@ -862,6 +881,8 @@ TV
 
 
 
+--
+
 ## async def get_timeline()
 
 获取番剧时间线
@@ -876,6 +897,8 @@ TV
 **Returns:** None
 
 
+
+--
 
 ## async def set_follow()
 
@@ -892,6 +915,8 @@ TV
 
 
 
+
+--
 
 ## async def update_follow_status()
 

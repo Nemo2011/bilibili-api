@@ -10,9 +10,9 @@ bilibili_api.session
 from bilibili_api import session
 ```
 
-## class Event
+--
 
-**Extend: builtins.object**
+## class Event()
 
 事件参数:
 + receiver_id:   收信人 UID
@@ -28,7 +28,9 @@ from bilibili_api import session
 
 
 
-## class EventType
+--
+
+## class EventType()
 
 **Extend: enum.Enum**
 
@@ -46,7 +48,9 @@ from bilibili_api import session
 
 
 
-## class Session
+--
+
+## class Session()
 
 **Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
 
@@ -116,6 +120,8 @@ from bilibili_api import session
 
 
 
+--
+
 ## async def fetch_session_msgs()
 
 获取指定用户的近三十条消息
@@ -133,6 +139,8 @@ from bilibili_api import session
 
 
 
+--
+
 ## async def get_at()
 
 获取收到的 AT
@@ -148,6 +156,8 @@ from bilibili_api import session
 
 
 
+
+--
 
 ## async def get_likes()
 
@@ -165,6 +175,8 @@ from bilibili_api import session
 
 
 
+--
+
 ## async def get_replies()
 
 获取收到的回复
@@ -180,6 +192,8 @@ from bilibili_api import session
 
 
 
+
+--
 
 ## async def get_session_detail()
 
@@ -197,6 +211,8 @@ from bilibili_api import session
 
 
 
+--
+
 ## async def get_session_settings()
 
 获取消息设置
@@ -210,6 +226,8 @@ from bilibili_api import session
 
 
 
+
+--
 
 ## async def get_sessions()
 
@@ -226,6 +244,8 @@ from bilibili_api import session
 
 
 
+--
+
 ## async def get_system_messages()
 
 获取系统信息
@@ -239,6 +259,8 @@ from bilibili_api import session
 
 
 
+
+--
 
 ## async def get_unread_messages()
 
@@ -254,6 +276,8 @@ from bilibili_api import session
 
 
 
+--
+
 ## async def new_sessions()
 
 获取新消息
@@ -268,6 +292,8 @@ from bilibili_api import session
 
 
 
+
+--
 
 ## async def send_msg()
 

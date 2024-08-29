@@ -10,6 +10,8 @@ bilibili_api.app
 from bilibili_api import app
 ```
 
+--
+
 ## async def get_loading_images()
 
 获取开屏启动画面
@@ -29,6 +31,8 @@ from bilibili_api import app
 
 
 
+
+--
 
 ## async def get_loading_images_special()
 

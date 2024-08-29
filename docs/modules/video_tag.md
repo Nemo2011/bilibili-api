@@ -10,9 +10,9 @@ bilibili_api.video_tag
 from bilibili_api import video_tag
 ```
 
-## class Tag
+--
 
-**Extend: builtins.object**
+## class Tag()
 
 标签类
 

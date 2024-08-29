@@ -10,7 +10,9 @@ bilibili_api.channel_series
 from bilibili_api import channel_series
 ```
 
-## class ChannelOrder
+--
+
+## class ChannelOrder()
 
 **Extend: enum.Enum**
 
@@ -21,9 +23,9 @@ from bilibili_api import channel_series
 
 
 
-## class ChannelSeries
+--
 
-**Extend: builtins.object**
+## class ChannelSeries()
 
 合集与列表类
 
@@ -59,7 +61,9 @@ from bilibili_api import channel_series
 
 
 
-## class ChannelSeriesType
+--
+
+## class ChannelSeriesType()
 
 **Extend: enum.Enum**
 
@@ -72,6 +76,8 @@ from bilibili_api import channel_series
 
 
 
+
+--
 
 ## async def add_aids_to_series()
 
@@ -88,6 +94,8 @@ from bilibili_api import channel_series
 
 
 
+
+--
 
 ## async def create_channel_series()
 
@@ -107,6 +115,8 @@ from bilibili_api import channel_series
 
 
 
+--
+
 ## async def del_aids_from_series()
 
 从视频列表(旧版合集)删除视频
@@ -123,6 +133,8 @@ from bilibili_api import channel_series
 
 
 
+--
+
 ## async def del_channel_series()
 
 删除视频列表(旧版合集)
@@ -137,6 +149,8 @@ from bilibili_api import channel_series
 
 
 
+
+--
 
 ## async def set_follow_channel_season()
 

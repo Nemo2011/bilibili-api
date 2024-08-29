@@ -10,9 +10,9 @@ bilibili_api.manga
 from bilibili_api import manga
 ```
 
-## class Manga
+--
 
-**Extend: builtins.object**
+## class Manga()
 
 漫画类
 
@@ -113,16 +113,16 @@ from bilibili_api import manga
 
 
 
-## class MangaIndexFilter
+--
 
-**Extend: builtins.object**
+## class MangaIndexFilter()
 
 漫画索引筛选器类。
 
 
 
 
-### class Area
+### class Area()
 
 **Extend: enum.Enum**
 
@@ -137,7 +137,7 @@ from bilibili_api import manga
 
 
 
-### class Order
+### class Order()
 
 **Extend: enum.Enum**
 
@@ -150,7 +150,7 @@ from bilibili_api import manga
 
 
 
-### class Payment
+### class Payment()
 
 **Extend: enum.Enum**
 
@@ -164,7 +164,7 @@ from bilibili_api import manga
 
 
 
-### class Status
+### class Status()
 
 **Extend: enum.Enum**
 
@@ -177,7 +177,7 @@ from bilibili_api import manga
 
 
 
-### class Style
+### class Style()
 
 **Extend: enum.Enum**
 
@@ -204,6 +204,8 @@ from bilibili_api import manga
 
 
 
+--
+
 ## async def get_manga_home_recommend()
 
 获取首页推荐的漫画
@@ -219,6 +221,8 @@ from bilibili_api import manga
 
 
 
+
+--
 
 ## async def get_manga_index()
 
@@ -241,6 +245,8 @@ from bilibili_api import manga
 
 
 
+--
+
 ## async def get_manga_update()
 
 获取更新推荐的漫画
@@ -257,6 +263,8 @@ from bilibili_api import manga
 
 
 
+
+--
 
 ## async def get_raw_manga_index()
 
@@ -279,6 +287,8 @@ from bilibili_api import manga
 
 
 
+--
+
 ## async def manga_image_url_turn_to_Picture()
 
 将 Manga.get_images_url 函数获得的图片 url 转换为 Picture 类。
@@ -293,6 +303,8 @@ from bilibili_api import manga
 
 
 
+
+--
 
 ## async def set_follow_manga()
 

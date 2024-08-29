@@ -19,9 +19,9 @@ bilibili_api.comment
 from bilibili_api import comment
 ```
 
-## class Comment
+--
 
-**Extend: builtins.object**
+## class Comment()
 
 对单条评论的相关操作。
 
@@ -162,7 +162,9 @@ from bilibili_api import comment
 
 
 
-## class CommentResourceType
+--
+
+## class CommentResourceType()
 
 **Extend: enum.Enum**
 
@@ -181,7 +183,9 @@ from bilibili_api import comment
 
 
 
-## class OrderType
+--
+
+## class OrderType()
 
 **Extend: enum.Enum**
 
@@ -193,7 +197,9 @@ from bilibili_api import comment
 
 
 
-## class ReportReason
+--
+
+## class ReportReason()
 
 **Extend: enum.Enum**
 
@@ -221,6 +227,8 @@ from bilibili_api import comment
 
 
 
+--
+
 ## async def get_comments()
 
 获取资源评论列表。
@@ -240,6 +248,8 @@ from bilibili_api import comment
 
 
 
+
+--
 
 ## async def get_comments_lazy()
 
@@ -262,6 +272,8 @@ from bilibili_api import comment
 
 
 
+
+--
 
 ## async def send_comment()
 

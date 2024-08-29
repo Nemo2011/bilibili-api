@@ -10,9 +10,9 @@ bilibili_api.article
 from bilibili_api import article
 ```
 
-## class Article
+--
 
-**Extend: builtins.object**
+## class Article()
 
 专栏类
 
@@ -175,9 +175,9 @@ from bilibili_api import article
 
 
 
-## class ArticleList
+--
 
-**Extend: builtins.object**
+## class ArticleList()
 
 文集类
 
@@ -209,7 +209,9 @@ from bilibili_api import article
 
 
 
-## class ArticleRankingType
+--
+
+## class ArticleRankingType()
 
 **Extend: enum.Enum**
 
@@ -223,7 +225,9 @@ from bilibili_api import article
 
 
 
-## class ArticleType
+--
+
+## class ArticleType()
 
 **Extend: enum.Enum**
 
@@ -235,6 +239,8 @@ from bilibili_api import article
 
 
 
+
+--
 
 ## async def get_article_rank()
 

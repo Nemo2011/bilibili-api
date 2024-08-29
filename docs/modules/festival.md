@@ -10,9 +10,9 @@ bilibili_api.festival
 from bilibili_api import festival
 ```
 
-## class Festival
+--
 
-**Extend: builtins.object**
+## class Festival()
 
 节日专门页
 

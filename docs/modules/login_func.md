@@ -10,7 +10,9 @@ bilibili_api.login_func
 from bilibili_api import login_func
 ```
 
-## class QrCodeLoginEvents
+--
+
+## class QrCodeLoginEvents()
 
 **Extend: enum.Enum**
 
@@ -23,6 +25,8 @@ from bilibili_api import login_func
 
 
 
+
+--
 
 ## def check_qrcode_events()
 
@@ -38,6 +42,8 @@ from bilibili_api import login_func
 
 
 
+--
+
 ## def check_tv_qrcode_events()
 
 检查登录状态。
@@ -52,6 +58,8 @@ from bilibili_api import login_func
 
 
 
+--
+
 ## def close_geetest_server()
 
 关闭极验验证服务（打开极验验证服务后务必关闭掉它，否则会卡住）
@@ -61,6 +69,8 @@ from bilibili_api import login_func
 **Returns:** None
 
 
+
+--
 
 ## def done_geetest()
 
@@ -75,6 +85,8 @@ from bilibili_api import login_func
 
 
 
+--
+
 ## def get_qrcode()
 
 获取二维码及登录密钥（后面有用）
@@ -85,6 +97,8 @@ from bilibili_api import login_func
 
 
 
+
+--
 
 ## def get_tv_qrcode()
 
@@ -97,6 +111,8 @@ from bilibili_api import login_func
 
 
 
+--
+
 ## def safecenter_close_geetest_server()
 
 登录验证专用函数：关闭极验验证服务（打开极验验证服务后务必关闭掉它，否则会卡住）
@@ -106,6 +122,8 @@ from bilibili_api import login_func
 **Returns:** None
 
 
+
+--
 
 ## def safecenter_done_geetest()
 
@@ -119,6 +137,8 @@ from bilibili_api import login_func
 
 
 
+
+--
 
 ## def safecenter_start_geetest_server()
 
@@ -140,6 +160,8 @@ print(start_geetest_server().url)
 ```
 
 
+
+--
 
 ## def start_geetest_server()
 

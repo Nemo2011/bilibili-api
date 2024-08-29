@@ -10,7 +10,9 @@ bilibili_api.search
 from bilibili_api import search
 ```
 
-## class CategoryTypeArticle
+--
+
+## class CategoryTypeArticle()
 
 **Extend: enum.Enum**
 
@@ -27,7 +29,9 @@ from bilibili_api import search
 
 
 
-## class CategoryTypePhoto
+--
+
+## class CategoryTypePhoto()
 
 **Extend: enum.Enum**
 
@@ -39,7 +43,9 @@ from bilibili_api import search
 
 
 
-## class OrderArticle
+--
+
+## class OrderArticle()
 
 **Extend: enum.Enum**
 
@@ -53,7 +59,9 @@ from bilibili_api import search
 
 
 
-## class OrderCheese
+--
+
+## class OrderCheese()
 
 **Extend: enum.Enum**
 
@@ -67,7 +75,9 @@ from bilibili_api import search
 
 
 
-## class OrderLiveRoom
+--
+
+## class OrderLiveRoom()
 
 **Extend: enum.Enum**
 
@@ -78,7 +88,9 @@ from bilibili_api import search
 
 
 
-## class OrderUser
+--
+
+## class OrderUser()
 
 **Extend: enum.Enum**
 
@@ -89,7 +101,9 @@ from bilibili_api import search
 
 
 
-## class OrderVideo
+--
+
+## class OrderVideo()
 
 **Extend: enum.Enum**
 
@@ -106,7 +120,9 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
-## class SearchObjectType
+--
+
+## class SearchObjectType()
 
 **Extend: enum.Enum**
 
@@ -123,6 +139,8 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
+--
+
 ## async def get_default_search_keyword()
 
 获取默认的搜索内容
@@ -134,6 +152,8 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
+--
+
 ## async def get_hot_search_keywords()
 
 获取热搜
@@ -144,6 +164,8 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
+
+--
 
 ## async def get_suggest_keywords()
 
@@ -159,6 +181,8 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
+--
+
 ## async def search()
 
 只指定关键字在 web 进行搜索，返回未经处理的字典
@@ -173,6 +197,8 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
+
+--
 
 ## async def search_by_type()
 
@@ -199,6 +225,8 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
+--
+
 ## async def search_cheese()
 
 搜索课程特用函数
@@ -216,6 +244,8 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
+--
+
 ## async def search_games()
 
 搜索游戏特用函数
@@ -229,6 +259,8 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
+
+--
 
 ## async def search_manga()
 

@@ -10,9 +10,9 @@ bilibili_api.topic
 from bilibili_api import topic
 ```
 
-## class Topic
+--
 
-**Extend: builtins.object**
+## class Topic()
 
 话题类
 
@@ -90,7 +90,9 @@ from bilibili_api import topic
 
 
 
-## class TopicCardsSortBy
+--
+
+## class TopicCardsSortBy()
 
 **Extend: enum.Enum**
 
@@ -102,6 +104,8 @@ from bilibili_api import topic
 
 
 
+
+--
 
 ## async def get_hot_topics()
 
@@ -116,6 +120,8 @@ from bilibili_api import topic
 
 
 
+
+--
 
 ## async def search_topic()
 

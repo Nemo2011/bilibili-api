@@ -10,7 +10,9 @@ bilibili_api.live
 from bilibili_api import live
 ```
 
-## class LiveCodec
+--
+
+## class LiveCodec()
 
 **Extend: enum.Enum**
 
@@ -24,7 +26,9 @@ from bilibili_api import live
 
 
 
-## class LiveDanmaku
+--
+
+## class LiveDanmaku()
 
 **Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
 
@@ -90,7 +94,9 @@ Events：
 
 
 
-## class LiveFormat
+--
+
+## class LiveFormat()
 
 **Extend: enum.Enum**
 
@@ -105,7 +111,9 @@ Events：
 
 
 
-## class LiveProtocol
+--
+
+## class LiveProtocol()
 
 **Extend: enum.Enum**
 
@@ -119,9 +127,9 @@ Events：
 
 
 
-## class LiveRoom
+--
 
-**Extend: builtins.object**
+## class LiveRoom()
 
 直播类，获取各种直播间的操作均在里边。
 
@@ -524,7 +532,9 @@ Events：
 
 
 
-## class ScreenResolution
+--
+
+## class ScreenResolution()
 
 **Extend: enum.Enum**
 
@@ -542,6 +552,8 @@ Events：
 
 
 
+--
+
 ## async def create_live_reserve()
 
 创建直播预约
@@ -557,6 +569,8 @@ Events：
 
 
 
+--
+
 ## async def get_area_info()
 
 获取所有分区信息
@@ -567,6 +581,8 @@ Events：
 
 
 
+
+--
 
 ## async def get_gift_config()
 
@@ -588,6 +604,8 @@ Events：
 
 
 
+--
+
 ## async def get_live_followers_info()
 
 获取关注列表中正在直播的直播间信息，包括房间直播热度，房间名称及标题，清晰度，是否官方认证等信息。
@@ -602,6 +620,8 @@ Events：
 
 
 
+--
+
 ## async def get_self_bag()
 
 获取自己的直播礼物包裹信息
@@ -612,6 +632,8 @@ Events：
 
 
 
+
+--
 
 ## async def get_self_dahanghai_info()
 
@@ -637,6 +659,8 @@ pages = math.ceil(info['data']['guards'] / 10)
 
 
 
+--
+
 ## async def get_self_info()
 
 获取自己直播等级、排行等信息
@@ -648,6 +672,8 @@ pages = math.ceil(info['data']['guards'] / 10)
 
 
 
+--
+
 ## async def get_self_live_info()
 
 获取自己的粉丝牌、大航海等信息
@@ -658,6 +684,8 @@ pages = math.ceil(info['data']['guards'] / 10)
 
 
 
+
+--
 
 ## async def get_unlive_followers_info()
 

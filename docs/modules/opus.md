@@ -10,9 +10,9 @@ bilibili_api.opus
 from bilibili_api import opus
 ```
 
-## class Opus
+--
 
-**Extend: builtins.object**
+## class Opus()
 
 图文类。
 
@@ -106,7 +106,9 @@ from bilibili_api import opus
 
 
 
-## class OpusType
+--
+
+## class OpusType()
 
 **Extend: enum.Enum**
 

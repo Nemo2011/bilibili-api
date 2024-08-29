@@ -10,7 +10,9 @@ bilibili_api.video_zone
 from bilibili_api import video_zone
 ```
 
-## class VideoZoneTypes
+--
+
+## class VideoZoneTypes()
 
 **Extend: enum.Enum**
 
@@ -149,6 +151,8 @@ from bilibili_api import video_zone
 
 
 
+--
+
 ## async def get_zone_hot_tags()
 
 获取分区热门标签
@@ -162,6 +166,8 @@ from bilibili_api import video_zone
 
 
 
+
+--
 
 ## def get_zone_info_by_name()
 
@@ -177,6 +183,8 @@ from bilibili_api import video_zone
 
 
 
+--
+
 ## def get_zone_info_by_tid()
 
 根据 tid 获取分区信息。
@@ -191,6 +199,8 @@ from bilibili_api import video_zone
 
 
 
+--
+
 ## def get_zone_list()
 
 获取所有分区的数据
@@ -201,6 +211,8 @@ from bilibili_api import video_zone
 
 
 
+
+--
 
 ## def get_zone_list_sub()
 
@@ -213,6 +225,8 @@ from bilibili_api import video_zone
 
 
 
+
+--
 
 ## async def get_zone_new_videos()
 
@@ -230,6 +244,8 @@ from bilibili_api import video_zone
 
 
 
+--
+
 ## async def get_zone_top10()
 
 获取分区前十排行榜。
@@ -245,6 +261,8 @@ from bilibili_api import video_zone
 
 
 
+
+--
 
 ## async def get_zone_videos_count_today()
 

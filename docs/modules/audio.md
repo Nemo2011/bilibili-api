@@ -10,9 +10,9 @@ bilibili_api.audio
 from bilibili_api import audio
 ```
 
-## class Audio
+--
 
-**Extend: builtins.object**
+## class Audio()
 
 音频
 
@@ -80,9 +80,9 @@ from bilibili_api import audio
 
 
 
-## class AudioList
+--
 
-**Extend: builtins.object**
+## class AudioList()
 
 歌单
 
@@ -139,6 +139,8 @@ from bilibili_api import audio
 
 
 
+--
+
 ## async def get_hot_song_list()
 
 获取热门歌单
@@ -153,6 +155,8 @@ from bilibili_api import audio
 
 
 
+
+--
 
 ## async def get_user_stat()
 

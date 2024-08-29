@@ -12,7 +12,9 @@ bilibili_api.video
 from bilibili_api import video
 ```
 
-## class AudioQuality
+--
+
+## class AudioQuality()
 
 **Extend: enum.Enum**
 
@@ -27,9 +29,11 @@ from bilibili_api import video
 
 
 
-## class AudioStreamDownloadURL
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class AudioStreamDownloadURL()
 
 (@dataclass)
 
@@ -42,7 +46,9 @@ from bilibili_api import video
 | audio_quality | AudioQuality | 音频流清晰度 |
 
 
-## class DanmakuOperatorType
+--
+
+## class DanmakuOperatorType()
 
 **Extend: enum.Enum**
 
@@ -55,9 +61,11 @@ from bilibili_api import video
 
 
 
-## class EpisodeTryMP4DownloadURL
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class EpisodeTryMP4DownloadURL()
 
 (@dataclass)
 
@@ -69,9 +77,11 @@ from bilibili_api import video
 | url | str | 番剧试看的 mp4 播放流 |
 
 
-## class FLVStreamDownloadURL
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class FLVStreamDownloadURL()
 
 (@dataclass)
 
@@ -83,9 +93,11 @@ FLV 视频流
 | url | str | FLV 流 url |
 
 
-## class HTML5MP4DownloadURL
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class HTML5MP4DownloadURL()
 
 (@dataclass)
 
@@ -97,9 +109,9 @@ FLV 视频流
 | url | str | HTML5 mp4 视频流 |
 
 
-## class Video
+--
 
-**Extend: builtins.object**
+## class Video()
 
 视频类，各种对视频的操作均在里面。
 
@@ -786,9 +798,9 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
-## class VideoAppealReasonType
+--
 
-**Extend: builtins.object**
+## class VideoAppealReasonType()
 
 视频投诉原因枚举
 
@@ -815,7 +827,39 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
-## class VideoCodecs
+**@staticmethod** 
+
+### def PLAGIARISM()
+
+与站内其他视频撞车
+
+
+| name | type | description |
+| - | - | - |
+| bvid | str | 撞车对象 |
+
+**Returns:** None
+
+
+
+**@staticmethod** 
+
+### def UNREAL_COPYRIGHT()
+
+转载/自制类型错误
+
+
+| name | type | description |
+| - | - | - |
+| source | str | 原创视频出处 |
+
+**Returns:** None
+
+
+
+--
+
+## class VideoCodecs()
 
 **Extend: enum.Enum**
 
@@ -828,9 +872,9 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
-## class VideoDownloadURLDataDetecter
+--
 
-**Extend: builtins.object**
+## class VideoDownloadURLDataDetecter()
 
 `Video.get_download_url` 返回结果解析类。
 
@@ -953,7 +997,9 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
-## class VideoOnlineMonitor
+--
+
+## class VideoOnlineMonitor()
 
 **Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
 
@@ -1015,7 +1061,9 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 
 
-## class VideoQuality
+--
+
+## class VideoQuality()
 
 **Extend: enum.Enum**
 
@@ -1035,9 +1083,11 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 
 
-## class VideoStreamDownloadURL
+--
 
-**Extend: builtins.object**
+**@dataclasses.dataclass** 
+
+## class VideoStreamDownloadURL()
 
 (@dataclass)
 
@@ -1051,6 +1101,8 @@ CONNECTED:  成功连接。 CallbackData: None。
 | video_codecs | VideoCodecs | 视频流编码 |
 
 
+--
+
 ## async def get_cid_info()
 
 获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
@@ -1061,6 +1113,8 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 
 
+
+--
 
 ## def get_cid_info_sync()
 

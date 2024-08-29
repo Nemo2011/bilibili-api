@@ -14,9 +14,9 @@ bilibili_api.login
 from bilibili_api import login
 ```
 
-## class Check
+--
 
-**Extend: builtins.object**
+## class Check()
 
 验证类，如果密码登录需要验证会返回此类
 
@@ -38,14 +38,16 @@ from bilibili_api import login
 
 
 
-## class PhoneNumber
+--
 
-**Extend: builtins.object**
+## class PhoneNumber()
 
 手机号类
 
 
 
+
+--
 
 ## def get_code_by_country()
 
@@ -61,6 +63,8 @@ from bilibili_api import login
 
 
 
+--
+
 ## def get_countries_list()
 
 获取国际地区代码列表
@@ -71,6 +75,8 @@ from bilibili_api import login
 
 
 
+
+--
 
 ## def get_id_by_code()
 
@@ -86,6 +92,8 @@ from bilibili_api import login
 
 
 
+--
+
 ## def have_code()
 
 是否存在地区代码
@@ -100,6 +108,8 @@ from bilibili_api import login
 
 
 
+--
+
 ## def have_country()
 
 是否有地区
@@ -113,6 +123,8 @@ from bilibili_api import login
 
 
 
+
+--
 
 ## def login_with_password()
 
@@ -129,6 +141,8 @@ from bilibili_api import login
 
 
 
+--
+
 ## def login_with_qrcode()
 
 扫描二维码登录
@@ -143,6 +157,8 @@ from bilibili_api import login
 
 
 
+--
+
 ## def login_with_qrcode_term()
 
 终端扫描二维码登录
@@ -153,6 +169,8 @@ from bilibili_api import login
 
 
 
+
+--
 
 ## def login_with_sms()
 
@@ -169,6 +187,8 @@ from bilibili_api import login
 
 
 
+--
+
 ## def login_with_tv_qrcode_term()
 
 终端扫描 TV 二维码登录
@@ -179,6 +199,8 @@ from bilibili_api import login
 
 
 
+
+--
 
 ## def search_countries()
 
@@ -193,6 +215,8 @@ from bilibili_api import login
 
 
 
+
+--
 
 ## def send_sms()
 

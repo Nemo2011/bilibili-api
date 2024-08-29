@@ -10,6 +10,8 @@ bilibili_api.hot
 from bilibili_api import hot
 ```
 
+--
+
 ## async def get_history_popular_videos()
 
 获取入站必刷 85 个视频
@@ -20,6 +22,8 @@ from bilibili_api import hot
 
 
 
+
+--
 
 ## async def get_hot_buzzwords()
 
@@ -36,6 +40,8 @@ from bilibili_api import hot
 
 
 
+--
+
 ## async def get_hot_videos()
 
 获取热门视频
@@ -51,6 +57,8 @@ from bilibili_api import hot
 
 
 
+--
+
 ## async def get_weekly_hot_videos()
 
 获取一周的每周必看视频列表
@@ -64,6 +72,8 @@ from bilibili_api import hot
 
 
 
+
+--
 
 ## async def get_weekly_hot_videos_list()
 

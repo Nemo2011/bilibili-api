@@ -10,7 +10,9 @@ bilibili_api.user
 from bilibili_api import user
 ```
 
-## class AlbumType
+--
+
+## class AlbumType()
 
 **Extend: enum.Enum**
 
@@ -24,7 +26,9 @@ from bilibili_api import user
 
 
 
-## class ArticleListOrder
+--
+
+## class ArticleListOrder()
 
 **Extend: enum.Enum**
 
@@ -36,7 +40,9 @@ from bilibili_api import user
 
 
 
-## class ArticleOrder
+--
+
+## class ArticleOrder()
 
 **Extend: enum.Enum**
 
@@ -49,7 +55,9 @@ from bilibili_api import user
 
 
 
-## class AudioOrder
+--
+
+## class AudioOrder()
 
 **Extend: enum.Enum**
 
@@ -62,7 +70,9 @@ from bilibili_api import user
 
 
 
-## class BangumiFollowStatus
+--
+
+## class BangumiFollowStatus()
 
 **Extend: enum.Enum**
 
@@ -76,7 +86,9 @@ from bilibili_api import user
 
 
 
-## class BangumiType
+--
+
+## class BangumiType()
 
 **Extend: enum.Enum**
 
@@ -88,7 +100,9 @@ from bilibili_api import user
 
 
 
-## class HistoryBusinessType
+--
+
+## class HistoryBusinessType()
 
 **Extend: enum.Enum**
 
@@ -103,7 +117,9 @@ from bilibili_api import user
 
 
 
-## class HistoryType
+--
+
+## class HistoryType()
 
 **Extend: enum.Enum**
 
@@ -117,7 +133,9 @@ from bilibili_api import user
 
 
 
-## class MedialistOrder
+--
+
+## class MedialistOrder()
 
 **Extend: enum.Enum**
 
@@ -130,7 +148,9 @@ medialist排序顺序。
 
 
 
-## class OrderType
+--
+
+## class OrderType()
 
 **Extend: enum.Enum**
 
@@ -142,7 +162,9 @@ medialist排序顺序。
 
 
 
-## class RelationType
+--
+
+## class RelationType()
 
 **Extend: enum.Enum**
 
@@ -158,9 +180,9 @@ medialist排序顺序。
 
 
 
-## class User
+--
 
-**Extend: builtins.object**
+## class User()
 
 用户相关
 
@@ -672,7 +694,9 @@ medialist排序顺序。
 
 
 
-## class VideoOrder
+--
+
+## class VideoOrder()
 
 **Extend: enum.Enum**
 
@@ -684,6 +708,8 @@ medialist排序顺序。
 
 
 
+
+--
 
 ## async def check_nickname()
 
@@ -699,6 +725,8 @@ medialist排序顺序。
 
 
 
+--
+
 ## async def clear_toview_list()
 
 清空稍后再看列表
@@ -712,6 +740,8 @@ medialist排序顺序。
 
 
 
+
+--
 
 ## async def create_subscribe_group()
 
@@ -728,6 +758,8 @@ medialist排序顺序。
 
 
 
+--
+
 ## async def delete_subscribe_group()
 
 删除用户关注分组
@@ -743,6 +775,8 @@ medialist排序顺序。
 
 
 
+--
+
 ## async def delete_viewed_videos_from_toview()
 
 删除稍后再看列表已经看过的视频
@@ -756,6 +790,8 @@ medialist排序顺序。
 
 
 
+
+--
 
 ## async def edit_self_info()
 
@@ -774,6 +810,8 @@ medialist排序顺序。
 
 
 
+--
+
 ## async def get_self_black_list()
 
 获取自己的黑名单信息
@@ -789,6 +827,8 @@ medialist排序顺序。
 
 
 
+--
+
 ## async def get_self_coins()
 
 获取自己的硬币数量。
@@ -799,6 +839,8 @@ medialist排序顺序。
 
 
 
+
+--
 
 ## async def get_self_events()
 
@@ -815,6 +857,8 @@ medialist排序顺序。
 
 
 
+--
+
 ## async def get_self_experience_log()
 
 获取自己的经验记录
@@ -829,6 +873,8 @@ medialist排序顺序。
 
 
 
+--
+
 ## async def get_self_friends()
 
 获取与自己互粉的人
@@ -841,6 +887,8 @@ medialist排序顺序。
 **Returns:** None
 
 
+
+--
 
 ## async def get_self_history()
 
@@ -857,6 +905,8 @@ medialist排序顺序。
 
 
 
+
+--
 
 ## async def get_self_history_new()
 
@@ -880,6 +930,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+--
+
 ## async def get_self_info()
 
 获取自己的信息
@@ -893,6 +945,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+--
+
 ## async def get_self_jury_info()
 
 获取自己风纪委员信息
@@ -902,6 +956,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 **Returns:** None
 
 
+
+--
 
 ## async def get_self_login_log()
 
@@ -917,6 +973,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+--
+
 ## async def get_self_moral_log()
 
 获取自己的节操记录
@@ -930,6 +988,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+
+--
 
 ## async def get_self_notes_info()
 
@@ -947,6 +1007,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+--
+
 ## async def get_self_public_notes_info()
 
 获取自己的公开笔记列表
@@ -963,6 +1025,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+--
+
 ## async def get_self_special_followings()
 
 获取自己特殊关注的列表
@@ -977,6 +1041,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 **Returns:** None
 
 
+
+--
 
 ## async def get_self_whisper_followings()
 
@@ -993,6 +1059,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+--
+
 ## async def get_toview_list()
 
 获取稍后再看列表
@@ -1006,6 +1074,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+
+--
 
 ## async def name2uid()
 
@@ -1021,6 +1091,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+--
+
 ## async def name2uid_sync()
 
 将用户名转为 uid
@@ -1034,6 +1106,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+
+--
 
 ## async def rename_subscribe_group()
 
@@ -1050,6 +1124,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 
 
+
+--
 
 ## async def set_subscribe_group()
 

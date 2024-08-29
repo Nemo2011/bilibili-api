@@ -12,9 +12,9 @@ bilibili_api.music
 from bilibili_api import music
 ```
 
-## class Music
+--
 
-**Extend: builtins.object**
+## class Music()
 
 音乐类。
 
@@ -58,9 +58,9 @@ from bilibili_api import music
 
 
 
-## class MusicIndexTags
+--
 
-**Extend: builtins.object**
+## class MusicIndexTags()
 
 音乐索引信息查找可以用的标签，有语言和类型两种标签，每种标签选一个
 
@@ -70,7 +70,7 @@ from bilibili_api import music
 
 
 
-### class Genre
+### class Genre()
 
 **Extend: enum.Enum**
 
@@ -101,7 +101,7 @@ from bilibili_api import music
 
 
 
-### class Lang
+### class Lang()
 
 **Extend: enum.Enum**
 
@@ -115,7 +115,9 @@ from bilibili_api import music
 
 
 
-## class MusicOrder
+--
+
+## class MusicOrder()
 
 **Extend: enum.Enum**
 
@@ -126,6 +128,8 @@ from bilibili_api import music
 
 
 
+
+--
 
 ## async def get_homepage_recommend()
 
@@ -140,6 +144,8 @@ from bilibili_api import music
 
 
 
+
+--
 
 ## async def get_music_index_info()
 

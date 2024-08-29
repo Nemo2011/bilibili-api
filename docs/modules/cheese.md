@@ -18,9 +18,9 @@ bilibili_api.cheese
 from bilibili_api import cheese
 ```
 
-## class CheeseList
+--
 
-**Extend: builtins.object**
+## class CheeseList()
 
 课程类
 
@@ -100,9 +100,9 @@ from bilibili_api import cheese
 
 
 
-## class CheeseVideo
+--
 
-**Extend: builtins.object**
+## class CheeseVideo()
 
 教程视频类
 因为不和其他视频相通，所以这里是一个新的类，无继承

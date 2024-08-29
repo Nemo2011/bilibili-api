@@ -10,9 +10,9 @@ bilibili_api.interactive_video
 from bilibili_api import interactive_video
 ```
 
-## class InteractiveButton
+--
 
-**Extend: builtins.object**
+## class InteractiveButton()
 
 互动视频节点按钮类
 
@@ -52,7 +52,9 @@ from bilibili_api import interactive_video
 
 
 
-## class InteractiveButtonAlign
+--
+
+## class InteractiveButtonAlign()
 
 **Extend: enum.Enum**
 
@@ -82,9 +84,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveGraph
+--
 
-**Extend: builtins.object**
+## class InteractiveGraph()
 
 情节树类
 
@@ -135,9 +137,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveJumpingCommand
+--
 
-**Extend: builtins.object**
+## class InteractiveJumpingCommand()
 
 节点跳转对变量的操作
 
@@ -155,9 +157,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveJumpingCondition
+--
 
-**Extend: builtins.object**
+## class InteractiveJumpingCondition()
 
 节点跳转的公式，只有公式成立才会跳转
 
@@ -175,9 +177,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveNode
+--
 
-**Extend: builtins.object**
+## class InteractiveNode()
 
 互动视频节点类
 
@@ -293,7 +295,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveNodeJumpingType
+--
+
+## class InteractiveNodeJumpingType()
 
 **Extend: enum.Enum**
 
@@ -306,9 +310,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveVariable
+--
 
-**Extend: builtins.object**
+## class InteractiveVariable()
 
 互动节点的变量
 
@@ -380,7 +384,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveVideo
+--
+
+## class InteractiveVideo()
 
 **Extend: bilibili_api.video.Video**
 
@@ -474,7 +480,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveVideoDownloader
+--
+
+## class InteractiveVideoDownloader()
 
 **Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
 
@@ -493,7 +501,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveVideoDownloaderEvents
+--
+
+## class InteractiveVideoDownloaderEvents()
 
 **Extend: enum.Enum**
 
@@ -515,7 +525,9 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-## class InteractiveVideoDownloaderMode
+--
+
+## class InteractiveVideoDownloaderMode()
 
 **Extend: enum.Enum**
 
@@ -528,6 +540,8 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
+
+--
 
 ## def get_ivi_file_meta()
 
