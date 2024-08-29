@@ -390,17 +390,17 @@ class MPlayer(object):
                     else:
                         # 跳转类型
                         if (
-                            self.graph[str(children[0])]["jump_type"]
+                            self.graph[str(self.current_node)]["sub"][0]["jump_type"]
                             == InteractiveNodeJumpingType.DEFAULT.value
                         ):
                             # 直接跳转
-                            for node_id in children:
+                            for node in children:
                                 btn = Button(
-                                    node_id,
+                                    node["id"],
                                     [0, 0],
                                     "",
-                                    self.graph[str(node_id)]["condition"],
-                                    self.graph[str(node_id)]["command"],
+                                    node["condition"],
+                                    node["command"],
                                 )
                                 condition = InteractiveJumpingCondition(
                                     self.variables, btn.condition
@@ -415,36 +415,31 @@ class MPlayer(object):
                                     self.set_source(self.graph[str(btn_id)]["cid"])
                                     self.current_node = btn.node_id
                                     self.volume_change_event()
-                                    title = self.graph[str(node_id)]["title"]
+                                    title = self.graph[str(btn_id)]["title"]
                                     self.node.setText(f"(当前节点: {title})")
                                     break
                         else:
-                            # 进行选择
-                            def get_info(node_id: int):
-                                return self.graph[str(node_id)]
-
                             cnt = 0
                             for idx, child in enumerate(children):
                                 pos_x = cnt * 200
                                 pos_y = 600
-                                cur_info = get_info(child)
                                 # 生成 Button 对象
                                 self.choice_buttons.append(
                                     Button(
-                                        child,
+                                        child["id"],
                                         [pos_x, pos_y],
-                                        cur_info["button"]["text"],
-                                        cur_info["condition"],
-                                        cur_info["command"],
+                                        child["text"],
+                                        child["condition"],
+                                        child["command"],
                                     )
                                 )
                                 # 生成 ButtonLabel 对象
-                                if cur_info["button"]["pos"][0] == None:
+                                if child["pos"][0] == None:
                                     if idx != 0:
-                                        previous_info = get_info(children[idx - 1])
+                                        previous_info = children[idx - 1]
                                         curtext, previoustext = (
-                                            cur_info["button"]["text"],
-                                            previous_info["button"]["text"],
+                                            child["text"],
+                                            previous_info["text"],
                                         )
                                         if curtext[2:] == previoustext[2:]:
                                             # 可确定与上一个按钮同一个位置（即概率按钮）
@@ -454,16 +449,16 @@ class MPlayer(object):
                                     cnt += 1
                                     lbl = ButtonLabel(self.win)
                                     lbl.prep_text(
-                                        cur_info["button"]["text"], pos_x, pos_y
+                                        child["text"], pos_x, pos_y
                                     )
                                     lbl.show()
                                     self.choice_labels.append(lbl)
                                     continue
                                 if idx != 0:
-                                    previous_info = get_info(children[idx - 1])
+                                    previous_info = children[idx - 1]
                                     curpos, previouspos = (
-                                        cur_info["button"]["pos"],
-                                        previous_info["button"]["pos"],
+                                        child["pos"],
+                                        previous_info["pos"],
                                     )
                                     if (abs(curpos[0] - previouspos[0]) <= 5) and (
                                         abs(curpos[1] - previouspos[1]) <= 5
@@ -476,7 +471,7 @@ class MPlayer(object):
                                         cnt += 1
                                         lbl = ButtonLabel(self.win)
                                         lbl.prep_text(
-                                            cur_info["button"]["text"], pos_x, pos_y
+                                            child["text"], pos_x, pos_y
                                         )
                                         lbl.show()
                                         self.choice_labels.append(lbl)
@@ -485,7 +480,7 @@ class MPlayer(object):
                                     cnt += 1
                                     lbl = ButtonLabel(self.win)
                                     lbl.prep_text(
-                                        cur_info["button"]["text"], pos_x, pos_y
+                                        child["text"], pos_x, pos_y
                                     )
                                     lbl.show()
                                     self.choice_labels.append(lbl)
@@ -510,8 +505,7 @@ class MPlayer(object):
                 self.label.setText("--:--/--:--")
                 return
             if (
-                (self.mediaplayer.duration() // 1000)
-                == ((self.mediaplayer.position() // 1000))
+                abs(self.mediaplayer.duration() - self.mediaplayer.position()) <= 500
             ) and (not self.has_end):
                 self.has_end = True
                 self.mediaplayer.pause()

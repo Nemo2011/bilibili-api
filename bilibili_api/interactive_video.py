@@ -424,7 +424,7 @@ class InteractiveNode:
         """
         获取子节点跳转方式 (参考 InteractiveNodeJumpingType)
         """
-        edge_info = await self.__parent.get_edge_info(self.__id)
+        edge_info = await self.__get_cached_edge_info()
         return edge_info["edges"]["questions"][0]["type"]
 
     def get_node_id(self) -> int:
@@ -846,11 +846,6 @@ class InteractiveVideoDownloader(AsyncEvent):
             edges_info[edge_id] = {
                 "title": None,
                 "cid": None,
-                "button": None,
-                "condition": None,
-                "jump_type": None,
-                "is_default": None,
-                "command": None,
                 "sub": [],
             }
 
@@ -876,18 +871,9 @@ class InteractiveVideoDownloader(AsyncEvent):
         if n.get_node_id() not in edges_info:
             createEdge(n.get_node_id())
         edges_info[n.get_node_id()]["cid"] = n.get_cid()
-        edges_info[n.get_node_id()]["button"] = {
-            "text": n.get_self_button().get_text(),
-            "align": n.get_self_button().get_align(),
-            "pos": (n.get_self_button().get_pos()),
-        }
         edges_info[n.get_node_id()]["vars"] = [
             var2dict(var) for var in (await n.get_vars())
         ]
-        edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
-        edges_info[n.get_node_id()]["jump_type"] = 0
-        edges_info[n.get_node_id()]["is_default"] = True
-        edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
 
         while queue:
             # 出队
@@ -939,31 +925,19 @@ class InteractiveVideoDownloader(AsyncEvent):
                 if n.get_node_id() not in edges_info:
                     createEdge(n.get_node_id())
                 edges_info[n.get_node_id()]["cid"] = n.get_cid()
-                edges_info[n.get_node_id()]["button"] = {
-                    "text": n.get_self_button().get_text(),
-                    "align": n.get_self_button().get_align(),
-                    "pos": n.get_self_button().get_pos(),
-                }
-
-                def var2dict(var: InteractiveVariable):
-                    return {
-                        "name": var.get_name(),
-                        "id": var.get_id(),
-                        "value": var.get_value(),
-                        "show": var.is_show(),
-                        "random": var.is_random(),
+                edges_info[now_node.get_node_id()]["sub"].append(
+                    {
+                        "id": n.get_node_id(),
+                        "text": n.get_self_button().get_text(),
+                        "align": n.get_self_button().get_align(),
+                        "pos": n.get_self_button().get_pos(),
+                        "condition": n.get_jumping_condition()._InteractiveJumpingCondition__command,  # type: ignore
+                        "jump_type": await now_node.get_jumping_type(),
+                        "is_default": n.is_default(),
+                        "command": n._InteractiveNode__command._InteractiveJumpingCommand__command,  # type: ignore
                     }
-
-                edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
-                edges_info[n.get_node_id()][
-                    "jump_type"
-                ] = await now_node.get_jumping_type()
-                edges_info[n.get_node_id()]["is_default"] = n.is_default()
-                edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
-                edges_info[now_node.get_node_id()]["sub"] = [
-                    n.get_node_id() for n in subs
-                ]
-                # 所有可达顶点 ID 入队
+                )
+                # # 所有可达顶点 ID 入队
                 queue.insert(0, n)
 
         json.dump(
@@ -1060,18 +1034,6 @@ class InteractiveVideoDownloader(AsyncEvent):
         if n.get_node_id() not in edges_info:
             createEdge(n.get_node_id())
         edges_info[n.get_node_id()]["cid"] = n.get_cid()
-        edges_info[n.get_node_id()]["button"] = {
-            "text": n.get_self_button().get_text(),
-            "align": n.get_self_button().get_align(),
-            "pos": (n.get_self_button().get_pos()),
-        }
-        edges_info[n.get_node_id()]["vars"] = [
-            var2dict(var) for var in (await n.get_vars())
-        ]
-        edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
-        edges_info[n.get_node_id()]["jump_type"] = 0
-        edges_info[n.get_node_id()]["is_default"] = True
-        edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
 
         while queue:
             # 出队
@@ -1119,30 +1081,6 @@ class InteractiveVideoDownloader(AsyncEvent):
                 if n.get_node_id() not in edges_info:
                     createEdge(n.get_node_id())
                 edges_info[n.get_node_id()]["cid"] = n.get_cid()
-                edges_info[n.get_node_id()]["button"] = {
-                    "text": n.get_self_button().get_text(),
-                    "align": n.get_self_button().get_align(),
-                    "pos": n.get_self_button().get_pos(),
-                }
-
-                def var2dict(var: InteractiveVariable):
-                    return {
-                        "name": var.get_name(),
-                        "id": var.get_id(),
-                        "value": var.get_value(),
-                        "show": var.is_show(),
-                        "random": var.is_random(),
-                    }
-
-                edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
-                edges_info[n.get_node_id()][
-                    "jump_type"
-                ] = await now_node.get_jumping_type()
-                edges_info[n.get_node_id()]["is_default"] = n.is_default()
-                edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
-                edges_info[now_node.get_node_id()]["sub"] = [
-                    n.get_node_id() for n in subs
-                ]
                 # 所有可达顶点 ID 入队
                 queue.insert(0, n)
 
@@ -1288,11 +1226,6 @@ class InteractiveVideoDownloader(AsyncEvent):
             edges_info[edge_id] = {
                 "title": None,
                 "cid": None,
-                "button": None,
-                "condition": None,
-                "jump_type": None,
-                "is_default": None,
-                "command": None,
                 "sub": [],
             }
 
@@ -1318,18 +1251,9 @@ class InteractiveVideoDownloader(AsyncEvent):
         if n.get_node_id() not in edges_info:
             createEdge(n.get_node_id())
         edges_info[n.get_node_id()]["cid"] = n.get_cid()
-        edges_info[n.get_node_id()]["button"] = {
-            "text": n.get_self_button().get_text(),
-            "align": n.get_self_button().get_align(),
-            "pos": (n.get_self_button().get_pos()),
-        }
         edges_info[n.get_node_id()]["vars"] = [
             var2dict(var) for var in (await n.get_vars())
         ]
-        edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
-        edges_info[n.get_node_id()]["jump_type"] = 0
-        edges_info[n.get_node_id()]["is_default"] = True
-        edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
 
         while queue:
             # 出队
@@ -1377,31 +1301,19 @@ class InteractiveVideoDownloader(AsyncEvent):
                 if n.get_node_id() not in edges_info:
                     createEdge(n.get_node_id())
                 edges_info[n.get_node_id()]["cid"] = n.get_cid()
-                edges_info[n.get_node_id()]["button"] = {
-                    "text": n.get_self_button().get_text(),
-                    "align": n.get_self_button().get_align(),
-                    "pos": n.get_self_button().get_pos(),
-                }
-
-                def var2dict(var: InteractiveVariable):
-                    return {
-                        "name": var.get_name(),
-                        "id": var.get_id(),
-                        "value": var.get_value(),
-                        "show": var.is_show(),
-                        "random": var.is_random(),
+                edges_info[now_node.get_node_id()]["sub"].append(
+                    {
+                        "id": n.get_node_id(),
+                        "text": n.get_self_button().get_text(),
+                        "align": n.get_self_button().get_align(),
+                        "pos": n.get_self_button().get_pos(),
+                        "condition": n.get_jumping_condition()._InteractiveJumpingCondition__command,  # type: ignore
+                        "jump_type": await now_node.get_jumping_type(),
+                        "is_default": n.is_default(),
+                        "command": n._InteractiveNode__command._InteractiveJumpingCommand__command,  # type: ignore
                     }
-
-                edges_info[n.get_node_id()]["condition"] = n.get_jumping_condition()._InteractiveJumpingCondition__command  # type: ignore
-                edges_info[n.get_node_id()][
-                    "jump_type"
-                ] = await now_node.get_jumping_type()
-                edges_info[n.get_node_id()]["is_default"] = n.is_default()
-                edges_info[n.get_node_id()]["command"] = n._InteractiveNode__command._InteractiveJumpingCommand__command  # type: ignore
-                edges_info[now_node.get_node_id()]["sub"] = [
-                    n.get_node_id() for n in subs
-                ]
-                # 所有可达顶点 ID 入队
+                )
+                # # 所有可达顶点 ID 入队
                 queue.insert(0, n)
 
         json.dump(

@@ -28,28 +28,28 @@
 - test_ivi
   - bilivideo.json
   - ivideo.json
-  - xxxxx.mp4
+  - xxxxx.video.mp4
+  - xxxxx.audio.mp4
 
 **提示：所有除二进制文件以外的文件请采用 `utf-8` 编码或是 `ascii` 编码打开/保存，请不要用 `gbk` 编码。建议使用 `ascii` 编码**
 
 其中，`bilivideo.json` 存放了视频的基本信息（`BVID` 和视频标题）。而 `ivideo.json` 则是剧情树。还有许多的 `mp4` 文件，这些都对应了一个个的节点，举个例子，`123.mp4` 是 `cid` 为 `123` 的节点对应的视频。节点的 `cid` 可以在 `ivideo.json` 中找到。
 
-`ivideo.json` 存放的是一个字典，字典的 `key` 对应了节点的 `id`，而内容则是节点的信息。无论哪个视频，初始的节点的 `id` 永远都是 `1`。以下为一个节点的信息的详解: 
+`ivideo.json` 存放的是一个字典，字典的 `key` 对应了节点的 `id`，而内容则是节点的信息。初始的节点的 `id` 为 `bilivideo.json` 中的 `root_id`。以下为一个节点的信息的详解: 
 
-- "1" (str: 节点 ID 转为字符串的结果)
+- "114514" (str: 节点 ID 转为字符串的结果)
   - `title` (str: 标题)
   - `cid` (int: CID)
-  - `button` (dict: 跳转对应按钮的信息)
+  - `sub` (list: 子节点列表)
     - `text` (str: 按钮文字)
     - `align` (int: 按钮文字相对于定位的位置，有上左下右中五种，可以参考 `interactive_video.InteractiveButtonAlign`，里面有详细注释)
     - `pos` (list: 按钮位置信息 (如果所有按钮都照正常布局，那么此数据的值为 `[null, null]`))
       - `0`: X 坐标
       - `1`: Y 坐标
-  - `condition` (str: 节点跳转必须符合的表达式，默认为 `""`。为 `javascript` 语言。主要作用为实现随机跳转。)
-  - `jump_type` (int: 跳转方式，有直接跳转和选择跳转两种，可查看 `interactive_video.InteractiveJumpingType`)
-  - `is_default` (bool: 是否为默认节点，如果是直接跳转则会跳转至默认节点，或者是定时选择后直接跳转至默认节点(定时选择后直接跳转目前不支持))
-  - `command` (str: 跳转成功后需要对变量做的操作。为 `javascript` 语言。)
-  - `sub` (list: 子节点列表)
+    - `condition` (str: 节点跳转必须符合的表达式，默认为 `""`。为 `javascript` 语言。主要作用为实现随机跳转。)
+    - `jump_type` (int: 跳转方式，有直接跳转和选择跳转两种，可查看 `interactive_video.InteractiveJumpingType`)
+    - `is_default` (bool: 是否为默认节点，如果是直接跳转则会跳转至默认节点，或者是定时选择后直接跳转至默认节点(定时选择后直接跳转目前不支持))
+    - `command` (str: 跳转成功后需要对变量做的操作。为 `javascript` 语言。)
   - `vars` (list: 初始化时的变量设置)
     - `每一项` (dict)
       - `name` (str: 变量名)
