@@ -10,7 +10,7 @@ bilibili_api.article
 from bilibili_api import article
 ```
 
---
+---
 
 ## class Article()
 
@@ -175,7 +175,7 @@ from bilibili_api import article
 
 
 
---
+---
 
 ## class ArticleList()
 
@@ -209,7 +209,7 @@ from bilibili_api import article
 
 
 
---
+---
 
 ## class ArticleRankingType()
 
@@ -225,7 +225,7 @@ from bilibili_api import article
 
 
 
---
+---
 
 ## class ArticleType()
 
@@ -240,7 +240,7 @@ from bilibili_api import article
 
 
 
---
+---
 
 ## async def get_article_rank()
 

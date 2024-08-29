@@ -10,7 +10,7 @@ bilibili_api.app
 from bilibili_api import app
 ```
 
---
+---
 
 ## async def get_loading_images()
 
@@ -32,7 +32,7 @@ from bilibili_api import app
 
 
 
---
+---
 
 ## async def get_loading_images_special()
 

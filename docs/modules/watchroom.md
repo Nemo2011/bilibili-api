@@ -12,7 +12,7 @@ bilibili_api.watchroom
 from bilibili_api import watchroom
 ```
 
---
+---
 
 ## class Message()
 
@@ -21,7 +21,7 @@ from bilibili_api import watchroom
 
 
 
---
+---
 
 ## class MessageSegment()
 
@@ -34,7 +34,7 @@ from bilibili_api import watchroom
 | is_emoji | bool | 是否为表情包 |
 
 
---
+---
 
 ## class MessageType()
 
@@ -48,7 +48,7 @@ from bilibili_api import watchroom
 
 
 
---
+---
 
 ## class SeasonType()
 
@@ -66,7 +66,7 @@ from bilibili_api import watchroom
 
 
 
---
+---
 
 ## class WatchRoom()
 
@@ -232,7 +232,7 @@ from bilibili_api import watchroom
 
 
 
---
+---
 
 ## async def create()
 
@@ -251,7 +251,7 @@ from bilibili_api import watchroom
 
 
 
---
+---
 
 ## async def match()
 

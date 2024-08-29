@@ -325,7 +325,7 @@ for module in all_funcs:
     for func in module[1:]:
         print("PROCESS", func[1])
         if func[4] == 2:
-            file.write("--\n\n")
+            file.write("---\n\n")
         if func[3].startswith("@"):
             file.write(f"**{func[3]}** \n\n")
         file.write("#" * func[4] + f" {func[2]} {func[0]}()\n\n")

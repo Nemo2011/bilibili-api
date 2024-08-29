@@ -10,7 +10,7 @@ bilibili_api.dynamic
 from bilibili_api import dynamic
 ```
 
---
+---
 
 ## class BuildDynamic()
 
@@ -262,7 +262,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
---
+---
 
 ## class Dynamic()
 
@@ -404,7 +404,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
---
+---
 
 ## class DynamicContentType()
 
@@ -420,7 +420,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
---
+---
 
 ## class DynamicType()
 
@@ -436,7 +436,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
---
+---
 
 ## class SendDynamicType()
 
@@ -451,7 +451,7 @@ scene 参数
 
 
 
---
+---
 
 ## async def delete_schedule()
 
@@ -468,7 +468,7 @@ scene 参数
 
 
 
---
+---
 
 ## async def get_dynamic_page_UPs_info()
 
@@ -484,7 +484,7 @@ scene 参数
 
 
 
---
+---
 
 ## async def get_dynamic_page_info()
 
@@ -509,7 +509,7 @@ scene 参数
 
 
 
---
+---
 
 ## async def get_live_users()
 
@@ -526,7 +526,7 @@ scene 参数
 
 
 
---
+---
 
 ## async def get_new_dynamic_users()
 
@@ -542,7 +542,7 @@ scene 参数
 
 
 
---
+---
 
 ## async def get_schedules_list()
 
@@ -558,7 +558,7 @@ scene 参数
 
 
 
---
+---
 
 ## async def send_dynamic()
 
@@ -575,7 +575,7 @@ scene 参数
 
 
 
---
+---
 
 ## async def send_schedule_now()
 
@@ -592,7 +592,7 @@ scene 参数
 
 
 
---
+---
 
 ## async def upload_image()
 
@@ -610,7 +610,7 @@ scene 参数
 
 
 
---
+---
 
 ## def upload_image_sync()
 

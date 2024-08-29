@@ -10,7 +10,7 @@ bilibili_api.interactive_video
 from bilibili_api import interactive_video
 ```
 
---
+---
 
 ## class InteractiveButton()
 
@@ -52,7 +52,7 @@ from bilibili_api import interactive_video
 
 
 
---
+---
 
 ## class InteractiveButtonAlign()
 
@@ -84,7 +84,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveGraph()
 
@@ -137,7 +137,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveJumpingCommand()
 
@@ -157,7 +157,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveJumpingCondition()
 
@@ -177,7 +177,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveNode()
 
@@ -295,7 +295,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveNodeJumpingType()
 
@@ -310,7 +310,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveVariable()
 
@@ -384,7 +384,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveVideo()
 
@@ -480,7 +480,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveVideoDownloader()
 
@@ -501,7 +501,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveVideoDownloaderEvents()
 
@@ -525,7 +525,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## class InteractiveVideoDownloaderMode()
 
@@ -541,7 +541,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
---
+---
 
 ## def get_ivi_file_meta()
 

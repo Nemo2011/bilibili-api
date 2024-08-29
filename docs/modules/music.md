@@ -12,7 +12,7 @@ bilibili_api.music
 from bilibili_api import music
 ```
 
---
+---
 
 ## class Music()
 
@@ -58,7 +58,7 @@ from bilibili_api import music
 
 
 
---
+---
 
 ## class MusicIndexTags()
 
@@ -115,7 +115,7 @@ from bilibili_api import music
 
 
 
---
+---
 
 ## class MusicOrder()
 
@@ -129,7 +129,7 @@ from bilibili_api import music
 
 
 
---
+---
 
 ## async def get_homepage_recommend()
 
@@ -145,7 +145,7 @@ from bilibili_api import music
 
 
 
---
+---
 
 ## async def get_music_index_info()
 

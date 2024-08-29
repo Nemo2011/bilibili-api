@@ -12,7 +12,7 @@ bilibili_api.creative_center
 from bilibili_api import creative_center
 ```
 
---
+---
 
 ## class ArchiveType()
 
@@ -27,7 +27,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class ArticleInfoType()
 
@@ -45,7 +45,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class CommentManagerOrder()
 
@@ -60,7 +60,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class Copyright()
 
@@ -75,7 +75,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class DanmakuMode()
 
@@ -94,7 +94,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class DanmakuOrder()
 
@@ -108,7 +108,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class DanmakuPool()
 
@@ -123,7 +123,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class DanmakuSort()
 
@@ -137,7 +137,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class DanmakuType()
 
@@ -151,7 +151,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class FanGraphPeriod()
 
@@ -167,7 +167,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class FanGraphType()
 
@@ -183,7 +183,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class GraphPeriod()
 
@@ -200,7 +200,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class GraphType()
 
@@ -222,7 +222,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class UploadManagerArticleStatus()
 
@@ -238,7 +238,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class UploadManagerOrder()
 
@@ -255,7 +255,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class UploadManagerSort()
 
@@ -272,7 +272,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## class UploadManagerStatus()
 
@@ -288,7 +288,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def del_comments()
 
@@ -308,7 +308,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def del_danmaku()
 
@@ -324,7 +324,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def edit_danmaku_pool()
 
@@ -342,7 +342,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def edit_danmaku_state()
 
@@ -360,7 +360,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_article_graph()
 
@@ -377,7 +377,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_article_list_upload_manager_info()
 
@@ -393,7 +393,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_article_overview()
 
@@ -409,7 +409,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_article_rank()
 
@@ -426,7 +426,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_article_source()
 
@@ -442,7 +442,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_article_upload_manager_info()
 
@@ -461,7 +461,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_comments()
 
@@ -485,7 +485,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_compare()
 
@@ -501,7 +501,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_danmakus()
 
@@ -534,7 +534,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_fan_graph()
 
@@ -552,7 +552,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_fan_overview()
 
@@ -569,7 +569,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_graph()
 
@@ -587,7 +587,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_overview()
 
@@ -604,7 +604,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_recently_danmakus()
 
@@ -622,7 +622,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_video_draft_upload_manager_info()
 
@@ -638,7 +638,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_video_playanalysis()
 
@@ -655,7 +655,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_video_source()
 
@@ -671,7 +671,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_video_survey()
 
@@ -687,7 +687,7 @@ from bilibili_api import creative_center
 
 
 
---
+---
 
 ## async def get_video_upload_manager_info()
 

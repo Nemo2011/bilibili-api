@@ -10,7 +10,7 @@ bilibili_api.session
 from bilibili_api import session
 ```
 
---
+---
 
 ## class Event()
 
@@ -28,7 +28,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## class EventType()
 
@@ -48,7 +48,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## class Session()
 
@@ -120,7 +120,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def fetch_session_msgs()
 
@@ -139,7 +139,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def get_at()
 
@@ -157,7 +157,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def get_likes()
 
@@ -175,7 +175,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def get_replies()
 
@@ -193,7 +193,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def get_session_detail()
 
@@ -211,7 +211,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def get_session_settings()
 
@@ -227,7 +227,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def get_sessions()
 
@@ -244,7 +244,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def get_system_messages()
 
@@ -260,7 +260,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def get_unread_messages()
 
@@ -276,7 +276,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def new_sessions()
 
@@ -293,7 +293,7 @@ from bilibili_api import session
 
 
 
---
+---
 
 ## async def send_msg()
 

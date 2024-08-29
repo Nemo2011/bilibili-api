@@ -10,7 +10,7 @@ bilibili_api.topic
 from bilibili_api import topic
 ```
 
---
+---
 
 ## class Topic()
 
@@ -90,7 +90,7 @@ from bilibili_api import topic
 
 
 
---
+---
 
 ## class TopicCardsSortBy()
 
@@ -105,7 +105,7 @@ from bilibili_api import topic
 
 
 
---
+---
 
 ## async def get_hot_topics()
 
@@ -121,7 +121,7 @@ from bilibili_api import topic
 
 
 
---
+---
 
 ## async def search_topic()
 

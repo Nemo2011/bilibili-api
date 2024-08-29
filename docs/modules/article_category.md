@@ -10,7 +10,7 @@ bilibili_api.article_category
 from bilibili_api import article_category
 ```
 
---
+---
 
 ## class ArticleOrder()
 
@@ -27,7 +27,7 @@ from bilibili_api import article_category
 
 
 
---
+---
 
 ## def get_categories_list()
 
@@ -40,7 +40,7 @@ from bilibili_api import article_category
 
 
 
---
+---
 
 ## def get_categories_list_sub()
 
@@ -55,7 +55,7 @@ from bilibili_api import article_category
 
 
 
---
+---
 
 ## def get_category_info_by_id()
 
@@ -71,7 +71,7 @@ from bilibili_api import article_category
 
 
 
---
+---
 
 ## def get_category_info_by_name()
 
@@ -87,7 +87,7 @@ from bilibili_api import article_category
 
 
 
---
+---
 
 ## async def get_category_recommend_articles()
 

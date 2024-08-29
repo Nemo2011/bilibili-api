@@ -10,7 +10,7 @@ bilibili_api.game
 from bilibili_api import game
 ```
 
---
+---
 
 ## class Game()
 
@@ -88,7 +88,7 @@ from bilibili_api import game
 
 
 
---
+---
 
 ## class GameRankType()
 
@@ -106,7 +106,7 @@ from bilibili_api import game
 
 
 
---
+---
 
 ## async def game_name2id()
 
@@ -122,7 +122,7 @@ from bilibili_api import game
 
 
 
---
+---
 
 ## async def get_game_rank()
 
@@ -140,7 +140,7 @@ from bilibili_api import game
 
 
 
---
+---
 
 ## async def get_start_test_list()
 
@@ -157,7 +157,7 @@ from bilibili_api import game
 
 
 
---
+---
 
 ## def get_wiki_api_root()
 

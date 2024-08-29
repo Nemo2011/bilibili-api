@@ -10,7 +10,7 @@ bilibili_api.live
 from bilibili_api import live
 ```
 
---
+---
 
 ## class LiveCodec()
 
@@ -26,7 +26,7 @@ from bilibili_api import live
 
 
 
---
+---
 
 ## class LiveDanmaku()
 
@@ -94,7 +94,7 @@ Events：
 
 
 
---
+---
 
 ## class LiveFormat()
 
@@ -111,7 +111,7 @@ Events：
 
 
 
---
+---
 
 ## class LiveProtocol()
 
@@ -127,7 +127,7 @@ Events：
 
 
 
---
+---
 
 ## class LiveRoom()
 
@@ -532,7 +532,7 @@ Events：
 
 
 
---
+---
 
 ## class ScreenResolution()
 
@@ -552,7 +552,7 @@ Events：
 
 
 
---
+---
 
 ## async def create_live_reserve()
 
@@ -569,7 +569,7 @@ Events：
 
 
 
---
+---
 
 ## async def get_area_info()
 
@@ -582,7 +582,7 @@ Events：
 
 
 
---
+---
 
 ## async def get_gift_config()
 
@@ -604,7 +604,7 @@ Events：
 
 
 
---
+---
 
 ## async def get_live_followers_info()
 
@@ -620,7 +620,7 @@ Events：
 
 
 
---
+---
 
 ## async def get_self_bag()
 
@@ -633,7 +633,7 @@ Events：
 
 
 
---
+---
 
 ## async def get_self_dahanghai_info()
 
@@ -659,7 +659,7 @@ pages = math.ceil(info['data']['guards'] / 10)
 
 
 
---
+---
 
 ## async def get_self_info()
 
@@ -672,7 +672,7 @@ pages = math.ceil(info['data']['guards'] / 10)
 
 
 
---
+---
 
 ## async def get_self_live_info()
 
@@ -685,7 +685,7 @@ pages = math.ceil(info['data']['guards'] / 10)
 
 
 
---
+---
 
 ## async def get_unlive_followers_info()
 

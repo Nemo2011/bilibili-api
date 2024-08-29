@@ -10,7 +10,7 @@ bilibili_api.note
 from bilibili_api import note
 ```
 
---
+---
 
 ## class Note()
 
@@ -214,7 +214,7 @@ from bilibili_api import note
 
 
 
---
+---
 
 ## class NoteType()
 

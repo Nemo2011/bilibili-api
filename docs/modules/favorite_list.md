@@ -10,7 +10,7 @@ bilibili_api.favorite_list
 from bilibili_api import favorite_list
 ```
 
---
+---
 
 ## class FavoriteList()
 
@@ -109,7 +109,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## class FavoriteListContentOrder()
 
@@ -124,7 +124,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## class FavoriteListType()
 
@@ -139,7 +139,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## class SearchFavoriteListMode()
 
@@ -153,7 +153,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def clean_video_favorite_list_content()
 
@@ -170,7 +170,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def copy_video_favorite_list_content()
 
@@ -189,7 +189,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def create_video_favorite_list()
 
@@ -208,7 +208,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def delete_video_favorite_list()
 
@@ -225,7 +225,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def delete_video_favorite_list_content()
 
@@ -243,7 +243,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def get_article_favorite_list()
 
@@ -260,7 +260,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def get_course_favorite_list()
 
@@ -277,7 +277,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def get_favorite_collected()
 
@@ -295,7 +295,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def get_note_favorite_list()
 
@@ -312,7 +312,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def get_topic_favorite_list()
 
@@ -329,7 +329,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def get_video_favorite_list()
 
@@ -347,7 +347,7 @@ from bilibili_api import favorite_list
 
 
 
---
+---
 
 ## async def get_video_favorite_list_content()
 
@@ -371,7 +371,7 @@ mode 参数见 SearchFavoriteListMode 枚举。
 
 
 
---
+---
 
 ## async def modify_video_favorite_list()
 
@@ -391,7 +391,7 @@ mode 参数见 SearchFavoriteListMode 枚举。
 
 
 
---
+---
 
 ## async def move_video_favorite_list_content()
 

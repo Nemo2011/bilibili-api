@@ -10,7 +10,7 @@ bilibili_api.video_uploader
 from bilibili_api import video_uploader
 ```
 
---
+---
 
 ## class Lines()
 
@@ -28,7 +28,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
---
+---
 
 ## class VideoEditor()
 
@@ -55,7 +55,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
---
+---
 
 ## class VideoEditorEvents()
 
@@ -79,7 +79,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
---
+---
 
 ## class VideoMeta()
 
@@ -102,7 +102,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
---
+---
 
 ## class VideoPorderIndustry()
 
@@ -129,7 +129,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
---
+---
 
 ## class VideoPorderMeta()
 
@@ -138,7 +138,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
---
+---
 
 ## class VideoPorderShowType()
 
@@ -160,7 +160,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
---
+---
 
 ## class VideoPorderType()
 
@@ -172,7 +172,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
---
+---
 
 ## class VideoUploader()
 
@@ -200,7 +200,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
---
+---
 
 ## class VideoUploaderEvents()
 
@@ -232,7 +232,7 @@ Events:
 
 
 
---
+---
 
 ## class VideoUploaderPage()
 
@@ -252,7 +252,7 @@ Events:
 
 
 
---
+---
 
 ## async def get_available_topics()
 
@@ -264,7 +264,7 @@ Events:
 
 
 
---
+---
 
 ## async def get_missions()
 
@@ -281,7 +281,7 @@ Events:
 
 
 
---
+---
 
 ## async def upload_cover()
 

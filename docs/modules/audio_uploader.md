@@ -10,7 +10,7 @@ bilibili_api.audio_uploader
 from bilibili_api import audio_uploader
 ```
 
---
+---
 
 ## class AudioUploader()
 
@@ -31,7 +31,7 @@ from bilibili_api import audio_uploader
 
 
 
---
+---
 
 ## class AudioUploaderEvents()
 
@@ -58,7 +58,7 @@ Events:
 
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -68,7 +68,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
---
+---
 
 ## class CompilationCategories()
 
@@ -198,7 +198,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
---
+---
 
 ## class SongCategories()
 
@@ -326,7 +326,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -389,7 +389,7 @@ lrc (Optional[str]): 歌词
 
 
 
---
+---
 
 ## async def get_upinfo()
 
@@ -405,7 +405,7 @@ lrc (Optional[str]): 歌词
 
 
 
---
+---
 
 ## async def upload_cover()
 
@@ -422,7 +422,7 @@ lrc (Optional[str]): 歌词
 
 
 
---
+---
 
 ## async def upload_lrc()
 

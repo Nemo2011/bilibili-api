@@ -10,7 +10,7 @@ bilibili_api.search
 from bilibili_api import search
 ```
 
---
+---
 
 ## class CategoryTypeArticle()
 
@@ -29,7 +29,7 @@ from bilibili_api import search
 
 
 
---
+---
 
 ## class CategoryTypePhoto()
 
@@ -43,7 +43,7 @@ from bilibili_api import search
 
 
 
---
+---
 
 ## class OrderArticle()
 
@@ -59,7 +59,7 @@ from bilibili_api import search
 
 
 
---
+---
 
 ## class OrderCheese()
 
@@ -75,7 +75,7 @@ from bilibili_api import search
 
 
 
---
+---
 
 ## class OrderLiveRoom()
 
@@ -88,7 +88,7 @@ from bilibili_api import search
 
 
 
---
+---
 
 ## class OrderUser()
 
@@ -101,7 +101,7 @@ from bilibili_api import search
 
 
 
---
+---
 
 ## class OrderVideo()
 
@@ -120,7 +120,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
---
+---
 
 ## class SearchObjectType()
 
@@ -139,7 +139,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
---
+---
 
 ## async def get_default_search_keyword()
 
@@ -152,7 +152,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
---
+---
 
 ## async def get_hot_search_keywords()
 
@@ -165,7 +165,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
---
+---
 
 ## async def get_suggest_keywords()
 
@@ -181,7 +181,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
---
+---
 
 ## async def search()
 
@@ -198,7 +198,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
---
+---
 
 ## async def search_by_type()
 
@@ -225,7 +225,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
---
+---
 
 ## async def search_cheese()
 
@@ -244,7 +244,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
---
+---
 
 ## async def search_games()
 
@@ -260,7 +260,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
---
+---
 
 ## async def search_manga()
 

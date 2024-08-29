@@ -10,7 +10,7 @@ bilibili_api.live_area
 from bilibili_api import live_area
 ```
 
---
+---
 
 ## class LiveRoomOrder()
 
@@ -24,7 +24,7 @@ from bilibili_api import live_area
 
 
 
---
+---
 
 ## def get_area_info_by_id()
 
@@ -40,7 +40,7 @@ from bilibili_api import live_area
 
 
 
---
+---
 
 ## def get_area_info_by_name()
 
@@ -56,7 +56,7 @@ from bilibili_api import live_area
 
 
 
---
+---
 
 ## def get_area_list()
 
@@ -69,7 +69,7 @@ from bilibili_api import live_area
 
 
 
---
+---
 
 ## def get_area_list_sub()
 
@@ -83,7 +83,7 @@ from bilibili_api import live_area
 
 
 
---
+---
 
 ## async def get_list_by_area()
 

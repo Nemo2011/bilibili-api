@@ -10,7 +10,7 @@ bilibili_api.login_func
 from bilibili_api import login_func
 ```
 
---
+---
 
 ## class QrCodeLoginEvents()
 
@@ -26,7 +26,7 @@ from bilibili_api import login_func
 
 
 
---
+---
 
 ## def check_qrcode_events()
 
@@ -42,7 +42,7 @@ from bilibili_api import login_func
 
 
 
---
+---
 
 ## def check_tv_qrcode_events()
 
@@ -58,7 +58,7 @@ from bilibili_api import login_func
 
 
 
---
+---
 
 ## def close_geetest_server()
 
@@ -70,7 +70,7 @@ from bilibili_api import login_func
 
 
 
---
+---
 
 ## def done_geetest()
 
@@ -85,7 +85,7 @@ from bilibili_api import login_func
 
 
 
---
+---
 
 ## def get_qrcode()
 
@@ -98,7 +98,7 @@ from bilibili_api import login_func
 
 
 
---
+---
 
 ## def get_tv_qrcode()
 
@@ -111,7 +111,7 @@ from bilibili_api import login_func
 
 
 
---
+---
 
 ## def safecenter_close_geetest_server()
 
@@ -123,7 +123,7 @@ from bilibili_api import login_func
 
 
 
---
+---
 
 ## def safecenter_done_geetest()
 
@@ -138,7 +138,7 @@ from bilibili_api import login_func
 
 
 
---
+---
 
 ## def safecenter_start_geetest_server()
 
@@ -161,7 +161,7 @@ print(start_geetest_server().url)
 
 
 
---
+---
 
 ## def start_geetest_server()
 

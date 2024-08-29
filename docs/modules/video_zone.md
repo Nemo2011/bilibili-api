@@ -10,7 +10,7 @@ bilibili_api.video_zone
 from bilibili_api import video_zone
 ```
 
---
+---
 
 ## class VideoZoneTypes()
 
@@ -151,7 +151,7 @@ from bilibili_api import video_zone
 
 
 
---
+---
 
 ## async def get_zone_hot_tags()
 
@@ -167,7 +167,7 @@ from bilibili_api import video_zone
 
 
 
---
+---
 
 ## def get_zone_info_by_name()
 
@@ -183,7 +183,7 @@ from bilibili_api import video_zone
 
 
 
---
+---
 
 ## def get_zone_info_by_tid()
 
@@ -199,7 +199,7 @@ from bilibili_api import video_zone
 
 
 
---
+---
 
 ## def get_zone_list()
 
@@ -212,7 +212,7 @@ from bilibili_api import video_zone
 
 
 
---
+---
 
 ## def get_zone_list_sub()
 
@@ -226,7 +226,7 @@ from bilibili_api import video_zone
 
 
 
---
+---
 
 ## async def get_zone_new_videos()
 
@@ -244,7 +244,7 @@ from bilibili_api import video_zone
 
 
 
---
+---
 
 ## async def get_zone_top10()
 
@@ -262,7 +262,7 @@ from bilibili_api import video_zone
 
 
 
---
+---
 
 ## async def get_zone_videos_count_today()
 

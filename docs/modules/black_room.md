@@ -10,7 +10,7 @@ bilibili_api.black_room
 from bilibili_api import black_room
 ```
 
---
+---
 
 ## class BlackFrom()
 
@@ -25,7 +25,7 @@ from bilibili_api import black_room
 
 
 
---
+---
 
 ## class BlackReasonType()
 
@@ -68,7 +68,7 @@ from bilibili_api import black_room
 
 
 
---
+---
 
 ## class BlackRoom()
 
@@ -126,7 +126,7 @@ from bilibili_api import black_room
 
 
 
---
+---
 
 ## class BlackType()
 
@@ -148,7 +148,7 @@ from bilibili_api import black_room
 
 
 
---
+---
 
 ## class JuryCase()
 
@@ -200,7 +200,7 @@ from bilibili_api import black_room
 
 
 
---
+---
 
 ## class JuryVoteOpinion()
 
@@ -223,7 +223,7 @@ from bilibili_api import black_room
 
 
 
---
+---
 
 ## async def get_blocked_list()
 
@@ -241,7 +241,7 @@ from bilibili_api import black_room
 
 
 
---
+---
 
 ## async def get_jury_case_list()
 
@@ -259,7 +259,7 @@ from bilibili_api import black_room
 
 
 
---
+---
 
 ## async def get_next_jury_case()
 

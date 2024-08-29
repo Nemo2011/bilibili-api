@@ -10,7 +10,7 @@ bilibili_api.festival
 from bilibili_api import festival
 ```
 
---
+---
 
 ## class Festival()
 

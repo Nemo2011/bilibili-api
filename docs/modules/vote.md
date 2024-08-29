@@ -12,7 +12,7 @@ bilibili_api.vote
 from bilibili_api import vote
 ```
 
---
+---
 
 ## class Vote()
 
@@ -90,7 +90,7 @@ from bilibili_api import vote
 
 
 
---
+---
 
 ## class VoteChoices()
 
@@ -137,7 +137,7 @@ from bilibili_api import vote
 
 
 
---
+---
 
 ## class VoteType()
 
@@ -151,7 +151,7 @@ from bilibili_api import vote
 
 
 
---
+---
 
 ## async def create_vote()
 

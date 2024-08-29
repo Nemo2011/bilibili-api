@@ -14,7 +14,7 @@ bilibili_api.login
 from bilibili_api import login
 ```
 
---
+---
 
 ## class Check()
 
@@ -38,7 +38,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## class PhoneNumber()
 
@@ -47,7 +47,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def get_code_by_country()
 
@@ -63,7 +63,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def get_countries_list()
 
@@ -76,7 +76,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def get_id_by_code()
 
@@ -92,7 +92,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def have_code()
 
@@ -108,7 +108,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def have_country()
 
@@ -124,7 +124,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def login_with_password()
 
@@ -141,7 +141,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def login_with_qrcode()
 
@@ -157,7 +157,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def login_with_qrcode_term()
 
@@ -170,7 +170,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def login_with_sms()
 
@@ -187,7 +187,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def login_with_tv_qrcode_term()
 
@@ -200,7 +200,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def search_countries()
 
@@ -216,7 +216,7 @@ from bilibili_api import login
 
 
 
---
+---
 
 ## def send_sms()
 

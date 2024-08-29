@@ -10,7 +10,7 @@ bilibili_api.channel_series
 from bilibili_api import channel_series
 ```
 
---
+---
 
 ## class ChannelOrder()
 
@@ -23,7 +23,7 @@ from bilibili_api import channel_series
 
 
 
---
+---
 
 ## class ChannelSeries()
 
@@ -61,7 +61,7 @@ from bilibili_api import channel_series
 
 
 
---
+---
 
 ## class ChannelSeriesType()
 
@@ -77,7 +77,7 @@ from bilibili_api import channel_series
 
 
 
---
+---
 
 ## async def add_aids_to_series()
 
@@ -95,7 +95,7 @@ from bilibili_api import channel_series
 
 
 
---
+---
 
 ## async def create_channel_series()
 
@@ -115,7 +115,7 @@ from bilibili_api import channel_series
 
 
 
---
+---
 
 ## async def del_aids_from_series()
 
@@ -133,7 +133,7 @@ from bilibili_api import channel_series
 
 
 
---
+---
 
 ## async def del_channel_series()
 
@@ -150,7 +150,7 @@ from bilibili_api import channel_series
 
 
 
---
+---
 
 ## async def set_follow_channel_season()
 

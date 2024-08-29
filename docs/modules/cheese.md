@@ -18,7 +18,7 @@ bilibili_api.cheese
 from bilibili_api import cheese
 ```
 
---
+---
 
 ## class CheeseList()
 
@@ -100,7 +100,7 @@ from bilibili_api import cheese
 
 
 
---
+---
 
 ## class CheeseVideo()
 

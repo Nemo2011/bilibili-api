@@ -10,7 +10,7 @@ bilibili_api.rank
 from bilibili_api import rank
 ```
 
---
+---
 
 ## class LiveEnergyRankType()
 
@@ -24,7 +24,7 @@ from bilibili_api import rank
 
 
 
---
+---
 
 ## class LiveRankType()
 
@@ -41,7 +41,7 @@ from bilibili_api import rank
 
 
 
---
+---
 
 ## class MangeRankType()
 
@@ -61,7 +61,7 @@ from bilibili_api import rank
 
 
 
---
+---
 
 ## class RankAPIType()
 
@@ -75,7 +75,7 @@ from bilibili_api import rank
 
 
 
---
+---
 
 ## class RankDayType()
 
@@ -89,7 +89,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## class RankType()
 
@@ -126,7 +126,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## class VIPRankType()
 
@@ -145,7 +145,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_live_energy_user_rank()
 
@@ -163,7 +163,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_live_hot_rank()
 
@@ -176,7 +176,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_live_rank()
 
@@ -194,7 +194,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_live_sailing_rank()
 
@@ -207,7 +207,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_live_user_medal_rank()
 
@@ -224,7 +224,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_manga_rank()
 
@@ -240,7 +240,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_music_rank_list()
 
@@ -253,7 +253,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_music_rank_weekly_detail()
 
@@ -269,7 +269,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_music_rank_weekly_musics()
 
@@ -285,7 +285,7 @@ RankAPIType.PGC 排行榜时间类型
 
 
 
---
+---
 
 ## async def get_playlet_rank_info()
 
@@ -303,7 +303,7 @@ https://www.bilibili.com/v/popular/drama/
 
 
 
---
+---
 
 ## async def get_playlet_rank_phases()
 
@@ -316,7 +316,7 @@ https://www.bilibili.com/v/popular/drama/
 
 
 
---
+---
 
 ## async def get_rank()
 
@@ -333,7 +333,7 @@ https://www.bilibili.com/v/popular/drama/
 
 
 
---
+---
 
 ## async def get_vip_rank()
 
@@ -349,7 +349,7 @@ https://www.bilibili.com/v/popular/drama/
 
 
 
---
+---
 
 ## async def subscribe_music_rank()
 

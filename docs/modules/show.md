@@ -10,7 +10,7 @@ bilibili_api.show
 from bilibili_api import show
 ```
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -51,7 +51,7 @@ isBuyerValid (bool): 默认为 True
 
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -91,7 +91,7 @@ isBuyerValid (bool): 默认为 True
 
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -110,7 +110,7 @@ ticket_list (list[Ticket]): 存放Ticket对象的list
 
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -131,7 +131,7 @@ sale_end (str): 开售结束时间
 
 
 
---
+---
 
 ## async def get_all_buyer_info()
 
@@ -147,7 +147,7 @@ sale_end (str): 开售结束时间
 
 
 
---
+---
 
 ## async def get_all_buyer_info_obj()
 
@@ -163,7 +163,7 @@ sale_end (str): 开售结束时间
 
 
 
---
+---
 
 ## async def get_available_sessions()
 
@@ -179,7 +179,7 @@ sale_end (str): 开售结束时间
 
 
 
---
+---
 
 ## async def get_project_info()
 

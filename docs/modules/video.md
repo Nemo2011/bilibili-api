@@ -12,7 +12,7 @@ bilibili_api.video
 from bilibili_api import video
 ```
 
---
+---
 
 ## class AudioQuality()
 
@@ -29,7 +29,7 @@ from bilibili_api import video
 
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -46,7 +46,7 @@ from bilibili_api import video
 | audio_quality | AudioQuality | 音频流清晰度 |
 
 
---
+---
 
 ## class DanmakuOperatorType()
 
@@ -61,7 +61,7 @@ from bilibili_api import video
 
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -77,7 +77,7 @@ from bilibili_api import video
 | url | str | 番剧试看的 mp4 播放流 |
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -93,7 +93,7 @@ FLV 视频流
 | url | str | FLV 流 url |
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -109,7 +109,7 @@ FLV 视频流
 | url | str | HTML5 mp4 视频流 |
 
 
---
+---
 
 ## class Video()
 
@@ -798,7 +798,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
---
+---
 
 ## class VideoAppealReasonType()
 
@@ -857,7 +857,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
---
+---
 
 ## class VideoCodecs()
 
@@ -872,7 +872,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
---
+---
 
 ## class VideoDownloadURLDataDetecter()
 
@@ -997,7 +997,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
---
+---
 
 ## class VideoOnlineMonitor()
 
@@ -1061,7 +1061,7 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 
 
---
+---
 
 ## class VideoQuality()
 
@@ -1083,7 +1083,7 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 
 
---
+---
 
 **@dataclasses.dataclass** 
 
@@ -1101,7 +1101,7 @@ CONNECTED:  成功连接。 CallbackData: None。
 | video_codecs | VideoCodecs | 视频流编码 |
 
 
---
+---
 
 ## async def get_cid_info()
 
@@ -1114,7 +1114,7 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 
 
---
+---
 
 ## def get_cid_info_sync()
 

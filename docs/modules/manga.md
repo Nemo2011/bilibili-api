@@ -10,7 +10,7 @@ bilibili_api.manga
 from bilibili_api import manga
 ```
 
---
+---
 
 ## class Manga()
 
@@ -113,7 +113,7 @@ from bilibili_api import manga
 
 
 
---
+---
 
 ## class MangaIndexFilter()
 
@@ -204,7 +204,7 @@ from bilibili_api import manga
 
 
 
---
+---
 
 ## async def get_manga_home_recommend()
 
@@ -222,7 +222,7 @@ from bilibili_api import manga
 
 
 
---
+---
 
 ## async def get_manga_index()
 
@@ -245,7 +245,7 @@ from bilibili_api import manga
 
 
 
---
+---
 
 ## async def get_manga_update()
 
@@ -264,7 +264,7 @@ from bilibili_api import manga
 
 
 
---
+---
 
 ## async def get_raw_manga_index()
 
@@ -287,7 +287,7 @@ from bilibili_api import manga
 
 
 
---
+---
 
 ## async def manga_image_url_turn_to_Picture()
 
@@ -304,7 +304,7 @@ from bilibili_api import manga
 
 
 
---
+---
 
 ## async def set_follow_manga()
 

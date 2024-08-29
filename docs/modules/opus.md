@@ -10,7 +10,7 @@ bilibili_api.opus
 from bilibili_api import opus
 ```
 
---
+---
 
 ## class Opus()
 
@@ -106,7 +106,7 @@ from bilibili_api import opus
 
 
 
---
+---
 
 ## class OpusType()
 

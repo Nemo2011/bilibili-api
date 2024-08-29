@@ -10,7 +10,7 @@ bilibili_api.hot
 from bilibili_api import hot
 ```
 
---
+---
 
 ## async def get_history_popular_videos()
 
@@ -23,7 +23,7 @@ from bilibili_api import hot
 
 
 
---
+---
 
 ## async def get_hot_buzzwords()
 
@@ -40,7 +40,7 @@ from bilibili_api import hot
 
 
 
---
+---
 
 ## async def get_hot_videos()
 
@@ -57,7 +57,7 @@ from bilibili_api import hot
 
 
 
---
+---
 
 ## async def get_weekly_hot_videos()
 
@@ -73,7 +73,7 @@ from bilibili_api import hot
 
 
 
---
+---
 
 ## async def get_weekly_hot_videos_list()
 

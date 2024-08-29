@@ -16,7 +16,7 @@ bilibili_api.bangumi
 from bilibili_api import bangumi
 ```
 
---
+---
 
 ## class Bangumi()
 
@@ -182,7 +182,7 @@ from bilibili_api import bangumi
 
 
 
---
+---
 
 ## class BangumiCommentOrder()
 
@@ -196,7 +196,7 @@ from bilibili_api import bangumi
 
 
 
---
+---
 
 ## class BangumiType()
 
@@ -211,7 +211,7 @@ from bilibili_api import bangumi
 
 
 
---
+---
 
 ## class Episode()
 
@@ -355,7 +355,7 @@ from bilibili_api import bangumi
 
 
 
---
+---
 
 ## class IndexFilter()
 
@@ -806,7 +806,7 @@ start 或 end 为 None 时则表示不设置开始或结尾
 
 
 
---
+---
 
 ## class IndexFilterMeta()
 
@@ -859,7 +859,7 @@ TV
 
 
 
---
+---
 
 ## async def get_index_info()
 
@@ -881,7 +881,7 @@ TV
 
 
 
---
+---
 
 ## async def get_timeline()
 
@@ -898,7 +898,7 @@ TV
 
 
 
---
+---
 
 ## async def set_follow()
 
@@ -916,7 +916,7 @@ TV
 
 
 
---
+---
 
 ## async def update_follow_status()
 

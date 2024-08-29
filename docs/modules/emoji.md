@@ -10,7 +10,7 @@ bilibili_api.emoji
 from bilibili_api import emoji
 ```
 
---
+---
 
 ## async def get_emoji_list()
 

@@ -19,7 +19,7 @@ bilibili_api.comment
 from bilibili_api import comment
 ```
 
---
+---
 
 ## class Comment()
 
@@ -162,7 +162,7 @@ from bilibili_api import comment
 
 
 
---
+---
 
 ## class CommentResourceType()
 
@@ -183,7 +183,7 @@ from bilibili_api import comment
 
 
 
---
+---
 
 ## class OrderType()
 
@@ -197,7 +197,7 @@ from bilibili_api import comment
 
 
 
---
+---
 
 ## class ReportReason()
 
@@ -227,7 +227,7 @@ from bilibili_api import comment
 
 
 
---
+---
 
 ## async def get_comments()
 
@@ -249,7 +249,7 @@ from bilibili_api import comment
 
 
 
---
+---
 
 ## async def get_comments_lazy()
 
@@ -273,7 +273,7 @@ from bilibili_api import comment
 
 
 
---
+---
 
 ## async def send_comment()
 

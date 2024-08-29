@@ -10,7 +10,7 @@ bilibili_api.audio
 from bilibili_api import audio
 ```
 
---
+---
 
 ## class Audio()
 
@@ -80,7 +80,7 @@ from bilibili_api import audio
 
 
 
---
+---
 
 ## class AudioList()
 
@@ -139,7 +139,7 @@ from bilibili_api import audio
 
 
 
---
+---
 
 ## async def get_hot_song_list()
 
@@ -156,7 +156,7 @@ from bilibili_api import audio
 
 
 
---
+---
 
 ## async def get_user_stat()
 

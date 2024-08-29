@@ -46,8 +46,16 @@ Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/ne
 首先使用以下指令安装本模块：
 
 ```
+# 主版本
 $ pip3 install bilibili-api-python
+
+# 开发版本
+$ pip3 install bilibili-api-dev
+
+# 最新修改会在 dev 分支
+$ pip3 install git+https://github.com/Nemo2011/bilibili-api.git@dev
 ```
+
 
 接下来我们来获取视频的播放量等信息：
 
