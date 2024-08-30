@@ -262,9 +262,7 @@ from bilibili_api import comment
 | - | - | - |
 | oid | int | 资源 ID。 |
 | type_ | CommentsResourceType | 资源类枚举。 |
-| pagination_str | Union[str, None] | 分页依据 Defaults to `{"offset" |
-| pn | Union[int, None] | 页码. Defaults to 1. |
-| ps | Union[int, None] | 每页数量. Defaults to 20. |
+| offset | Union[str, None] | 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。 |
 | order | Union[OrderType, None] | 排序方式枚举. Defaults to OrderType.TIME. |
 | credential | Union[Credential, None] | 凭据。Defaults to None. |
 

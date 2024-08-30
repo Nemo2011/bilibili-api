@@ -433,9 +433,7 @@ async def get_comments(
 async def get_comments_lazy(
     oid: int,
     type_: CommentResourceType,
-    # pagination_str: str = "",
-    pn: int = 1,
-    ps: int = 20,
+    offset: str = '',
     order: OrderType = OrderType.TIME,
     credential: Union[Credential, None] = None,
 ) -> dict:
@@ -449,11 +447,7 @@ async def get_comments_lazy(
 
         type_      (CommentsResourceType)        : 资源类枚举。
 
-        pagination_str (str, optional)       : 分页依据 Defaults to `{"offset":""}`. 弃用 #658
-
-        pn (int, optional)       : 页码. Defaults to 1.
-
-        ps (int, optional)       : 每页数量. Defaults to 20.
+        offset (str, optional)       : 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。
 
         order      (OrderType, optional) : 排序方式枚举. Defaults to OrderType.TIME.
 
@@ -462,12 +456,14 @@ async def get_comments_lazy(
     Returns:
         dict: 调用 API 返回的结果
     """
+    offset = offset.replace('"', '\\"')
+    offset = '{"offset":"' + offset + '"}'
     api = API["comment"]["reply_by_session_id"]
     params = {
         "oid": oid,
         "type": type_.value,
         "mode": order.value,
-        "next": pn - 1,
-        "ps": ps,
+        "pagination_str": offset,
+        "web_location": "1315875",
     }
     return await Api(**api, credential=credential).update_params(**params).result
