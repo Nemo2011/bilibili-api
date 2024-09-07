@@ -112,6 +112,7 @@ async def make_ass_file_subtitle(
         credential (Credential, optional): Credential 类. 必须在此处或传入的视频 obj 中传入凭据，两者均存在则优先此处
     """
     # 目测必须得有 Credential 才能获取字幕
+    credential = credential if credential else Credential()
     if credential.has_sessdata():
         obj.credential = credential
     elif not obj.credential.has_sessdata():
