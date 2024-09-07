@@ -885,10 +885,10 @@ def get_session() -> httpx.AsyncClient:
         if settings.proxy != "":
             last_proxy = settings.proxy
             proxies = {"all://": settings.proxy}
-            session = httpx.AsyncClient(proxies=proxies)  # type: ignore
+            session = httpx.AsyncClient(proxies=proxies, timeout=settings.timeout)  # type: ignore
         else:
             last_proxy = ""
-            session = httpx.AsyncClient()
+            session = httpx.AsyncClient(timeout=settings.timeout)
         __httpx_session_pool[loop] = session
 
     return session
