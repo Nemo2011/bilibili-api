@@ -148,7 +148,7 @@ class Picture:
         open(img_path, "wb").write(self.content)
         return img_path
 
-    async def upload_file(self, credential: Credential, data: dict = None) -> "Picture":
+    async def upload_file(self, credential: Credential) -> "Picture":
         """
         上传图片至 B 站。
 
@@ -160,7 +160,7 @@ class Picture:
         """
         from ..dynamic import upload_image
 
-        res = await upload_image(self, credential, data)
+        res = await upload_image(self, credential)
         self.height = res["image_height"]
         self.width = res["image_width"]
         self.url = res["image_url"]
