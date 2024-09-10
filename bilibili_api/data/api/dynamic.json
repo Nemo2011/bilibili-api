@@ -5,7 +5,7 @@
       "method": "POST",
       "verify": true,
       "data": {
-        "biz": "const str: draw",
+        "biz": "const str: draw article",
         "category": "const str: daily"
       },
       "files": {

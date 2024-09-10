@@ -4,29 +4,29 @@ bilibili_api.article
 专栏相关
 """
 
-import re
 import json
+import random
+import re
+import time
 from copy import copy
-from enum import Enum
+from enum import Enum, IntEnum
 from html import unescape
-from datetime import datetime
-from urllib.parse import unquote
 from typing import List, Union, TypeVar, overload
+from urllib.parse import unquote
 
 import yaml
-import httpx
-from yarl import URL
 from bs4 import BeautifulSoup, element
+from yarl import URL
 
-from .utils.initial_state import get_initial_state, get_initial_state_sync
-from .utils.utils import get_api, raise_for_statement
-from .utils.credential import Credential
-from .utils.network import Api, get_session
-from .utils import cache_pool
-from .exceptions.NetworkException import ApiException, NetworkException
-from .video import get_cid_info_sync
-from . import note
+from . import note, Picture
 from . import opus
+from .exceptions import ApiException
+from .utils import cache_pool
+from .utils.credential import Credential
+from .utils.initial_state import get_initial_state, get_initial_state_sync
+from .utils.network import Api
+from .utils.utils import get_api, raise_for_statement
+from .video import get_cid_info_sync
 
 API = get_api("article")
 
@@ -149,7 +149,7 @@ class ArticleList:
         """
         credential = self.credential if self.credential is not None else Credential()
 
-        api = API["info"]["list"]
+        api = API["list"]["get"]
         params = {"id": self.__rlid}
         return await Api(**api, credential=credential).update_params(**params).result
 
@@ -1082,3 +1082,676 @@ class SeparatorNode(Node):
 
     def json(self):
         return {"type": "SeparatorNode"}
+
+
+######################
+#
+#  以下是创建专栏的代码
+#
+######################
+
+
+class LineType(Enum):
+    """分割线枚举
+
+    按新版编辑器分割线选项从上往下排列
+    """
+    L0 = {"url": "https://i0.hdslb.com/bfs/article/0117cbba35e51b0bce5f8c2f6a838e8a087e8ee7.png", "height": 1}
+    L1 = {"url": "https://i0.hdslb.com/bfs/article/4aa545dccf7de8d4a93c2b2b8e3265ac0a26d216.png", "height": 2}
+    L2 = {"url": "https://i0.hdslb.com/bfs/article/71bf2cd56882a2e97f8b3477c9256f8b09f361d3.png", "height": 4}
+    L3 = {"url": "https://i0.hdslb.com/bfs/article/db75225feabec8d8b64ee7d3c7165cd639554cbc.png", "height": 16}
+    L4 = {"url": "https://i0.hdslb.com/bfs/article/4adb9255ada5b97061e610b682b8636764fe50ed.png", "height": 16}
+    L5 = {"url": "https://i0.hdslb.com/bfs/article/02db465212d3c374a43c60fa2625cc1caeaab796.png", "height": 64}
+
+
+class FontSize(IntEnum):
+    """字体大小枚举
+
+    Attributes:
+        Text: 正文
+        Header_2: 标题 2
+        Header_1: 标题 1
+    """
+    Text = 17
+    Header_2 = 22
+    Header_1 = 24
+
+
+class Align(IntEnum):
+    """段落对齐方向枚举
+
+    """
+    left = 0
+    center = 1
+    right = 2
+
+
+class BaseNode2:
+    """新 Node 基类
+
+    Attributes:
+        node_type: 1 纯文字小节 4 超链接小节
+        font_size: 字体大小
+    """
+    node_type: int = None
+    font_size: int
+
+    def json2(self) -> dict:
+        """转化为新版编辑器上传所需的数据格式
+
+        """
+        pass
+
+    def to_insert2(self) -> dict:
+        """转化为新版编辑器保存草稿所需的数据格式
+
+        """
+        pass
+
+
+class TextNode2(BaseNode2):
+    """纯文字 Node
+
+    """
+
+    node_type = 1
+
+    def __init__(self, words: str,
+                 font_size: FontSize = FontSize.Text,
+                 bold: bool = None,
+                 italic: bool = None,
+                 strikethrough: bool = None,
+                 color: str = None):
+        """
+        Args:
+            words (str) : 文本内容
+            font_size (FontSize) : 字体大小
+            bold (bool) : 粗体
+            italic (bool) : 斜体
+            strikethrough (bool) : 删除线
+            color (str) : 字体颜色，最好是 ARTICLE_COLOR_MAP 内的颜色定义
+        """
+        self.words = words
+        self.font_size = font_size.value
+        self.bold = bold
+        self.italic = italic
+        self.strikethrough = strikethrough
+        self.color = color
+
+    def json2(self) -> dict:
+        word = {"node_type": self.node_type, "words": self.words, "font_size": self.font_size, "style": {}}
+        if self.bold:
+            word["style"]["bold"] = self.bold
+        if self.italic:
+            word["style"]["italic"] = self.italic
+        if self.strikethrough:
+            word["style"]["strikethrough"] = self.strikethrough
+
+        if self.color:
+            word["color"] = f"#{self.color}"
+        return {"word": word}
+
+    def to_insert2(self) -> dict:
+        result = {"attributes": {}, "insert": self.words}
+        if self.bold:
+            result["attributes"]["bold"] = self.bold
+        if self.italic:
+            result["attributes"]["italic"] = self.italic
+        if self.strikethrough:
+            result["attributes"]["strike"] = self.strikethrough
+        if self.color:
+            result["attributes"]["color"] = f"#{self.color}"
+        if len(result["attributes"]) == 0:
+            result.pop("attributes")
+        return result
+
+
+class LinkNode2(BaseNode2):
+    """超链接 Node
+
+    """
+    node_type = 4
+
+    def __init__(self, show_text: str,
+                 link: str,
+                 bold: bool = None,
+                 italic: bool = None,
+                 strikethrough: bool = None,
+                 font_size: FontSize = FontSize.Text):
+        """
+        Args:
+            show_text (str) : 超链接显示文本
+            link (str) : 超链接的链接
+            bold (bool) : 粗体
+            italic (bool) : 斜体
+            strikethrough (bool): 删除线
+            font_size (FontSize): 字体大小
+        """
+
+        self.link_type = 16
+        self.show_text = show_text
+        self.link = link
+        self.bold = bold
+        self.italic = italic
+        self.strikethrough = strikethrough
+        self.font_size = font_size.value
+
+    def json2(self) -> dict:
+        link = {"link_type": self.link_type, "show_text": self.show_text, "link": self.link, "style": {}}
+        if self.bold:
+            link["style"]["bold"] = self.bold
+        if self.italic:
+            link["style"]["italic"] = self.italic
+        if self.strikethrough:
+            link["style"]["strikethrough"] = self.strikethrough
+        if self.font_size:
+            link["style"]["font_size"] = self.font_size
+        return {"node_type": self.node_type, "link": link}
+
+    def to_insert2(self) -> dict:
+        result = {"attributes": {"link": self.link}, "insert": self.show_text}
+        if self.bold:
+            result["attributes"]["bold"] = self.bold
+        if self.italic:
+            result["attributes"]["italic"] = self.italic
+        if self.strikethrough:
+            result["attributes"]["strike"] = self.strikethrough
+        if self.font_size:
+            result["attributes"]["font_size"] = self.font_size
+        return result
+
+
+async def upwatermark(image: Picture, credential: Credential) -> dict:
+    """上传获取带水印专栏段落图片
+
+    Args:
+        image (Picture)   : 图片流. 有格式要求.
+        credential (Credential): 凭据
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_bili_jct()
+    credential.raise_for_no_sessdata()
+    api = API["send"]["upwatermark"]
+
+    files = {"binary": open(image._write_to_temp_file(), "rb")}
+
+    return_info = await Api(**api, credential=credential, wbi=True).request(files=files)
+    return return_info
+
+
+async def upcover(image: Picture, credential: Credential) -> dict:
+    """上传专栏段落图片
+
+    Args:
+        image (Picture)   : 图片流. 有格式要求.
+        credential (Credential): 凭据
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_bili_jct()
+    credential.raise_for_no_sessdata()
+    api = API["send"]["upcover"]
+
+    data = {"filename": f"read-editor-{int(time.time() * 1000)}"}
+    files = {"binary": open(image._write_to_temp_file(), "rb")}
+
+    return_info = await Api(**api, credential=credential, wbi=True).update_data(**data).request(files=files)
+    return return_info
+
+
+class Cover(Picture):
+    """封面图片
+
+    """
+
+    def json2(self):
+        """转化为新版编辑器上传所需的数据格式
+
+        """
+        result = {"url": self.url}
+        if self.width:
+            result["width"] = self.width
+        if self.height:
+            result["height"] = self.height
+        if self.size:
+            result["size"] = self.size
+        return result
+
+    def to_insert2(self) -> dict:
+        """转化为新版编辑器保存草稿所需的数据格式
+
+        """
+        return {
+            "attributes": {
+                "class": "normal-img"
+            },
+            "insert": {
+                "native-image": {
+                    "alt": "read-normal-img",
+                    "url": self.url,
+                    "width": self.width,
+                    "height": self.height,
+                    "size": self.size,
+                    "status": "loaded"
+                }
+            },
+            "comment": "插入的图片"
+        }
+
+    async def upcover(self, credential: Credential):
+        """上传专栏段落图片
+
+        Args:
+            credential (Credential) : 凭据类
+        """
+        res = await upcover(self, credential)
+        self.url = res["url"]
+        self.size = res["size"]
+        self.content = self.from_url(self.url).content
+        return self
+
+    async def upwatermark(self, credential: Credential):
+        """上传获取带水印专栏段落图片
+
+        Args:
+            credential (Credential) : 凭据类
+        """
+        res = await upwatermark(self, credential)
+        self.url = res["url"]
+        self.size = res["size"]
+        self.content = self.from_url(self.url).content
+        return self
+
+    async def upload_bfs(self, credential: Credential):
+        """上传封面图片
+
+        Args:
+            credential (Credential) : 凭据类
+        """
+        return await self.upload_file(credential, data={"biz": "article", "category": "daily"})
+
+
+class BaseParagraph:
+    """段落基类
+
+    Attributes:
+        para_type (int) : 1 文本 2 图片 3 超链接 4 引用 5 无序列表 6 有序列表
+    """
+    para_type: int = None
+
+    def json2(self) -> dict:
+        """转化为新版编辑器上传所需的数据格式
+
+        """
+        pass
+
+    def to_insert2(self) -> list:
+        """转化为新版编辑器保存草稿所需的数据格式
+
+        """
+        pass
+
+
+class TextParagraph(BaseParagraph):
+    """文本段落
+
+    """
+    para_type = 1
+
+    def __init__(self, nodes: List[BaseNode2],
+                 align: Align = Align.left):
+        """
+        Args:
+            nodes (List[BaseNode2]) : BaseNode2 组成的列表
+            align (Align) : 段落对齐方向
+        """
+
+        raise_for_statement(
+            len(nodes) != 0,
+            "nodes 至少包含一个 Node"
+        )
+
+        self.nodes = nodes
+        self.align = align.value
+
+    def json2(self) -> dict:
+        result = {"para_type": self.para_type, "text": {"nodes": [i.json2() for i in self.nodes]}}
+        if self.align:
+            result["format"] = {"align": self.align}
+        return result
+
+    def to_insert2(self) -> list:
+        insert_list = [i.to_insert2() for i in self.nodes]
+        first_font_size = self.nodes[0].font_size
+        last = {"attributes": {}}
+        if self.align:
+            last["attributes"]["align"] = Align(self.align).name
+        if first_font_size == FontSize.Header_2:
+            header = 2
+        elif first_font_size == FontSize.Header_1:
+            header = 1
+        else:
+            header = 0
+        if header != 0:
+            last["attributes"]["header"] = header
+        if len(last["attributes"]) == 0:
+            last.pop("attributes")
+        last.update({"insert": "\n"})
+
+        insert_list.append(last)
+        return insert_list
+
+
+class PicParagraph(BaseParagraph):
+    """图片段落
+
+    """
+    para_type = 2
+
+    def __init__(self, pics: List[Cover]):
+        """
+        Args:
+            pics (List[Cover]) : Cover 组成的列表
+        """
+        raise_for_statement(
+            len(pics) != 0,
+            "pics 至少包含一个 Cover"
+        )
+        self.pics = pics
+
+    def json2(self):
+        return {
+            "para_type": self.para_type,
+            "pic": {
+                "style": 1,
+                "pics": [i.json2() for i in self.pics]
+            }
+        }
+
+    def to_insert2(self) -> list:
+        result = [i.to_insert2() for i in self.pics]
+        result.append({"insert": "\n"})
+        return result
+
+
+class LineParagraph(BaseParagraph):
+    """分割线段落
+
+    """
+    para_type = 3
+
+    def __init__(self, line: LineType):
+        """
+        Args:
+            line (LineType) : 分割线类型
+        """
+        self.line = line
+
+    def json2(self):
+        return {"para_type": self.para_type, "format": {"align": 1}, "line": self.line.value}
+
+    def to_insert2(self) -> list:
+        result = {
+            "attributes": {
+                "class": "cut-off"
+            },
+            "insert": {
+                "cut-off": {
+                    "type": self.line.name[1:],
+                    "url": self.line.value["url"]
+                }
+            }
+        }
+        return [result, {"insert": "\n"}]
+
+
+class TextQuoteParagraph(TextParagraph):
+    """引用文本段落
+
+    """
+    para_type = 4
+
+    def to_insert2(self) -> list:
+        insert_list = [i.to_insert2() for i in self.nodes]
+        last = {"attributes": {"blockquote": True}, "insert": "\n"}
+        if self.align:
+            last["attributes"]["align"] = Align(self.align).name
+        insert_list.append(last)
+        return insert_list
+
+
+class ListOLParagraph(BaseParagraph):
+    """无序列表段落
+
+    """
+    para_type = 5
+
+    def __init__(self, nodes: List[BaseNode2],
+                 order: int,
+                 align: Align = Align.left):
+        """
+        Args:
+            nodes (List[BaseNode2]) : BaseNode2 组成的列表
+            align (Align) : 段落对齐方向
+        """
+        raise_for_statement(
+            len(nodes) != 0,
+            "nodes 至少包含一个 Node"
+        )
+        self.nodes = nodes
+        self.order = order
+        self.align = align.value
+
+    def json2(self):
+        result = {
+            "para_type": self.para_type,
+            "text": {"nodes": [i.json2() for i in self.nodes]},
+            "format": {"list_format": {"level": 1, "order": self.order}}
+        }
+        if self.align:
+            result["format"]["align"] = self.align
+        return result
+
+    def to_insert2(self) -> list:
+        insert_list = [i.to_insert2() for i in self.nodes]
+        last = {"attributes": {"list": "bullet"}, "insert": "\n"}
+        if self.align:
+            last["attributes"]["align"] = Align(self.align).name
+        insert_list.append(last)
+        return insert_list
+
+
+class ListULParagraph(ListOLParagraph):
+    """有序列表段落
+
+    """
+    para_type = 6
+
+    def to_insert2(self) -> list:
+        insert_list = [i.to_insert2() for i in self.nodes]
+        last = {"attributes": {"list": "ordered"}, "insert": "\n"}
+        if self.align:
+            last["attributes"]["align"] = Align(self.align).name
+        insert_list.append(last)
+        return insert_list
+
+
+class ArticleCreator:
+    """创建专栏的类
+
+    """
+
+    def __init__(self, title: str,
+                 category_id: int,
+                 paragraphs: List[BaseParagraph] = (),
+                 *,
+                 list_id: int = 0,
+                 originality: bool = False,
+                 reproduced: bool = False,
+                 cover: List[Cover] = (),
+                 biz_tags: List[str] = (),
+                 up_reply_closed: bool = False,
+                 comment_selected: bool = False,
+                 timer_pub_time: int = 0,
+                 draft_id: int = None,
+                 credential: Credential = None):
+        """
+        Args:
+            title (str) : 专栏标题
+            category_id (int) : 专栏所属分类
+            paragraphs (List[BaseParagraph]) : BaseParagraph 组成的段落
+            list_id (int) : 专栏所属文集的 id
+            originality (bool) : 是否原创
+            reproduced (bool) : 允许转载
+            cover (List[Cover]) : 封面图片
+            biz_tags (List[str]) : 标签列表
+            up_reply_closed (bool) : 关闭评论区
+            comment_selected (bool) : 精选评论
+            timer_pub_time: (int) : 定时发布时间戳（秒），可选时间为当前+2小时~7天内，设置时间以北京时间UTC+8为准
+            draft_id: (int) : 所用草稿的字符串 id，会同时删除该草稿
+            credential (BaseParagraph) : 凭据类
+        """
+        self.credential: Credential = (
+            credential if credential is not None else Credential()
+        )
+        self.__title = title
+        self.__paragraphs = paragraphs
+        self.__category_id = category_id
+        self.__list_id = list_id
+        self.__originality = originality
+        self.__reproduced = reproduced
+        self.__cover = cover
+        self.__biz_tags = biz_tags
+        self.__up_reply_closed = up_reply_closed
+        if not up_reply_closed:
+            self.__comment_selected = comment_selected
+        self.__timer_pub_time = timer_pub_time
+        self.__draft_id = draft_id
+        self.__type = ArticleType.SPECIAL_ARTICLE
+        self.__insert_list = []
+
+        for i in self.__paragraphs:
+            self.__insert_list += i.to_insert2()
+
+    def add_paragraph(self, *args: BaseParagraph):
+        """在已有段落后面新增段落
+
+        Args:
+            *args (BaseParagraph) : BaseParagraph 组成的元组
+        """
+        for paragraph in args:
+            self.__paragraphs.append(paragraph)
+            self.__insert_list += paragraph.to_insert2()
+
+    async def create_opus(self):
+        """创建专栏
+
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_dedeuserid()
+        self.credential.raise_for_no_bili_jct()
+
+        raise_for_statement(
+            len(self.__paragraphs) != 0,
+            "专栏至少包含一个 BaseParagraph"
+        )
+
+        api = API["send"]["create"]
+
+        data = {
+            "raw_content": json.dumps({"ops": self.__insert_list}, ensure_ascii=False),
+            "opus_req": {
+                "upload_id": f"{self.credential.dedeuserid}_{int(time.time())}_{random.randint(1000, 9999)}",
+                "opus": {
+                    "opus_source": ArticleType.NOTE.value,
+                    "title": self.__title,
+                    "content": {
+                        "paragraphs": [i.json2() for i in self.__paragraphs]
+                    },
+                    "article": {
+                        "category_id": self.__category_id,
+                        "list_id": self.__list_id,
+                        "originality": 1 if self.__originality else 0,
+                        "reproduced": 1 if self.__reproduced else 0,
+                        "biz_tags": self.__biz_tags
+                    },
+                    "pub_info": {}
+                },
+                "scene": 12,
+                "meta": {
+                    "app_meta": {
+                        "from": "create.article.web",
+                        "mobi_app": "web"
+                    }
+                },
+                "option": {}
+            }
+        }
+        if len(self.__cover) != 0:
+            data["opus_req"]["opus"]["article"]["cover"] = self.__cover
+        if self.__up_reply_closed:
+            data["opus_req"]["option"]["up_reply_closed"] = 1
+        else:
+            if self.__comment_selected:
+                data["opus_req"]["option"]["comment_selected"] = 1
+        if self.__timer_pub_time:
+            data["opus_req"]["option"]["timer_pub_time"] = self.__timer_pub_time
+
+        if self.__draft_id:
+            data["draft_id_str"] = str(self.__draft_id)
+
+        params = {"gaia_source": "main_web", "csrf": self.credential.bili_jct}
+
+        return (await Api(**api, credential=self.credential, wbi=True, ensure_ascii=False)
+                .update_params(**params)
+                .update_data(**data).result)
+
+    @property
+    def _text_total_number(self):
+        """总字数（包括不可见字符）
+
+        """
+        total = 0
+        for i in self.__insert_list:
+            if isinstance(i["insert"], str):
+                total += len(i["insert"])
+        return total - 1
+
+    async def draft(self, banner_url: str = None):
+        """保存草稿
+
+        Args:
+            banner_url (str) : 横幅封面
+        """
+        api = API["send"]["draft"]
+        biz_tags = ""
+        for i in self.__biz_tags:
+            biz_tags += f",{i}"
+        biz_tags = biz_tags[1:]
+        data = {
+            "type": 3,
+            "aid": self.__draft_id,
+            "title": self.__title,
+            "banner_url": banner_url,
+            "content": json.dumps({"ops": self.__insert_list}, ensure_ascii=False),
+            "summary": None,
+            "words": self._text_total_number,
+            "category": self.__category_id,
+            "list_id": self.__list_id,
+            "tid": 3,
+            "reprint": 1 if self.__reproduced else 0,
+            "tags": biz_tags,
+            "image_urls": self.__cover[0] if 0 < len(self.__cover) else None,
+            "origin_image_urls": self.__cover[0] if 0 < len(self.__cover) else None,
+            "media_id": 0,
+            "spoiler": 0,
+            "action": 1,
+            "original": 1 if self.__originality else 0,
+            "dynamic_intro": "",
+            "top_video_bvid": None,
+            "up_reply_closed": 1 if self.__up_reply_closed else 0,
+            "comment_selected": 1 if self.__comment_selected else 0
+        }
+
+        return await Api(**api, credential=self.credential, wbi=True).update_data(**data).result

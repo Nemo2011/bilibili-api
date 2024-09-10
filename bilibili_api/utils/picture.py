@@ -1,14 +1,12 @@
 import os
 import tempfile
-from typing import Any
 from dataclasses import dataclass
+from typing import Any
 
 import httpx
-from yarl import URL
 from PIL import Image
-import io
+from yarl import URL
 
-from .utils import get_api
 from .credential import Credential
 
 
@@ -57,8 +55,8 @@ class Picture:
         self.width = img.width
         self.imageType = imgtype
 
-    @staticmethod
-    async def async_load_url(url: str) -> "Picture":
+    @classmethod
+    async def async_load_url(cls, url: str) -> "Picture":
         """
         加载网络图片。(async 方法)
 
@@ -70,7 +68,7 @@ class Picture:
         """
         if URL(url).scheme == "":
             url = "https:" + url
-        obj = Picture()
+        obj = cls()
         session = httpx.AsyncClient()
         resp = await session.get(
             url,
@@ -81,8 +79,8 @@ class Picture:
         obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1])
         return obj
 
-    @staticmethod
-    def from_url(url: str) -> "Picture":
+    @classmethod
+    def from_url(cls, url: str) -> "Picture":
         """
         加载网络图片。
 
@@ -94,7 +92,7 @@ class Picture:
         """
         if URL(url).scheme == "":
             url = "https:" + url
-        obj = Picture()
+        obj = cls()
         session = httpx.Client()
         resp = session.get(
             url,
@@ -105,8 +103,8 @@ class Picture:
         obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1])
         return obj
 
-    @staticmethod
-    def from_file(path: str) -> "Picture":
+    @classmethod
+    def from_file(cls, path: str):
         """
         加载本地图片。
 
@@ -116,15 +114,15 @@ class Picture:
         Returns:
             Picture: 加载后的图片对象
         """
-        obj = Picture()
+        obj = cls()
         with open(path, "rb") as file:
             obj.content = file.read()
         obj.url = "file://" + path
         obj.__set_picture_meta_from_bytes(os.path.basename(path).split(".")[1])
         return obj
 
-    @staticmethod
-    def from_content(content: bytes, format: str) -> "Picture":
+    @classmethod
+    def from_content(cls, content: bytes, format: str) -> "Picture":
         """
         加载字节数据
 
@@ -136,7 +134,7 @@ class Picture:
         Returns:
             Picture: 加载后的图片对象
         """
-        obj = Picture()
+        obj = cls()
         obj.content = content
         obj.url = "bytes://" + content.decode("utf-8", errors="ignore")
         obj.__set_picture_meta_from_bytes(format)
