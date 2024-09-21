@@ -88,7 +88,7 @@ from . import (
     watchroom
 )
 
-BILIBILI_API_VERSION = "16.2.0"
+BILIBILI_API_VERSION = "16.3.0"
 
 # 如果系统为 Windows，则修改默认策略，以解决代理报错问题
 if "windows" in platform.system().lower():
