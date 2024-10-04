@@ -834,19 +834,16 @@ class User:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_relation(self, uid: int) -> dict:
+    async def get_relation(self) -> dict:
         """
         获取与某用户的关系
-
-        Args:
-            uid (int): 用户 UID
 
         Returns:
             dict: 调用接口返回的内容。
         """
 
         api = API["info"]["relation"]
-        params = {"mid": uid}
+        params = {"mid": self.__uid}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )

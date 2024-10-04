@@ -465,9 +465,6 @@ medialist排序顺序。
 获取与某用户的关系
 
 
-| name | type | description |
-| - | - | - |
-| uid | int | 用户 UID |
 
 **Returns:** dict: 调用接口返回的内容。
 
