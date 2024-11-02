@@ -9,10 +9,12 @@ import random
 import time
 from enum import Enum
 from typing import List, Union, Tuple
-from json.decoder import JSONDecodeError
+
+import jwt
 
 from .utils.utils import get_api, join, raise_for_statement
 from .utils.credential import Credential
+from .utils.user_render_data import get_user_dynamic_render_data
 from .exceptions import ResponseCodeException
 from .utils.network import get_session, Api, HEADERS
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
@@ -252,6 +254,7 @@ class User:
             credential = Credential()
         self.credential: Credential = credential
         self.__self_info = None
+        self.__access_id: Union[str, None] = None
 
     def get_user_info_sync(self) -> dict:
         """
@@ -281,6 +284,7 @@ class User:
         """
         params = {
             "mid": self.__uid,
+            "w_webid": await self.get_access_id()
         }
         return (
             await Api(**API["info"]["info"], credential=self.credential)
@@ -435,7 +439,10 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["live"]
-        params = {"mid": self.__uid}
+        params = {
+            "mid": self.__uid,
+            "w_webid": await self.get_access_id()
+        }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -1055,6 +1062,33 @@ class User:
         api = API["info"]["uplikeimg"]
         params = {"vmid": self.get_uid()}
         return await Api(**api).update_params(**params).result
+
+    async def get_access_id(self) -> str:
+        """
+        获取用户 access_id 如未过期直接从本地获取 防止重复请求
+        """
+        if self.__access_id is not None:
+            if not await self.is_access_id_expired():
+                return self.__access_id
+
+        render_data: dict = await get_user_dynamic_render_data(self.__uid)
+        self.__access_id = render_data['access_id']
+
+        return self.__access_id
+
+    async def is_access_id_expired(self) -> bool:
+        """
+        判断用户 access_id 是否过期 access_id 为 JWT 解析 Payload 内容判断是否有效
+        """
+        if self.__access_id is None:
+            return False
+
+        payload = jwt.decode(jwt=self.__access_id, options={"verify_signature": False})
+        created_at: int = payload['iat']
+        ttl: int = payload['ttl']
+        current_timestamp: int = int(time.time())
+
+        return (created_at + ttl) <= current_timestamp
 
 
 async def get_self_info(credential: Credential) -> dict:
