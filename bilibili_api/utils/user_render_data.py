@@ -14,7 +14,7 @@ RENDER_DATA_PATTERN: Pattern[str] = compile(
 
 async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
     """
-    获取用户动态页面加载静态渲染数据 获取部分接口需要的w_webid关键参数
+    获取用户动态页面加载静态渲染数据 获取部分接口需要的 w_webid 关键参数
 
     :param uid: 用户ID 示例参数: 208259
     :return: 用户动态页面服务端渲染提取数据结构

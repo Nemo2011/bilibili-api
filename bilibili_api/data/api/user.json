@@ -131,16 +131,14 @@
       "method": "GET",
       "verify": false,
       "wbi": true,
+      "wbi2": true,
+      "bili_ticket": true,
       "params": {
         "mid": "int: uid",
         "ps": "const int: 30",
         "tid": "int: 分区 ID，0 表示全部",
         "pn": "int: 页码",
-        "keyword": "str: 关键词，可为空",
-        "order": "str: pubdate 上传日期，click 播放量，stow 收藏量",
-        "dm_img_list": "[]",
-        "dm_img_str": "V2ViR0wgMS4wIChPcGVuR0wgRVMgMi4wIENocm9taXVtKQ",
-        "dm_cover_img_str": "QU5HTEUgKEludGVsLCBJbnRlbChSKSBVSEQgR3JhcGhpY3MgNjMwICgweDAwMDAzRTlCKSBEaXJlY3QzRDExIHZzXzVfMCBwc181XzAsIEQzRDExKUdvb2dsZSBJbmMuIChJbnRlbC"
+        "keyword": "str: 关键词，可为空"
       },
       "comment": "搜索用户视频"
     },

@@ -473,7 +473,6 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["video"]
-        dm_rand = "ABCDEFGHIJK"
         params = {
             "mid": self.__uid,
             "ps": ps,
@@ -481,12 +480,9 @@ class User:
             "pn": pn,
             "keyword": keyword,
             "order": order.value,
-            # -352 https://github.com/Nemo2011/bilibili-api/issues/595 需要跟进
-            "dm_img_list": "[]",  # 鼠标/键盘操作记录
-            "dm_img_str": "".join(random.sample(dm_rand, 2)),
-            "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
-            "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
             "order_avoided": True,
+            "platform": "web",
+            "w_webid": await self.get_access_id(),
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
