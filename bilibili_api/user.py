@@ -218,22 +218,25 @@ async def name2uid_sync(names: Union[str, List[str]]):
     return Api(**API["info"]["name_to_uid"]).update_params(**params).result_sync
 
 
-async def name2uid(names: Union[str, List[str]]):
+async def name2uid(names: Union[str, List[str]], credential: Credential = None):
     """
     将用户名转为 uid
 
     Args:
         names (str/List[str]): 用户名
+        credential (Credential, optional): 凭据类. Defaults to None.
 
     Returns:
         dict: 调用 API 返回的结果
     """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
     if isinstance(names, str):
         n = names
     else:
         n = ",".join(names)
     params = {"names": n}
-    return await Api(**API["info"]["name_to_uid"]).update_params(**params).result
+    return await Api(**API["info"]["name_to_uid"], credential=credential).update_params(**params).result
 
 
 class User:

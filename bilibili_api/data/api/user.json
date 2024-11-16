@@ -16,7 +16,7 @@
       "verify": true
     },
     "name_to_uid": {
-      "url": "https://api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/name_to_uid",
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/name-to-uid",
       "method": "GET",
       "verify": false,
       "params": {
