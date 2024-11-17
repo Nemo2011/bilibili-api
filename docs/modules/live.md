@@ -148,6 +148,7 @@ Events：
 | name | type | description |
 | - | - | - |
 | uid | int | 用户 UID |
+| hour | int | 禁言时长，-1永久，0本场 |
 
 **Returns:** dict: 调用 API 返回的结果
 

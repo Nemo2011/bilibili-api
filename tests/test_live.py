@@ -54,7 +54,7 @@ async def test_j_get_danmu_info():
 
 async def test_k_ban_user():
     try:
-        return await l.ban_user(1)
+        return await l.ban_user(1, 1)
     except ResponseCodeException as e:
         if e.code == 1200000:
             return e.raw

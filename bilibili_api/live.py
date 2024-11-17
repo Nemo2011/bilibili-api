@@ -470,12 +470,13 @@ class LiveRoom:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def ban_user(self, uid: int) -> dict:
+    async def ban_user(self, uid: int, hour: int) -> dict:
         """
         封禁用户
 
         Args:
             uid (int): 用户 UID
+            hour (int): 禁言时长，-1为永久，0为直到本场结束
 
         Returns:
             dict: 调用 API 返回的结果
@@ -487,6 +488,7 @@ class LiveRoom:
             "room_id": self.room_display_id,
             "tuid": uid,
             "mobile_app": "web",
+            "hour": hour,
             "visit_id": "",
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
