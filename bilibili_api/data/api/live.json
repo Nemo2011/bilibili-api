@@ -321,6 +321,7 @@
         "room_id": "int: 真实房间号",
         "tuid": "int: 封禁用户 UID",
         "mobile_app": "str: 设备类型",
+        "hour": "int: 禁言小时数， -1永久，0本场",
         "visit_id": "str: 空"
       },
       "comment": "封禁用户"
