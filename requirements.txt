@@ -13,4 +13,4 @@ tqdm~=4.66.5
 yarl~=1.17.1
 pycryptodomex~=3.21.0
 qrcode_terminal~=0.8
-PyJWT~=2.9.0
+PyJWT~=2.10.0
