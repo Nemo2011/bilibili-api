@@ -1228,10 +1228,6 @@ class Bangumi:
 
         episodes = []
         for ep in episode_list["main_section"]["episodes"]:
-            episode_data_cache[ep["id"]] = {
-                "bangumi_meta": bangumi_meta,
-                "bangumi_class": self,
-            }
             episodes.append(Episode(epid=ep["id"], credential=self.credential))
         return episodes
 
