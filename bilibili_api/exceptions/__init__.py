@@ -21,3 +21,5 @@ from .DynamicExceedImagesException import *
 from .CredentialNoAcTimeValueException import *
 from .StatementException import *
 from .ExClimbWuzhiException import *
+from .GeetestUndoneException import *
+from .GeetestServerNotFoundException import *

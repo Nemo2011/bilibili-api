@@ -40,26 +40,26 @@
                 "url": "https://passport.bilibili.com/x/passport-tv-login/qrcode/auth_code",
                 "method": "POST",
                 "verify": false,
+                "sign": true,
                 "data": {
-                    "appkey": "str: appkey",
-                    "sign": "str: 签名",
                     "ts": "str: 时间戳",
                     "local_id": "int: 0"
                 },
                 "comment": "tv 请求二维码及登录密钥"
             },
             "get_events": {
-                "url": "https://passport.bilibili.com/x/passport-tv-login/qrcode/poll",
-                "method": "POST",
-                "verify": false,
-                "data": {
-                    "appkey": "str: appkey",
-                    "sign": "str: 签名",
-                    "ts": "str: 时间戳",
-                    "local_id": "int: 0",
-                    "auth_code": "str: 登陆密钥"
-                },
-                "comment": "tv 获取最新信息"
+              "url": "https://passport.bilibili.com/x/passport-tv-login/qrcode/poll",
+              "method": "POST",
+              "verify": false,
+              "sign": true,
+              "data": {
+                "appkey": "str: appkey",
+                "sign": "str: 签名",
+                "ts": "str: 时间戳",
+                "local_id": "int: 0",
+                "auth_code": "str: 登陆密钥"
+              },
+              "comment": "tv 获取最新信息"
             }
         }
     },

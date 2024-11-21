@@ -234,7 +234,6 @@ def start_server():
     """
     global thread
     thread = _start_server(_geetest_urlhandler, "127.0.0.1", 0)
-    print("请打开 " + thread.url + " 进行验证。")  # type: ignore
     return thread
 
 
@@ -244,6 +243,21 @@ def close_server():
     """
     global thread
     thread.stop()  # type: ignore
+
+
+def get_info():
+    """
+    获取验证码信息
+
+    Returns:
+        dict: 验证码信息
+    """
+    global gt, challenge, key
+    return {
+        "gt": copy.copy(gt),
+        "challenge": copy.copy(challenge),
+        "token": copy.copy(key)
+    }
 
 
 def get_result():

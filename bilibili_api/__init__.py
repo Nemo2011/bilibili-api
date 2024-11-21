@@ -24,6 +24,7 @@ from .utils.network import (
     set_httpx_sync_session,
     get_buvid3
 )
+from .utils.geetest import Geetest
 from .errors import (
     LoginError,
     ApiException,
@@ -76,6 +77,9 @@ from . import (
     rank,
     search,
     session,
+    festival,
+    homepage,
+    login_v2,
     settings,
     show,
     topic,
@@ -108,6 +112,7 @@ __all__ = [
     "DmFontSize",
     "DmMode",
     "DynamicExceedImagesException",
+    "Geetest",
     "HEADERS",
     "LiveException",
     "LoginError",
@@ -148,6 +153,7 @@ __all__ = [
     "live",
     "live_area",
     "login",
+    "login_v2",
     "login_func",
     "manga",
     "music",
