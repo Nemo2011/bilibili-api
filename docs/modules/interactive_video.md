@@ -19,7 +19,7 @@ from bilibili_api import interactive_video
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -104,7 +104,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -167,7 +167,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -196,7 +196,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -225,7 +225,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -373,7 +373,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -461,7 +461,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -563,7 +563,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
 

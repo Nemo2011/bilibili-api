@@ -21,7 +21,7 @@ from bilibili_api import audio_uploader
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 初始化
 
@@ -80,7 +80,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -407,7 +407,7 @@ lrc (Optional[str]): 歌词
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 

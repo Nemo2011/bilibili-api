@@ -31,7 +31,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 构建动态内容
 
@@ -281,7 +281,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | credential | Credential | 凭据类 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

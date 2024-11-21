@@ -28,7 +28,7 @@ from bilibili_api import session
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 信息事件类型
 
@@ -70,7 +70,7 @@ from bilibili_api import session
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 

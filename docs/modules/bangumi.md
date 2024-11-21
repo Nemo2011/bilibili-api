@@ -28,7 +28,7 @@ from bilibili_api import bangumi
 | credential | Credential | 凭据类 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -239,7 +239,7 @@ from bilibili_api import bangumi
 | bangumi | Bangumi | 所属番剧 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -845,7 +845,7 @@ IndexFilter 元数据
 
 
 
-#### def __init__()
+#### def \_\_init\_\_()
 
 Anime Meta
 
@@ -869,7 +869,7 @@ Anime Meta
 
 
 
-#### def __init__()
+#### def \_\_init\_\_()
 
 Documentary Meta
 
@@ -888,7 +888,7 @@ Documentary Meta
 
 
 
-#### def __init__()
+#### def \_\_init\_\_()
 
 Guochuang Meta
 
@@ -909,7 +909,7 @@ Guochuang Meta
 
 
 
-#### def __init__()
+#### def \_\_init\_\_()
 
 Movie Meta
 
@@ -929,7 +929,7 @@ TV
 
 
 
-#### def __init__()
+#### def \_\_init\_\_()
 
 TV Meta
 
@@ -948,7 +948,7 @@ TV Meta
 
 
 
-#### def __init__()
+#### def \_\_init\_\_()
 
 Variety Meta
 

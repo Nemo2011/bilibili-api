@@ -63,7 +63,7 @@ Events：
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -152,7 +152,7 @@ Events：
 | room_display_id | int | 房间展示 id |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

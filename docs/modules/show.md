@@ -51,7 +51,7 @@ isBuyerValid (bool): 默认为 True
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -75,7 +75,7 @@ isBuyerValid (bool): 默认为 True
 | ticket | Ticket | Ticket 对象 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -122,7 +122,7 @@ ticket_list (list[Ticket]): 存放Ticket对象的list
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -149,7 +149,7 @@ sale_end (str): 开售结束时间
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 

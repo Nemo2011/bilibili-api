@@ -21,7 +21,7 @@ from bilibili_api import watchroom
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -40,7 +40,7 @@ from bilibili_api import watchroom
 | is_emoji | bool | 是否为表情包 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -87,7 +87,7 @@ from bilibili_api import watchroom
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

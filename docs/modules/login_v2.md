@@ -19,7 +19,7 @@ from bilibili_api import login_v2
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -39,7 +39,7 @@ from bilibili_api import login_v2
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

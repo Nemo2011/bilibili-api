@@ -22,7 +22,7 @@ from bilibili_api import audio
 | credential | Credential | 凭据类 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -101,7 +101,7 @@ from bilibili_api import audio
 | credential | Credential | 凭据类 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

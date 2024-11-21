@@ -30,7 +30,7 @@ from bilibili_api import cheese
 | credential | Credential | 凭据类 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 注意：season_id 和 ep_id 任选一个即可，两个都选的话
 以 season_id 为主
@@ -127,7 +127,7 @@ from bilibili_api import cheese
 | cheese | CheeseList | 所属的课程 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

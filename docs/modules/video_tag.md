@@ -19,7 +19,7 @@ from bilibili_api import video_tag
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 注意：tag_name 和 tag_id 任选一个传入即可。tag_id 优先使用。
 

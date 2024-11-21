@@ -35,7 +35,7 @@ from bilibili_api import channel_series
 | credential | Credential | 凭据类. Defaults to None. |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

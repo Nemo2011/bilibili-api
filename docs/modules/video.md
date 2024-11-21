@@ -46,7 +46,7 @@ from bilibili_api import video
 | audio_quality | AudioQuality | 音频流清晰度 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -83,7 +83,7 @@ from bilibili_api import video
 | url | str | 番剧试看的 mp4 播放流 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -105,7 +105,7 @@ FLV 视频流
 | url | str | FLV 流 url |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -127,7 +127,7 @@ FLV 视频流
 | url | str | HTML5 mp4 视频流 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -142,7 +142,7 @@ FLV 视频流
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -924,7 +924,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -1083,7 +1083,7 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -1155,7 +1155,7 @@ CONNECTED:  成功连接。 CallbackData: None。
 | video_codecs | VideoCodecs | 视频流编码 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 

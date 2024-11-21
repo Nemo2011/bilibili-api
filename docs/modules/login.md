@@ -27,7 +27,7 @@ from bilibili_api import login
 | tmp_token | str | 验证 token |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -53,7 +53,7 @@ from bilibili_api import login
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

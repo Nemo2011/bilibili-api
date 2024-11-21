@@ -23,7 +23,7 @@ from bilibili_api import festival
 | credential | Credential | 凭证类 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

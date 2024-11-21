@@ -19,7 +19,7 @@ from bilibili_api import note
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

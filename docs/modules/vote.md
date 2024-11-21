@@ -25,7 +25,7 @@ from bilibili_api import vote
 | credential | Credential | 凭据类 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
@@ -108,7 +108,7 @@ from bilibili_api import vote
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 

@@ -45,7 +45,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 | credential | Credential | 凭据类. Defaults to None. |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 ``` json
 {
@@ -122,7 +122,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 基本视频上传参数
 
@@ -205,7 +205,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 
@@ -263,7 +263,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 | line | Lines, Optional | 线路. Defaults to None. 不选择则自动测速选择 |
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 建议传入 VideoMeta 对象，避免参数有误
 
@@ -356,7 +356,7 @@ Events:
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |

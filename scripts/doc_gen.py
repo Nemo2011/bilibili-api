@@ -340,13 +340,15 @@ for module in all_funcs:
             file.write("---\n\n")
         if func[3].startswith("@"):
             file.write(f"**{func[3]}** \n\n")
+        if func[0] == "__init__":
+            func[0] = "\\_\\_init\\_\\_"
         file.write("#" * func[4] + f" {func[2]} {func[0]}()\n\n")
         if func[2] == "class":
             if not func[3].startswith("@") and func[3] != "builtins.object":
                 file.write(f"**Extend: {func[3]}**\n\n")
             file.write(parse_docstring1(eval(f"{func[1]}.__doc__")))
         else:
-            if func[0] == "__init__":
+            if func[0] == "\\_\\_init\\_\\_":
                 file.write(parse_docstring1(eval(f"{func[1]}.__doc__")))
             else:
                 file.write(parse_docstring(eval(f"{func[1]}.__doc__")))

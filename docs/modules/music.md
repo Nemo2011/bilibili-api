@@ -25,7 +25,7 @@ from bilibili_api import music
 
 
 
-### def __init__()
+### def \_\_init\_\_()
 
 
 | name | type | description |
