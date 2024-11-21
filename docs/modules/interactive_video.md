@@ -19,6 +19,17 @@ from bilibili_api import interactive_video
 
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| text | str | 文字 |
+| x | int | x 轴 |
+| y | int | y 轴 |
+| align | InteractiveButtonAlign \| int | 按钮的文字在按钮中的位置 |
+
+
 ### def get_align()
 
 获取按钮文字布局
@@ -93,6 +104,16 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| video | InteractiveVideo | 互动视频类 |
+| skin | Dict | 样式 |
+| root_cid | int | 根节点 CID |
+
+
 ### async def get_children()
 
 获取子节点
@@ -146,6 +167,15 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| var | List[InteractiveVariable] | 所有变量 |
+| command | str | 公式 |
+
+
 ### def run_command()
 
 执行操作
@@ -166,6 +196,15 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| var | List[InteractiveVariable] | 所有变量 |
+| condition | str | 公式 |
+
+
 ### def get_result()
 
 计算公式获得结果
@@ -184,6 +223,21 @@ o----|xxx| (TEXT_RIGHT)
 互动视频节点类
 
 
+
+
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| video | InteractiveVideo | 视频类 |
+| node_id | int | 节点 id |
+| cid | int | CID |
+| vars | List[InteractiveVariable] | 变量 |
+| button | InteractiveButton | 对应的按钮 |
+| condition | InteractiveJumpingCondition | 跳转公式 |
+| native_command | InteractiveJumpingCommand | 跳转时变量操作 |
+| is_default | bool | 是不是默认的跳转的节点 |
 
 
 ### async def get_children()
@@ -319,6 +373,18 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| name | str | 变量名 |
+| var_id | str | 变量 id |
+| var_value | int | 变量的值 |
+| show | bool | 是否显示 |
+| random | bool | 是否为随机值(1-100) |
+
+
 ### def get_id()
 
 获取变量 id
@@ -391,6 +457,12 @@ o----|xxx| (TEXT_RIGHT)
 **Extend: bilibili_api.video.Video**
 
 互动视频类
+
+
+
+
+### def __init__()
+
 
 
 
@@ -489,6 +561,20 @@ o----|xxx| (TEXT_RIGHT)
 互动视频下载类
 
 
+
+
+### def __init__()
+
+`self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
+
+
+| name | type | description |
+| - | - | - |
+| video | InteractiveVideo | 互动视频类 |
+| out | str | 输出文件地址 (如果模式为 NODE_VIDEOS/NO_PACKAGING 则此参数表示所有节点视频的存放目录) |
+| self_download_func | Coroutine \| None | 自定义下载函数（需 async 函数） |
+| downloader_mode | InteractiveVideoDownloaderMode | 下载模式 |
+| stream_detecting_params | Dict | `VideoDownloadURLDataDetecter` 提取最佳流时传入的参数，可控制视频及音频品质 |
 
 
 ### async def abort()

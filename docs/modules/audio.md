@@ -22,6 +22,15 @@ from bilibili_api import audio
 | credential | Credential | 凭据类 |
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| auid | int | 音频 AU 号 |
+| credential | Union[Credential, None] | 凭据. Defaults to None |
+
+
 ### async def add_coins()
 
 投币
@@ -90,6 +99,15 @@ from bilibili_api import audio
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类 |
+
+
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| amid | int | 歌单 ID |
+| credential | Union[Credential, None] | 凭据. Defaults to None. |
 
 
 ### def get_amid()

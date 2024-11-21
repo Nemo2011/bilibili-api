@@ -30,6 +30,19 @@ from bilibili_api import cheese
 | credential | Credential | 凭据类 |
 
 
+### def __init__()
+
+注意：season_id 和 ep_id 任选一个即可，两个都选的话
+以 season_id 为主
+
+
+| name | type | description |
+| - | - | - |
+| season_id | int | ssid |
+| ep_id | int | 单集 ep_id |
+| credential | Credential | 凭据类 |
+
+
 ### async def get_list()
 
 获取教程所有视频
@@ -112,6 +125,15 @@ from bilibili_api import cheese
 | - | - | - |
 | credential | Credential | 凭据类 |
 | cheese | CheeseList | 所属的课程 |
+
+
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| epid | int | 单集 ep_id |
+| credential | Credential | 凭据类 |
 
 
 ### def get_aid()

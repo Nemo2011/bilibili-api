@@ -70,6 +70,7 @@ from . import (
     live,
     login_func,
     login,
+    login_v2,
     manga,
     music,
     note,

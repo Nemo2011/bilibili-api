@@ -46,6 +46,12 @@ from bilibili_api import video
 | audio_quality | AudioQuality | 音频流清晰度 |
 
 
+### def __init__()
+
+
+
+
+
 ---
 
 ## class DanmakuOperatorType()
@@ -77,6 +83,12 @@ from bilibili_api import video
 | url | str | 番剧试看的 mp4 播放流 |
 
 
+### def __init__()
+
+
+
+
+
 ---
 
 **@dataclasses.dataclass** 
@@ -91,6 +103,12 @@ FLV 视频流
 | name | type | description |
 | - | - | - |
 | url | str | FLV 流 url |
+
+
+### def __init__()
+
+
+
 
 
 ---
@@ -109,6 +127,12 @@ FLV 视频流
 | url | str | HTML5 mp4 视频流 |
 
 
+### def __init__()
+
+
+
+
+
 ---
 
 ## class Video()
@@ -116,6 +140,16 @@ FLV 视频流
 视频类，各种对视频的操作均在里面。
 
 
+
+
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| bvid | Union[str, None] | BV 号. bvid 和 aid 必须提供其中之一。 |
+| aid | Union[int, None] | AV 号. bvid 和 aid 必须提供其中之一。 |
+| credential | Union[Credential, None] | Credential 类. Defaults to None. |
 
 
 ### async def add_tag()
@@ -192,9 +226,9 @@ cid 和 page_index 至少提供其中一个，其中 cid 优先级最高
 
 | name | type | description |
 | - | - | - |
-| cid | Union[int, None] | 分 P 的 cid。 |
-| page_index | Union[int, None] | 分 P 号，从 0 开始。 |
-| up_mid | Union[int, None] | up 主的 mid。 |
+| cid | Union[Optional,, None] | 分 P 的 cid。 |
+| page_index | Union[Optional,, None] | 分 P 号，从 0 开始。 |
+| up_mid | Union[Optional,, None] | up 主的 mid。 |
 
 **Returns:** dict: 调用 API 返回的结果。
 
@@ -419,7 +453,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 ### async def get_player_info()
 
-获取字幕信息
+获取视频上一次播放的记录，字幕和地区信息。需要分集的 cid, 返回数据中含有json字幕的链接
 
 
 | name | type | description |
@@ -497,7 +531,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 ### async def get_subtitle()
 
-获取视频上一次播放的记录，字幕和地区信息。需要分集的 cid, 返回数据中含有json字幕的链接
+获取字幕信息
 
 
 | name | type | description |
@@ -890,6 +924,14 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| data | Dict | `Video.get_download_url` 返回的结果 |
+
+
 ### def check_episode_try_mp4_stream()
 
 判断是否为番剧/课程试看的 mp4 视频流
@@ -1041,6 +1083,18 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| bvid | Union[str, None] | BVID. Defaults to None. |
+| aid | Union[int, None] | AID. Defaults to None. |
+| page_index | Union[int, None] | 分 P 序号. Defaults to 0. |
+| credential | Union[Credential, None] | Credential 类. Defaults to None. |
+| debug | Union[bool, None] | 调试模式，将输出更详细信息. Defaults to False. |
+
+
 ### async def connect()
 
 连接服务器
@@ -1099,6 +1153,12 @@ CONNECTED:  成功连接。 CallbackData: None。
 | url | str | 视频流 url |
 | video_quality | VideoQuality | 视频流清晰度 |
 | video_codecs | VideoCodecs | 视频流编码 |
+
+
+### def __init__()
+
+
+
 
 
 ---

@@ -51,6 +51,12 @@ isBuyerValid (bool): 默认为 True
 
 
 
+### def __init__()
+
+
+
+
+
 ---
 
 **@dataclasses.dataclass** 
@@ -67,6 +73,12 @@ isBuyerValid (bool): 默认为 True
 | project_id | int | 展出id |
 | session | Session | Session 对象 |
 | ticket | Ticket | Ticket 对象 |
+
+
+### def __init__()
+
+
+
 
 
 ### async def create_order()
@@ -110,6 +122,12 @@ ticket_list (list[Ticket]): 存放Ticket对象的list
 
 
 
+### def __init__()
+
+
+
+
+
 ---
 
 **@dataclasses.dataclass** 
@@ -127,6 +145,12 @@ desc (str): 描述
 sale_start (str): 开售开始时间
 
 sale_end (str): 开售结束时间
+
+
+
+
+### def __init__()
+
 
 
 

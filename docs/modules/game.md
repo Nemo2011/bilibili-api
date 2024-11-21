@@ -22,6 +22,15 @@ from bilibili_api import game
 | credential | Credential | 凭据类 |
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| game_id | int | 游戏 id |
+| credential | Credential | 凭据类. Defaults to None. |
+
+
 ### async def get_detail()
 
 获取游戏详情

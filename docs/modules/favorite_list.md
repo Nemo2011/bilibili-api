@@ -22,6 +22,16 @@ from bilibili_api import favorite_list
 | credential | Credential | 凭据类 |
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| type_ | Union[FavoriteListType, None] | 收藏夹类型. Defaults to FavoriteListType.VIDEO. |
+| media_id | Union[int, None] | 收藏夹号（仅为视频收藏夹时提供）. Defaults to None. |
+| credential | Union[Credential, None] | 凭据类. Defaults to Credential(). |
+
+
 ### async def get_content()
 
 获取收藏夹内容。

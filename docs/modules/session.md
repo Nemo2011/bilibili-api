@@ -28,6 +28,17 @@ from bilibili_api import session
 
 
 
+### def __init__()
+
+信息事件类型
+
+
+| name | type | description |
+| - | - | - |
+| data: 接收到的事件详细信息 |  | 接收到的事件详细信息 |
+| self_uid: 用户自身 UID |  | 用户自身 UID |
+
+
 ---
 
 ## class EventType()
@@ -55,6 +66,12 @@ from bilibili_api import session
 **Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
 
 会话类，用来开启消息监听。
+
+
+
+
+### def __init__()
+
 
 
 
@@ -149,8 +166,8 @@ from bilibili_api import session
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类. |
-| last_id | Union[int, None] | 最后一个 ID |
-| at_time | Union[int, None] | 最后一个点赞发送时间 |
+| last_id | Union[Optional,, None] | 最后一个 ID |
+| at_time | Union[Optional,, None] | 最后一个点赞发送时间 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -167,8 +184,8 @@ from bilibili_api import session
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类. |
-| last_id | Union[int, None] | 最后一个 ID |
-| like_time | Union[int, None] | 最后一个点赞发送时间 |
+| last_id | Union[Optional,, None] | 最后一个 ID |
+| like_time | Union[Optional,, None] | 最后一个点赞发送时间 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -185,8 +202,8 @@ from bilibili_api import session
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类. |
-| last_reply_id | Union[int, None] | 最后一个评论的 ID |
-| reply_time | Union[int, None] | 最后一个评论发送时间 |
+| last_reply_id | Union[Optional,, None] | 最后一个评论的 ID |
+| reply_time | Union[Optional,, None] | 最后一个评论发送时间 |
 
 **Returns:** dict: 调用 API 返回的结果
 

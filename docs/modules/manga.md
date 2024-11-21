@@ -22,6 +22,15 @@ from bilibili_api import manga
 | credential | Credential | 凭据类。 |
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| manga_id | int | 漫画 id |
+| credential | Credential \| None | 凭据类. Defaults to None. |
+
+
 ### async def get_episode_id()
 
 获取某一话的 id
@@ -214,7 +223,7 @@ from bilibili_api import manga
 | name | type | description |
 | - | - | - |
 | pn | int | 页码。Defaults to 1. |
-| seed | Union[str, None] | Unknown param，无需传入. |
+| seed | Union[Optional,, None] | Unknown param，无需传入. |
 | credential | Credential | 凭据类. Defaults to None. |
 
 **Returns:** List[Manga]: 漫画列表

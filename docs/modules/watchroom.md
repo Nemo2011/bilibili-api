@@ -21,6 +21,12 @@ from bilibili_api import watchroom
 
 
 
+### def __init__()
+
+
+
+
+
 ---
 
 ## class MessageSegment()
@@ -32,6 +38,12 @@ from bilibili_api import watchroom
 | - | - | - |
 | msg | str | 信息 |
 | is_emoji | bool | 是否为表情包 |
+
+
+### def __init__()
+
+
+
 
 
 ---
@@ -73,6 +85,15 @@ from bilibili_api import watchroom
 放映室类
 
 
+
+
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类 (大部分用户操作都需要与之匹配的 buvid3 值，务必在 credential 传入) |
+| room_id | int | 放映室 id |
 
 
 ### async def close()

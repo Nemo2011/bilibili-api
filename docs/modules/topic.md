@@ -22,6 +22,15 @@ from bilibili_api import topic
 | credential | Credential | 凭据类 |
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| topic_id | int | 话题 id |
+| credential | Credential | 凭据类 |
+
+
 ### async def get_cards()
 
 获取话题下的内容
@@ -32,7 +41,7 @@ from bilibili_api import topic
 | name | type | description |
 | - | - | - |
 | ps | int | 数据数量. Defaults to 100. |
-| offset | Union[str, None] | 偏移量. 生成格式为 f'{页码}_{页码*数据量]}' 如'2_40' Defaults to None. |
+| offset | Union[Optional,, None] | 偏移量. 生成格式为 f'{页码}_{页码*数据量]}' 如'2_40' Defaults to None. |
 | sort_by | TopicCardsSortBy | 排序方式. Defaults to TopicCardsSortBy.HOT. |
 
 **Returns:** dict: 调用 API 返回的结果

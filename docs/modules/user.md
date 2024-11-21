@@ -189,6 +189,25 @@ medialist排序顺序。
 
 
 
+### def __init__()
+
+
+| name | type | description |
+| - | - | - |
+| uid | int | 用户 UID |
+| credential | Union[Credential, None] | 凭据. Defaults to None. |
+
+
+### async def get_access_id()
+
+获取用户 access_id 如未过期直接从本地获取 防止重复请求
+
+
+
+**Returns:** None
+
+
+
 ### async def get_album()
 
 获取用户投稿相簿。
@@ -650,6 +669,16 @@ medialist排序顺序。
 
 
 
+### async def is_access_id_expired()
+
+判断用户 access_id 是否过期 access_id 为 JWT 解析 Payload 内容判断是否有效
+
+
+
+**Returns:** None
+
+
+
 ### async def modify_relation()
 
 修改和用户的关系，比如拉黑、关注、取关等。
@@ -1082,6 +1111,7 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 | name | type | description |
 | - | - | - |
 | names | str/List[str] | 用户名 |
+| credential | Union[Credential, None] | 凭据类. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
