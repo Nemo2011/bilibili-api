@@ -139,7 +139,8 @@ if __name__ == '__main__':
 | Feature | 同步 | 异步 | aiohttp | httpx | 备注 |
 | ------ | ---- | ----- | ------ | ------ | ---- |
 | `LiveDanmaku` & `VideoOnlineMonitor` | :x: | :white_check_mark: | :white_check_mark: | :x: | httpx 暂不支持 `WebSocket` |
-| `login` | :white_check_mark: | :x: | :x: | :white_check_mark: | 目前暂时仅支持同步请求 |
+| `login` | :white_check_mark: | :x: | :x: | :white_check_mark: | 旧版登录，仅支持同步请求 |
+| `login_func` | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | 新版登录 |
 | other | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
 
 # FA♂Q
