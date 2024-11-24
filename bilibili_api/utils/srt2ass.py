@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# python-srt2ass: https://github.com/ewwink/python-srt2ass
+# by: ewwink
+#
+
 # type: ignore
 # pylint: skip-file
 
@@ -51,7 +57,7 @@ def srt2ass(input_file, out_file, sub_type):
         if (
             line.isdigit()
             and ln + 1 < len(lines)
-            and re.match("-?\d\d:\d\d:\d\d", lines[(ln + 1)])
+            and re.match(r"-?\d\d:\d\d:\d\d", lines[(ln + 1)])
         ):
             if tmpLines:
                 subLines += tmpLines + "\n"
@@ -59,7 +65,7 @@ def srt2ass(input_file, out_file, sub_type):
             lineCount = 0
             continue
         else:
-            if re.match("-?\d\d:\d\d:\d\d", line):
+            if re.match(r"-?\d\d:\d\d:\d\d", line):
                 line = line.replace("-0", "0").replace(",", ".")
                 tmpLines += "Dialogue: 0," + line + ",Default,,0,0,0,,"
             else:
@@ -75,8 +81,8 @@ def srt2ass(input_file, out_file, sub_type):
     subLines = re.sub(r"\d(\d:\d{2}:\d{2}),(\d{2})\d", "\\1.\\2", subLines)
     subLines = re.sub(r"\s+-->\s+", ",", subLines)
     # replace style
-    subLines = re.sub(r"<([ubi])>", "{\\\\\g<1>1}", subLines)
-    subLines = re.sub(r"</([ubi])>", "{\\\\\g<1>0}", subLines)
+    subLines = re.sub(r"<([ubi])>", "{\\\\\\g<1>1}", subLines)
+    subLines = re.sub(r"</([ubi])>", "{\\\\\\g<1>0}", subLines)
     subLines = re.sub(
         r'<font\s+color="?#(\w{2})(\w{2})(\w{2})"?>', "{\\\\c&H\\3\\2\\1&}", subLines
     )

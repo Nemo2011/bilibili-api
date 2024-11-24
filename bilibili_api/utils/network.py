@@ -12,6 +12,7 @@ import asyncio
 import hashlib
 import urllib
 import hmac
+import pprint
 from functools import reduce
 from urllib.parse import urlencode
 from dataclasses import field, dataclass
@@ -598,7 +599,10 @@ class Api:
             except httpx.HTTPStatusError as e:
                 raise NetworkException(resp.status_code, str(resp.status_code))
             if byte:
-                return resp.read()
+                ret = resp.read()
+                if settings.request_log:
+                    settings.logger.info(f"获得字节数据\n{str(ret)}")
+                return ret
             real_data = self._process_response(
                 resp, await self._get_resp_text(resp), raw=raw
             )
@@ -611,7 +615,10 @@ class Api:
                 except aiohttp.ClientResponseError as e:
                     raise NetworkException(e.status, e.message)
                 if byte:
-                    return await resp.read()
+                    ret = await resp.read()
+                    if settings.request_log:
+                        settings.logger.info(f"获得字节数据\n{str(ret)}")
+                    return ret
                 real_data = self._process_response(
                     resp, await self._get_resp_text(resp), raw=raw
                 )
@@ -663,7 +670,7 @@ class Api:
             elif OK != 1:
                 raise ResponseCodeException(-1, "API 返回数据 OK 不为 1", resp_data)
         if settings.request_log:
-            settings.logger.info(resp_data)
+            settings.logger.info(f"获得 json 数据\n{pprint.pformat(resp_data)}")
 
         real_data = resp_data.get("data") if OK is None else resp_data
         if real_data is None:
