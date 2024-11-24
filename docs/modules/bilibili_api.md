@@ -362,12 +362,24 @@ BV 号转 AV 号。
 
 ---
 
+## async def get_short_url()
+
+| name       | type                | description |
+|------------|---------------------|-------------|
+| real_url   | str                 | 真实链接        |
+| credential | Optional[Credential] | 凭据类.        |
+
+获取bilibili真实链接对应的短链接。
+
+**注意：** 这个函数对于同一个真实链接的每一次调用都会返回不同的短链接。并且，请注意短链接也会包含你的分享信息（因为会redirect）。
+
+**Returns：** b23.tv的短链接
+
 ## async def get_real_url()
 
 | name | type | description |
 | - | - | - |
 | short_url | str | 短链接 |
-| credential | Optional[Credential] | 凭据类. |
 
 获取短链接对应的真实链接。
 
