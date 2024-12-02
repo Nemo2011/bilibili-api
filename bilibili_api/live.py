@@ -508,6 +508,7 @@ class LiveRoom:
         data = {
             "room_id": self.room_display_id,
             "tuid": uid,
+            "visit_id": "",
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
