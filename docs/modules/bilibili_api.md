@@ -10,23 +10,25 @@ import bilibili_api
 
 ## Exceptions
 
-- LoginError: 登陆问题
 - ApiException: 错误基类
 - ArgsException: 参数错误
-- LiveException: 直播错误
-- NetworkException: 网络错误
-- ResponseException: 响应错误
-- VideoUploadException: 视频上传错误
-- ResponseCodeException: 响应代码错误
-- DanmakuClosedException: 弹幕关闭错误
-- CredentialNoBuvid3Exception: 凭据未提供 buvid3
-- CredentialNoBiliJctException: 凭据未提供 bili_jct
-- DynamicExceedImagesException: 动态图片达到上限
-- CredentialNoSessdataException: 凭据未提供 SESSDATA
-- CredentialNoDedeUserIDException: 凭据未提供 DedeUserID
-- ExClimbWuzhiException: ExClimbWuzhi 封控处理错误
-- StatementException: 设定条件未满足抛出的错误，如公开笔记使用私有笔记获取信息的借口
 - CredentialNoAcTimeValueException: 凭据未提供 ac_time_value
+- CredentialNoBiliJctException: 凭据未提供 bili_jct
+- CredentialNoBuvid3Exception: 凭据未提供 buvid3
+- CredentialNoDedeUserIDException: 凭据未提供 DedeUserID
+- CredentialNoSessdataException: 凭据未提供 SESSDATA
+- DanmakuClosedException: 弹幕关闭错误
+- DynamicExceedImagesException: 动态图片达到上限
+- ExClimbWuzhiException: ExClimbWuzhi 封控处理错误
+- GeetestServerNotFoundException: 未找到验证码服务器
+- GeetestUndoneException: 验证码未完成
+- LiveException: 直播错误
+- LoginError: 登陆问题
+- NetworkException: 网络错误
+- ResponseCodeException: 响应代码错误
+- ResponseException: 响应错误
+- StatementException: 设定条件未满足抛出的错误，如公开笔记使用私有笔记获取信息的接口
+- VideoUploadException: 视频上传错误
 
 ---
 
@@ -99,6 +101,14 @@ import bilibili_api
 获取当前模块的 httpx.Client 对象，用于自定义请求
 
 **Returns:** httpx.Client
+
+---
+
+## def get_buvid3()
+
+获取已激活的生成的 buvid3
+
+**Returns:** str: buvid3
 
 ---
 
@@ -566,3 +576,88 @@ BV 号转 AV 号。
 #### def remove_ignore_events()
 
 移除所有忽略事件
+
+---
+
+
+
+
+**@dataclasses.dataclass**
+## class GeetestMeta
+
+极验验证码完成信息
+
+NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate` 为完成验证码后可得字段。
+
+| name | type |
+| - | - |
+| gt | str |
+| challenge | str |
+| token | str |
+| seccode | str |
+| validate | str |
+
+---
+
+## class Geetest
+
+极验验证类
+
+### async def generate_test()
+
+创建验证码
+
+**Returns:** None
+
+### def test_generated()
+
+当前是否有创建的测试
+
+**Returns:** bool: 是否有创建的测试
+
+### def get_info()
+
+获取验证码信息
+
+**Returns:** GeetestMeta: 验证码信息
+
+## def has_done()
+
+是否完成
+
+**Returns:** bool: 是否完成
+
+## def get_result()
+
+获取结果
+
+**Returns:** dict: 验证结果
+
+## def complete_test()
+
+| name | type | description |
+| - | - | - |
+| validate | str | 作答结果的 validate |
+| seccode | str | 作答结果的 seccode |
+
+作答测试
+
+**Returns:** None
+
+## def start_geetest_server()
+
+开启本地极验验证码服务
+
+**Returns:** None
+
+## def get_geetest_server_url()
+
+获取本地极验验证码服务链接
+
+**Returns:** str: 链接
+
+## def close_geetest_server()
+
+关闭本地极验验证码服务
+
+**Returns:** None

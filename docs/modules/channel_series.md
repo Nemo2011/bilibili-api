@@ -35,6 +35,17 @@ from bilibili_api import channel_series
 | credential | Credential | 凭据类. Defaults to None. |
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| uid | int | 用户 uid. Defaults to -1. |
+| type_ | ChannelSeriesType | 合集与列表类型. Defaults to ChannelSeriesType.SERIES. |
+| id_ | int | season_id 或 series_id. Defaults to -1. |
+| credential | Credential | 凭证. Defaults to None. |
+
+
 ### def get_meta()
 
 获取元数据

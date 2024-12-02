@@ -22,6 +22,12 @@ from bilibili_api import opus
 | credential | Credential | 凭据类 |
 
 
+### def \_\_init\_\_()
+
+
+
+
+
 ### async def get_info()
 
 获取图文基本信息

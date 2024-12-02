@@ -63,6 +63,18 @@ Events：
 
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| room_display_id | int | 房间展示 ID |
+| debug | Union[bool, None] | 调试模式，将输出更多信息。. Defaults to False. |
+| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| max_retry | Union[int, None] | 连接出错后最大重试次数. Defaults to 5 |
+| retry_after | Union[int, None] | 连接出错后重试间隔时间（秒）. Defaults to 1 |
+
+
 ### async def connect()
 
 连接直播间
@@ -140,6 +152,15 @@ Events：
 | room_display_id | int | 房间展示 id |
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| room_display_id | int | 房间展示 ID（即 URL 中的 ID） |
+| credential | Union[Credential, None] | 凭据. Defaults to None. |
+
+
 ### async def ban_user()
 
 封禁用户
@@ -148,7 +169,7 @@ Events：
 | name | type | description |
 | - | - | - |
 | uid | int | 用户 UID |
-| hour | int | 禁言时长，-1永久，0本场 |
+| hour | int | 禁言时长，-1为永久，0为直到本场结束 |
 
 **Returns:** dict: 调用 API 返回的结果
 

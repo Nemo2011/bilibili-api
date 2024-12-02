@@ -31,6 +31,17 @@ from bilibili_api import comment
 | credential | Credential | 凭据类 |
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| oid | int | 评论所在资源 ID。 |
+| type_ | ResourceType | 评论所在资源类型枚举。 |
+| rpid | int | 评论 ID。 |
+| credential | Credential | 凭据类. Defaults to None. |
+
+
 ### async def delete()
 
 删除评论。

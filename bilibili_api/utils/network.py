@@ -10,7 +10,9 @@ import time
 import atexit
 import asyncio
 import hashlib
+import urllib
 import hmac
+import pprint
 from functools import reduce
 from urllib.parse import urlencode
 from dataclasses import field, dataclass
@@ -224,6 +226,7 @@ class Api:
     no_csrf: bool = False
     json_body: bool = False
     ignore_code: bool = False
+    sign: bool = False
     data: dict = field(default_factory=dict)
     params: dict = field(default_factory=dict)
     files: dict = field(default_factory=dict)
@@ -393,6 +396,21 @@ class Api:
 
         if settings.request_log:
             settings.logger.info(self)
+        if self.sign:
+            appkey = "4409e2ce8ffd12b8"
+            appsec = "59b43e04ad6965f34319062b478f83dd"
+            if self.method in ["POST", "DELETE", "PATCH"]:
+                self.data["appkey"] = appkey
+                self.data = dict(sorted(self.data.items()))
+                self.data["sign"] = hashlib.md5(
+                    (urllib.parse.urlencode(self.data) + appsec).encode("utf-8")
+                ).hexdigest()
+            else:
+                self.params["appkey"] = appkey
+                self.params = dict(sorted(self.params.items()))
+                self.params["sign"] = hashlib.md5(
+                    (urllib.parse.urlencode(self.params) + appsec).encode("utf-8")
+                ).hexdigest()
 
         config = {
             "url": self.url,
@@ -477,6 +495,21 @@ class Api:
 
         if settings.request_log:
             settings.logger.info(self)
+        if self.sign:
+            appkey = "4409e2ce8ffd12b8"
+            appsec = "59b43e04ad6965f34319062b478f83dd"
+            if self.method in ["POST", "DELETE", "PATCH"]:
+                self.data["appkey"] = appkey
+                self.data = dict(sorted(self.data.items()))
+                self.data["sign"] = hashlib.md5(
+                    (urllib.parse.urlencode(self.data) + appsec).encode("utf-8")
+                ).hexdigest()
+            else:
+                self.params["appkey"] = appkey
+                self.params = dict(sorted(self.params.items()))
+                self.params["sign"] = hashlib.md5(
+                    (urllib.parse.urlencode(self.params) + appsec).encode("utf-8")
+                ).hexdigest()
 
         config = {
             "url": self.url,
@@ -566,7 +599,10 @@ class Api:
             except httpx.HTTPStatusError as e:
                 raise NetworkException(resp.status_code, str(resp.status_code))
             if byte:
-                return resp.read()
+                ret = resp.read()
+                if settings.request_log:
+                    settings.logger.info(f"获得字节数据\n{str(ret)}")
+                return ret
             real_data = self._process_response(
                 resp, await self._get_resp_text(resp), raw=raw
             )
@@ -579,7 +615,10 @@ class Api:
                 except aiohttp.ClientResponseError as e:
                     raise NetworkException(e.status, e.message)
                 if byte:
-                    return await resp.read()
+                    ret = await resp.read()
+                    if settings.request_log:
+                        settings.logger.info(f"获得字节数据\n{str(ret)}")
+                    return ret
                 real_data = self._process_response(
                     resp, await self._get_resp_text(resp), raw=raw
                 )
@@ -631,7 +670,7 @@ class Api:
             elif OK != 1:
                 raise ResponseCodeException(-1, "API 返回数据 OK 不为 1", resp_data)
         if settings.request_log:
-            settings.logger.info(resp_data)
+            settings.logger.info(f"获得 json 数据\n{pprint.pformat(resp_data)}")
 
         real_data = resp_data.get("data") if OK is None else resp_data
         if real_data is None:
@@ -723,7 +762,6 @@ async def active_buvid(buvid3: str, buvid4: str) -> dict:
     if text["code"] != 0:
         raise ExClimbWuzhiException(text["code"], text["msg"])
     settings.logger.info(f"激活 buvid3: [{buvid3}] 成功")
-
 
 def get_nav_sync(credential: Union[Credential, None] = None):
     """

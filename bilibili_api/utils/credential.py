@@ -162,9 +162,6 @@ class Credential:
             bool: cookies 是否有效
         """
 
-    def __repr__(self):
-        return f"SESSDATA: {self.sessdata}; bili_jct: {self.bili_jct}; buvid3: {self.buvid3}; DedeUserID: {self.dedeuserid}; ac_time_value: {self.ac_time_value}"
-
     def __str__(self):
         return f"SESSDATA: {self.sessdata}; bili_jct: {self.bili_jct}; buvid3: {self.buvid3}; DedeUserID: {self.dedeuserid}; ac_time_value: {self.ac_time_value}"
 

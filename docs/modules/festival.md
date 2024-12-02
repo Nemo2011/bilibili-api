@@ -23,6 +23,15 @@ from bilibili_api import festival
 | credential | Credential | 凭证类 |
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| fes_id | str | 节日专门页编号 |
+| credential | Union[Credential, None] | 凭据类. Defaults to None. |
+
+
 ### async def get_info()
 
 获取节日信息

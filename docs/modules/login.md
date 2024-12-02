@@ -27,6 +27,12 @@ from bilibili_api import login
 | tmp_token | str | 验证 token |
 
 
+### def \_\_init\_\_()
+
+
+
+
+
 ### def fetch_info()
 
 获取验证信息
@@ -45,6 +51,15 @@ from bilibili_api import login
 手机号类
 
 
+
+
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| number | str | 手机号 |
+| country | str | 地区/地区码，如 +86 |
 
 
 ---

@@ -22,6 +22,15 @@ from bilibili_api import article
 | credential | Credential | 凭据类 |
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| cvid | int | cv 号 |
+| credential | Union[Credential, None] | 凭据. Defaults to None. |
+
+
 ### async def add_coins()
 
 给专栏投币，目前只能投一个
@@ -185,6 +194,15 @@ from bilibili_api import article
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类 |
+
+
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| rlid | int | 文集 id |
+| credential | Union[Credential, None] | 凭据类. Defaults to None. |
 
 
 ### async def get_content()

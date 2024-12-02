@@ -25,6 +25,14 @@ from bilibili_api import music
 
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| music_id | str | 音乐 id，例如 MA436038343856245020 |
+
+
 ### async def get_info()
 
 获取音乐信息

@@ -80,6 +80,15 @@ from bilibili_api import black_room
 | credential | Credential | 凭据类 |
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| black_room_id | int | 小黑屋 id |
+| credential | Union[Credential, None] | 凭据类. Defaults to None. |
+
+
 ### async def get_details()
 
 获取小黑屋详细信息
@@ -155,6 +164,15 @@ from bilibili_api import black_room
 案件仲裁
 
 
+
+
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| case_id | str | 案件 id |
+| credential | Credential | 凭据类 |
 
 
 ### async def get_details()

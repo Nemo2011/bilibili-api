@@ -182,7 +182,7 @@ def parse(data: dict, indent: int = 0):
     if data["node"]["bases"][0] == "enum.Enum":
         return
     for key in data["node"]["names"].keys():
-        if not str(key).startswith("_") and key != ".class":
+        if (not str(key).startswith("_") and key != ".class") or str(key) == "__init__":
             parse(data["node"]["names"][key], indent + 1)
 
 
@@ -213,6 +213,8 @@ for module in modules:
 
 
 def parse_docstring(doc: str):
+    if not doc:
+        doc = ""
     doc = doc.replace("    ", "")
     doc = doc.lstrip("\n")
     info = ""
@@ -235,9 +237,11 @@ def parse_docstring(doc: str):
                 argname = line.split("(")[0].rstrip()
                 argtype = line[len(argname) : len(line.split(":")[0])]
                 argtype = argtype.lstrip(" ").rstrip(" ")[1:-1]
-                if argtype.startswith("Optional"):
-                    argtype = f"Union[{argtype.split(' ')[1].rstrip()}, None]"
-                if argtype.endswith("optional"):
+                if argtype.startswith("Optional["):
+                    argtype = f"Union[{argtype[9:-1]}, None]"
+                elif argtype.startswith("Optional"):
+                    argtype = f"Union[{argtype.split(' ')[0].rstrip()}, None]"
+                elif argtype.endswith("optional"):
                     argtype = (
                         f"Union[{argtype.split(' ')[0].rstrip(',').rstrip()}, None]"
                     )
@@ -269,6 +273,8 @@ def parse_docstring(doc: str):
 
 
 def parse_docstring1(doc: str):
+    if not doc:
+        doc = ""
     doc = doc.replace("    ", "")
     doc = doc.lstrip("\n")
     info = ""
@@ -285,13 +291,19 @@ def parse_docstring1(doc: str):
             elif state == 1:
                 if line == "":
                     continue
+                if line.find(":") == -1:
+                    state = 0
+                    info += line + "\n"
+                    continue
                 arginfo = line.split(":")[1].lstrip()
                 argname = line.split("(")[0].rstrip()
                 argtype = line[len(argname) : len(line.split(":")[0])]
                 argtype = argtype.lstrip(" ").rstrip(" ")[1:-1]
-                if argtype.startswith("Optional") or argtype.startswith("optional"):
-                    argtype = f"Union[{argtype.split(' ')[1].rstrip()}, None]"
-                if argtype.endswith("optional") or argtype.endswith("Optional"):
+                if argtype.startswith("Optional["):
+                    argtype = f"Union[{argtype[9:-1]}, None]"
+                elif argtype.startswith("Optional"):
+                    argtype = f"Union[{argtype.split(' ')[0].rstrip()}, None]"
+                elif argtype.endswith("optional"):
                     argtype = (
                         f"Union[{argtype.split(' ')[0].rstrip(',').rstrip()}, None]"
                     )
@@ -328,12 +340,17 @@ for module in all_funcs:
             file.write("---\n\n")
         if func[3].startswith("@"):
             file.write(f"**{func[3]}** \n\n")
+        if func[0] == "__init__":
+            func[0] = "\\_\\_init\\_\\_"
         file.write("#" * func[4] + f" {func[2]} {func[0]}()\n\n")
         if func[2] == "class":
             if not func[3].startswith("@") and func[3] != "builtins.object":
                 file.write(f"**Extend: {func[3]}**\n\n")
             file.write(parse_docstring1(eval(f"{func[1]}.__doc__")))
         else:
-            file.write(parse_docstring(eval(f"{func[1]}.__doc__")))
+            if func[0] == "\\_\\_init\\_\\_":
+                file.write(parse_docstring1(eval(f"{func[1]}.__doc__")))
+            else:
+                file.write(parse_docstring(eval(f"{func[1]}.__doc__")))
     file.close()
     print("DONE", docs_dir)

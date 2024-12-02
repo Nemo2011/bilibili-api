@@ -6,7 +6,7 @@
 
 [![API 数量](https://img.shields.io/badge/API%20数量-400+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3+-red)][LICENSE]
-[![Python](https://img.shields.io/badge/python-3.12(dev)|3.11|3.10|3.9|3.8-blue)](https://www.python.org)
+[![Python](https://img.shields.io/badge/python-3.13|3.12|3.11|3.10|3.9|3.8-blue)](https://www.python.org)
 [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]
 [![Pre-release Version](https://img.shields.io/github/v/release/Nemo2011/bilibili-api?label=pre-release&include_prereleases&sort=semver)][pypi-dev]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
@@ -139,7 +139,8 @@ if __name__ == '__main__':
 | Feature | 同步 | 异步 | aiohttp | httpx | 备注 |
 | ------ | ---- | ----- | ------ | ------ | ---- |
 | `LiveDanmaku` & `VideoOnlineMonitor` | :x: | :white_check_mark: | :white_check_mark: | :x: | httpx 暂不支持 `WebSocket` |
-| `login` | :white_check_mark: | :x: | :x: | :white_check_mark: | 目前暂时仅支持同步请求 |
+| `login` | :white_check_mark: | :x: | :x: | :white_check_mark: | 旧版登录，仅支持同步请求 |
+| `login_v2` | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | 新版登录 |
 | other | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
 
 # FA♂Q

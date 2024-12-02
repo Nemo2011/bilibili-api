@@ -28,6 +28,18 @@ from bilibili_api import bangumi
 | credential | Credential | 凭据类 |
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| media_id | Union[int, None] | 番剧本身的 ID. Defaults to -1. |
+| ssid | Union[int, None] | 每季度的 ID. Defaults to -1. |
+| epid | Union[int, None] | 每集的 ID. Defaults to -1. |
+| oversea | Union[bool, None] | 是否要采用兼容的港澳台Api,用于仅限港澳台地区番剧的信息请求. Defaults to False. |
+| credential | Union[Credential, None] | 凭据类. Defaults to None. |
+
+
 ### async def get_episode_list()
 
 获取季度分集列表，自动转换出海Api的字段，适配部分，但是键还是有不同
@@ -225,6 +237,15 @@ from bilibili_api import bangumi
 | credential | Credential | 凭据类 |
 | video_class | Video | 视频类 |
 | bangumi | Bangumi | 所属番剧 |
+
+
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| epid | int | 番剧 epid |
+| credential | Union[Credential, None] | 凭据. Defaults to None. |
 
 
 ### def get_bangumi()
@@ -824,11 +845,40 @@ IndexFilter 元数据
 
 
 
+#### def \_\_init\_\_()
+
+Anime Meta
+
+| name | type | description |
+| - | - | - |
+| version | Index_Filter.Version | 类型，如正片、电影等 |
+| spoken_language | Index_Filter.Spoken_Language | 配音 |
+| area | Index_Filter.Area | 地区 |
+| finish_status | Index_Filter.Finish_Status | 是否完结 |
+| copyright | Index_Filter.Copryright | 版权 |
+| payment | Index_Filter.Payment | 付费门槛 |
+| season | Index_Filter.Season | 季度 |
+| year | str | 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取 |
+| style | Index_Filter.Style.Anime | 风格 |
+
+
 ### class Documentary()
 
 纪录片
 
 
+
+
+#### def \_\_init\_\_()
+
+Documentary Meta
+
+| name | type | description |
+| - | - | - |
+| area | Index_Filter.Area | 地区 |
+| release_date | str | 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取 |
+| style | Index_Filter.Style.Documentary | 风格 |
+| producer | Index_Filter.Producer | 制作方 |
 
 
 ### class GuoChuang()
@@ -838,11 +888,38 @@ IndexFilter 元数据
 
 
 
+#### def \_\_init\_\_()
+
+Guochuang Meta
+
+| name | type | description |
+| - | - | - |
+| version | Index_Filter.VERSION | 类型，如正片、电影等 |
+| finish_status | Index_Filter.Finish_Status | 是否完结 |
+| copyright | Index_Filter.Copyright | 版权 |
+| payment | Index_Filter.Payment | 付费门槛 |
+| year | str | 年份，调用 Index_Filter.make_time_filter() 传入年份 (int, str) 获取 |
+| style | Index_Filter.Style.GuoChuang | 风格 |
+
+
 ### class Movie()
 
 电影
 
 
+
+
+#### def \_\_init\_\_()
+
+Movie Meta
+
+| name | type | description |
+| - | - | - |
+| area | Index_Filter.Area | 地区 |
+| payment | Index_Filter.Payment | 付费门槛 |
+| season | Index_Filter.Season | 季度 |
+| release_date | str | 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取 |
+| style | Index_Filter.Style.Movie | 风格 |
 
 
 ### class TV()
@@ -852,11 +929,33 @@ TV
 
 
 
+#### def \_\_init\_\_()
+
+TV Meta
+
+| name | type | description |
+| - | - | - |
+| area | Index_Filter.Area | 地区 |
+| payment | Index_Filter.Payment | 付费门槛 |
+| release_date | str | 上映时间，调用 Index_Filter.make_time_filter() 传入年份 (datetime.datetime) 获取 |
+| style | Index_Filter.Style.TV | 风格 |
+
+
 ### class Variety()
 
 综艺
 
 
+
+
+#### def \_\_init\_\_()
+
+Variety Meta
+
+| name | type | description |
+| - | - | - |
+| payment | Index_Filter.Payment | 付费门槛 |
+| style | Index_Filter.Style.Variety | 风格 |
 
 
 ---

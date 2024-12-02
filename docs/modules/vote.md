@@ -25,6 +25,15 @@ from bilibili_api import vote
 | credential | Credential | 凭据类 |
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| vote_id | int | vote_id, 获取：https |
+| credential | Credential | 凭据类，非必要. |
+
+
 ### async def get_info()
 
 获取投票详情
@@ -83,7 +92,7 @@ from bilibili_api import vote
 | duration | int | 投票持续秒数 常用 |
 | choices | VoteChoices | 投票选项 |
 | credential | Credential | Credential 枚举类 |
-| desc | Union[optional, None] | 投票描述. Defaults to None. |
+| desc | Union[str], optiona, None] | 投票描述. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -95,6 +104,12 @@ from bilibili_api import vote
 ## class VoteChoices()
 
 投票选项类
+
+
+
+
+### def \_\_init\_\_()
+
 
 
 
@@ -166,7 +181,7 @@ from bilibili_api import vote
 | duration | int | 投票持续秒数 常用 |
 | choices | VoteChoices | 投票选项 |
 | credential | Credential | Credential |
-| desc | Union[optional, None] | 投票描述. Defaults to None. |
+| desc | Union[str], optiona, None] | 投票描述. Defaults to None. |
 
 **Returns:** Vote: Vote 类
 

@@ -19,6 +19,18 @@ from bilibili_api import note
 
 
 
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| cvid | int | 公开笔记 ID (对应专栏的 cvid) (公开笔记必要) |
+| aid | int | 稿件 ID（oid_type 为 0 时是 avid） (私有笔记必要) |
+| note_id | int | 私有笔记 ID (私有笔记必要) |
+| note_type | str | 笔记类型 (private, public) |
+| credential | Union[Credential, None] | Credential. Defaults to None. |
+
+
 ### async def add_coins()
 
 (仅供公开笔记)

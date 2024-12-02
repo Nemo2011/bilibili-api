@@ -21,6 +21,18 @@ from bilibili_api import audio_uploader
 
 
 
+### def \_\_init\_\_()
+
+初始化
+
+
+| name | type | description |
+| - | - | - |
+| path | str | 文件路径 |
+| meta | AudioMeta | 元数据 |
+| credential | Credential | 账号信息 |
+
+
 ### async def abort()
 
 中断更改
@@ -65,6 +77,12 @@ Events:
 ## class AuthorInfo()
 
 AuthorInfo(name: str, uid: int = 0)
+
+
+
+### def \_\_init\_\_()
+
+
 
 
 
@@ -385,6 +403,12 @@ tid (Optional[int]): 视频 tid
 compilation_id (Optional[int]): 合辑 ID
 
 lrc (Optional[str]): 歌词
+
+
+
+
+### def \_\_init\_\_()
+
 
 
 

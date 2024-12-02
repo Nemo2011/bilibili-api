@@ -31,6 +31,13 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
+### def \_\_init\_\_()
+
+构建动态内容
+
+
+
+
 ### def add_at()
 
 添加@用户，支持传入 User 类或 UID
@@ -272,6 +279,15 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类 |
+
+
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| dynamic_id | int | 动态 ID |
+| credential | Union[Credential, None] | 凭据类. Defaults to None. |
 
 
 ### async def delete()
