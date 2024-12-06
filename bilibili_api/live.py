@@ -197,9 +197,6 @@ class LiveRoom:
         resp = (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
-
-        # 缓存真实房间 ID
-        self.__ruid = resp["uid"]
         return resp
 
     async def get_room_id(self) -> int:
