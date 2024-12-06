@@ -38,7 +38,7 @@
       "verify": true,
       "params": {
         "platform": "const str: pc",
-        "room_id": "int: 房间号",
+        "room_id": "int: 房间号"
       },
       "comment": "获取当前用户在本房间可用的表情包"
     },
