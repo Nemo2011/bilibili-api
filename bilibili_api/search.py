@@ -6,7 +6,7 @@ bilibili_api.search
 import json
 from enum import Enum
 from typing import List, Union, Callable
-
+from .utils.utils import to_timestamps
 from .utils.utils import get_api
 from .video_zone import VideoZoneTypes
 from .utils.network import Api, get_session
@@ -193,6 +193,10 @@ async def search_by_type(
         category_id      (CategoryTypeArticle | CategoryTypePhoto | int | None, optional)        : 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效
 
         time_range       (int, optional)                                                         : 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上
+        
+        time_start       (str, optional)                                                         : 指定开始时间，与结束时间搭配使用，格式为："YYYY-MM-DD"
+
+        time_end         (str, optional)                                                         : 指定结束时间，与开始时间搭配使用，格式为："YYYY-MM-DD"
 
         video_zone_type  (int | ZoneTypes | None, optional)                                      : 话题类型，指定 tid (可使用 channel 模块查询)
 
@@ -254,6 +258,11 @@ async def search_by_type(
         params["order_sort"] = order_sort
     if debug_param_func:
         debug_param_func(params)
+    # time setting
+    if time_start and time_end:
+        time_stamp = to_timestamps(time_start,time_end)
+        params["pubtime_begin_s"] = time_stamp[0]
+        params["pubtime_end_s"] = time_stamp[1]
     api = API["search"]["web_search_by_type"]
     return await Api(**api, wbi=True).update_params(**params).result
 
