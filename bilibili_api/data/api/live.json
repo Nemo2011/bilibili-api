@@ -315,7 +315,7 @@
         "rnd": "int: 当前时间戳",
         "bubble": "int: 默认 0，功能不知",
         "dm_type": "int: 默认 1，功能不知",
-        "emoticonOptions": " 默认 [object object] 功能不知",
+        "emoticonOptions": " 默认 [object Object] 功能不知",
         "csrf,csrf_token": "str: 要给两个"
       },
       "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
