@@ -558,14 +558,14 @@ class LiveRoom:
             room_id = (await self.get_room_play_info())["room_id"]
 
         data = {
-            "mode": danmaku.mode,
-            "msg": danmaku.text,
+            "mode": emoticon.mode,
+            "msg": emoticon.text,
             "roomid": room_id,
             "bubble": 0,
             "dm_type": 1,
             "rnd": int(time.time()),
-            "color": int(danmaku.color, 16),
-            "fontsize": danmaku.font_size,
+            "color": int(emoticon.color, 16),
+            "fontsize": emoticon.font_size,
             "emoticonOptions": '[object Object]'
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
