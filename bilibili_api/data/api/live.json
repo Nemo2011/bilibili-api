@@ -302,6 +302,24 @@
       },
       "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
     },
+    "send_emoticon": {
+      "url": "https://api.live.bilibili.com/msg/send",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "roomid": "int: 真实房间号",
+        "color": "int: 十进制颜色，有权限限制",
+        "fontsize": "int: 字体大小，默认 25",
+        "mode": "int: 弹幕模式，1 飞行 5 顶部 4 底部",
+        "msg": "str: 表情包代号",
+        "rnd": "int: 当前时间戳",
+        "bubble": "int: 默认 0，功能不知",
+        "dm_type": "int: 默认 1，功能不知",
+        "emoticonOptions": " 默认 [object object] 功能不知",
+        "csrf,csrf_token": "str: 要给两个"
+      },
+      "comment": "发送直播间弹幕，有的参数不确定因为自己不搞这块没权限发一些样式的弹幕"
+    },
      "send_popular_ticket": {
       "url": "https://api.live.bilibili.com/xlive/general-interface/v1/rank/popularRankFreeScoreIncr",
       "method": "POST",
