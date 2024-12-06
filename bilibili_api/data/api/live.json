@@ -32,6 +32,16 @@
       },
       "comment": "获取房间信息（真实房间号，封禁情况等）"
     },
+    "emoticons": {
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/v2/emoticon/GetEmoticons",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "platform": "const str: pc",
+        "room_id": "int: 房间号",
+      },
+      "comment": "获取当前用户在本房间可用的表情包"
+    },
     "danmu_info": {
       "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo",
       "method": "GET",
