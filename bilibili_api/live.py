@@ -182,6 +182,26 @@ class LiveRoom:
         self.__ruid = resp["uid"]
         return resp
 
+    async def get_emoticons(self) -> dict:
+        """
+        获取本房间可用表情包
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["emoticons"]
+        params = {
+            "platform": "pc",
+            "room_id": self.room_display_id,
+        }
+        resp = (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+        # 缓存真实房间 ID
+        self.__ruid = resp["uid"]
+        return resp
+
     async def get_room_id(self) -> int:
         """
         获取直播间 id
