@@ -541,6 +541,35 @@ class LiveRoom:
         if reply_mid: data["reply_mid"] = reply_mid
         return await Api(**api, credential=self.credential).update_data(**data).result
 
+    async def send_emoticon(self, emoticon: Danmaku, room_id: int = None) -> dict:
+        """
+        直播间发送表情包
+
+        Args:
+            emoticon (Danmaku): text为表情包代号
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+
+        api = API["operate"]["send_emoticon"]
+        if not room_id:
+            room_id = (await self.get_room_play_info())["room_id"]
+
+        data = {
+            "mode": danmaku.mode,
+            "msg": danmaku.text,
+            "roomid": room_id,
+            "bubble": 0,
+            "dm_type": 1,
+            "rnd": int(time.time()),
+            "color": int(danmaku.color, 16),
+            "fontsize": danmaku.font_size,
+            "emoticonOptions": '[object Object]'
+        }
+        return await Api(**api, credential=self.credential).update_data(**data).result
+
     async def sign_up_dahanghai(self, task_id: int = 1447) -> dict:
         """
         大航海签到
