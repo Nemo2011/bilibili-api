@@ -470,7 +470,7 @@ class LiveRoom:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def ban_user(self, uid: int, hour: int) -> dict:
+    async def ban_user(self, uid: int, hour: int = -1) -> dict:
         """
         封禁用户
 
@@ -508,6 +508,7 @@ class LiveRoom:
         data = {
             "room_id": self.room_display_id,
             "tuid": uid,
+            "visit_id": "",
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
