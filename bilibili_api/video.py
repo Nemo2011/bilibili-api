@@ -29,7 +29,7 @@ from .utils.AsyncEvent import AsyncEvent
 from .utils.credential import Credential
 from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku, SpecialDanmaku
-from .utils.network import get_aiohttp_session, Api, get_session, get_mixin_key, enc_wbi
+from .utils.network import get_aiohttp_session, Api
 from .exceptions import (
     ArgsException,
     NetworkException,
@@ -622,24 +622,14 @@ class Video:
 
             cid = await self.__get_cid_by_index(page_index)
 
-        session = get_session()
         api = API["danmaku"]["view"]
-
-        config = {}
-        config["url"] = api["url"]
-        config["params"] = {"type": 1, "oid": cid, "pid": self.get_aid(), "duration": (await self.__get_info_cached())["duration"]}
-        config["cookies"] = self.credential.get_cookies()
-        config["headers"] = {
-            "Referer": "https://www.bilibili.com",
-            "User-Agent": "Mozilla/5.0",
-        }
+        params = {"type": 1, "oid": cid, "pid": self.get_aid()}
 
         try:
-            resp = await session.get(**config)
+            resp_data = await Api(**api, credential=self.credential).update_params(**params).request(byte=True)
         except Exception as e:
             raise NetworkException(-1, str(e))
 
-        resp_data = resp.read()
         json_data = {}
         reader = BytesReader(resp_data)
 
@@ -869,11 +859,10 @@ class Video:
             if from_seg == None:
                 from_seg = 0
             if to_seg == None:
-                view = await self.get_danmaku_view(cid=cid)
-                if view["dm_seg"].get("total"):
-                    to_seg = view["dm_seg"]["total"] - 1
-                else:
-                    to_seg = (await self.__get_info_cached())["duration"] // 360 + 1
+                info = await self.__get_info_cached()
+                for p in info["pages"]:
+                    if p["cid"] == cid:
+                        to_seg = p["duration"] // 360 + 1
 
         danmakus = []
 
@@ -884,7 +873,6 @@ class Video:
             try:
                 data = await Api(**api, credential=self.credential).update_params(**params).request(byte=True)
             except Exception as e:
-                raise e
                 raise NetworkException(-1, str(e))
 
             if data == b"\x10\x01":
@@ -1174,14 +1162,7 @@ class Video:
 
             cid = await self.__get_cid_by_index(page_index)
         url = f"https://comment.bilibili.com/{cid}.xml"
-        sess = get_session()
-        config: dict[Any, Any] = {"url": url}
-        config["headers"] = {"User-Agent": "Mozilla/5.0"}
-        # 代理
-        if settings.proxy:
-            config["proxies"] = {"all://", settings.proxy}
-        resp = await sess.get(**config)
-        return resp.content.decode("utf-8")
+        return (await Api(url=url, method="GET").request(byte=True)).decode("utf-8")
 
     async def like_danmaku(
         self,
@@ -1652,18 +1633,8 @@ class Video:
             cid = await self.__get_cid_by_index(page_index)
 
         api = API["info"]["pbp"]
-
         params = {"cid": cid}
-
-        session = get_session()
-
-        return json.loads(
-            (
-                await session.get(
-                    api["url"], params=params, cookies=self.credential.get_cookies()
-                )
-            ).text
-        )
+        return await Api(**api, credential=self.credential).update_params(**params).request(raw=True)
 
     async def add_to_toview(self) -> dict:
         """

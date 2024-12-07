@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup, element
 from .utils.initial_state import get_initial_state, get_initial_state_sync
 from .utils.utils import get_api, raise_for_statement
 from .utils.credential import Credential
-from .utils.network import Api, get_session
+from .utils.network import Api
 from .utils import cache_pool
 from .exceptions.NetworkException import ApiException, NetworkException
 from .video import get_cid_info_sync

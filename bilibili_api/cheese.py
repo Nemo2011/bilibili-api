@@ -22,7 +22,7 @@ from .utils.danmaku import Danmaku
 from .utils.credential import Credential
 from .utils.BytesReader import BytesReader
 from .exceptions.ArgsException import ArgsException
-from .utils.network import Api, get_session
+from .utils.network import Api
 from .exceptions import NetworkException, ResponseException, DanmakuClosedException
 
 API = get_api("cheese")
@@ -291,24 +291,14 @@ class CheeseVideo:
             dict: 调用 API 返回的结果。
         """
         cid = self.get_cid()
-        session = get_session()
         api = API_video["danmaku"]["view"]
-
-        config = {}
-        config["url"] = api["url"]
-        config["params"] = {"type": 1, "oid": cid, "pid": self.get_aid()}
-        config["cookies"] = self.credential.get_cookies()
-        config["headers"] = {
-            "Referer": "https://www.bilibili.com",
-            "User-Agent": "Mozilla/5.0",
-        }
+        params = {"type": 1, "oid": cid, "pid": self.get_aid()}
 
         try:
-            resp = await session.get(**config)
+            resp_data = await Api(**api, credential=self.credential).update_params(**params).request(byte=True)
         except Exception as e:
             raise NetworkException(-1, str(e))
 
-        resp_data = resp.read()
         json_data = {}
         reader = BytesReader(resp_data)
         # 解析二进制数据流
@@ -486,65 +476,60 @@ class CheeseVideo:
                 continue
         return json_data
 
-    async def get_danmakus(self, date: Union[datetime.date, None] = None):
+    async def get_danmakus(
+        self,
+        date: Union[datetime.date, None] = None,
+        from_seg: Union[int, None] = None,
+        to_seg: Union[int, None] = None,
+    ) -> List[Danmaku]:
         """
         获取弹幕。
 
         Args:
-            date (datetime.Date | None, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+            date       (datetime.Date | None, optional): 指定日期后为获取历史弹幕，精确到年月日。Defaults to None.
+
+            from_seg (int, optional): 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None.
+
+            to_seg (int, optional): 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None.
 
         Returns:
             List[Danmaku]: Danmaku 类的列表。
+
+        注意：
+            - 1. 段数可以通过视频时长计算。6分钟为一段。
+            - 2. `from_seg` 和 `to_seg` 仅对 `date == None` 的时候有效果。
+            - 3. 例：取前 `12` 分钟的弹幕：`from_seg=0, to_seg=1`
         """
         if date is not None:
             self.credential.raise_for_no_sessdata()
 
-        # self.credential.raise_for_no_sessdata()
-
-        session = get_session()
+        cid = self.get_cid()
         aid = self.get_aid()
-        params: dict[str, Any] = {"oid": self.get_cid(), "type": 1, "pid": aid}
+        params: dict[str, Any] = {"oid": cid, "type": 1, "pid": aid}
         if date is not None:
             # 获取历史弹幕
             api = API_video["danmaku"]["get_history_danmaku"]
             params["date"] = date.strftime("%Y-%m-%d")
             params["type"] = 1
-            all_seg = 1
+            from_seg = to_seg = 0
         else:
             api = API_video["danmaku"]["get_danmaku"]
-            view = await self.get_danmaku_view()
-            all_seg = view["dm_seg"]["total"]
+            if from_seg == None:
+                from_seg = 0
+            if to_seg == None:
+                to_seg = self.get_meta()["duration"] // 360 + 1
 
         danmakus = []
 
-        for seg in range(all_seg):
+        for seg in range(from_seg, to_seg + 1):
             if date is None:
                 # 仅当获取当前弹幕时需要该参数
                 params["segment_index"] = seg + 1
-
-            config = {}
-            config["url"] = api["url"]
-            config["params"] = params
-            config["headers"] = {
-                "Referer": "https://www.bilibili.com",
-                "User-Agent": "Mozilla/5.0",
-            }
-            config["cookies"] = self.credential.get_cookies()
-
             try:
-                req = await session.get(**config)
+                data = await Api(**api, credential=self.credential).update_params(**params).request(byte=True)
             except Exception as e:
                 raise NetworkException(-1, str(e))
 
-            if "content-type" not in req.headers.keys():
-                break
-            else:
-                content_type = req.headers["content-type"]
-                if content_type != "application/octet-stream":
-                    raise ResponseException("返回数据类型错误：")
-
-            # 解析二进制流数据
-            data = req.read()
             if data == b"\x10\x01":
                 # 视频弹幕被关闭
                 raise DanmakuClosedException()
@@ -584,7 +569,12 @@ class CheeseVideo:
                     elif data_type == 4:
                         dm.font_size = dm_reader.varint()
                     elif data_type == 5:
-                        dm.color = hex(dm_reader.varint())[2:]
+                        color = dm_reader.varint()
+                        if color != 60001:
+                            color = hex(color)[2:]
+                        else:
+                            color = "special"
+                        dm.color = color
                     elif data_type == 6:
                         dm.crc32_id = dm_reader.string()
                     elif data_type == 7:
@@ -594,7 +584,7 @@ class CheeseVideo:
                     elif data_type == 9:
                         dm.weight = dm_reader.varint()
                     elif data_type == 10:
-                        dm.action = str(dm_reader.varint())
+                        dm.action = str(dm_reader.string())
                     elif data_type == 11:
                         dm.pool = dm_reader.varint()
                     elif data_type == 12:
@@ -609,12 +599,18 @@ class CheeseVideo:
                         dm_reader.bytes_string()
                     elif data_type == 21:
                         dm_reader.bytes_string()
+                    elif data_type == 22:
+                        dm_reader.bytes_string()
+                    elif data_type == 25:
+                        dm_reader.varint()
+                    elif data_type == 26:
+                        dm_reader.varint()
                     else:
                         break
                 danmakus.append(dm)
         return danmakus
 
-    async def get_pbp(self):
+    async def get_pbp(self) -> dict:
         """
         获取高能进度条
 
@@ -622,20 +618,10 @@ class CheeseVideo:
             调用 API 返回的结果
         """
         cid = self.get_cid()
-
         api = API_video["info"]["pbp"]
-
         params = {"cid": cid}
+        return await Api(**api, credential=self.credential).update_params(**params).request(raw=True)
 
-        session = get_session()
-
-        return json.loads(
-            (
-                await session.get(
-                    api["url"], params=params, cookies=self.credential.get_cookies()
-                )
-            ).text
-        )
 
     async def send_danmaku(self, danmaku: Union[Danmaku, None] = None):
         """
@@ -791,18 +777,13 @@ class CheeseVideo:
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def get_danmaku_xml(self):
+    async def get_danmaku_xml(self) -> str:
         """
-        获取弹幕(xml 源)
+        获取所有弹幕的 xml 源文件（非装填）
 
         Returns:
-            str: xml 文件源
+            str: 文件源
         """
-        url = f"https://comment.bilibili.com/{self.get_cid()}.xml"
-        sess = get_session()
-        config: dict[str, Any] = {"url": url}
-        # 代理
-        if settings.proxy:
-            config["proxies"] = {"all://", settings.proxy}
-        resp = await sess.get(**config)
-        return resp.content.decode("utf-8")
+        cid = self.get_cid()
+        url = f"https://comment.bilibili.com/{cid}.xml"
+        return (await Api(url=url, method="GET").request(byte=True)).decode("utf-8")

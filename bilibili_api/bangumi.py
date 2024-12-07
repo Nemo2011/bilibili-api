@@ -20,8 +20,7 @@ from . import settings
 from .video import Video
 from .utils.utils import get_api, raise_for_statement
 from .utils.credential import Credential
-from .exceptions.ApiException import ApiException
-from .utils.network import Api, get_session, HEADERS
+from .utils.network import Api
 from .utils.initial_state import (
     get_initial_state,
     get_initial_state_sync,
@@ -745,6 +744,7 @@ class IndexFilterMeta:
         """
         动画
         """
+
         def __init__(
             self,
             version: IndexFilter.Version = IndexFilter.Version.ALL,
@@ -793,6 +793,7 @@ class IndexFilterMeta:
         """
         电影
         """
+
         def __init__(
             self,
             area: IndexFilter.Area = IndexFilter.Area.ALL,
@@ -823,6 +824,7 @@ class IndexFilterMeta:
         """
         纪录片
         """
+
         def __init__(
             self,
             release_date: str = -1,
@@ -851,6 +853,7 @@ class IndexFilterMeta:
         """
         TV
         """
+
         def __init__(
             self,
             area: IndexFilter.Area = IndexFilter.Area.ALL,
@@ -879,6 +882,7 @@ class IndexFilterMeta:
         """
         国创
         """
+
         def __init__(
             self,
             version: IndexFilter.Version = IndexFilter.Version.ALL,
@@ -915,6 +919,7 @@ class IndexFilterMeta:
         """
         综艺
         """
+
         def __init__(
             self,
             style: IndexFilter.Style.Variety = IndexFilter.Style.Variety.ALL,
@@ -1362,9 +1367,9 @@ class Episode(Video):
         else:
             content = episode_data_cache[epid]["bangumi_meta"]
             bvid = None
-            self.__ep_info = content["props"]["pageProps"]["dehydratedState"]["queries"][0][
-                "state"
-            ]["data"]["result"]["play_view_business_info"]["episode_info"]
+            self.__ep_info = content["props"]["pageProps"]["dehydratedState"][
+                "queries"
+            ][0]["state"]["data"]["result"]["play_view_business_info"]["episode_info"]
             bvid = self.__ep_info["bvid"]
             self.bangumi = episode_data_cache[epid]["bangumi_class"]
             self.__ep_info: dict = episode_data_cache[epid]
@@ -1393,7 +1398,7 @@ class Episode(Video):
         Returns:
             int: cid
         """
-        return (await self.get_episode_info())["epInfo"]["cid"]
+        return (await self.get_episode_info())["cid"]
 
     def get_bangumi(self) -> "Bangumi":
         """
@@ -1480,13 +1485,7 @@ class Episode(Video):
         """
         cid = await self.get_cid()
         url = f"https://comment.bilibili.com/{cid}.xml"
-        sess = get_session()
-        config: dict[str, Any] = {"url": url}
-        # 代理
-        if settings.proxy:
-            config["proxies"] = {"all://", settings.proxy}
-        resp = await sess.get(**config)
-        return resp.content.decode("utf-8")
+        return (await Api(url=url, method="GET").request(byte=True)).decode("utf-8")
 
     async def get_danmaku_view(self) -> dict:
         """
@@ -1498,7 +1497,10 @@ class Episode(Video):
         return await self.video_class.get_danmaku_view(0)
 
     async def get_danmakus(
-        self, date: Union[datetime.date, None] = None
+        self,
+        date: Union[datetime.date, None] = None,
+        from_seg: Union[int, None] = None,
+        to_seg: Union[int, None] = None,
     ) -> List["Danmaku"]:
         """
         获取弹幕
@@ -1506,10 +1508,14 @@ class Episode(Video):
         Args:
             date (datetime.date | None, optional): 指定某一天查询弹幕. Defaults to None. (不指定某一天)
 
+            from_seg (int, optional): 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None.
+
+            to_seg (int, optional): 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None.
+
         Returns:
             dict[Danmaku]: 弹幕列表
         """
-        return await self.video_class.get_danmakus(0, date)
+        return await self.video_class.get_danmakus(0, date, from_seg=from_seg, to_seg=to_seg)
 
     async def get_history_danmaku_index(
         self, date: Union[datetime.date, None] = None

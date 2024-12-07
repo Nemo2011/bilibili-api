@@ -647,6 +647,9 @@ class Api:
             # JSON
             resp_data: dict = json.loads(resp_text)
 
+        if settings.request_log:
+            settings.logger.info(f"获得 json 数据\n{pprint.pformat(resp_data)}")
+
         if raw:
             return resp_data
 
@@ -669,8 +672,6 @@ class Api:
                     raise ResponseCodeException(code, msg, resp_data)
             elif OK != 1:
                 raise ResponseCodeException(-1, "API 返回数据 OK 不为 1", resp_data)
-        if settings.request_log:
-            settings.logger.info(f"获得 json 数据\n{pprint.pformat(resp_data)}")
 
         real_data = resp_data.get("data") if OK is None else resp_data
         if real_data is None:
@@ -761,7 +762,8 @@ async def active_buvid(buvid3: str, buvid4: str) -> dict:
     text = json.loads(text)
     if text["code"] != 0:
         raise ExClimbWuzhiException(text["code"], text["msg"])
-    settings.logger.info(f"激活 buvid3: [{buvid3}] 成功")
+    if settings.request_log:
+        settings.logger.info(f"激活 buvid3: [{buvid3}] 成功")
 
 def get_nav_sync(credential: Union[Credential, None] = None):
     """

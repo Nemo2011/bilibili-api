@@ -4,6 +4,7 @@ bilibili_api.ass
 有关 ASS 文件的操作
 """
 import os
+import json
 from tempfile import gettempdir
 from typing import Union, Optional
 
@@ -14,7 +15,7 @@ from .utils.srt2ass import srt2ass
 from .utils.json2srt import json2srt
 from .utils.credential import Credential
 from .utils.danmaku2ass import Danmaku2ASS
-from .utils.network import get_session
+from .utils.network import Api
 from .exceptions.ArgsException import ArgsException
 
 
@@ -132,10 +133,10 @@ async def make_ass_file_subtitle(
             url = subtitle["subtitle_url"]
             if isinstance(obj, Episode) or "https:" not in url:
                 url = "https:" + url
-            req = await get_session().request("GET", url)
+            req = await Api(url=url, method="GET").request(raw=True)
             file_dir = gettempdir() + "/" + "subtitle.json"
-            with open(file_dir, "wb") as f:
-                f.write(req.content)
+            with open(file_dir, "w+") as f:
+                f.write(json.dumps(req))
             export_ass_from_json(file_dir, out)
             return
     raise ValueError("没有找到指定字幕")

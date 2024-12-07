@@ -13,7 +13,7 @@ from .errors import ApiException
 from httpx import AsyncClient
 
 from .utils.credential import Credential
-from .utils.network import HEADERS, Api, get_session
+from .utils.network import Api
 from .utils.utils import get_api
 
 API = get_api("game")
@@ -222,22 +222,18 @@ async def game_name2id(game_name: str) -> str:
     Returns:
         str: 游戏编码
     """
-    sess: AsyncClient = get_session()
     try:
-        wiki_page_title = json.loads(
-            (
-                await sess.get(
-                    f"https://wiki.biligame.com/wiki/api.php?action=opensearch&format=json&formatversion=2&search={game_name}&namespace=0&limit=10"
-                )
-            ).text
+        wiki_page_title = (await Api(
+                url=f"https://wiki.biligame.com/wiki/api.php?action=opensearch&format=json&formatversion=2&search={game_name}&namespace=0&limit=10",
+                method="GET"
+            ).request(raw=True)
         )[3][0].lstrip("https://wiki.biligame.com/wiki/")
     except IndexError as e:
         raise ApiException("未找到游戏")
-    wiki_page_content = (
-        await sess.get(
-            f"https://wiki.biligame.com/wiki/api.php?action=query&prop=revisions&titles={wiki_page_title}&rvprop=content&format=json",
-        )
-    ).text
+    wiki_page_content = (await Api(
+        url=f"https://wiki.biligame.com/wiki/api.php?action=query&prop=revisions&titles={wiki_page_title}&rvprop=content&format=json",
+        method="GET"
+    ).request(byte=True)).decode("utf-8")
     wiki_page_template_re = re.compile(r"\{\{(.*?)\}\}")
     match = re.search(wiki_page_template_re, wiki_page_content)
     if match is None:
