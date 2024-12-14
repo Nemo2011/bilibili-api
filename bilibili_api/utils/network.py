@@ -600,7 +600,7 @@ class Api:
                 raise NetworkException(resp.status_code, str(resp.status_code))
             if byte:
                 ret = resp.read()
-                if settings.request_log:
+                if settings.request_log and settings.request_log_show_response:
                     settings.logger.info(f"获得字节数据\n{str(ret)}")
                 return ret
             real_data = self._process_response(
@@ -616,7 +616,7 @@ class Api:
                     raise NetworkException(e.status, e.message)
                 if byte:
                     ret = await resp.read()
-                    if settings.request_log:
+                    if settings.request_log and settings.request_log_show_response:
                         settings.logger.info(f"获得字节数据\n{str(ret)}")
                     return ret
                 real_data = self._process_response(
@@ -647,7 +647,7 @@ class Api:
             # JSON
             resp_data: dict = json.loads(resp_text)
 
-        if settings.request_log:
+        if settings.request_log and settings.request_log_show_response:
             settings.logger.info(f"获得 json 数据\n{pprint.pformat(resp_data)}")
 
         if raw:

@@ -55,6 +55,11 @@ request_log: bool = False
 请求 Api 时是否打印 Api 信息
 """
 
+request_log_show_response: bool = False
+"""
+请求 Api 打印 Api 信息是否打印响应信息（避免信息过多）
+"""
+
 wbi_retry_times: int = 3
 """
 WBI请求重试次数上限设置, 默认为3次

@@ -14,7 +14,7 @@ import asyncio
 import logging
 import datetime
 from enum import Enum
-from inspect import isfunction
+from inspect import iscoroutine, isfunction
 from functools import cmp_to_key
 from dataclasses import dataclass
 from typing import Any, List, Union, Optional
@@ -218,6 +218,18 @@ class Video:
         """
         return self.__aid
 
+    async def __get_bvid(self) -> str:
+        res = self.get_bvid()
+        if iscoroutine(res):
+            return await res
+        return res
+
+    async def __get_aid(self) -> str:
+        res = self.get_aid()
+        if iscoroutine(res):
+            return await res
+        return res
+
     async def get_info(self) -> dict:
         """
         获取视频信息。
@@ -226,7 +238,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         api = API["info"]["info"]
-        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+        params = {"bvid": await self.__get_bvid(), "aid": await self.__get_aid()}
         resp = (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -243,8 +255,8 @@ class Video:
         """
         api = API["info"]["detail"]
         params = {
-            "bvid": self.get_bvid(),
-            "aid": self.get_aid(),
+            "bvid": await self.__get_bvid(),
+            "aid": await self.__get_aid(),
             "need_operation_card": 0,
             "need_elec": 0,
         }
@@ -272,7 +284,7 @@ class Video:
     #         dict: 调用 API 返回的结果。
     #     """
     #     api = API["info"]["stat"]
-    #     params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+    #     params = {"bvid": await self.__get_bvid(), "aid": await self.__get_aid()}
     #     return await Api(**api, credential=self.credential).update_params(**params).result
 
     async def get_up_mid(self) -> int:
@@ -305,7 +317,7 @@ class Video:
 
             cid = await self.get_cid(page_index=page_index)
         api = API["info"]["tags"]
-        params = {"bvid": self.get_bvid(), "aid": self.get_aid(), "cid": cid}
+        params = {"bvid": await self.__get_bvid(), "aid": await self.__get_aid(), "cid": cid}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -320,7 +332,7 @@ class Video:
         info = await self.__get_info_cached()
         mid = info["owner"]["mid"]
         api = API["info"]["chargers"]
-        params = {"aid": self.get_aid(), "bvid": self.get_bvid(), "mid": mid}
+        params = {"aid": await self.__get_aid(), "bvid": await self.__get_bvid(), "mid": mid}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -333,7 +345,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         api = API["info"]["pages"]
-        params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
+        params = {"aid": await self.__get_aid(), "bvid": await self.__get_bvid()}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -380,11 +392,11 @@ class Video:
         Returns:
             dict: 调用 API 返回的结果,数据中 Url 没有 http 头
         """
-        params: dict[str, Any] = {"aid": self.get_aid()}
+        params: dict[str, Any] = {"aid": await self.__get_aid()}
         if pvideo:
             api = API["info"]["video_snapshot_pvideo"]
         else:
-            params["bvid"] = self.get_bvid()
+            params["bvid"] = await self.__get_bvid()
             if json_index:
                 params["index"] = 1
             if cid:
@@ -434,8 +446,8 @@ class Video:
 
         api = API["info"]["playurl"]
         params = {
-            "avid": self.get_aid(),
-            "bvid": self.get_bvid(),
+            "avid": await self.__get_aid(),
+            "bvid": await self.__get_bvid(),
             "cid": cid,
             "qn": "127",
             "fnver": 0,
@@ -456,7 +468,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         api = API["info"]["related"]
-        params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
+        params = {"aid": await self.__get_aid(), "bvid": await self.__get_bvid()}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -470,7 +482,7 @@ class Video:
         """
         self.credential.raise_for_no_sessdata()
         api = API["info"]["relation"]
-        params = {"aid": self.get_aid(), "bvid": self.get_bvid()}
+        params = {"aid": await self.__get_aid(), "bvid": await self.__get_bvid()}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -485,7 +497,7 @@ class Video:
         self.credential.raise_for_no_sessdata()
 
         api = API["info"]["has_liked"]
-        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+        params = {"bvid": await self.__get_bvid(), "aid": await self.__get_aid()}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -500,7 +512,7 @@ class Video:
         self.credential.raise_for_no_sessdata()
 
         api = API["info"]["get_pay_coins"]
-        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+        params = {"bvid": await self.__get_bvid(), "aid": await self.__get_aid()}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )["multiply"]
@@ -515,7 +527,7 @@ class Video:
         self.credential.raise_for_no_sessdata()
 
         api = API["info"]["has_favoured"]
-        params = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+        params = {"bvid": await self.__get_bvid(), "aid": await self.__get_aid()}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )["favoured"]
@@ -528,7 +540,7 @@ class Video:
             bool: 是否禁止笔记。
         """
         api = API["info"]["is_forbid"]
-        params = {"aid": self.get_aid()}
+        params = {"aid": await self.__get_aid()}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )["forbid_note_entrance"]
@@ -543,7 +555,7 @@ class Video:
         self.credential.raise_for_no_sessdata()
 
         api = API["info"]["private_notes"]
-        params = {"oid": self.get_aid(), "oid_type": 0}
+        params = {"oid": await self.__get_aid(), "oid_type": 0}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )["noteIds"]
@@ -562,7 +574,7 @@ class Video:
         """
 
         api = API["info"]["public_notes"]
-        params = {"oid": self.get_aid(), "oid_type": 0, "pn": pn, "ps": ps}
+        params = {"oid": await self.__get_aid(), "oid_type": 0, "pn": pn, "ps": ps}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -592,8 +604,8 @@ class Video:
 
         api = API["info"]["ai_conclusion"]
         params = {
-            "aid": self.get_aid(),
-            "bvid": self.get_bvid(),
+            "aid": await self.__get_aid(),
+            "bvid": await self.__get_bvid(),
             "cid": cid,
             "up_mid": await self.get_up_mid() if up_mid is None else up_mid,
             "web_location": "333.788",
@@ -623,7 +635,7 @@ class Video:
             cid = await self.__get_cid_by_index(page_index)
 
         api = API["danmaku"]["view"]
-        params = {"type": 1, "oid": cid, "pid": self.get_aid()}
+        params = {"type": 1, "oid": cid, "pid": await self.__get_aid()}
 
         try:
             resp_data = await Api(**api, credential=self.credential).update_params(**params).request(byte=True)
@@ -846,7 +858,7 @@ class Video:
 
             cid = await self.__get_cid_by_index(page_index)
 
-        aid = self.get_aid()
+        aid = await self.__get_aid()
         params: dict[str, Any] = {"oid": cid, "type": 1, "pid": aid}
         if date is not None:
             # 获取历史弹幕
@@ -1131,8 +1143,8 @@ class Video:
             "type": 1,
             "oid": cid,
             "msg": danmaku.text,
-            "aid": self.get_aid(),
-            "bvid": self.get_bvid(),
+            "aid": await self.__get_aid(),
+            "bvid": await self.__get_bvid(),
             "progress": int(danmaku.dm_time * 1000),
             "color": int(danmaku.color, 16),
             "fontsize": danmaku.font_size,
@@ -1216,7 +1228,7 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         api = API["info"]["online"]
-        params = {"aid": self.get_aid(), "bvid": self.get_bvid(),
+        params = {"aid": await self.__get_aid(), "bvid": await self.__get_bvid(),
                   "cid": cid if cid is not None else await self.get_cid(page_index=page_index)}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -1285,7 +1297,7 @@ class Video:
         self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["like"]
-        data = {"aid": self.get_aid(), "like": 1 if status else 2}
+        data = {"aid": await self.__get_aid(), "like": 1 if status else 2}
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def pay_coin(self, num: int = 1, like: bool = False) -> dict:
@@ -1308,8 +1320,8 @@ class Video:
 
         api = API["operate"]["coin"]
         data = {
-            "aid": self.get_aid(),
-            "bvid": self.get_bvid(),
+            "aid": await self.__get_aid(),
+            "bvid": await self.__get_bvid(),
             "multiply": num,
             "like": 1 if like else 0,
         }
@@ -1324,8 +1336,8 @@ class Video:
         """
         api = API["operate"]["share"]
         data = {
-            "bvid": self.get_bvid(),
-            "aid": self.get_aid(),
+            "bvid": await self.__get_bvid(),
+            "aid": await self.__get_aid(),
             "csrf": self.credential.bili_jct,
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
@@ -1338,7 +1350,7 @@ class Video:
             dict: 调用 API 返回的结果
         """
         api = API["operate"]["yjsl"]
-        data = {"bvid": self.get_bvid(), "aid": self.get_aid()}
+        data = {"bvid": await self.__get_bvid(), "aid": await self.__get_aid()}
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def add_tag(self, name: str) -> dict:
@@ -1355,7 +1367,7 @@ class Video:
         self.credential.raise_for_no_bili_jct()
 
         api = API["operate"]["add_tag"]
-        data = {"aid": self.get_aid(), "bvid": self.get_bvid(), "tag_name": name}
+        data = {"aid": await self.__get_aid(), "bvid": await self.__get_bvid(), "tag_name": name}
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def delete_tag(self, tag_id: int) -> dict:
@@ -1373,7 +1385,7 @@ class Video:
 
         api = API["operate"]["del_tag"]
 
-        data = {"tag_id": tag_id, "aid": self.get_aid(), "bvid": self.get_bvid()}
+        data = {"tag_id": tag_id, "aid": await self.__get_aid(), "bvid": await self.__get_bvid()}
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def appeal(self, reason: Any, detail: str):
@@ -1389,7 +1401,7 @@ class Video:
             dict: 调用 API 返回的结果
         """
         api = API["operate"]["appeal"]
-        data = {"aid": self.get_aid(), "desc": detail}
+        data = {"aid": await self.__get_aid(), "desc": detail}
         if isfunction(reason):
             reason = reason()
         if isinstance(reason, int):
@@ -1420,7 +1432,7 @@ class Video:
 
         api = API["operate"]["favorite"]
         data = {
-            "rid": self.get_aid(),
+            "rid": await self.__get_aid(),
             "type": 2,
             "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
             "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
@@ -1466,7 +1478,7 @@ class Video:
         api = API["info"]["get_player_info"]
 
         params = {
-            "aid": self.get_aid(),
+            "aid": await self.__get_aid(),
             "cid": cid,
             "isGaiaAvoided": False,
             "web_location": 1315873,
@@ -1560,7 +1572,7 @@ class Video:
             "data": json.dumps(data),
             "submit": submit,
             "sign": sign,
-            "bvid": self.get_bvid(),
+            "bvid": await self.__get_bvid(),
         }
 
         return await Api(**api, credential=self.credential).update_data(**payload).result
@@ -1574,7 +1586,7 @@ class Video:
         """
         api = API["danmaku"]["snapshot"]
 
-        params = {"aid": self.get_aid()}
+        params = {"aid": await self.__get_aid()}
 
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -1647,7 +1659,7 @@ class Video:
         self.credential.raise_for_no_bili_jct()
         api = get_api("toview")["operate"]["add"]
         datas = {
-            "aid": self.get_aid(),
+            "aid": await self.__get_aid(),
         }
         return await Api(**api, credential=self.credential).update_data(**datas).result
 
@@ -1661,7 +1673,7 @@ class Video:
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
         api = get_api("toview")["operate"]["del"]
-        datas = {"viewed": "false", "aid": self.get_aid()}
+        datas = {"viewed": "false", "aid": await self.__get_aid()}
         return await Api(**api, credential=self.credential).update_data(**datas).result
 
 
@@ -1792,7 +1804,7 @@ class VideoOnlineMonitor(AsyncEvent):
         cid = pages[self.__page_index]["cid"]
 
         # 获取服务器信息
-        self.logger.debug(f"准备连接：{self.__video.get_bvid()}")
+        self.logger.debug(f"准备连接：{self.__video.__get_bvid()}")
         self.logger.debug(f"获取服务器信息中...")
 
         api = API["info"]["video_online_broadcast_servers"]
@@ -1811,7 +1823,7 @@ class VideoOnlineMonitor(AsyncEvent):
             # 发送认证信息
             self.logger.debug("服务器连接成功，准备发送认证信息...")
             verify_info = {
-                "room_id": f"video://{self.__video.get_aid()}/{cid}",
+                "room_id": f"video://{self.__video.__get_aid()}/{cid}",
                 "platform": "web",
                 "accepts": [1000, 1015],
             }
