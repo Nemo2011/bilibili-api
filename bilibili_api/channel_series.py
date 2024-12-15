@@ -79,35 +79,39 @@ class ChannelSeries:
         self.is_new = type_.value
         self.id_ = id_
         self.owner = User(self.__uid, credential=credential)
-        self.credential: Credential = credential
+        self.credential: Credential = credential if credential else Credential()
         self.meta = None
-        if not f"{type_.value}-{id_}" in channel_meta_cache.keys():
-            if self.is_new:
-                api = API_USER["channel_series"]["season_info"]
-                params = {"season_id": self.id_}
-            else:
-                api = API_USER["channel_series"]["info"]
-                params = {"series_id": self.id_}
-            resp = Api(**api).update_params(**params).result_sync
-            if self.is_new:
-                self.meta = resp["info"]
-                self.meta["mid"] = resp["info"]["upper"]["mid"]
-                self.__uid = self.meta["mid"]
-                self.owner = User(self.__uid, credential=credential)
-            else:
-                self.meta = resp["meta"]
-                self.__uid = self.meta["mid"]
-                self.owner = User(self.__uid, credential=credential)
-        else:
+        if f"{type_.value}-{id_}" in channel_meta_cache.keys():
             self.meta = channel_meta_cache[f"{type_.value}-{id_}"]
 
-    def get_meta(self) -> dict:
+    async def __fetch_meta(self) -> None:
+        from .user import User
+        if self.is_new:
+            api = API_USER["channel_series"]["season_info"]
+            params = {"season_id": self.id_}
+        else:
+            api = API_USER["channel_series"]["info"]
+            params = {"series_id": self.id_}
+        resp = await Api(**api).update_params(**params).result
+        if self.is_new:
+            self.meta = resp["info"]
+            self.meta["mid"] = resp["info"]["upper"]["mid"]
+            self.__uid = self.meta["mid"]
+            self.owner = User(self.__uid, credential=self.credential)
+        else:
+            self.meta = resp["meta"]
+            self.__uid = self.meta["mid"]
+            self.owner = User(self.__uid, credential=self.credential)
+
+    async def get_meta(self) -> dict:
         """
         获取元数据
 
         Returns:
             调用 API 返回的结果
         """
+        if not self.meta:
+            await self.__fetch_meta()
         return self.meta  # type: ignore
 
     async def get_videos(
@@ -125,6 +129,8 @@ class ChannelSeries:
         Returns:
             调用 API 返回的结果
         """
+        if self.__uid == -1:
+            await self.__fetch_meta()
         if self.is_new:
             return await self.owner.get_channel_videos_season(self.id_, sort, pn, ps)
         else:
