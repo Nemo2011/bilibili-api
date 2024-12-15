@@ -20,6 +20,8 @@ from typing import List, Tuple, Union, Callable, Coroutine
 
 import httpx
 
+from bilibili_api.exceptions import ApiException
+
 from . import settings
 from .video import Video, VideoDownloadURLDataDetecter
 from .utils.utils import get_api
@@ -759,6 +761,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         self_download_func: Union[Coroutine, None] = None,
         downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI,
         stream_detecting_params: dict = {},
+        fetching_nodes_retry_times: int = 3
     ):
         """
         Args:
@@ -772,6 +775,8 @@ class InteractiveVideoDownloader(AsyncEvent):
 
             stream_detecting_params (dict)                     : `VideoDownloadURLDataDetecter` 提取最佳流时传入的参数，可控制视频及音频品质
 
+            fetching_nodes_retry_times (int)                   : 获取节点时的最大重试次数
+            
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
         """
         super().__init__()
@@ -784,6 +789,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.__out = out
         self.__mode = downloader_mode
         self.__detect_params = stream_detecting_params
+        self.__fetching_nodes_retry_times = fetching_nodes_retry_times
 
     async def __download(self, url: str, out: str) -> None:
         sess = get_session()
@@ -804,7 +810,7 @@ class InteractiveVideoDownloader(AsyncEvent):
             if not os.path.exists(parent):
                 os.mkdir(parent)
 
-            # self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
+            self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
 
             all_length = int(resp.headers["Content-Length"])
             parts = all_length // 1024 + (1 if all_length % 1024 != 0 else 0)
@@ -888,7 +894,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                 continue
 
             # 获取顶点信息，最大重试 3 次
-            retry = 3
+            retry = self.__fetching_nodes_retry_times
             while True:
                 try:
                     node = await now_node.get_info()
@@ -904,8 +910,10 @@ class InteractiveVideoDownloader(AsyncEvent):
                     break
                 except Exception as e:
                     retry -= 1
+                    if settings.request_log:
+                        settings.logger.info("第 %d 次重试", self.__fetching_nodes_retry_times - retry)
                     if retry < 0:
-                        raise e
+                        raise ApiException("重试达到最大次数")
 
             # 检查节顶点是否在 edges_info 中，本次步骤得到 title 信息
             if node["edge_id"] not in edges_info:
@@ -1048,7 +1056,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                 continue
 
             # 获取顶点信息，最大重试 3 次
-            retry = 3
+            retry = self.__fetching_nodes_retry_times
             while True:
                 try:
                     node = await now_node.get_info()
@@ -1060,8 +1068,10 @@ class InteractiveVideoDownloader(AsyncEvent):
                     break
                 except Exception as e:
                     retry -= 1
+                    if settings.request_log:
+                        settings.logger.info("第 %d 次重试", self.__fetching_nodes_retry_times - retry)
                     if retry < 0:
-                        raise e
+                        raise ApiException("重试达到最大次数")
 
             # 检查节顶点是否在 edges_info 中，本次步骤得到 title 信息
             if node["edge_id"] not in edges_info:
@@ -1268,7 +1278,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                 continue
 
             # 获取顶点信息，最大重试 3 次
-            retry = 3
+            retry = self.__fetching_nodes_retry_times
             while True:
                 try:
                     node = await now_node.get_info()
@@ -1280,8 +1290,10 @@ class InteractiveVideoDownloader(AsyncEvent):
                     break
                 except Exception as e:
                     retry -= 1
+                    if settings.request_log:
+                        settings.logger.info("第 %d 次重试", self.__fetching_nodes_retry_times - retry)
                     if retry < 0:
-                        raise e
+                        raise ApiException("重试达到最大次数")
 
             # 检查节顶点是否在 edges_info 中，本次步骤得到 title 信息
             if node["edge_id"] not in edges_info:

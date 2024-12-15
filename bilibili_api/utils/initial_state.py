@@ -3,6 +3,7 @@ bilibili_api.utils.initial_state
 
 用于获取页码的初始化信息
 """
+import pprint
 import re
 import json
 import httpx
@@ -13,6 +14,7 @@ from ..exceptions import *
 from .short import get_real_url
 from .credential import Credential
 from .network import get_session, Api
+from .. import settings
 
 
 class InitialDataType(Enum):
@@ -57,7 +59,8 @@ async def get_initial_state(
             content = json.loads(match.group(1))
         except json.JSONDecodeError:
             raise ApiException("信息解析错误")
-
+        if settings.request_log_show_response:
+            settings.logger.info(f"获取到 {content_type.value} 初始化信息\n{pprint.pformat(content)}")
         return content, content_type
 
 

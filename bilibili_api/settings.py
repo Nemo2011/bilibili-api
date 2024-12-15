@@ -18,12 +18,12 @@ class HTTPClient(Enum):
 
 http_client: HTTPClient = HTTPClient.AIOHTTP
 """
-用于设置使用的 HTTP 客户端，默认为 Httpx
+用于设置使用的 HTTP 客户端，默认为 AioHTTP
 
 e.x.:
 ``` python
 from bilibili_api import settings
-settings.http_client = settings.HTTPClient.AIOHTTP
+settings.http_client = settings.HTTPClient.HTTPX
 ```
 
 **Note: 当前模块所有 `Web Socket` 操作强制使用 `aiohttp`**
