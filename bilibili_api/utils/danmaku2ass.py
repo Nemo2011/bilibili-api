@@ -590,7 +590,7 @@ def WriteCommentAcfunPositioned(f, c, width, height, styleid):
     try:
         comment_args = c[3]
         text = ASSEscape(str(comment_args["n"]).replace("\r", "\n"))
-        common_styles = ["\org(%d, %d)" % (width / 2, height / 2)]
+        common_styles = ["\\org(%d, %d)" % (width / 2, height / 2)]
         anchor = {0: 7, 1: 8, 2: 9, 3: 4, 4: 5, 5: 6, 6: 1, 7: 2, 8: 3}.get(
             comment_args.get("c", 0), 7
         )

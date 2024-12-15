@@ -9,7 +9,6 @@ qrcode~=8.0
 APScheduler~=3.11.0
 rsa~=4.9
 pillow~=11.0.0
-tqdm~=4.67.1
 yarl~=1.18.3
 pycryptodomex~=3.21.0
 qrcode_terminal~=0.8

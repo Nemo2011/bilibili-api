@@ -6,8 +6,6 @@ ivitools.download
 
 import os
 
-import tqdm
-import httpx
 from colorama import Fore
 
 from bilibili_api import sync, interactive_video, video

@@ -19,7 +19,6 @@ from typing import List
 from colorama import Fore
 
 from .touch import touch_ivi
-from .scan import scan_ivi_file
 from .extract import extract_ivi
 from .download import download_interactive_video
 
@@ -28,19 +27,15 @@ def run_args(command: str, args: List[str]):
     if command == "help":
         print(
             "IVITools - A Simple IVI file manager & toolbox. \n\
-BY Nemo2011<yimoxia@outlook.com>\n\
 \n\
 Commands: download, extract, help, play, scan, touch\n\
 \n\
 ivitools download [BVID] [OUT]\n\
-ivitools extract [IVI]\n\
+ivitools extract [IVI] [DIR]\n\
 ivitools help\n\
 ivitools play [IVI] (PyQT6 require)\n\
-ivitools scan [IVI]\n\
 ivitools touch [IVI]"
         )
-    if command == "scan":
-        scan_ivi_file(args[0])
     elif command == "extract":
         extract_ivi(args[0], args[1])
     elif command == "touch":
