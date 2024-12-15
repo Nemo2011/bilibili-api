@@ -42,7 +42,9 @@ def json2srt(doc: str, out: str):
         hour = math.floor(stop) // 3600
         minute = (math.floor(stop) - hour * 3600) // 60
         sec = math.floor(stop) - hour * 3600 - minute * 60
-        minisec = abs(int(math.modf(stop)[0] * 100 - 1))  # 此处减1是为了防止两个字幕同时出现
+        minisec = abs(
+            int(math.modf(stop)[0] * 100 - 1)
+        )  # 此处减1是为了防止两个字幕同时出现
         file += (
             str(hour).zfill(2)
             + ":"

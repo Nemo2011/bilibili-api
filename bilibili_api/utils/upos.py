@@ -1,6 +1,7 @@
 """
 bilibili_api.utils.upos
 """
+
 import os
 import json
 import httpx
@@ -110,8 +111,6 @@ class UposFileUploader:
         data = await self._complete_file(total_chunk_count)
 
         return data
-
-
 
     async def _upload_chunk(
         self,

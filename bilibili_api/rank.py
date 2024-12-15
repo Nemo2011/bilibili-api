@@ -259,7 +259,9 @@ async def get_vip_rank(type_: VIPRankType = VIPRankType.VIP) -> dict:
     return await Api(**api).update_params(**params).result
 
 
-async def get_manga_rank(type_: MangeRankType = MangeRankType.NEW, credential: Credential = None) -> dict:
+async def get_manga_rank(
+    type_: MangeRankType = MangeRankType.NEW, credential: Credential = None
+) -> dict:
     """
     获取漫画专属排行榜
 

@@ -761,7 +761,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         self_download_func: Union[Coroutine, None] = None,
         downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI,
         stream_detecting_params: dict = {},
-        fetching_nodes_retry_times: int = 3
+        fetching_nodes_retry_times: int = 3,
     ):
         """
         Args:
@@ -776,7 +776,7 @@ class InteractiveVideoDownloader(AsyncEvent):
             stream_detecting_params (dict)                     : `VideoDownloadURLDataDetecter` 提取最佳流时传入的参数，可控制视频及音频品质
 
             fetching_nodes_retry_times (int)                   : 获取节点时的最大重试次数
-            
+
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
         """
         super().__init__()
@@ -911,7 +911,9 @@ class InteractiveVideoDownloader(AsyncEvent):
                 except Exception as e:
                     retry -= 1
                     if settings.request_log:
-                        settings.logger.info("第 %d 次重试", self.__fetching_nodes_retry_times - retry)
+                        settings.logger.info(
+                            "第 %d 次重试", self.__fetching_nodes_retry_times - retry
+                        )
                     if retry < 0:
                         raise ApiException("重试达到最大次数")
 
@@ -1069,7 +1071,9 @@ class InteractiveVideoDownloader(AsyncEvent):
                 except Exception as e:
                     retry -= 1
                     if settings.request_log:
-                        settings.logger.info("第 %d 次重试", self.__fetching_nodes_retry_times - retry)
+                        settings.logger.info(
+                            "第 %d 次重试", self.__fetching_nodes_retry_times - retry
+                        )
                     if retry < 0:
                         raise ApiException("重试达到最大次数")
 
@@ -1291,7 +1295,9 @@ class InteractiveVideoDownloader(AsyncEvent):
                 except Exception as e:
                     retry -= 1
                     if settings.request_log:
-                        settings.logger.info("第 %d 次重试", self.__fetching_nodes_retry_times - retry)
+                        settings.logger.info(
+                            "第 %d 次重试", self.__fetching_nodes_retry_times - retry
+                        )
                     if retry < 0:
                         raise ApiException("重试达到最大次数")
 

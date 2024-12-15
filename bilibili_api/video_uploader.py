@@ -3,6 +3,7 @@ bilibili_api.video_uploader
 
 视频上传
 """
+
 import os
 import json
 import time
@@ -305,6 +306,7 @@ class VideoPorderMeta:
     """
     视频商业相关参数
     """
+
     flow_id: int
     industry_id: Optional[int] = None
     official: Optional[int] = None
@@ -337,6 +339,7 @@ class VideoMeta:
     """
     视频源数据
     """
+
     tid: int  # 分区 ID。可以使用 channel 模块进行查询。
     title: str  # 视频标题
     desc: str  # 视频简介。
@@ -385,7 +388,9 @@ class VideoMeta:
         subtitle: Optional[dict] = None,  # 可选，字幕设置。
         dynamic: Optional[str] = None,  # 可选，动态信息。
         neutral_mark: Optional[str] = None,  # 可选，中性化标签。
-        delay_time: Optional[Union[int, datetime]] = None,  # 可选，定时发布时间戳（秒）。
+        delay_time: Optional[
+            Union[int, datetime]
+        ] = None,  # 可选，定时发布时间戳（秒）。
         porder: Optional[VideoPorderMeta] = None,  # 可选，商业相关参数。
     ) -> None:
         """
@@ -531,12 +536,14 @@ class VideoMeta:
             "porder": None if self.porder is None else self.porder.__dict__(),
             "adorder_type": 9,  # unknown
             "no_reprint": 1 if self.no_reprint else 0,
-            "subtitle": self.subtitle
-            if self.subtitle is not None
-            else {
-                "open": 0,
-                "lan": "",
-            },  # 莫名其妙没法上传 srt 字幕，显示格式错误，不校验
+            "subtitle": (
+                self.subtitle
+                if self.subtitle is not None
+                else {
+                    "open": 0,
+                    "lan": "",
+                }
+            ),  # 莫名其妙没法上传 srt 字幕，显示格式错误，不校验
             "neutral_mark": self.neutral_mark,  # 不知道能不能随便写文本
             "dolby": 1 if self.dolby else 0,
             "lossless_music": 1 if self.lossless_music else 0,
@@ -544,7 +551,7 @@ class VideoMeta:
             "up_close_reply": self.up_close_reply,
             "up_close_danmu": self.up_close_danmu,
             "web_os": 1,  # const 1
-            "source": self.source
+            "source": self.source,
         }
         for k in copy(meta).keys():
             if meta[k] is None:
@@ -738,9 +745,7 @@ class VideoUploader(AsyncEvent):
         self.cover = (
             self.meta.cover
             if isinstance(self.meta, VideoMeta)
-            else cover
-            if isinstance(cover, Picture)
-            else Picture().from_file(cover)
+            else cover if isinstance(cover, Picture) else Picture().from_file(cover)
         )
         self.line = line
         self.__task: Union[Task, None] = None
@@ -1479,7 +1484,9 @@ class VideoEditor(AsyncEvent):
                 "user-agent": "Mozilla/5.0",
             }
             resp = (
-                await Api(**api, credential=self.credential, no_csrf=True, json_body=True)
+                await Api(
+                    **api, credential=self.credential, no_csrf=True, json_body=True
+                )
                 .update_params(**params)
                 .update_data(**data)
                 .update_headers(**headers)

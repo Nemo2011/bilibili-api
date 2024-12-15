@@ -780,7 +780,9 @@ class Dynamic:
             credential (Credential | None, optional): 凭据类. Defaults to None.
         """
         self.__dynamic_id = dynamic_id
-        self.credential: Credential = credential if credential is not None else Credential()
+        self.credential: Credential = (
+            credential if credential is not None else Credential()
+        )
 
         if cache_pool.dynamic_is_opus.get(self.__dynamic_id):
             self.__opus = cache_pool.dynamic_is_opus[self.__dynamic_id]

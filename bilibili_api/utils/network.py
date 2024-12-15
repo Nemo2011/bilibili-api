@@ -27,7 +27,12 @@ from .sync import sync
 from .. import settings
 from .utils import get_api
 from .credential import Credential
-from ..exceptions import ApiException, ResponseCodeException, NetworkException, ExClimbWuzhiException
+from ..exceptions import (
+    ApiException,
+    ResponseCodeException,
+    NetworkException,
+    ExClimbWuzhiException,
+)
 from .exclimbwuzhi import *
 
 __httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
@@ -119,6 +124,7 @@ def retry_sync():
     Returns:
         Any: 原函数调用结果
     """
+
     def wrapper(func):
         def inner(*args, **kwargs):
             times = settings.wbi_retry_times
@@ -154,6 +160,7 @@ def retry():
     Returns:
         Any: 原函数调用结果
     """
+
     def wrapper(func: Coroutine):
         async def inner(*args, **kwargs):
             # 这里必须新建一个变量用来计数！！不能直接对 times 操作！！！
@@ -361,12 +368,14 @@ class Api:
         if self.wbi2:
             # -352 https://github.com/Nemo2011/bilibili-api/issues/595 需要跟进
             dm_rand = "ABCDEFGHIJK"
-            self.params.update({
-                "dm_img_list": "[]",  # 鼠标/键盘操作记录
-                "dm_img_str": "".join(random.sample(dm_rand, 2)),
-                "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
-                "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
-            })
+            self.params.update(
+                {
+                    "dm_img_list": "[]",  # 鼠标/键盘操作记录
+                    "dm_img_str": "".join(random.sample(dm_rand, 2)),
+                    "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
+                    "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
+                }
+            )
 
         if self.wbi:
             global wbi_mixin_key
@@ -456,12 +465,14 @@ class Api:
         if self.wbi2:
             # -352 https://github.com/Nemo2011/bilibili-api/issues/595 需要跟进
             dm_rand = "ABCDEFGHIJK"
-            self.params.update({
-                "dm_img_list": "[]",  # 鼠标/键盘操作记录
-                "dm_img_str": "".join(random.sample(dm_rand, 2)),
-                "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
-                "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
-            })
+            self.params.update(
+                {
+                    "dm_img_list": "[]",  # 鼠标/键盘操作记录
+                    "dm_img_str": "".join(random.sample(dm_rand, 2)),
+                    "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
+                    "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
+                }
+            )
 
         if self.wbi:
             global wbi_mixin_key
@@ -490,8 +501,9 @@ class Api:
         if self.bili_ticket:
             cookies["bili_ticket"] = await get_bili_ticket()
             cookies["bili_ticket_expires"] = str(int(time.time()) + 2 * 86400)
-            settings.logger.info(f'使用 bili_ticket [{cookies["bili_ticket"]}] expires [{cookies["bili_ticket_expires"]}]')
-
+            settings.logger.info(
+                f'使用 bili_ticket [{cookies["bili_ticket"]}] expires [{cookies["bili_ticket_expires"]}]'
+            )
 
         if settings.request_log:
             settings.logger.info(self)
@@ -579,7 +591,9 @@ class Api:
         return real_data
 
     @retry()
-    async def request(self, raw: bool = False, byte: bool = False, **kwargs) -> Union[int, str, dict]:
+    async def request(
+        self, raw: bool = False, byte: bool = False, **kwargs
+    ) -> Union[int, str, dict]:
         """
         向接口发送请求。
 
@@ -752,7 +766,7 @@ async def active_buvid(buvid3: str, buvid4: str) -> dict:
             "buvid3": buvid3,
             "buvid4": buvid4,
             "buvid_fp": gen_buvid_fp(payload, 31),
-            "_uuid": uuid
+            "_uuid": uuid,
         },
     )
     if settings.http_client == settings.HTTPClient.HTTPX:
@@ -764,6 +778,7 @@ async def active_buvid(buvid3: str, buvid4: str) -> dict:
         raise ExClimbWuzhiException(text["code"], text["msg"])
     if settings.request_log:
         settings.logger.info(f"激活 buvid3: [{buvid3}] 成功")
+
 
 def get_nav_sync(credential: Union[Credential, None] = None):
     """

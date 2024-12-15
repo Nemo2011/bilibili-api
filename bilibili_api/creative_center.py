@@ -261,6 +261,7 @@ class DanmakuPool(Enum):
     SUBTITLE = 1  # 字幕
     SPECIAL = 2  # 特殊
 
+
 class DanmakuOrder(Enum):
     """
     弹幕排序依据
@@ -749,9 +750,6 @@ async def get_recently_danmakus(
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-
-
-
 async def get_danmakus(
     credential: Credential,
     oid: int,
@@ -823,26 +821,30 @@ async def get_danmakus(
         "keyword": keyword,
         "progress_from": progress_from,
         "progress_to": progress_to,
-        "ctime_from": ctime_from.strftime("%d-%m-%Y %H:%M:%S")
-        if ctime_from is not None
-        else None,
-        "ctime_to": ctime_to.strftime("%d-%m-%Y %H:%M:%S")
-        if ctime_to is not None
-        else None,
+        "ctime_from": (
+            ctime_from.strftime("%d-%m-%Y %H:%M:%S") if ctime_from is not None else None
+        ),
+        "ctime_to": (
+            ctime_to.strftime("%d-%m-%Y %H:%M:%S") if ctime_to is not None else None
+        ),
         "modes": (
-            ",".join([mode.value for mode in modes])
-            if isinstance(modes, list)
-            else modes.value
-        )
-        if modes is not None
-        else None,
+            (
+                ",".join([mode.value for mode in modes])
+                if isinstance(modes, list)
+                else modes.value
+            )
+            if modes is not None
+            else None
+        ),
         "pool": (
-            ",".join([pool.value for pool in pools])
-            if isinstance(pools, list)
-            else pools.value
-        )
-        if pools is not None
-        else None,
+            (
+                ",".join([pool.value for pool in pools])
+                if isinstance(pools, list)
+                else pools.value
+            )
+            if pools is not None
+            else None
+        ),
         "attrs": attrs,
         "order": order.value,
         "sort": sort.value,
@@ -867,7 +869,9 @@ async def del_danmaku(
         dmids (list[int], int): 弹幕 id，可以传入列表和 int
     """
 
-    return await edit_danmaku_state(credential=credential, oid=oid, dmids=dmids, state=1)
+    return await edit_danmaku_state(
+        credential=credential, oid=oid, dmids=dmids, state=1
+    )
 
 
 async def edit_danmaku_state(

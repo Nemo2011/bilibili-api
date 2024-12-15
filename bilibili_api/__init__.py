@@ -22,7 +22,7 @@ from .utils.network import (
     set_aiohttp_session,
     get_httpx_sync_session,
     set_httpx_sync_session,
-    get_buvid3
+    get_buvid3,
 )
 from .utils.geetest import Geetest, GeetestMeta
 from .errors import (
@@ -92,7 +92,7 @@ from . import (
     video_zone,
     video,
     vote,
-    watchroom
+    watchroom,
 )
 
 BILIBILI_API_VERSION = "16.3.0"

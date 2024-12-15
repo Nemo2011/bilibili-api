@@ -66,7 +66,11 @@ class CheeseList:
             # self.season_id = str(sync(self.get_meta())["season_id"])
             api = API["info"]["meta"]
             params = {"season_id": self.__season_id, "ep_id": self.__ep_id}
-            meta = Api(**api, credential=self.credential).update_params(**params).result_sync
+            meta = (
+                Api(**api, credential=self.credential)
+                .update_params(**params)
+                .result_sync
+            )
             self.__season_id = int(meta["season_id"])
 
     def set_season_id(self, season_id: int) -> None:
@@ -295,7 +299,11 @@ class CheeseVideo:
         params = {"type": 1, "oid": cid, "pid": self.get_aid()}
 
         try:
-            resp_data = await Api(**api, credential=self.credential).update_params(**params).request(byte=True)
+            resp_data = (
+                await Api(**api, credential=self.credential)
+                .update_params(**params)
+                .request(byte=True)
+            )
         except Exception as e:
             raise NetworkException(-1, str(e))
 
@@ -526,7 +534,11 @@ class CheeseVideo:
                 # 仅当获取当前弹幕时需要该参数
                 params["segment_index"] = seg + 1
             try:
-                data = await Api(**api, credential=self.credential).update_params(**params).request(byte=True)
+                data = (
+                    await Api(**api, credential=self.credential)
+                    .update_params(**params)
+                    .request(byte=True)
+                )
             except Exception as e:
                 raise NetworkException(-1, str(e))
 
@@ -620,8 +632,11 @@ class CheeseVideo:
         cid = self.get_cid()
         api = API_video["info"]["pbp"]
         params = {"cid": cid}
-        return await Api(**api, credential=self.credential).update_params(**params).request(raw=True)
-
+        return (
+            await Api(**api, credential=self.credential)
+            .update_params(**params)
+            .request(raw=True)
+        )
 
     async def send_danmaku(self, danmaku: Union[Danmaku, None] = None):
         """
@@ -763,7 +778,9 @@ class CheeseVideo:
             dict: 调用 API 返回结果。
         """
         if len(add_media_ids) + len(del_media_ids) == 0:
-            raise ArgsException("对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。")
+            raise ArgsException(
+                "对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。"
+            )
 
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()

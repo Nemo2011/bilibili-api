@@ -3,6 +3,7 @@ bilibili_api.BytesReader
 
 读字节流助手。
 """
+
 import struct
 
 from .varint import read_varint

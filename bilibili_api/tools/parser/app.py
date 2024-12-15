@@ -17,10 +17,7 @@ def Result(code: int, data: Any) -> dict:
     Result:
         dict: 返回体
     """
-    return {
-        "code": code,
-        "data" if code == 0 else "error": data
-    }
+    return {"code": code, "data" if code == 0 else "error": data}
 
 
 async def bilibili_api_web(
@@ -43,7 +40,7 @@ async def bilibili_api_web(
         params (str, Optional): 可选变量 如果 path 中多次用到某个值可保存
 
             例如 `?uid=434334701&roomid=21452505`
-    
+
     Returns:
         dict: 解析结果
     """

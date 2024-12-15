@@ -236,7 +236,11 @@ async def name2uid(names: Union[str, List[str]], credential: Credential = None):
     else:
         n = ",".join(names)
     params = {"names": n}
-    return await Api(**API["info"]["name_to_uid"], credential=credential).update_params(**params).result
+    return (
+        await Api(**API["info"]["name_to_uid"], credential=credential)
+        .update_params(**params)
+        .result
+    )
 
 
 class User:
@@ -285,10 +289,7 @@ class User:
 
         [用户空间详细信息](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md#%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF)
         """
-        params = {
-            "mid": self.__uid,
-            "w_webid": await self.get_access_id()
-        }
+        params = {"mid": self.__uid, "w_webid": await self.get_access_id()}
         return (
             await Api(**API["info"]["info"], credential=self.credential)
             .update_params(**params)
@@ -442,10 +443,7 @@ class User:
             dict: 调用接口返回的内容。
         """
         api = API["info"]["live"]
-        params = {
-            "mid": self.__uid,
-            "w_webid": await self.get_access_id()
-        }
+        params = {"mid": self.__uid, "w_webid": await self.get_access_id()}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -1071,7 +1069,7 @@ class User:
                 return self.__access_id
 
         render_data: dict = await get_user_dynamic_render_data(self.__uid)
-        self.__access_id = render_data['access_id']
+        self.__access_id = render_data["access_id"]
 
         return self.__access_id
 
@@ -1083,8 +1081,8 @@ class User:
             return False
 
         payload = jwt.decode(jwt=self.__access_id, options={"verify_signature": False})
-        created_at: int = payload['iat']
-        ttl: int = payload['ttl']
+        created_at: int = payload["iat"]
+        ttl: int = payload["ttl"]
         current_timestamp: int = int(time.time())
 
         return (created_at + ttl) <= current_timestamp

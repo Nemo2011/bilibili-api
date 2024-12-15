@@ -421,6 +421,7 @@ class Session(AsyncEvent):
     """
     会话类，用来开启消息监听。
     """
+
     def __init__(self, credential: Credential, debug=False):
         super().__init__()
         # 会话状态

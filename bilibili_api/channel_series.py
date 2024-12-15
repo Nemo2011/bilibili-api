@@ -3,6 +3,7 @@ bilibili_api.channel_series
 
 用户合集与列表相关
 """
+
 import json
 from enum import Enum
 from typing import List, Union, Optional

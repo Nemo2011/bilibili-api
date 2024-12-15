@@ -3,6 +3,7 @@ bilibili_api.utils.initial_state
 
 用于获取页码的初始化信息
 """
+
 import pprint
 import re
 import json
@@ -38,7 +39,9 @@ async def get_initial_state(
         credential (Credential, optional): 用户凭证. Defaults to Credential().
     """
     try:
-        resp = await Api(url=url, method="GET", credential=credential, comment="[获取初始化信息]").request(byte=True)
+        resp = await Api(
+            url=url, method="GET", credential=credential, comment="[获取初始化信息]"
+        ).request(byte=True)
     except Exception as e:
         raise e
     else:
@@ -60,7 +63,9 @@ async def get_initial_state(
         except json.JSONDecodeError:
             raise ApiException("信息解析错误")
         if settings.request_log_show_response:
-            settings.logger.info(f"获取到 {content_type.value} 初始化信息\n{pprint.pformat(content)}")
+            settings.logger.info(
+                f"获取到 {content_type.value} 初始化信息\n{pprint.pformat(content)}"
+            )
         return content, content_type
 
 

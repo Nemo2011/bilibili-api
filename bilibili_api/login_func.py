@@ -47,7 +47,9 @@ def get_qrcode() -> Tuple[Picture, str]:
     return (Picture.from_file(img), login_key)
 
 
-def check_qrcode_events(login_key: str) -> Tuple[QrCodeLoginEvents, Union[str, Credential]]:
+def check_qrcode_events(
+    login_key: str,
+) -> Tuple[QrCodeLoginEvents, Union[str, Credential]]:
     """
     检查登录状态。（建议频率 1s，这个 API 也有风控！）
 
@@ -98,7 +100,9 @@ def get_tv_qrcode() -> Tuple[Picture, str]:
     return (Picture.from_file(img), auth_code)
 
 
-def check_tv_qrcode_events(auth_code: str) -> Tuple[QrCodeLoginEvents, Union[str, Credential]]:
+def check_tv_qrcode_events(
+    auth_code: str,
+) -> Tuple[QrCodeLoginEvents, Union[str, Credential]]:
     """
     检查登录状态。
 
@@ -218,8 +222,7 @@ class ServerThreadModel(threading.Thread):
 
     url: str
 
-    def __init__(self, *args, **kwargs):
-        ...
+    def __init__(self, *args, **kwargs): ...
 
     def stop(self):
         """Stop the server and this thread nicely"""

@@ -223,23 +223,28 @@ async def game_name2id(game_name: str) -> str:
         str: 游戏编码
     """
     try:
-        wiki_page_title = (await Api(
+        wiki_page_title = (
+            await Api(
                 url=f"https://wiki.biligame.com/wiki/api.php?action=opensearch&format=json&formatversion=2&search={game_name}&namespace=0&limit=10",
-                method="GET"
+                method="GET",
             ).request(raw=True)
         )[3][0].lstrip("https://wiki.biligame.com/wiki/")
     except IndexError as e:
         raise ApiException("未找到游戏")
-    wiki_page_content = (await Api(
-        url=f"https://wiki.biligame.com/wiki/api.php?action=query&prop=revisions&titles={wiki_page_title}&rvprop=content&format=json",
-        method="GET"
-    ).request(byte=True)).decode("utf-8")
+    wiki_page_content = (
+        await Api(
+            url=f"https://wiki.biligame.com/wiki/api.php?action=query&prop=revisions&titles={wiki_page_title}&rvprop=content&format=json",
+            method="GET",
+        ).request(byte=True)
+    ).decode("utf-8")
     wiki_page_template_re = re.compile(r"\{\{(.*?)\}\}")
     match = re.search(wiki_page_template_re, wiki_page_content)
     if match is None:
         raise ApiException("获取游戏编码失败")
     wiki_page_template_content = match.group(1)
-    wiki_page_template_content = wiki_page_template_content.encode("ascii").decode("unicode-escape")
+    wiki_page_template_content = wiki_page_template_content.encode("ascii").decode(
+        "unicode-escape"
+    )
     for prop in wiki_page_template_content.split("|"):
         if prop.startswith("WIKI域名="):
             return prop.lstrip("WIKI域名=").rstrip()

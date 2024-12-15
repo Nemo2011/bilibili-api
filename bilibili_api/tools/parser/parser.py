@@ -40,18 +40,17 @@ class Parser:
                 self.params[key] = obj
         return self
 
-    async def __aexit__(self, type, value, trace):
-        ...
+    async def __aexit__(self, type, value, trace): ...
 
     async def transform(self, var: str) -> Any:
         """
         类型装换函数
-        
+
         通过在字符串后加上 `:int` `:float` `:bool` `:parse` 等操作符来实现
 
         Args:
             var (str): 需要转换的字符串
-        
+
         Returns:
             Any: 装换结果
         """
@@ -69,17 +68,23 @@ class Parser:
     async def parse(self, path: str) -> Tuple[Any, Optional[str]]:
         """
         分析指令
-        
+
         Args:
             path (str): 需要解析的 token 对应库中的路径
-        
+
         Returns:
             Any: 最终数据 若解析失败为 None
 
             str: 错误信息 若解析成功为 None
         """
         # 纯数字
-        if path.replace(":int", "").replace(":float", "").replace(".", "").replace("-", "").isdigit():
+        if (
+            path.replace(":int", "")
+            .replace(":float", "")
+            .replace(".", "")
+            .replace("-", "")
+            .isdigit()
+        ):
             return await self.transform(path), None
 
         # 指令列表
@@ -90,7 +95,7 @@ class Parser:
         async def inner() -> Optional[str]:
             """
             递归取值
-            
+
             Returns:
                 str: 错误信息 若解析成功为 None
             """

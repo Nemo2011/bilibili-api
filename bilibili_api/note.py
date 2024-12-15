@@ -32,6 +32,7 @@ class NoteType(Enum):
     """
     笔记类型
     """
+
     PUBLIC = "public"
     PRIVATE = "private"
 
@@ -735,9 +736,7 @@ class ComicCardNode(Node):
         self.mcid = 0
 
     def markdown(self):
-        return (
-            f"[漫画 mc{self.mcid}](https://manga.bilibili.com/m/detail/mc{self.mcid})\n\n"
-        )
+        return f"[漫画 mc{self.mcid}](https://manga.bilibili.com/m/detail/mc{self.mcid})\n\n"
 
     def json(self):
         return {"type": "ComicCardNode", "mcid": self.mcid}

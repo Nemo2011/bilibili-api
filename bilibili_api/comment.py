@@ -12,6 +12,7 @@ bilibili_api.comment
 + 课程：ep{5556}
 + 小黑屋: ban/{2600321}
 """
+
 from enum import Enum
 from typing import Union, Optional
 
@@ -316,7 +317,9 @@ class Comment:
 
         api = API["comment"]["report"]
         if content is not None and report_reason != ReportReason.OTHER:
-            raise ArgsException("content 只能在 report_reason=ReportReason.OTHER 时使用")
+            raise ArgsException(
+                "content 只能在 report_reason=ReportReason.OTHER 时使用"
+            )
         elif content is None and report_reason == ReportReason.OTHER:
             raise ArgsException("report_reason=ReportReason.OTHER 时 content 不能为空")
         data = {
@@ -433,7 +436,7 @@ async def get_comments(
 async def get_comments_lazy(
     oid: int,
     type_: CommentResourceType,
-    offset: str = '',
+    offset: str = "",
     order: OrderType = OrderType.TIME,
     credential: Union[Credential, None] = None,
 ) -> dict:

@@ -245,6 +245,7 @@ class JuryCase:
     """
     案件仲裁
     """
+
     def __init__(self, case_id: str, credential: Credential):
         """
         Args:

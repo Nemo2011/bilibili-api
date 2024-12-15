@@ -7,6 +7,7 @@ BY Nemo2011 <yimoxia@outlook.com>
 
 Licensed under the GNU General Public License v3+.
 """
+
 __author__ = "Nemo2011 <yimoxia@outlook.com>"
 __license__ = "GPLv3+"
 

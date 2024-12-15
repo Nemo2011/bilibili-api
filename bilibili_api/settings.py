@@ -7,6 +7,7 @@ bilibili_api.settings
 import logging
 from enum import Enum
 
+
 class HTTPClient(Enum):
     """
     - AioHttp: aiohttp
@@ -15,6 +16,7 @@ class HTTPClient(Enum):
 
     AIOHTTP = "aiohttp"
     HTTPX = "httpx"
+
 
 http_client: HTTPClient = HTTPClient.AIOHTTP
 """

@@ -3,6 +3,7 @@ bilibili_api.utils.captcha
 
 人机测试
 """
+
 import os
 import copy
 import json
@@ -256,7 +257,7 @@ def get_info():
     return {
         "gt": copy.copy(gt),
         "challenge": copy.copy(challenge),
-        "token": copy.copy(key)
+        "token": copy.copy(key),
     }
 
 

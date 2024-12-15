@@ -228,7 +228,11 @@ class Geetest:
             with open(
                 os.path.abspath(
                     os.path.join(
-                        os.path.dirname(__file__), "..", "data", "geetest", "captcha.html"
+                        os.path.dirname(__file__),
+                        "..",
+                        "data",
+                        "geetest",
+                        "captcha.html",
                     )
                 ),
                 encoding="utf8",

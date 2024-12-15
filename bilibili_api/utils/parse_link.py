@@ -82,9 +82,7 @@ class ResourceType(Enum):
     FAILED = "failed"
 
 
-async def parse_link(
-    url: str, credential: Union[Credential, None] = None
-) -> Union[
+async def parse_link(url: str, credential: Union[Credential, None] = None) -> Union[
     Tuple[Video, Literal[ResourceType.VIDEO]],
     Tuple[InteractiveVideo, Literal[ResourceType.INTERACTIVE_VIDEO]],
     Tuple[Bangumi, Literal[ResourceType.BANGUMI]],
@@ -256,9 +254,7 @@ async def auto_convert_video(
     return (video, ResourceType.VIDEO)
 
 
-async def check_short_name(
-    name: str, credential: Credential
-) -> Union[
+async def check_short_name(name: str, credential: Credential) -> Union[
     Tuple[Video, Literal[ResourceType.VIDEO]],
     Tuple[Episode, Literal[ResourceType.EPISODE]],
     Tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]],

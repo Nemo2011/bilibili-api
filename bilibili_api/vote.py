@@ -5,6 +5,7 @@ bilibili_api.vote
 
 需要 vote_id,获取 vote_id: https://nemo2011.github.io/bilibili-api/#/vote_id
 """
+
 from enum import Enum
 from typing import Union, Optional
 

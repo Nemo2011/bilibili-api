@@ -5,11 +5,17 @@ from urllib.parse import unquote
 
 from httpx import AsyncClient, Response, HTTPStatusError, codes
 
-from bilibili_api.utils.network import get_session, HEADERS, NetworkException, ApiException
+from bilibili_api.utils.network import (
+    get_session,
+    HEADERS,
+    NetworkException,
+    ApiException,
+)
 
 
 RENDER_DATA_PATTERN: Pattern[str] = compile(
-    r"<script id=\"__RENDER_DATA__\" type=\"application/json\">(.*?)</script>")
+    r"<script id=\"__RENDER_DATA__\" type=\"application/json\">(.*?)</script>"
+)
 
 
 async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
@@ -27,7 +33,9 @@ async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
     try:
         response.raise_for_status()
     except HTTPStatusError as e:
-        raise NetworkException(response.status_code, codes.get_reason_phrase(response.status_code))
+        raise NetworkException(
+            response.status_code, codes.get_reason_phrase(response.status_code)
+        )
 
     response_content_text: str = response.text
     match: Match = RENDER_DATA_PATTERN.search(response_content_text)
@@ -40,4 +48,3 @@ async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
         return extract_json
     except json.JSONDecodeError as e:
         raise ApiException("序列化用户动态页渲染数据异常" + str(e))
-

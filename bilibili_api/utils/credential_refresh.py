@@ -67,7 +67,7 @@ class Credential(_Credential):
         return data["isLogin"]
 
     @staticmethod
-    def from_cookies(cookies: dict={}) -> "Credential":
+    def from_cookies(cookies: dict = {}) -> "Credential":
         """
         从 cookies 新建 Credential
 

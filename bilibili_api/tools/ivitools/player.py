@@ -448,9 +448,7 @@ class MPlayer(object):
                                             continue
                                     cnt += 1
                                     lbl = ButtonLabel(self.win)
-                                    lbl.prep_text(
-                                        child["text"], pos_x, pos_y
-                                    )
+                                    lbl.prep_text(child["text"], pos_x, pos_y)
                                     lbl.show()
                                     self.choice_labels.append(lbl)
                                     continue
@@ -470,18 +468,14 @@ class MPlayer(object):
                                         # 生成 label
                                         cnt += 1
                                         lbl = ButtonLabel(self.win)
-                                        lbl.prep_text(
-                                            child["text"], pos_x, pos_y
-                                        )
+                                        lbl.prep_text(child["text"], pos_x, pos_y)
                                         lbl.show()
                                         self.choice_labels.append(lbl)
                                 else:
                                     # 生成 label
                                     cnt += 1
                                     lbl = ButtonLabel(self.win)
-                                    lbl.prep_text(
-                                        child["text"], pos_x, pos_y
-                                    )
+                                    lbl.prep_text(child["text"], pos_x, pos_y)
                                     lbl.show()
                                     self.choice_labels.append(lbl)
                                     pass

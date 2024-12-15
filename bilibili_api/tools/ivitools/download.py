@@ -3,6 +3,7 @@ ivitools.download
 
 下载互动视频
 """
+
 import os
 
 import tqdm
@@ -11,12 +12,11 @@ from colorama import Fore
 
 from bilibili_api import sync, interactive_video, video
 
+
 def download_interactive_video(bvid: str, out: str):
     ivideo = interactive_video.InteractiveVideo(bvid)
     downloader = interactive_video.InteractiveVideoDownloader(
-        ivideo, out, stream_detecting_params={
-            "codecs": [video.VideoCodecs.AVC]
-        }
+        ivideo, out, stream_detecting_params={"codecs": [video.VideoCodecs.AVC]}
     )
 
     @downloader.on("START")
@@ -29,9 +29,7 @@ def download_interactive_video(bvid: str, out: str):
 
     @downloader.on("PREPARE_DOWNLOAD")
     async def on_prepare_download(data):
-        print(
-            f'Start download the video for cid {data["cid"]}'
-        )
+        print(f'Start download the video for cid {data["cid"]}')
 
     @downloader.on("PACKAGING")
     async def on_packaing(data):
