@@ -2334,7 +2334,10 @@ class VideoDownloadURLDataDetecter:
             flac_data = self.__data["dash"].get("flac")
             dolby_data = self.__data["dash"].get("dolby")
             for video_data in videos_data:
-                video_stream_url = video_data["baseUrl"]
+                if video_data.get("baseUrl"):
+                    video_stream_url = video_data["baseUrl"]
+                else:
+                    video_stream_url = video_data["base_url"]
                 video_stream_quality = VideoQuality(video_data["id"])
                 if video_stream_quality == VideoQuality.HDR and no_hdr:
                     continue
@@ -2374,7 +2377,10 @@ class VideoDownloadURLDataDetecter:
                 streams.append(video_stream)
             if audios_data:
                 for audio_data in audios_data:
-                    audio_stream_url = audio_data["baseUrl"]
+                    if audio_data.get("baseUrl"):
+                        audio_stream_url = audio_data["baseUrl"]
+                    else:
+                        audio_stream_url = audio_data["base_url"]
                     audio_stream_quality = AudioQuality(audio_data["id"])
                     if audio_stream_quality.value > audio_max_quality.value:
                         continue
