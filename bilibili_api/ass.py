@@ -118,7 +118,7 @@ async def make_ass_file_subtitle(
     if credential.has_sessdata():
         obj.credential = credential
     elif not obj.credential.has_sessdata():
-        raise credential.raise_for_no_sessdata()
+        credential.raise_for_no_sessdata()
 
     if isinstance(obj, Episode):
         info = await obj.get_player_info(cid=await obj.get_cid(), epid=obj.get_epid())

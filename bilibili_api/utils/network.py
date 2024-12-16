@@ -498,6 +498,8 @@ class Api:
             cookies["buvid3"] = self.credential.buvid3
         # cookies["Domain"] = ".bilibili.com"
 
+        cookies["opus-goback"] = 1
+
         if self.bili_ticket:
             cookies["bili_ticket"] = await get_bili_ticket()
             cookies["bili_ticket_expires"] = str(int(time.time()) + 2 * 86400)

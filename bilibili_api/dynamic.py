@@ -22,9 +22,7 @@ from .utils.picture import Picture
 from . import user, vote, exceptions
 from .utils.credential import Credential
 from .utils.network import Api
-from .utils import cache_pool
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
-from . import opus
 
 API = utils.get_api("dynamic")
 raise_for_statement = utils.raise_for_statement
@@ -784,61 +782,23 @@ class Dynamic:
             credential if credential is not None else Credential()
         )
 
-        if cache_pool.dynamic_is_opus.get(self.__dynamic_id):
-            self.__opus = cache_pool.dynamic_is_opus[self.__dynamic_id]
-        else:
-            api = API["info"]["detail"]
-            params = {
-                "id": self.__dynamic_id,
-                "timezone_offset": -480,
-                "platform": "web",
-                "gaia_source": "main_web",
-                "features": "itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete",
-                "web_location": "333.1368",
-                "x-bili-device-req-json": '{"platform":"web","device":"pc"}',
-                "x-bili-web-req-json": '{"spm_id":"333.1368"}',
-            }
-            data = (
-                Api(**api, credential=self.credential)
-                .update_params(**params)
-                .result_sync
-            )
-            self.__opus = data["item"]["basic"]["comment_type"] != 11
-            cache_pool.dynamic_is_opus[self.__dynamic_id] = self.__opus
-
-    def get_dynamic_id(self) -> int:
+    def get_dynamic_id(self) -> None:
         """
-        获取动态 id
+        获取 动态 ID。
 
         Returns:
-            int: _description_
+            int: 动态 ID。
         """
         return self.__dynamic_id
 
-    def is_opus(self) -> DynamicType:
-        """
-        判断是否为 opus 动态
-
-        Returns:
-            bool: 是否为 opus 动态
-        """
-        return self.__opus
-
-    def turn_to_opus(self) -> "opus.Opus":
-        """
-        对 opus 动态，将其转换为图文
-        """
-        raise_for_statement(self.__opus, "仅支持图文动态")
-        return opus.Opus(self.__dynamic_id, credential=self.credential)
-
-    async def get_info(self, features: str = "itemOpusStyle") -> dict:
+    async def get_info(self, features: str = "itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete") -> dict:
         """
         (对 Opus 动态，获取动态内容建议使用 Opus.get_detail())
 
         获取动态信息
 
         Args:
-            features (str, optional): 默认 itemOpusStyle.
+            features (str, optional): 默认 itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete.
 
         Returns:
             dict: 调用 API 返回的结果
@@ -848,7 +808,12 @@ class Dynamic:
         params = {
             "id": self.__dynamic_id,
             "timezone_offset": -480,
+            "platform": "web",
+            "gaia_source": "main_web",
             "features": features,
+            "web_location": "333.1368",
+            "x-bili-device-req-json": '{"platform":"web","device":"pc"}',
+            "x-bili-web-req-json": '{"spm_id":"333.1368"}',
         }
         data = (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -867,7 +832,7 @@ class Dynamic:
         """
 
         api = API["info"]["reaction"]
-        params = {"web_location": "333.1369", "offset": "", "id": self.get_dynamic_id()}
+        params = {"web_location": "333.1369", "offset": "", "id": self.__dynamic_id}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )

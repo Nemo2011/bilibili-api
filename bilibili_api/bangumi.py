@@ -1537,15 +1537,14 @@ class Episode(Video):
             dict: 调用 API 返回的结果。
         """
         api = API["info"]["playurl"]
-        if True:
-            params = {
-                "avid": await self.get_aid(),
-                "ep_id": self.get_epid(),
-                "qn": "127",
-                "otype": "json",
-                "fnval": 4048,
-                "fourk": 1,
-            }
+        params = {
+            "avid": await self.get_aid(),
+            "ep_id": self.get_epid(),
+            "qn": "127",
+            "otype": "json",
+            "fnval": 4048,
+            "fourk": 1,
+        }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )

@@ -26,7 +26,7 @@
           "object_id_str": "890484395664736288",
           "type": { "biz": 2 }
         },
-        "action": 4
+        "action": "int: 3 or 4"
       },
       "json_body": true,
       "comment": "收藏/取消收藏"

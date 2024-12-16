@@ -303,6 +303,9 @@ class Event:
             logging.error(f"解析消息错误：{data}")
 
     def __str__(self):
+        msg_type = "[]"
+        user_id = 0
+
         if self.receiver_type == 1:
             if self.receiver_id == self.uid:
                 msg_type = "收到"

@@ -22,11 +22,8 @@ from .utils.initial_state import get_initial_state, get_initial_state_sync
 from .utils.utils import get_api, raise_for_statement
 from .utils.credential import Credential
 from .utils.network import Api
-from .utils import cache_pool
 from .exceptions.NetworkException import ApiException, NetworkException
 from .video import get_cid_info_sync
-from . import note
-from . import opus
 
 API = get_api("article")
 
@@ -61,20 +58,6 @@ ARTICLE_COLOR_MAP = {
     "gray-02": "929292",
     "gray-03": "5f5f5f",
 }
-
-
-class ArticleType(Enum):
-    """
-    专栏类型
-
-    - ARTICLE        : 普通专栏，不与 opus 图文兼容。
-    - OPUS           : opus。
-    - SPECIAL_ARTICLE: 特殊专栏，与 opus 兼容。
-    """
-
-    ARTICLE = 3
-    OPUS = 4
-    SPECIAL_ARTICLE = 5
 
 
 class ArticleRankingType(Enum):
@@ -176,22 +159,6 @@ class Article:
         self.__meta = None
         self.__cvid = cvid
         self.__has_parsed: bool = False
-        self.__is_note = False
-
-        # 设置专栏类别
-        if cache_pool.article_is_opus.get(self.__cvid):
-            self.__type = ArticleType.SPECIAL_ARTICLE
-            self.__is_note = cache_pool.article_is_note[self.__cvid]
-        else:
-            resp = get_initial_state_sync(
-                f"https://www.bilibili.com/read/cv{self.__cvid}"
-            )[0]
-            self.__dyn_id = int(resp["readInfo"]["dyn_id_str"])
-            self.__type = ArticleType(resp["readInfo"]["template_id"])
-            self.__is_note = resp["readInfo"]["type"] == 2
-
-        if cache_pool.article_dyn_id.get(self.__cvid):
-            self.__dyn_id = cache_pool.article_dyn_id[self.__cvid]
 
     def get_cvid(self) -> int:
         """
@@ -201,46 +168,6 @@ class Article:
             int: cvid
         """
         return self.__cvid
-
-    def get_type(self) -> ArticleType:
-        """
-        获取专栏类型(专栏/笔记)
-
-        Returns:
-            ArticleType: 专栏类型
-        """
-        return self.__type
-
-    def is_note(self) -> bool:
-        """
-        检查专栏是否笔记
-
-        Returns:
-            bool: 是否笔记
-        """
-        return self.__is_note
-
-    def turn_to_note(self) -> "note.Note":
-        """
-        对于完全与 opus 兼容的部分的特殊专栏，将 Article 对象转换为 Dynamic 对象。
-
-        Returns:
-            Note: 笔记类
-        """
-        raise_for_statement(self.is_note(), "仅支持公开笔记")
-        return note.Note(
-            cvid=self.__cvid, note_type=note.NoteType.PUBLIC, credential=self.credential
-        )
-
-    def turn_to_opus(self) -> "opus.Opus":
-        """
-        对于 SPECIAL_ARTICLE，将其转为图文
-        """
-        raise_for_statement(self.__type != ArticleType.ARTICLE, "仅支持图文专栏")
-        cache_pool.opus_type[self.__dyn_id] = 1
-        cache_pool.opus_is_note[self.__dyn_id] = self.is_note()
-        cache_pool.opus_cvid[self.__dyn_id] = self.__cvid
-        return opus.Opus(self.__dyn_id, credential=self.credential)
 
     def markdown(self) -> str:
         """
@@ -546,82 +473,27 @@ class Article:
                 elif e.name == "img":
                     className = e.attrs.get("class")
 
-                    if not className:
+                    if "latex" in className:
+                        # 公式
+                        node = LatexNode()
+                        node.code = unquote(e["alt"])  # type: ignore
+                        node_list.append(node)
+                    else:
                         # 图片
                         node = ImageNode()
                         node.url = e.attrs.get("data-src")  # type: ignore
                         node_list.append(node)
 
-                    elif "latex" in className:
-                        # 公式
-                        node = LatexNode()
-                        node_list.append(node)
-
-                        node.code = unquote(e["alt"])  # type: ignore
+                elif e.name == "div":
+                    node_list += (await parse(e))
 
             return node_list
-
-        def parse_note(data: List[dict]):
-            for field in data:
-                if not isinstance(field["insert"], str):
-                    if "tag" in field["insert"].keys():
-                        node = VideoCardNode()
-                        node.aid = get_cid_info_sync(field["insert"]["tag"]["cid"])[
-                            "cid"
-                        ]
-                        self.__children.append(node)
-                    elif "imageUpload" in field["insert"].keys():
-                        node = ImageNode()
-                        node.url = field["insert"]["imageUpload"]["url"]
-                        self.__children.append(node)
-                    elif "cut-off" in field["insert"].keys():
-                        node = ImageNode()
-                        node.url = field["insert"]["cut-off"]["url"]
-                        self.__children.append(node)
-                    elif "native-image" in field["insert"].keys():
-                        node = ImageNode()
-                        node.url = field["insert"]["native-image"]["url"]
-                        self.__children.append(node)
-                    else:
-                        raise Exception()
-                else:
-                    node = TextNode(field["insert"])
-                    if "attributes" in field.keys():
-                        if field["attributes"].get("bold") == True:
-                            bold = BoldNode()
-                            bold.children = [node]
-                            node = bold
-                        if field["attributes"].get("strike") == True:
-                            delete = DelNode()
-                            delete.children = [node]
-                            node = delete
-                        if field["attributes"].get("underline") == True:
-                            underline = UnderlineNode()
-                            underline.children = [node]
-                            node = underline
-                        if field["attributes"].get("background") == True:
-                            # FIXME: 暂不支持背景颜色
-                            pass
-                        if field["attributes"].get("color") != None:
-                            color = ColorNode()
-                            color.color = field["attributes"]["color"].replace("#", "")
-                            color.children = [node]
-                            node = color
-                        if field["attributes"].get("size") != None:
-                            size = FontSizeNode()
-                            size.size = field["attributes"]["size"]
-                            size.children = [node]
-                            node = size
-                    else:
-                        pass
-                    self.__children.append(node)
 
         # 文章元数据
         self.__meta = copy(resp["readInfo"])
         del self.__meta["content"]
 
         self.__children = await parse(document.find("div"))
-
         self.__has_parsed = True
 
     async def get_info(self) -> dict:
@@ -646,7 +518,7 @@ class Article:
             dict: 调用 API 返回的结果
         """
         return (
-            await get_initial_state(f"https://www.bilibili.com/read/cv{self.__cvid}")
+            await get_initial_state(f"https://www.bilibili.com/read/cv{self.__cvid}/?jump_opus=1")
         )[0]
 
     async def set_like(self, status: bool = True) -> dict:

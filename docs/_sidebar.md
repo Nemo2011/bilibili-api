@@ -5,7 +5,6 @@
 + [配置](/configuration.md)
 + [获取 vote_id](/vote_id.md)
 + [`.ivi` 文件和 `ivitools` 相关](/ivifile.md)
-+ [图文冷知识](/opus.md)
 + API 示例
     + [app.py - 应用程序](/examples/app.md)
     + [article_category.py - 专栏分类](/examples/article_category.md)
@@ -36,7 +35,6 @@
     + [manga.py - 漫画](/examples/manga.md)
     + [music.py - 音乐](/examples/music.md)
     + [note.py - 笔记](/examples/note.md)
-    + [opus.py - 图文](/examples/opus.md)
     + [rank.py - 排行](/examples/rank.md)
     + [search.py - 搜索](/examples/search.md)
     + [session.py - 会话](/examples/session.md)
@@ -80,7 +78,6 @@
   + [manga.py - 漫画](/modules/manga.md)
   + [music.py - 音乐](/modules/music.md)
   + [note.py - 笔记](/modules/note.md)
-  + [opus.py - 图文](/modules/opus.md)
   + [rank.py - 排行](/modules/rank.md)
   + [search.py - 搜索](/modules/search.md)
   + [session.py - 会话](/modules/session.md)
