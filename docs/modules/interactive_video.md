@@ -575,6 +575,7 @@ o----|xxx| (TEXT_RIGHT)
 | self_download_func | Coroutine \| None | 自定义下载函数（需 async 函数） |
 | downloader_mode | InteractiveVideoDownloaderMode | 下载模式 |
 | stream_detecting_params | Dict | `VideoDownloadURLDataDetecter` 提取最佳流时传入的参数，可控制视频及音频品质 |
+| fetching_nodes_retry_times | int | 获取节点时的最大重试次数 |
 
 
 ### async def abort()

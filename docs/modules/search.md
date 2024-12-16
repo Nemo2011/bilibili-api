@@ -209,16 +209,15 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 | name | type | description |
 | - | - | - |
-| debug_param_func | Union[Callable, None] | 参数回调器，用来存储或者什么的 |
-| order_sort | Union[int, None] | 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1 |
-| category_id | Union[CategoryTypeArticle, None] | 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效 |
-| time_range | Union[int, None] | 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上 |
-| time_start | Union[str, None] | 指定搜索开始日期，与结束日期搭配使用，格式为："YYYY-MM-DD" |
-| time_end | Union[str, None] | 指定搜索结束日期，与开始日期搭配使用，格式为："YYYY-MM-DD" |
-| video_zone_type | Union[int, None] | 话题类型，指定 tid (可使用 channel 模块查询) |
-| order_type | Union[OrderUser, None] | 排序分类类型 |
 | keyword | str | 搜索关键词 |
 | search_type | Union[SearchObjectType, None] | 搜索类型 |
+| order_type | Union[OrderUser, None] | 排序分类类型 |
+| time_range | Union[int, None] | 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上 |
+| video_zone_type | Union[int, None] | 话题类型，指定 tid (可使用 channel 模块查询) |
+| order_sort | Union[int, None] | 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1 |
+| category_id | Union[CategoryTypeArticle, None] | 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效 |
+| time_start | Union[str, None] | 指定开始时间，与结束时间搭配使用，格式为："YYYY-MM-DD" |
+| time_end | Union[str, None] | 指定结束时间，与开始时间搭配使用，格式为："YYYY-MM-DD" |
 | page | Union[int, None] | 页码 |
 | page_size | Union[int, None] | 每一页的数据大小 |
 

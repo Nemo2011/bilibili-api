@@ -46,7 +46,7 @@ from bilibili_api import channel_series
 | credential | Credential | 凭证. Defaults to None. |
 
 
-### def get_meta()
+### async def get_meta()
 
 获取元数据
 

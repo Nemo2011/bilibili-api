@@ -76,7 +76,7 @@ from bilibili_api import bangumi
 
 
 
-### def get_media_id()
+### async def get_media_id()
 
 获取 media_id
 
@@ -109,7 +109,7 @@ from bilibili_api import bangumi
 
 
 
-### def get_raw()
+### async def get_raw()
 
 原始初始化数据
 
@@ -120,7 +120,7 @@ from bilibili_api import bangumi
 
 
 
-### def get_season_id()
+### async def get_season_id()
 
 获取季度 id
 
@@ -157,7 +157,7 @@ from bilibili_api import bangumi
 
 
 
-### def get_up_info()
+### async def get_up_info()
 
 番剧上传者信息 出差或者原版
 
@@ -168,7 +168,7 @@ from bilibili_api import bangumi
 
 
 
-### def set_media_id()
+### async def set_media_id()
 
 设置 media_id
 
@@ -181,7 +181,7 @@ from bilibili_api import bangumi
 
 
 
-### def set_ssid()
+### async def set_ssid()
 
 设置季度 id
 
@@ -246,9 +246,35 @@ from bilibili_api import bangumi
 | - | - | - |
 | epid | int | 番剧 epid |
 | credential | Union[Credential, None] | 凭据. Defaults to None. |
+| initial_state_retry_times | int | 番剧剧集加载初始化信息请求重试次数上限设置. Defaults to 3. |
 
 
-### def get_bangumi()
+### async def get_ai_conclusion()
+
+获取稿件 AI 总结结果。
+
+
+| name | type | description |
+| - | - | - |
+| up_mid | Union[Optional,, None] | up 主的 mid。 |
+
+**Returns:** dict: 调用 API 返回的结果。
+
+
+
+
+### async def get_aid()
+
+获取 AID。
+
+
+
+**Returns:** str: AID。
+
+
+
+
+### async def get_bangumi()
 
 获取对应的番剧
 
@@ -266,6 +292,17 @@ from bilibili_api import bangumi
 
 
 **Returns:** Bangumi: 输入的集对应的番剧类
+
+
+
+
+### async def get_bvid()
+
+获取 BVID。
+
+
+
+**Returns:** str: BVID。
 
 
 
@@ -311,6 +348,8 @@ from bilibili_api import bangumi
 | name | type | description |
 | - | - | - |
 | date | Union[datetime.date, None] | 指定某一天查询弹幕. Defaults to None. (不指定某一天) |
+| from_seg | Union[int, None] | 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None. |
+| to_seg | Union[int, None] | 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None. |
 
 **Returns:** dict[Danmaku]: 弹幕列表
 
@@ -344,7 +383,7 @@ from bilibili_api import bangumi
 
 
 
-**Returns:** HTML 中的数据
+**Returns:** Tuple[dict, InitialDataType]: 前半部分为数据，后半部分为数据类型（__INITIAL_STATE__ 或 __NEXT_DATA）
 
 
 
@@ -363,7 +402,68 @@ from bilibili_api import bangumi
 
 
 
-### def set_epid()
+### async def get_pbp()
+
+获取高能进度条
+
+
+
+**Returns:** 调用 API 返回的结果
+
+
+
+
+### async def get_player_info()
+
+获取视频上一次播放的记录，字幕和地区信息。需要分集的 cid, 返回数据中含有json字幕的链接
+
+
+
+**Returns:** 调用 API 返回的结果
+
+
+
+
+### async def get_subtitle()
+
+获取字幕信息
+
+
+
+**Returns:** 调用 API 返回的结果
+
+
+
+
+### async def recall_danmaku()
+
+撤回弹幕。
+
+
+| name | type | description |
+| - | - | - |
+| dmid | int | 弹幕 id |
+
+**Returns:** dict: 调用 API 返回的结果。
+
+
+
+
+### async def send_danmaku()
+
+发送弹幕。
+
+
+| name | type | description |
+| - | - | - |
+| danmaku | Danmaku \| None | Danmaku 类。 |
+
+**Returns:** dict: 调用 API 返回的结果。
+
+
+
+
+### async def set_epid()
 
 设置 epid
 
@@ -373,6 +473,43 @@ from bilibili_api import bangumi
 | epid | int | epid |
 
 **Returns:** None
+
+
+
+### async def submit_subtitle()
+
+上传字幕
+
+字幕数据 data 参考：
+
+```json
+{
+  "font_size": "float: 字体大小，默认 0.4",
+  "font_color": "str: 字体颜色，默认 "#FFFFFF"",
+  "background_alpha": "float: 背景不透明度，默认 0.5",
+  "background_color": "str: 背景颜色，默认 "#9C27B0"",
+  "Stroke": "str: 描边，目前作用未知，默认为 "none"",
+  "body": [
+{
+  "from": "int: 字幕开始时间（秒）",
+  "to": "int: 字幕结束时间（秒）",
+  "location": "int: 字幕位置，默认为 2",
+  "content": "str: 字幕内容"
+}
+  ]
+}
+```
+
+
+| name | type | description |
+| - | - | - |
+| lan | str | 字幕语言代码，参考 https |
+| data | Dict | 字幕数据 |
+| submit | bool | 是否提交，不提交为草稿 |
+| sign | bool | 是否署名 |
+
+**Returns:** dict: API 调用返回结果
+
 
 
 

@@ -212,6 +212,17 @@ Events：
 
 
 
+### async def get_emoticons()
+
+获取本房间可用表情包
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
 ### async def get_fan_model()
 
 获取自己的粉丝勋章信息
@@ -331,17 +342,6 @@ Events：
 
 
 
-### async def get_emoticons()
-
-获取本房间可用表情包
-
-
-
-**Returns:** dict: 调用 API 返回的结果
-
-
-
-
 ### async def get_room_play_info()
 
 获取房间信息（真实房间号，封禁情况等）
@@ -445,6 +445,7 @@ Events：
 
 
 
+
 ### async def send_emoticon()
 
 直播间发送表情包
@@ -452,9 +453,10 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| emoticon | Danmaku | 弹幕类, text为表情包代号 |
+| emoticon | Danmaku | text为表情包代号 |
 
 **Returns:** dict: 调用 API 返回的结果
+
 
 
 

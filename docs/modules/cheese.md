@@ -76,7 +76,7 @@ from bilibili_api import cheese
 
 
 
-### def get_season_id()
+### async def get_season_id()
 
 获取季度 id
 
@@ -87,7 +87,7 @@ from bilibili_api import cheese
 
 
 
-### def set_ep_id()
+### async def set_ep_id()
 
 设置 epid 并通过 epid 找到课程
 
@@ -100,7 +100,7 @@ from bilibili_api import cheese
 
 
 
-### def set_season_id()
+### async def set_season_id()
 
 设置季度 id
 
@@ -136,7 +136,7 @@ from bilibili_api import cheese
 | credential | Credential | 凭据类 |
 
 
-### def get_aid()
+### async def get_aid()
 
 获取 aid
 
@@ -147,7 +147,7 @@ from bilibili_api import cheese
 
 
 
-### def get_cheese()
+### async def get_cheese()
 
 获取所属课程
 
@@ -158,7 +158,7 @@ from bilibili_api import cheese
 
 
 
-### def get_cid()
+### async def get_cid()
 
 获取 cid
 
@@ -182,11 +182,11 @@ from bilibili_api import cheese
 
 ### async def get_danmaku_xml()
 
-获取弹幕(xml 源)
+获取所有弹幕的 xml 源文件（非装填）
 
 
 
-**Returns:** str: xml 文件源
+**Returns:** str: 文件源
 
 
 
@@ -199,9 +199,16 @@ from bilibili_api import cheese
 | name | type | description |
 | - | - | - |
 | date | Union[datetime.Date, None] | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+| from_seg | Union[int, None] | 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None. |
+| to_seg | Union[int, None] | 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None. |
 
 **Returns:** List[Danmaku]: Danmaku 类的列表。
 
+
+注意：
+- 1. 段数可以通过视频时长计算。6分钟为一段。
+- 2. `from_seg` 和 `to_seg` 仅对 `date == None` 的时候有效果。
+- 3. 例：取前 `12` 分钟的弹幕：`from_seg=0, to_seg=1`
 
 
 
@@ -227,7 +234,7 @@ from bilibili_api import cheese
 
 
 
-### def get_meta()
+### async def get_meta()
 
 获取课程元数据
 
@@ -347,7 +354,7 @@ from bilibili_api import cheese
 
 
 
-### def set_epid()
+### async def set_epid()
 
 设置 epid
 
