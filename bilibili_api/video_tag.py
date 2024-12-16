@@ -8,7 +8,7 @@ from typing import Optional
 
 import httpx
 
-from .errors import *
+from .exceptions import *
 from .utils.utils import get_api
 from .utils.credential import Credential
 from .utils.network import Api

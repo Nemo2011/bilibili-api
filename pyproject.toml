@@ -38,7 +38,6 @@ packages = [
     "bilibili_api",
     "bilibili_api.utils",
     "bilibili_api.exceptions",
-    "bilibili_api.errors",
     "bilibili_api.tools",
     "bilibili_api.tools.ivitools",
     "bilibili_api.tools.parser",

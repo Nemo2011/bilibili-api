@@ -13,18 +13,16 @@ from enum import Enum
 from datetime import datetime
 from typing import Any, List, Tuple, Union, Optional
 
-import httpx
-
 from .user import name2uid_sync
 from .utils import utils
-from .utils.sync import sync
 from .utils.picture import Picture
-from . import user, vote, exceptions
+from . import user, vote
 from .utils.credential import Credential
 from .utils.network import Api
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 
 API = utils.get_api("dynamic")
+API_opus = utils.get_api("opus")
 raise_for_statement = utils.raise_for_statement
 
 
@@ -791,7 +789,10 @@ class Dynamic:
         """
         return self.__dynamic_id
 
-    async def get_info(self, features: str = "itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete") -> dict:
+    async def get_info(
+        self,
+        features: str = "itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete",
+    ) -> dict:
         """
         (对 Opus 动态，获取动态内容建议使用 Opus.get_detail())
 
@@ -927,6 +928,44 @@ class Dynamic:
         data = await _get_text_data(text)
         data["dynamic_id"] = self.__dynamic_id
         return await Api(**api, credential=self.credential).update_data(**data).result
+
+    async def set_favorite(self, status: bool = True) -> dict:
+        """
+        设置动态（图文）收藏状态
+
+        Args:
+            status (bool, optional): 收藏状态. Defaults to True
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API_opus["operate"]["simple_action"]
+        params = {
+            "csrf": self.credential.bili_jct,
+        }
+        data = {
+            "meta": {
+                "spmid": "444.42.0.0",
+                "from_spmid": "333.1365.0.0",
+                "from": "unknown",
+            },
+            "entity": {
+                "object_id_str": str(self.__dynamic_id),
+                "type": {
+                    "biz": 2,
+                },
+            },
+            "action": 3 if status else 4,
+        }
+        return (
+            await Api(**api, credential=self.credential)
+            .update_params(**params)
+            .update_data(**data)
+            .result
+        )
 
 
 async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> dict:

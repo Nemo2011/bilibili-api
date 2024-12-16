@@ -8,7 +8,7 @@ import json
 import re
 from enum import Enum
 from typing import Union
-from .errors import ApiException
+from .exceptions import ApiException
 
 from httpx import AsyncClient
 
