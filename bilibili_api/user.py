@@ -200,7 +200,7 @@ class OrderType(Enum):
     asc = "asc"
 
 
-async def name2uid_sync(names: Union[str, List[str]]):
+def name2uid_sync(names: Union[str, List[str]]):
     """
     将用户名转为 uid
 

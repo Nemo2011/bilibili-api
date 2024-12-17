@@ -62,15 +62,13 @@ class CheeseList:
         self.__season_id = season_id
         self.__ep_id = ep_id
         self.credential: Credential = credential if credential else Credential()
-    
+
     async def __fetch_season_id(self) -> None:
         # self.season_id = str(sync(self.get_meta())["season_id"])
         api = API["info"]["meta"]
         params = {"ep_id": self.__ep_id}
         meta = await (
-            Api(**api, credential=self.credential)
-            .update_params(**params)
-            .result
+            Api(**api, credential=self.credential).update_params(**params).result
         )
         self.__season_id = int(meta["season_id"])
 

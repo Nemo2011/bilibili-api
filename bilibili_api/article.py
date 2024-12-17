@@ -25,6 +25,8 @@ from .utils.network import Api
 from .exceptions.NetworkException import ApiException, NetworkException
 from .video import get_cid_info_sync
 
+from . import dynamic
+
 API = get_api("article")
 
 # 文章颜色表
@@ -159,6 +161,21 @@ class Article:
         self.__meta = None
         self.__cvid = cvid
         self.__has_parsed: bool = False
+        self.__get_all_data: dict = None
+
+    async def turn_to_dynamic(self) -> "dynamic.Dynamic":
+        """
+        将专栏转为对应动态（评论、点赞等数据专栏/动态/图文共享）
+
+        转换后可查看“赞和转发”列表。
+
+        Returns:
+            Dynamic: 动态实例
+        """
+        return dynamic.Dynamic(
+            dynamic_id=(await self.get_all())["readInfo"]["dyn_id_str"],
+            credential=self.credential,
+        )
 
     def get_cvid(self) -> int:
         """
@@ -485,7 +502,7 @@ class Article:
                         node_list.append(node)
 
                 elif e.name == "div":
-                    node_list += (await parse(e))
+                    node_list += await parse(e)
 
             return node_list
 
@@ -517,9 +534,13 @@ class Article:
         Returns:
             dict: 调用 API 返回的结果
         """
-        return (
-            await get_initial_state(f"https://www.bilibili.com/read/cv{self.__cvid}/?jump_opus=1")
-        )[0]
+        if not self.__get_all_data:
+            self.__get_all_data = (
+                await get_initial_state(
+                    f"https://www.bilibili.com/read/cv{self.__cvid}/?jump_opus=1"
+                )
+            )[0]
+        return self.__get_all_data
 
     async def set_like(self, status: bool = True) -> dict:
         """

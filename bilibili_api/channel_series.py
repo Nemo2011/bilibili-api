@@ -86,6 +86,7 @@ class ChannelSeries:
 
     async def __fetch_meta(self) -> None:
         from .user import User
+
         if self.is_new:
             api = API_USER["channel_series"]["season_info"]
             params = {"season_id": self.id_}

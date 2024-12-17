@@ -20,6 +20,7 @@ from . import user, vote
 from .utils.credential import Credential
 from .utils.network import Api
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
+from .article import Article
 
 API = utils.get_api("dynamic")
 API_opus = utils.get_api("opus")
@@ -776,6 +777,7 @@ class Dynamic:
             credential (Credential | None, optional): 凭据类. Defaults to None.
         """
         self.__dynamic_id = dynamic_id
+        self.__detail = None
         self.credential: Credential = (
             credential if credential is not None else Credential()
         )
@@ -789,37 +791,55 @@ class Dynamic:
         """
         return self.__dynamic_id
 
-    async def get_info(
-        self,
-        features: str = "itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete",
-    ) -> dict:
+    async def get_info(self) -> dict:
         """
-        (对 Opus 动态，获取动态内容建议使用 Opus.get_detail())
-
         获取动态信息
-
-        Args:
-            features (str, optional): 默认 itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete.
 
         Returns:
             dict: 调用 API 返回的结果
         """
+        if not self.__detail:
+            api = API["info"]["detail"]
+            params = {
+                "id": self.__dynamic_id,
+                "timezone_offset": -480,
+                "platform": "web",
+                "gaia_source": "main_web",
+                "features": "itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete",
+                "web_location": "333.1368",
+                "x-bili-device-req-json": '{"platform":"web","device":"pc"}',
+                "x-bili-web-req-json": '{"spm_id":"333.1368"}',
+            }
+            self.__detail = (
+                await Api(**api, credential=self.credential)
+                .update_params(**params)
+                .result
+            )
+        return self.__detail
 
-        api = API["info"]["detail"]
-        params = {
-            "id": self.__dynamic_id,
-            "timezone_offset": -480,
-            "platform": "web",
-            "gaia_source": "main_web",
-            "features": features,
-            "web_location": "333.1368",
-            "x-bili-device-req-json": '{"platform":"web","device":"pc"}',
-            "x-bili-web-req-json": '{"spm_id":"333.1368"}',
-        }
-        data = (
-            await Api(**api, credential=self.credential).update_params(**params).result
+    async def is_article(self) -> bool:
+        """
+        判断动态是否为专栏发布动态（评论、点赞等数据专栏/动态/图文共享）
+
+        Returns:
+            bool: 是否为专栏
+        """
+        return (await self.get_info())["item"]["basic"]["comment_type"] == 12
+
+    async def turn_to_article(self) -> "Article":
+        """
+        将专栏发布动态转为对应专栏（评论、点赞等数据专栏/动态/图文共享）
+
+        转换后可投币。
+
+        Returns:
+            Article: 专栏实例
+        """
+        raise_for_statement(await self.is_article(), "此动态无对应专栏。")
+        return Article(
+            cvid=(await self.get_info())["item"]["basic"]["rid_str"],
+            credential=self.credential,
         )
-        return data
 
     async def get_reaction(self, offset: str = "") -> dict:
         """
