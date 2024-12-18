@@ -26,6 +26,7 @@ from .exceptions.NetworkException import ApiException, NetworkException
 from .video import get_cid_info_sync
 
 from . import dynamic
+from .note import Note, NoteType
 
 API = get_api("article")
 
@@ -175,6 +176,33 @@ class Article:
         return dynamic.Dynamic(
             dynamic_id=(await self.get_all())["readInfo"]["dyn_id_str"],
             credential=self.credential,
+        )
+
+    async def is_note(self) -> bool:
+        """
+        判断专栏是否为笔记
+
+        Returns:
+            bool: 是否为笔记
+        """
+        return (await self.get_all())["readInfo"]["category"]["id"] in [41, 42]
+
+    async def turn_to_note(self) -> "Note":
+        """
+        将专栏转为笔记（需保证专栏是笔记，过程中会有核验，共产生一次请求）
+
+        如果希望避免核验专栏是否是笔记，可以手动转换以避免请求。
+
+        ``` python
+        n = note.Note(cvid=ar.get_cvid(), note_type=note.NoteType.PUBLIC)
+        ```
+
+        Returns:
+            Note: 笔记实例
+        """
+        raise_for_statement(await self.is_note(), "此专栏不是笔记，无法转换。")
+        return Note(
+            cvid=self.get_cvid(), note_type=NoteType.PUBLIC, credential=self.credential
         )
 
     def get_cvid(self) -> int:
