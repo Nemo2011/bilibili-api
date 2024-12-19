@@ -24,6 +24,7 @@ from .utils.credential import Credential
 from .utils.network import Api
 from .exceptions.NetworkException import ApiException, NetworkException
 from .video import get_cid_info_sync
+from .utils import cache_pool
 
 from . import dynamic
 from .note import Note, NoteType
@@ -173,8 +174,17 @@ class Article:
         Returns:
             Dynamic: 动态实例
         """
+        if cache_pool.article2dynamic.get(self.get_cvid()) is None:
+            cache_pool.article2dynamic[self.get_cvid()] = (await self.get_all())[
+                "readInfo"
+            ]["dyn_id_str"]
+            cache_pool.dynamic2article[cache_pool.article2dynamic[self.get_cvid()]] = (
+                self.get_cvid()
+            )
+        if cache_pool.dynamic_is_article.get(cache_pool.article2dynamic[self.get_cvid()]) is None:
+            cache_pool.dynamic_is_article[cache_pool.article2dynamic[self.get_cvid()]] = True
         return dynamic.Dynamic(
-            dynamic_id=(await self.get_all())["readInfo"]["dyn_id_str"],
+            dynamic_id=cache_pool.article2dynamic[self.get_cvid()],
             credential=self.credential,
         )
 
@@ -185,22 +195,19 @@ class Article:
         Returns:
             bool: 是否为笔记
         """
-        return (await self.get_all())["readInfo"]["category"]["id"] in [41, 42]
+        if cache_pool.article_is_note.get(self.get_cvid()) is None:
+            cache_pool.article_is_note[self.get_cvid()] = (await self.get_all())[
+                "readInfo"
+            ]["category"]["id"] in [41, 42]
+        return cache_pool.article_is_note[self.get_cvid()]
 
-    async def turn_to_note(self) -> "Note":
+    def turn_to_note(self) -> "Note":
         """
-        将专栏转为笔记（需保证专栏是笔记，过程中会有核验，共产生一次请求）
-
-        如果希望避免核验专栏是否是笔记，可以手动转换以避免请求。
-
-        ``` python
-        n = note.Note(cvid=ar.get_cvid(), note_type=note.NoteType.PUBLIC)
-        ```
+        将专栏转为笔记，不会核验。如需核验使用 `await is_note()`
 
         Returns:
             Note: 笔记实例
         """
-        raise_for_statement(await self.is_note(), "此专栏不是笔记，无法转换。")
         return Note(
             cvid=self.get_cvid(), note_type=NoteType.PUBLIC, credential=self.credential
         )
