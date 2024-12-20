@@ -450,7 +450,7 @@ async def get_comments_lazy(
 
         type_      (CommentsResourceType)        : 资源类枚举。
 
-        offset (str, optional)       : 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。
+        offset (str, optional)       : 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。对应返回结果的 `["cursor"]["pagination_reply"]["next_offset"]`
 
         order      (OrderType, optional) : 排序方式枚举. Defaults to OrderType.TIME.
 
@@ -461,11 +461,12 @@ async def get_comments_lazy(
     """
     offset = offset.replace('"', '\\"')
     offset = '{"offset":"' + offset + '"}'
+    old_to_new = {0: 2, 2: 3}
     api = API["comment"]["reply_by_session_id"]
     params = {
         "oid": oid,
         "type": type_.value,
-        "mode": order.value,
+        "mode": old_to_new[order.value],
         "pagination_str": offset,
         "web_location": "1315875",
     }
