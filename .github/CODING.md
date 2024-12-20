@@ -29,7 +29,7 @@ async def get_user_real_name(self, uid: int, credential: Union[Credential, None]
     """
 ```
 
-首先你要写上函数的用途，然后要写好参数的说明：名称 + 类型 + 用途。其中类型如果是多个的话，那么写注释时可以用 `|` 分隔而不是用 `Union`，但写代码的时候务必要用 `Union`，需要支持 `Python3.8`。
+首先你要写上函数的用途，然后要写好参数的说明：名称 + 类型 + 用途。其中类型如果是多个的话，那么写注释时可以用 `|` 分隔而不是用 `Union`，但写代码的时候务必要用 `Union`，需要支持 `Python3.9`。
 
 如果你的 API 需要登录的话，你要加上 `credential` 参数，类型是 `Credential | None`，描述可以用 `凭据类。`。(凭据类能传入 cookies 以保证能正常访问需要登录的 API，这里就做到了登录的作用 ) 
 

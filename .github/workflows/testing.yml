@@ -11,7 +11,7 @@ on:
     - cron: '0 4 * * 6'
 
 jobs:
-  test-3_8:
+  test-3_9:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
