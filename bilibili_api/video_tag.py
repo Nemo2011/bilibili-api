@@ -36,30 +36,34 @@ class Tag:
 
             credential (Credential): 凭据类. Defaults to None.
 
-        注意：tag_name 和 tag_id 任选一个传入即可。tag_id 优先使用。
+        注意：tag_name 和 tag_id 任选一个传入即可。tag_id 优先。
         """
-        if tag_id == None:
-            if tag_name == None:
-                raise ArgsException("tag_name 和 tag_id 需要提供一个。")
-            self.__tag_id = self.__get_tag_info_sync(tag_name)["tag_id"]
-        else:
-            self.__tag_id = tag_id
+        self.__tag_id = tag_id
+        self.__tag_name = tag_name
         credential = credential if credential else Credential()
         self.credential: Credential = credential
 
-    def get_tag_id(self) -> int:
+    async def get_tag_id(self) -> int:
         """
         获取标签 id
 
         Returns:
             int: 标签 id
         """
+        if not self.__tag_id:
+            await self.get_tag_info()
         return self.__tag_id
 
-    def __get_tag_info_sync(self, tag_name: str) -> dict:
-        api = API["info"]["tag_info"]
-        params = {"tag_name": tag_name}
-        return Api(**api).update_params(**params).result_sync
+    async def get_tag_name(self) -> str:
+        """
+        获取标签名
+
+        Returns:
+            str: 标签名
+        """
+        if not self.__tag_name:
+            await self.get_tag_info()
+        return self.__tag_name
 
     async def get_tag_info(self) -> dict:
         """
@@ -68,9 +72,19 @@ class Tag:
         Returns:
             dict: 调用 API 返回的结果
         """
+        if not self.__tag_id and not self.__tag_name:
+            raise ArgsException("初始化时 tag_id 和 tag_name 至少要提供一个。")
         api = API["info"]["tag_info"]
-        params = {"tag_id": self.get_tag_id()}
-        return await Api(**api).update_params(**params).result
+        if self.__tag_id:
+            params = {"tag_id": self.__tag_id}
+        else:
+            params = {"tag_name": self.__tag_name}
+        res = await Api(**api).update_params(**params).result
+        if not self.__tag_id:
+            self.__tag_id = res["tag_id"]
+        if not self.__tag_name:
+            self.__tag_name = res["tag_name"]
+        return res
 
     async def get_similar_tags(self) -> dict:
         """
@@ -80,7 +94,7 @@ class Tag:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["get_similar"]
-        params = {"tag_id": self.get_tag_id()}
+        params = {"tag_id": await self.get_tag_id()}
         return await Api(**api).update_params(**params).result
 
     # async def get_cards(self) -> dict:
@@ -91,19 +105,19 @@ class Tag:
     #         dict: 调用 API 返回的结果
     #     """
     #     api = API["info"]["get_list"]
-    #     params = {"topic_id": self.get_tag_id()}
+    #     params = {"topic_id": await self.get_tag_id()}
     #     return await Api(**api).update_params(**params).result
 
-    async def get_history_cards(self, offset_dynamic_id: int) -> dict:
-        """
-        获取标签下，指定dynamic_id的视频的后一个视频/动态作为起始的视频/动态
+    # async def get_history_cards(self, offset_dynamic_id: int) -> dict:
+    #     """
+    #     获取标签下，指定dynamic_id的视频的后一个视频/动态作为起始的视频/动态
 
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        api = API["info"]["get_history_list"]
-        params = {"topic_id": self.get_tag_id(), "offset_dynamic_id": offset_dynamic_id}
-        return await Api(**api).update_params(**params).result
+    #     Returns:
+    #         dict: 调用 API 返回的结果
+    #     """
+    #     api = API["info"]["get_history_list"]
+    #     params = {"topic_id": await self.get_tag_id(), "offset_dynamic_id": offset_dynamic_id}
+    #     return await Api(**api).update_params(**params).result
 
     async def subscribe_tag(self) -> dict:
         """
@@ -117,7 +131,7 @@ class Tag:
 
         api = API_video["operate"]["subscribe_tag"]
 
-        data = {"tag_id": self.__tag_id}
+        data = {"tag_id": await self.get_tag_id()}
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def unsubscribe_tag(self) -> dict:
@@ -132,5 +146,5 @@ class Tag:
 
         api = API_video["operate"]["unsubscribe_tag"]
 
-        data = {"tag_id": self.__tag_id}
+        data = {"tag_id": await self.get_tag_id()}
         return await Api(**api, credential=self.credential).update_data(**data).result
