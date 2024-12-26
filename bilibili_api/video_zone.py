@@ -199,8 +199,8 @@ class VideoZoneTypes(enum.Enum):
 
     - MAINPAGE: 主页
     - ANIME: 番剧
-        - ANIME_SERIAL: 连载中番剧
-        - ANIME_FINISH: 已完结番剧
+        - ANIME_SERIAL: 连载动画
+        - ANIME_FINISH: 完结动画
         - ANIME_INFORMATION: 资讯
         - ANIME_OFFICAL: 官方延伸
     - MOVIE: 电影
@@ -215,9 +215,9 @@ class VideoZoneTypes(enum.Enum):
     - DOUGA: 动画
         - DOUGA_MAD: MAD·AMV
         - DOUGA_MMD: MMD·3D
-        - DOUGA_HANDDRAWN: 短片·手书
+        - DOUGA_HANDDRAWN: 同人·手书
         - DOUGA_VOICE: 配音
-        - DOUGA_GARAGE_KIT: 手办·模玩
+        - DOUGA_GARAGE_KIT: 模玩·周边
         - DOUGA_TOKUSATSU: 特摄
         - DOUGA_ACGNTALKS: 动漫杂谈
         - DOUGA_OTHER: 综合
@@ -245,26 +245,35 @@ class VideoZoneTypes(enum.Enum):
         - MUSIC_MV: MV
         - MUSIC_COMMENTARY: 乐评盘点
         - MUSIC_TUTORIAL: 音乐教学
+        - MUSIC_FAN_VIDEOS: 音乐粉丝饭拍
+        - MUSIC_AI_MUSIC: AI音乐
+        - MUSIC_RADIO: 电台
         - MUSIC_OTHER: 音乐综合
     - DANCE: 舞蹈
         - DANCE_OTAKU: 宅舞
         - DANCE_HIPHOP: 街舞
         - DANCE_STAR: 明星舞蹈
-        - DANCE_CHINA: 中国舞
+        - DANCE_CHINA: 国风舞蹈
         - DANCE_THREE_D: 舞蹈综合
         - DANCE_DEMO: 舞蹈教程
-        - DANGE_GESTURES: 手势·网红舞
+        - DANGE_GESTURES: 颜值·网红舞
     - CINEPHILE: 影视
         - CINEPHILE_CINECISM: 影视杂谈
         - CINEPHILE_MONTAGE: 影视剪辑
+        - CINEPHILE_MASHUP: 影视整活
+        - CINEPHILE_AI_IMAGING: AI影像
         - CINEPHILE_SHORTFILM: 短片
         - CINEPHILE_SHORTPLAY: 小剧场
         - CINEPHILE_TRAILER_INFO: 预告·资讯
+        - CINEPHILE_COMPREHENSIVE: 影视综合
     - ENT: 娱乐
         - ENT_VARIETY: 综艺
         - ENT_TALKER: 娱乐杂谈
         - ENT_FANS: 粉丝创作
         - ENT_CELEBRITY: 明星综合
+        - ENT_CP_RECOMMENDATION: CP安利
+        - ENT_BEAUTY: 颜值安利
+        - ENT_ENTERTAINMENT_NEWS: 娱乐资讯
     - KNOWLEDGE: 知识
         - KNOWLEDGE_SCIENCE: 科学科普
         - KNOWLEDGE_SOCIAL_SCIENCE: 社科·法律·心理
@@ -279,6 +288,7 @@ class VideoZoneTypes(enum.Enum):
         - TECH_APPLICATION: 软件应用
         - TECH_COMPUTER_TECH: 计算机技术
         - TECH_INDUSTRY: 科工机械
+        - TECH_DIY: 极客DIY
     - INFORMATION: 资讯
         - INFORMATION_HOTSPOT: 热点
         - INFORMATION_GLOBAL: 环球
@@ -292,6 +302,7 @@ class VideoZoneTypes(enum.Enum):
         - FOOD_RECORD: 美食记录
     - LIFE: 生活
         - LIFE_FUNNY: 搞笑
+        - LIFE_PARENTING: 亲子
         - LIFE_TRAVEL: 出行
         - LIFE_RURALLIFE: 三农
         - LIFE_HOME: 家居房产
@@ -306,6 +317,7 @@ class VideoZoneTypes(enum.Enum):
         - CAR_MOTORCYCLE: 摩托车
         - CAR_STRATEGY: 购车攻略
         - CAR_LIFE: 汽车生活
+        - CAR_KNOWLEDGE: 汽车知识科普
     - FASHION: 时尚
         - FASHION_MAKEUP: 美妆护肤
         - FASHION_COS: 仿妆cos
@@ -321,11 +333,10 @@ class VideoZoneTypes(enum.Enum):
     - ANIMAL: 动物圈
         - ANIMAL_CAT: 喵星人
         - ANIMAL_DOG: 汪星人
-        - ANIMAL_PANDA: 大熊猫
+        - ANIMAL_REPTILES: 小宠异宠
+        - ANIMAL_PANDA: 动物二创
         - ANIMAL_WILD_ANIMAL: 野生动物
-        - ANIMAL_REPTILES: 爬宠
         - ANIMAL_COMPOSITE: 动物综合
-    - VLOG: VLOG
     """
 
     MAINPAGE = 0
@@ -385,6 +396,9 @@ class VideoZoneTypes(enum.Enum):
     MUSIC_MV = 193
     MUSIC_COMMENTARY = 243
     MUSIC_TUTORIAL = 244
+    MUSIC_FAN_VIDEOS = 266
+    MUSIC_AI_MUSIC = 265
+    MUSIC_RADIO = 267
     MUSIC_OTHER = 130
 
     DANCE = 129
@@ -399,15 +413,21 @@ class VideoZoneTypes(enum.Enum):
     CINEPHILE = 181
     CINEPHILE_CINECISM = 182
     CINEPHILE_MONTAGE = 183
+    CINEPHILE_MASHUP = 260
+    CINEPHILE_AI_IMAGING = 259
     CINEPHILE_SHORTPLAY = 85
     CINEPHILE_SHORTFILM = 256
     CINEPHILE_TRAILER_INFO = 184
+    CINEPHILE_COMPREHENSIVE = 261
 
     ENT = 5
     ENT_VARIETY = 71
     ENT_TALKER = 241
     ENT_FANS = 242
     ENT_CELEBRITY = 137
+    ENT_CP_RECOMMENDATION = 262
+    ENT_BEAUTY = 263
+    ENT_ENTERTAINMENT_NEWS = 264
 
     KNOWLEDGE = 36
     KNOWLEDGE_SCIENCE = 201
@@ -424,6 +444,7 @@ class VideoZoneTypes(enum.Enum):
     TECH_APPLICATION = 230
     TECH_COMPUTER_TECH = 231
     TECH_INDUSTRY = 232
+    TECH_DIY = 233
 
     INFORMATION = 202
     INFORMATION_HOTSPOT = 203
@@ -440,6 +461,7 @@ class VideoZoneTypes(enum.Enum):
 
     LIFE = 160
     LIFE_FUNNY = 138
+    LIFE_PARENTING = 254
     LIFE_TRAVEL = 250
     LIFE_RURALLIFE = 251
     LIFE_HOME = 239
@@ -455,6 +477,7 @@ class VideoZoneTypes(enum.Enum):
     CAR_MOTORCYCLE = 240
     CAR_STRATEGY = 227
     CAR_LIFE = 176
+    CAR_KNOWLEDGE = 258
 
     FASHION = 155
     FASHION_MAKEUP = 157
@@ -473,9 +496,7 @@ class VideoZoneTypes(enum.Enum):
     ANIMAL = 217
     ANIMAL_CAT = 218
     ANIMAL_DOG = 219
-    ANIMAL_PANDA = 220
-    ANIMAL_WILD_ANIMAL = 221
     ANIMAL_REPTILES = 222
+    ANIMAL_SECOND_EDITION = 220
+    ANIMAL_WILD_ANIMAL = 221
     ANIMAL_COMPOSITE = 75
-
-    VLOG = 19
