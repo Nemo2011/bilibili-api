@@ -12,8 +12,25 @@ from typing import Dict, List, Tuple, Union
 
 from .utils.utils import get_api
 from .utils.network import Api
+from .live import get_area_info
+from .exceptions import ApiException
 
 API = get_api("live-area")
+
+
+live_area_data = None
+
+
+async def fetch_live_area_data() -> None:
+    """
+    抓取直播分区数据
+
+    因为直播分区容易出现变动，故不像视频分区一样直接使用文件保存，而是每次查询时先抓取一遍。
+
+    一次运行整个程序仅需执行一次此函数即可，无需多次调用。
+    """
+    global live_area_data
+    live_area_data = await get_area_info()
 
 
 class LiveRoomOrder(Enum):
@@ -38,10 +55,10 @@ def get_area_info_by_id(id: int) -> Tuple[Union[dict, None], Union[dict, None]]:
     Returns:
         `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
-    with open(
-        os.path.join(os.path.dirname(__file__), "data/live_area.json"), encoding="utf8"
-    ) as f:
-        channel = json.loads(f.read())
+    global live_area_data
+    if not live_area_data:
+        raise ApiException("请先调用 fetch_live_area_data()")
+    channel = live_area_data
 
     for main_ch in channel:
         if "id" not in main_ch:
@@ -70,10 +87,10 @@ def get_area_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, Non
     Returns:
         Tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
-    with open(
-        os.path.join(os.path.dirname(__file__), "data/live_area.json"), encoding="utf8"
-    ) as f:
-        channel = json.loads(f.read())
+    global live_area_data
+    if not live_area_data:
+        raise ApiException("请先调用 fetch_live_area_data()")
+    channel = live_area_data
 
     for main_ch in channel:
         if name in main_ch["name"]:
@@ -93,10 +110,10 @@ def get_area_list() -> List[Dict]:
     Returns:
         List[dict]: 所有分区的数据
     """
-    with open(
-        os.path.join(os.path.dirname(__file__), "data/live_area.json"), encoding="utf8"
-    ) as f:
-        channel = json.loads(f.read())
+    global live_area_data
+    if not live_area_data:
+        raise ApiException("请先调用 fetch_live_area_data()")
+    channel = live_area_data
     channel_list = []
     for channel_big in channel:
         channel_big_copy = copy.copy(channel_big)
@@ -118,10 +135,10 @@ def get_area_list_sub() -> dict:
     Returns:
         dict: 所有分区的数据
     """
-    with open(
-        os.path.join(os.path.dirname(__file__), "data/live_area.json"), encoding="utf8"
-    ) as f:
-        channel = json.loads(f.read())
+    global live_area_data
+    if not live_area_data:
+        raise ApiException("请先调用 fetch_live_area_data()")
+    channel = live_area_data
     return channel
 
 
