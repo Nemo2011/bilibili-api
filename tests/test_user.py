@@ -230,7 +230,7 @@ async def test_zk_get_reservation():
 
 
 async def test_zl_name2uid():
-    return await user.name2uid("田所こうじ")
+    return await user.name2uid("田所こうじ", credential=credential)
 
 
 # series_id = None
