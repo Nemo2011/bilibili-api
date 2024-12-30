@@ -21,7 +21,7 @@ from .utils.picture import Picture
 from .utils.credential import Credential
 from .exceptions import ApiException, ArgsException
 from .utils.network import Api, get_session
-from .video import get_cid_info_sync
+from .video import get_cid_info
 from . import article
 
 API = get_api("note")
@@ -305,14 +305,12 @@ class Note:
         该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
         """
 
-        def parse_note(data: List[dict]):
+        async def parse_note(data: List[dict]):
             for field in data:
                 if not isinstance(field["insert"], str):
                     if "tag" in field["insert"].keys():
                         node = VideoCardNode()
-                        node.aid = get_cid_info_sync(field["insert"]["tag"]["cid"])[
-                            "cid"
-                        ]
+                        node.aid = await get_cid_info(field["insert"]["tag"]["cid"])["cid"]
                         self.__children.append(node)
                     elif "imageUpload" in field["insert"].keys():
                         node = ImageNode()
@@ -359,7 +357,7 @@ class Note:
         info = await self.get_info()
         content = info["content"]
         content = unescape(content)
-        parse_note(json.loads(content))
+        await parse_note(json.loads(content))
         self.__has_parsed = True
         self.__meta = await self.__get_info_cached()
         del self.__meta["content"]

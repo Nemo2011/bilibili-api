@@ -23,7 +23,6 @@ from .utils.utils import get_api, raise_for_statement
 from .utils.credential import Credential
 from .utils.network import Api
 from .exceptions.NetworkException import ApiException, NetworkException
-from .video import get_cid_info_sync
 from .utils import cache_pool
 
 from . import dynamic

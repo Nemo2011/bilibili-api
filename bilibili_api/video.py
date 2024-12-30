@@ -40,18 +40,6 @@ from .exceptions import (
 API = get_api("video")
 
 
-def get_cid_info_sync(cid: int):
-    """
-    获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
-
-    Returns:
-        dict: 调用 https://hd.biliplus.com 的 API 返回的结果
-    """
-    api = API["info"]["cid_info"]
-    params = {"cid": cid}
-    return Api(**api).update_params(**params).result_sync
-
-
 async def get_cid_info(cid: int):
     """
     获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
