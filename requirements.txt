@@ -12,4 +12,4 @@ pillow~=11.0.0
 yarl~=1.18.3
 pycryptodomex~=3.21.0
 qrcode_terminal~=0.8
-PyJWT~=2.10.0
+PyJWT~=2.10.1
