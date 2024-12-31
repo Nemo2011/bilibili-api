@@ -238,6 +238,17 @@
         "page": "int: 页码. Defaults to 1. "
       },
       "comment": "获取热门动态"
+    },
+    "lottery": {
+      "url": "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice",
+      "method": "GET",
+      "verify": true,
+      "params": {
+        "business_id": "int: 动态 ID",
+        "business_type": "int: 1",
+        "web_location": "str: 333.1330"
+      },
+      "comment": "获取动态抽奖信息"
     }
   },
   "schedule": {

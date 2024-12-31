@@ -1018,6 +1018,27 @@ class Dynamic:
             .result
         )
 
+    async def get_lottery_info(self) -> dict:
+        """
+        获取动态抽奖信息
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["info"]["lottery"]
+        params = {
+            "business_id": self.get_dynamic_id(),
+            "business_type": 1,
+            "csrf": self.credential.bili_jct,
+            "web_location": "333.1330",
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
 
 async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> dict:
     """

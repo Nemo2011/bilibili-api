@@ -93,3 +93,7 @@ async def test_n_get_dynamic_page_info_by_mid():
 
 async def test_p_get_reaction():
     return await dy.get_reaction()
+
+
+async def test_q_get_lottery_info():
+    return await dy.get_lottery_info()

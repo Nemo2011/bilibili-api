@@ -32,7 +32,6 @@ async def test_f_search_by_order():
         time_range=10,
         video_zone_type=video_zone.VideoZoneTypes.DOUGA_MMD,
         page=1,
-        debug_param_func=print,
     )
 
 
