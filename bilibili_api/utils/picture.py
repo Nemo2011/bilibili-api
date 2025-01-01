@@ -78,7 +78,7 @@ class Picture:
         )
         obj.content = resp.read()
         obj.url = url
-        obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1])
+        obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1].split("?")[0])
         return obj
 
     @staticmethod

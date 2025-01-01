@@ -4,6 +4,7 @@ bilibili_api.manga
 漫画相关操作
 """
 
+import base64
 import datetime
 from enum import Enum
 from urllib.parse import urlparse
@@ -16,6 +17,8 @@ from bilibili_api.exceptions import ArgsException
 from bilibili_api.utils.picture import Picture
 from bilibili_api.utils.credential import Credential
 from bilibili_api.utils.network import HEADERS, Api
+
+from Cryptodome.PublicKey import ECC
 
 API = get_api("manga")
 
@@ -162,21 +165,12 @@ class Manga:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["detail"]
-        params = {"comic_id": self.__manga_id, "device": "pc", "platform": "web"}
+        params = {"device": "pc", "platform": "web", "nov": 25}
+        data = {"comic_id": self.get_manga_id()}
         return (
-            await Api(
-                **api,
-                credential=self.credential,
-                no_csrf=(
-                    False
-                    if (
-                        self.credential.has_sessdata()
-                        and self.credential.has_bili_jct()
-                    )
-                    else True
-                ),
-            )
+            await Api(**api, credential=self.credential, no_csrf=True, json_body=True)
             .update_params(**params)
+            .update_data(**data)
             .result
         )
 
@@ -257,21 +251,12 @@ class Manga:
                 raise ArgsException("episode_count 和 episode_id 中必须提供一个参数。")
             episode_id = await self.get_episode_id(episode_count)
         api = API["info"]["episode_images"]
-        params = {"ep_id": episode_id, "device": "pc", "platform": "web"}
+        params = {"device": "pc", "platform": "web", "nov": 25}
+        data = {"ep_id": episode_id}
         return (
-            await Api(
-                **api,
-                credential=self.credential,
-                no_csrf=(
-                    False
-                    if (
-                        self.credential.has_sessdata()
-                        and self.credential.has_bili_jct()
-                    )
-                    else True
-                ),
-            )
+            await Api(**api, credential=self.credential, no_csrf=True)
             .update_params(**params)
+            .update_data(**data)
             .result
         )
 
@@ -302,20 +287,15 @@ class Manga:
 
         async def get_real_image_url(url: str) -> str:
             token_api = API["info"]["image_token"]
+            params = {"device": "pc", "platform": "web", "nov": 25}
             datas = {"urls": f'["{url}"]'}
             token_data = (
                 await Api(
                     **token_api,
                     credential=self.credential,
-                    no_csrf=(
-                        False
-                        if (
-                            self.credential.has_sessdata()
-                            and self.credential.has_bili_jct()
-                        )
-                        else True
-                    ),
+                    no_csrf=True,
                 )
+                .update_params(**params)
                 .update_data(**datas)
                 .result
             )
@@ -353,23 +333,22 @@ async def manga_image_url_turn_to_Picture(
     url = urlparse(url).path
     credential = credential if credential else Credential()
 
+    def get_m1():
+        key = ECC.generate(curve="P-256")
+        pubKey = key.public_key().export_key(format="raw")
+        return base64.b64encode(pubKey).decode("ascii")
+
     async def get_real_image_url(url: str) -> str:
         token_api = API["info"]["image_token"]
-        datas = {"urls": f'["{url}"]'}
+        params = {"device": "pc", "platform": "web", "nov": 25}
+        datas = {"urls": f'["{url}"]', "m1": get_m1()}
         token_data = (
-            await Api(
-                **token_api,
-                credential=credential,
-                no_csrf=(
-                    False
-                    if (credential.has_sessdata() and credential.has_bili_jct())
-                    else True
-                ),
-            )
+            await Api(**token_api, credential=credential, no_csrf=True, json_body=True)
+            .update_params(**params)
             .update_data(**datas)
             .result
         )
-        return f'{token_data[0]["url"]}?token={token_data[0]["token"]}'
+        return token_data[0]["complete_url"]
 
     url = await get_real_image_url(url)
     return await Picture.async_load_url(url)
@@ -399,8 +378,15 @@ async def set_follow_manga(
         api = API["operate"]["add_favorite"]
     else:
         api = API["operate"]["del_favorite"]
+
+    params = {"device": "pc", "platform": "web", "nov": 25}
     data = {"comic_ids": str(manga.get_manga_id())}
-    return await Api(**api, credential=credential).update_data(**data).result
+    return (
+        await Api(**api, credential=credential)
+        .update_params(**params)
+        .update_data(**data)
+        .result
+    )
 
 
 async def get_raw_manga_index(
@@ -438,7 +424,7 @@ async def get_raw_manga_index(
     """
     credential = credential if credential else Credential()
     api = API["info"]["index"]
-    params = {"device": "pc", "platform": "web"}
+    params = {"device": "pc", "platform": "web", "nov": 25}
     data = {
         "area_id": area.value,
         "order": order.value,
@@ -519,7 +505,7 @@ async def get_manga_update(
     """
     credential = credential if credential else Credential()
     api = API["info"]["update"]
-    params = {"device": "pc", "platform": "web"}
+    params = {"device": "pc", "platform": "web", "nov": 25}
     if isinstance(date, datetime.datetime):
         date = date.strftime("%Y-%m-%d")
     data = {"date": date, "page_num": pn, "page_size": ps}
@@ -550,7 +536,7 @@ async def get_manga_home_recommend(
     """
     credential = credential if credential else Credential()
     api = API["info"]["home_recommend"]
-    params = {"device": "pc", "platform": "web"}
+    params = {"device": "pc", "platform": "web", "nov": 25}
     data = {"page_num": pn, "seed": seed}
     manga_data = (
         await Api(**api, credential=credential, no_csrf=True)

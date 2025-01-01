@@ -503,9 +503,10 @@ class Api:
         if self.bili_ticket:
             cookies["bili_ticket"] = await get_bili_ticket()
             cookies["bili_ticket_expires"] = str(int(time.time()) + 2 * 86400)
-            settings.logger.info(
-                f'使用 bili_ticket [{cookies["bili_ticket"]}] expires [{cookies["bili_ticket_expires"]}]'
-            )
+            if settings.request_log:
+                settings.logger.info(
+                    f'使用 bili_ticket [{cookies["bili_ticket"]}] expires [{cookies["bili_ticket_expires"]}]'
+                )
 
         if settings.request_log:
             settings.logger.info(self)
