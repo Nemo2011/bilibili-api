@@ -162,7 +162,7 @@ class Manga:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["detail"]
-        params = {"comic_id": self.__manga_id}
+        params = {"comic_id": self.__manga_id, "device": "pc", "platform": "web"}
         return (
             await Api(
                 **api,
@@ -194,7 +194,7 @@ class Manga:
         episode_id: Optional[int] = None,
     ) -> dict:
         """
-        获取某一话的详细信息
+        获取某一话信息
 
         Args:
             episode_count (int | float | None): 第几话.
@@ -202,7 +202,7 @@ class Manga:
             episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
         Returns:
-            dict: 对应的话的详细信息
+            dict: 对应的话信息
 
         **注意：episode_count 和 episode_id 中必须提供一个参数。**
         """
@@ -257,7 +257,7 @@ class Manga:
                 raise ArgsException("episode_count 和 episode_id 中必须提供一个参数。")
             episode_id = await self.get_episode_id(episode_count)
         api = API["info"]["episode_images"]
-        params = {"ep_id": episode_id}
+        params = {"ep_id": episode_id, "device": "pc", "platform": "web"}
         return (
             await Api(
                 **api,
