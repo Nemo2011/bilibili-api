@@ -64,10 +64,10 @@ class Credential:
             dict: 请求 Cookies 字典
         """
         cookies = {
-            "SESSDATA": self.sessdata,
-            "buvid3": self.buvid3,
-            "bili_jct": self.bili_jct,
-            "ac_time_value": self.ac_time_value,
+            "SESSDATA": self.sessdata if self.sessdata else "",
+            "buvid3": self.buvid3 if self.buvid3 else "",
+            "bili_jct": self.bili_jct if self.bili_jct else "",
+            "ac_time_value": self.ac_time_value if self.ac_time_value else "",
         }
         if self.dedeuserid:
             cookies.update({"DedeUserID": self.dedeuserid})

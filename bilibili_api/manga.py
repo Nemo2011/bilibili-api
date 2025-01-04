@@ -260,98 +260,100 @@ class Manga:
             .result
         )
 
-    async def get_images(
-        self,
-        episode_count: Optional[Union[int, float]] = None,
-        episode_id: Optional[int] = None,
-    ) -> List[Dict]:
-        """
-        获取某一话的所有图片
+    # async def get_images(
+    #     self,
+    #     episode_count: Optional[Union[int, float]] = None,
+    #     episode_id: Optional[int] = None,
+    # ) -> List[Dict]:
+    #     """
+    #     # 此函数已失效 2025-01-04
+    #     获取某一话的所有图片
 
-        Args:
-            episode_count (int | float | None): 第几话.
+    #     Args:
+    #         episode_count (int | float | None): 第几话.
 
-            episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
+    #         episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
-        Returns:
-            List[Picture]: 所有的图片
+    #     Returns:
+    #         List[Picture]: 所有的图片
 
-        **注意：episode_count 和 episode_id 中必须提供一个参数。**
+    #     **注意：episode_count 和 episode_id 中必须提供一个参数。**
 
-        注意事项：此函数速度非常慢并且失败率高
-        """
-        data = await self.get_images_url(
-            episode_count=episode_count, episode_id=episode_id
-        )
-        pictures: List[Dict] = []
+    #     注意事项：此函数速度非常慢并且失败率高
+    #     """
+    #     data = await self.get_images_url(
+    #         episode_count=episode_count, episode_id=episode_id
+    #     )
+    #     pictures: List[Dict] = []
 
-        async def get_real_image_url(url: str) -> str:
-            token_api = API["info"]["image_token"]
-            params = {"device": "pc", "platform": "web", "nov": 25}
-            datas = {"urls": f'["{url}"]'}
-            token_data = (
-                await Api(
-                    **token_api,
-                    credential=self.credential,
-                    no_csrf=True,
-                )
-                .update_params(**params)
-                .update_data(**datas)
-                .result
-            )
-            return token_data[0]["url"] + "?token=" + token_data[0]["token"]
+    #     async def get_real_image_url(url: str) -> str:
+    #         token_api = API["info"]["image_token"]
+    #         params = {"device": "pc", "platform": "web", "nov": 25}
+    #         datas = {"urls": f'["{url}"]'}
+    #         token_data = (
+    #             await Api(
+    #                 **token_api,
+    #                 credential=self.credential,
+    #                 no_csrf=True,
+    #             )
+    #             .update_params(**params)
+    #             .update_data(**datas)
+    #             .result
+    #         )
+    #         return token_data[0]["url"] + "?token=" + token_data[0]["token"]
 
-        for img in data["images"]:
-            url = await get_real_image_url(img["path"])
-            pictures.append(
-                {
-                    "x": img["x"],
-                    "y": img["y"],
-                    "picture": Picture.from_content(
-                        (await httpx.AsyncClient().get(url, headers=HEADERS)).content,
-                        "jpg",
-                    ),
-                }
-            )
-        return pictures
+    #     for img in data["images"]:
+    #         url = await get_real_image_url(img["path"])
+    #         pictures.append(
+    #             {
+    #                 "x": img["x"],
+    #                 "y": img["y"],
+    #                 "picture": Picture.from_content(
+    #                     (await httpx.AsyncClient().get(url, headers=HEADERS)).content,
+    #                     "jpg",
+    #                 ),
+    #             }
+    #         )
+    #     return pictures
 
 
-async def manga_image_url_turn_to_Picture(
-    url: str, credential: Optional[Credential] = None
-) -> Picture:
-    """
-    将 Manga.get_images_url 函数获得的图片 url 转换为 Picture 类。
+# async def manga_image_url_turn_to_Picture(
+#     url: str, credential: Optional[Credential] = None
+# ) -> Picture:
+#     """
+#     # 此函数已失效 2025-01-04
+#     将 Manga.get_images_url 函数获得的图片 url 转换为 Picture 类。
 
-    Args:
-        url        (str)               : 未经处理的漫画图片链接。
+#     Args:
+#         url        (str)               : 未经处理的漫画图片链接。
 
-        credential (Credential | None): 凭据类. Defaults to None.
+#         credential (Credential | None): 凭据类. Defaults to None.
 
-    Returns:
-        Picture: 图片类。
-    """
-    url = urlparse(url).path
-    credential = credential if credential else Credential()
+#     Returns:
+#         Picture: 图片类。
+#     """
+#     url = urlparse(url).path
+#     credential = credential if credential else Credential()
 
-    def get_m1():
-        key = ECC.generate(curve="P-256")
-        pubKey = key.public_key().export_key(format="raw")
-        return base64.b64encode(pubKey).decode("ascii")
+#     def get_m1():
+#         key = ECC.generate(curve="P-256")
+#         pubKey = key.public_key().export_key(format="raw")
+#         return base64.b64encode(pubKey).decode("ascii")
 
-    async def get_real_image_url(url: str) -> str:
-        token_api = API["info"]["image_token"]
-        params = {"device": "pc", "platform": "web", "nov": 25}
-        datas = {"urls": f'["{url}"]', "m1": get_m1()}
-        token_data = (
-            await Api(**token_api, credential=credential, no_csrf=True, json_body=True)
-            .update_params(**params)
-            .update_data(**datas)
-            .result
-        )
-        return token_data[0]["complete_url"]
+#     async def get_real_image_url(url: str) -> str:
+#         token_api = API["info"]["image_token"]
+#         params = {"device": "pc", "platform": "web", "nov": 25}
+#         datas = {"urls": f'["{url}@1100w.avif"]', "m1": get_m1()}
+#         token_data = (
+#             await Api(**token_api, credential=credential, no_csrf=True, json_body=True)
+#             .update_params(**params)
+#             .update_data(**datas)
+#             .result
+#         )
+#         return token_data[0]["complete_url"]
 
-    url = await get_real_image_url(url)
-    return await Picture.async_load_url(url)
+#     url = await get_real_image_url(url)
+#     return await Picture.async_load_url(url)
 
 
 async def set_follow_manga(

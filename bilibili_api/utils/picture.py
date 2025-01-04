@@ -78,7 +78,7 @@ class Picture:
         )
         obj.content = resp.read()
         obj.url = url
-        obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1].split("?")[0])
+        obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[-1].split("?")[0])
         return obj
 
     @staticmethod
@@ -102,7 +102,7 @@ class Picture:
         )
         obj.content = resp.read()
         obj.url = url
-        obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[1])
+        obj.__set_picture_meta_from_bytes(url.split("/")[-1].split(".")[-1].split("?")[0])
         return obj
 
     @staticmethod
@@ -120,7 +120,7 @@ class Picture:
         with open(path, "rb") as file:
             obj.content = file.read()
         obj.url = "file://" + path
-        obj.__set_picture_meta_from_bytes(os.path.basename(path).split(".")[1])
+        obj.__set_picture_meta_from_bytes(os.path.basename(path).split(".")[-1])
         return obj
 
     @staticmethod
