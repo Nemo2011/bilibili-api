@@ -501,7 +501,7 @@ class Api:
         cookies["opus-goback"] = "1"
 
         if self.bili_ticket:
-            cookies["bili_ticket"] = await get_bili_ticket()
+            cookies["bili_ticket"] = await get_bili_ticket(self.credential)
             cookies["bili_ticket_expires"] = str(int(time.time()) + 2 * 86400)
             if settings.request_log:
                 settings.logger.info(
@@ -891,7 +891,7 @@ def hmac_sha256(key: str, message: str) -> str:
     return hash_hex
 
 
-async def get_bili_ticket() -> str:
+async def get_bili_ticket(credential: Credential = None) -> str:
     """
     获取 bili_ticket，但目前没用到，暂时不启用
 
@@ -900,6 +900,7 @@ async def get_bili_ticket() -> str:
     Returns:
         str: bili_ticket
     """
+    credential = credential if credential else Credential()
     o = hmac_sha256("XgwSnGZ1p", f"ts{int(time.time())}")
     url = "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket"
     params = {
@@ -909,7 +910,9 @@ async def get_bili_ticket() -> str:
         "csrf": "",
     }
     return (
-        await Api(method="POST", url=url, no_csrf=True).update_params(**params).result
+        await Api(method="POST", url=url, no_csrf=True, credential=credential)
+        .update_params(**params)
+        .result
     )["ticket"]
 
 
