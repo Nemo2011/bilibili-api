@@ -720,7 +720,6 @@ class Video:
             data = {}
             while not reader_.has_end():
                 t = reader_.varint() >> 3
-
                 if t == 1:
                     data["dm_switch"] = reader_.bool()
                 elif t == 2:
@@ -761,6 +760,12 @@ class Video:
                     data["font_border"] = reader_.varint()
                 elif t == 20:
                     data["draw_type"] = reader_.string()
+                elif t == 22 or t == 24 or t == 26:
+                    reader_.bool()
+                elif t == 25:
+                    reader_.varint()
+                elif t == 23:
+                    reader_.bytes_string()
                 else:
                     continue
             return data
@@ -796,7 +801,6 @@ class Video:
 
         while not reader.has_end():
             type_ = reader.varint() >> 3
-
             if type_ == 1:
                 json_data["state"] = reader.varint()
             elif type_ == 2:
@@ -1003,13 +1007,8 @@ class Video:
 
         view = await self.get_danmaku_view(cid=cid)
         special_dms = view["special_dms"][0]
-        if settings.proxy != "":
-            sess = httpx.AsyncClient(proxies={"all://": settings.proxy})
-        else:
-            sess = httpx.AsyncClient()
-        dm_content = await sess.get(special_dms, cookies=self.credential.get_cookies())
-        dm_content.raise_for_status()
-        reader = BytesReader(dm_content.content)
+        dm_content = await Api(url=special_dms, method="GET", credential=self.credential).request(byte=True)
+        reader = BytesReader(dm_content)
         dms: List[SpecialDanmaku] = []
         while not reader.has_end():
             spec_dm = SpecialDanmaku("")

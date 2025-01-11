@@ -117,21 +117,24 @@ class WatchRoom:
         """
         credential = credential if credential else Credential()
         self.__room_id = room_id
+        self.__season_id = None
+        self.__episode_id = None
         self.credential: Credential = credential
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
         if room_id in watch_room_bangumi_cache.keys():
             self.set_season_id(watch_room_bangumi_cache[room_id][0])
             self.set_episode_id(watch_room_bangumi_cache[room_id][1])
-        else:
-            params = {"room_id": self.get_room_id(), "platform": "web"}
-            info: dict = (
-                Api(credential=self.credential, **API["info"]["info"])
-                .update_params(**params)
-                .result_sync
-            )
-            self.set_season_id(info["status"]["season_id"])
-            self.set_episode_id(info["status"]["episode_id"])
+
+    async def __fetch_meta(self) -> None:
+        params = {"room_id": self.get_room_id(), "platform": "web"}
+        info: dict = await (
+            Api(credential=self.credential, **API["info"]["info"])
+            .update_params(**params)
+            .result
+        )
+        self.set_season_id(info["status"]["season_id"])
+        self.set_episode_id(info["status"]["episode_id"])
 
     def set_season_id(self, season_id: int) -> None:
         """
@@ -151,22 +154,26 @@ class WatchRoom:
         """
         self.__episode_id = episode_id
 
-    def get_season_id(self) -> int:
+    async def get_season_id(self) -> int:
         """
         获取番剧季度 id
 
         Returns:
             int: 番剧季度 id
         """
+        if not self.__season_id:
+            await self.__fetch_meta()
         return self.__season_id
 
-    def get_episode_id(self) -> int:
+    async def get_episode_id(self) -> int:
         """
         获取番剧剧集 id
 
         Returns:
             int: 番剧剧集 id
         """
+        if not self.__episode_id:
+            await self.__fetch_meta()
         return self.__episode_id
 
     def get_room_id(self) -> int:
@@ -336,8 +343,8 @@ class WatchRoom:
         api = API["info"]["season"]
         params = {
             "room_id": self.get_room_id(),
-            "season_id": self.get_season_id(),
-            "ep_id": self.get_episode_id(),
+            "season_id": await self.get_season_id(),
+            "ep_id": await self.get_episode_id(),
             "csrf": self.credential.bili_jct,
             "platform": "web",
         }

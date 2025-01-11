@@ -200,24 +200,6 @@ class OrderType(Enum):
     asc = "asc"
 
 
-def name2uid_sync(names: Union[str, List[str]]):
-    """
-    将用户名转为 uid
-
-    Args:
-        names (str/List[str]): 用户名
-
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    if isinstance(names, str):
-        n = names
-    else:
-        n = ",".join(names)
-    params = {"names": n}
-    return Api(**API["info"]["name_to_uid"]).update_params(**params).result_sync
-
-
 async def name2uid(names: Union[str, List[str]], credential: Credential = None):
     """
     将用户名转为 uid
@@ -262,23 +244,6 @@ class User:
         self.credential: Credential = credential
         self.__self_info = None
         self.__access_id: Union[str, None] = None
-
-    def get_user_info_sync(self) -> dict:
-        """
-        获取用户信息（昵称，性别，生日，签名，头像 URL，空间横幅 URL 等）
-
-        Returns:
-            dict: 调用接口返回的内容。
-
-        [用户空间详细信息](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md#%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF)
-        """
-        params = {
-            "mid": self.__uid,
-        }
-        result = Api(
-            **API["info"]["info"], credential=self.credential, params=params
-        ).result_sync
-        return result
 
     async def get_user_info(self) -> dict:
         """

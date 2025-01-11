@@ -13,7 +13,6 @@ from enum import Enum
 from datetime import datetime
 from typing import Any, List, Tuple, Union, Optional
 
-from .user import name2uid_sync
 from .utils import utils
 from .utils.picture import Picture
 from . import user, vote
@@ -336,7 +335,7 @@ class BuildDynamic:
         """
         if isinstance(uid, user.User):
             uid = uid.__uid
-        name = user.User(uid).get_user_info_sync().get("name")
+        name = user.User(uid).get_user_info_sync().get("name") # FIXME: Don't use sync function
         self.contents.append(
             {"biz_id": uid, "type": DynamicContentType.AT.value, "raw_text": f"@{name}"}
         )
@@ -371,7 +370,7 @@ class BuildDynamic:
         Args:
             vote (vote.Vote): 投票对象
         """
-        vote.get_info_sync()
+        vote.get_info_sync() # FIXME: Don't use sync function
         self.contents.append(
             {
                 "biz_id": str(vote.get_vote_id()),
@@ -410,7 +409,7 @@ class BuildDynamic:
             for match in match_result:
                 uname = match.group()
                 try:
-                    name_to_uid_resp = name2uid_sync(uname)
+                    name_to_uid_resp = name2uid_sync(uname) # FIXME: Don't use sync function
                     uid = name_to_uid_resp["uid_list"][0]["uid"]
                 except KeyError:
                     # 没有此用户
