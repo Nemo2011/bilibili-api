@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from functools import reduce
 from http.cookiejar import CookieJar
-from typing import BinaryIO, Dict, Optional, Tuple, Type, Union
+from typing import Dict, Optional, Tuple, Type, Union
 
 import curl_cffi
 import curl_cffi.curl
@@ -328,10 +328,11 @@ class BiliAPIResponse:
         return json.loads(self.utf8_text())
 
     def get_cookie(self, name: str):
+        ret = None
         for cookie in self.cookies:
             if cookie.name == name:
-                return cookie.value
-        return None
+                ret = cookie.value  # use the latest value
+        return ret
 
 
 class BiliWsMsgType(Enum):
@@ -347,6 +348,16 @@ class BiliWsMsgType(Enum):
     CLOSE = 0x8
     CLOSING = 0x100
     CLOSED = 0x101
+
+
+@dataclass
+class BiliAPIFile:
+    """
+    上传文件类。
+    """
+
+    path: str
+    mime_type: str
 
 
 class BiliAPIClient(ABC):
@@ -566,7 +577,7 @@ class CurlCFFIClient(BiliAPIClient):
         url: str = "",
         params: dict = {},
         data: Union[dict, str, bytes] = {},
-        files: Dict[str, BinaryIO] = {},
+        files: Dict[str, BiliAPIFile] = {},
         headers: dict = {},
         cookies: dict = {},
         allow_redirects: bool = False,
@@ -586,9 +597,16 @@ class CurlCFFIClient(BiliAPIClient):
             },
         )
         if files != {}:
-            multipart = CurlMime.from_list(
-                [{"name": key, "data": item.read()} for key, item in files.items()]
-            )
+            cnt = 1
+            multipart = CurlMime()
+            for key, item in files.items():
+                multipart.addpart(
+                    name=key,
+                    content_type=item.mime_type,
+                    filename=f'{cnt}.{item.path.split(".")[1]}',
+                    local_path=item.path,
+                )
+                cnt += 1
         else:
             multipart = None
         resp = await self.__session.request(
@@ -601,6 +619,8 @@ class CurlCFFIClient(BiliAPIClient):
             allow_redirects=allow_redirects,
             multipart=multipart,
         )
+        if multipart:
+            multipart.close()
         resp_header_items = resp.headers.multi_items()
         resp_headers = {}
         for item in resp_header_items:
@@ -612,13 +632,16 @@ class CurlCFFIClient(BiliAPIClient):
             raw=resp.content,
             url=resp.url,
         )
+
         request_log.dispatch(
             "RESPONSE",
             "获得响应",
             {
                 "code": bili_api_resp.code,
                 "headers": bili_api_resp.headers,
+                "cookies": str(bili_api_resp.cookies),
                 "data": bili_api_resp.raw,
+                "url": bili_api_resp.url,
             },
         )
         return bili_api_resp
@@ -1768,7 +1791,7 @@ class Api:
     sign: bool = False
     data: dict = field(default_factory=dict)
     params: dict = field(default_factory=dict)
-    files: dict = field(default_factory=dict)
+    files: Dict[str, BiliAPIFile] = field(default_factory=Dict[str, BiliAPIFile])
     headers: dict = field(default_factory=dict)
     credential: Credential = field(default_factory=Credential)
 

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from yarl import URL
 from PIL import Image
 
-from .network import Credential, get_client
+from .network import Credential, get_client, BiliAPIFile
 
 
 @dataclass
@@ -124,11 +124,14 @@ class Picture:
         obj.__set_picture_meta_from_bytes(format)
         return obj
 
-    def _write_to_temp_file(self):
+    def _to_biliapifile(self) -> BiliAPIFile:
         tmp_dir = tempfile.gettempdir()
         img_path = os.path.join(tmp_dir, "test." + self.imageType)
-        open(img_path, "wb").write(self.content)
-        return img_path
+        with open(img_path, "wb") as file:
+            file.write(self.content)
+        img = Image.open(img_path)
+        mime_type = img.get_format_mimetype()
+        return BiliAPIFile(path=img_path, mime_type=mime_type)
 
     async def upload_file(self, credential: Credential) -> "Picture":
         """
@@ -146,7 +149,7 @@ class Picture:
         self.height = res["image_height"]
         self.width = res["image_width"]
         self.url = res["image_url"]
-        self.content = self.from_url(self.url).content
+        self.content = (await self.load_url(self.url)).content
         return self
 
     def convert_format(self, new_format: str) -> "Picture":

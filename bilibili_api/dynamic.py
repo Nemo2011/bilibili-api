@@ -197,12 +197,11 @@ async def upload_image(
     credential.raise_for_no_bili_jct()
 
     api = API["send"]["upload_img"]
-    raw = image.content
 
     if data is None:
         data = {"biz": "new_dyn", "category": "daily"}
 
-    files = {"file_up": open(image._write_to_temp_file(), "rb")}
+    files = {"file_up": image._to_biliapifile()}
     return_info = (
         await Api(**api, credential=credential)
         .update_data(**data)
