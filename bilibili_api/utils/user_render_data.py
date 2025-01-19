@@ -24,7 +24,7 @@ async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
     session = get_client()
     response = await session.request(method="GET", url=dynamic_url, headers=HEADERS)
     if response.code != 200:
-        raise NetworkException(response.status_code, "")
+        raise NetworkException(response.code, "")
 
     response_content_text: str = response.utf8_text()
     match: Match = RENDER_DATA_PATTERN.search(response_content_text)

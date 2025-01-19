@@ -4,11 +4,10 @@ bilibili_api.utils.upos
 
 import os
 import json
-import httpx
 import asyncio
 from asyncio.tasks import create_task
 
-from .network import get_session
+from .network import get_client, BiliAPIClient
 from ..exceptions.NetworkException import NetworkException
 from ..exceptions.ResponseCodeException import ResponseCodeException
 
@@ -54,14 +53,14 @@ class UposFileUploader:
 
     _upload_id: str
     _upload_url: str
-    _session: httpx.AsyncClient
+    _session: BiliAPIClient
 
     def __init__(self, file: UposFile, preupload: dict) -> None:
         self.file = file
         self.preupload = preupload
         self._upload_id = preupload["upload_id"]
         self._upload_url = f'https:{preupload["endpoint"]}/{preupload["upos_uri"].removeprefix("upos://")}'
-        self._session = get_session()
+        self._session = get_client()
 
     async def upload(self) -> dict:
         """
@@ -167,17 +166,18 @@ class UposFileUploader:
         }
 
         try:
-            resp = await self._session.put(
-                self._upload_url,
+            resp = await self._session.request(
+                method="PUT",
+                url=self._upload_url,
                 data=chunk,  # type: ignore
                 params=params,
                 headers={"x-upos-auth": self.preupload["auth"]},
             )
-            if resp.status_code >= 400:
-                chunk_event_callback_data["info"] = f"Status {resp.status_code}"
+            if resp.code >= 400:
+                chunk_event_callback_data["info"] = f"Status {resp.code}"
                 return err_return
 
-            data = resp.text
+            data = resp.utf8_text()
 
             if data != "MULTIPART_PUT_SUCCESS" and data != "":
                 chunk_event_callback_data["info"] = "分块上传失败"
@@ -214,7 +214,8 @@ class UposFileUploader:
             "biz_id": self.preupload["biz_id"],
         }
 
-        resp = await self._session.post(
+        resp = await self._session.request(
+            method="POST",
             url=self._upload_url,
             data=json.dumps(data),  # type: ignore
             headers={
@@ -223,11 +224,11 @@ class UposFileUploader:
             },
             params=params,
         )
-        if resp.status_code >= 400:
-            err = NetworkException(resp.status_code, "状态码错误，提交分 P 失败")
+        if resp.code >= 400:
+            err = NetworkException(resp.code, "状态码错误，提交分 P 失败")
             raise err
 
-        data = json.loads(resp.read())
+        data = resp.json()
 
         if data["OK"] != 1:
             err = ResponseCodeException(-1, f'提交分 P 失败，原因: {data["message"]}')

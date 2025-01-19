@@ -23,14 +23,14 @@ from dataclasses import dataclass, field
 from enum import Enum
 from functools import reduce
 from http.cookiejar import CookieJar
-from typing import Dict, Optional, Tuple, Type, Union
+from typing import BinaryIO, Dict, Optional, Tuple, Type, Union
 
 import curl_cffi
 import curl_cffi.curl
 from Cryptodome.Cipher import PKCS1_OAEP
 from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
-from curl_cffi import requests
+from curl_cffi import requests, CurlMime
 
 from ..exceptions import (
     ArgsException,
@@ -249,9 +249,7 @@ class RequestLog(AsyncEvent):
         """
         self.__on = status
 
-    async def __handle_events(
-        self, data: dict
-    ) -> None:
+    async def __handle_events(self, data: dict) -> None:
         evt = data["name"]
         desc, real_data = data["data"]
         if (
@@ -260,9 +258,7 @@ class RequestLog(AsyncEvent):
             and not evt in self.get_ignore_events()
         ):
             if evt.startswith("WS_"):
-                self.logger.info(
-                    f"WS #{real_data["id"]} {desc}: {real_data}"
-                )
+                self.logger.info(f"WS #{real_data["id"]} {desc}: {real_data}")
             elif evt == "ANTI_SPIDER":
                 self.logger.info(f"{real_data["msg"]}")
             else:
@@ -542,7 +538,7 @@ class CurlCFFIClient(BiliAPIClient):
                 proxies={"all": proxy},
                 verify=verify_ssl,
                 trust_env=trust_env,
-                impersonate="edge"
+                impersonate="chrome116",
             )
         self.__ws: Dict[int, requests.WebSocket] = {}
         self.__ws_cnt: int = 0
@@ -570,7 +566,7 @@ class CurlCFFIClient(BiliAPIClient):
         url: str = "",
         params: dict = {},
         data: Union[dict, str, bytes] = {},
-        files: dict = {},
+        files: Dict[str, BinaryIO] = {},
         headers: dict = {},
         cookies: dict = {},
         allow_redirects: bool = False,
@@ -589,15 +585,21 @@ class CurlCFFIClient(BiliAPIClient):
                 "allow_redirects": allow_redirects,
             },
         )
+        if files != {}:
+            multipart = CurlMime.from_list(
+                [{"name": key, "data": item.read()} for key, item in files.items()]
+            )
+        else:
+            multipart = None
         resp = await self.__session.request(
             method=method,
             url=url,
             params=params,
             data=data,
-            files=files,
             headers=headers,
             cookies=cookies,
             allow_redirects=allow_redirects,
+            multipart=multipart,
         )
         resp_header_items = resp.headers.multi_items()
         resp_headers = {}
@@ -1058,12 +1060,12 @@ async def _check_cookies(credential: Credential) -> bool:
 def _getCorrespondPath() -> str:
     key = RSA.importKey(
         """\
-    -----BEGIN PUBLIC KEY-----
-    MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDLgd2OAkcGVtoE3ThUREbio0Eg
-    Uc/prcajMKXvkCKFCWhJYJcLkcM2DKKcSeFpD/j6Boy538YXnR6VhcuUJOhH2x71
-    nzPjfdTcqMz7djHum0qSZA0AyCBDABUqCrfNgCiJ00Ra7GmRj+YCK1NJEuewlb40
-    JNrRuoEUXpabUzGB8QIDAQAB
-    -----END PUBLIC KEY-----"""
+-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDLgd2OAkcGVtoE3ThUREbio0Eg
+Uc/prcajMKXvkCKFCWhJYJcLkcM2DKKcSeFpD/j6Boy538YXnR6VhcuUJOhH2x71
+nzPjfdTcqMz7djHum0qSZA0AyCBDABUqCrfNgCiJ00Ra7GmRj+YCK1NJEuewlb40
+JNrRuoEUXpabUzGB8QIDAQAB
+-----END PUBLIC KEY-----"""
     )
     ts = round(time.time() * 1000)
     cipher = PKCS1_OAEP.new(key, SHA256)

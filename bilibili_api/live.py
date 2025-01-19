@@ -14,7 +14,6 @@ from enum import Enum
 from typing import Any, List, Union
 
 import brotli
-import aiohttp
 
 from .utils.utils import get_api, raise_for_statement
 from .utils.danmaku import Danmaku
