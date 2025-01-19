@@ -21,8 +21,7 @@ from .user import get_self_info
 from .utils.utils import get_api, raise_for_statement
 from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 
 API = get_api("session")
 

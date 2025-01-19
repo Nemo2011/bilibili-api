@@ -14,14 +14,12 @@ from urllib.parse import unquote
 from typing import List, Union, TypeVar, overload
 
 import yaml
-import httpx
 from yarl import URL
 from bs4 import BeautifulSoup, element
 
-from .utils.initial_state import get_initial_state, get_initial_state_sync
+from .utils.initial_state import get_initial_state
 from .utils.utils import get_api, raise_for_statement
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .exceptions.NetworkException import ApiException, NetworkException
 from .utils import cache_pool
 

@@ -23,3 +23,5 @@ from .StatementException import *
 from .ExClimbWuzhiException import *
 from .GeetestUndoneException import *
 from .GeetestServerNotFoundException import *
+from .WbiRetryTimesExceedException import *
+from .CookiesRefreshException import *

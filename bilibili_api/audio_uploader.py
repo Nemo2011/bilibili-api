@@ -17,9 +17,8 @@ from .utils.upos import UposFile, UposFileUploader
 from .utils.utils import get_api, raise_for_statement
 from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
-from .utils.credential import Credential
 from .exceptions.ApiException import ApiException
-from .utils.network import Api, get_session, HEADERS
+from .utils.network import Api, get_client, HEADERS, Credential
 from .exceptions.NetworkException import NetworkException
 
 from enum import Enum
@@ -542,10 +541,11 @@ class AudioUploader(AsyncEvent):
         api = _API["preupload"]
 
         # 首先获取音频文件预检信息
-        session = get_session()
+        session = get_client()
 
-        resp = await session.get(
-            api["url"],
+        resp = await session.request(
+            method="GET",
+            url=api["url"],
             params={
                 "profile": "uga/bup",
                 "name": os.path.basename(self.path),
@@ -558,11 +558,11 @@ class AudioUploader(AsyncEvent):
             cookies=self.credential.get_cookies(),
             headers=HEADERS.copy(),
         )
-        if resp.status_code >= 400:
+        if resp.code >= 400:
             self.dispatch(
                 AudioUploaderEvents.PREUPLOAD_FAILED.value, {"song": self.meta}
             )
-            raise NetworkException(resp.status_code, resp.reason_phrase)
+            raise NetworkException(resp.code, "")
 
         preupload = resp.json()
 
@@ -577,8 +577,9 @@ class AudioUploader(AsyncEvent):
         headers["x-upos-auth"] = preupload["auth"]
 
         # 获取 upload_id
-        resp = await session.post(
-            url,
+        resp = await session.request(
+            method="POST",
+            url=url,
             headers=headers,
             params={
                 "uploads": "",
@@ -589,13 +590,13 @@ class AudioUploader(AsyncEvent):
                 "biz_id": preupload["biz_id"],
             },
         )
-        if resp.status_code >= 400:
+        if resp.code >= 400:
             self.dispatch(
                 AudioUploaderEvents.PREUPLOAD_FAILED.value, {"song": self.meta}
             )
             raise ApiException("获取 upload_id 错误")
 
-        data = json.loads(resp.text)
+        data = resp.json()
 
         if data["OK"] != 1:
             self.dispatch(

@@ -14,9 +14,8 @@ from .bangumi import Episode
 from .cheese import CheeseVideo
 from .utils.srt2ass import srt2ass
 from .utils.json2srt import json2srt
-from .utils.credential import Credential
 from .utils.danmaku2ass import Danmaku2ASS
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .exceptions.ArgsException import ArgsException
 
 

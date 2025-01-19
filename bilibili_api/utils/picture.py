@@ -6,10 +6,8 @@ from dataclasses import dataclass
 import httpx
 from yarl import URL
 from PIL import Image
-import io
 
-from .utils import get_api
-from .credential import Credential
+from .network import Credential
 
 
 @dataclass

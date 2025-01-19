@@ -16,13 +16,11 @@ import json
 import datetime
 from typing import Any, List, Union
 
-from . import settings
 from .utils.utils import get_api
 from .utils.danmaku import Danmaku
-from .utils.credential import Credential
 from .utils.BytesReader import BytesReader
 from .exceptions.ArgsException import ArgsException
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .exceptions import NetworkException, ResponseException, DanmakuClosedException
 
 API = get_api("cheese")

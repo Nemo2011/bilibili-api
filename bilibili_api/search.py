@@ -10,8 +10,7 @@ from typing import List, Union, Callable
 from .utils.utils import to_timestamps
 from .utils.utils import get_api
 from .video_zone import VideoZoneTypes
-from .utils.network import Api, get_session
-from .utils.credential import Credential
+from .utils.network import Api, Credential
 from .exceptions import ArgsException
 
 API = get_api("search")
@@ -275,8 +274,7 @@ async def get_hot_search_keywords() -> dict:
         dict: 调用 API 返回的结果
     """
     api = API["search"]["hot_search_keywords"]
-    sess = get_session()
-    return json.loads((await sess.request("GET", api["url"])).text)
+    return await Api(**api).request(raw=True)
 
 
 async def get_suggest_keywords(keyword: str) -> List[str]:
@@ -290,7 +288,6 @@ async def get_suggest_keywords(keyword: str) -> List[str]:
         List[str]: 关键词列表
     """
     keywords = []
-    sess = get_session()
     api = API["search"]["suggest"]
     params = {"term": keyword}
     res = await Api(**api).update_params(**params).result

@@ -10,10 +10,7 @@ from enum import Enum
 from typing import Union
 from .exceptions import ApiException
 
-from httpx import AsyncClient
-
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .utils.utils import get_api
 
 API = get_api("game")

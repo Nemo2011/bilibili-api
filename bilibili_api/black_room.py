@@ -8,8 +8,7 @@ from enum import Enum
 from typing import List, Union, Optional
 
 from .utils.utils import get_api
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 
 
 class BlackReasonType(Enum):

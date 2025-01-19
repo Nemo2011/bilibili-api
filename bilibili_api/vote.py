@@ -11,8 +11,7 @@ from typing import Union, Optional
 
 from .utils.utils import get_api
 from .utils.picture import Picture
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 
 API = get_api("vote")
 

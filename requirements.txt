@@ -1,10 +1,8 @@
-aiohttp~=3.11.11
 beautifulsoup4~=4.12.3
 colorama~=0.4.6
 lxml~=5.3.0
 pyyaml~=6.0
 brotli~=1.1.0
-httpx~=0.28.1
 qrcode~=8.0
 APScheduler~=3.11.0
 rsa~=4.9
@@ -13,3 +11,4 @@ yarl~=1.18.3
 pycryptodomex~=3.21.0
 qrcode_terminal~=0.8
 PyJWT~=2.10.1
+curl_cffi<=0.7.4

@@ -10,7 +10,6 @@ import time
 import base64
 import re
 import asyncio
-import httpx
 from enum import Enum
 from typing import List, Union, Optional
 from copy import copy, deepcopy
@@ -23,10 +22,9 @@ from .topic import Topic
 from .utils.utils import get_api
 from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
-from .utils.credential import Credential
 from .utils.aid_bvid_transformer import bvid2aid
 from .exceptions.ApiException import ApiException
-from .utils.network import Api, get_session
+from .utils.network import Api, get_client, Credential, request_settings
 from .exceptions.NetworkException import NetworkException
 from .exceptions.ResponseCodeException import ResponseCodeException
 
@@ -87,12 +85,16 @@ async def _probe() -> dict:
     for line in LINES_INFO.values():
         start = time.perf_counter()
         data = bytes(int(1024 * 0.1 * 1024))  # post 0.1MB
-        timeout = 30
+        client = get_client()
         try:
-            httpx.post(f'https:{line["probe_url"]}', data=data, timeout=timeout)
+            await client.request(
+                method="POST",
+                url=f'https:{line["probe_url"]}',
+                data=data,
+            )
             cost_time = time.perf_counter() - start
-        except httpx.ReadTimeout:
-            cost_time = timeout
+        except Exception:
+            cost_time = request_settings.get_timeout()
         if cost_time < min_cost:
             min_cost, fastest_line = cost_time, line
     return fastest_line
@@ -761,10 +763,11 @@ class VideoUploader(AsyncEvent):
         api = _API["preupload"]
 
         # 首先获取视频文件预检信息
-        session = get_session()
+        session = get_client()
 
-        resp = await session.get(
-            api["url"],
+        resp = await session.request(
+            method="GET",
+            url=api["url"],
             params={
                 "profile": "ugcfx/bup",
                 "name": os.path.basename(page.path),
@@ -782,9 +785,9 @@ class VideoUploader(AsyncEvent):
                 "Referer": "https://www.bilibili.com",
             },
         )
-        if resp.status_code >= 400:
+        if resp.code >= 400:
             self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {"page": page})
-            raise NetworkException(resp.status_code, resp.reason_phrase)
+            raise NetworkException(resp.code, "")
 
         preupload = resp.json()
 
@@ -796,8 +799,9 @@ class VideoUploader(AsyncEvent):
         url = self._get_upload_url(preupload)
 
         # 获取 upload_id
-        resp = await session.post(
-            url,
+        resp = await session.request(
+            method="POST",
+            url=url,
             headers={
                 "x-upos-auth": preupload["auth"],
                 "user-agent": "Mozilla/5.0",
@@ -812,11 +816,11 @@ class VideoUploader(AsyncEvent):
                 "biz_id": preupload["biz_id"],
             },
         )
-        if resp.status_code >= 400:
+        if resp.code >= 400:
             self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {"page": page})
             raise ApiException("获取 upload_id 错误")
 
-        data = json.loads(resp.text)
+        data = resp.json()
 
         if data["OK"] != 1:
             self.dispatch(VideoUploaderEvents.PREUPLOAD_FAILED.value, {"page": page})
@@ -1108,7 +1112,7 @@ class VideoUploader(AsyncEvent):
             "total_chunk_count": total_chunk_count,
         }
         self.dispatch(VideoUploaderEvents.PRE_CHUNK.value, chunk_event_callback_data)
-        session = get_session()
+        session = get_client()
 
         stream = open(page.path, "rb")
         stream.seek(offset)
@@ -1147,21 +1151,22 @@ class VideoUploader(AsyncEvent):
         }
 
         try:
-            resp = await session.put(
-                url,
+            resp = await session.request(
+                method="PUT",
+                url=url,
                 data=chunk,  # type: ignore
                 params=params,
                 headers={"x-upos-auth": preupload["auth"]},
             )
-            if resp.status_code >= 400:
-                chunk_event_callback_data["info"] = f"Status {resp.status_code}"
+            if resp.code >= 400:
+                chunk_event_callback_data["info"] = f"Status {resp.code}"
                 self.dispatch(
                     VideoUploaderEvents.CHUNK_FAILED.value,
                     chunk_event_callback_data,
                 )
                 return err_return
 
-            data = resp.text
+            data = resp.utf8_text()
 
             if data != "MULTIPART_PUT_SUCCESS" and data != "":
                 chunk_event_callback_data["info"] = "分块上传失败"
@@ -1218,9 +1223,10 @@ class VideoUploader(AsyncEvent):
         preupload = self._switch_upload_endpoint(preupload, self.line)
         url = self._get_upload_url(preupload)
 
-        session = get_session()
+        session = get_client()
 
-        resp = await session.post(
+        resp = await session.request(
+            method="POST",
             url=url,
             data=json.dumps(data),  # type: ignore
             headers={
@@ -1229,15 +1235,15 @@ class VideoUploader(AsyncEvent):
             },
             params=params,
         )
-        if resp.status_code >= 400:
-            err = NetworkException(resp.status_code, "状态码错误，提交分 P 失败")
+        if resp.code >= 400:
+            err = NetworkException(resp.code, "状态码错误，提交分 P 失败")
             self.dispatch(
                 VideoUploaderEvents.PAGE_SUBMIT_FAILED.value,
                 {"page": page, "err": err},
             )
             raise err
 
-        data = json.loads(resp.read())
+        data = resp.json()
 
         if data["OK"] != 1:
             err = ResponseCodeException(-1, f'提交分 P 失败，原因: {data["message"]}')

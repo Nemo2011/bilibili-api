@@ -10,8 +10,7 @@ import time
 from dataclasses import dataclass, field
 from typing import List
 
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .utils.utils import get_api, get_deviceid
 
 API = get_api("show")

@@ -19,17 +19,12 @@ from functools import cmp_to_key
 from dataclasses import dataclass
 from typing import Any, List, Union, Optional
 
-import httpx
-import aiohttp
-
-from . import settings
 from .utils.aid_bvid_transformer import bvid2aid, aid2bvid
 from .utils.utils import get_api
 from .utils.AsyncEvent import AsyncEvent
-from .utils.credential import Credential
 from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku, SpecialDanmaku
-from .utils.network import get_aiohttp_session, Api
+from .utils.network import Credential, Api, get_client, BiliWsMsgType
 from .exceptions import (
     ArgsException,
     NetworkException,
@@ -1007,7 +1002,9 @@ class Video:
 
         view = await self.get_danmaku_view(cid=cid)
         special_dms = view["special_dms"][0]
-        dm_content = await Api(url=special_dms, method="GET", credential=self.credential).request(byte=True)
+        dm_content = await Api(
+            url=special_dms, method="GET", credential=self.credential
+        ).request(byte=True)
         reader = BytesReader(dm_content)
         dms: List[SpecialDanmaku] = []
         while not reader.has_end():
@@ -1720,28 +1717,29 @@ class VideoOnlineMonitor(AsyncEvent):
     示例代码：
 
     ```python
-        import asyncio
-        from bilibili_api import video
+    import asyncio
+    from bilibili_api import video
 
-        # 实例化
-        r = video.VideoOnlineMonitor("BV1Bf4y1Q7QP")
+    # 实例化
+    r = video.VideoOnlineMonitor("BV1Bf4y1Q7QP")
 
-        # 装饰器方法注册事件监听器
-        @r.on("ONLINE")
-        async def handler(data):
-            print(data)
+    # 装饰器方法注册事件监听器
+    @r.on("ONLINE")
+    async def handler(data):
+        print(data)
 
-        # 函数方法注册事件监听器
-        async def handler2(data):
-            print(data)
+    # 函数方法注册事件监听器
+    async def handler2(data):
+        print(data)
 
-        r.add_event_listener("ONLINE", handler2)
+    r.add_event_listener("ONLINE", handler2)
 
-        asyncio.get_event_loop().run_until_complete(r.connect())
-
+    asyncio.get_event_loop().run_until_complete(r.connect())
     ```
 
     Extends: AsyncEvent
+
+    Logger: VideoOnlineMonitor().logger
 
     Events:
         ONLINE：        在线人数更新。  CallbackData: dict。
@@ -1827,7 +1825,7 @@ class VideoOnlineMonitor(AsyncEvent):
         self.logger.info("主动断开连接。")
         self.dispatch("DISCONNECTED")
         await self.__cancel_all_tasks()
-        await self.__ws.close()
+        await self.__client.ws_close(self.__ws)
 
     async def __main(self):
         """
@@ -1840,7 +1838,9 @@ class VideoOnlineMonitor(AsyncEvent):
         cid = pages[self.__page_index]["cid"]
 
         # 获取服务器信息
-        self.logger.debug(f"准备连接：{self.__video.__get_bvid()}")
+        bvid = self.__video.get_bvid()
+        self.__bvid = await bvid if iscoroutine(bvid) else bvid
+        self.logger.debug(f"准备连接：{self.__bvid}")
         self.logger.debug(f"获取服务器信息中...")
 
         api = API["info"]["video_online_broadcast_servers"]
@@ -1852,36 +1852,38 @@ class VideoOnlineMonitor(AsyncEvent):
 
         # 连接服务器
         self.logger.debug("准备连接服务器...")
-        session = get_aiohttp_session()
-        async with session.ws_connect(uri) as ws:
-            self.__ws = ws
+        self.__client = get_client()
+        self.__ws = await self.__client.ws_create(uri)
 
-            # 发送认证信息
-            self.logger.debug("服务器连接成功，准备发送认证信息...")
-            verify_info = {
-                "room_id": f"video://{self.__video.__get_aid()}/{cid}",
-                "platform": "web",
-                "accepts": [1000, 1015],
-            }
-            verify_info = json.dumps(verify_info, separators=(",", ":"))
-            await ws.send_bytes(
-                self.__pack(
-                    VideoOnlineMonitor.Datapack.CLIENT_VERIFY, 1, verify_info.encode()
-                )
-            )
+        # 发送认证信息
+        self.logger.debug("服务器连接成功，准备发送认证信息...")
+        verify_info = {
+            "room_id": f"video://{bvid2aid(self.__bvid)}/{cid}",
+            "platform": "web",
+            "accepts": [1000, 1015],
+        }
+        verify_info = json.dumps(verify_info, separators=(",", ":"))
+        await self.__client.ws_send(
+            self.__ws,
+            self.__pack(
+                VideoOnlineMonitor.Datapack.CLIENT_VERIFY, 1, verify_info.encode()
+            ),
+        )
 
-            # 循环接收消息
-            async for msg in ws:
-                if msg.type == aiohttp.WSMsgType.BINARY:
-                    data = self.__unpack(msg.data)
-                    self.logger.debug(f"收到消息：{data}")
-                    await self.__handle_data(data)  # type: ignore
-
-                elif msg.type == aiohttp.WSMsgType.ERROR:
-                    self.logger.warning("连接被异常断开")
-                    await self.__cancel_all_tasks()
-                    self.dispatch("ERROR", msg)
-                    break
+        # 循环接收消息
+        while True:
+            try:
+                data, flag = await self.__client.ws_recv(self.__ws)
+            except:
+                self.logger.warning("连接被异常断开")
+                await self.__cancel_all_tasks()
+                self.dispatch("ERROR", data)
+            if flag == BiliWsMsgType.BINARY:
+                data = self.__unpack(data)
+                self.logger.debug(f"收到消息：{data}")
+                await self.__handle_data(data)  # type: ignore
+            elif flag == BiliWsMsgType.CLOSED:
+                break
 
     async def __handle_data(self, data: List[dict]):
         """
@@ -1938,7 +1940,8 @@ class VideoOnlineMonitor(AsyncEvent):
         index = 2
         while True:
             self.logger.debug(f"发送心跳包，编号：{index}")
-            await self.__ws.send_bytes(
+            await self.__client.ws_send(
+                self.__ws,
                 self.__pack(
                     VideoOnlineMonitor.Datapack.CLIENT_HEARTBEAT,
                     index,

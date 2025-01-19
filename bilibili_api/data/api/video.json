@@ -224,7 +224,7 @@
     },
     "video_online_broadcast_servers": {
       "method": "GET",
-      "verify": true,
+      "verify": false,
       "url": "https://api.bilibili.com/x/web-interface/broadcast/servers?platform=pc",
       "comment": "获取视频在线人数实时监测服务器列表"
     },

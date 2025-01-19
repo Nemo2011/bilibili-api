@@ -13,10 +13,9 @@ from typing import List, Union, Tuple
 import jwt
 
 from .utils.utils import get_api, join, raise_for_statement
-from .utils.credential import Credential
 from .utils.user_render_data import get_user_dynamic_render_data
 from .exceptions import ResponseCodeException
-from .utils.network import get_session, Api, HEADERS
+from .utils.network import Api, HEADERS, Credential
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
 
 API = get_api("user")
@@ -714,17 +713,7 @@ class User:
         """
         api = API["info"]["all_followings"]
         params = {"mid": self.__uid}
-        sess = get_session()
-        data = json.loads(
-            (
-                await sess.get(
-                    url=api["url"],
-                    params=params,
-                    cookies=self.credential.get_cookies(),
-                    headers=HEADERS,
-                )
-            ).text
-        )
+        data = await Api(**api).update_params(**params).request(raw=True)
         return data["card"]["attentions"]
 
     async def get_followers(

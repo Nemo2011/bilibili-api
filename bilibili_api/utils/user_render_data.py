@@ -3,15 +3,8 @@ from re import Match, Pattern, compile
 from typing import Any
 from urllib.parse import unquote
 
-from httpx import AsyncClient, Response, HTTPStatusError, codes
-
-from bilibili_api.utils.network import (
-    get_session,
-    HEADERS,
-    NetworkException,
-    ApiException,
-)
-
+from ..exceptions import ApiException, NetworkException
+from .network import HEADERS, get_client
 
 RENDER_DATA_PATTERN: Pattern[str] = compile(
     r"<script id=\"__RENDER_DATA__\" type=\"application/json\">(.*?)</script>"
@@ -28,16 +21,12 @@ async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
 
     dynamic_url: str = "https://space.bilibili.com/{}/dynamic".format(uid)
 
-    session: AsyncClient = get_session()
-    response: Response = await session.get(url=dynamic_url, headers=HEADERS)
-    try:
-        response.raise_for_status()
-    except HTTPStatusError as e:
-        raise NetworkException(
-            response.status_code, codes.get_reason_phrase(response.status_code)
-        )
+    session = get_client()
+    response = await session.request(method="GET", url=dynamic_url, headers=HEADERS)
+    if response.code != 200:
+        raise NetworkException(response.status_code, "")
 
-    response_content_text: str = response.text
+    response_content_text: str = response.utf8_text()
     match: Match = RENDER_DATA_PATTERN.search(response_content_text)
     if match is None:
         raise ApiException("未匹配到用户动态页渲染数据")

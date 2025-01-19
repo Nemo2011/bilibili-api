@@ -4,15 +4,11 @@ bilibili_api.utils.parse_link
 链接资源解析。
 """
 
-import re
-import json
 from enum import Enum
 from typing import Tuple, Union, Literal
 
-import httpx
 from yarl import URL
 
-from .network import Api
 from ..game import Game
 from ..manga import Manga
 from ..topic import Topic
@@ -24,7 +20,7 @@ from ..dynamic import Dynamic
 from .short import get_real_url
 from ..note import Note, NoteType
 from ..black_room import BlackRoom
-from .credential import Credential
+from .network import Credential, Api
 from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
 from ..article import Article, ArticleList

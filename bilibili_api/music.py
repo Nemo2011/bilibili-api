@@ -10,8 +10,7 @@ from enum import Enum
 from typing import Optional
 
 from .utils.utils import get_api
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 
 API_audio = get_api("audio")
 API = get_api("music")

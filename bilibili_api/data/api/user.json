@@ -46,6 +46,7 @@
       "method": "GET",
       "verify": false,
       "wbi": true,
+      "wbi2": true,
       "params": {
         "mid": "int: uid"
       },

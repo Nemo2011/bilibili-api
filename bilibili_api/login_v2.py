@@ -12,18 +12,15 @@ import base64
 import enum
 
 from .exceptions import GeetestUndoneException
-from .utils.network import get_aiohttp_session, get_session, to_form_urlencoded
 import rsa
 import os
 import qrcode
 import qrcode_terminal
 from typing import Union, List, Dict
 
-from . import settings
-from .utils.utils import get_api, raise_for_statement
-from .utils.credential import Credential
+from .utils.utils import get_api, raise_for_statement, to_form_urlencoded
 from .exceptions import LoginError
-from .utils.network import Api
+from .utils.network import Api, Credential, get_client, get_buvid
 from .utils.geetest import Geetest
 from .utils.picture import Picture
 
@@ -78,32 +75,24 @@ async def login_with_password(
         "User-Agent": "Mozilla/5.0",
         "Referer": "https://passport.bilibili.com/login",
     }
-    sess = (
-        get_session()
-        if settings.http_client == settings.HTTPClient.HTTPX
-        else get_aiohttp_session()
-    )
-    resp = await sess.request(
-        "POST",
-        login_api["url"],
+    client = get_client()
+    resp = await client.request(
+        method="POST",
+        url=login_api["url"],
         data=data,
         headers=headers,
-        cookies={"buvid3": str(uuid.uuid1())},
+        cookies={"buvid3": (await get_buvid())[0]},
     )
-    login_data = json.loads(
-        resp.text
-        if settings.http_client == settings.HTTPClient.HTTPX
-        else await resp.text()
-    )
+    login_data = resp.json()
     if login_data["code"] == 0:
         if login_data["data"]["status"] == 1:
             raise LoginError("需要手机号进一步验证码验证，请直接通过验证码登录")
         elif login_data["data"]["status"] == 2:
             raise LoginError("需要手机号进一步验证码验证，请直接通过验证码登录")
         return Credential(
-            sessdata=str(resp.cookies.get("SESSDATA")),
-            bili_jct=str(resp.cookies.get("bili_jct")),
-            dedeuserid=str(resp.cookies.get("DedeUserID")),
+            sessdata=str(resp.get_cookie("SESSDATA")),
+            bili_jct=str(resp.get_cookie("bili_jct")),
+            dedeuserid=str(resp.get_cookie("DedeUserID")),
             ac_time_value=login_data["data"]["refresh_token"],
         )
     else:
@@ -288,17 +277,13 @@ async def send_sms(phonenumber: PhoneNumber, geetest: Geetest) -> str:
         "Referer": "https://www.bilibili.com",
         "Content-Type": "application/x-www-form-urlencoded",
     }
-    sess = (
-        get_session()
-        if settings.http_client == settings.HTTPClient.HTTPX
-        else get_aiohttp_session()
-    )
-    res = await sess.request(
-        "POST",
-        api["url"],
+    client = get_client()
+    res = await client.request(
+        method="POST",
+        url=api["url"],
         data=data,
         headers=headers,
-        cookies={"buvid3": str(uuid.uuid1())},
+        cookies={"buvid3": (await get_buvid())[0]},
     )
     return_data = res.json()
     if return_data["code"] == 0:
@@ -335,16 +320,13 @@ async def login_with_sms(
         "Referer": "https://www.bilibili.com",
         "Content-Type": "application/x-www-form-urlencoded",
     }
-    sess = (
-        get_session()
-        if settings.http_client == settings.HTTPClient.HTTPX
-        else get_aiohttp_session()
-    )
-    res = await sess.request(
-        "POST",
-        api["url"],
+    client = get_client()
+    res = await client.request(
+        method="POST",
+        url=api["url"],
         data=data,
         headers=headers,
+        cookies={"buvid3": (await get_buvid())[0]},
     )
     return_data = res.json()
     if return_data["code"] == 0 and return_data["data"]["status"] != 5:

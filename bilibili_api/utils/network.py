@@ -4,45 +4,1147 @@ bilibili_api.utils.network
 与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。
 """
 
-import re
-import json
-import time
-import atexit
 import asyncio
+import atexit
+import binascii
 import hashlib
-import urllib
 import hmac
-import pprint
+import io
+import json
+import logging
+import random
+import re
+import struct
+import time
+import urllib.parse
+import uuid
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from enum import Enum
 from functools import reduce
-from urllib.parse import urlencode
-from dataclasses import field, dataclass
-from typing import Any, Dict, Union, Coroutine, Type
-from inspect import iscoroutinefunction as isAsync
-from urllib.parse import quote
+from http.cookiejar import CookieJar
+from typing import Dict, Optional, Tuple, Type, Union
 
-import httpx
-import aiohttp
+import curl_cffi
+import curl_cffi.curl
+from Cryptodome.Cipher import PKCS1_OAEP
+from Cryptodome.Hash import SHA256
+from Cryptodome.PublicKey import RSA
+from curl_cffi import requests
 
-from .sync import sync
-from .. import settings
-from .utils import get_api
-from .credential import Credential
 from ..exceptions import (
-    ApiException,
-    ResponseCodeException,
-    NetworkException,
+    ArgsException,
+    CookiesRefreshException,
+    CredentialNoAcTimeValueException,
+    CredentialNoBiliJctException,
+    CredentialNoBuvid3Exception,
+    CredentialNoDedeUserIDException,
+    CredentialNoSessdataException,
     ExClimbWuzhiException,
+    ResponseCodeException,
+    WbiRetryTimesExceedException,
 )
-from .exclimbwuzhi import *
+from .AsyncEvent import AsyncEvent
+from .utils import get_api, raise_for_statement
 
-__httpx_session_pool: Dict[asyncio.AbstractEventLoop, httpx.AsyncClient] = {}
-__aiohttp_session_pool: Dict[asyncio.AbstractEventLoop, aiohttp.ClientSession] = {}
-__httpx_sync_session: httpx.Client = None
-last_proxy = ""
-wbi_mixin_key = ""
-buvid3 = ""
+################################################## BEGIN Settings ##################################################
 
-# 获取密钥时的申必数组
+
+class RequestSettings:
+    def __init__(self):
+        self.__proxy: str = ""
+        self.__timeout: float = 5.0
+        self.__verify_ssl: bool = True
+        self.__trust_env: bool = True
+        self.__wbi_retry_times: int = 3
+
+    def get_proxy(self) -> str:
+        """
+        获取设置的代理
+
+        Returns:
+            str: 代理地址. Defaults to "".
+        """
+        return self.__proxy
+
+    def set_proxy(self, proxy: str):
+        """
+        修改设置的代理
+
+        Args:
+            proxy (str): 代理地址
+        """
+        global __session_pool
+        self.__proxy = proxy
+        for _, pool in __session_pool.items():
+            for _, client in pool.items():
+                client.set_proxy(proxy)
+
+    def get_timeout(self) -> float:
+        """
+        获取设置的 web 请求超时时间
+
+        Returns:
+            float: 超时时间. Defaults to 5.0.
+        """
+        return self.__timeout
+
+    def set_timeout(self, timeout: float):
+        """
+        修改设置的 web 请求超时时间
+
+        Args:
+            timeout (float): 超时时间
+        """
+        global __session_pool
+        self.__timeout = timeout
+        for _, pool in __session_pool.items():
+            for _, client in pool.items():
+                client.set_timeout(timeout)
+
+    def get_verify_ssl(self) -> bool:
+        """
+        获取设置的是否验证 SSL
+
+        Returns:
+            bool: 是否验证 SSL. Defaults to True.
+        """
+        return self.__verify_ssl
+
+    def set_verify_ssl(self, verify_ssl: bool):
+        """
+        修改设置的是否验证 SSL
+
+        Args:
+            verify_ssl (bool): 是否验证 SSL
+        """
+        global __session_pool
+        self.__verify_ssl = verify_ssl
+        for _, pool in __session_pool.items():
+            for _, client in pool.items():
+                client.set_verify_ssl(verify_ssl)
+
+    def get_trust_env(self) -> bool:
+        """
+        获取设置的 `trust_env`
+
+        Returns:
+            bool: `trust_env`. Defaults to True.
+        """
+        return self.__trust_env
+
+    def set_trust_env(self, trust_env: bool):
+        """
+        修改设置的 `trust_env`
+
+        Args:
+            verify_ssl (bool): `trust_env`
+        """
+        global __session_pool
+        self.__trust_env = trust_env
+        for _, pool in __session_pool.items():
+            for _, client in pool.items():
+                client.set_trust_env(trust_env)
+
+    def get_wbi_retry_times(self) -> int:
+        """
+        获取设置的 wbi 重试次数
+
+        Returns:
+            int: wbi 重试次数. Defaults to 3.
+        """
+        return self.__wbi_retry_times
+
+    def set_wbi_retry_times(self, wbi_retry_times: int) -> None:
+        """
+        修改设置的 wbi 重试次数
+
+        Args:
+            wbi_retry_times (int): wbi 重试次数.
+        """
+        self.__wbi_retry_times = wbi_retry_times
+
+
+request_settings = RequestSettings()
+"""
+请求参数设置
+"""
+
+
+################################################## END Settings ##################################################
+
+
+################################################## BEGIN Logger ##################################################
+
+
+class RequestLog(AsyncEvent):
+    def __init__(self) -> None:
+        super().__init__()
+        self.logger: logging.Logger = logging.getLogger("bilibili-api-request")
+        self.logger.setLevel(logging.INFO)
+        if not self.logger.handlers:
+            handler = logging.StreamHandler()
+            handler.setFormatter(
+                logging.Formatter(
+                    "[BILIBILI_API][%(asctime)s][%(levelname)s] %(message)s"
+                )
+            )
+            self.logger.addHandler(handler)
+        self.__on = False
+        self.__on_events = ["API_REQUEST", "API_RESPONSE", "ANTI_SPIDER"]
+        self.__ignore_events = []
+        self.add_event_listener("__ALL__", self.__handle_events)
+
+    def get_on_events(self) -> dict:
+        """
+        获取日志输出支持的事件类型
+
+        Returns:
+            dict: 日志输出支持的事件类型
+        """
+        return self.__on_events
+
+    def set_on_events(self, events: dict) -> None:
+        """
+        设置日志输出支持的事件类型
+
+        Args:
+            events (dict): 日志输出支持的事件类型
+        """
+        self.__on_events = events
+
+    def get_ignore_events(self) -> dict:
+        """
+        获取日志输出排除的事件类型
+
+        Returns:
+            dict: 日志输出排除的事件类型
+        """
+        return self.__ignore_events
+
+    def set_ignore_events(self, events: dict) -> None:
+        """
+        设置日志输出排除的事件类型
+
+        Args:
+            events (dict): 日志输出排除的事件类型
+        """
+        self.__ignore_events = events
+
+    def is_on(self) -> bool:
+        """
+        获取日志输出是否启用
+
+        Returns:
+            bool: 是否启用
+        """
+        return self.__on
+
+    def set_on(self, status: bool) -> None:
+        """
+        设置日志输出是否启用
+
+        Args:
+            status (bool): 是否启用
+        """
+        self.__on = status
+
+    async def __handle_events(
+        self, data: dict
+    ) -> None:
+        evt = data["name"]
+        desc, real_data = data["data"]
+        if (
+            self.__on
+            and evt in self.get_on_events()
+            and not evt in self.get_ignore_events()
+        ):
+            if evt.startswith("WS_"):
+                self.logger.info(
+                    f"WS #{real_data["id"]} {desc}: {real_data}"
+                )
+            elif evt == "ANTI_SPIDER":
+                self.logger.info(f"{real_data["msg"]}")
+            else:
+                self.logger.info(f"{desc}: {real_data}")
+
+
+request_log = RequestLog()
+"""
+请求日志支持，默认支持输出到指定 I/O 对象。
+
+可以添加更多监听器达到更多效果。
+
+Logger: RequestLog().logger
+
+Extends: AsyncEvent
+
+Events:
+    (CurlCFFIClient)
+    REQUEST:   HTTP 请求。
+    RESPONSE:  HTTP 响应。
+    WS_CREATE: 新建的 Websocket 请求。
+    WS_RECV:   获得到 WebSocket 请求。
+    WS_SEND:   发送了 WebSocket 请求。
+    WS_CLOSE:  关闭 WebSocket 请求。
+    (Api)
+    API_REQUEST: Api 请求。
+    API_RESPONSE: Api 响应。
+    ANTI_SPIDER: 反爬虫相关信息。
+
+CallbackData:
+    事件 (str)
+    描述 (str)
+    数据 (dict)
+    时间 (datetime.datetime)
+
+默认启用 Api 和 Anti-Spider 相关信息。
+"""
+
+
+################################################## END Logger ##################################################
+
+
+################################################## BEGIN Session Management ##################################################
+
+
+__sessions: Dict[str, Type["BiliAPIClient"]] = {}
+__session_pool: Dict[str, Dict[asyncio.AbstractEventLoop, "BiliAPIClient"]] = {}
+__selected_client: str = ""
+
+
+@dataclass
+class BiliAPIResponse:
+    """
+    响应对象类。
+    """
+
+    code: int
+    headers: dict
+    cookies: CookieJar
+    raw: bytes
+    url: str
+
+    def utf8_text(self):
+        return self.raw.decode("utf-8")
+
+    def json(self):
+        return json.loads(self.utf8_text())
+
+    def get_cookie(self, name: str):
+        for cookie in self.cookies:
+            if cookie.name == name:
+                return cookie.value
+        return None
+
+
+class BiliWsMsgType(Enum):
+    """
+    WebSocket 状态枚举
+    """
+
+    CONTINUATION = 0x0
+    TEXT = 0x1
+    BINARY = 0x2
+    PING = 0x9
+    PONG = 0xA
+    CLOSE = 0x8
+    CLOSING = 0x100
+    CLOSED = 0x101
+
+
+class BiliAPIClient(ABC):
+    """
+    请求客户端抽象类。通过对第三方模块请求客户端的封装令模块可对其进行调用。
+    """
+
+    @abstractmethod
+    def __init__(
+        self,
+        proxy: str = "",
+        timeout: float = 0.0,
+        verify_ssl: bool = True,
+        trust_env: bool = True,
+        session: Optional[object] = None,
+    ) -> None:
+        """
+        Args:
+            proxy (str, optional): 代理地址. Defaults to "".
+            timeout (float, optional): 请求超时时间. Defaults to 0.0.
+            verify_ssl (bool, optional): 是否验证 SSL. Defaults to True.
+            trust_env (bool, optional): `trust_env`. Defaults to True.
+            session (object, optional): 会话对象. Defaults to None.
+
+        Note: 当设置 session 后自动忽略 proxy 和 timeout 参数。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_wrapped_session(self) -> object:
+        """
+        获取封装的第三方会话对象
+
+        Returns:
+            object: 第三方会话对象
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_timeout(self, timeout: float = 0.0) -> None:
+        """
+        设置请求超时时间
+
+        Args:
+            timeout (float, optional): 请求超时时间. Defaults to 0.0.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_proxy(self, proxy: str = "") -> None:
+        """
+        设置代理地址
+
+        Args:
+            proxy (str, optional): 代理地址. Defaults to "".
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_verify_ssl(self, verify_ssl: bool = True) -> None:
+        """
+        设置是否验证 SSL
+
+        Args:
+            verify_ssl (bool, optional): 是否验证 SSL. Defaults to True.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_trust_env(self, trust_env: bool = True) -> None:
+        """
+        设置 `trust_env`
+
+        Args:
+            trust_env (bool, optional): `trust_env`. Defaults to True.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def request(
+        self,
+        method: str = "",
+        url: str = "",
+        params: dict = {},
+        data: Union[dict, str, bytes] = {},
+        files: dict = {},
+        headers: dict = {},
+        cookies: dict = {},
+        allow_redirects: bool = False,
+    ) -> BiliAPIResponse:
+        """
+        进行 HTTP 请求
+
+        Args:
+            method (str, optional): 请求方法. Defaults to "".
+            url (str, optional): 请求地址. Defaults to "".
+            params (dict, optional): 请求参数. Defaults to {}.
+            data (Union[dict, str], optional): 请求数据. Defaults to {}.
+            files (dict, optional): 请求文件. Defaults to {}.
+            headers (dict, optional): 请求头. Defaults to {}.
+            cookies (dict, optional): 请求 Cookies. Defaults to {}.
+            allow_redirects (bool, optional): 是否允许重定向. Defaults to False.
+
+        Returns:
+            BiliAPIResponse: 响应对象
+
+        Note: 无需实现 data 为 str 且 files 不为空的情况。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def ws_create(
+        self, url: str = "", params: dict = {}, headers: dict = {}, cookies: dict = {}
+    ) -> int:
+        """
+        创建 WebSocket 连接
+
+        Args:
+            url (str, optional): WebSocket 地址. Defaults to "".
+            params (dict, optional): WebSocket 参数. Defaults to {}.
+            headers (dict, optional): WebSocket 头. Defaults to {}.
+            cookies (dict, optional): WebSocket Cookies. Defaults to {}.
+
+        Returns:
+            int: WebSocket 连接编号，用于后续操作。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def ws_send(self, cnt: int, data: bytes) -> None:
+        """
+        发送 WebSocket 数据
+
+        Args:
+            cnt (int): WebSocket 连接编号
+            data (bytes): WebSocket 数据
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
+        """
+        接受 WebSocket 数据
+
+        Args:
+            cnt (int): WebSocket 连接编号
+
+        Returns:
+            Tuple[bytes, BiliWsMsgType]: WebSocket 数据和状态
+
+        Note: 建议实现此函数时支持其他线程关闭不阻塞，除基础状态同时实现 CLOSE, CLOSING, CLOSED。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def ws_close(self, cnt: int) -> None:
+        """
+        关闭 WebSocket 连接
+
+        Args:
+            cnt (int): WebSocket 连接编号
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def close(self):
+        """
+        关闭请求客户端，即关闭封装的第三方会话对象
+        """
+        raise NotImplementedError
+
+
+class CurlCFFIClient(BiliAPIClient):
+    def __init__(
+        self,
+        proxy: str = "",
+        timeout: float = 0.0,
+        verify_ssl: bool = True,
+        trust_env: bool = True,
+        session: Optional[requests.AsyncSession] = None,
+    ) -> None:
+        if session:
+            self.__session = session
+        else:
+            loop = asyncio.get_event_loop()
+            self.__session = requests.AsyncSession(
+                loop=loop,
+                timeout=timeout,
+                proxies={"all": proxy},
+                verify=verify_ssl,
+                trust_env=trust_env,
+                impersonate="edge"
+            )
+        self.__ws: Dict[int, requests.WebSocket] = {}
+        self.__ws_cnt: int = 0
+        self.__ws_need_close: Dict[int, bool] = {}
+        self.__ws_is_closed: Dict[int, bool] = {}
+
+    def get_wrapped_session(self):
+        return self.__session
+
+    def set_proxy(self, proxy: str = ""):
+        self.__session.proxies = {"all": proxy}
+
+    def set_timeout(self, timeout: float = 0.0):
+        self.__session.timeout = timeout
+
+    def set_verify_ssl(self, verify_ssl=True):
+        self.__session.verify = verify_ssl
+
+    def set_trust_env(self, trust_env=True):
+        self.__session.trust_env = trust_env
+
+    async def request(
+        self,
+        method: str = "",
+        url: str = "",
+        params: dict = {},
+        data: Union[dict, str, bytes] = {},
+        files: dict = {},
+        headers: dict = {},
+        cookies: dict = {},
+        allow_redirects: bool = False,
+    ) -> BiliAPIResponse:
+        request_log.dispatch(
+            "REQUEST",
+            "发起请求",
+            {
+                "method": method,
+                "url": url,
+                "params": params,
+                "data": data,
+                "files": files,
+                "headers": headers,
+                "cookies": cookies,
+                "allow_redirects": allow_redirects,
+            },
+        )
+        resp = await self.__session.request(
+            method=method,
+            url=url,
+            params=params,
+            data=data,
+            files=files,
+            headers=headers,
+            cookies=cookies,
+            allow_redirects=allow_redirects,
+        )
+        resp_header_items = resp.headers.multi_items()
+        resp_headers = {}
+        for item in resp_header_items:
+            resp_headers[item[0]] = item[1]
+        bili_api_resp = BiliAPIResponse(
+            code=resp.status_code,
+            headers=resp_headers,
+            cookies=resp.cookies.jar,
+            raw=resp.content,
+            url=resp.url,
+        )
+        request_log.dispatch(
+            "RESPONSE",
+            "获得响应",
+            {
+                "code": bili_api_resp.code,
+                "headers": bili_api_resp.headers,
+                "data": bili_api_resp.raw,
+            },
+        )
+        return bili_api_resp
+
+    async def ws_create(
+        self, url: str = "", params: dict = {}, headers: dict = {}, cookies: dict = {}
+    ) -> int:
+        self.__ws_cnt += 1
+        request_log.dispatch(
+            "WS_CREATE",
+            "开始 WebSocket 连接",
+            {
+                "id": self.__ws_cnt,
+                "url": url,
+                "params": params,
+                "headers": headers,
+                "cookies": cookies,
+            },
+        )
+        ws = await self.__session.ws_connect(
+            url, params=params, headers=headers, cookies=cookies
+        )
+        self.__ws[self.__ws_cnt] = ws
+        self.__ws_is_closed[self.__ws_cnt] = False
+        self.__ws_need_close[self.__ws_cnt] = False
+        return self.__ws_cnt
+
+    async def ws_send(self, cnt: int, data: bytes) -> None:
+        if self.__ws_need_close[cnt] or self.__ws_is_closed[cnt]:
+            return
+        request_log.dispatch(
+            "WS_SEND",
+            "发送 WebSocket 数据",
+            {"id": cnt, "data": data},
+        )
+        ws = self.__ws[cnt]
+        await ws.asend(data)
+
+    async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
+        ws = self.__ws[cnt]
+        chunks = []
+        flags = 0
+        while True:
+            if self.__ws_is_closed[cnt]:
+                return (b"", BiliWsMsgType.CLOSED)
+            if self.__ws_need_close[cnt]:
+                return (b"", BiliWsMsgType.CLOSING)
+            try:
+                loop = self.__session.loop
+                chunk, frame = await loop.run_in_executor(None, ws.recv_fragment)
+                flags = frame.flags
+                request_log.dispatch(
+                    "WS_RECV",
+                    "收到 WebSocket 数据",
+                    {"id": cnt, "data": chunk, "flags": flags},
+                )
+                chunks.append(chunk)
+                if frame.bytesleft == 0 and flags & curl_cffi.CurlWsFlag.CONT == 0:
+                    break
+            except curl_cffi.curl.CurlError as e:
+                if e.code == curl_cffi.curl.CurlECode.AGAIN:
+                    pass
+                else:
+                    raise e
+        if flags & curl_cffi.CurlWsFlag.CLOSE:
+            await self.ws_close(cnt)
+            return (b"", BiliWsMsgType.CLOSE)
+        by = b"".join(chunks)
+        if flags & curl_cffi.CurlWsFlag.TEXT:
+            return (by, BiliWsMsgType.TEXT)
+        if flags & curl_cffi.CurlWsFlag.PING:
+            return (by, BiliWsMsgType.PING)
+        return (by, BiliWsMsgType.BINARY)
+
+    async def ws_close(self, cnt: int) -> None:
+        ws = self.__ws[cnt]
+        self.__ws_need_close[cnt] = True
+        request_log.dispatch(
+            "WS_CLOSE",
+            "关闭 WebSocket 请求",
+            {"id": cnt},
+        )
+        ws.close()
+        self.__ws_is_closed[cnt] = True
+
+    async def close(self) -> None:
+        await self.__session.close()
+
+
+def register_client(name: str, cls: type) -> None:
+    """
+    注册请求客户端，可用于用户自定义请求客户端。
+
+    Args:
+        name (str): 请求客户端类型名称，用户自定义命名。
+        cls  (type): 基于 BiliAPIClient 重写后的请求客户端类。
+
+    **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
+    """
+    global __sessions, __session_pool
+    raise_for_statement(
+        issubclass(cls, BiliAPIClient), "传入的类型需要继承 BiliAPIClient"
+    )
+    __sessions[name] = cls
+    __session_pool[name] = {}
+
+
+def unregister_client(name: str) -> None:
+    """
+    取消注册请求客户端，可用于用户自定义请求客户端。
+
+    Args:
+        name (str): 请求客户端类型名称，用户自定义命名。
+
+    **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
+    """
+    global __sessions, __session_pool
+    try:
+        __sessions.pop(name)
+        __session_pool.pop(name)
+    except KeyError:
+        raise ArgsException("未找到指定请求客户端。")
+
+
+def select_client(name: str) -> None:
+    """
+    选择模块使用的注册过的请求客户端，可用于用户自定义请求客户端。
+
+    Args:
+        name (str): 请求客户端类型名称，用户自定义命名。
+
+    **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
+    """
+    global __selected_client
+    __selected_client = name
+
+
+def get_selected_client() -> Tuple[str, Type[BiliAPIClient]]:
+    """
+    获取用户选择的请求客户端名称和对应的类
+
+    Returns:
+        Tuple[str, Type[BiliAPIClient]]: 第 0 项为客户端名称，第 1 项为对应的类
+    **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
+    """
+    return __selected_client, __sessions[__selected_client]
+
+
+def get_client() -> BiliAPIClient:
+    """
+    在当前事件循环下获取模块正在使用的请求客户端
+
+    Returns:
+        BiliAPIClient: 请求客户端
+    """
+    global __session_pool
+    pool = __session_pool.get(__selected_client)
+    if pool is None:
+        raise ArgsException("未找到用户指定的请求客户端。")
+    loop = asyncio.get_event_loop()
+    session = pool.get(loop)
+    if session is None:
+        session = __sessions[__selected_client](
+            proxy=request_settings.get_proxy(),
+            timeout=request_settings.get_timeout(),
+            verify_ssl=request_settings.get_verify_ssl(),
+            trust_env=request_settings.get_trust_env(),
+        )
+        __session_pool[__selected_client][loop] = session
+    return session
+
+
+def get_session() -> object:
+    """
+    在当前事件循环下获取请求客户端的会话对象。
+
+    Returns:
+        object: 会话对象
+    """
+    return get_client().get_wrapped_session()
+
+
+def set_session(session: object) -> None:
+    """
+    在当前事件循环下设置请求客户端的会话对象。
+
+    Args:
+        session (object): 会话对象
+    """
+
+    global __session_pool
+    pool = __session_pool.get(__selected_client)
+    if not pool:
+        raise ArgsException("未找到用户指定的请求客户端。")
+    loop = asyncio.get_event_loop()
+    __session_pool[__selected_client][loop] = __sessions[__selected_client](
+        session=session
+    )
+
+
+@atexit.register
+def __clean() -> None:
+    """
+    程序退出清理操作。
+    """
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        return
+
+    async def __clean_task():
+        for _, pool in __session_pool.items():
+            for _, client in pool.items():
+                await client.close()
+
+    if loop.is_closed():
+        loop.run_until_complete(__clean_task())
+    else:
+        loop.create_task(__clean_task())
+
+
+register_client("curl_cffi", CurlCFFIClient)
+select_client("curl_cffi")
+
+
+################################################## END Session Management ##################################################
+
+
+################################################## BEGIN Credential ##################################################
+
+
+class Credential:
+    """
+    凭据类，用于各种请求操作的验证。
+    """
+
+    def __init__(
+        self,
+        sessdata: Union[str, None] = None,
+        bili_jct: Union[str, None] = None,
+        buvid3: Union[str, None] = None,
+        dedeuserid: Union[str, None] = None,
+        ac_time_value: Union[str, None] = None,
+    ) -> None:
+        """
+        各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
+
+        Args:
+            sessdata   (str | None, optional): 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None.
+
+            bili_jct   (str | None, optional): 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None.
+
+            buvid3     (str | None, optional): 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None.
+
+            dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
+
+            ac_time_value (str | None, optional): 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None.
+        """
+        self.sessdata = (
+            None
+            if sessdata is None
+            else (
+                sessdata if sessdata.find("%") != -1 else urllib.parse.quote(sessdata)
+            )
+        )
+        self.bili_jct = bili_jct
+        self.buvid3 = buvid3
+        self.dedeuserid = dedeuserid
+        self.ac_time_value = ac_time_value
+
+    def get_cookies(self) -> dict:
+        """
+        获取请求 Cookies 字典
+
+        Returns:
+            dict: 请求 Cookies 字典
+        """
+        cookies = {
+            "SESSDATA": self.sessdata if self.sessdata else "",
+            "buvid3": self.buvid3 if self.buvid3 else "",
+            "bili_jct": self.bili_jct if self.bili_jct else "",
+            "ac_time_value": self.ac_time_value if self.ac_time_value else "",
+        }
+        if self.dedeuserid:
+            cookies.update({"DedeUserID": self.dedeuserid})
+
+        return cookies
+
+    def has_dedeuserid(self) -> bool:
+        """
+        是否提供 dedeuserid。
+
+        Returns:
+            bool。
+        """
+        return self.dedeuserid is not None and self.sessdata != ""
+
+    def has_sessdata(self) -> bool:
+        """
+        是否提供 sessdata。
+
+        Returns:
+            bool。
+        """
+        return self.sessdata is not None and self.sessdata != ""
+
+    def has_bili_jct(self) -> bool:
+        """
+        是否提供 bili_jct。
+
+        Returns:
+            bool。
+        """
+        return self.bili_jct is not None and self.sessdata != ""
+
+    def has_buvid3(self) -> bool:
+        """
+        是否提供 buvid3
+
+        Returns:
+            bool.
+        """
+        return self.buvid3 is not None and self.sessdata != ""
+
+    def has_ac_time_value(self) -> bool:
+        """
+        是否提供 ac_time_value
+
+        Returns:
+            bool.
+        """
+        return self.ac_time_value is not None and self.sessdata != ""
+
+    def raise_for_no_sessdata(self):
+        """
+        没有提供 sessdata 则抛出异常。
+        """
+        if not self.has_sessdata():
+            raise CredentialNoSessdataException()
+
+    def raise_for_no_bili_jct(self):
+        """
+        没有提供 bili_jct 则抛出异常。
+        """
+        if not self.has_bili_jct():
+            raise CredentialNoBiliJctException()
+
+    def raise_for_no_buvid3(self):
+        """
+        没有提供 buvid3 时抛出异常。
+        """
+        if not self.has_buvid3():
+            raise CredentialNoBuvid3Exception()
+
+    def raise_for_no_dedeuserid(self):
+        """
+        没有提供 DedeUserID 时抛出异常。
+        """
+        if not self.has_dedeuserid():
+            raise CredentialNoDedeUserIDException()
+
+    def raise_for_no_ac_time_value(self):
+        """
+        没有提供 ac_time_value 时抛出异常。
+        """
+        if not self.has_ac_time_value():
+            raise CredentialNoAcTimeValueException()
+
+    async def check_valid(self):
+        """
+        检查 cookies 是否有效
+
+        Returns:
+            bool: cookies 是否有效
+        """
+        return await _check_valid(self)
+
+    async def check_refresh(self) -> bool:
+        """
+        检查是否需要刷新 cookies
+
+        Returns:
+            bool: cookies 是否需要刷新
+        """
+        return await _check_cookies(self)
+
+    async def refresh(self) -> None:
+        """
+        刷新 cookies
+        """
+        new_cred: Credential = await _refresh_cookies(self)
+        self.sessdata = new_cred.sessdata
+        self.bili_jct = new_cred.bili_jct
+        self.dedeuserid = new_cred.dedeuserid
+        self.ac_time_value = new_cred.ac_time_value
+
+    @staticmethod
+    def from_cookies(cookies: dict = {}) -> "Credential":
+        """
+        从 cookies 新建 Credential
+
+        Args:
+            cookies (dict, optional): Cookies. Defaults to {}.
+
+        Returns:
+            Credential: 凭据类
+        """
+        c = Credential()
+        c.sessdata = cookies.get("SESSDATA")
+        c.bili_jct = cookies.get("bili_jct")
+        c.buvid3 = cookies.get("buvid3")
+        c.dedeuserid = cookies.get("DedeUserID")
+        c.ac_time_value = cookies.get("ac_time_value")
+        return c
+
+    def __str__(self):
+        return f"SESSDATA: {self.sessdata}; bili_jct: {self.bili_jct}; buvid3: {self.buvid3}; DedeUserID: {self.dedeuserid}; ac_time_value: {self.ac_time_value}"
+
+
+"""
+Cookies 刷新相关
+
+感谢 bilibili-API-collect 提供的刷新 Cookies 的思路
+
+https://socialsisteryi.github.io/bilibili-API-collect/docs/login/cookie_refresh.html
+"""
+
+
+async def _check_valid(credential: Credential) -> bool:
+    api = API["info"]["valid"]
+    return (await Api(**api, credential=credential).result)["isLogin"]
+
+
+async def _check_cookies(credential: Credential) -> bool:
+    api = API["info"]["check_cookies"]
+    return (await Api(**api, credential=credential).result)["refresh"]
+
+
+def _getCorrespondPath() -> str:
+    key = RSA.importKey(
+        """\
+    -----BEGIN PUBLIC KEY-----
+    MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDLgd2OAkcGVtoE3ThUREbio0Eg
+    Uc/prcajMKXvkCKFCWhJYJcLkcM2DKKcSeFpD/j6Boy538YXnR6VhcuUJOhH2x71
+    nzPjfdTcqMz7djHum0qSZA0AyCBDABUqCrfNgCiJ00Ra7GmRj+YCK1NJEuewlb40
+    JNrRuoEUXpabUzGB8QIDAQAB
+    -----END PUBLIC KEY-----"""
+    )
+    ts = round(time.time() * 1000)
+    cipher = PKCS1_OAEP.new(key, SHA256)
+    encrypted = cipher.encrypt(f"refresh_{ts}".encode())
+    return binascii.b2a_hex(encrypted).decode()
+
+
+async def _get_refresh_csrf(credential: Credential) -> str:
+    correspond_path = _getCorrespondPath()
+    api = API["operate"]["get_refresh_csrf"]
+    cookies = credential.get_cookies()
+    cookies["buvid3"] = str(uuid.uuid1())
+    cookies["Domain"] = ".bilibili.com"
+    client = get_client()
+    resp = await client.request(
+        method="GET",
+        url=api["url"].replace("{correspondPath}", correspond_path),
+        cookies=cookies,
+        headers=HEADERS.copy(),
+    )
+    if resp.code == 404:
+        raise CookiesRefreshException("correspondPath 过期或错误。")
+    elif resp.code == 200:
+        text = resp.utf8_text()
+        refresh_csrf = re.findall('<div id="1-name">(.+?)</div>', text)[0]
+        return refresh_csrf
+    elif resp.code != 200:
+        raise CookiesRefreshException("获取刷新 Cookies 的 csrf 失败。")
+
+
+async def _refresh_cookies(credential: Credential) -> Credential:
+    api = API["operate"]["refresh_cookies"]
+    credential.raise_for_no_bili_jct()
+    credential.raise_for_no_ac_time_value()
+    refresh_csrf = await _get_refresh_csrf(credential)
+    data = {
+        "csrf": credential.bili_jct,
+        "refresh_csrf": refresh_csrf,
+        "refresh_token": credential.ac_time_value,
+        "source": "main_web",
+    }
+    cookies = credential.get_cookies()
+    cookies["buvid3"] = str(uuid.uuid1())
+    cookies["Domain"] = ".bilibili.com"
+    client = get_client()
+    resp = await client.request(
+        method="POST",
+        url=api["url"],
+        cookies=cookies,
+        data=data,
+        headers=HEADERS.copy(),
+    )
+    if resp.code != 200 or resp.json()["code"] != 0:
+        raise CookiesRefreshException("刷新 Cookies 失败")
+    new_credential = Credential(
+        sessdata=resp.get_cookie("SESSDATA"),
+        bili_jct=resp.get_cookie("bili_jct"),
+        dedeuserid=resp.get_cookie("DedeUserID"),
+        ac_time_value=resp.json()["data"]["refresh_token"],
+    )
+    await _confirm_refresh(credential, new_credential)
+    return new_credential
+
+
+async def _confirm_refresh(
+    old_credential: Credential, new_credential: Credential
+) -> None:
+    api = API["operate"]["confirm_refresh"]
+    data = {
+        "csrf": new_credential.bili_jct,
+        "refresh_token": old_credential.ac_time_value,
+    }
+    await Api(**api, credential=new_credential).update_data(**data).result
+
+
+################################################## END Credential ##################################################
+
+
+################################################## BEGIN Anti-Spider ##################################################
+
+
 OE = [
     46,
     47,
@@ -109,7 +1211,8 @@ OE = [
     44,
     52,
 ]
-# 使用 Referer 和 UA 请求头以绕过反爬虫机制
+APPKEY = "4409e2ce8ffd12b8"
+APPSEC = "59b43e04ad6965f34319062b478f83dd"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.54",
     "Referer": "https://www.bilibili.com",
@@ -117,77 +1220,504 @@ HEADERS = {
 API = get_api("credential")
 
 
-def retry_sync():
+async def _get_spi_buvid() -> dict:
+    api = API["info"]["spi"]
+    client = get_client()
+    return (
+        await client.request(method="GET", url=api["url"], headers=HEADERS.copy())
+    ).json()["data"]
+
+
+async def _active_buvid(buvid3: str, buvid4: str) -> dict:
+    MOD = 1 << 64
+
+    def get_time_milli() -> int:
+        return int(time.time() * 1000)
+
+    def rotate_left(x: int, k: int) -> int:
+        bin_str = bin(x)[2:].rjust(64, "0")
+        return int(bin_str[k:] + bin_str[:k], base=2)
+
+    def gen_uuid_infoc() -> str:
+        t = get_time_milli() % 100000
+        mp = list("123456789ABCDEF") + ["10"]
+        pck = [8, 4, 4, 4, 12]
+        gen_part = lambda x: "".join([random.choice(mp) for _ in range(x)])
+        return "-".join([gen_part(l) for l in pck]) + str(t).ljust(5, "0") + "infoc"
+
+    def gen_b_lsid() -> str:
+        ret = ""
+        for _ in range(8):
+            ret += hex(random.randint(0, 15))[2:].upper()
+        ret = f"{ret}_{hex(get_time_milli())[2:].upper()}"
+        return ret
+
+    def gen_buvid_fp(key: str, seed: int):
+        source = io.BytesIO(bytes(key, "ascii"))
+        m = murmur3_x64_128(source, seed)
+        return "{}{}".format(hex(m & (MOD - 1))[2:], hex(m >> 64)[2:])
+
+    def murmur3_x64_128(source: io.BufferedIOBase, seed: int) -> str:
+        C1 = 0x87C3_7B91_1142_53D5
+        C2 = 0x4CF5_AD43_2745_937F
+        C3 = 0x52DC_E729
+        C4 = 0x3849_5AB5
+        R1, R2, R3, M = 27, 31, 33, 5
+        h1, h2 = seed, seed
+        processed = 0
+        while 1:
+            read = source.read(16)
+            processed += len(read)
+            if len(read) == 16:
+                k1 = struct.unpack("<q", read[:8])[0]
+                k2 = struct.unpack("<q", read[8:])[0]
+                h1 ^= rotate_left(k1 * C1 % MOD, R2) * C2 % MOD
+                h1 = ((rotate_left(h1, R1) + h2) * M + C3) % MOD
+                h2 ^= rotate_left(k2 * C2 % MOD, R3) * C1 % MOD
+                h2 = ((rotate_left(h2, R2) + h1) * M + C4) % MOD
+            elif len(read) == 0:
+                h1 ^= processed
+                h2 ^= processed
+                h1 = (h1 + h2) % MOD
+                h2 = (h2 + h1) % MOD
+                h1 = fmix64(h1)
+                h2 = fmix64(h2)
+                h1 = (h1 + h2) % MOD
+                h2 = (h2 + h1) % MOD
+                return (h2 << 64) | h1
+            else:
+                k1 = 0
+                k2 = 0
+                if len(read) >= 15:
+                    k2 ^= int(read[14]) << 48
+                if len(read) >= 14:
+                    k2 ^= int(read[13]) << 40
+                if len(read) >= 13:
+                    k2 ^= int(read[12]) << 32
+                if len(read) >= 12:
+                    k2 ^= int(read[11]) << 24
+                if len(read) >= 11:
+                    k2 ^= int(read[10]) << 16
+                if len(read) >= 10:
+                    k2 ^= int(read[9]) << 8
+                if len(read) >= 9:
+                    k2 ^= int(read[8])
+                    k2 = rotate_left(k2 * C2 % MOD, R3) * C1 % MOD
+                    h2 ^= k2
+                if len(read) >= 8:
+                    k1 ^= int(read[7]) << 56
+                if len(read) >= 7:
+                    k1 ^= int(read[6]) << 48
+                if len(read) >= 6:
+                    k1 ^= int(read[5]) << 40
+                if len(read) >= 5:
+                    k1 ^= int(read[4]) << 32
+                if len(read) >= 4:
+                    k1 ^= int(read[3]) << 24
+                if len(read) >= 3:
+                    k1 ^= int(read[2]) << 16
+                if len(read) >= 2:
+                    k1 ^= int(read[1]) << 8
+                if len(read) >= 1:
+                    k1 ^= int(read[0])
+                k1 = rotate_left(k1 * C1 % MOD, R2) * C2 % MOD
+                h1 ^= k1
+
+    def fmix64(k: int) -> int:
+        C1 = 0xFF51_AFD7_ED55_8CCD
+        C2 = 0xC4CE_B9FE_1A85_EC53
+        R = 33
+        tmp = k
+        tmp ^= tmp >> R
+        tmp = tmp * C1 % MOD
+        tmp ^= tmp >> R
+        tmp = tmp * C2 % MOD
+        tmp ^= tmp >> R
+        return tmp
+
+    def get_payload(uuid: str) -> str:
+        content = {
+            "3064": 1,
+            "5062": get_time_milli(),
+            "03bf": "https%3A%2F%2Fwww.bilibili.com%2F",
+            "39c8": "333.788.fp.risk",
+            "34f1": "",
+            "d402": "",
+            "654a": "",
+            "6e7c": "839x959",
+            "3c43": {
+                "2673": 0,
+                "5766": 24,
+                "6527": 0,
+                "7003": 1,
+                "807e": 1,
+                "b8ce": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Safari/605.1.15",
+                "641c": 0,
+                "07a4": "en-US",
+                "1c57": "not available",
+                "0bd0": 8,
+                "748e": [900, 1440],
+                "d61f": [875, 1440],
+                "fc9d": -480,
+                "6aa9": "Asia/Shanghai",
+                "75b8": 1,
+                "3b21": 1,
+                "8a1c": 0,
+                "d52f": "not available",
+                "adca": "MacIntel",
+                "80c9": [
+                    [
+                        "PDF Viewer",
+                        "Portable Document Format",
+                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
+                    ],
+                    [
+                        "Chrome PDF Viewer",
+                        "Portable Document Format",
+                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
+                    ],
+                    [
+                        "Chromium PDF Viewer",
+                        "Portable Document Format",
+                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
+                    ],
+                    [
+                        "Microsoft Edge PDF Viewer",
+                        "Portable Document Format",
+                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
+                    ],
+                    [
+                        "WebKit built-in PDF",
+                        "Portable Document Format",
+                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
+                    ],
+                ],
+                "13ab": "0dAAAAAASUVORK5CYII=",
+                "bfe9": "QgAAEIQAACEIAABCCQN4FXANGq7S8KTZayAAAAAElFTkSuQmCC",
+                "a3c1": [
+                    "extensions:ANGLE_instanced_arrays;EXT_blend_minmax;EXT_color_buffer_half_float;EXT_float_blend;EXT_frag_depth;EXT_shader_texture_lod;EXT_texture_compression_bptc;EXT_texture_compression_rgtc;EXT_texture_filter_anisotropic;EXT_sRGB;KHR_parallel_shader_compile;OES_element_index_uint;OES_fbo_render_mipmap;OES_standard_derivatives;OES_texture_float;OES_texture_float_linear;OES_texture_half_float;OES_texture_half_float_linear;OES_vertex_array_object;WEBGL_color_buffer_float;WEBGL_compressed_texture_astc;WEBGL_compressed_texture_etc;WEBGL_compressed_texture_etc1;WEBGL_compressed_texture_pvrtc;WEBKIT_WEBGL_compressed_texture_pvrtc;WEBGL_compressed_texture_s3tc;WEBGL_compressed_texture_s3tc_srgb;WEBGL_debug_renderer_info;WEBGL_debug_shaders;WEBGL_depth_texture;WEBGL_draw_buffers;WEBGL_lose_context;WEBGL_multi_draw",
+                    "webgl aliased line width range:[1, 1]",
+                    "webgl aliased point size range:[1, 511]",
+                    "webgl alpha bits:8",
+                    "webgl antialiasing:yes",
+                    "webgl blue bits:8",
+                    "webgl depth bits:24",
+                    "webgl green bits:8",
+                    "webgl max anisotropy:16",
+                    "webgl max combined texture image units:32",
+                    "webgl max cube map texture size:16384",
+                    "webgl max fragment uniform vectors:1024",
+                    "webgl max render buffer size:16384",
+                    "webgl max texture image units:16",
+                    "webgl max texture size:16384",
+                    "webgl max varying vectors:30",
+                    "webgl max vertex attribs:16",
+                    "webgl max vertex texture image units:16",
+                    "webgl max vertex uniform vectors:1024",
+                    "webgl max viewport dims:[16384, 16384]",
+                    "webgl red bits:8",
+                    "webgl renderer:WebKit WebGL",
+                    "webgl shading language version:WebGL GLSL ES 1.0 (1.0)",
+                    "webgl stencil bits:0",
+                    "webgl vendor:WebKit",
+                    "webgl version:WebGL 1.0",
+                    "webgl unmasked vendor:Apple Inc.",
+                    "webgl unmasked renderer:Apple GPU",
+                    "webgl vertex shader high float precision:23",
+                    "webgl vertex shader high float precision rangeMin:127",
+                    "webgl vertex shader high float precision rangeMax:127",
+                    "webgl vertex shader medium float precision:23",
+                    "webgl vertex shader medium float precision rangeMin:127",
+                    "webgl vertex shader medium float precision rangeMax:127",
+                    "webgl vertex shader low float precision:23",
+                    "webgl vertex shader low float precision rangeMin:127",
+                    "webgl vertex shader low float precision rangeMax:127",
+                    "webgl fragment shader high float precision:23",
+                    "webgl fragment shader high float precision rangeMin:127",
+                    "webgl fragment shader high float precision rangeMax:127",
+                    "webgl fragment shader medium float precision:23",
+                    "webgl fragment shader medium float precision rangeMin:127",
+                    "webgl fragment shader medium float precision rangeMax:127",
+                    "webgl fragment shader low float precision:23",
+                    "webgl fragment shader low float precision rangeMin:127",
+                    "webgl fragment shader low float precision rangeMax:127",
+                    "webgl vertex shader high int precision:0",
+                    "webgl vertex shader high int precision rangeMin:31",
+                    "webgl vertex shader high int precision rangeMax:30",
+                    "webgl vertex shader medium int precision:0",
+                    "webgl vertex shader medium int precision rangeMin:31",
+                    "webgl vertex shader medium int precision rangeMax:30",
+                    "webgl vertex shader low int precision:0",
+                    "webgl vertex shader low int precision rangeMin:31",
+                    "webgl vertex shader low int precision rangeMax:30",
+                    "webgl fragment shader high int precision:0",
+                    "webgl fragment shader high int precision rangeMin:31",
+                    "webgl fragment shader high int precision rangeMax:30",
+                    "webgl fragment shader medium int precision:0",
+                    "webgl fragment shader medium int precision rangeMin:31",
+                    "webgl fragment shader medium int precision rangeMax:30",
+                    "webgl fragment shader low int precision:0",
+                    "webgl fragment shader low int precision rangeMin:31",
+                    "webgl fragment shader low int precision rangeMax:30",
+                ],
+                "6bc5": "Apple Inc.~Apple GPU",
+                "ed31": 0,
+                "72bd": 0,
+                "097b": 0,
+                "52cd": [0, 0, 0],
+                "a658": [
+                    "Andale Mono",
+                    "Arial",
+                    "Arial Black",
+                    "Arial Hebrew",
+                    "Arial Narrow",
+                    "Arial Rounded MT Bold",
+                    "Arial Unicode MS",
+                    "Comic Sans MS",
+                    "Courier",
+                    "Courier New",
+                    "Geneva",
+                    "Georgia",
+                    "Helvetica",
+                    "Helvetica Neue",
+                    "Impact",
+                    "LUCIDA GRANDE",
+                    "Microsoft Sans Serif",
+                    "Monaco",
+                    "Palatino",
+                    "Tahoma",
+                    "Times",
+                    "Times New Roman",
+                    "Trebuchet MS",
+                    "Verdana",
+                    "Wingdings",
+                    "Wingdings 2",
+                    "Wingdings 3",
+                ],
+                "d02f": "124.04345259929687",
+            },
+            "54ef": '{"in_new_ab":true,"ab_version":{"remove_back_version":"REMOVE","login_dialog_version":"V_PLAYER_PLAY_TOAST","open_recommend_blank":"SELF","storage_back_btn":"HIDE","call_pc_app":"FORBID","clean_version_old":"GO_NEW","optimize_fmp_version":"LOADED_METADATA","for_ai_home_version":"V_OTHER","bmg_fallback_version":"DEFAULT","ai_summary_version":"SHOW","weixin_popup_block":"ENABLE","rcmd_tab_version":"DISABLE","in_new_ab":true},"ab_split_num":{"remove_back_version":11,"login_dialog_version":43,"open_recommend_blank":90,"storage_back_btn":87,"call_pc_app":47,"clean_version_old":46,"optimize_fmp_version":28,"for_ai_home_version":38,"bmg_fallback_version":86,"ai_summary_version":466,"weixin_popup_block":45,"rcmd_tab_version":90,"in_new_ab":0},"pageVersion":"new_video","videoGoOldVersion":-1}',
+            "8b94": "https%3A%2F%2Fwww.bilibili.com%2F",
+            "df35": uuid,
+            "07a4": "en-US",
+            "5f45": None,
+            "db46": 0,
+        }
+        return json.dumps(
+            {"payload": json.dumps(content, separators=(",", ":"))},
+            separators=(",", ":"),
+        )
+
+    api = API["operate"]["active"]
+    client = get_client()
+    uuid = gen_uuid_infoc()
+    payload = get_payload(uuid)
+    buvid_fp = gen_buvid_fp(payload, 31)
+    headers = HEADERS.copy()
+    headers["Content-Type"] = "application/json"
+    resp = await client.request(
+        method="POST",
+        url=api["url"],
+        data=payload,
+        headers=headers,
+        cookies={
+            "buvid3": buvid3,
+            "buvid4": buvid4,
+            "buvid_fp": buvid_fp,
+            "_uuid": uuid,
+        },
+    )
+    data = resp.json()
+    if data["code"] != 0:
+        raise ExClimbWuzhiException(data["code"], data["msg"])
+
+
+async def _get_nav(credential: Optional[Credential] = None) -> dict:
+    credential = credential if credential else Credential()
+    api = API["info"]["valid"]
+    client = get_client()
+    return (
+        await client.request(
+            method="GET",
+            url=api["url"],
+            headers=HEADERS.copy(),
+            cookies=credential.get_cookies(),
+        )
+    ).json()["data"]
+
+
+async def _get_mixin_key(credential: Optional[Credential] = None) -> str:
+    data = await _get_nav(credential=credential)
+    wbi_img: Dict[str, str] = data["wbi_img"]
+
+    def split(key):
+        return wbi_img.get(key).split("/")[-1].split(".")[0]
+
+    ae = split("img_url") + split("sub_url")
+    le = reduce(lambda s, i: s + (ae[i] if i < len(ae) else ""), OE, "")
+    return le[:32]
+
+
+def _enc_wbi(params: dict, mixin_key: str) -> dict:
+    params.pop("w_rid", None)  # 重试时先把原有 w_rid 去除
+    params["wts"] = int(time.time())
+    # web_location 因为没被列入参数可能炸一些接口 比如 video.get_ai_conclusion
+    # 但 video.get_download_url 的 web_location 不是这东西
+    # 因此此处默认提供 1550101，具体哪些一些也不清楚。
+    if not params.get("web_location"):
+        params["web_location"] = 1550101
+    Ae = urllib.parse.urlencode(sorted(params.items()))
+    params["w_rid"] = hashlib.md5((Ae + mixin_key).encode(encoding="utf-8")).hexdigest()
+    return params
+
+
+def _enc_wbi2(params: dict) -> dict:
+    dm_rand = "ABCDEFGHIJK"
+    params.update(
+        {
+            "dm_img_list": "[]",  # 鼠标/键盘操作记录
+            "dm_img_str": "".join(random.sample(dm_rand, 2)),
+            "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
+            "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
+        }
+    )
+    return params
+
+
+def _enc_sign(paramsordata: dict) -> dict:
+    paramsordata["appkey"] = APPKEY
+    paramsordata = dict(sorted(paramsordata.items()))
+    paramsordata["sign"] = hashlib.md5(
+        (urllib.parse.urlencode(paramsordata) + APPSEC).encode("utf-8")
+    ).hexdigest()
+    return paramsordata
+
+
+async def _get_bili_ticket(credential: Optional[Credential] = None) -> str:
+    def hmac_sha256(key: str, message: str) -> str:
+        key = key.encode("utf-8")
+        message = message.encode("utf-8")
+        hmac_obj = hmac.new(key, message, hashlib.sha256)
+        return hmac_obj.digest().hex()
+
+    credential = credential if credential else Credential()
+    o = hmac_sha256("XgwSnGZ1p", f"ts{int(time.time())}")
+    api = API["info"]["ticket"]
+    params = {
+        "key_id": "ec02",
+        "hexsign": o,
+        "context[ts]": f"{int(time.time())}",
+        "csrf": "",
+    }
+    client = get_client()
+    resp = await client.request(
+        method="POST",
+        url=api["url"],
+        params=params,
+        headers=HEADERS.copy(),
+        cookies=credential.get_cookies(),
+    )
+    return resp.json()["data"]["ticket"]
+
+
+################################################## END Anti-Spider ##################################################
+
+
+################################################## BEGIN Api ##################################################
+
+
+__buvid3 = ""
+__buvid4 = ""
+__bili_ticket = ""
+__wbi_mixin_key = ""
+
+
+def refresh_buvid() -> None:
     """
-    重试装饰器
+    刷新 buvid3 和 buvid4
+    """
+    global __buvid3, __buvid4
+    __buvid3 = ""
+    __buvid4 = ""
+
+
+def refresh_bili_ticket() -> None:
+    """
+    刷新 bili_ticket
+    """
+    global __bili_ticket
+    __bili_ticket = ""
+
+
+def refresh_wbi_mixin_key() -> None:
+    """
+    刷新 wbi mixin key
+    """
+    global __wbi_mixin_key
+    __wbi_mixin_key = ""
+
+
+async def get_buvid() -> Tuple[str, str]:
+    """
+    获取 buvid3 和 buvid4
 
     Returns:
-        Any: 原函数调用结果
+        Tuple[str, str]: 第 0 项为 buvid3，第 1 项为 buvid4。
     """
-
-    def wrapper(func):
-        def inner(*args, **kwargs):
-            times = settings.wbi_retry_times
-            loop = times
-            while loop != 0:
-                if loop != times and settings.request_log:
-                    settings.logger.info("第 %d 次重试", times - loop)
-                loop -= 1
-                try:
-                    return func(*args, **kwargs)
-                except json.decoder.JSONDecodeError:
-                    # json 解析错误 说明数据获取有误 再给次机会
-                    continue
-                except ResponseCodeException as e:
-                    # -403 时尝试重新获取 wbi_mixin_key 可能过期了
-                    if e.code == -403:
-                        global wbi_mixin_key
-                        wbi_mixin_key = ""
-                        continue
-                    # 不是 -403 错误直接报错
-                    raise
-            raise ApiException("重试达到最大次数")
-
-        return inner
-
-    return wrapper
+    global __buvid3, __buvid4
+    if __buvid3 == "" or __buvid4 == "":
+        spi = await _get_spi_buvid()
+        __buvid3 = spi["b_3"]
+        __buvid4 = spi["b_4"]
+        await _active_buvid(__buvid3, __buvid4)
+        request_log.dispatch(
+            "ANTI_SPIDER",
+            "反爬虫",
+            {"msg": f"激活 buvid3 / buvid4 成功: 3 [{__buvid3}] 4 [{__buvid4}]"},
+        )
+    return (__buvid3, __buvid4)
 
 
-def retry():
+async def get_bili_ticket(credential: Optional[Credential] = None) -> str:
     """
-    重试装饰器
+    获取 bili_ticket
+
+    Args:
+        credential (Credential, optional): 凭据. Defaults to None.
 
     Returns:
-        Any: 原函数调用结果
+        str: bili_ticket
     """
+    global __bili_ticket
+    if __bili_ticket == "":
+        __bili_ticket = await _get_bili_ticket(credential)
+        request_log.dispatch(
+            "ANTI_SPIDER",
+            "反爬虫",
+            {"msg": f"获取 bili_ticket 成功: [{__bili_ticket}]"},
+        )
+    return __bili_ticket
 
-    def wrapper(func: Coroutine):
-        async def inner(*args, **kwargs):
-            # 这里必须新建一个变量用来计数！！不能直接对 times 操作！！！
-            times = settings.wbi_retry_times
-            loop = times
-            while loop != 0:
-                if loop != times and settings.request_log:
-                    settings.logger.info("第 %d 次重试", times - loop)
-                loop -= 1
-                try:
-                    return await func(*args, **kwargs)
-                except json.decoder.JSONDecodeError:
-                    # json 解析错误 说明数据获取有误 再给次机会
-                    continue
-                except ResponseCodeException as e:
-                    # -403 时尝试重新获取 wbi_mixin_key 可能过期了
-                    if e.code == -403:
-                        global wbi_mixin_key
-                        wbi_mixin_key = ""
-                        continue
-                    # 不是 -403 错误直接报错
-                    raise
-            raise ApiException("重试达到最大次数")
 
-        return inner
+async def get_wbi_mixin_key(credential: Optional[Credential] = None) -> str:
+    """
+    获取 wbi mixin key
 
-    return wrapper
+    Args:
+        credential (Credential, optional): 凭据. Defaults to None.
+
+    Returns:
+        str: wbi mixin key
+    """
+    global __wbi_mixin_key
+    if __wbi_mixin_key == "":
+        __wbi_mixin_key = await _get_mixin_key(credential)
+        request_log.dispatch(
+            "ANTI_SPIDER",
+            "反爬虫",
+            {"msg": f"获取 wbi mixin key: [{__wbi_mixin_key}]"},
+        )
+    return __wbi_mixin_key
 
 
 @dataclass
@@ -248,88 +1778,38 @@ class Api:
         self.params = {k: "" for k in self.params.keys()}
         self.files = {k: "" for k in self.files.keys()}
         self.headers = {k: "" for k in self.headers.keys()}
-        if self.credential is None:
-            self.credential = Credential()
-        self.__result = None
-
-    def __setattr__(self, __name: str, __value: Any) -> None:
-        """
-        每次更新参数都要把 __result 清除
-        """
-        if self.initialized and __name != "_Api__result":
-            self.__result = None
-        return super().__setattr__(__name, __value)
-
-    @property
-    def initialized(self):
-        return "_Api__result" in self.__dict__
-
-    @property
-    async def result(self) -> Union[int, str, dict]:
-        """
-        异步获取请求结果
-
-        `self.__result` 用来暂存数据 参数不变时获取结果不变
-        """
-        if self.__result is None:
-            self.__result = await self.request()
-        return self.__result
-
-    @property
-    def result_sync(self) -> Union[int, str, dict]:
-        """
-        通过 `sync` 同步获取请求结果
-
-        一般用于非协程内同步获取数据
-
-        `self.__result` 用来暂存数据 参数不变时获取结果不变
-        """
-        if self.__result is None:
-            self.__result = self.request_sync()
-        return self.__result
+        self.credential = self.credential if self.credential else Credential()
 
     def update_data(self, **kwargs) -> "Api":
         """
-        毫无亮点的更新 data
+        更新 data
         """
         self.data = kwargs
-        self.__result = None
         return self
 
     def update_params(self, **kwargs) -> "Api":
         """
-        毫无亮点的更新 params
+        更新 params
         """
         self.params = kwargs
-        self.__result = None
         return self
 
     def update_files(self, **kwargs) -> "Api":
         """
-        毫无亮点的更新 files
+        更新 files
         """
         self.files = kwargs
-        self.__result = None
         return self
 
     def update_headers(self, **kwargs) -> "Api":
         """
-        毫无亮点的更新 headers
+        更新 headers
         """
         self.headers = kwargs
-        self.__result = None
         return self
 
-    def update(self, **kwargs) -> "Api":
-        """
-        毫无亮点的自动选择更新，不包括 files, headers
-        """
-        if self.method == "GET":
-            return self.update_params(**kwargs)
-        else:
-            return self.update_data(**kwargs)
-
-    def _prepare_params_data(self) -> None:
+    async def _prepare_request(self) -> dict:
+        # 处理 bool
         new_params, new_data = {}, {}
         for key, value in self.params.items():
             if isinstance(value, bool):
@@ -342,319 +1822,73 @@ class Api:
             elif value != None:
                 new_data[key] = value
         self.params, self.data = new_params, new_data
-
-    def _prepare_request_sync(self, **kwargs) -> dict:
-        """
-        准备请求的配置参数
-
-        Args:
-            **kwargs: 其他额外的请求配置参数
-
-        Returns:
-            dict: 包含请求的配置参数
-        """
-        # 如果接口需要 Credential 且未传入则报错 (默认值为 Credential())
+        # 如果接口需要 Credential 且未传入 sessdata 鉴权则报错
         if self.verify:
             self.credential.raise_for_no_sessdata()
-
         # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
         if self.method != "GET" and not self.no_csrf:
             self.credential.raise_for_no_bili_jct()
-
         # jsonp
         if self.params.get("jsonp") == "jsonp":
             self.params["callback"] = "callback"
-
+        # 鼠标移动 wbi 风控 (这东西不放在前面工作不了)
+        # (https://github.com/Nemo2011/bilibili-api/issues/595)
         if self.wbi2:
-            # -352 https://github.com/Nemo2011/bilibili-api/issues/595 需要跟进
-            dm_rand = "ABCDEFGHIJK"
-            self.params.update(
-                {
-                    "dm_img_list": "[]",  # 鼠标/键盘操作记录
-                    "dm_img_str": "".join(random.sample(dm_rand, 2)),
-                    "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
-                    "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
-                }
-            )
-
+            self.params = _enc_wbi2(self.params)
+        # 普遍存在的 wbi 鉴权
         if self.wbi:
-            global wbi_mixin_key
-            if wbi_mixin_key == "":
-                wbi_mixin_key = get_mixin_key_sync()
-            enc_wbi(self.params, wbi_mixin_key)
-
+            self.params = _enc_wbi(
+                self.params, await get_wbi_mixin_key(self.credential)
+            )
         # 自动添加 csrf
         if (
             not self.no_csrf
             and self.verify
             and self.method in ["POST", "DELETE", "PATCH"]
-        ):
+        ) and isinstance(self.data, dict):
             self.data["csrf"] = self.credential.bili_jct
             self.data["csrf_token"] = self.credential.bili_jct
-
+        # 处理 cookies
         cookies = self.credential.get_cookies()
-
-        if self.credential.buvid3 is None:
-            global buvid3
-            if buvid3 == "" and self.url != API["info"]["spi"]["url"]:
-                buvid3 = get_spi_buvid_sync()["b_3"]
-            cookies["buvid3"] = buvid3
-        else:
-            cookies["buvid3"] = self.credential.buvid3
-        # cookies["Domain"] = ".bilibili.com"
-
-        if settings.request_log:
-            settings.logger.info(self)
-        if self.sign:
-            appkey = "4409e2ce8ffd12b8"
-            appsec = "59b43e04ad6965f34319062b478f83dd"
-            if self.method in ["POST", "DELETE", "PATCH"]:
-                self.data["appkey"] = appkey
-                self.data = dict(sorted(self.data.items()))
-                self.data["sign"] = hashlib.md5(
-                    (urllib.parse.urlencode(self.data) + appsec).encode("utf-8")
-                ).hexdigest()
-            else:
-                self.params["appkey"] = appkey
-                self.params = dict(sorted(self.params.items()))
-                self.params["sign"] = hashlib.md5(
-                    (urllib.parse.urlencode(self.params) + appsec).encode("utf-8")
-                ).hexdigest()
-
-        config = {
-            "url": self.url,
-            "method": self.method,
-            "data": self.data,
-            "params": self.params,
-            "files": self.files,
-            "cookies": cookies,
-            "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
-            "timeout": settings.timeout,
-        }
-        config.update(kwargs)
-
-        if self.json_body:
-            config["headers"]["Content-Type"] = "application/json"
-            config["data"] = json.dumps(config["data"])
-
-        return config
-
-    async def _prepare_request(self, **kwargs) -> dict:
-        """
-        准备请求的配置参数
-
-        Args:
-            **kwargs: 其他额外的请求配置参数
-
-        Returns:
-            dict: 包含请求的配置参数
-        """
-        # 如果接口需要 Credential 且未传入则报错 (默认值为 Credential())
-        if self.verify:
-            self.credential.raise_for_no_sessdata()
-
-        # 请求为非 GET 且 no_csrf 不为 True 时要求 bili_jct
-        if self.method != "GET" and not self.no_csrf:
-            self.credential.raise_for_no_bili_jct()
-
-        # jsonp
-        if self.params.get("jsonp") == "jsonp":
-            self.params["callback"] = "callback"
-
-        # 这东西不放在前面工作不了，不到
-        if self.wbi2:
-            # -352 https://github.com/Nemo2011/bilibili-api/issues/595 需要跟进
-            dm_rand = "ABCDEFGHIJK"
-            self.params.update(
-                {
-                    "dm_img_list": "[]",  # 鼠标/键盘操作记录
-                    "dm_img_str": "".join(random.sample(dm_rand, 2)),
-                    "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
-                    "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
-                }
-            )
-
-        if self.wbi:
-            global wbi_mixin_key
-            if wbi_mixin_key == "":
-                wbi_mixin_key = await get_mixin_key(credential=self.credential)
-            enc_wbi(self.params, wbi_mixin_key)
-
-        # 自动添加 csrf
-        if (
-            not self.no_csrf
-            and self.verify
-            and self.method in ["POST", "DELETE", "PATCH"]
-        ):
-            self.data["csrf"] = self.credential.bili_jct
-            self.data["csrf_token"] = self.credential.bili_jct
-
-        cookies = self.credential.get_cookies()
-
-        if self.credential.buvid3 is None or self.credential.buvid3 == "":
-            if self.url != API["info"]["spi"]["url"]:
-                cookies["buvid3"] = await get_buvid3()
-        else:
-            cookies["buvid3"] = self.credential.buvid3
-        # cookies["Domain"] = ".bilibili.com"
-
+        if cookies["buvid3"] == "":
+            cookies["buvid3"] = (await get_buvid())[0]
         cookies["opus-goback"] = "1"
-
+        # bili_ticket
         if self.bili_ticket:
             cookies["bili_ticket"] = await get_bili_ticket(self.credential)
             cookies["bili_ticket_expires"] = str(int(time.time()) + 2 * 86400)
-            if settings.request_log:
-                settings.logger.info(
-                    f'使用 bili_ticket [{cookies["bili_ticket"]}] expires [{cookies["bili_ticket_expires"]}]'
-                )
-
-        if settings.request_log:
-            settings.logger.info(self)
+        # APP 鉴权
         if self.sign:
-            appkey = "4409e2ce8ffd12b8"
-            appsec = "59b43e04ad6965f34319062b478f83dd"
             if self.method in ["POST", "DELETE", "PATCH"]:
-                self.data["appkey"] = appkey
-                self.data = dict(sorted(self.data.items()))
-                self.data["sign"] = hashlib.md5(
-                    (urllib.parse.urlencode(self.data) + appsec).encode("utf-8")
-                ).hexdigest()
+                self.data = _enc_sign(self.data)
             else:
-                self.params["appkey"] = appkey
-                self.params = dict(sorted(self.params.items()))
-                self.params["sign"] = hashlib.md5(
-                    (urllib.parse.urlencode(self.params) + appsec).encode("utf-8")
-                ).hexdigest()
-
+                self.params = _enc_sign(self.params)
+        # 初步 params
         config = {
-            "url": self.url,
             "method": self.method,
-            "data": self.data,
+            "url": self.url,
             "params": self.params,
+            "data": self.data,
             "files": self.files,
             "cookies": cookies,
             "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
-            "timeout": (
-                settings.timeout
-                if settings.http_client == settings.HTTPClient.HTTPX
-                else aiohttp.ClientTimeout(total=settings.timeout)
-            ),
         }
-        config.update(kwargs)
-
+        # json_body
         if self.json_body:
             config["headers"]["Content-Type"] = "application/json"
             config["data"] = json.dumps(config["data"])
 
-        if settings.http_client == settings.HTTPClient.AIOHTTP and not self.json_body:
-            config["data"].update(config["files"])
-            if config["data"] != {}:
-                data = aiohttp.FormData()
-                for key, val in config["data"].items():
-                    data.add_field(key, val)
-                config["data"] = data
-            config.pop("files")
-            if settings.proxy != "":
-                config["proxy"] = settings.proxy
-        elif settings.http_client == settings.HTTPClient.AIOHTTP:
-            # 舍去 files
-            config.pop("files")
-
         return config
 
-    def _get_resp_text_sync(self, resp: httpx.Response):
-        return resp.text
-
-    async def _get_resp_text(self, resp: Union[httpx.Response, aiohttp.ClientResponse]):
-        if isinstance(resp, httpx.Response):
-            return resp.text
-        else:
-            return await resp.text()
-
-    @retry_sync()
-    def request_sync(self, raw: bool = False, **kwargs) -> Union[int, str, dict]:
-        """
-        向接口发送请求。
-
-        Returns:
-            接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
-        """
-        self._prepare_params_data()
-        config = self._prepare_request_sync(**kwargs)
-        session = get_httpx_sync_session()
-        session.cookies = config.pop("cookies")
-        resp = session.request(**config)
-        try:
-            resp.raise_for_status()
-        except httpx.HTTPStatusError as e:
-            raise NetworkException(resp.status_code, str(resp.status_code))
-        real_data = self._process_response(
-            resp, self._get_resp_text_sync(resp), raw=raw
-        )
-        return real_data
-
-    @retry()
-    async def request(
-        self, raw: bool = False, byte: bool = False, **kwargs
-    ) -> Union[int, str, dict]:
-        """
-        向接口发送请求。
-
-        Returns:
-            接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
-        """
-        self._prepare_params_data()
-        config = await self._prepare_request(**kwargs)
-        session: Union[httpx.AsyncClient, aiohttp.ClientSession]
-        # 判断http_client的类型
-        if settings.http_client == settings.HTTPClient.HTTPX:
-            session = get_session()
-            session.cookies = config.pop("cookies")
-            resp = await session.request(**config)
-            try:
-                resp.raise_for_status()
-            except httpx.HTTPStatusError as e:
-                raise NetworkException(resp.status_code, str(resp.status_code))
-            if byte:
-                ret = resp.read()
-                if settings.request_log and settings.request_log_show_response:
-                    settings.logger.info(f"获得字节数据\n{str(ret)}")
-                return ret
-            real_data = self._process_response(
-                resp, await self._get_resp_text(resp), raw=raw
-            )
-            return real_data
-        elif settings.http_client == settings.HTTPClient.AIOHTTP:
-            session = get_aiohttp_session()
-            async with session.request(**config) as resp:
-                try:
-                    resp.raise_for_status()
-                except aiohttp.ClientResponseError as e:
-                    raise NetworkException(e.status, e.message)
-                if byte:
-                    ret = await resp.read()
-                    if settings.request_log and settings.request_log_show_response:
-                        settings.logger.info(f"获得字节数据\n{str(ret)}")
-                    return ret
-                real_data = self._process_response(
-                    resp, await self._get_resp_text(resp), raw=raw
-                )
-                return real_data
-
     def _process_response(
-        self,
-        resp: Union[httpx.Response, aiohttp.ClientResponse],
-        resp_text: str,
-        raw: bool = False,
-    ) -> Union[int, str, dict]:
-        """
-        处理接口的响应数据
-        """
+        self, resp: BiliAPIResponse, raw: bool = False
+    ) -> Union[int, str, dict, None]:
         # 检查响应头 Content-Length
         content_length = resp.headers.get("content-length")
         if content_length and int(content_length) == 0:
             return None
-
+        # 提取 json
+        resp_text = resp.utf8_text()
         if "callback" in self.params:
             # JSONP 请求
             resp_data: dict = json.loads(
@@ -663,16 +1897,10 @@ class Api:
         else:
             # JSON
             resp_data: dict = json.loads(resp_text)
-
-        if settings.request_log and settings.request_log_show_response:
-            settings.logger.info(f"获得 json 数据\n{pprint.pformat(resp_data)}")
-
         if raw:
             return resp_data
-
+        # 检查状态
         OK = resp_data.get("OK")
-
-        # 检查 code
         if not self.ignore_code:
             if OK is None:
                 code = resp_data.get("code")
@@ -689,375 +1917,79 @@ class Api:
                     raise ResponseCodeException(code, msg, resp_data)
             elif OK != 1:
                 raise ResponseCodeException(-1, "API 返回数据 OK 不为 1", resp_data)
-
-        real_data = resp_data.get("data") if OK is None else resp_data
-        if real_data is None:
-            real_data = resp_data.get("result")
+        # 自动提取 data / result 字段
+        real_data = resp_data
+        if OK is None:
+            real_data = resp_data.get("data")
+            if real_data is None:
+                real_data = resp_data.get("result")
         return real_data
 
-    @classmethod
-    def from_file(cls, path: str, credential: Union[Credential, None] = None):
+    async def _request(
+        self, raw: bool = False, byte: bool = False
+    ) -> Union[int, str, dict, bytes, None]:
+        request_log.dispatch(
+            "API_REQUEST",
+            "Api 发起请求",
+            self.__dict__,
+        )
+        config: dict = await self._prepare_request()
+        client: BiliAPIClient = get_client()
+        resp: BiliAPIResponse = await client.request(**config)
+        ret: Union[int, str, dict, bytes, None]
+        if byte:
+            ret = resp.raw
+        else:
+            ret = self._process_response(resp=resp, raw=raw)
+        request_log.dispatch(
+            "API_RESPONSE",
+            "Api 获得响应",
+            {"result": ret},
+        )
+        return ret
+
+    async def request(
+        self, raw: bool = False, byte: bool = False
+    ) -> Union[int, str, dict, bytes, None]:
         """
-        以 json 文件生成对象
+        向接口发送请求。
 
         Args:
-            path (str): 例如 user.info.info
-
-            credential (Credential, Optional): 凭据类. Defaults to None.
+            raw  (bool): 是否不提取 data 或 result 字段。 Defaults to False.
+            byte (bool): 是否直接返回字节数据。 Defaults to False.
 
         Returns:
-            api (Api): 从文件中读取的 api 信息
+            接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
         """
-        path_list = path.split(".")
-        api = get_api(path_list.pop(0))
-        for key in path_list:
-            api = api.get(key)
-        return cls(credential=credential, **api)
-
-
-async def check_valid(credential: Credential) -> bool:
-    """
-    检查 cookies 是否有效
-
-    Args:
-        credential (Credential): 凭据类
-
-    Returns:
-        bool: cookies 是否有效
-    """
-    data = await get_nav(credential)
-    return data["isLogin"]
-
-
-async def get_spi_buvid() -> dict:
-    """
-    获取 buvid3 / buvid4
-
-    Returns:
-        dict: 账号相关信息
-    """
-    return await Api(**API["info"]["spi"]).result
-
-
-def get_spi_buvid_sync() -> dict:
-    """
-    同步获取 buvid3 / buvid4
-
-    Returns:
-        dict: 账号相关信息
-    """
-    return Api(**API["info"]["spi"]).result_sync
-
-
-async def active_buvid(buvid3: str, buvid4: str) -> dict:
-    api = API["operate"]["active"]
-    sess = (
-        get_session()
-        if settings.http_client == settings.HTTPClient.HTTPX
-        else get_aiohttp_session()
-    )
-    uuid = gen_uuid_infoc()
-    payload = get_payload(uuid)
-    headers = HEADERS.copy()
-    headers["Content-Type"] = "application/json"
-    resp = await sess.request(
-        "POST",
-        api["url"],
-        data=payload,
-        headers=headers,
-        cookies={
-            "buvid3": buvid3,
-            "buvid4": buvid4,
-            "buvid_fp": gen_buvid_fp(payload, 31),
-            "_uuid": uuid,
-        },
-    )
-    if settings.http_client == settings.HTTPClient.HTTPX:
-        text = resp.text
-    else:
-        text = await resp.text()
-    text = json.loads(text)
-    if text["code"] != 0:
-        raise ExClimbWuzhiException(text["code"], text["msg"])
-    if settings.request_log:
-        settings.logger.info(f"激活 buvid3: [{buvid3}] 成功")
-
-
-def get_nav_sync(credential: Union[Credential, None] = None):
-    """
-    获取导航
-
-    Args:
-        credential (Credential, Optional): 凭据类. Defaults to None
-
-    Returns:
-        dict: 账号相关信息
-    """
-    return Api(credential=credential, **API["info"]["valid"]).result_sync
-
-
-async def get_nav(credential: Union[Credential, None] = None):
-    """
-    获取导航
-
-    Args:
-        credential (Credential, Optional): 凭据类. Defaults to None
-
-    Returns:
-        dict: 账号相关信息
-    """
-    return await Api(credential=credential, **API["info"]["valid"]).result
-
-
-def get_mixin_key_sync() -> str:
-    """
-    获取混合密钥
-
-    Returns:
-        str: 新获取的密钥
-    """
-    data = get_nav_sync()
-    wbi_img: Dict[str, str] = data["wbi_img"]
-
-    # 为什么要把里的 lambda 表达式换成函数 这不是一样的吗
-    # split = lambda key: wbi_img.get(key).split("/")[-1].split(".")[0]
-    def split(key):
-        return wbi_img.get(key).split("/")[-1].split(".")[0]
-
-    ae = split("img_url") + split("sub_url")
-    le = reduce(lambda s, i: s + (ae[i] if i < len(ae) else ""), OE, "")
-    return le[:32]
-
-
-async def get_mixin_key(credential: Credential = Credential()) -> str:
-    """
-    获取混合密钥
-
-    Returns:
-        str: 新获取的密钥
-    """
-    data = await get_nav(credential=credential)
-    wbi_img: Dict[str, str] = data["wbi_img"]
-
-    # 为什么要把里的 lambda 表达式换成函数 这不是一样的吗
-    # split = lambda key: wbi_img.get(key).split("/")[-1].split(".")[0]
-    def split(key):
-        return wbi_img.get(key).split("/")[-1].split(".")[0]
-
-    ae = split("img_url") + split("sub_url")
-    le = reduce(lambda s, i: s + (ae[i] if i < len(ae) else ""), OE, "")
-    return le[:32]
-
-
-def enc_wbi(params: dict, mixin_key: str):
-    """
-    更新请求参数
-
-    Args:
-        params (dict): 原请求参数
-
-        mixin_key (str): 混合密钥
-    """
-    params.pop("w_rid", None)  # 重试时先把原有 w_rid 去除
-    params["wts"] = int(time.time())
-    # web_location 因为没被列入参数可能炸一些接口 比如 video.get_ai_conclusion
-    # 但 video.get_download_url 的 web_location 不是这东西
-    if not params.get("web_location"):
-        params["web_location"] = 1550101
-    Ae = urlencode(sorted(params.items()))
-    params["w_rid"] = hashlib.md5((Ae + mixin_key).encode(encoding="utf-8")).hexdigest()
-
-
-def hmac_sha256(key: str, message: str) -> str:
-    """
-    使用HMAC-SHA256算法对给定的消息进行加密
-    :param key: 密钥
-    :param message: 要加密的消息
-    :return: 加密后的哈希值
-    """
-    # 将密钥和消息转换为字节串
-    key = key.encode("utf-8")
-    message = message.encode("utf-8")
-
-    # 创建HMAC对象，使用SHA256哈希算法
-    hmac_obj = hmac.new(key, message, hashlib.sha256)
-
-    # 计算哈希值
-    hash_value = hmac_obj.digest()
-
-    # 将哈希值转换为十六进制字符串
-    hash_hex = hash_value.hex()
-
-    return hash_hex
-
-
-async def get_bili_ticket(credential: Credential = None) -> str:
-    """
-    获取 bili_ticket，但目前没用到，暂时不启用
-
-    https://github.com/SocialSisterYi/bilibili-API-collect/issues/903
-
-    Returns:
-        str: bili_ticket
-    """
-    credential = credential if credential else Credential()
-    o = hmac_sha256("XgwSnGZ1p", f"ts{int(time.time())}")
-    url = "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket"
-    params = {
-        "key_id": "ec02",
-        "hexsign": o,
-        "context[ts]": f"{int(time.time())}",
-        "csrf": "",
-    }
-    return (
-        await Api(method="POST", url=url, no_csrf=True, credential=credential)
-        .update_params(**params)
-        .result
-    )["ticket"]
-
-
-def get_httpx_sync_session() -> httpx.Client:
-    """
-    获取当前模块的 httpx.Client 对象，用于自定义请求
-
-    Returns:
-        httpx.Client
-    """
-    global __httpx_sync_session
-    global last_proxy
-
-    if __httpx_sync_session is None or last_proxy != settings.proxy:
-        if settings.proxy != "":
-            last_proxy = settings.proxy
-            proxies = {"all://": settings.proxy}
-            session = httpx.Client(proxies=proxies)  # type: ignore
-        else:
-            last_proxy = ""
-            session = httpx.Client()
-        __httpx_sync_session = session
-
-    return __httpx_sync_session
-
-
-def set_httpx_sync_session(session: httpx.Client) -> None:
-    """
-    用户手动设置 Session
-
-    Args:
-        session (httpx.Client):  httpx.Client 实例。
-    """
-    global __httpx_sync_session
-    __httpx_sync_session = session
-
-
-def get_session() -> httpx.AsyncClient:
-    """
-    获取当前模块的 httpx.AsyncClient 对象，用于自定义请求
-
-    Returns:
-        httpx.AsyncClient
-    """
-    global __httpx_session_pool, last_proxy
-    loop = asyncio.get_event_loop()
-    session = __httpx_session_pool.get(loop, None)
-    if session is None or last_proxy != settings.proxy:
-        if settings.proxy != "":
-            last_proxy = settings.proxy
-            session = httpx.AsyncClient(proxy=settings.proxy, timeout=settings.timeout)  # type: ignore
-        else:
-            last_proxy = ""
-            session = httpx.AsyncClient(timeout=settings.timeout)
-        __httpx_session_pool[loop] = session
-
-    return session
-
-
-def set_session(session: httpx.AsyncClient) -> None:
-    """
-    用户手动设置 Session
-
-    Args:
-        session (httpx.AsyncClient):  httpx.AsyncClient 实例。
-    """
-    loop = asyncio.get_event_loop()
-    __httpx_session_pool[loop] = session
-
-
-def get_aiohttp_session() -> aiohttp.ClientSession:
-    """
-    获取当前模块的 aiohttp.ClientSession 对象，用于自定义请求
-
-    Returns:
-        aiohttp.ClientSession
-    """
-    loop = asyncio.get_event_loop()
-    session = __aiohttp_session_pool.get(loop, None)
-    if session is None:
-        session = aiohttp.ClientSession(
-            loop=loop, connector=aiohttp.TCPConnector(), trust_env=True
-        )
-        __aiohttp_session_pool[loop] = session
-
-    return session
-
-
-def set_aiohttp_session(session: aiohttp.ClientSession) -> None:
-    """
-    用户手动设置 Session
-
-    Args:
-        session (aiohttp.ClientSession):  aiohttp.ClientSession 实例。
-    """
-    loop = asyncio.get_event_loop()
-    __aiohttp_session_pool[loop] = session
-
-
-def to_form_urlencoded(data: dict) -> str:
-    temp = []
-    for [k, v] in data.items():
-        temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
-
-    return "&".join(temp)
-
-
-async def generate_buvid3() -> None:
-    global buvid3
-    resp = await get_spi_buvid()
-    buvid3 = resp["b_3"]
-    await active_buvid(buvid3, resp["b_4"])
-
-
-async def get_buvid3() -> str:
-    """
-    获取已激活的生成的 buvid3
-
-    Returns:
-        str: buvid3
-    """
-    if buvid3 == "":
-        await generate_buvid3()
-    return buvid3
-
-
-@atexit.register
-def __clean() -> None:
-    """
-    程序退出清理操作。
-    """
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        return
-
-    async def __clean_task():
-        s0 = __aiohttp_session_pool.get(loop, None)
-        if s0 is not None:
-            await s0.close()
-        s1 = __httpx_session_pool.get(loop, None)
-        if s1 is not None:
-            await s1.aclose()
-
-    if loop.is_closed():
-        loop.run_until_complete(__clean_task())
-    else:
-        loop.create_task(__clean_task())
+        times = request_settings.get_wbi_retry_times()
+        loop = times
+        while loop != 0:
+            if loop != times:
+                request_log.dispatch(
+                    "ANTI_SPIDER",
+                    "反爬虫",
+                    {"msg": f"wbi 第 {times - loop} 次重试"},
+                )
+            loop -= 1
+            try:
+                return await self._request(raw=raw, byte=byte)
+            except json.decoder.JSONDecodeError:
+                continue
+            except ResponseCodeException as e:
+                # -403 时尝试重新获取 wbi_mixin_key 可能过期了
+                if e.code == -403:
+                    refresh_wbi_mixin_key()
+                    continue
+                # 不是 -403 错误直接报错
+                raise e
+        raise WbiRetryTimesExceedException()
+
+    @property
+    async def result(self) -> Union[int, str, dict, bytes, None]:
+        """
+        获取请求结果
+        """
+        return await self.request()
+
+
+################################################## END Api ##################################################

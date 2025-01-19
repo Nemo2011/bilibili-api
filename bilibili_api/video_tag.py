@@ -6,12 +6,9 @@ bilibili_api.video_tag
 
 from typing import Optional
 
-import httpx
-
 from .exceptions import *
 from .utils.utils import get_api
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 
 API = get_api("video_tag")
 API_video = get_api("video")

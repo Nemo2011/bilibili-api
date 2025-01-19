@@ -14,16 +14,13 @@ import datetime
 from enum import Enum
 from typing import Any, List, Tuple, Union, Optional
 
-from . import settings
 from .video import Video
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.danmaku import Danmaku
 from .utils.utils import get_api, raise_for_statement
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .utils.initial_state import (
     get_initial_state,
-    get_initial_state_sync,
     InitialDataType,
 )
 from .exceptions import ApiException
@@ -1426,9 +1423,8 @@ class Episode(Video):
                     self.__ep_bvid = res["epInfo"]["bvid"]
                     self.__ep_aid = bvid2aid(self.__ep_bvid)
                     return
-            except Exception as e:
-                if settings.request_log and _ != self.__initial_state_retry_times:
-                    settings.logger.info("第 %d 次重试", _ + 1)
+            except:
+                pass
         raise ApiException("重试达到最大次数")
 
     async def get_bvid(self) -> str:

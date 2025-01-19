@@ -16,8 +16,7 @@ from typing import Any, List, Tuple, Union, Optional
 from .utils import utils
 from .utils.picture import Picture
 from . import user, vote
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 from .article import Article
 from .utils import cache_pool

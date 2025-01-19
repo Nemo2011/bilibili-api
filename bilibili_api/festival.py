@@ -5,8 +5,8 @@ bilibili_api.festival
 """
 
 from typing import Optional
-from .utils.credential import Credential
 from .utils.initial_state import get_initial_state
+from .utils.network import Credential
 from .video import Video
 
 

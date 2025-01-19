@@ -17,6 +17,7 @@ def __ensure_event_loop() -> None:
         asyncio.get_event_loop()
     except:
         asyncio.set_event_loop(asyncio.new_event_loop())
+    return asyncio.get_event_loop()
 
 
 def sync(coroutine: Union[Coroutine[Any, Any, T], AsyncioFuture, ConcurrentFuture]) -> T:
@@ -32,7 +33,7 @@ def sync(coroutine: Union[Coroutine[Any, Any, T], AsyncioFuture, ConcurrentFutur
     try:
         asyncio.get_running_loop()
     except RuntimeError:
-        return asyncio.get_event_loop().run_until_complete(coroutine)
+        return __ensure_event_loop().run_until_complete(coroutine)
     else:
         with ThreadPoolExecutor() as executor:
-            return executor.submit(lambda x: asyncio.get_event_loop().run_until_complete(x), coroutine).result()
+            return executor.submit(lambda x: __ensure_event_loop().run_until_complete(x), coroutine).result()

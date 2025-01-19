@@ -17,8 +17,7 @@ from enum import Enum
 from typing import Union, Optional
 
 from .utils.utils import get_api
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .exceptions.ArgsException import ArgsException
 
 API = get_api("common")

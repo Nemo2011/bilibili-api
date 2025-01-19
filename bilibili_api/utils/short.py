@@ -6,9 +6,7 @@ bilibili_api.utils.short
 
 from typing import Optional
 
-from .. import settings
-from .credential import Credential
-from .network import get_session, get_aiohttp_session
+from .network import get_client, Credential
 
 
 async def get_real_url(short_url: str, credential: Optional[Credential] = None) -> str:
@@ -28,12 +26,9 @@ async def get_real_url(short_url: str, credential: Optional[Credential] = None) 
     credential = credential if credential else Credential()
 
     try:
-        if settings.http_client == settings.HTTPClient.HTTPX:
-            resp = await get_session().head(url=str(short_url), follow_redirects=True)
-        else:
-            resp = await get_aiohttp_session().head(
-                url=str(short_url), allow_redirects=True
-            )
+        resp = await get_client().request(
+            method="HEAD", url=str(short_url), allow_redirects=True
+        )
         u = resp.url
 
         return str(u)

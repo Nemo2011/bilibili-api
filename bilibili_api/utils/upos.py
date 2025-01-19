@@ -8,11 +8,9 @@ import httpx
 import asyncio
 from asyncio.tasks import create_task
 
-from .utils import get_api
 from .network import get_session
 from ..exceptions.NetworkException import NetworkException
 from ..exceptions.ResponseCodeException import ResponseCodeException
-from ..exceptions.ApiException import ApiException
 
 
 class UposFile:

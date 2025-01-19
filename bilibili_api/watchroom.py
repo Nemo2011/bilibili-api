@@ -10,8 +10,7 @@ import time
 from enum import Enum
 from typing import Dict, List, Union
 
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .utils.utils import get_api
 
 API = get_api("watchroom")

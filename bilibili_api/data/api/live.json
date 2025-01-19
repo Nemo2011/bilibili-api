@@ -45,7 +45,7 @@
     "danmu_info": {
       "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo",
       "method": "GET",
-      "verify": true,
+      "verify": false,
       "params": {
         "id": "int: 真实房间号"
       },

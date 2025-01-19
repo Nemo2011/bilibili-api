@@ -10,8 +10,7 @@ from typing import List, Union, Optional
 from . import user
 from .video import Video
 from .utils.utils import join, get_api, raise_for_statement
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .exceptions.ArgsException import ArgsException
 
 API = get_api("favorite-list")

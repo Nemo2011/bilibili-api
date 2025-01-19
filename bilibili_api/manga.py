@@ -10,13 +10,10 @@ from enum import Enum
 from urllib.parse import urlparse
 from typing import Dict, List, Union, Optional
 
-import httpx
-
 from bilibili_api.utils.utils import get_api
 from bilibili_api.exceptions import ArgsException
 from bilibili_api.utils.picture import Picture
-from bilibili_api.utils.credential import Credential
-from bilibili_api.utils.network import HEADERS, Api
+from bilibili_api.utils.network import HEADERS, Api, Credential
 
 from Cryptodome.PublicKey import ECC
 

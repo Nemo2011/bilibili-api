@@ -8,11 +8,8 @@ import json
 from enum import Enum
 from typing import List, Union, Optional
 
-import httpx
-
 from .utils.utils import get_api, raise_for_statement
-from .utils.credential import Credential
-from .utils.network import Api, HEADERS
+from .utils.network import Api, HEADERS, Credential
 
 API_USER = get_api("user")
 API = get_api("channel-series")

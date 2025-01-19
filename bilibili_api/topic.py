@@ -10,8 +10,7 @@ from typing import Union, Optional
 from . import dynamic
 from .user import get_self_info
 from .utils.utils import get_api
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 
 API = get_api("topic")
 

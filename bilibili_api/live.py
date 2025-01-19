@@ -15,13 +15,11 @@ from typing import Any, List, Union
 
 import brotli
 import aiohttp
-from aiohttp.client_ws import ClientWebSocketResponse
 
 from .utils.utils import get_api, raise_for_statement
 from .utils.danmaku import Danmaku
-from .utils.network import get_aiohttp_session, Api, HEADERS
+from .utils.network import Credential, Api, HEADERS, get_client, BiliWsMsgType
 from .utils.AsyncEvent import AsyncEvent
-from .utils.credential import Credential
 from .exceptions.LiveException import LiveException
 
 API = get_api("live")
@@ -886,6 +884,10 @@ class LiveDanmaku(AsyncEvent):
     """
     Websocket 实时获取直播弹幕
 
+    Extends: AsyncEvent
+
+    Logger: LiveDanmaku().logger
+
     Events：
     + DANMU_MSG: 用户发送弹幕
     + SEND_GIFT: 礼物
@@ -1015,7 +1017,7 @@ class LiveDanmaku(AsyncEvent):
             self.__tasks.pop().cancel()
 
         self.__status = self.STATUS_CLOSED
-        await self.__ws.close()  # type: ignore
+        await self.__client.ws_close(self.__ws)  # type: ignore
 
         self.logger.info("连接已关闭")
 
@@ -1040,7 +1042,7 @@ class LiveDanmaku(AsyncEvent):
 
         # 连接直播间
         self.logger.debug("准备连接直播间")
-        session = get_aiohttp_session()
+        self.__client = get_client()
         available_hosts: List[dict] = conf["host_list"]
         retry = self.max_retry
         host = None
@@ -1049,7 +1051,7 @@ class LiveDanmaku(AsyncEvent):
         async def on_timeout(ev):
             # 连接超时
             self.err_reason = "心跳响应超时"
-            await self.__ws.close()  # type: ignore
+            await self.__client.ws_close(self.__ws)  # type: ignore
 
         while True:
             self.err_reason = ""
@@ -1070,35 +1072,35 @@ class LiveDanmaku(AsyncEvent):
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
-                async with session.ws_connect(uri, headers=HEADERS.copy()) as ws:
+                self.__ws = await self.__client.ws_create(uri, headers=HEADERS.copy())
 
-                    @self.on("VERIFICATION_SUCCESSFUL")
-                    async def on_verification_successful(data):
-                        # 新建心跳任务
-                        while len(self.__tasks) > 0:
-                            self.__tasks.pop().cancel()
-                        self.__tasks.append(asyncio.create_task(self.__heartbeat(ws)))
+                @self.on("VERIFICATION_SUCCESSFUL")
+                async def on_verification_successful(data):
+                    # 新建心跳任务
+                    while len(self.__tasks) > 0:
+                        self.__tasks.pop().cancel()
+                    self.__tasks.append(asyncio.create_task(self.__heartbeat()))
 
-                    self.__ws = ws
-                    self.logger.debug("连接主机成功, 准备发送认证信息")
-                    await self.__send_verify_data(ws, conf["token"])
+                self.logger.debug("连接主机成功, 准备发送认证信息")
+                await self.__send_verify_data(conf["token"])
 
-                    async for msg in ws:
-                        if msg.type == aiohttp.WSMsgType.BINARY:
-                            self.logger.debug(f"收到原始数据：{msg.data}")
-                            await self.__handle_data(msg.data)
-
-                        elif msg.type == aiohttp.WSMsgType.ERROR:
-                            self.__status = self.STATUS_ERROR
-                            self.logger.error("出现错误")
-
-                        elif msg.type == aiohttp.WSMsgType.CLOSING:
-                            self.logger.debug("连接正在关闭")
-                            self.__status = self.STATUS_CLOSING
-
-                        elif msg.type == aiohttp.WSMsgType.CLOSED:
-                            self.logger.info("连接已关闭")
-                            self.__status = self.STATUS_CLOSED
+                while True:
+                    try:
+                        data, flag = await self.__client.ws_recv(self.__ws)
+                    except Exception as e:
+                        self.__status = self.STATUS_ERROR
+                        self.logger.error("出现错误")
+                        break
+                    if flag == BiliWsMsgType.BINARY:
+                        self.logger.debug(f"收到原始数据：{data}")
+                        await self.__handle_data(data)
+                    elif flag == BiliWsMsgType.CLOSING:
+                        self.logger.debug("连接正在关闭")
+                        self.__status = self.STATUS_CLOSING
+                    elif flag == BiliWsMsgType.CLOSED:
+                        self.logger.info("连接已关闭")
+                        self.__status = self.STATUS_CLOSED
+                        break
 
                 # 正常断开情况下跳出循环
                 if self.__status != self.STATUS_CLOSED or self.err_reason:
@@ -1110,7 +1112,7 @@ class LiveDanmaku(AsyncEvent):
                     break
 
             except Exception as e:
-                await ws.close()
+                await self.__client.ws_close(self.__ws)
                 self.logger.warning(e)
                 if retry <= 0 or len(available_hosts) == 0:
                     self.logger.error("无法连接服务器")
@@ -1175,15 +1177,14 @@ class LiveDanmaku(AsyncEvent):
             else:
                 self.logger.warning("检测到未知的数据包类型，无法处理")
 
-    async def __send_verify_data(self, ws: ClientWebSocketResponse, token: str) -> None:
+    async def __send_verify_data(self, token: str) -> None:
         # 没传入 dedeuserid 可以试图 live.get_self_info
         if not self.credential.has_dedeuserid():
             try:
                 info = await get_self_info(self.credential)
                 self.credential.dedeuserid = str(info["uid"])
             except:
-                pass  # 留到下面一起抛出错误
-        self.credential.raise_for_no_dedeuserid()
+                self.credential.dedeuserid = 0
         verifyData = {
             "uid": int(self.credential.dedeuserid),
             "roomid": self.__room_real_id,
@@ -1195,10 +1196,10 @@ class LiveDanmaku(AsyncEvent):
         }
         data = json.dumps(verifyData).encode()
         await self.__send(
-            data, self.PROTOCOL_VERSION_HEARTBEAT, self.DATAPACK_TYPE_VERIFY, ws
+            data, self.PROTOCOL_VERSION_HEARTBEAT, self.DATAPACK_TYPE_VERIFY
         )
 
-    async def __heartbeat(self, ws: ClientWebSocketResponse) -> None:
+    async def __heartbeat(self) -> None:
         """
         定时发送心跳包
         """
@@ -1210,14 +1211,14 @@ class LiveDanmaku(AsyncEvent):
         while True:
             if self.__heartbeat_timer == 0:
                 self.logger.debug("发送心跳包")
-                await ws.send_bytes(HEARTBEAT)
+                await self.__client.ws_send(self.__ws, HEARTBEAT)
                 heartbeat_url = "https://live-trace.bilibili.com/xlive/rdata-interface/v1/heartbeat/webHeartBeat?pf=web&hb="
                 hb = str(
                     base64.b64encode(f"60|{self.room_display_id}|1|0".encode("utf-8")),
                     "utf-8",
                 )
                 await Api(
-                    method="GET", url=heartbeat_url, json_body=True
+                    method="GET", url=heartbeat_url, json_body=True, comment="[直播心跳包]"
                 ).update_params(**{"hb": hb, "pf": "web"}).result
             elif self.__heartbeat_timer <= -30:
                 # 视为已异常断开连接，发布 TIMEOUT 事件
@@ -1232,14 +1233,13 @@ class LiveDanmaku(AsyncEvent):
         data: bytes,
         protocol_version: int,
         datapack_type: int,
-        ws: ClientWebSocketResponse,
     ) -> None:
         """
         自动打包并发送数据
         """
         data = self.__pack(data, protocol_version, datapack_type)
         self.logger.debug(f"发送原始数据：{data}")
-        await ws.send_bytes(data)
+        await self.__client.ws_send(self.__ws, data)
 
     @staticmethod
     def __pack(data: bytes, protocol_version: int, datapack_type: int) -> bytes:

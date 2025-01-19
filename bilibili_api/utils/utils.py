@@ -10,6 +10,7 @@ import random
 from typing import List, TypeVar
 from ..exceptions import StatementException
 from datetime import datetime
+from urllib.parse import quote
 
 
 def get_api(field: str, *args) -> dict:
@@ -211,6 +212,14 @@ def get_deviceid(separator: str = "-", is_lowercase: bool = False) -> str:
 def raise_for_statement(statement: bool, msg: str = "未满足条件") -> None:
     if not statement:
         raise StatementException(msg=msg)
+
+
+def to_form_urlencoded(data: dict) -> str:
+    temp = []
+    for [k, v] in data.items():
+        temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
+
+    return "&".join(temp)
 
 
 def to_timestamps(time_start, time_end):

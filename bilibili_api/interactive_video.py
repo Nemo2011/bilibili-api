@@ -16,18 +16,14 @@ import zipfile
 from urllib import parse
 from random import randint as rand
 from asyncio import CancelledError, create_task
-from typing import List, Tuple, Union, Callable, Coroutine
+from typing import List, Tuple, Union, Coroutine
 
-import httpx
+from.exceptions import ApiException
 
-from bilibili_api.exceptions import ApiException
-
-from . import settings
 from .video import Video, VideoDownloadURLDataDetecter
 from .utils.utils import get_api
 from .utils.AsyncEvent import AsyncEvent
-from .utils.credential import Credential
-from .utils.network import Api, get_session, get_buvid3
+from .utils.network import Api, get_client, get_buvid, Credential
 
 API = get_api("interactive_video")
 
@@ -661,7 +657,7 @@ class InteractiveVideo(Video):
             "screen": 0,
             "platform": "pc",
             "choices": "",
-            "buvid": await get_buvid3(),
+            "buvid": (await get_buvid())[0],
         }
         if edge_id is not None:
             params["edge_id"] = edge_id
@@ -791,46 +787,47 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.__detect_params = stream_detecting_params
         self.__fetching_nodes_retry_times = fetching_nodes_retry_times
 
-    async def __download(self, url: str, out: str) -> None:
-        sess = get_session()
-        async with sess.stream(
-            "GET",
-            url,
-            headers={
-                "User-Agent": "Mozilla/5.0",
-                "Referer": "https://www.bilibili.com",
-            },
-        ) as resp:
-            resp.raise_for_status()
+    # FIXME: Just use curl_cffi or add a new function to BiliAPIClient or remove this default function or don't use streaming request?
+    # async def __download(self, url: str, out: str) -> None:
+    #     sess = get_session()
+    #     async with sess.stream(
+    #         "GET",
+    #         url,
+    #         headers={
+    #             "User-Agent": "Mozilla/5.0",
+    #             "Referer": "https://www.bilibili.com",
+    #         },
+    #     ) as resp:
+    #         resp.raise_for_status()
 
-            if os.path.exists(out):
-                os.remove(out)
+    #         if os.path.exists(out):
+    #             os.remove(out)
 
-            parent = os.path.dirname(out)
-            if not os.path.exists(parent):
-                os.mkdir(parent)
+    #         parent = os.path.dirname(out)
+    #         if not os.path.exists(parent):
+    #             os.mkdir(parent)
 
-            self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
+    #         self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
 
-            all_length = int(resp.headers["Content-Length"])
-            parts = all_length // 1024 + (1 if all_length % 1024 != 0 else 0)
-            cnt = 0
-            start_time = time.perf_counter()
+    #         all_length = int(resp.headers["Content-Length"])
+    #         parts = all_length // 1024 + (1 if all_length % 1024 != 0 else 0)
+    #         cnt = 0
+    #         start_time = time.perf_counter()
 
-            with open(out, "wb") as f:
-                async for chunk in resp.aiter_bytes(1024):
-                    cnt += 1
-                    self.dispatch(
-                        "DOWNLOAD_PART",
-                        {
-                            "done": cnt,
-                            "total": parts,
-                            "time": int(time.perf_counter() - start_time),
-                        },
-                    )
-                    f.write(chunk)
+    #         with open(out, "wb") as f:
+    #             async for chunk in resp.aiter_bytes(1024):
+    #                 cnt += 1
+    #                 self.dispatch(
+    #                     "DOWNLOAD_PART",
+    #                     {
+    #                         "done": cnt,
+    #                         "total": parts,
+    #                         "time": int(time.perf_counter() - start_time),
+    #                     },
+    #                 )
+    #                 f.write(chunk)
 
-            self.dispatch("DOWNLOAD_SUCCESS")
+    #         self.dispatch("DOWNLOAD_SUCCESS")
 
     async def __main(self) -> None:
         # 初始化
@@ -910,10 +907,6 @@ class InteractiveVideoDownloader(AsyncEvent):
                     break
                 except Exception as e:
                     retry -= 1
-                    if settings.request_log:
-                        settings.logger.info(
-                            "第 %d 次重试", self.__fetching_nodes_retry_times - retry
-                        )
                     if retry < 0:
                         raise ApiException("重试达到最大次数")
 
@@ -1070,10 +1063,6 @@ class InteractiveVideoDownloader(AsyncEvent):
                     break
                 except Exception as e:
                     retry -= 1
-                    if settings.request_log:
-                        settings.logger.info(
-                            "第 %d 次重试", self.__fetching_nodes_retry_times - retry
-                        )
                     if retry < 0:
                         raise ApiException("重试达到最大次数")
 
@@ -1294,10 +1283,6 @@ class InteractiveVideoDownloader(AsyncEvent):
                     break
                 except Exception as e:
                     retry -= 1
-                    if settings.request_log:
-                        settings.logger.info(
-                            "第 %d 次重试", self.__fetching_nodes_retry_times - retry
-                        )
                     if retry < 0:
                         raise ApiException("重试达到最大次数")
 

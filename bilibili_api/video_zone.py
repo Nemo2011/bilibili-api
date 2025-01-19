@@ -12,8 +12,7 @@ from typing import Dict, List, Tuple, Union
 
 from .utils.utils import get_api
 from .exceptions import ArgsException
-from .utils.credential import Credential
-from .utils.network import Api
+from .utils.network import Api, Credential
 
 API = get_api("video_zone")
 
