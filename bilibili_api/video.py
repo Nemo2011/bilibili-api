@@ -1877,7 +1877,7 @@ class VideoOnlineMonitor(AsyncEvent):
             except:
                 self.logger.warning("连接被异常断开")
                 await self.__cancel_all_tasks()
-                self.dispatch("ERROR", data)
+                self.dispatch("ERROR", "")
             if flag == BiliWsMsgType.BINARY:
                 data = self.__unpack(data)
                 self.logger.debug(f"收到消息：{data}")
