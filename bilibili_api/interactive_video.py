@@ -18,7 +18,7 @@ from random import randint as rand
 from asyncio import CancelledError, create_task
 from typing import List, Tuple, Union, Coroutine
 
-from.exceptions import ApiException
+from .exceptions import ApiException
 
 from .video import Video, VideoDownloadURLDataDetecter
 from .utils.utils import get_api

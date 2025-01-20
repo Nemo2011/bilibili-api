@@ -58,4 +58,3 @@ async def get_initial_state(
         except json.JSONDecodeError:
             raise ApiException("信息解析错误")
         return content, content_type
-

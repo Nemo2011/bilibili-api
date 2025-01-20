@@ -307,7 +307,9 @@ class Note:
                 if not isinstance(field["insert"], str):
                     if "tag" in field["insert"].keys():
                         node = VideoCardNode()
-                        node.aid = await get_cid_info(field["insert"]["tag"]["cid"])["cid"]
+                        node.aid = await get_cid_info(field["insert"]["tag"]["cid"])[
+                            "cid"
+                        ]
                         self.__children.append(node)
                     elif "imageUpload" in field["insert"].keys():
                         node = ImageNode()

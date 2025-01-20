@@ -1946,7 +1946,7 @@ class VideoOnlineMonitor(AsyncEvent):
                     VideoOnlineMonitor.Datapack.CLIENT_HEARTBEAT,
                     index,
                     b"[object Object]",
-                )
+                ),
             )
             index += 1
             await asyncio.sleep(self.__heartbeat_interval)

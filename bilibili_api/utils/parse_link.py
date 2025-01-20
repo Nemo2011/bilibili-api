@@ -498,9 +498,7 @@ async def parse_space_favorite_list(
                     api = get_api("favorite-list")["info"]["list_list"]
                     params = {"up_mid": uid, "type": 2}
                     favorite_lists = await (
-                        Api(**api, credential=credential)
-                        .update_params(**params)
-                        .result
+                        Api(**api, credential=credential).update_params(**params).result
                     )
 
                     if favorite_lists == None:

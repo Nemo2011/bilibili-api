@@ -23,7 +23,7 @@ async def download(url: str, path: str) -> None:
             cur += file.write(chunk)
             print(f"{path} [{cur}/{tot}]", end="\r")
     print()
-    await asyncio.sleep(1.0) # give bilibili a rest
+    await asyncio.sleep(1.0)  # give bilibili a rest
 
 
 def download_interactive_video(bvid: str, out: str):

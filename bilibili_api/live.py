@@ -1217,7 +1217,10 @@ class LiveDanmaku(AsyncEvent):
                     "utf-8",
                 )
                 await Api(
-                    method="GET", url=heartbeat_url, json_body=True, comment="[直播心跳包]"
+                    method="GET",
+                    url=heartbeat_url,
+                    json_body=True,
+                    comment="[直播心跳包]",
                 ).update_params(**{"hb": hb, "pf": "web"}).result
             elif self.__heartbeat_timer <= -30:
                 # 视为已异常断开连接，发布 TIMEOUT 事件
