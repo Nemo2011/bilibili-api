@@ -4,17 +4,35 @@ ivitools.download
 下载互动视频
 """
 
+import asyncio
 import os
 
 from colorama import Fore
+from curl_cffi import requests
 
-from bilibili_api import sync, interactive_video, video
+from bilibili_api import HEADERS, interactive_video, sync, video
+
+
+async def download(url: str, path: str) -> None:
+    sess = requests.AsyncSession()
+    req = await sess.request(method="GET", url=url, headers=HEADERS, stream=True)
+    tot = req.headers.get("content-length")
+    cur = 0
+    with open(path, "wb") as file:
+        async for chunk in req.aiter_content():
+            cur += file.write(chunk)
+            print(f"{path} [{cur}/{tot}]", end="\r")
+    print()
+    await asyncio.sleep(1.0) # give bilibili a rest
 
 
 def download_interactive_video(bvid: str, out: str):
     ivideo = interactive_video.InteractiveVideo(bvid)
     downloader = interactive_video.InteractiveVideoDownloader(
-        ivideo, out, stream_detecting_params={"codecs": [video.VideoCodecs.AVC]}
+        ivideo,
+        out,
+        self_download_func=download,
+        stream_detecting_params={"codecs": [video.VideoCodecs.AVC]},
     )
 
     @downloader.on("START")

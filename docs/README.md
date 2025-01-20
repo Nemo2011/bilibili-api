@@ -40,6 +40,7 @@ Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/ne
 - 调用简便，函数命名易懂，代码注释详细。
 - 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查、下载弹幕、字幕文件、专栏内容爬取等。
 - **全部是异步操作**。
+- 基于 `curl_cffi`，支持模仿浏览器指纹进行请求，同时有良好的性能。
 
 # 快速上手
 
@@ -134,15 +135,6 @@ if __name__ == '__main__':
 
 如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
 
-以下为 `API` 关于异步请求库使用的详细信息：
-
-| Feature | 同步 | 异步 | aiohttp | httpx | 备注 |
-| ------ | ---- | ----- | ------ | ------ | ---- |
-| `LiveDanmaku` & `VideoOnlineMonitor` | :x: | :white_check_mark: | :white_check_mark: | :x: | httpx 暂不支持 `WebSocket` |
-| `login` | :white_check_mark: | :x: | :x: | :white_check_mark: | 旧版登录，仅支持同步请求 |
-| `login_v2` | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | 新版登录 |
-| other | :x: | :white_check_mark: | :white_check_mark: | :white_check_mark: | |
-
 # FA♂Q
 
 **Q: 关于 API 调用的正确姿势是什么？**
@@ -171,12 +163,16 @@ A: 你的请求速度太快了。造成请求速度过快的原因可能是你�
 这种情况下，你的 IP 会暂时被封禁而无法使用，你可以设置代理绕过。
 
 ```python
-from bilibili_api import settings
+from bilibili_api import request_settings
 
-settings.proxy = "http://your-proxy.com" # 里头填写你的代理地址
+request_settings.set_proxy("http://your-proxy.com") # 里头填写你的代理地址
 
-settings.proxy = "http://username:password@your-proxy.com" # 如果需要用户名、密码
+request_settings.set_proxy("http://username:password@your-proxy.com") # 如果需要用户名、密码
 ```
+
+**Q: 我想在项目中使用这个模块，但是我的项目使用其他请求库进行网络请求（如 `aiohttp` 和 `httpx`），想要模块也同时使用它（们），可以吗？**
+
+A: 可以，但是你可能要自己动手实现模块和具体请求库的适配。详见  [自定义请求库](https://nemo2011.github.io/bilibili-api/#/request_client)
 
 **Q: 怎么没有我想要的功能？**
 

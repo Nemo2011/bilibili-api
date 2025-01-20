@@ -704,18 +704,15 @@ class InteractiveVideoDownloaderEvents(enum.Enum):
     """
     互动视频下载器事件枚举
 
-    | event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode | Is Built-In downloader event |
-    | ----- | ------- | -------- | ---------------- | -------------- | ----------------- | ------------------------- |
-    | START | 开始下载 | [x] | [x] | [x] | [x] | [ ] |
-    | GET | 获取到节点信息 | [x] | [x] | [x] | [x] | [ ] |
-    | PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] | [ ] |
-    | DOWNLOAD_START | 开始下载单个文件 | Unknown | Unknown | [ ] | Unknown | [x] |
-    | DOWNLOAD_PART | 文件分块部分完成 | Unknown | Unknown | [ ] | Unknown | [x] |
-    | DOWNLOAD_SUCCESS | 完成下载 | Unknown | Unknown | [ ] | Unknown | [x] |
-    | PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] | [ ] |
-    | SUCCESS | 下载成功 | [x] | [x] | [x] | [x] | [ ] |
-    | ABORTED | 用户暂停 | [x] | [x] | [x] | [x] | [ ] |
-    | FAILED | 下载失败 | [x] | [x] | [x] | [x] | [ ] |
+    | event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode |
+    | ----- | ------- | -------- | ---------------- | -------------- | ----------------- |
+    | START | 开始下载 | [x] | [x] | [x] | [x] |
+    | GET | 获取到节点信息 | [x] | [x] | [x] | [x] |
+    | PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] |
+    | PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] |
+    | SUCCESS | 下载成功 | [x] | [x] | [x] | [x] |
+    | ABORTED | 用户暂停 | [x] | [x] | [x] | [x] |
+    | FAILED | 下载失败 | [x] | [x] | [x] | [x] |
     """
 
     START = "START"
@@ -753,8 +750,8 @@ class InteractiveVideoDownloader(AsyncEvent):
     def __init__(
         self,
         video: InteractiveVideo,
-        out: str = "",
-        self_download_func: Union[Coroutine, None] = None,
+        out: str,
+        self_download_func: Coroutine,
         downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI,
         stream_detecting_params: dict = {},
         fetching_nodes_retry_times: int = 3,
@@ -765,7 +762,7 @@ class InteractiveVideoDownloader(AsyncEvent):
 
             out                (str)                           : 输出文件地址 (如果模式为 NODE_VIDEOS/NO_PACKAGING 则此参数表示所有节点视频的存放目录)
 
-            self_download_func (Coroutine | None)              : 自定义下载函数（需 async 函数）
+            self_download_func (Coroutine)                     : 自定义下载函数（需 async 函数）
 
             downloader_mode    (InteractiveVideoDownloaderMode): 下载模式
 
@@ -774,60 +771,17 @@ class InteractiveVideoDownloader(AsyncEvent):
             fetching_nodes_retry_times (int)                   : 获取节点时的最大重试次数
 
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
+
+        为保证视频能被成功下载，请在请求的时候加入 `bilibili_api.HEADERS` 头部。
         """
         super().__init__()
         self.__video = video
-        if self_download_func == None:
-            self.__download_func = self.__download
-        else:
-            self.__download_func = self_download_func
+        self.__download_func = self_download_func
         self.__task = None
         self.__out = out
         self.__mode = downloader_mode
         self.__detect_params = stream_detecting_params
         self.__fetching_nodes_retry_times = fetching_nodes_retry_times
-
-    # FIXME: Just use curl_cffi or add a new function to BiliAPIClient or remove this default function or don't use streaming request?
-    # async def __download(self, url: str, out: str) -> None:
-    #     sess = get_session()
-    #     async with sess.stream(
-    #         "GET",
-    #         url,
-    #         headers={
-    #             "User-Agent": "Mozilla/5.0",
-    #             "Referer": "https://www.bilibili.com",
-    #         },
-    #     ) as resp:
-    #         resp.raise_for_status()
-
-    #         if os.path.exists(out):
-    #             os.remove(out)
-
-    #         parent = os.path.dirname(out)
-    #         if not os.path.exists(parent):
-    #             os.mkdir(parent)
-
-    #         self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
-
-    #         all_length = int(resp.headers["Content-Length"])
-    #         parts = all_length // 1024 + (1 if all_length % 1024 != 0 else 0)
-    #         cnt = 0
-    #         start_time = time.perf_counter()
-
-    #         with open(out, "wb") as f:
-    #             async for chunk in resp.aiter_bytes(1024):
-    #                 cnt += 1
-    #                 self.dispatch(
-    #                     "DOWNLOAD_PART",
-    #                     {
-    #                         "done": cnt,
-    #                         "total": parts,
-    #                         "time": int(time.perf_counter() - start_time),
-    #                     },
-    #                 )
-    #                 f.write(chunk)
-
-    #         self.dispatch("DOWNLOAD_SUCCESS")
 
     async def __main(self) -> None:
         # 初始化

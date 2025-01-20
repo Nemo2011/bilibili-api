@@ -12,7 +12,6 @@ __author__ = "Nemo2011 <yimoxia@outlook.com>"
 __license__ = "GPLv3+"
 
 import sys
-import platform
 import warnings
 from typing import List
 

@@ -1791,7 +1791,7 @@ class Api:
     sign: bool = False
     data: dict = field(default_factory=dict)
     params: dict = field(default_factory=dict)
-    files: Dict[str, BiliAPIFile] = field(default_factory=Dict[str, BiliAPIFile])
+    files: Dict[str, BiliAPIFile] = field(default_factory=dict)
     headers: dict = field(default_factory=dict)
     credential: Credential = field(default_factory=Credential)
 

@@ -30,6 +30,7 @@ from .utils.network import (
     # credential
     Credential,
     # api
+    HEADERS,
     refresh_buvid,
     refresh_bili_ticket,
     refresh_wbi_mixin_key,
@@ -134,6 +135,7 @@ __all__ = [
     "GeetestMeta",
     "GeetestServerNotFoundException",
     "GeetestUndoneException",
+    "HEADERS",
     "LiveException",
     "LoginError",
     "NetworkException",
