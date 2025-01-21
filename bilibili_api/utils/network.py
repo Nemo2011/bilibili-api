@@ -31,6 +31,7 @@ from Cryptodome.Cipher import PKCS1_OAEP
 from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
 from curl_cffi import requests, CurlMime
+import curl_cffi.requests
 
 from ..exceptions import (
     ArgsException,
@@ -46,132 +47,6 @@ from ..exceptions import (
 )
 from .AsyncEvent import AsyncEvent
 from .utils import get_api, raise_for_statement
-
-################################################## BEGIN Settings ##################################################
-
-
-class RequestSettings:
-    def __init__(self):
-        self.__proxy: str = ""
-        self.__timeout: float = 5.0
-        self.__verify_ssl: bool = True
-        self.__trust_env: bool = True
-        self.__wbi_retry_times: int = 3
-
-    def get_proxy(self) -> str:
-        """
-        获取设置的代理
-
-        Returns:
-            str: 代理地址. Defaults to "".
-        """
-        return self.__proxy
-
-    def set_proxy(self, proxy: str):
-        """
-        修改设置的代理
-
-        Args:
-            proxy (str): 代理地址
-        """
-        global __session_pool
-        self.__proxy = proxy
-        for _, pool in __session_pool.items():
-            for _, client in pool.items():
-                client.set_proxy(proxy)
-
-    def get_timeout(self) -> float:
-        """
-        获取设置的 web 请求超时时间
-
-        Returns:
-            float: 超时时间. Defaults to 5.0.
-        """
-        return self.__timeout
-
-    def set_timeout(self, timeout: float):
-        """
-        修改设置的 web 请求超时时间
-
-        Args:
-            timeout (float): 超时时间
-        """
-        global __session_pool
-        self.__timeout = timeout
-        for _, pool in __session_pool.items():
-            for _, client in pool.items():
-                client.set_timeout(timeout)
-
-    def get_verify_ssl(self) -> bool:
-        """
-        获取设置的是否验证 SSL
-
-        Returns:
-            bool: 是否验证 SSL. Defaults to True.
-        """
-        return self.__verify_ssl
-
-    def set_verify_ssl(self, verify_ssl: bool):
-        """
-        修改设置的是否验证 SSL
-
-        Args:
-            verify_ssl (bool): 是否验证 SSL
-        """
-        global __session_pool
-        self.__verify_ssl = verify_ssl
-        for _, pool in __session_pool.items():
-            for _, client in pool.items():
-                client.set_verify_ssl(verify_ssl)
-
-    def get_trust_env(self) -> bool:
-        """
-        获取设置的 `trust_env`
-
-        Returns:
-            bool: `trust_env`. Defaults to True.
-        """
-        return self.__trust_env
-
-    def set_trust_env(self, trust_env: bool):
-        """
-        修改设置的 `trust_env`
-
-        Args:
-            verify_ssl (bool): `trust_env`
-        """
-        global __session_pool
-        self.__trust_env = trust_env
-        for _, pool in __session_pool.items():
-            for _, client in pool.items():
-                client.set_trust_env(trust_env)
-
-    def get_wbi_retry_times(self) -> int:
-        """
-        获取设置的 wbi 重试次数
-
-        Returns:
-            int: wbi 重试次数. Defaults to 3.
-        """
-        return self.__wbi_retry_times
-
-    def set_wbi_retry_times(self, wbi_retry_times: int) -> None:
-        """
-        修改设置的 wbi 重试次数
-
-        Args:
-            wbi_retry_times (int): wbi 重试次数.
-        """
-        self.__wbi_retry_times = wbi_retry_times
-
-
-request_settings = RequestSettings()
-"""
-请求参数设置
-"""
-
-
-################################################## END Settings ##################################################
 
 
 ################################################## BEGIN Logger ##################################################
@@ -191,7 +66,7 @@ class RequestLog(AsyncEvent):
             )
             self.logger.addHandler(handler)
         self.__on = False
-        self.__on_events = ["API_REQUEST", "API_RESPONSE", "ANTI_SPIDER"]
+        self.__on_events = ["API_REQUEST", "API_RESPONSE", "ANTI_SPIDER", "WS_CONNECT", "WS_RECV", "WS_SEND", "WS_CLOSE"]
         self.__ignore_events = []
         self.add_event_listener("__ALL__", self.__handle_events)
 
@@ -304,9 +179,130 @@ CallbackData:
 ################################################## BEGIN Session Management ##################################################
 
 
-__sessions: Dict[str, Type["BiliAPIClient"]] = {}
-__session_pool: Dict[str, Dict[asyncio.AbstractEventLoop, "BiliAPIClient"]] = {}
-__selected_client: str = ""
+sessions: Dict[str, Type["BiliAPIClient"]] = {}
+session_pool: Dict[str, Dict[asyncio.AbstractEventLoop, "BiliAPIClient"]] = {}
+selected_client: str = ""
+
+
+class RequestSettings:
+    def __init__(self):
+        self.__proxy: str = ""
+        self.__timeout: float = 5.0
+        self.__verify_ssl: bool = True
+        self.__trust_env: bool = True
+        self.__wbi_retry_times: int = 3
+
+    def get_proxy(self) -> str:
+        """
+        获取设置的代理
+
+        Returns:
+            str: 代理地址. Defaults to "".
+        """
+        return self.__proxy
+
+    def set_proxy(self, proxy: str):
+        """
+        修改设置的代理
+
+        Args:
+            proxy (str): 代理地址
+        """
+        global session_pool
+        self.__proxy = proxy
+        for _, pool in session_pool.items():
+            for _, client in pool.items():
+                client.set_proxy(proxy)
+
+    def get_timeout(self) -> float:
+        """
+        获取设置的 web 请求超时时间
+
+        Returns:
+            float: 超时时间. Defaults to 5.0.
+        """
+        return self.__timeout
+
+    def set_timeout(self, timeout: float):
+        """
+        修改设置的 web 请求超时时间
+
+        Args:
+            timeout (float): 超时时间
+        """
+        global session_pool
+        self.__timeout = timeout
+        for _, pool in session_pool.items():
+            for _, client in pool.items():
+                client.set_timeout(timeout)
+
+    def get_verify_ssl(self) -> bool:
+        """
+        获取设置的是否验证 SSL
+
+        Returns:
+            bool: 是否验证 SSL. Defaults to True.
+        """
+        return self.__verify_ssl
+
+    def set_verify_ssl(self, verify_ssl: bool):
+        """
+        修改设置的是否验证 SSL
+
+        Args:
+            verify_ssl (bool): 是否验证 SSL
+        """
+        global session_pool
+        self.__verify_ssl = verify_ssl
+        for _, pool in session_pool.items():
+            for _, client in pool.items():
+                client.set_verify_ssl(verify_ssl)
+
+    def get_trust_env(self) -> bool:
+        """
+        获取设置的 `trust_env`
+
+        Returns:
+            bool: `trust_env`. Defaults to True.
+        """
+        return self.__trust_env
+
+    def set_trust_env(self, trust_env: bool):
+        """
+        修改设置的 `trust_env`
+
+        Args:
+            verify_ssl (bool): `trust_env`
+        """
+        global session_pool
+        self.__trust_env = trust_env
+        for _, pool in session_pool.items():
+            for _, client in pool.items():
+                client.set_trust_env(trust_env)
+
+    def get_wbi_retry_times(self) -> int:
+        """
+        获取设置的 wbi 重试次数
+
+        Returns:
+            int: wbi 重试次数. Defaults to 3.
+        """
+        return self.__wbi_retry_times
+
+    def set_wbi_retry_times(self, wbi_retry_times: int) -> None:
+        """
+        修改设置的 wbi 重试次数
+
+        Args:
+            wbi_retry_times (int): wbi 重试次数.
+        """
+        self.__wbi_retry_times = wbi_retry_times
+
+
+request_settings = RequestSettings()
+"""
+请求参数设置
+"""
 
 
 @dataclass
@@ -317,7 +313,7 @@ class BiliAPIResponse:
 
     code: int
     headers: dict
-    cookies: CookieJar
+    cookies: dict
     raw: bytes
     url: str
 
@@ -326,13 +322,6 @@ class BiliAPIResponse:
 
     def json(self):
         return json.loads(self.utf8_text())
-
-    def get_cookie(self, name: str):
-        ret = None
-        for cookie in self.cookies:
-            if cookie.name == name:
-                ret = cookie.value  # use the latest value
-        return ret
 
 
 class BiliWsMsgType(Enum):
@@ -382,7 +371,7 @@ class BiliAPIClient(ABC):
             trust_env (bool, optional): `trust_env`. Defaults to True.
             session (object, optional): 会话对象. Defaults to None.
 
-        Note: 当设置 session 后自动忽略 proxy 和 timeout 参数。
+        Note: 仅当用户只提供 `session` 参数且用户中途未调用 `set_xxx` 函数才使用用户提供的 `session`。
         """
         raise NotImplementedError
 
@@ -443,7 +432,7 @@ class BiliAPIClient(ABC):
         url: str = "",
         params: dict = {},
         data: Union[dict, str, bytes] = {},
-        files: dict = {},
+        files: Dict[str, BiliAPIFile] = {},
         headers: dict = {},
         cookies: dict = {},
         allow_redirects: bool = False,
@@ -455,8 +444,8 @@ class BiliAPIClient(ABC):
             method (str, optional): 请求方法. Defaults to "".
             url (str, optional): 请求地址. Defaults to "".
             params (dict, optional): 请求参数. Defaults to {}.
-            data (Union[dict, str], optional): 请求数据. Defaults to {}.
-            files (dict, optional): 请求文件. Defaults to {}.
+            data (Union[dict, str, bytes], optional): 请求数据. Defaults to {}.
+            files (Dict[str, BiliAPIFile], optional): 请求文件. Defaults to {}.
             headers (dict, optional): 请求头. Defaults to {}.
             cookies (dict, optional): 请求 Cookies. Defaults to {}.
             allow_redirects (bool, optional): 是否允许重定向. Defaults to False.
@@ -508,7 +497,7 @@ class BiliAPIClient(ABC):
         Returns:
             Tuple[bytes, BiliWsMsgType]: WebSocket 数据和状态
 
-        Note: 建议实现此函数时支持其他线程关闭不阻塞，除基础状态同时实现 CLOSE, CLOSING, CLOSED。
+        Note: 建议实现此函数时支持其他线程关闭不阻塞，除基础状态同时实现 CLOSING, CLOSED。
         """
         raise NotImplementedError
 
@@ -549,9 +538,9 @@ class CurlCFFIClient(BiliAPIClient):
                 proxies={"all": proxy},
                 verify=verify_ssl,
                 trust_env=trust_env,
-                impersonate="chrome116",
+                impersonate="chrome131",
             )
-        self.__ws: Dict[int, requests.WebSocket] = {}
+        self.__ws: Dict[int, requests.AsyncWebSocket] = {}
         self.__ws_cnt: int = 0
         self.__ws_need_close: Dict[int, bool] = {}
         self.__ws_is_closed: Dict[int, bool] = {}
@@ -625,10 +614,13 @@ class CurlCFFIClient(BiliAPIClient):
         resp_headers = {}
         for item in resp_header_items:
             resp_headers[item[0]] = item[1]
+        resp_cookies = {}
+        for cookie in resp.cookies.jar:
+            resp_cookies[cookie.name] = cookie.value
         bili_api_resp = BiliAPIResponse(
             code=resp.status_code,
             headers=resp_headers,
-            cookies=resp.cookies.jar,
+            cookies=resp_cookies,
             raw=resp.content,
             url=resp.url,
         )
@@ -639,7 +631,7 @@ class CurlCFFIClient(BiliAPIClient):
             {
                 "code": bili_api_resp.code,
                 "headers": bili_api_resp.headers,
-                "cookies": str(bili_api_resp.cookies),
+                "cookies": bili_api_resp.cookies,
                 "data": bili_api_resp.raw,
                 "url": bili_api_resp.url,
             },
@@ -678,7 +670,7 @@ class CurlCFFIClient(BiliAPIClient):
             {"id": cnt, "data": data},
         )
         ws = self.__ws[cnt]
-        await ws.asend(data)
+        await ws.send_binary(data)
 
     async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
         ws = self.__ws[cnt]
@@ -691,7 +683,7 @@ class CurlCFFIClient(BiliAPIClient):
                 return (b"", BiliWsMsgType.CLOSING)
             try:
                 loop = self.__session.loop
-                chunk, frame = await loop.run_in_executor(None, ws.recv_fragment)
+                chunk, frame = await loop.run_in_executor(None, ws.curl.ws_recv)
                 flags = frame.flags
                 request_log.dispatch(
                     "WS_RECV",
@@ -707,7 +699,6 @@ class CurlCFFIClient(BiliAPIClient):
                 else:
                     raise e
         if flags & curl_cffi.CurlWsFlag.CLOSE:
-            await self.ws_close(cnt)
             return (b"", BiliWsMsgType.CLOSE)
         by = b"".join(chunks)
         if flags & curl_cffi.CurlWsFlag.TEXT:
@@ -717,6 +708,8 @@ class CurlCFFIClient(BiliAPIClient):
         return (by, BiliWsMsgType.BINARY)
 
     async def ws_close(self, cnt: int) -> None:
+        if self.__ws_need_close[cnt] or self.__ws_is_closed[cnt]:
+            return
         ws = self.__ws[cnt]
         self.__ws_need_close[cnt] = True
         request_log.dispatch(
@@ -724,7 +717,7 @@ class CurlCFFIClient(BiliAPIClient):
             "关闭 WebSocket 请求",
             {"id": cnt},
         )
-        ws.close()
+        ws.terminate() # It's better to terminate than close.
         self.__ws_is_closed[cnt] = True
 
     async def close(self) -> None:
@@ -741,12 +734,12 @@ def register_client(name: str, cls: type) -> None:
 
     **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
     """
-    global __sessions, __session_pool
+    global sessions, session_pool
     raise_for_statement(
         issubclass(cls, BiliAPIClient), "传入的类型需要继承 BiliAPIClient"
     )
-    __sessions[name] = cls
-    __session_pool[name] = {}
+    sessions[name] = cls
+    session_pool[name] = {}
 
 
 def unregister_client(name: str) -> None:
@@ -758,10 +751,10 @@ def unregister_client(name: str) -> None:
 
     **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
     """
-    global __sessions, __session_pool
+    global sessions, session_pool
     try:
-        __sessions.pop(name)
-        __session_pool.pop(name)
+        sessions.pop(name)
+        session_pool.pop(name)
     except KeyError:
         raise ArgsException("未找到指定请求客户端。")
 
@@ -775,8 +768,8 @@ def select_client(name: str) -> None:
 
     **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
     """
-    global __selected_client
-    __selected_client = name
+    global selected_client
+    selected_client = name
 
 
 def get_selected_client() -> Tuple[str, Type[BiliAPIClient]]:
@@ -787,7 +780,7 @@ def get_selected_client() -> Tuple[str, Type[BiliAPIClient]]:
         Tuple[str, Type[BiliAPIClient]]: 第 0 项为客户端名称，第 1 项为对应的类
     **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
     """
-    return __selected_client, __sessions[__selected_client]
+    return selected_client, sessions[selected_client]
 
 
 def get_client() -> BiliAPIClient:
@@ -797,20 +790,20 @@ def get_client() -> BiliAPIClient:
     Returns:
         BiliAPIClient: 请求客户端
     """
-    global __session_pool
-    pool = __session_pool.get(__selected_client)
+    global session_pool
+    pool = session_pool.get(selected_client)
     if pool is None:
         raise ArgsException("未找到用户指定的请求客户端。")
     loop = asyncio.get_event_loop()
     session = pool.get(loop)
     if session is None:
-        session = __sessions[__selected_client](
+        session = sessions[selected_client](
             proxy=request_settings.get_proxy(),
             timeout=request_settings.get_timeout(),
             verify_ssl=request_settings.get_verify_ssl(),
             trust_env=request_settings.get_trust_env(),
         )
-        __session_pool[__selected_client][loop] = session
+        session_pool[selected_client][loop] = session
     return session
 
 
@@ -832,14 +825,12 @@ def set_session(session: object) -> None:
         session (object): 会话对象
     """
 
-    global __session_pool
-    pool = __session_pool.get(__selected_client)
+    global session_pool
+    pool = session_pool.get(selected_client)
     if not pool:
         raise ArgsException("未找到用户指定的请求客户端。")
     loop = asyncio.get_event_loop()
-    __session_pool[__selected_client][loop] = __sessions[__selected_client](
-        session=session
-    )
+    session_pool[selected_client][loop] = sessions[selected_client](session=session)
 
 
 @atexit.register
@@ -853,7 +844,7 @@ def __clean() -> None:
         return
 
     async def __clean_task():
-        for _, pool in __session_pool.items():
+        for _, pool in session_pool.items():
             for _, client in pool.items():
                 await client.close()
 
@@ -1144,9 +1135,9 @@ async def _refresh_cookies(credential: Credential) -> Credential:
     if resp.code != 200 or resp.json()["code"] != 0:
         raise CookiesRefreshException("刷新 Cookies 失败")
     new_credential = Credential(
-        sessdata=resp.get_cookie("SESSDATA"),
-        bili_jct=resp.get_cookie("bili_jct"),
-        dedeuserid=resp.get_cookie("DedeUserID"),
+        sessdata=resp.cookies["SESSDATA"],
+        bili_jct=resp.cookies["bili_jct"],
+        dedeuserid=resp.cookies["DedeUserID"],
         ac_time_value=resp.json()["data"]["refresh_token"],
     )
     await _confirm_refresh(credential, new_credential)
@@ -1239,7 +1230,7 @@ OE = [
 APPKEY = "4409e2ce8ffd12b8"
 APPSEC = "59b43e04ad6965f34319062b478f83dd"
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.54",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
     "Referer": "https://www.bilibili.com",
 }
 API = get_api("credential")
@@ -1251,6 +1242,11 @@ async def _get_spi_buvid() -> dict:
     return (
         await client.request(method="GET", url=api["url"], headers=HEADERS.copy())
     ).json()["data"]
+
+
+"""
+思路来源：https://github.com/SocialSisterYi/bilibili-API-collect/issues/933
+"""
 
 
 async def _active_buvid(buvid3: str, buvid4: str) -> dict:
@@ -1616,6 +1612,11 @@ def _enc_sign(paramsordata: dict) -> dict:
         (urllib.parse.urlencode(paramsordata) + APPSEC).encode("utf-8")
     ).hexdigest()
     return paramsordata
+
+
+"""
+算法来源：https://github.com/SocialSisterYi/bilibili-API-collect/issues/903
+"""
 
 
 async def _get_bili_ticket(credential: Optional[Credential] = None) -> str:

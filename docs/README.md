@@ -38,7 +38,8 @@ Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/ne
 - 可使用代理，绕过 b 站风控策略。
 - 全面支持 BV 号（bvid），同时也兼容 AV 号（aid）。
 - 调用简便，函数命名易懂，代码注释详细。
-- 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查、下载弹幕、字幕文件、专栏内容爬取等。
+- 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查、下载弹幕、字幕文件[[3]](#脚注)、专栏内容爬取、cookies 刷新等[[4]](#脚注)。
+- 支持采用各种手段避免触发反爬虫风控[[5]](#脚注)。
 - **全部是异步操作**。
 - 基于 `curl_cffi`，支持模仿浏览器指纹进行请求，同时有良好的性能。
 
@@ -191,8 +192,10 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 # 脚注
 
 + \[1\] 这里只列出一部分，请以实际 API 为准。
-+ \[2\] 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784>
-
++ \[2\] 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784> (WTFPL)
++ \[3\] 部分代码来源：<https://github.com/m13253/danmaku2ass> (GPLv3) <https://github.com/ewwink/python-srt2ass>
++ \[4\] 思路来源：<https://socialsisteryi.github.io/bilibili-API-collect/docs/login/cookie_refresh.html> (CC-BY-NC 4.0)
++ \[5\] 大量思路来源 <https://socialsisteryi.github.io/bilibili-API-collect> 中相关讨论。
 
 [docs]: https://nemo2011.github.io/bilibili-api
 [docs-github]: https://github.com/nemo2011/bilibili-api/tree/main/docs

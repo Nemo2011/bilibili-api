@@ -18,6 +18,7 @@ from .utils.network import (
     # session
     BiliAPIResponse,
     BiliWsMsgType,
+    BiliAPIFile,
     BiliAPIClient,
     CurlCFFIClient,
     register_client,
@@ -115,6 +116,7 @@ __all__ = [
     "ArgsException",
     "BILIBILI_API_VERSION",
     "BiliAPIClient",
+    "BiliAPIFile",
     "BiliAPIResponse",
     "BiliWsMsgType",
     "CookiesRefreshException",

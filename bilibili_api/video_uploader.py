@@ -781,7 +781,7 @@ class VideoUploader(AsyncEvent):
             },
             cookies=self.credential.get_cookies(),
             headers={
-                "User-Agent": "Mozilla/5.0",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
                 "Referer": "https://www.bilibili.com",
             },
         )
@@ -804,7 +804,7 @@ class VideoUploader(AsyncEvent):
             url=url,
             headers={
                 "x-upos-auth": preupload["auth"],
-                "user-agent": "Mozilla/5.0",
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
                 "referer": "https://www.bilibili.com",
             },
             params={
@@ -867,7 +867,7 @@ class VideoUploader(AsyncEvent):
         #     "build": "2100300",
         # }, cookies=self.credential.get_cookies(),
         #     headers={
-        #         "User-Agent": "Mozilla/5.0",
+        #         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
         #         "Referer": "https://www.bilibili.com"
         #     }, proxy=settings.proxy
         # ) as resp:
@@ -1487,7 +1487,7 @@ class VideoEditor(AsyncEvent):
             headers = {
                 "content-type": "application/json;charset=UTF-8",
                 "referer": "https://member.bilibili.com",
-                "user-agent": "Mozilla/5.0",
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
             }
             resp = (
                 await Api(

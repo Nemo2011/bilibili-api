@@ -72,7 +72,7 @@ async def login_with_password(
     }
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
         "Referer": "https://passport.bilibili.com/login",
     }
     client = get_client()
@@ -90,9 +90,9 @@ async def login_with_password(
         elif login_data["data"]["status"] == 2:
             raise LoginError("需要手机号进一步验证码验证，请直接通过验证码登录")
         return Credential(
-            sessdata=str(resp.get_cookie("SESSDATA")),
-            bili_jct=str(resp.get_cookie("bili_jct")),
-            dedeuserid=str(resp.get_cookie("DedeUserID")),
+            sessdata=str(resp.cookies["SESSDATA"]),
+            bili_jct=str(resp.cookies["bili_jct"]),
+            dedeuserid=str(resp.cookies["DedeUserID"]),
             ac_time_value=login_data["data"]["refresh_token"],
         )
     else:
@@ -273,7 +273,7 @@ async def send_sms(phonenumber: PhoneNumber, geetest: Geetest) -> str:
         }
     )
     headers = {
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
         "Referer": "https://www.bilibili.com",
         "Content-Type": "application/x-www-form-urlencoded",
     }
@@ -316,7 +316,7 @@ async def login_with_sms(
         "keep": "true",
     }
     headers = {
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
         "Referer": "https://www.bilibili.com",
         "Content-Type": "application/x-www-form-urlencoded",
     }
