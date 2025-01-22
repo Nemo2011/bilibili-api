@@ -384,7 +384,7 @@
       "comment": "查看列表内视频（旧版）"
     },
     "channel_video_season": {
-      "url": "https://api.bilibili.com/x/polymer/space/seasons_archives_list",
+      "url": "https://api.bilibili.com/x/polymer/web-space/seasons_archives_list",
       "method": "GET",
       "verify": false,
       "params": {
