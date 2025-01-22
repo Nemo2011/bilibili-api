@@ -722,8 +722,9 @@ class MPlayer(object):
         self.stop_playing()
         self.pp.setText("Pause")
         self.has_end = False
-        self.mediaplayer = QtMultimedia.QMediaPlayer()  # Clear the multimedia source
-        self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput())
+        if self.horizontalSlider.value() != 0: # I don't know why but without it the application will be blocked
+            self.mediaplayer = QtMultimedia.QMediaPlayer()  # Clear the multimedia source
+            self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput())
         self.videoplayer = QtMultimedia.QMediaPlayer()
         self.videoplayer.setVideoOutput(self.player)
         self.volume_change_event()
