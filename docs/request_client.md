@@ -323,7 +323,6 @@ class AioHTTPClient(BiliAPIClient):
                     filename=value.path.split("/")[-1],
                 )
             data = form
-
         if self.__use_args:
             resp = await self.__session.request(
                 method=method,
@@ -333,6 +332,7 @@ class AioHTTPClient(BiliAPIClient):
                 headers=headers,
                 cookies=cookies,
                 allow_redirects=allow_redirects,
+                # 这是模块设置
                 proxy=self.__args["proxy"],
                 timeout=aiohttp.ClientTimeout(self.__args["timeout"]),
             )
@@ -345,6 +345,7 @@ class AioHTTPClient(BiliAPIClient):
                 headers=headers,
                 cookies=cookies,
                 allow_redirects=allow_redirects,
+                # 不需要管模块设置
             )
         resp_code = resp.status
         resp_headers = {}
@@ -369,6 +370,21 @@ class AioHTTPClient(BiliAPIClient):
 ``` python
 class AioHTTPClient(BiliAPIClient):
     ...
+    async def ws_create(self, url="", params=..., headers=...):
+        # 这里也可能碰上更改设置，需要顺便更换一下 session
+        if self.__need_update_session:
+            await self.__session.close()
+            self.__session = aiohttp.ClientSession(
+                trust_env=self.__args["trust_env"],
+                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
+            )
+            self.__need_update_session = False
+        self.__ws_cnt += 1
+        self.__wss[self.__ws_cnt] = await self.__session.ws_connect(
+            url=url, params=params, headers=headers
+        )
+        return self.__ws_cnt
+
     async def ws_recv(self, cnt):
        msg = await self.__wss[cnt].receive()
        return msg.data, BiliWsMsgType(msg.type.value)
@@ -545,7 +561,7 @@ class BiliAPIClient(ABC):
 
     @abstractmethod
     async def ws_create(
-        self, url: str = "", params: dict = {}, headers: dict = {}, cookies: dict = {}
+        self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
         """
         创建 WebSocket 连接
@@ -554,7 +570,6 @@ class BiliAPIClient(ABC):
             url (str, optional): WebSocket 地址. Defaults to "".
             params (dict, optional): WebSocket 参数. Defaults to {}.
             headers (dict, optional): WebSocket 头. Defaults to {}.
-            cookies (dict, optional): WebSocket Cookies. Defaults to {}.
 
         Returns:
             int: WebSocket 连接编号，用于后续操作。

@@ -66,7 +66,15 @@ class RequestLog(AsyncEvent):
             )
             self.logger.addHandler(handler)
         self.__on = False
-        self.__on_events = ["API_REQUEST", "API_RESPONSE", "ANTI_SPIDER", "WS_CONNECT", "WS_RECV", "WS_SEND", "WS_CLOSE"]
+        self.__on_events = [
+            "API_REQUEST",
+            "API_RESPONSE",
+            "ANTI_SPIDER",
+            "WS_CONNECT",
+            "WS_RECV",
+            "WS_SEND",
+            "WS_CLOSE",
+        ]
         self.__ignore_events = []
         self.add_event_listener("__ALL__", self.__handle_events)
 
@@ -459,7 +467,7 @@ class BiliAPIClient(ABC):
 
     @abstractmethod
     async def ws_create(
-        self, url: str = "", params: dict = {}, headers: dict = {}, cookies: dict = {}
+        self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
         """
         创建 WebSocket 连接
@@ -468,7 +476,6 @@ class BiliAPIClient(ABC):
             url (str, optional): WebSocket 地址. Defaults to "".
             params (dict, optional): WebSocket 参数. Defaults to {}.
             headers (dict, optional): WebSocket 头. Defaults to {}.
-            cookies (dict, optional): WebSocket Cookies. Defaults to {}.
 
         Returns:
             int: WebSocket 连接编号，用于后续操作。
@@ -639,7 +646,7 @@ class CurlCFFIClient(BiliAPIClient):
         return bili_api_resp
 
     async def ws_create(
-        self, url: str = "", params: dict = {}, headers: dict = {}, cookies: dict = {}
+        self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
         self.__ws_cnt += 1
         request_log.dispatch(
@@ -650,12 +657,9 @@ class CurlCFFIClient(BiliAPIClient):
                 "url": url,
                 "params": params,
                 "headers": headers,
-                "cookies": cookies,
             },
         )
-        ws = await self.__session.ws_connect(
-            url, params=params, headers=headers, cookies=cookies
-        )
+        ws = await self.__session.ws_connect(url, params=params, headers=headers)
         self.__ws[self.__ws_cnt] = ws
         self.__ws_is_closed[self.__ws_cnt] = False
         self.__ws_need_close[self.__ws_cnt] = False
@@ -717,7 +721,7 @@ class CurlCFFIClient(BiliAPIClient):
             "关闭 WebSocket 请求",
             {"id": cnt},
         )
-        ws.terminate() # It's better to terminate than close.
+        ws.terminate()  # It's better to terminate than close.
         self.__ws_is_closed[cnt] = True
 
     async def close(self) -> None:
