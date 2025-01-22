@@ -353,7 +353,7 @@ class AioHTTPClient(BiliAPIClient):
             resp_headers[key] = item
         resp_cookies = {}
         for key, item in resp.cookies.items():
-            resp_cookies[key] = item
+            resp_cookies[key] = item.value
         return BiliAPIResponse(
             code=resp_code,
             headers=resp_headers,
