@@ -12,6 +12,17 @@ from bilibili_api import ass
 
 ---
 
+## def json2srt()
+
+
+
+
+**Returns:** None
+
+
+
+---
+
 ## async def make_ass_file_danmakus_protobuf()
 
 生成视频弹幕文件

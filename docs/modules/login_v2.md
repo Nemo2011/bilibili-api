@@ -1,7 +1,7 @@
 # Module login_v2.py
 
 
-bilibili_api.login
+bilibili_api.login_v2
 
 登录
 
@@ -9,25 +9,6 @@ bilibili_api.login
 ``` python
 from bilibili_api import login_v2
 ```
-
----
-
-## Overview
-
-`login_v2` 是对登陆模块的一次彻底的重写，主要有以下改动：
-
-- **将所有同步操作迁移至异步**
-- 将 `login` 和 `login_func` 所有功能合并，即把 `login` 功能拆分，结合 `login_func` 进行编写。
-- 将 Geetest 实例化，作为参数传入函数，生成、作答、检查、部署本地服务器过程全程由用户操作，取代了原先除作答外全模块操作。
-- 同样将二维码登录过程实例化，用户操控生成、检查、获取数据的全流程。
-
-（另一种表达方式：重构）
-
-`login_v2` 相较于 `login` 也更加灵活，可以满足更多情况下的需求，虽然固定功能代码长度相较于原来有所上升，但是编写特定功能起来也更加游刃有余。
-
-因为 `login` 和 `login_v2` 间的完全不兼容，`login` 和 `login_func` 将在之后的版本中暂时保留，甚至永久保留也有可能（懒得删）。
-
-相关使用案例见 [Examples](/examples/login_v2.md)
 
 ---
 

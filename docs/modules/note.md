@@ -237,3 +237,20 @@ from bilibili_api import note
 
 
 
+---
+
+## async def upload_image()
+
+上传笔记图片
+
+
+| name | type | description |
+| - | - | - |
+| img | Picture | 图片 |
+| credential | Credential | 凭据类 |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+

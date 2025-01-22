@@ -26,6 +26,22 @@ from bilibili_api import live_area
 
 ---
 
+## async def fetch_live_area_data()
+
+抓取直播分区数据
+
+因为直播分区容易出现变动，故不像视频分区一样直接使用文件保存，而是每次查询时先抓取一遍。
+
+一次运行整个程序仅需执行一次此函数即可，无需多次调用。
+
+
+
+**Returns:** None
+
+
+
+---
+
 ## def get_area_info_by_id()
 
 根据 id 获取分区信息。

@@ -273,7 +273,7 @@ from bilibili_api import comment
 | - | - | - |
 | oid | int | 资源 ID。 |
 | type_ | CommentsResourceType | 资源类枚举。 |
-| offset | Union[str, None] | 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。 |
+| offset | Union[str, None] | 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。对应返回结果的 `["cursor"]["pagination_reply"]["next_offset"]` |
 | order | Union[OrderType, None] | 排序方式枚举. Defaults to OrderType.TIME. |
 | credential | Union[Credential, None] | 凭据。Defaults to None. |
 

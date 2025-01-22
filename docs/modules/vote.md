@@ -45,17 +45,6 @@ from bilibili_api import vote
 
 
 
-### def get_info_sync()
-
-获取投票详情
-
-
-
-**Returns:** dict: 调用 API 返回的结果
-
-
-
-
 ### async def get_title()
 
 快速获取投票标题

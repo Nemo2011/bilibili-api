@@ -40,12 +40,13 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 ### def add_at()
 
-添加@用户，支持传入 User 类或 UID
+添加@用户，支持传入 用户名或 UID
 
 
 | name | type | description |
 | - | - | - |
-| uid | Union[int, user.User] | 用户ID |
+| uid | int | 用户ID |
+| uname | str | 用户名称. Defaults to "". |
 
 **Returns:** None
 
@@ -110,7 +111,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| vote | vote.Vote | 投票对象 |
+| vote_id | int | 投票对象 |
 
 **Returns:** None
 
@@ -159,11 +160,14 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
-### def get_contents()
+### async def get_contents()
 
-获取动态内容
+获取动态内容，通过请求完善字段后返回
 
 
+| name | type | description |
+| - | - | - |
+| credential | Credential | 凭据类。必需。 |
 
 **Returns:** list: 动态内容
 
@@ -314,14 +318,9 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 ### async def get_info()
 
-(对 Opus 动态，获取动态内容建议使用 Opus.get_detail())
-
 获取动态信息
 
 
-| name | type | description |
-| - | - | - |
-| features | Union[str, None] | 默认 itemOpusStyle,opusBigCover,onlyfansVote,endFooterHidden,decorationCard,onlyfansAssetsV2,ugcDelete. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -337,6 +336,17 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | - | - | - |
 | pn | Union[int, None] | 页码，defaults to 1 |
 | ps | Union[int, None] | 每页大小，defaults to 30 |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def get_lottery_info()
+
+获取动态抽奖信息
+
+
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -367,6 +377,17 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | offset | Union[str, None] | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0" |
 
 **Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def is_article()
+
+判断动态是否为专栏发布动态（评论、点赞等数据专栏/动态/图文共享）
+
+
+
+**Returns:** bool: 是否为专栏
 
 
 
@@ -409,6 +430,21 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | status | Union[bool, None] | 点赞状态. Defaults to True. |
 
 **Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def turn_to_article()
+
+将专栏发布动态转为对应专栏（评论、点赞等数据专栏/动态/图文共享）
+
+不会核验。如需核验使用 `await is_article()`。
+
+转换后可投币。
+
+
+
+**Returns:** Article: 专栏实例
 
 
 
@@ -606,24 +642,6 @@ scene 参数
 ## async def upload_image()
 
 上传动态图片
-
-
-| name | type | description |
-| - | - | - |
-| image | Picture | 图片流. 有格式要求. |
-| credential | Credential | 凭据 |
-| data | Dict | 自定义请求体 |
-
-**Returns:** dict: 调用 API 返回的结果
-
-
-
-
----
-
-## def upload_image_sync()
-
-上传动态图片 (同步函数)
 
 
 | name | type | description |

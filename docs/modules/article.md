@@ -87,6 +87,17 @@ from bilibili_api import article
 
 
 
+### async def is_note()
+
+判断专栏是否为笔记
+
+
+
+**Returns:** bool: 是否为笔记
+
+
+
+
 ### def json()
 
 转换为 JSON 数据
@@ -137,6 +148,30 @@ from bilibili_api import article
 | status | Union[bool, None] | 点赞状态. Defaults to True |
 
 **Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def turn_to_dynamic()
+
+将专栏转为对应动态（评论、点赞等数据专栏/动态/图文共享）
+
+转换后可查看“赞和转发”列表。
+
+
+
+**Returns:** Dynamic: 动态实例
+
+
+
+
+### def turn_to_note()
+
+将专栏转为笔记，不会核验。如需核验使用 `await is_note()`
+
+
+
+**Returns:** Note: 笔记实例
 
 
 

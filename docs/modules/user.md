@@ -627,19 +627,6 @@ medialist排序顺序。
 
 
 
-### def get_user_info_sync()
-
-获取用户信息（昵称，性别，生日，签名，头像 URL，空间横幅 URL 等）
-
-
-
-**Returns:** dict: 调用接口返回的内容。
-
-
-[用户空间详细信息](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md#%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF)
-
-
-
 ### async def get_user_medal()
 
 读取用户粉丝牌详细列表，如果隐私则不可以
@@ -1112,22 +1099,6 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 | - | - | - |
 | names | str/List[str] | 用户名 |
 | credential | Union[Credential, None] | 凭据类. Defaults to None. |
-
-**Returns:** dict: 调用 API 返回的结果
-
-
-
-
----
-
-## async def name2uid_sync()
-
-将用户名转为 uid
-
-
-| name | type | description |
-| - | - | - |
-| names | str/List[str] | 用户名 |
 
 **Returns:** dict: 调用 API 返回的结果
 

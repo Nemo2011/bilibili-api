@@ -106,7 +106,7 @@ from bilibili_api import watchroom
 
 
 
-### def get_episode_id()
+### async def get_episode_id()
 
 获取番剧剧集 id
 
@@ -139,7 +139,7 @@ from bilibili_api import watchroom
 
 
 
-### def get_season_id()
+### async def get_season_id()
 
 获取番剧季度 id
 

@@ -1068,10 +1068,11 @@ print(data)
 r.add_event_listener("ONLINE", handler2)
 
 asyncio.get_event_loop().run_until_complete(r.connect())
-
 ```
 
 Extends: AsyncEvent
+
+Logger: VideoOnlineMonitor().logger
 
 Events:
 ONLINE：在线人数更新。  CallbackData: dict。
@@ -1164,19 +1165,6 @@ CONNECTED:  成功连接。 CallbackData: None。
 ---
 
 ## async def get_cid_info()
-
-获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
-
-
-
-**Returns:** dict: 调用 https://hd.biliplus.com 的 API 返回的结果
-
-
-
-
----
-
-## def get_cid_info_sync()
 
 获取 cid 信息 (对应的视频，具体分 P 序号，up 等)
 

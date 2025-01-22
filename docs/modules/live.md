@@ -34,6 +34,10 @@ from bilibili_api import live
 
 Websocket 实时获取直播弹幕
 
+Extends: AsyncEvent
+
+Logger: LiveDanmaku().logger
+
 Events：
 + DANMU_MSG: 用户发送弹幕
 + SEND_GIFT: 礼物
