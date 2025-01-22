@@ -71,12 +71,13 @@ class DynamicContentType(Enum):
     VOTE = 4
 
 
-async def _parse_at(text: str) -> Tuple[str, str, str]:
+async def _parse_at(text: str, credential: Credential) -> Tuple[str, str, str]:
     """
     @人格式：“@用户名 ”(注意最后有空格）
 
     Args:
-        text (str): 原始文本
+        text       (str)       : 原始文本
+        credential (Credential): 凭据类，必须提供
 
     Returns:
         tuple(str, str(int[]), str(dict)): 替换后文本，解析出艾特的 UID 列表，AT 数据
@@ -89,9 +90,12 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
     for match in match_result:
         uname = match.group()
         try:
-            uid = (await user.name2uid(uname))["uid_list"][0]["uid"]
+            uid = (await user.name2uid(uname, credential=credential))["uid_list"][0][
+                "uid"
+            ]
         except KeyError:
-            # 没有此用户
+            continue
+        except IndexError:
             continue
 
         uid_list.append(str(uid))
@@ -110,17 +114,18 @@ async def _parse_at(text: str) -> Tuple[str, str, str]:
     return text, at_uids, json.dumps(ctrl, ensure_ascii=False)
 
 
-async def _get_text_data(text: str) -> dict:
+async def _get_text_data(text: str, credential: Credential) -> dict:
     """
     获取文本动态请求参数
 
     Args:
-        text (str): 文本内容
+        text       (str)       : 文本内容
+        credential (Credential): 凭据类。必须提供。
 
     Returns:
         dict: 文本动态请求数据
     """
-    new_text, at_uids, ctrl = await _parse_at(text)
+    new_text, at_uids, ctrl = await _parse_at(text, credential=credential)
     data = {
         "dynamic_id": 0,
         "type": 4,
@@ -129,51 +134,6 @@ async def _get_text_data(text: str) -> dict:
         "extension": '{"emoji_type":1}',
         "at_uids": at_uids,
         "ctrl": ctrl,
-    }
-    return data
-
-
-async def _get_draw_data(
-    text: str, images: List[Picture], credential: Credential
-) -> dict:
-    """
-    获取图片动态请求参数，将会自动上传图片
-
-    Args:
-        text   (str)          : 文本内容
-
-        images (List[Picture]): 图片流
-    """
-    new_text, at_uids, ctrl = await _parse_at(text)
-    images_info = await asyncio.gather(
-        *[upload_image(stream, credential) for stream in images]
-    )
-
-    def transformPicInfo(image: dict):
-        return {
-            "img_src": image["image_url"],
-            "img_width": image["image_width"],
-            "img_height": image["image_height"],
-        }
-
-    pictures = list(map(transformPicInfo, images_info))
-    data = {
-        "biz": 3,
-        "category": 3,
-        "type": 0,
-        "pictures": json.dumps(pictures),
-        "title": "",
-        "tags": "",
-        "description": new_text,
-        "content": new_text,
-        "from": "create.dynamic.web",
-        "up_choose_comment": 0,
-        "extension": json.dumps(
-            {"emoji_type": 1, "from": {"emoji_type": 1}, "flag_cfg": {}}
-        ),
-        "at_uids": at_uids,
-        "at_control": ctrl,
-        "setting": json.dumps({"copy_forbidden": 0, "cachedTime": 0}),
     }
     return data
 
@@ -296,20 +256,20 @@ class BuildDynamic:
         )
         return self
 
-    def add_at(self, uid: Union[int, user.User]) -> "BuildDynamic":
+    def add_at(self, uid: int = 0, uname: str = "") -> "BuildDynamic":
         """
-        添加@用户，支持传入 User 类或 UID
+        添加@用户，支持传入 用户名或 UID
 
         Args:
-            uid (Union[int, user.User]): 用户ID
+            uid   (int): 用户ID
+            uname (str): 用户名称. Defaults to "".
         """
-        if isinstance(uid, user.User):
-            uid = uid.__uid
-        name = (
-            user.User(uid).get_user_info_sync().get("name")
-        )  # FIXME: Don't use sync function
         self.contents.append(
-            {"biz_id": uid, "type": DynamicContentType.AT.value, "raw_text": f"@{name}"}
+            {
+                "biz_id": uid,
+                "type": DynamicContentType.AT.value,
+                "raw_text": f"@{uname}",
+            }
         )
         return self
 
@@ -335,19 +295,18 @@ class BuildDynamic:
         )
         return self
 
-    def add_vote(self, vote: vote.Vote) -> "BuildDynamic":
+    def add_vote(self, vote_id: int) -> "BuildDynamic":
         """
         添加投票
 
         Args:
-            vote (vote.Vote): 投票对象
+            vote_id (int): 投票对象
         """
-        vote.get_info_sync()  # FIXME: Don't use sync function
         self.contents.append(
             {
-                "biz_id": str(vote.get_vote_id()),
+                "biz_id": vote_id,
                 "type": DynamicContentType.VOTE.value,
-                "raw_text": vote.title,
+                "raw_text": "",
             }
         )
         return self
@@ -376,20 +335,9 @@ class BuildDynamic:
             text += " "
             pattern = re.compile(r"(?<=@).*?(?=\s)")
             match_result = re.finditer(pattern, text)
-            uid_list = []
             names = []
             for match in match_result:
-                uname = match.group()
-                try:
-                    name_to_uid_resp = name2uid_sync(
-                        uname
-                    )  # FIXME: Don't use sync function
-                    uid = name_to_uid_resp["uid_list"][0]["uid"]
-                except KeyError:
-                    # 没有此用户
-                    continue
-                uid_list.append(str(uid))
-                names.append(uname)
+                names.append(match.group())
             data = []
             last_index = 0
             for i, name in enumerate(names):
@@ -400,9 +348,9 @@ class BuildDynamic:
                     {
                         "location": index,
                         "length": length,
-                        "text": f"@{name} ",
+                        "text": f"@{name}",
                         "type": "at",
-                        "uid": uid_list[i],
+                        "uid": 0,
                     }
                 )
             return data
@@ -557,14 +505,51 @@ class BuildDynamic:
             return SendDynamicType.IMAGE
         return SendDynamicType.TEXT
 
-    def get_contents(self) -> list:
+    async def get_contents(self, credential: Credential) -> list:
         """
-        获取动态内容
+        获取动态内容，通过请求完善字段后返回
+
+        Args:
+            credential (Credential): 凭据类。必需。
 
         Returns:
             list: 动态内容
         """
-        return self.contents
+        contents = self.contents
+        for idx, content in enumerate(contents):
+            if content["type"] == DynamicContentType.AT.value:
+                if content["biz_id"] == 0:
+                    if content["raw_text"] == "@":
+                        contents[idx] = {
+                            "biz_id": "",
+                            "type": DynamicContentType.EMOJI.value,
+                            "raw_text": "@",
+                        }
+                        continue
+                    resp = (
+                        await user.name2uid(
+                            content["raw_text"][1:], credential=credential
+                        )
+                    )["uid_list"][0]
+                    if resp["name"] != content["raw_text"][1:]:
+                        contents[idx] = {
+                            "biz_id": "",
+                            "type": DynamicContentType.EMOJI.value,
+                            "raw_text": content["raw_text"],
+                        }
+                    else:
+                        contents[idx]["biz_id"] = str(resp["uid"])
+                elif content["raw_text"] == "@":
+                    contents[idx][
+                        "raw_text"
+                    ] = f"@{(await user.User(uid=content["biz_id"]).get_user_info())["name"]}"
+            if content["type"] == DynamicContentType.VOTE.value:
+                contents[idx]["raw_text"] = (
+                    await vote.Vote(vote_id=content["biz_id"]).get_info()
+                )["info"]["title"]
+        for idx, content in enumerate(contents):
+            contents[idx]["biz_id"] = str(contents[idx]["biz_id"])
+        return contents
 
     def get_pics(self) -> list:
         """
@@ -619,43 +604,25 @@ async def send_dynamic(info: BuildDynamic, credential: Credential):
     credential.raise_for_no_bili_jct()
     pic_data = []
     for image in info.pics:
-        await image.upload_file(credential)
+        await image.upload(credential)
         pic_data.append(
             {"img_src": image.url, "img_width": image.width, "img_height": image.height}
         )
 
-    async def schedule(type_: int):
-        api = API["send"]["schedule"]
-        text = "".join(
-            [part["raw_text"] for part in info.contents if part["type"] != 4]
-        )
-        send_time = info.time
-        if len(info.pics) > 0:
-            # 画册动态
-            request_data = await _get_draw_data(text, info.pics, credential)  # type: ignore
-            request_data.pop("setting")
-        else:
-            # 文字动态
-            request_data = await _get_text_data(text)
-        data = {
-            "type": type_,
-            "publish_time": int(send_time.timestamp()),  # type: ignore
-            "request": json.dumps(request_data, ensure_ascii=False),
-        }
-        return await Api(**api, credential=credential).update_data(**data).result
-
-    if info.time != None:
-        return await schedule(2 if len(info.pics) == 0 else 4)
     api = API["send"]["instant"]
     data = {
         "dyn_req": {
-            "content": {"contents": info.get_contents()},  # 必要参数
+            "content": {
+                "contents": await info.get_contents(credential=credential)
+            },  # 必要参数
             "scene": info.get_dynamic_type().value,  # 必要参数
             "meta": {
                 "app_meta": {"from": "create.dynamic.web", "mobi_app": "web"},
             },
         }
     }
+    if info.time:
+        data["dyn_req"]["option"] = {"timer_pub_time": int(info.time.timestamp())}
     if len(info.get_pics()) != 0:
         data["dyn_req"]["pics"] = pic_data
     if info.get_topic() is not None:
@@ -949,7 +916,7 @@ class Dynamic:
         self.credential.raise_for_no_sessdata()
 
         api = API["operate"]["repost"]
-        data = await _get_text_data(text)
+        data = await _get_text_data(text, self.credential)
         data["dynamic_id"] = self.__dynamic_id
         return await Api(**api, credential=self.credential).update_data(**data).result
 

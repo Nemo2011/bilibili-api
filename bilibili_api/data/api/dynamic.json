@@ -87,6 +87,8 @@
       "url": "https://api.bilibili.com/x/dynamic/feed/create/dyn",
       "method": "POST",
       "verify": true,
+      "wbi": true,
+      "wbi2": true,
       "data": {
         "content": {
           "contents": [
