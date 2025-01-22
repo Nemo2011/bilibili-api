@@ -25,6 +25,24 @@ API = get_api("note")
 API_ARTICLE = get_api("article")
 
 
+async def upload_image(img: Picture, credential: Credential) -> dict:
+    """
+    上传笔记图片
+
+    Args:
+        img        (Picture)   : 图片
+        credential (Credential): 凭据类
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+    credential.raise_for_no_bili_jct()
+    api = API["operate"]["upload_img"]
+    files = {"file": img._to_biliapifile()}
+    return await Api(**api, credential=credential).update_files(**files).result
+
+
 class NoteType(Enum):
     """
     笔记类型

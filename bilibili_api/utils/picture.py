@@ -8,7 +8,6 @@ from PIL import Image
 
 from .network import Credential, get_client, BiliAPIFile
 
-
 @dataclass
 class Picture:
     """
@@ -133,7 +132,7 @@ class Picture:
         mime_type = img.get_format_mimetype()
         return BiliAPIFile(path=img_path, mime_type=mime_type)
 
-    async def upload_file(self, credential: Credential) -> "Picture":
+    async def upload(self, credential: Credential) -> "Picture":
         """
         上传图片至 B 站。
 
@@ -150,6 +149,22 @@ class Picture:
         self.width = res["image_width"]
         self.url = res["image_url"]
         self.content = (await self.load_url(self.url)).content
+        return self
+
+    async def upload_by_note(self, credential: Credential) -> "Picture":
+        """
+        通过笔记接口上传图片至 B 站。
+
+        Args:
+            credential (Credential): 凭据类。
+
+        Returns:
+            Picture: `self`
+        """
+        from ..note import upload_image
+
+        res = await upload_image(self, credential)
+        self = await self.load_url("https:" + res["location"])
         return self
 
     def convert_format(self, new_format: str) -> "Picture":
