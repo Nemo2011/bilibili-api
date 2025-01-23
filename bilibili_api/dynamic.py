@@ -542,7 +542,7 @@ class BuildDynamic:
                 elif content["raw_text"] == "@":
                     contents[idx][
                         "raw_text"
-                    ] = f"@{(await user.User(uid=content["biz_id"]).get_user_info())["name"]}"
+                    ] = f"@{(await user.User(uid=content['biz_id']).get_user_info())['name']}"
             if content["type"] == DynamicContentType.VOTE.value:
                 contents[idx]["raw_text"] = (
                     await vote.Vote(vote_id=content["biz_id"]).get_info()
