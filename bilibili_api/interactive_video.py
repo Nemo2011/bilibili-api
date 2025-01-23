@@ -773,6 +773,22 @@ class InteractiveVideoDownloader(AsyncEvent):
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
 
         为保证视频能被成功下载，请在请求的时候加入 `bilibili_api.HEADERS` 头部。
+
+        `self_download_func` 例子：
+
+        ``` python
+        async def download(url: str, path: str) -> None:
+            sess = requests.AsyncSession()
+            req = await sess.request(method="GET", url=url, headers=HEADERS, stream=True)
+            tot = req.headers.get("content-length")
+            cur = 0
+            with open(path, "wb") as file:
+                async for chunk in req.aiter_content():
+                    cur += file.write(chunk)
+                    print(f"{path} [{cur}/{tot}]", end="\r")
+            print()
+            await asyncio.sleep(1.0)  # give bilibili a rest
+        ```
         """
         super().__init__()
         self.__video = video
