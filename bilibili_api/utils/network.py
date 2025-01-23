@@ -141,9 +141,9 @@ class RequestLog(AsyncEvent):
             and not evt in self.get_ignore_events()
         ):
             if evt.startswith("WS_"):
-                self.logger.info(f"WS #{real_data["id"]} {desc}: {real_data}")
+                self.logger.info(f"WS #{real_data['id']} {desc}: {real_data}")
             elif evt == "ANTI_SPIDER":
-                self.logger.info(f"{real_data["msg"]}")
+                self.logger.info(f"{real_data['msg']}")
             else:
                 self.logger.info(f"{desc}: {real_data}")
 
