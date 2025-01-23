@@ -917,7 +917,6 @@ class User:
             .result
         )
         items = res["items_lists"]["page"]["total"]
-        time.sleep(0.5)
         if items == 0:
             items = 1
         params["page_size"] = items

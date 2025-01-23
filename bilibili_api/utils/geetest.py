@@ -253,7 +253,7 @@ class Geetest:
         self.thread = ServerThread(self._geetest_urlhandler, "127.0.0.1", 0)
         self.thread.start()
         while not self.thread.error and not self.thread.serving:
-            time.sleep(0.01)
+            pass
 
     def get_geetest_server_url(self) -> str:
         """
