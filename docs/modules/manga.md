@@ -223,7 +223,7 @@ from bilibili_api import manga
 | name | type | description |
 | - | - | - |
 | pn | int | 页码。Defaults to 1. |
-| seed | Union[Optional,, None] | Unknown param，无需传入. |
+| seed | Optional, str | Unknown param，无需传入. |
 | credential | Credential | 凭据类. Defaults to None. |
 
 **Returns:** List[Manga]: 漫画列表

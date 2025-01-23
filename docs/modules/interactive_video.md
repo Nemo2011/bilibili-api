@@ -539,7 +539,7 @@ o----|xxx| (TEXT_RIGHT)
 
 | name | type | description |
 | - | - | - |
-| edge_id | Union[int, None] | 节点 ID，为 None 时获取根节点信息. Defaults to None. |
+| edge_id | int, optional | 节点 ID，为 None 时获取根节点信息. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 

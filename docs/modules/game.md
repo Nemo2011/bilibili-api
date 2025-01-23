@@ -155,8 +155,8 @@ from bilibili_api import game
 | name | type | description |
 | - | - | - |
 | rank_type | GameRankType | 游戏排行榜类型 |
-| page_num | Union[int, None] | 页码. Defaults to 1. |
-| page_size | Union[int, None] | 每页游戏数量. Defaults to 20. |
+| page_num | int, optional | 页码. Defaults to 1. |
+| page_size | int, optional | 每页游戏数量. Defaults to 20. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -172,8 +172,8 @@ from bilibili_api import game
 
 | name | type | description |
 | - | - | - |
-| page_num | Union[int, None] | 页码. Defaults to 1. |
-| page_size | Union[int, None] | 每页游戏数量. Defaults to 20. |
+| page_num | int, optional | 页码. Defaults to 1. |
+| page_size | int, optional | 每页游戏数量. Defaults to 20. |
 
 **Returns:** dict: 调用 API 返回的结果
 

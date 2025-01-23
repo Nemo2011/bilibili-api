@@ -188,8 +188,8 @@ from bilibili_api import session
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类. |
-| last_id | Union[Optional,, None] | 最后一个 ID |
-| at_time | Union[Optional,, None] | 最后一个点赞发送时间 |
+| last_id | Optional, int | 最后一个 ID |
+| at_time | Optional, int | 最后一个点赞发送时间 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -206,8 +206,8 @@ from bilibili_api import session
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类. |
-| last_id | Union[Optional,, None] | 最后一个 ID |
-| like_time | Union[Optional,, None] | 最后一个点赞发送时间 |
+| last_id | Optional, int | 最后一个 ID |
+| like_time | Optional, int | 最后一个点赞发送时间 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -224,8 +224,8 @@ from bilibili_api import session
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类. |
-| last_reply_id | Union[Optional,, None] | 最后一个评论的 ID |
-| reply_time | Union[Optional,, None] | 最后一个评论发送时间 |
+| last_reply_id | Optional, int | 最后一个评论的 ID |
+| reply_time | Optional, int | 最后一个评论发送时间 |
 
 **Returns:** dict: 调用 API 返回的结果
 

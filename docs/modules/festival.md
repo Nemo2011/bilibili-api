@@ -33,7 +33,7 @@ from bilibili_api import festival
 | name | type | description |
 | - | - | - |
 | fes_id | str | 节日专门页编号 |
-| credential | Union[Credential, None] | 凭据类. Defaults to None. |
+| credential | Credential, optional | 凭据类. Defaults to None. |
 
 
 ### async def get_info()

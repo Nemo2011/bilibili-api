@@ -512,8 +512,8 @@ from bilibili_api import creative_center
 | name | type | description |
 | - | - | - |
 | credentials | Credential | Credential 凭据。 |
-| oid | Union[Optional,, None] | 指定稿件 |
-| keyword | Union[Optional,, None] | 关键词 |
+| oid | Optional, int | 指定稿件 |
+| keyword | Optional, str | 关键词 |
 | archive_type | ArchiveType | 稿件类型 |
 | order | CommentManagerOrder | 排序字段 |
 | filter | int | 筛选器，作用未知 |

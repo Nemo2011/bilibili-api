@@ -67,7 +67,7 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| platform | Union[QrCodeLoginChannel, None] | 平台. (web/tv) Defaults to QrCodeLoginChannel.WEB. |
+| platform | QrCodeLoginChannel, optional | 平台. (web/tv) Defaults to QrCodeLoginChannel.WEB. |
 
 
 ### async def check_state()

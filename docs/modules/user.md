@@ -273,7 +273,7 @@ medialist排序顺序。
 | name | type | description |
 | - | - | - |
 | uid | int | 用户 UID |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
 
 
 ### async def get_access_id()
@@ -293,8 +293,8 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| biz | Union[AlbumType, None] | 排序方式. Defaults to AlbumType.ALL. |
-| page_num | Union[int, None] | 页码数，从 1 开始。 Defaults to 1. |
+| biz | AlbumType, optional | 排序方式. Defaults to AlbumType.ALL. |
+| page_num | int, optional | 页码数，从 1 开始。 Defaults to 1. |
 | page_size | int | 每一页的相簿条目. Defaults to 30. |
 
 **Returns:** dict: 调用接口返回的内容。
@@ -320,7 +320,7 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| order | Union[ArticleListOrder, None] | 排序方式. Defaults to ArticleListOrder.LATEST |
+| order | ArticleListOrder, optional | 排序方式. Defaults to ArticleListOrder.LATEST |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -334,9 +334,9 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| order | Union[ArticleOrder, None] | 排序方式. Defaults to ArticleOrder.PUBDATE. |
-| pn | Union[int, None] | 页码数，从 1 开始。 Defaults to 1. |
-| ps | Union[int, None] | 每一页的视频数. Defaults to 30. |
+| order | ArticleOrder, optional | 排序方式. Defaults to ArticleOrder.PUBDATE. |
+| pn | int, optional | 页码数，从 1 开始。 Defaults to 1. |
+| ps | int, optional | 每一页的视频数. Defaults to 30. |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -350,9 +350,9 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| order | Union[AudioOrder, None] | 排序方式. Defaults to AudioOrder.PUBDATE. |
-| pn | Union[int, None] | 页码数，从 1 开始。 Defaults to 1. |
-| ps | Union[int, None] | 每一页的视频数. Defaults to 30. |
+| order | AudioOrder, optional | 排序方式. Defaults to AudioOrder.PUBDATE. |
+| pn | int, optional | 页码数，从 1 开始。 Defaults to 1. |
+| ps | int, optional | 每一页的视频数. Defaults to 30. |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -438,8 +438,8 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| offset | Union[str, None] | 该值为第一次调用本方法时，数据中会有个 next_offset 字段，指向下一动态列表第一条动态（类似单向链表）。根据上一次获取结果中的 next_offset 字段值，循环填充该值即可获取到全部动态。0 为从头开始。Defaults to 0. |
-| need_top | Union[bool, None] | 显示置顶动态. Defaults to False. |
+| offset | str, optional | 该值为第一次调用本方法时，数据中会有个 next_offset 字段，指向下一动态列表第一条动态（类似单向链表）。根据上一次获取结果中的 next_offset 字段值，循环填充该值即可获取到全部动态。0 为从头开始。Defaults to 0. |
+| need_top | bool, optional | 显示置顶动态. Defaults to False. |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -453,7 +453,7 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| offset | Union[str, None] | 该值为第一次调用本方法时，数据中会有个 offset 字段，指向下一动态列表第一条动态（类似单向链表）。根据上一次获取结果中的 next_offset 字段值，循环填充该值即可获取到全部动态。空字符串为从头开始。Defaults to "". |
+| offset | str, optional | 该值为第一次调用本方法时，数据中会有个 offset 字段，指向下一动态列表第一条动态（类似单向链表）。根据上一次获取结果中的 next_offset 字段值，循环填充该值即可获取到全部动态。空字符串为从头开始。Defaults to "". |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -478,9 +478,9 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| pn | Union[int, None] | 页码，从 1 开始. Defaults to 1. |
-| ps | Union[int, None] | 每页的数据量. Defaults to 100. |
-| desc | Union[bool, None] | 倒序排序. Defaults to True. |
+| pn | int, optional | 页码，从 1 开始. Defaults to 1. |
+| ps | int, optional | 每页的数据量. Defaults to 100. |
+| desc | bool, optional | 倒序排序. Defaults to True. |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -494,10 +494,10 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| pn | Union[int, None] | 页码，从 1 开始. Defaults to 1. |
-| ps | Union[int, None] | 每页的数据量. Defaults to 100. |
-| attention | Union[bool, None] | 是否采用“最常访问”排序，否则为“关注顺序”排序. Defaults to False. |
-| order | Union[OrderType, None] | 排序方式. Defaults to OrderType.desc. |
+| pn | int, optional | 页码，从 1 开始. Defaults to 1. |
+| ps | int, optional | 每页的数据量. Defaults to 100. |
+| attention | bool, optional | 是否采用“最常访问”排序，否则为“关注顺序”排序. Defaults to False. |
+| order | OrderType, optional | 排序方式. Defaults to OrderType.desc. |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -533,13 +533,13 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| oid | Union[int, None] | 起始视频 aid， 默认为列表开头 |
-| ps | Union[int, None] | 每一页的视频数. Defaults to 20. Max 100 |
-| direction | Union[bool, None] | 相对于给定oid的查询方向 True 向列表末尾方向 False 向列表开头方向 Defaults to False. |
-| desc | Union[bool, None] | 倒序排序. Defaults to True. |
-| sort_field | Union[int, None] | 用于排序的栏  1 发布时间，2 播放量，3 收藏量 |
-| tid | Union[int, None] | 分区 ID. Defaults to 0（全部）. 1 部分（未知） |
-| with_current | Union[bool, None] | 返回的列表中是否包含给定oid自身 Defaults to False. |
+| oid | int, optional | 起始视频 aid， 默认为列表开头 |
+| ps | int, optional | 每一页的视频数. Defaults to 20. Max 100 |
+| direction | bool, optional | 相对于给定oid的查询方向 True 向列表末尾方向 False 向列表开头方向 Defaults to False. |
+| desc | bool, optional | 倒序排序. Defaults to True. |
+| sort_field | int, optional | 用于排序的栏  1 发布时间，2 播放量，3 收藏量 |
+| tid | int, optional | 分区 ID. Defaults to 0（全部）. 1 部分（未知） |
+| with_current | bool, optional | 返回的列表中是否包含给定oid自身 Defaults to False. |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -623,10 +623,10 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| pn | Union[int, None] | 页码数，从 1 开始。 Defaults to 1. |
-| ps | Union[int, None] | 每一页的番剧数. Defaults to 15. |
-| type_ | Union[BangumiType, None] | 资源类型. Defaults to BangumiType.BANGUMI |
-| follow_status | Union[BangumiFollowStatus, None] | 追番状态. Defaults to BangumiFollowStatus.ALL |
+| pn | int, optional | 页码数，从 1 开始。 Defaults to 1. |
+| ps | int, optional | 每一页的番剧数. Defaults to 15. |
+| type_ | BangumiType, optional | 资源类型. Defaults to BangumiType.BANGUMI |
+| follow_status | BangumiFollowStatus, optional | 追番状态. Defaults to BangumiFollowStatus.ALL |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -684,8 +684,8 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| pn | Union[int, None] | 页码，从 1 开始. Defaults to 1. |
-| ps | Union[int, None] | 每页的数据量. Defaults to 20. |
+| pn | int, optional | 页码，从 1 开始. Defaults to 1. |
+| ps | int, optional | 每页的数据量. Defaults to 20. |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -723,11 +723,11 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| tid | Union[int, None] | 分区 ID. Defaults to 0（全部）. |
-| pn | Union[int, None] | 页码，从 1 开始. Defaults to 1. |
-| ps | Union[int, None] | 每一页的视频数. Defaults to 30. |
-| keyword | Union[str, None] | 搜索关键词. Defaults to "". |
-| order | Union[VideoOrder, None] | 排序方式. Defaults to VideoOrder.PUBDATE |
+| tid | int, optional | 分区 ID. Defaults to 0（全部）. |
+| pn | int, optional | 页码，从 1 开始. Defaults to 1. |
+| ps | int, optional | 每一页的视频数. Defaults to 30. |
+| keyword | str, optional | 搜索关键词. Defaults to "". |
+| order | VideoOrder, optional | 排序方式. Defaults to VideoOrder.PUBDATE |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -778,7 +778,7 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| since | Union[int, None] | 开始时间(msec) |
+| since | int, optional | 开始时间(msec) |
 
 **Returns:** dict: 调用接口返回的内容。
 
@@ -911,8 +911,8 @@ medialist排序顺序。
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类 |
-| pn | Union[int, None] | 页码. Defaults to 1. |
-| ps | Union[int, None] | 每页数据大小. Defaults to 50. |
+| pn | int, optional | 页码. Defaults to 1. |
+| ps | int, optional | 每页数据大小. Defaults to 50. |
 
 **Returns:** None
 
@@ -940,8 +940,8 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| ts | Union[int, None] | 时间戳. Defaults to 0. |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| ts | int, optional | 时间戳. Defaults to 0. |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -1126,8 +1126,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类 |
-| pn | Union[int, None] | 页码. Defaults to 1. |
-| ps | Union[int, None] | 每页数据大小. Defaults to 50. |
+| pn | int, optional | 页码. Defaults to 1. |
+| ps | int, optional | 每页数据大小. Defaults to 50. |
 
 **Returns:** None
 
@@ -1143,8 +1143,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类 |
-| pn | Union[int, None] | 页码. Defaults to 1. |
-| ps | Union[int, None] | 每页数据大小. Defaults to 50. |
+| pn | int, optional | 页码. Defaults to 1. |
+| ps | int, optional | 每页数据大小. Defaults to 50. |
 
 **Returns:** None
 
@@ -1176,7 +1176,7 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 | name | type | description |
 | - | - | - |
 | names | str/List[str] | 用户名 |
-| credential | Union[Credential, None] | 凭据类. Defaults to None. |
+| credential | Credential, optional | 凭据类. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 

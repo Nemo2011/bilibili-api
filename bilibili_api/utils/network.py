@@ -179,6 +179,36 @@ CallbackData:
 
 默认启用 Api 和 Anti-Spider 相关信息。
 """
+request_log.__doc__ = """
+请求日志支持，默认支持输出到指定 I/O 对象。
+
+可以添加更多监听器达到更多效果。
+
+Logger: RequestLog().logger
+
+Extends: AsyncEvent
+
+Events:
+    (CurlCFFIClient)
+    REQUEST:   HTTP 请求。
+    RESPONSE:  HTTP 响应。
+    WS_CREATE: 新建的 Websocket 请求。
+    WS_RECV:   获得到 WebSocket 请求。
+    WS_SEND:   发送了 WebSocket 请求。
+    WS_CLOSE:  关闭 WebSocket 请求。
+    (Api)
+    API_REQUEST: Api 请求。
+    API_RESPONSE: Api 响应。
+    ANTI_SPIDER: 反爬虫相关信息。
+
+CallbackData:
+    事件 (str)
+    描述 (str)
+    数据 (dict)
+    时间 (datetime.datetime)
+
+默认启用 Api 和 Anti-Spider 相关信息。
+"""
 
 
 ################################################## END Logger ##################################################
@@ -308,9 +338,8 @@ class RequestSettings:
 
 
 request_settings = RequestSettings()
-"""
-请求参数设置
-"""
+"请求参数设置"
+request_settings.__doc__ = "请求参数设置"
 
 
 @dataclass
@@ -560,6 +589,9 @@ class BiliAPIClient(ABC):
 
 
 class CurlCFFIClient(BiliAPIClient):
+    """
+    curl_cffi 模块请求客户端
+    """
     def __init__(
         self,
         proxy: str = "",
@@ -759,6 +791,19 @@ class CurlCFFIClient(BiliAPIClient):
 
     async def close(self) -> None:
         await self.__session.close()
+
+    __init__.__doc__ = BiliAPIClient.__init__.__doc__
+    get_wrapped_session.__doc__ = BiliAPIClient.get_wrapped_session.__doc__
+    set_proxy.__doc__ = BiliAPIClient.set_proxy.__doc__
+    set_timeout.__doc__ = BiliAPIClient.set_timeout.__doc__
+    set_verify_ssl.__doc__ = BiliAPIClient.set_verify_ssl.__doc__
+    set_trust_env.__doc__ = BiliAPIClient.set_trust_env.__doc__
+    request.__doc__ = BiliAPIClient.request.__doc__
+    ws_create.__doc__ = BiliAPIClient.ws_create.__doc__
+    ws_recv.__doc__ = BiliAPIClient.ws_recv.__doc__
+    ws_send.__doc__ = BiliAPIClient.ws_send.__doc__
+    ws_close.__doc__ = BiliAPIClient.ws_close.__doc__
+    close.__doc__ = BiliAPIClient.close.__doc__
 
 
 def register_client(name: str, cls: type) -> None:

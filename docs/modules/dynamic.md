@@ -173,12 +173,12 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| text | Union[str, None] | 动态文字. Defaults to "". |
-| pics | Union[List[Picture], None] | 动态图片列表. Defaults to []. |
-| topic_id | Union[int, None] | 动态话题 id. Defaults to -1. |
-| vote_id | Union[int, None] | 动态中的投票的 id. 将放在整个动态的最后面. Defaults to -1. |
-| live_reserve_id | Union[int, None] | 直播预约 oid. 通过 `live.create_live_reserve` 获取. Defaults to -1. |
-| send_time | Union[datetime, None] | 发送时间. Defaults to None. |
+| text | str, optional | 动态文字. Defaults to "". |
+| pics | List[Picture]  , optional | 动态图片列表. Defaults to []. |
+| topic_id | int, optional | 动态话题 id. Defaults to -1. |
+| vote_id | int, optional | 动态中的投票的 id. 将放在整个动态的最后面. Defaults to -1. |
+| live_reserve_id | int, optional | 直播预约 oid. 通过 `live.create_live_reserve` 获取. Defaults to -1. |
+| send_time | datetime \| None, optional | 发送时间. Defaults to None. |
 
 **Returns:** None
 
@@ -338,7 +338,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | name | type | description |
 | - | - | - |
 | dynamic_id | int | 动态 ID |
-| credential | Union[Credential, None] | 凭据类. Defaults to None. |
+| credential | Credential \| None, optional | 凭据类. Defaults to None. |
 
 
 ### async def delete()
@@ -381,8 +381,8 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| pn | Union[int, None] | 页码，defaults to 1 |
-| ps | Union[int, None] | 每页大小，defaults to 30 |
+| pn | int, optional | 页码，defaults to 1 |
+| ps | int, optional | 每页大小，defaults to 30 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -407,7 +407,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| offset | Union[str, None] | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "" |
+| offset | str, optional | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "" |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -421,7 +421,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| offset | Union[str, None] | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0" |
+| offset | str, optional | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0" |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -446,7 +446,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| text | Union[str, None] | 转发动态时的文本内容. Defaults to "转发动态" |
+| text | str, optional | 转发动态时的文本内容. Defaults to "转发动态" |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -460,7 +460,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 收藏状态. Defaults to True |
+| status | bool, optional | 收藏状态. Defaults to True |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -474,7 +474,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 点赞状态. Defaults to True. |
+| status | bool, optional | 点赞状态. Defaults to True. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -590,11 +590,11 @@ scene 参数
 | name | type | description |
 | - | - | - |
 | credential | Credential | 凭据类. |
-| _type | Union[DynamicType, None] | 动态类型. Defaults to DynamicType.ALL. |
-| host_mid | Union[int, None] | 获取对应 UP 主动态的 mid. Defaults to None. |
-| features | Union[str, None] | 默认 itemOpusStyle. |
-| pn | Union[int, None] | 页码. Defaults to 1. |
-| offset | Union[int, None] | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None. |
+| _type | DynamicType, optional | 动态类型. Defaults to DynamicType.ALL. |
+| host_mid | int, optional | 获取对应 UP 主动态的 mid. Defaults to None. |
+| features | str, optional | 默认 itemOpusStyle. |
+| pn | int, optional | 页码. Defaults to 1. |
+| offset | int, optional | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None. |
 
 **Returns:** list[Dynamic]: 动态类列表
 

@@ -28,7 +28,7 @@ import traceback
 
 from colorama import Fore, Style, init
 
-from bilibili_api import settings
+from bilibili_api import request_settings
 
 
 def collect_test_function(module):
@@ -43,8 +43,7 @@ RATELIMIT = (
     float(os.getenv("BILI_RATELIMIT")) if os.getenv("BILI_RATELIMIT") is not None else 0
 )
 
-settings.timeout = 100
-
+request_settings.set_timeout(100)
 
 async def test(module):
     print(Fore.YELLOW + f"::group::=========== 开始测试 {module.__name__} ===========")

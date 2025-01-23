@@ -85,6 +85,7 @@ from bilibili_api import bilibili_api
 - [class GeetestMeta()](#class-GeetestMeta)
 - [class GeetestServerNotFoundException()](#class-GeetestServerNotFoundException)
 - [class GeetestUndoneException()](#class-GeetestUndoneException)
+- [var HEADERS](#var-HEADERS)
 - [class LiveException()](#class-LiveException)
 - [class LoginError()](#class-LoginError)
 - [class NetworkException()](#class-NetworkException)
@@ -118,6 +119,24 @@ from bilibili_api import bilibili_api
 - [def refresh\_buvid()](#def-refresh\_buvid)
 - [def refresh\_wbi\_mixin\_key()](#def-refresh\_wbi\_mixin\_key)
 - [def register\_client()](#def-register\_client)
+- [var request\_log](#var-request\_log)
+  - [def get\_ignore\_events()](#def-get\_ignore\_events)
+  - [def get\_on\_events()](#def-get\_on\_events)
+  - [def is\_on()](#def-is\_on)
+  - [def set\_ignore\_events()](#def-set\_ignore\_events)
+  - [def set\_on()](#def-set\_on)
+  - [def set\_on\_events()](#def-set\_on\_events)
+- [var request\_settings](#var-request\_settings)
+  - [def get\_proxy()](#def-get\_proxy)
+  - [def get\_timeout()](#def-get\_timeout)
+  - [def get\_trust\_env()](#def-get\_trust\_env)
+  - [def get\_verify\_ssl()](#def-get\_verify\_ssl)
+  - [def get\_wbi\_retry\_times()](#def-get\_wbi\_retry\_times)
+  - [def set\_proxy()](#def-set\_proxy)
+  - [def set\_timeout()](#def-set\_timeout)
+  - [def set\_trust\_env()](#def-set\_trust\_env)
+  - [def set\_verify\_ssl()](#def-set\_verify\_ssl)
+  - [def set\_wbi\_retry\_times()](#def-set\_wbi\_retry\_times)
 - [def select\_client()](#def-select\_client)
 - [def set\_session()](#def-set\_session)
 - [def sync()](#def-sync)
@@ -136,17 +155,17 @@ from bilibili_api import bilibili_api
 | - | - | - |
 | url | str | 请求地址 |
 | method | str | 请求方法 |
-| comment | Union[str, None] | 注释. Defaults to "". |
-| wbi | Union[bool, None] | 是否使用 wbi 鉴权. Defaults to False. |
-| wbi2 | Union[bool, None] | 是否使用参数进一步的 wbi 鉴权. Defaults to False. |
-| bili_ticket | Union[bool, None] | 是否使用 bili_ticket. Defaults to False. |
-| verify | Union[bool, None] | 是否验证凭据. Defaults to False. |
-| no_csrf | Union[bool, None] | 是否不使用 csrf. Defaults to False. |
-| json_body | Union[bool, None] | 是否使用 json 作为载荷. Defaults to False. |
-| ignore_code | Union[bool, None] | 是否忽略返回值 code 的检验. Defaults to False. |
-| data | Union[Dict, None] | 请求载荷. Defaults to {}. |
-| params | Union[Dict, None] | 请求参数. Defaults to {}. |
-| credential | Union[Credential, None] | 凭据. Defaults to Credential(). |
+| comment | str, optional | 注释. Defaults to "". |
+| wbi | bool, optional | 是否使用 wbi 鉴权. Defaults to False. |
+| wbi2 | bool, optional | 是否使用参数进一步的 wbi 鉴权. Defaults to False. |
+| bili_ticket | bool, optional | 是否使用 bili_ticket. Defaults to False. |
+| verify | bool, optional | 是否验证凭据. Defaults to False. |
+| no_csrf | bool, optional | 是否不使用 csrf. Defaults to False. |
+| json_body | bool, optional | 是否使用 json 作为载荷. Defaults to False. |
+| ignore_code | bool, optional | 是否忽略返回值 code 的检验. Defaults to False. |
+| data | Dict, optional | 请求载荷. Defaults to {}. |
+| params | Dict, optional | 请求参数. Defaults to {}. |
+| credential | Credential, optional | 凭据. Defaults to Credential(). |
 
 
 ### async def request()
@@ -340,11 +359,11 @@ Cookies 刷新错误。
 
 | name | type | description |
 | - | - | - |
-| sessdata | Union[str, None] | 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None. |
-| bili_jct | Union[str, None] | 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None. |
-| buvid3 | Union[str, None] | 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None. |
-| dedeuserid | Union[str, None] | 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None. |
-| ac_time_value | Union[str, None] | 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None. |
+| sessdata | str \| None, optional | 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None. |
+| bili_jct | str \| None, optional | 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None. |
+| buvid3 | str \| None, optional | 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None. |
+| dedeuserid | str \| None, optional | 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None. |
+| ac_time_value | str \| None, optional | 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None. |
 
 
 ### async def check_refresh()
@@ -378,7 +397,7 @@ Cookies 刷新错误。
 
 | name | type | description |
 | - | - | - |
-| cookies | Union[Dict, None] | Cookies. Defaults to {}. |
+| cookies | Dict, optional | Cookies. Defaults to {}. |
 
 **Returns:** Credential: 凭据类
 
@@ -572,6 +591,7 @@ Credential 类未提供 sessdata 时的异常。
 
 **Extend: bilibili_api.utils.network.BiliAPIClient**
 
+curl_cffi 模块请求客户端
 
 
 
@@ -579,11 +599,19 @@ Credential 类未提供 sessdata 时的异常。
 ### def \_\_init\_\_()
 
 
-
+| name | type | description |
+| - | - | - |
+| proxy | str, optional | 代理地址. Defaults to "". |
+| timeout | float, optional | 请求超时时间. Defaults to 0.0. |
+| verify_ssl | bool, optional | 是否验证 SSL. Defaults to True. |
+| trust_env | bool, optional | `trust_env`. Defaults to True. |
+| session | object, optional | 会话对象. Defaults to None. |
+| Note: 仅当用户只提供 `session` 参数且用户中途未调用 `set_xxx` 函数才使用用户提供的 `session`。 |  | 仅当用户只提供 `session` 参数且用户中途未调用 `set_xxx` 函数才使用用户提供的 `session`。 |
 
 
 ### async def close()
 
+关闭请求客户端，即关闭封装的第三方会话对象
 
 
 
@@ -593,26 +621,46 @@ Credential 类未提供 sessdata 时的异常。
 
 ### def get_wrapped_session()
 
+获取封装的第三方会话对象
 
 
 
-**Returns:** None
+**Returns:** object: 第三方会话对象
+
 
 
 
 ### async def request()
 
+进行 HTTP 请求
 
 
+| name | type | description |
+| - | - | - |
+| method | str, optional | 请求方法. Defaults to "". |
+| url | str, optional | 请求地址. Defaults to "". |
+| params | Dict, optional | 请求参数. Defaults to {}. |
+| data | Union[Dict, str, bytes], optional | 请求数据. Defaults to {}. |
+| files | Dict[str, BiliAPIFile], optional | 请求文件. Defaults to {}. |
+| headers | Dict, optional | 请求头. Defaults to {}. |
+| cookies | Dict, optional | 请求 Cookies. Defaults to {}. |
+| allow_redirects | bool, optional | 是否允许重定向. Defaults to False. |
 
-**Returns:** None
+**Returns:** BiliAPIResponse: 响应对象
+
+
+Note: 无需实现 data 为 str 且 files 不为空的情况。
 
 
 
 ### def set_proxy()
 
+设置代理地址
 
 
+| name | type | description |
+| - | - | - |
+| proxy | str, optional | 代理地址. Defaults to "". |
 
 **Returns:** None
 
@@ -620,8 +668,12 @@ Credential 类未提供 sessdata 时的异常。
 
 ### def set_timeout()
 
+设置请求超时时间
 
 
+| name | type | description |
+| - | - | - |
+| timeout | float, optional | 请求超时时间. Defaults to 0.0. |
 
 **Returns:** None
 
@@ -629,8 +681,12 @@ Credential 类未提供 sessdata 时的异常。
 
 ### def set_trust_env()
 
+设置 `trust_env`
 
 
+| name | type | description |
+| - | - | - |
+| trust_env | bool, optional | `trust_env`. Defaults to True. |
 
 **Returns:** None
 
@@ -638,8 +694,12 @@ Credential 类未提供 sessdata 时的异常。
 
 ### def set_verify_ssl()
 
+设置是否验证 SSL
 
 
+| name | type | description |
+| - | - | - |
+| verify_ssl | bool, optional | 是否验证 SSL. Defaults to True. |
 
 **Returns:** None
 
@@ -647,8 +707,12 @@ Credential 类未提供 sessdata 时的异常。
 
 ### async def ws_close()
 
+关闭 WebSocket 连接
 
 
+| name | type | description |
+| - | - | - |
+| cnt | int | WebSocket 连接编号 |
 
 **Returns:** None
 
@@ -656,26 +720,45 @@ Credential 类未提供 sessdata 时的异常。
 
 ### async def ws_create()
 
+创建 WebSocket 连接
 
 
+| name | type | description |
+| - | - | - |
+| url | str, optional | WebSocket 地址. Defaults to "". |
+| params | Dict, optional | WebSocket 参数. Defaults to {}. |
+| headers | Dict, optional | WebSocket 头. Defaults to {}. |
 
-**Returns:** None
+**Returns:** int: WebSocket 连接编号，用于后续操作。
+
 
 
 
 ### async def ws_recv()
 
+接受 WebSocket 数据
 
 
+| name | type | description |
+| - | - | - |
+| cnt | int | WebSocket 连接编号 |
 
-**Returns:** None
+**Returns:** Tuple[bytes, BiliWsMsgType]: WebSocket 数据和状态
+
+
+Note: 建议实现此函数时支持其他线程关闭不阻塞，除基础状态同时实现 CLOSING, CLOSED。
 
 
 
 ### async def ws_send()
 
+发送 WebSocket 数据
 
 
+| name | type | description |
+| - | - | - |
+| cnt | int | WebSocket 连接编号 |
+| data | bytes | WebSocket 数据 |
 
 **Returns:** None
 
@@ -696,20 +779,20 @@ Credential 类未提供 sessdata 时的异常。
 | name | type | description |
 | - | - | - |
 | text | str | 弹幕文本。 |
-| dm_time | Union[float, None] | 弹幕在视频中的位置，单位为秒。Defaults to 0.0. |
-| send_time | Union[float, None] | 弹幕发送的时间。Defaults to time.time(). |
-| crc32_id | Union[str, None] | 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to "". |
-| color | Union[str, None] | 弹幕十六进制颜色。Defaults to "ffffff" (如果为大会员专属的颜色则为"special"). |
-| weight | Union[int, None] | 弹幕在弹幕列表显示的权重。Defaults to -1. |
-| id_ | Union[int, None] | 弹幕 ID。Defaults to -1. |
-| id_str | Union[str, None] | 弹幕字符串 ID。Defaults to "". |
-| action | Union[str, None] | 暂不清楚。Defaults to "". |
-| mode | Union[Union[DmMode, None] | 弹幕模式。Defaults to Mode.FLY. |
-| font_size | Union[Union[DmFontSize, None] | 弹幕字体大小。Defaults to FontSize.NORMAL. |
-| is_sub | Union[bool, None] | 是否为字幕弹幕。Defaults to False. |
-| pool | Union[int, None] | 池。Defaults to 0. |
-| attr | Union[int, None] | 暂不清楚。 Defaults to -1. |
-| uid | Union[int, None] | 弹幕发送者 UID。Defaults to -1. |
+| dm_time | float, optional | 弹幕在视频中的位置，单位为秒。Defaults to 0.0. |
+| send_time | float, optional | 弹幕发送的时间。Defaults to time.time(). |
+| crc32_id | str, optional | 弹幕发送者 UID 经 CRC32 算法取摘要后的值。Defaults to "". |
+| color | str, optional | 弹幕十六进制颜色。Defaults to "ffffff" (如果为大会员专属的颜色则为"special"). |
+| weight | int, optional | 弹幕在弹幕列表显示的权重。Defaults to -1. |
+| id_ | int, optional | 弹幕 ID。Defaults to -1. |
+| id_str | str, optional | 弹幕字符串 ID。Defaults to "". |
+| action | str, optional | 暂不清楚。Defaults to "". |
+| mode | Union[DmMode, int], optional | 弹幕模式。Defaults to Mode.FLY. |
+| font_size | Union[DmFontSize, int], optional | 弹幕字体大小。Defaults to FontSize.NORMAL. |
+| is_sub | bool, optional | 是否为字幕弹幕。Defaults to False. |
+| pool | int, optional | 池。Defaults to 0. |
+| attr | int, optional | 暂不清楚。 Defaults to -1. |
+| uid | int, optional | 弹幕发送者 UID。Defaults to -1. |
 | 大会员专属颜色文字填充：http://i0.hdslb.com/bfs/dm/9dcd329e617035b45d2041ac889c49cb5edd3e44.png |  | //i0.hdslb.com/bfs/dm/9dcd329e617035b45d2041ac889c49cb5edd3e44.png |
 | 大会员专属颜色背景填充：http://i0.hdslb.com/bfs/dm/ba8e32ae03a0a3f70f4e51975a965a9ddce39d50.png |  | //i0.hdslb.com/bfs/dm/ba8e32ae03a0a3f70f4e51975a965a9ddce39d50.png |
 
@@ -947,6 +1030,10 @@ NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate
 
 
 
+
+---
+
+## var HEADERS
 
 ---
 
@@ -1252,7 +1339,7 @@ BV 号转 AV 号。
 
 | name | type | description |
 | - | - | - |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| credential | Credential, optional | 凭据. Defaults to None. |
 
 **Returns:** str: bili_ticket
 
@@ -1340,7 +1427,7 @@ BV 号转 AV 号。
 
 | name | type | description |
 | - | - | - |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| credential | Credential, optional | 凭据. Defaults to None. |
 
 **Returns:** str: wbi mixin key
 
@@ -1412,6 +1499,244 @@ BV 号转 AV 号。
 | name | str | 请求客户端类型名称，用户自定义命名。 |
 | cls | type | 基于 BiliAPIClient 重写后的请求客户端类。 |
 | **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。 |  | 模块默认使用 `curl_cffi` 库作为请求客户端。 |
+
+**Returns:** None
+
+
+
+---
+
+## var request_log
+
+**Extend: AsyncEvent**
+
+请求日志支持，默认支持输出到指定 I/O 对象。
+
+可以添加更多监听器达到更多效果。
+
+Logger: RequestLog().logger
+
+Extends: AsyncEvent
+
+Events:
+(CurlCFFIClient)
+REQUEST:   HTTP 请求。
+RESPONSE:  HTTP 响应。
+WS_CREATE: 新建的 Websocket 请求。
+WS_RECV:   获得到 WebSocket 请求。
+WS_SEND:   发送了 WebSocket 请求。
+WS_CLOSE:  关闭 WebSocket 请求。
+(Api)
+API_REQUEST: Api 请求。
+API_RESPONSE: Api 响应。
+ANTI_SPIDER: 反爬虫相关信息。
+
+CallbackData:
+事件 (str)
+描述 (str)
+数据 (dict)
+时间 (datetime.datetime)
+
+默认启用 Api 和 Anti-Spider 相关信息。
+
+
+
+
+### def get_ignore_events()
+
+获取日志输出排除的事件类型
+
+
+
+**Returns:** dict: 日志输出排除的事件类型
+
+
+
+
+### def get_on_events()
+
+获取日志输出支持的事件类型
+
+
+
+**Returns:** dict: 日志输出支持的事件类型
+
+
+
+
+### def is_on()
+
+获取日志输出是否启用
+
+
+
+**Returns:** bool: 是否启用
+
+
+
+
+### def set_ignore_events()
+
+设置日志输出排除的事件类型
+
+
+| name | type | description |
+| - | - | - |
+| events | Dict | 日志输出排除的事件类型 |
+
+**Returns:** None
+
+
+
+### def set_on()
+
+设置日志输出是否启用
+
+
+| name | type | description |
+| - | - | - |
+| status | bool | 是否启用 |
+
+**Returns:** None
+
+
+
+### def set_on_events()
+
+设置日志输出支持的事件类型
+
+
+| name | type | description |
+| - | - | - |
+| events | Dict | 日志输出支持的事件类型 |
+
+**Returns:** None
+
+
+
+---
+
+## var request_settings
+
+请求参数设置
+
+
+
+### def get_proxy()
+
+获取设置的代理
+
+
+
+**Returns:** str: 代理地址. Defaults to "".
+
+
+
+
+### def get_timeout()
+
+获取设置的 web 请求超时时间
+
+
+
+**Returns:** float: 超时时间. Defaults to 5.0.
+
+
+
+
+### def get_trust_env()
+
+获取设置的 `trust_env`
+
+
+
+**Returns:** bool: `trust_env`. Defaults to True.
+
+
+
+
+### def get_verify_ssl()
+
+获取设置的是否验证 SSL
+
+
+
+**Returns:** bool: 是否验证 SSL. Defaults to True.
+
+
+
+
+### def get_wbi_retry_times()
+
+获取设置的 wbi 重试次数
+
+
+
+**Returns:** int: wbi 重试次数. Defaults to 3.
+
+
+
+
+### def set_proxy()
+
+修改设置的代理
+
+
+| name | type | description |
+| - | - | - |
+| proxy | str | 代理地址 |
+
+**Returns:** None
+
+
+
+### def set_timeout()
+
+修改设置的 web 请求超时时间
+
+
+| name | type | description |
+| - | - | - |
+| timeout | float | 超时时间 |
+
+**Returns:** None
+
+
+
+### def set_trust_env()
+
+修改设置的 `trust_env`
+
+
+| name | type | description |
+| - | - | - |
+| verify_ssl | bool | `trust_env` |
+
+**Returns:** None
+
+
+
+### def set_verify_ssl()
+
+修改设置的是否验证 SSL
+
+
+| name | type | description |
+| - | - | - |
+| verify_ssl | bool | 是否验证 SSL |
+
+**Returns:** None
+
+
+
+### def set_wbi_retry_times()
+
+修改设置的 wbi 重试次数
+
+
+| name | type | description |
+| - | - | - |
+| wbi_retry_times | int | wbi 重试次数. |
 
 **Returns:** None
 

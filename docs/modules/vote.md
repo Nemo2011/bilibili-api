@@ -95,7 +95,7 @@ from bilibili_api import vote
 | duration | int | 投票持续秒数 常用 |
 | choices | VoteChoices | 投票选项 |
 | credential | Credential | Credential 枚举类 |
-| desc | Union[str], optiona, None] | 投票描述. Defaults to None. |
+| desc | Optional[str], optional | 投票描述. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -125,7 +125,7 @@ from bilibili_api import vote
 | name | type | description |
 | - | - | - |
 | desc | str | 选项描述 |
-| image | Union[str, None] | 选项的图片链接，用于图片投票。支持 Picture 类. Defaults to None. |
+| image | str, Picture, optional | 选项的图片链接，用于图片投票。支持 Picture 类. Defaults to None. |
 
 **Returns:** None
 
@@ -184,7 +184,7 @@ from bilibili_api import vote
 | duration | int | 投票持续秒数 常用 |
 | choices | VoteChoices | 投票选项 |
 | credential | Credential | Credential |
-| desc | Union[str], optiona, None] | 投票描述. Defaults to None. |
+| desc | Optional[str], optional | 投票描述. Defaults to None. |
 
 **Returns:** Vote: Vote 类
 

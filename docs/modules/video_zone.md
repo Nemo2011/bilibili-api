@@ -275,8 +275,8 @@ from bilibili_api import video_zone
 | name | type | description |
 | - | - | - |
 | tid | int | 频道的 tid。 |
-| day | Union[int, None] | 3 天排行还是 7 天排行。 Defaults to 7. |
-| credential | Union[Credential, None] | Credential 类。Defaults to None. |
+| day | int, optional | 3 天排行还是 7 天排行。 Defaults to 7. |
+| credential | Credential \| None, optional | Credential 类。Defaults to None. |
 
 **Returns:** list: 前 10 的视频信息。
 

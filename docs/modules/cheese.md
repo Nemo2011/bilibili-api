@@ -229,9 +229,9 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| date | Union[datetime.Date, None] | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
-| from_seg | Union[int, None] | 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None. |
-| to_seg | Union[int, None] | 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None. |
+| date | datetime.Date \| None, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+| from_seg | int, optional | 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None. |
+| to_seg | int, optional | 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None. |
 
 **Returns:** List[Danmaku]: Danmaku 类的列表。
 
@@ -349,7 +349,7 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 点赞状态。Defaults to True. |
+| status | bool, optional | 点赞状态。Defaults to True. |
 
 **Returns:** dict: 调用 API 返回的结果。
 
@@ -363,8 +363,8 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| num | Union[int, None] | 硬币数量，为 1 ~ 2 个。Defaults to 1. |
-| like | Union[bool, None] | 是否同时点赞。Defaults to False. |
+| num | int, optional | 硬币数量，为 1 ~ 2 个。Defaults to 1. |
+| like | bool, optional | 是否同时点赞。Defaults to False. |
 
 **Returns:** dict: 调用 API 返回的结果。
 
@@ -405,8 +405,8 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| add_media_ids | Union[List[int], None] | 要添加到的收藏夹 ID. Defaults to []. |
-| del_media_ids | Union[List[int], None] | 要移出的收藏夹 ID. Defaults to []. |
+| add_media_ids | List[int], optional | 要添加到的收藏夹 ID. Defaults to []. |
+| del_media_ids | List[int], optional | 要移出的收藏夹 ID. Defaults to []. |
 
 **Returns:** dict: 调用 API 返回结果。
 

@@ -49,7 +49,7 @@ from bilibili_api import article
 | name | type | description |
 | - | - | - |
 | cvid | int | cv 号 |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
 
 
 ### async def add_coins()
@@ -152,7 +152,7 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 收藏状态. Defaults to True |
+| status | bool, optional | 收藏状态. Defaults to True |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -166,7 +166,7 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 点赞状态. Defaults to True |
+| status | bool, optional | 点赞状态. Defaults to True |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -215,7 +215,7 @@ from bilibili_api import article
 | name | type | description |
 | - | - | - |
 | rlid | int | 文集 id |
-| credential | Union[Credential, None] | 凭据类. Defaults to None. |
+| credential | Credential \| None, optional | 凭据类. Defaults to None. |
 
 
 ### async def get_content()

@@ -22,13 +22,13 @@ from bilibili_api import app
 
 | name | type | description |
 | - | - | - |
-| build | Union[int, None] | 客户端内部版本号 |
-| mobi_app | Union[str, None] | android / iphone / ipad |
-| platform | Union[str, None] | android / ios/ ios |
-| height | Union[int, None] | 屏幕高度 |
-| width | Union[int, None] | 屏幕宽度 |
-| birth | Union[str, None] | 生日日期(四位数，例 0101) |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| build | int, optional | 客户端内部版本号 |
+| mobi_app | str, optional | android / iphone / ipad |
+| platform | str, optional | android / ios/ ios |
+| height | int, optional | 屏幕高度 |
+| width | int, optional | 屏幕宽度 |
+| birth | str, optional | 生日日期(四位数，例 0101) |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -44,11 +44,11 @@ from bilibili_api import app
 
 | name | type | description |
 | - | - | - |
-| mobi_app | Union[str, None] | android / iphone / ipad |
-| platform | Union[str, None] | android / ios/ ios |
-| height | Union[str, None] | 屏幕高度 |
-| width | Union[str, None] | 屏幕宽度 |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| mobi_app | str, optional | android / iphone / ipad |
+| platform | str, optional | android / ios/ ios |
+| height | str, optional | 屏幕高度 |
+| width | str, optional | 屏幕宽度 |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 

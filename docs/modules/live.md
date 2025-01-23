@@ -125,10 +125,10 @@ Events：
 | name | type | description |
 | - | - | - |
 | room_display_id | int | 房间展示 ID |
-| debug | Union[bool, None] | 调试模式，将输出更多信息。. Defaults to False. |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
-| max_retry | Union[int, None] | 连接出错后最大重试次数. Defaults to 5 |
-| retry_after | Union[int, None] | 连接出错后重试间隔时间（秒）. Defaults to 1 |
+| debug | bool, optional | 调试模式，将输出更多信息。. Defaults to False. |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
+| max_retry | int, optional | 连接出错后最大重试次数. Defaults to 5 |
+| retry_after | int, optional | 连接出错后重试间隔时间（秒）. Defaults to 1 |
 
 
 ### async def connect()
@@ -214,7 +214,7 @@ Events：
 | name | type | description |
 | - | - | - |
 | room_display_id | int | 房间展示 ID（即 URL 中的 ID） |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| credential | Credential, optional | 凭据. Defaults to None. |
 
 
 ### async def ban_user()
@@ -250,7 +250,7 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| page | Union[int, None] | 页码. Defaults to 1. |
+| page | int, optional | 页码. Defaults to 1. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -290,9 +290,9 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| roomId | Union[int, None] | 指定房间，查询是否拥有此房间的粉丝牌 |
-| target_id | Union[int, None] | 指定返回一个主播的粉丝牌，留空就不返回 |
-| page_num | Union[int, None] | 粉丝牌列表，默认 1 |
+| roomId | int, optional | 指定房间，查询是否拥有此房间的粉丝牌 |
+| target_id | int \| None, optional | 指定返回一个主播的粉丝牌，留空就不返回 |
+| page_num | int \| None, optional | 粉丝牌列表，默认 1 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -317,7 +317,7 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| page | Union[int, None] | 页码. Defaults to 1 |
+| page | int, optional | 页码. Defaults to 1 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -331,7 +331,7 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| act_id | Union[int, None] | 未知，Defaults to 100061 |
+| act_id | int, optional | 未知，Defaults to 100061 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -416,10 +416,10 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| live_protocol | Union[LiveProtocol, None] | 直播源流协议. Defaults to LiveProtocol.DEFAULT. |
-| live_format | Union[LiveFormat, None] | 直播源容器格式. Defaults to LiveFormat.DEFAULT. |
-| live_codec | Union[LiveCodec, None] | 直播源视频编码. Defaults to LiveCodec.DEFAULT. |
-| live_qn | Union[ScreenResolution, None] | 直播源清晰度. Defaults to ScreenResolution.ORIGINAL. |
+| live_protocol | LiveProtocol, optional | 直播源流协议. Defaults to LiveProtocol.DEFAULT. |
+| live_format | LiveFormat, optional | 直播源容器格式. Defaults to LiveFormat.DEFAULT. |
+| live_codec | LiveCodec, optional | 直播源视频编码. Defaults to LiveCodec.DEFAULT. |
+| live_qn | ScreenResolution, optional | 直播源清晰度. Defaults to ScreenResolution.ORIGINAL. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -433,7 +433,7 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| screen_resolution | Union[ScreenResolution, None] | 清晰度. Defaults to ScreenResolution.ORIGINAL |
+| screen_resolution | ScreenResolution, optional | 清晰度. Defaults to ScreenResolution.ORIGINAL |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -495,7 +495,7 @@ Events：
 | name | type | description |
 | - | - | - |
 | danmaku | Danmaku | 弹幕类 |
-| reply_mid | Union[int, None] | @的 UID. Defaults to None. |
+| reply_mid | int, optional | @的 UID. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -527,8 +527,8 @@ Events：
 | bag_id | int | 礼物背包 ID |
 | gift_id | int | 礼物 ID |
 | gift_num | int | 礼物数量 |
-| storm_beat_id | Union[int, None] | 未知， Defaults to 0 |
-| price | Union[int, None] | 礼物单价，Defaults to 0 |
+| storm_beat_id | int, optional | 未知， Defaults to 0 |
+| price | int, optional | 礼物单价，Defaults to 0 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -589,7 +589,7 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| task_id | Union[int, None] | 签到任务 ID. Defaults to 1447 |
+| task_id | int, optional | 签到任务 ID. Defaults to 1447 |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -698,9 +698,9 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| room_id | Union[int, None] | 房间显示 ID. Defaults to None. |
-| area_id | Union[int, None] | 子分区 ID. Defaults to None. |
-| area_parent_id | Union[int, None] | 父分区 ID. Defaults to None. |
+| room_id | int, optional | 房间显示 ID. Defaults to None. |
+| area_id | int, optional | 子分区 ID. Defaults to None. |
+| area_parent_id | int, optional | 父分区 ID. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -716,7 +716,7 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| need_recommend | Union[bool, None] | 是否接受推荐直播间，Defaults to True |
+| need_recommend | bool, optional | 是否接受推荐直播间，Defaults to True |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -745,8 +745,8 @@ Events：
 
 | name | type | description |
 | - | - | - |
-| page | Union[int, None] | 页数. Defaults to 1. |
-| page_size | Union[int, None] | 每页数量. Defaults to 10. |
+| page | int, optional | 页数. Defaults to 1. |
+| page_size | int, optional | 每页数量. Defaults to 10. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -797,8 +797,8 @@ pages = math.ceil(info['data']['guards'] / 10)
 
 | name | type | description |
 | - | - | - |
-| page | Union[int, None] | 页码, Defaults to 1. |
-| page_size | Union[int, None] | 每页数量 Defaults to 30. |
+| page | int, optional | 页码, Defaults to 1. |
+| page_size | int, optional | 每页数量 Defaults to 30. |
 
 **Returns:** dict: 调用 API 返回的结果
 

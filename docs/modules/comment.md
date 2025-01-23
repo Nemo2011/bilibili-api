@@ -100,8 +100,8 @@ from bilibili_api import comment
 
 | name | type | description |
 | - | - | - |
-| page_index | Union[int, None] | 页码索引，从 1 开始。Defaults to 1. |
-| page_size | Union[int, None] | 每页评论数。设置大于20的数值不会起作用。Defaults to 10. |
+| page_index | int, optional | 页码索引，从 1 开始。Defaults to 1. |
+| page_size | int, optional | 每页评论数。设置大于20的数值不会起作用。Defaults to 10. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -126,7 +126,7 @@ from bilibili_api import comment
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 状态, Defaults to True. |
+| status | bool, optional | 状态, Defaults to True. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -140,7 +140,7 @@ from bilibili_api import comment
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 状态, Defaults to True. |
+| status | bool, optional | 状态, Defaults to True. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -154,7 +154,7 @@ from bilibili_api import comment
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 状态, Defaults to True. |
+| status | bool, optional | 状态, Defaults to True. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -169,7 +169,7 @@ from bilibili_api import comment
 | name | type | description |
 | - | - | - |
 | report_reason | ReportReason | 举报类型枚举 |
-| content | Union[str, None] | 其他举报备注内容仅 reason=ReportReason.OTHER 可用且不能为 None. |
+| content | str, optional | 其他举报备注内容仅 reason=ReportReason.OTHER 可用且不能为 None. |
 | Error Code: |  |  |
 | 0: 成功 |  | 成功 |
 | -101: 账号未登录 |  | 账号未登录 |
@@ -269,9 +269,9 @@ from bilibili_api import comment
 | - | - | - |
 | oid | int | 资源 ID。 |
 | type_ | CommentsResourceType | 资源类枚举。 |
-| page_index | Union[int, None] | 页码. Defaults to 1. |
-| order | Union[OrderType, None] | 排序方式枚举. Defaults to OrderType.TIME. |
-| credential | Union[Credential, None] | 凭据。Defaults to None. |
+| page_index | int, optional | 页码. Defaults to 1. |
+| order | OrderType, optional | 排序方式枚举. Defaults to OrderType.TIME. |
+| credential | Credential, optional | 凭据。Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -291,9 +291,9 @@ from bilibili_api import comment
 | - | - | - |
 | oid | int | 资源 ID。 |
 | type_ | CommentsResourceType | 资源类枚举。 |
-| offset | Union[str, None] | 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。对应返回结果的 `["cursor"]["pagination_reply"]["next_offset"]` |
-| order | Union[OrderType, None] | 排序方式枚举. Defaults to OrderType.TIME. |
-| credential | Union[Credential, None] | 凭据。Defaults to None. |
+| offset | str, optional | 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。对应返回结果的 `["cursor"]["pagination_reply"]["next_offset"]` |
+| order | OrderType, optional | 排序方式枚举. Defaults to OrderType.TIME. |
+| credential | Credential, optional | 凭据。Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -320,8 +320,8 @@ from bilibili_api import comment
 | text | str | 评论内容。 |
 | oid | str | 资源 ID。 |
 | type_ | CommentsResourceType | 资源类型枚举。 |
-| root | Union[int, None] | 根评论 ID, Defaults to None. |
-| parent | Union[int, None] | 父评论 ID, Defaults to None. |
+| root | int, optional | 根评论 ID, Defaults to None. |
+| parent | int, optional | 父评论 ID, Defaults to None. |
 | credential | Credential | 凭据 |
 
 **Returns:** dict: 调用 API 返回的结果

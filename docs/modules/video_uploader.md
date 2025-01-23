@@ -160,23 +160,23 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 | desc | str | 视频简介，最多 2000 字 |
 | cover | Union[Picture, str] | 封面，可以传入路径 |
 | tags | List[str], str | 标签列表，传入 List 或者传入 str 以 "," 为分隔符，至少 1 个 Tag，最多 10 个 |
-| topic | Union[Union[int, Topic], None] | 活动主题，应该从 video_uploader.get_available_topics(tid) 获取，可选 |
-| mission_id | Union[int, None] | 任务 id，与 topic 一同获取传入 |
+| topic | Optional[Union[int, Topic]] | 活动主题，应该从 video_uploader.get_available_topics(tid) 获取，可选 |
+| mission_id | Optional[int] | 任务 id，与 topic 一同获取传入 |
 | original | bool | 是否原创，默认原创 |
-| source | Union[str, None] | 转载来源，非原创应该提供 |
-| recreate | Union[bool, None] | 是否允许转载. 可选，默认为不允许二创 |
-| no_reprint | Union[bool, None] | 未经允许是否禁止转载. 可选，默认为允许转载 |
-| open_elec | Union[bool, None] | 是否开启充电. 可选，默认为关闭充电 |
-| up_selection_reply | Union[bool, None] | 是否开启评论精选. 可选，默认为关闭评论精选 |
-| up_close_danmu | Union[bool, None] | 是否关闭弹幕. 可选，默认为开启弹幕 |
-| up_close_reply | Union[bool, None] | 是否关闭评论. 可选，默认为开启评论 |
-| lossless_music | Union[bool, None] | 是否开启无损音乐. 可选，默认为关闭无损音乐 |
-| dolby | Union[bool, None] | 是否开启杜比音效. 可选，默认为关闭杜比音效 |
-| subtitle | Union[Dict, None] | 字幕信息，可选 |
-| dynamic | Union[str, None] | 粉丝动态，可选，最多 233 字 |
-| neutral_mark | Union[str, None] | 创作者声明，可选 |
-| delay_time | Union[Union[int, datetime], None] | 定时发布时间，可选 |
-| porder | Union[VideoPorderMeta, None] | 商业相关参数，可选 |
+| source | Optional[str] | 转载来源，非原创应该提供 |
+| recreate | Optional[bool] | 是否允许转载. 可选，默认为不允许二创 |
+| no_reprint | Optional[bool] | 未经允许是否禁止转载. 可选，默认为允许转载 |
+| open_elec | Optional[bool] | 是否开启充电. 可选，默认为关闭充电 |
+| up_selection_reply | Optional[bool] | 是否开启评论精选. 可选，默认为关闭评论精选 |
+| up_close_danmu | Optional[bool] | 是否关闭弹幕. 可选，默认为开启弹幕 |
+| up_close_reply | Optional[bool] | 是否关闭评论. 可选，默认为开启评论 |
+| lossless_music | Optional[bool] | 是否开启无损音乐. 可选，默认为关闭无损音乐 |
+| dolby | Optional[bool] | 是否开启杜比音效. 可选，默认为关闭杜比音效 |
+| subtitle | Optional[Dict] | 字幕信息，可选 |
+| dynamic | Optional[str] | 粉丝动态，可选，最多 233 字 |
+| neutral_mark | Optional[str] | 创作者声明，可选 |
+| delay_time | Optional[Union[int, datetime]] | 定时发布时间，可选 |
+| porder | Optional[VideoPorderMeta] | 商业相关参数，可选 |
 
 
 ### async def verify()
@@ -387,7 +387,7 @@ Events:
 | - | - | - |
 | path | str | 视频文件路径 |
 | title | str | 视频标题 |
-| description | Union[str, None] | 视频简介. Defaults to "". |
+| description | str, optional | 视频简介. Defaults to "". |
 
 
 ### def get_size()
@@ -422,8 +422,8 @@ Events:
 
 | name | type | description |
 | - | - | - |
-| tid | Union[int, None] | 分区 ID. Defaults to 0. |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| tid | int, optional | 分区 ID. Defaults to 0. |
+| credential | Credential, optional | 凭据. Defaults to None. |
 
 **Returns:** dict API 调用返回结果
 

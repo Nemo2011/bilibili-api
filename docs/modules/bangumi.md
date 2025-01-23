@@ -110,11 +110,11 @@ from bilibili_api import bangumi
 
 | name | type | description |
 | - | - | - |
-| media_id | Union[int, None] | 番剧本身的 ID. Defaults to -1. |
-| ssid | Union[int, None] | 每季度的 ID. Defaults to -1. |
-| epid | Union[int, None] | 每集的 ID. Defaults to -1. |
-| oversea | Union[bool, None] | 是否要采用兼容的港澳台Api,用于仅限港澳台地区番剧的信息请求. Defaults to False. |
-| credential | Union[Credential, None] | 凭据类. Defaults to None. |
+| media_id | int, optional | 番剧本身的 ID. Defaults to -1. |
+| ssid | int, optional | 每季度的 ID. Defaults to -1. |
+| epid | int, optional | 每集的 ID. Defaults to -1. |
+| oversea | bool, optional | 是否要采用兼容的港澳台Api,用于仅限港澳台地区番剧的信息请求. Defaults to False. |
+| credential | Credential \| None, optional | 凭据类. Defaults to None. |
 
 
 ### async def get_episode_list()
@@ -145,8 +145,8 @@ from bilibili_api import bangumi
 
 | name | type | description |
 | - | - | - |
-| order | Union[BangumiCommentOrder, None] | 排序方式。Defaults to BangumiCommentOrder.DEFAULT |
-| next | Union[str, None] | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None |
+| order | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT |
+| next | str \| None, optional | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -215,8 +215,8 @@ from bilibili_api import bangumi
 
 | name | type | description |
 | - | - | - |
-| order | Union[BangumiCommentOrder, None] | 排序方式。Defaults to BangumiCommentOrder.DEFAULT |
-| next | Union[str, None] | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None |
+| order | BangumiCommentOrder, optional | 排序方式。Defaults to BangumiCommentOrder.DEFAULT |
+| next | str \| None, optional | 调用返回结果中的 next 键值，用于获取下一页数据。Defaults to None |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -322,7 +322,7 @@ from bilibili_api import bangumi
 | name | type | description |
 | - | - | - |
 | epid | int | 番剧 epid |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| credential | Credential, optional | 凭据. Defaults to None. |
 | initial_state_retry_times | int | 番剧剧集加载初始化信息请求重试次数上限设置. Defaults to 3. |
 
 
@@ -333,7 +333,7 @@ from bilibili_api import bangumi
 
 | name | type | description |
 | - | - | - |
-| up_mid | Union[Optional,, None] | up 主的 mid。 |
+| up_mid | Optional, int | up 主的 mid。 |
 
 **Returns:** dict: 调用 API 返回的结果。
 
@@ -424,9 +424,9 @@ from bilibili_api import bangumi
 
 | name | type | description |
 | - | - | - |
-| date | Union[datetime.date, None] | 指定某一天查询弹幕. Defaults to None. (不指定某一天) |
-| from_seg | Union[int, None] | 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None. |
-| to_seg | Union[int, None] | 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None. |
+| date | datetime.date \| None, optional | 指定某一天查询弹幕. Defaults to None. (不指定某一天) |
+| from_seg | int, optional | 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None. |
+| to_seg | int, optional | 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None. |
 
 **Returns:** dict[Danmaku]: 弹幕列表
 
@@ -472,7 +472,7 @@ from bilibili_api import bangumi
 
 | name | type | description |
 | - | - | - |
-| date | Union[datetime.date, None] | 精确到年月. Defaults to None。 |
+| date | datetime.date \| None, optional | 精确到年月. Defaults to None。 |
 
 **Returns:** None | List[str]: 调用 API 返回的结果。不存在时为 None。
 
@@ -1183,11 +1183,11 @@ Variety Meta
 
 | name | type | description |
 | - | - | - |
-| filters | Union[Index_Filter_Meta, None] | 筛选条件元数据. Defaults to Anime. |
-| order | Union[BANGUMI_INDEX.ORDER, None] | 排序字段. Defaults to SCORE. |
-| sort | Union[BANGUMI_INDEX.SORT, None] | 排序方式. Defaults to DESC. |
-| pn | Union[int, None] | 页数. Defaults to 1. |
-| ps | Union[int, None] | 每页数量. Defaults to 20. |
+| filters | Index_Filter_Meta, optional | 筛选条件元数据. Defaults to Anime. |
+| order | BANGUMI_INDEX.ORDER, optional | 排序字段. Defaults to SCORE. |
+| sort | BANGUMI_INDEX.SORT, optional | 排序方式. Defaults to DESC. |
+| pn | int, optional | 页数. Defaults to 1. |
+| ps | int, optional | 每页数量. Defaults to 20. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -1221,8 +1221,8 @@ Variety Meta
 | name | type | description |
 | - | - | - |
 | bangumi | Bangumi | 番剧类 |
-| status | Union[bool, None] | 追番状态. Defaults to True. |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| status | bool, optional | 追番状态. Defaults to True. |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -1239,7 +1239,7 @@ Variety Meta
 | name | type | description |
 | - | - | - |
 | bangumi | Bangumi | 番剧类 |
-| credential | Union[Credential, None] | 凭据. Defaults to None. |
+| credential | Credential \| None, optional | 凭据. Defaults to None. |
 | status | int | 追番状态 1 想看 2 在看 3 已看 |
 
 **Returns:** dict: 调用 API 返回的结果

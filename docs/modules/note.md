@@ -49,7 +49,7 @@ from bilibili_api import note
 | aid | int | 稿件 ID（oid_type 为 0 时是 avid） (私有笔记必要) |
 | note_id | int | 私有笔记 ID (私有笔记必要) |
 | note_type | str | 笔记类型 (private, public) |
-| credential | Union[Credential, None] | Credential. Defaults to None. |
+| credential | Credential, optional | Credential. Defaults to None. |
 
 
 ### async def add_coins()
@@ -213,7 +213,7 @@ from bilibili_api import note
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 收藏状态. Defaults to True |
+| status | bool, optional | 收藏状态. Defaults to True |
 
 **Returns:** dict: 调用 API 返回的结果
 
@@ -229,7 +229,7 @@ from bilibili_api import note
 
 | name | type | description |
 | - | - | - |
-| status | Union[bool, None] | 点赞状态. Defaults to True |
+| status | bool, optional | 点赞状态. Defaults to True |
 
 **Returns:** dict: 调用 API 返回的结果
 
