@@ -10,6 +10,12 @@ bilibili_api.hot
 from bilibili_api import hot
 ```
 
+- [async def get\_history\_popular\_videos()](#async-def-get\_history\_popular\_videos)
+- [async def get\_hot\_buzzwords()](#async-def-get\_hot\_buzzwords)
+- [async def get\_hot\_videos()](#async-def-get\_hot\_videos)
+- [async def get\_weekly\_hot\_videos()](#async-def-get\_weekly\_hot\_videos)
+- [async def get\_weekly\_hot\_videos\_list()](#async-def-get\_weekly\_hot\_videos\_list)
+
 ---
 
 ## async def get_history_popular_videos()

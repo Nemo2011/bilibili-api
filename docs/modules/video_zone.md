@@ -10,6 +10,16 @@ bilibili_api.video_zone
 from bilibili_api import video_zone
 ```
 
+- [class VideoZoneTypes()](#class-VideoZoneTypes)
+- [async def get\_zone\_hot\_tags()](#async-def-get\_zone\_hot\_tags)
+- [def get\_zone\_info\_by\_name()](#def-get\_zone\_info\_by\_name)
+- [def get\_zone\_info\_by\_tid()](#def-get\_zone\_info\_by\_tid)
+- [def get\_zone\_list()](#def-get\_zone\_list)
+- [def get\_zone\_list\_sub()](#def-get\_zone\_list\_sub)
+- [async def get\_zone\_new\_videos()](#async-def-get\_zone\_new\_videos)
+- [async def get\_zone\_top10()](#async-def-get\_zone\_top10)
+- [async def get\_zone\_videos\_count\_today()](#async-def-get\_zone\_videos\_count\_today)
+
 ---
 
 ## class VideoZoneTypes()

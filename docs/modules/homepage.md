@@ -10,6 +10,11 @@ bilibili_api.homepage
 from bilibili_api import homepage
 ```
 
+- [async def get\_links()](#async-def-get\_links)
+- [async def get\_popularize()](#async-def-get\_popularize)
+- [async def get\_top\_photo()](#async-def-get\_top\_photo)
+- [async def get\_videos()](#async-def-get\_videos)
+
 ---
 
 ## async def get_links()

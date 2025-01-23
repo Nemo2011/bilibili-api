@@ -10,6 +10,33 @@ bilibili_api.favorite_list
 from bilibili_api import favorite_list
 ```
 
+- [class FavoriteList()](#class-FavoriteList)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_content()](#async-def-get\_content)
+  - [async def get\_content\_ids\_info()](#async-def-get\_content\_ids\_info)
+  - [async def get\_content\_video()](#async-def-get\_content\_video)
+  - [def get\_favorite\_list\_type()](#def-get\_favorite\_list\_type)
+  - [async def get\_info()](#async-def-get\_info)
+  - [def get\_media\_id()](#def-get\_media\_id)
+  - [def is\_video\_favorite\_list()](#def-is\_video\_favorite\_list)
+- [class FavoriteListContentOrder()](#class-FavoriteListContentOrder)
+- [class FavoriteListType()](#class-FavoriteListType)
+- [class SearchFavoriteListMode()](#class-SearchFavoriteListMode)
+- [async def clean\_video\_favorite\_list\_content()](#async-def-clean\_video\_favorite\_list\_content)
+- [async def copy\_video\_favorite\_list\_content()](#async-def-copy\_video\_favorite\_list\_content)
+- [async def create\_video\_favorite\_list()](#async-def-create\_video\_favorite\_list)
+- [async def delete\_video\_favorite\_list()](#async-def-delete\_video\_favorite\_list)
+- [async def delete\_video\_favorite\_list\_content()](#async-def-delete\_video\_favorite\_list\_content)
+- [async def get\_article\_favorite\_list()](#async-def-get\_article\_favorite\_list)
+- [async def get\_course\_favorite\_list()](#async-def-get\_course\_favorite\_list)
+- [async def get\_favorite\_collected()](#async-def-get\_favorite\_collected)
+- [async def get\_note\_favorite\_list()](#async-def-get\_note\_favorite\_list)
+- [async def get\_topic\_favorite\_list()](#async-def-get\_topic\_favorite\_list)
+- [async def get\_video\_favorite\_list()](#async-def-get\_video\_favorite\_list)
+- [async def get\_video\_favorite\_list\_content()](#async-def-get\_video\_favorite\_list\_content)
+- [async def modify\_video\_favorite\_list()](#async-def-modify\_video\_favorite\_list)
+- [async def move\_video\_favorite\_list\_content()](#async-def-move\_video\_favorite\_list\_content)
+
 ---
 
 ## class FavoriteList()

@@ -10,6 +10,15 @@ bilibili_api.video_tag
 from bilibili_api import video_tag
 ```
 
+- [class Tag()](#class-Tag)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_similar\_tags()](#async-def-get\_similar\_tags)
+  - [async def get\_tag\_id()](#async-def-get\_tag\_id)
+  - [async def get\_tag\_info()](#async-def-get\_tag\_info)
+  - [async def get\_tag\_name()](#async-def-get\_tag\_name)
+  - [async def subscribe\_tag()](#async-def-subscribe\_tag)
+  - [async def unsubscribe\_tag()](#async-def-unsubscribe\_tag)
+
 ---
 
 ## class Tag()

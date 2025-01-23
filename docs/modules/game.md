@@ -10,6 +10,20 @@ bilibili_api.game
 from bilibili_api import game
 ```
 
+- [class Game()](#class-Game)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_detail()](#async-def-get\_detail)
+  - [def get\_game\_id()](#def-get\_game\_id)
+  - [async def get\_info()](#async-def-get\_info)
+  - [async def get\_up\_info()](#async-def-get\_up\_info)
+  - [async def get\_videos()](#async-def-get\_videos)
+  - [async def get\_wiki()](#async-def-get\_wiki)
+- [class GameRankType()](#class-GameRankType)
+- [async def game\_name2id()](#async-def-game\_name2id)
+- [async def get\_game\_rank()](#async-def-get\_game\_rank)
+- [async def get\_start\_test\_list()](#async-def-get\_start\_test\_list)
+- [def get\_wiki\_api\_root()](#def-get\_wiki\_api\_root)
+
 ---
 
 ## class Game()

@@ -10,6 +10,32 @@ bilibili_api.audio_uploader
 from bilibili_api import audio_uploader
 ```
 
+- [class AudioUploader()](#class-AudioUploader)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def abort()](#async-def-abort)
+- [class AudioUploaderEvents()](#class-AudioUploaderEvents)
+- [class AuthorInfo()](#class-AuthorInfo)
+- [class CompilationCategories()](#class-CompilationCategories)
+  - [class AudioType()](#class-AudioType)
+  - [class ContentType()](#class-ContentType)
+  - [class CreationType()](#class-CreationType)
+  - [class Language()](#class-Language)
+  - [class SongType()](#class-SongType)
+  - [class Style()](#class-Style)
+  - [class Theme()](#class-Theme)
+- [class SongCategories()](#class-SongCategories)
+  - [class AudioType()](#class-AudioType)
+  - [class ContentType()](#class-ContentType)
+  - [class CreationType()](#class-CreationType)
+  - [class Language()](#class-Language)
+  - [class SongType()](#class-SongType)
+  - [class Style()](#class-Style)
+  - [class Theme()](#class-Theme)
+- [class SongMeta()](#class-SongMeta)
+- [async def get\_upinfo()](#async-def-get\_upinfo)
+- [async def upload\_cover()](#async-def-upload\_cover)
+- [async def upload\_lrc()](#async-def-upload\_lrc)
+
 ---
 
 ## class AudioUploader()
@@ -77,12 +103,6 @@ Events:
 ## class AuthorInfo()
 
 AuthorInfo(name: str, uid: int = 0)
-
-
-
-### def \_\_init\_\_()
-
-
 
 
 
@@ -403,12 +423,6 @@ tid (Optional[int]): 视频 tid
 compilation_id (Optional[int]): 合辑 ID
 
 lrc (Optional[str]): 歌词
-
-
-
-
-### def \_\_init\_\_()
-
 
 
 

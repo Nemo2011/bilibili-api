@@ -10,6 +10,29 @@ bilibili_api.login_v2
 from bilibili_api import login_v2
 ```
 
+- [class PhoneNumber()](#class-PhoneNumber)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+- [class QrCodeLogin()](#class-QrCodeLogin)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def check\_state()](#async-def-check\_state)
+  - [async def generate\_qrcode()](#async-def-generate\_qrcode)
+  - [def get\_credential()](#def-get\_credential)
+  - [def get\_qrcode\_picture()](#def-get\_qrcode\_picture)
+  - [def get\_qrcode\_terminal()](#def-get\_qrcode\_terminal)
+  - [def has\_done()](#def-has\_done)
+  - [def has\_qrcode()](#def-has\_qrcode)
+- [class QrCodeLoginChannel()](#class-QrCodeLoginChannel)
+- [class QrCodeLoginEvents()](#class-QrCodeLoginEvents)
+- [def get\_code\_by\_country()](#def-get\_code\_by\_country)
+- [def get\_countries\_list()](#def-get\_countries\_list)
+- [def get\_id\_by\_code()](#def-get\_id\_by\_code)
+- [def have\_code()](#def-have\_code)
+- [def have\_country()](#def-have\_country)
+- [async def login\_with\_password()](#async-def-login\_with\_password)
+- [async def login\_with\_sms()](#async-def-login\_with\_sms)
+- [def search\_countries()](#def-search\_countries)
+- [async def send\_sms()](#async-def-send\_sms)
+
 ---
 
 ## class PhoneNumber()

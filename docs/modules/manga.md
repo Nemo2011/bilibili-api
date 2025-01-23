@@ -10,6 +10,25 @@ bilibili_api.manga
 from bilibili_api import manga
 ```
 
+- [class Manga()](#class-Manga)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_episode\_id()](#async-def-get\_episode\_id)
+  - [async def get\_episode\_info()](#async-def-get\_episode\_info)
+  - [async def get\_images\_url()](#async-def-get\_images\_url)
+  - [async def get\_info()](#async-def-get\_info)
+  - [def get\_manga\_id()](#def-get\_manga\_id)
+- [class MangaIndexFilter()](#class-MangaIndexFilter)
+  - [class Area()](#class-Area)
+  - [class Order()](#class-Order)
+  - [class Payment()](#class-Payment)
+  - [class Status()](#class-Status)
+  - [class Style()](#class-Style)
+- [async def get\_manga\_home\_recommend()](#async-def-get\_manga\_home\_recommend)
+- [async def get\_manga\_index()](#async-def-get\_manga\_index)
+- [async def get\_manga\_update()](#async-def-get\_manga\_update)
+- [async def get\_raw\_manga\_index()](#async-def-get\_raw\_manga\_index)
+- [async def set\_follow\_manga()](#async-def-set\_follow\_manga)
+
 ---
 
 ## class Manga()

@@ -10,6 +10,25 @@ bilibili_api.black_room
 from bilibili_api import black_room
 ```
 
+- [class BlackFrom()](#class-BlackFrom)
+- [class BlackReasonType()](#class-BlackReasonType)
+- [class BlackRoom()](#class-BlackRoom)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_details()](#async-def-get\_details)
+  - [async def get\_id()](#async-def-get\_id)
+  - [async def get\_reason()](#async-def-get\_reason)
+  - [async def set\_id()](#async-def-set\_id)
+- [class BlackType()](#class-BlackType)
+- [class JuryCase()](#class-JuryCase)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_details()](#async-def-get\_details)
+  - [async def get\_opinions()](#async-def-get\_opinions)
+  - [async def vote()](#async-def-vote)
+- [class JuryVoteOpinion()](#class-JuryVoteOpinion)
+- [async def get\_blocked\_list()](#async-def-get\_blocked\_list)
+- [async def get\_jury\_case\_list()](#async-def-get\_jury\_case\_list)
+- [async def get\_next\_jury\_case()](#async-def-get\_next\_jury\_case)
+
 ---
 
 ## class BlackFrom()

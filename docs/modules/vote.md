@@ -12,6 +12,20 @@ bilibili_api.vote
 from bilibili_api import vote
 ```
 
+- [class Vote()](#class-Vote)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_info()](#async-def-get\_info)
+  - [async def get\_title()](#async-def-get\_title)
+  - [def get\_vote\_id()](#def-get\_vote\_id)
+  - [async def update\_vote()](#async-def-update\_vote)
+- [class VoteChoices()](#class-VoteChoices)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def add\_choice()](#def-add\_choice)
+  - [def get\_choices()](#def-get\_choices)
+  - [def remove\_choice()](#def-remove\_choice)
+- [class VoteType()](#class-VoteType)
+- [async def create\_vote()](#async-def-create\_vote)
+
 ---
 
 ## class Vote()

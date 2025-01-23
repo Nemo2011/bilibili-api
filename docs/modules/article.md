@@ -10,6 +10,27 @@ bilibili_api.article
 from bilibili_api import article
 ```
 
+- [class Article()](#class-Article)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def add\_coins()](#async-def-add\_coins)
+  - [async def fetch\_content()](#async-def-fetch\_content)
+  - [async def get\_all()](#async-def-get\_all)
+  - [def get\_cvid()](#def-get\_cvid)
+  - [async def get\_info()](#async-def-get\_info)
+  - [async def is\_note()](#async-def-is\_note)
+  - [def json()](#def-json)
+  - [def markdown()](#def-markdown)
+  - [async def set\_favorite()](#async-def-set\_favorite)
+  - [async def set\_like()](#async-def-set\_like)
+  - [async def turn\_to\_dynamic()](#async-def-turn\_to\_dynamic)
+  - [def turn\_to\_note()](#def-turn\_to\_note)
+- [class ArticleList()](#class-ArticleList)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_content()](#async-def-get\_content)
+  - [def get\_rlid()](#def-get\_rlid)
+- [class ArticleRankingType()](#class-ArticleRankingType)
+- [async def get\_article\_rank()](#async-def-get\_article\_rank)
+
 ---
 
 ## class Article()

@@ -19,6 +19,24 @@ bilibili_api.comment
 from bilibili_api import comment
 ```
 
+- [class Comment()](#class-Comment)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def delete()](#async-def-delete)
+  - [def get\_oid()](#def-get\_oid)
+  - [def get\_rpid()](#def-get\_rpid)
+  - [async def get\_sub\_comments()](#async-def-get\_sub\_comments)
+  - [def get\_type()](#def-get\_type)
+  - [async def hate()](#async-def-hate)
+  - [async def like()](#async-def-like)
+  - [async def pin()](#async-def-pin)
+  - [async def report()](#async-def-report)
+- [class CommentResourceType()](#class-CommentResourceType)
+- [class OrderType()](#class-OrderType)
+- [class ReportReason()](#class-ReportReason)
+- [async def get\_comments()](#async-def-get\_comments)
+- [async def get\_comments\_lazy()](#async-def-get\_comments\_lazy)
+- [async def send\_comment()](#async-def-send\_comment)
+
 ---
 
 ## class Comment()

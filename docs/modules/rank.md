@@ -10,6 +10,28 @@ bilibili_api.rank
 from bilibili_api import rank
 ```
 
+- [class LiveEnergyRankType()](#class-LiveEnergyRankType)
+- [class LiveRankType()](#class-LiveRankType)
+- [class MangeRankType()](#class-MangeRankType)
+- [class RankAPIType()](#class-RankAPIType)
+- [class RankDayType()](#class-RankDayType)
+- [class RankType()](#class-RankType)
+- [class VIPRankType()](#class-VIPRankType)
+- [async def get\_live\_energy\_user\_rank()](#async-def-get\_live\_energy\_user\_rank)
+- [async def get\_live\_hot\_rank()](#async-def-get\_live\_hot\_rank)
+- [async def get\_live\_rank()](#async-def-get\_live\_rank)
+- [async def get\_live\_sailing\_rank()](#async-def-get\_live\_sailing\_rank)
+- [async def get\_live\_user\_medal\_rank()](#async-def-get\_live\_user\_medal\_rank)
+- [async def get\_manga\_rank()](#async-def-get\_manga\_rank)
+- [async def get\_music\_rank\_list()](#async-def-get\_music\_rank\_list)
+- [async def get\_music\_rank\_weekly\_detail()](#async-def-get\_music\_rank\_weekly\_detail)
+- [async def get\_music\_rank\_weekly\_musics()](#async-def-get\_music\_rank\_weekly\_musics)
+- [async def get\_playlet\_rank\_info()](#async-def-get\_playlet\_rank\_info)
+- [async def get\_playlet\_rank\_phases()](#async-def-get\_playlet\_rank\_phases)
+- [async def get\_rank()](#async-def-get\_rank)
+- [async def get\_vip\_rank()](#async-def-get\_vip\_rank)
+- [async def subscribe\_music\_rank()](#async-def-subscribe\_music\_rank)
+
 ---
 
 ## class LiveEnergyRankType()

@@ -10,6 +10,10 @@ bilibili_api.festival
 from bilibili_api import festival
 ```
 
+- [class Festival()](#class-Festival)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_info()](#async-def-get\_info)
+
 ---
 
 ## class Festival()

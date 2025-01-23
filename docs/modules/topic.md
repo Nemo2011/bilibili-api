@@ -10,6 +10,17 @@ bilibili_api.topic
 from bilibili_api import topic
 ```
 
+- [class Topic()](#class-Topic)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_cards()](#async-def-get\_cards)
+  - [async def get\_info()](#async-def-get\_info)
+  - [def get\_topic\_id()](#def-get\_topic\_id)
+  - [async def like()](#async-def-like)
+  - [async def set\_favorite()](#async-def-set\_favorite)
+- [class TopicCardsSortBy()](#class-TopicCardsSortBy)
+- [async def get\_hot\_topics()](#async-def-get\_hot\_topics)
+- [async def search\_topic()](#async-def-search\_topic)
+
 ---
 
 ## class Topic()

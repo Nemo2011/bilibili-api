@@ -10,6 +10,30 @@ bilibili_api.video_uploader
 from bilibili_api import video_uploader
 ```
 
+- [class Lines()](#class-Lines)
+- [class VideoEditor()](#class-VideoEditor)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def abort()](#async-def-abort)
+- [class VideoEditorEvents()](#class-VideoEditorEvents)
+- [class VideoMeta()](#class-VideoMeta)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def verify()](#async-def-verify)
+- [class VideoPorderIndustry()](#class-VideoPorderIndustry)
+- [class VideoPorderMeta()](#class-VideoPorderMeta)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+- [class VideoPorderShowType()](#class-VideoPorderShowType)
+- [class VideoPorderType()](#class-VideoPorderType)
+- [class VideoUploader()](#class-VideoUploader)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def abort()](#async-def-abort)
+- [class VideoUploaderEvents()](#class-VideoUploaderEvents)
+- [class VideoUploaderPage()](#class-VideoUploaderPage)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def get\_size()](#def-get\_size)
+- [async def get\_available\_topics()](#async-def-get\_available\_topics)
+- [async def get\_missions()](#async-def-get\_missions)
+- [async def upload\_cover()](#async-def-upload\_cover)
+
 ---
 
 ## class Lines()

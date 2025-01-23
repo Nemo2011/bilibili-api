@@ -12,6 +12,83 @@ bilibili_api.video
 from bilibili_api import video
 ```
 
+- [class AudioQuality()](#class-AudioQuality)
+- [class AudioStreamDownloadURL()](#class-AudioStreamDownloadURL)
+- [class DanmakuOperatorType()](#class-DanmakuOperatorType)
+- [class EpisodeTryMP4DownloadURL()](#class-EpisodeTryMP4DownloadURL)
+- [class FLVStreamDownloadURL()](#class-FLVStreamDownloadURL)
+- [class HTML5MP4DownloadURL()](#class-HTML5MP4DownloadURL)
+- [class Video()](#class-Video)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def add\_tag()](#async-def-add\_tag)
+  - [async def add\_to\_toview()](#async-def-add\_to\_toview)
+  - [async def appeal()](#async-def-appeal)
+  - [async def delete\_from\_toview()](#async-def-delete\_from\_toview)
+  - [async def delete\_tag()](#async-def-delete\_tag)
+  - [async def get\_ai\_conclusion()](#async-def-get\_ai\_conclusion)
+  - [def get\_aid()](#def-get\_aid)
+  - [def get\_bvid()](#def-get\_bvid)
+  - [async def get\_chargers()](#async-def-get\_chargers)
+  - [async def get\_cid()](#async-def-get\_cid)
+  - [async def get\_danmaku\_snapshot()](#async-def-get\_danmaku\_snapshot)
+  - [async def get\_danmaku\_view()](#async-def-get\_danmaku\_view)
+  - [async def get\_danmaku\_xml()](#async-def-get\_danmaku\_xml)
+  - [async def get\_danmakus()](#async-def-get\_danmakus)
+  - [async def get\_detail()](#async-def-get\_detail)
+  - [async def get\_download\_url()](#async-def-get\_download\_url)
+  - [async def get\_history\_danmaku\_index()](#async-def-get\_history\_danmaku\_index)
+  - [async def get\_info()](#async-def-get\_info)
+  - [async def get\_online()](#async-def-get\_online)
+  - [async def get\_pages()](#async-def-get\_pages)
+  - [async def get\_pay\_coins()](#async-def-get\_pay\_coins)
+  - [async def get\_pbp()](#async-def-get\_pbp)
+  - [async def get\_player\_info()](#async-def-get\_player\_info)
+  - [async def get\_private\_notes\_list()](#async-def-get\_private\_notes\_list)
+  - [async def get\_public\_notes\_list()](#async-def-get\_public\_notes\_list)
+  - [async def get\_related()](#async-def-get\_related)
+  - [async def get\_relation()](#async-def-get\_relation)
+  - [async def get\_special\_dms()](#async-def-get\_special\_dms)
+  - [async def get\_subtitle()](#async-def-get\_subtitle)
+  - [async def get\_tags()](#async-def-get\_tags)
+  - [async def get\_up\_mid()](#async-def-get\_up\_mid)
+  - [async def get\_video\_snapshot()](#async-def-get\_video\_snapshot)
+  - [async def has\_favoured()](#async-def-has\_favoured)
+  - [async def has\_liked()](#async-def-has\_liked)
+  - [async def has\_liked\_danmakus()](#async-def-has\_liked\_danmakus)
+  - [async def is\_forbid\_note()](#async-def-is\_forbid\_note)
+  - [async def like()](#async-def-like)
+  - [async def like\_danmaku()](#async-def-like\_danmaku)
+  - [async def operate\_danmaku()](#async-def-operate\_danmaku)
+  - [async def pay\_coin()](#async-def-pay\_coin)
+  - [async def recall\_danmaku()](#async-def-recall\_danmaku)
+  - [async def send\_danmaku()](#async-def-send\_danmaku)
+  - [def set\_aid()](#def-set\_aid)
+  - [def set\_bvid()](#def-set\_bvid)
+  - [async def set\_favorite()](#async-def-set\_favorite)
+  - [async def share()](#async-def-share)
+  - [async def submit\_subtitle()](#async-def-submit\_subtitle)
+  - [async def triple()](#async-def-triple)
+- [class VideoAppealReasonType()](#class-VideoAppealReasonType)
+  - [def PLAGIARISM()](#def-PLAGIARISM)
+  - [def UNREAL\_COPYRIGHT()](#def-UNREAL\_COPYRIGHT)
+- [class VideoCodecs()](#class-VideoCodecs)
+- [class VideoDownloadURLDataDetecter()](#class-VideoDownloadURLDataDetecter)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def check\_episode\_try\_mp4\_stream()](#def-check\_episode\_try\_mp4\_stream)
+  - [def check\_flv\_stream()](#def-check\_flv\_stream)
+  - [def check\_html5\_mp4\_stream()](#def-check\_html5\_mp4\_stream)
+  - [def check\_video\_and\_audio\_stream()](#def-check\_video\_and\_audio\_stream)
+  - [def detect()](#def-detect)
+  - [def detect\_all()](#def-detect\_all)
+  - [def detect\_best\_streams()](#def-detect\_best\_streams)
+- [class VideoOnlineMonitor()](#class-VideoOnlineMonitor)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def connect()](#async-def-connect)
+  - [async def disconnect()](#async-def-disconnect)
+- [class VideoQuality()](#class-VideoQuality)
+- [class VideoStreamDownloadURL()](#class-VideoStreamDownloadURL)
+- [async def get\_cid\_info()](#async-def-get\_cid\_info)
+
 ---
 
 ## class AudioQuality()
@@ -46,12 +123,6 @@ from bilibili_api import video
 | audio_quality | AudioQuality | 音频流清晰度 |
 
 
-### def \_\_init\_\_()
-
-
-
-
-
 ---
 
 ## class DanmakuOperatorType()
@@ -83,12 +154,6 @@ from bilibili_api import video
 | url | str | 番剧试看的 mp4 播放流 |
 
 
-### def \_\_init\_\_()
-
-
-
-
-
 ---
 
 **@dataclasses.dataclass** 
@@ -105,12 +170,6 @@ FLV 视频流
 | url | str | FLV 流 url |
 
 
-### def \_\_init\_\_()
-
-
-
-
-
 ---
 
 **@dataclasses.dataclass** 
@@ -125,12 +184,6 @@ FLV 视频流
 | name | type | description |
 | - | - | - |
 | url | str | HTML5 mp4 视频流 |
-
-
-### def \_\_init\_\_()
-
-
-
 
 
 ---
@@ -1154,12 +1207,6 @@ CONNECTED:  成功连接。 CallbackData: None。
 | url | str | 视频流 url |
 | video_quality | VideoQuality | 视频流清晰度 |
 | video_codecs | VideoCodecs | 视频流编码 |
-
-
-### def \_\_init\_\_()
-
-
-
 
 
 ---

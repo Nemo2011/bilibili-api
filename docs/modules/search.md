@@ -10,6 +10,23 @@ bilibili_api.search
 from bilibili_api import search
 ```
 
+- [class CategoryTypeArticle()](#class-CategoryTypeArticle)
+- [class CategoryTypePhoto()](#class-CategoryTypePhoto)
+- [class OrderArticle()](#class-OrderArticle)
+- [class OrderCheese()](#class-OrderCheese)
+- [class OrderLiveRoom()](#class-OrderLiveRoom)
+- [class OrderUser()](#class-OrderUser)
+- [class OrderVideo()](#class-OrderVideo)
+- [class SearchObjectType()](#class-SearchObjectType)
+- [async def get\_default\_search\_keyword()](#async-def-get\_default\_search\_keyword)
+- [async def get\_hot\_search\_keywords()](#async-def-get\_hot\_search\_keywords)
+- [async def get\_suggest\_keywords()](#async-def-get\_suggest\_keywords)
+- [async def search()](#async-def-search)
+- [async def search\_by\_type()](#async-def-search\_by\_type)
+- [async def search\_cheese()](#async-def-search\_cheese)
+- [async def search\_games()](#async-def-search\_games)
+- [async def search\_manga()](#async-def-search\_manga)
+
 ---
 
 ## class CategoryTypeArticle()

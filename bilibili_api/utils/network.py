@@ -317,6 +317,13 @@ request_settings = RequestSettings()
 class BiliAPIResponse:
     """
     响应对象类。
+
+    Attributes:
+        code    (int)  : 响应码
+        headers (dict) : 响应头
+        cookies (dict) : 当前状态的 cookies
+        raw     (bytes): 响应数据
+        url     (str)  : 当前 url
     """
 
     code: int
@@ -325,16 +332,38 @@ class BiliAPIResponse:
     raw: bytes
     url: str
 
-    def utf8_text(self):
+    def utf8_text(self) -> str:
+        """
+        转为 utf8 文字
+
+        Returns:
+            str: utf8 文字
+        """
         return self.raw.decode("utf-8")
 
-    def json(self):
+    def json(self) -> object:
+        """
+        解析 json
+
+        Returns:
+            object: 解析后的 json
+        """
         return json.loads(self.utf8_text())
 
 
 class BiliWsMsgType(Enum):
     """
     WebSocket 状态枚举
+
+    - CONTINUATION: 延续
+    - TEXT: 文字
+    - BINARY: 字节
+    - PING: ping
+    - PONG: pong
+    - CLOSE: 关闭
+
+    - CLOSING: 正在关闭
+    - CLOSED: 已关闭
     """
 
     CONTINUATION = 0x0
@@ -351,6 +380,10 @@ class BiliWsMsgType(Enum):
 class BiliAPIFile:
     """
     上传文件类。
+
+    Attributes:
+        path      (str): 文件地址
+        mime_type (str): 文件类型
     """
 
     path: str

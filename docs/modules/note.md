@@ -10,6 +10,27 @@ bilibili_api.note
 from bilibili_api import note
 ```
 
+- [class Note()](#class-Note)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def add\_coins()](#async-def-add\_coins)
+  - [async def fetch\_content()](#async-def-fetch\_content)
+  - [def get\_aid()](#def-get\_aid)
+  - [async def get\_all()](#async-def-get\_all)
+  - [def get\_cvid()](#def-get\_cvid)
+  - [async def get\_images()](#async-def-get\_images)
+  - [async def get\_images\_raw\_info()](#async-def-get\_images\_raw\_info)
+  - [async def get\_info()](#async-def-get\_info)
+  - [def get\_note\_id()](#def-get\_note\_id)
+  - [async def get\_private\_note\_info()](#async-def-get\_private\_note\_info)
+  - [async def get\_public\_note\_info()](#async-def-get\_public\_note\_info)
+  - [def json()](#def-json)
+  - [def markdown()](#def-markdown)
+  - [async def set\_favorite()](#async-def-set\_favorite)
+  - [async def set\_like()](#async-def-set\_like)
+  - [def turn\_to\_article()](#def-turn\_to\_article)
+- [class NoteType()](#class-NoteType)
+- [async def upload\_image()](#async-def-upload\_image)
+
 ---
 
 ## class Note()

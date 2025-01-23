@@ -10,6 +10,14 @@ bilibili_api.live_area
 from bilibili_api import live_area
 ```
 
+- [class LiveRoomOrder()](#class-LiveRoomOrder)
+- [async def fetch\_live\_area\_data()](#async-def-fetch\_live\_area\_data)
+- [def get\_area\_info\_by\_id()](#def-get\_area\_info\_by\_id)
+- [def get\_area\_info\_by\_name()](#def-get\_area\_info\_by\_name)
+- [def get\_area\_list()](#def-get\_area\_list)
+- [def get\_area\_list\_sub()](#def-get\_area\_list\_sub)
+- [async def get\_list\_by\_area()](#async-def-get\_list\_by\_area)
+
 ---
 
 ## class LiveRoomOrder()

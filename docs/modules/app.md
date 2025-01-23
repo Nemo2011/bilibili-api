@@ -10,6 +10,9 @@ bilibili_api.app
 from bilibili_api import app
 ```
 
+- [async def get\_loading\_images()](#async-def-get\_loading\_images)
+- [async def get\_loading\_images\_special()](#async-def-get\_loading\_images\_special)
+
 ---
 
 ## async def get_loading_images()

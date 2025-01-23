@@ -127,8 +127,22 @@ ignored_vars = [
 ]
 
 
-def parse(data: dict, indent: int = 0):
-    if data.get("cross_ref"):
+def parse(data: dict, indent: int = 0, root: bool = False):
+    if data.get("cross_ref") and not root:
+        return
+    elif data.get("cross_ref"):
+        file = "/".join(data["cross_ref"].split(".")[:-1])
+        jsons = json.load(
+            open(
+                os.path.join(
+                    ".mypy_cache", f"{sys.version_info.major}.{sys.version_info.minor}"
+                )
+                + "/"
+                + file
+                + ".data.json"
+            )
+        )
+        parse(jsons["names"][data["cross_ref"].split(".")[-1]], indent, root=True)
         return
     if data["node"][".class"] == "TypeInfo":
         if data["node"]["defn"]["name"] in ignored_classes:
@@ -156,12 +170,19 @@ def parse(data: dict, indent: int = 0):
                 indent,
             ]
         )
-    elif data["node"][".class"] == "Decorator" and "is_static" in data["node"]["func"]["flags"]:
+    elif (
+        data["node"][".class"] == "Decorator"
+        and "is_static" in data["node"]["func"]["flags"]
+    ):
         funcs.append(
             [
                 data["node"]["func"]["name"],
                 data["node"]["func"]["fullname"],
-                "async def" if "is_coroutine" in data["node"]["func"]["flags"] else "def",
+                (
+                    "async def"
+                    if "is_coroutine" in data["node"]["func"]["flags"]
+                    else "def"
+                ),
                 "@staticmethod",
                 indent,
             ]
@@ -174,7 +195,15 @@ def parse(data: dict, indent: int = 0):
             return
         if indent != 1:
             return
-        funcs.append((data["node"]["name"], data["node"]["fullname"], "const", "", indent))
+        funcs.append(
+            (
+                data["node"]["name"],
+                data["node"]["fullname"],
+                "const",
+                "",
+                indent,
+            )
+        )
     else:
         return
     if not "names" in data["node"]:
@@ -210,6 +239,32 @@ for module in modules:
             if key != ".class" and not key.startswith("_"):
                 parse(data["names"][key], 2)
         all_funcs.append(funcs)
+
+funcs = []
+funcs.append(("bilibili_api", "bilibili_api", "MODULE", 1))
+data = json.load(
+    open(
+        os.path.join(
+            ".mypy_cache",
+            f"{sys.version_info.major}.{sys.version_info.minor}",
+            "bilibili_api",
+            "__init__.data.json",
+        )
+    )
+)
+for key in data["names"].keys():
+    if key != ".class" and not key.startswith("_"):
+        if os.path.exists(
+            os.path.join(
+                ".mypy_cache",
+                f"{sys.version_info.major}.{sys.version_info.minor}",
+                "bilibili_api",
+                key + ".data.json",
+            )
+        ):
+            continue
+        parse(data["names"][key], 2, root=True)
+all_funcs.append(funcs)
 
 
 def parse_docstring(doc: str):
@@ -331,15 +386,37 @@ import bilibili_api
 for module in all_funcs:
     docs_dir = "./docs/modules/" + module[0][0] + ".md"
     file = open(docs_dir, "w+")
+    print("BEGIN", module[0][0])
     file.write(
         f"# Module {module[0][0]}.py\n\n{eval(f'{module[0][1]}.__doc__')}\n\n``` python\nfrom bilibili_api import {module[0][0]}\n```\n\n"
     )
-    for func in module[1:]:
+    print("GENERATING TOC")
+    last_data_class = -114514
+    for idx, func in enumerate(module[1:]):
+        if idx == last_data_class + 1:
+            # don't show __init__ of dataclass and ApiException
+            continue
+        if func[3] == "@dataclasses.dataclass" or func[1].count("exceptions") == 1:
+            last_data_class = idx
+        file.write(
+            "  " * (func[4] - 2)
+            + f"- [{func[2]} {func[0].replace("_", "\\_")}()](#{func[2].replace(' ', '-')}-{func[0].replace("_", "\\_")})\n"
+        )
+    file.write("\n")
+    last_data_class = -114514
+    for idx, func in enumerate(module[1:]):
+        if idx == last_data_class + 1:
+            # don't show __init__ of dataclass and ApiException
+            continue
+        if func[1].count("exceptions") == 1:
+            func[1] = ".".join(func[1].split(".")[:2] + func[1].split(".")[3:])
         print("PROCESS", func[1])
         if func[4] == 2:
             file.write("---\n\n")
         if func[3].startswith("@"):
             file.write(f"**{func[3]}** \n\n")
+        if func[3] == "@dataclasses.dataclass" or func[1].count("exceptions") == 1:
+            last_data_class = idx
         if func[0] == "__init__":
             func[0] = "\\_\\_init\\_\\_"
         file.write("#" * func[4] + f" {func[2]} {func[0]}()\n\n")

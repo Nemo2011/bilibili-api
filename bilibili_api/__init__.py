@@ -2,6 +2,8 @@
 bilibili_api
 
 哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。
+
+ (默认已导入所有子模块，例如 `bilibili_api.video`, `bilibili_api.user`)
 """
 
 from .utils.sync import sync

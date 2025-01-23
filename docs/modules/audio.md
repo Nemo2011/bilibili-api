@@ -10,6 +10,22 @@ bilibili_api.audio
 from bilibili_api import audio
 ```
 
+- [class Audio()](#class-Audio)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def add\_coins()](#async-def-add\_coins)
+  - [def get\_auid()](#def-get\_auid)
+  - [async def get\_download\_url()](#async-def-get\_download\_url)
+  - [async def get\_info()](#async-def-get\_info)
+  - [async def get\_tags()](#async-def-get\_tags)
+- [class AudioList()](#class-AudioList)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def get\_amid()](#def-get\_amid)
+  - [async def get\_info()](#async-def-get\_info)
+  - [async def get\_song\_list()](#async-def-get\_song\_list)
+  - [async def get\_tags()](#async-def-get\_tags)
+- [async def get\_hot\_song\_list()](#async-def-get\_hot\_song\_list)
+- [async def get\_user\_stat()](#async-def-get\_user\_stat)
+
 ---
 
 ## class Audio()

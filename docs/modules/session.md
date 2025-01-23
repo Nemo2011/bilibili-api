@@ -10,6 +10,28 @@ bilibili_api.session
 from bilibili_api import session
 ```
 
+- [class Event()](#class-Event)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+- [class EventType()](#class-EventType)
+- [class Session()](#class-Session)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def close()](#def-close)
+  - [def get\_status()](#def-get\_status)
+  - [def on()](#def-on)
+  - [async def reply()](#async-def-reply)
+  - [async def run()](#async-def-run)
+- [async def fetch\_session\_msgs()](#async-def-fetch\_session\_msgs)
+- [async def get\_at()](#async-def-get\_at)
+- [async def get\_likes()](#async-def-get\_likes)
+- [async def get\_replies()](#async-def-get\_replies)
+- [async def get\_session\_detail()](#async-def-get\_session\_detail)
+- [async def get\_session\_settings()](#async-def-get\_session\_settings)
+- [async def get\_sessions()](#async-def-get\_sessions)
+- [async def get\_system\_messages()](#async-def-get\_system\_messages)
+- [async def get\_unread\_messages()](#async-def-get\_unread\_messages)
+- [async def new\_sessions()](#async-def-new\_sessions)
+- [async def send\_msg()](#async-def-send\_msg)
+
 ---
 
 ## class Event()

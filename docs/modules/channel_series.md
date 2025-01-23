@@ -10,6 +10,18 @@ bilibili_api.channel_series
 from bilibili_api import channel_series
 ```
 
+- [class ChannelOrder()](#class-ChannelOrder)
+- [class ChannelSeries()](#class-ChannelSeries)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_meta()](#async-def-get\_meta)
+  - [async def get\_videos()](#async-def-get\_videos)
+- [class ChannelSeriesType()](#class-ChannelSeriesType)
+- [async def add\_aids\_to\_series()](#async-def-add\_aids\_to\_series)
+- [async def create\_channel\_series()](#async-def-create\_channel\_series)
+- [async def del\_aids\_from\_series()](#async-def-del\_aids\_from\_series)
+- [async def del\_channel\_series()](#async-def-del\_channel\_series)
+- [async def set\_follow\_channel\_season()](#async-def-set\_follow\_channel\_season)
+
 ---
 
 ## class ChannelOrder()

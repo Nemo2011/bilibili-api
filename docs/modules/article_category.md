@@ -10,6 +10,13 @@ bilibili_api.article_category
 from bilibili_api import article_category
 ```
 
+- [class ArticleOrder()](#class-ArticleOrder)
+- [def get\_categories\_list()](#def-get\_categories\_list)
+- [def get\_categories\_list\_sub()](#def-get\_categories\_list\_sub)
+- [def get\_category\_info\_by\_id()](#def-get\_category\_info\_by\_id)
+- [def get\_category\_info\_by\_name()](#def-get\_category\_info\_by\_name)
+- [async def get\_category\_recommend\_articles()](#async-def-get\_category\_recommend\_articles)
+
 ---
 
 ## class ArticleOrder()

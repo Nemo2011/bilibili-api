@@ -18,6 +18,37 @@ bilibili_api.cheese
 from bilibili_api import cheese
 ```
 
+- [class CheeseList()](#class-CheeseList)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_list()](#async-def-get\_list)
+  - [async def get\_list\_raw()](#async-def-get\_list\_raw)
+  - [async def get\_meta()](#async-def-get\_meta)
+  - [async def get\_season\_id()](#async-def-get\_season\_id)
+  - [async def set\_ep\_id()](#async-def-set\_ep\_id)
+  - [async def set\_season\_id()](#async-def-set\_season\_id)
+- [class CheeseVideo()](#class-CheeseVideo)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def get\_aid()](#async-def-get\_aid)
+  - [async def get\_cheese()](#async-def-get\_cheese)
+  - [async def get\_cid()](#async-def-get\_cid)
+  - [async def get\_danmaku\_view()](#async-def-get\_danmaku\_view)
+  - [async def get\_danmaku\_xml()](#async-def-get\_danmaku\_xml)
+  - [async def get\_danmakus()](#async-def-get\_danmakus)
+  - [async def get\_download\_url()](#async-def-get\_download\_url)
+  - [def get\_epid()](#def-get\_epid)
+  - [async def get\_meta()](#async-def-get\_meta)
+  - [async def get\_pages()](#async-def-get\_pages)
+  - [async def get\_pay\_coins()](#async-def-get\_pay\_coins)
+  - [async def get\_pbp()](#async-def-get\_pbp)
+  - [async def get\_stat()](#async-def-get\_stat)
+  - [async def has\_favoured()](#async-def-has\_favoured)
+  - [async def has\_liked()](#async-def-has\_liked)
+  - [async def like()](#async-def-like)
+  - [async def pay\_coin()](#async-def-pay\_coin)
+  - [async def send\_danmaku()](#async-def-send\_danmaku)
+  - [async def set\_epid()](#async-def-set\_epid)
+  - [async def set\_favorite()](#async-def-set\_favorite)
+
 ---
 
 ## class CheeseList()
