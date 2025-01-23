@@ -11,4 +11,4 @@ yarl~=1.18.3
 pycryptodomex~=3.21.0
 qrcode_terminal~=0.8
 PyJWT~=2.10.1
-curl_cffi<=0.7.4
+curl_cffi~=0.8.1b9
