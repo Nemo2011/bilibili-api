@@ -2081,14 +2081,14 @@ class Api:
             loop -= 1
             try:
                 return await self._request(raw=raw, byte=byte)
-            except json.decoder.JSONDecodeError:
-                continue
             except ResponseCodeException as e:
                 # -403 时尝试重新获取 wbi_mixin_key 可能过期了
                 if e.code == -403:
                     refresh_wbi_mixin_key()
                     continue
                 # 不是 -403 错误直接报错
+                raise e
+            except Exception as e:
                 raise e
         raise WbiRetryTimesExceedException()
 
