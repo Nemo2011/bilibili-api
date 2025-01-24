@@ -224,6 +224,20 @@ select_client("curl_cffi")
 unregister_client("aiohttp")
 ```
 
+前面提到一种需求，即统一 bilibili_api 和外部程序的会话，即让 bilibili_api 去用外部程序的一个 `curl_cffi.requests.AsyncSession`，这时候便能通过 `set_session` 设置。
+
+``` python
+set_session(curl_cffi.requests.AsyncSession()) # your specific session
+```
+
+或者也可以让外部程序使用 bilibili_api 的会话，这时候调用 `get_session` 即可。
+
+``` python
+sess: curl_cffi.requests.AsyncSession = get_session()
+```
+
+注意：1、不同事件循环下会话不同，因此 `get_session` 和 `set_session` 都**仅限于当前事件循环。**2、因为第三方请求库已经可以自定义，所以 `get_session` 和 `set_session` 类型注释均使用了 `object`，属于自定义请求库的一种体现。~~此事在 changelog 中亦有记载。~~
+
 ## 4、`aiohttp` 实战
 
 现在让我们写一个自己写一个十分简单的 `AioHTTPClient`。

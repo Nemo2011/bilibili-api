@@ -282,7 +282,8 @@ medialist排序顺序。
 
 
 
-**Returns:** None
+**Returns:** str: access_id
+
 
 
 
@@ -740,7 +741,8 @@ medialist排序顺序。
 
 
 
-**Returns:** None
+**Returns:** bool: 是否有效
+
 
 
 

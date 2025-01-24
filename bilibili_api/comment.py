@@ -294,6 +294,9 @@ class Comment:
 
             content (str, optional): 其他举报备注内容仅 reason=ReportReason.OTHER 可用且不能为 None.
 
+        Returns:
+            dict: 调用 API 返回的结果
+
         Error Code:
             0: 成功
             -101: 账号未登录

@@ -1016,6 +1016,9 @@ class User:
     async def get_access_id(self) -> str:
         """
         获取用户 access_id 如未过期直接从本地获取 防止重复请求
+
+        Returns:
+            str: access_id
         """
         if self.__access_id is not None:
             if not await self.is_access_id_expired():
@@ -1029,6 +1032,9 @@ class User:
     async def is_access_id_expired(self) -> bool:
         """
         判断用户 access_id 是否过期 access_id 为 JWT 解析 Payload 内容判断是否有效
+
+        Returns:
+            bool: 是否有效
         """
         if self.__access_id is None:
             return False

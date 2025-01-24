@@ -30,6 +30,7 @@ from .utils.network import (
     get_client,
     get_session,
     set_session,
+    get_registered_clients,
     # credential
     Credential,
     # api
@@ -175,6 +176,7 @@ __all__ = [
     "get_buvid",
     "get_client",
     "get_real_url",
+    "get_registered_clients",
     "get_selected_client",
     "get_session",
     "get_wbi_mixin_key",

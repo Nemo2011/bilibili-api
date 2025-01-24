@@ -906,7 +906,6 @@ def set_session(session: object) -> None:
     Args:
         session (object): 会话对象
     """
-
     global session_pool
     pool = session_pool.get(selected_client)
     if not pool:
@@ -915,8 +914,19 @@ def set_session(session: object) -> None:
     session_pool[selected_client][loop] = sessions[selected_client](session=session)
 
 
+def get_registered_clients() -> Dict[str, Type[BiliAPIClient]]:
+    """
+    获取所有注册过的 BiliAPIClient
+
+    Returns:
+        Dict[str, Type[BiliAPIClient]]: 注册过的 BiliAPIClient
+    """
+    return sessions
+
+
 @atexit.register
 def __clean() -> None:
+
     """
     程序退出清理操作。
     """
@@ -1891,6 +1901,9 @@ class Api:
     def update_data(self, **kwargs) -> "Api":
         """
         更新 data
+
+        Returns:
+            Api: 返回自身
         """
         self.data = kwargs
         return self
@@ -1898,6 +1911,9 @@ class Api:
     def update_params(self, **kwargs) -> "Api":
         """
         更新 params
+
+        Returns:
+            Api: 返回自身
         """
         self.params = kwargs
         return self
@@ -1905,6 +1921,9 @@ class Api:
     def update_files(self, **kwargs) -> "Api":
         """
         更新 files
+
+        Returns:
+            Api: 返回自身
         """
         self.files = kwargs
         return self
@@ -1912,6 +1931,9 @@ class Api:
     def update_headers(self, **kwargs) -> "Api":
         """
         更新 headers
+
+        Returns:
+            Api: 返回自身
         """
         self.headers = kwargs
         return self

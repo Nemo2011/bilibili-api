@@ -111,6 +111,7 @@ from bilibili_api import bilibili_api
 - [async def get\_buvid()](#async-def-get\_buvid)
 - [def get\_client()](#def-get\_client)
 - [async def get\_real\_url()](#async-def-get\_real\_url)
+- [def get\_registered\_clients()](#def-get\_registered\_clients)
 - [def get\_selected\_client()](#def-get\_selected\_client)
 - [def get\_session()](#def-get\_session)
 - [async def get\_wbi\_mixin\_key()](#async-def-get\_wbi\_mixin\_key)
@@ -189,7 +190,8 @@ from bilibili_api import bilibili_api
 
 
 
-**Returns:** None
+**Returns:** Api: 返回自身
+
 
 
 
@@ -199,7 +201,8 @@ from bilibili_api import bilibili_api
 
 
 
-**Returns:** None
+**Returns:** Api: 返回自身
+
 
 
 
@@ -209,7 +212,8 @@ from bilibili_api import bilibili_api
 
 
 
-**Returns:** None
+**Returns:** Api: 返回自身
+
 
 
 
@@ -219,7 +223,8 @@ from bilibili_api import bilibili_api
 
 
 
-**Returns:** None
+**Returns:** Api: 返回自身
+
 
 
 
@@ -1388,6 +1393,19 @@ BV 号转 AV 号。
 
 
 返回值为原 url 类型
+
+
+
+---
+
+## def get_registered_clients()
+
+获取所有注册过的 BiliAPIClient
+
+
+
+**Returns:** Dict[str, Type[BiliAPIClient]]: 注册过的 BiliAPIClient
+
 
 
 
