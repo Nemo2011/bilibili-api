@@ -10,21 +10,9 @@ bilibili_api.ass
 from bilibili_api import ass
 ```
 
-- [def json2srt()](#def-json2srt)
 - [async def make\_ass\_file\_danmakus\_protobuf()](#async-def-make\_ass\_file\_danmakus\_protobuf)
 - [async def make\_ass\_file\_danmakus\_xml()](#async-def-make\_ass\_file\_danmakus\_xml)
 - [async def make\_ass\_file\_subtitle()](#async-def-make\_ass\_file\_subtitle)
-
----
-
-## def json2srt()
-
-
-
-
-**Returns:** None
-
-
 
 ---
 

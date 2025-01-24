@@ -45,6 +45,7 @@ ignored_funcs = [
     "export_ass_from_json",
     "export_ass_from_srt",
     "export_ass_from_xml",
+    "json2srt",
     "app_signature",
     "encrypt",
     "id_",
