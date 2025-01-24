@@ -854,7 +854,7 @@ class TextNode(Node):
         txt = txt.replace("\t", " ")
         txt = txt.replace(" ", "&emsp;")
         txt = txt.replace(chr(160), "&emsp;")
-        special_chars = ["\\", "*", "$", "<", ">", "|"]
+        special_chars = ["\\", "*", "$", "<", ">", "|", "~", "_", "[", "]", "(", ")"]
         for c in special_chars:
             txt = txt.replace(c, "\\" + c)
         return txt

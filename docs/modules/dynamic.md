@@ -40,6 +40,7 @@ from bilibili_api import dynamic
   - [async def get\_reaction()](#async-def-get\_reaction)
   - [async def get\_reposts()](#async-def-get\_reposts)
   - [async def is\_article()](#async-def-is\_article)
+  - [async def markdown()](#async-def-markdown)
   - [async def repost()](#async-def-repost)
   - [async def set\_favorite()](#async-def-set\_favorite)
   - [async def set\_like()](#async-def-set\_like)
@@ -435,6 +436,17 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 **Returns:** bool: 是否为专栏
+
+
+
+
+### async def markdown()
+
+生成动态富文本对应 markdown
+
+
+
+**Returns:** str: markdown
 
 
 

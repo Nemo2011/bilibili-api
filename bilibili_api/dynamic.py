@@ -13,6 +13,8 @@ from enum import Enum
 from datetime import datetime
 from typing import Any, List, Tuple, Union, Optional
 
+import yaml
+
 from .utils import utils
 from .utils.picture import Picture
 from . import user, vote
@@ -812,6 +814,100 @@ class Dynamic:
             credential=self.credential,
         )
 
+    async def markdown(self) -> str:
+        """
+        生成动态富文本对应 markdown
+
+        Returns:
+            str: markdown
+        """
+        info = await self.get_info()
+
+        def parse_module_dynamic(module: dict):
+            if module["major"] is None:
+                # 转发动态
+                nodes = module["desc"]["rich_text_nodes"]
+                pics = []
+                title = ""
+            else:
+                if module["major"]["type"] == "MAJOR_TYPE_OPUS":
+                    # 图文
+                    nodes = module["major"]["opus"]["summary"]["rich_text_nodes"]
+                    pics = module["major"]["opus"]["pics"]
+                    title = module["major"]["opus"]["title"]
+                else:
+                    # 按投稿
+                    keys = module["major"].keys()
+                    for key in keys:
+                        if (
+                            module["major"][key].get("cover") is not None
+                            and module["major"][key].get("jump_url") is not None
+                            and module["major"][key].get("title") is not None
+                        ):
+                            cover = module["major"][key].get("cover")
+                            jump_url = "https:" + module["major"][key].get("jump_url")
+                            title = module["major"][key].get("title")
+                            return f"# {title}\n\n![]({cover})\n\n<{jump_url}>\n"
+            ret = "" if title is None else "# " + title + "\n\n"
+            for node in nodes:
+                text = node["text"]
+                jump_url = node.get("jump_url")
+                if jump_url is not None:
+                    if jump_url.startswith("//"):
+                        jump_url = f"https:{jump_url}"
+                text = text.replace("\t", " ")
+                text = text.replace(" ", "&emsp;")
+                text = text.replace(chr(160), "&emsp;")
+                special_chars = [
+                    "\\",
+                    "*",
+                    "$",
+                    "<",
+                    ">",
+                    "|",
+                    "~",
+                    "_",
+                    "[",
+                    "]",
+                    "(",
+                    ")",
+                ]
+                for c in special_chars:
+                    text = text.replace(c, "\\" + c)
+                if node["type"] == "RICH_TEXT_NODE_TYPE_AT":
+                    rid = node["rid"]
+                    ret += f"[{text}](https://space.bilibili.com/{rid}) "
+                elif node["type"] == "RICH_TEXT_NODE_TYPE_EMOJI":
+                    icon_url = node["emoji"]["icon_url"]
+                    if icon_url.startswith("//"):
+                        icon_url = f"https:{icon_url}"
+                    ret += f"<img width=50px height=50px src={icon_url}> "
+                elif jump_url is not None:
+                    ret += f"[{text}]({jump_url})"
+                else:
+                    ret += f"{text} "
+            ret += "\n\n"
+            for pic in pics:
+                width = pic["width"]
+                height = pic["height"]
+                url = pic["url"]
+                if url.startswith("//"):
+                    url = f"https:{url}"
+                ret += f"<img width={width} height={height} src={url}> \n"
+            return ret
+
+        content = parse_module_dynamic(info["item"]["modules"]["module_dynamic"])
+        content += "\n\n"
+        if info["item"].get("orig"):
+            orig_content = parse_module_dynamic(
+                info["item"]["orig"]["modules"]["module_dynamic"]
+            )
+            for line in orig_content.split("\n"):
+                content += f"> {line}\n"
+        meta_yaml = yaml.safe_dump(info["item"], allow_unicode=True)
+        content = f"---\n{meta_yaml}\n---\n\n{content}"
+        return content
+
     async def get_reaction(self, offset: str = "") -> dict:
         """
         获取点赞、转发
@@ -824,7 +920,7 @@ class Dynamic:
         """
 
         api = API["info"]["reaction"]
-        params = {"web_location": "333.1369", "offset": "", "id": self.__dynamic_id}
+        params = {"web_location": "333.1369", "offset": offset, "id": self.__dynamic_id}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
