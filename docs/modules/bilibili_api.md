@@ -1082,7 +1082,7 @@ NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate
 
 图片类，包含图片链接、尺寸以及下载操作。
 
-可以不实例化，用 `from_url`, `from_content` 或 `from_file` 加载图片。
+可以不实例化，用 `load_url`, `from_content` 或 `from_file` 加载图片。
 
 
 | name | type | description |
@@ -1550,10 +1550,14 @@ API_RESPONSE: Api 响应。
 ANTI_SPIDER: 反爬虫相关信息。
 
 CallbackData:
-事件 (str)
 描述 (str)
 数据 (dict)
-时间 (datetime.datetime)
+
+``` python
+@request_log.on("__ALL__")
+async def handle(desc: str, data: dict) -> None:
+print(desc, data)
+```
 
 默认启用 Api 和 Anti-Spider 相关信息。
 

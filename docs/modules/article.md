@@ -24,6 +24,7 @@ from bilibili_api import article
   - [async def set\_like()](#async-def-set\_like)
   - [async def turn\_to\_dynamic()](#async-def-turn\_to\_dynamic)
   - [def turn\_to\_note()](#def-turn\_to\_note)
+  - [async def turn\_to\_opus()](#async-def-turn\_to\_opus)
 - [class ArticleList()](#class-ArticleList)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def get\_content()](#async-def-get\_content)
@@ -195,6 +196,21 @@ from bilibili_api import article
 
 
 **Returns:** Note: 笔记实例
+
+
+
+
+### async def turn_to_opus()
+
+将专栏转为对应图文（评论、点赞等数据专栏/动态/图文共享）
+
+专栏完全包含于图文，因此此函数绝对成功。
+
+转换后可查看“赞和转发”列表。
+
+
+
+**Returns:** Opus: 动态实例
 
 
 

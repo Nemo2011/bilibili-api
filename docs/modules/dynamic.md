@@ -40,11 +40,13 @@ from bilibili_api import dynamic
   - [async def get\_reaction()](#async-def-get\_reaction)
   - [async def get\_reposts()](#async-def-get\_reposts)
   - [async def is\_article()](#async-def-is\_article)
+  - [async def is\_opus()](#async-def-is\_opus)
   - [async def markdown()](#async-def-markdown)
   - [async def repost()](#async-def-repost)
   - [async def set\_favorite()](#async-def-set\_favorite)
   - [async def set\_like()](#async-def-set\_like)
   - [async def turn\_to\_article()](#async-def-turn\_to\_article)
+  - [def turn\_to\_opus()](#def-turn\_to\_opus)
 - [class DynamicContentType()](#class-DynamicContentType)
 - [class DynamicType()](#class-DynamicType)
 - [class SendDynamicType()](#class-SendDynamicType)
@@ -67,7 +69,7 @@ from bilibili_api import dynamic
 - 1. 链式调用构建
 
 ``` python
-BuildDynamic.empty().add_plain_text("114514").add_image(Picture.from_url("https://www.bilibili.com/favicon.ico"))
+BuildDynamic.empty().add_plain_text("114514").add_image(await Picture.load_url("https://www.bilibili.com/favicon.ico"))
 ```
 
 - 2. 参数构建
@@ -440,6 +442,19 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
+### async def is_opus()
+
+判断动态是否为图文
+
+如果是图文，则动态/图文评论/点赞/转发数据共享
+
+
+
+**Returns:** bool: 是否为图文
+
+
+
+
 ### async def markdown()
 
 生成动态富文本对应 markdown
@@ -497,13 +512,26 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 将专栏发布动态转为对应专栏（评论、点赞等数据专栏/动态/图文共享）
 
-不会核验。如需核验使用 `await is_article()`。
+如动态无对应专栏将报错。
 
 转换后可投币。
 
 
 
 **Returns:** Article: 专栏实例
+
+
+
+
+### def turn_to_opus()
+
+对图文动态，转换为图文
+
+此函数不会核验动态是否为图文
+
+
+
+**Returns:** Opus: 图文对象
 
 
 
