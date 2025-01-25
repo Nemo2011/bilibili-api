@@ -24,6 +24,7 @@ from .exceptions.NetworkException import ApiException, NetworkException
 from .utils import cache_pool
 
 from . import dynamic
+from . import opus
 from .note import Note, NoteType
 
 API = get_api("article")
@@ -191,6 +192,38 @@ class Article:
             ] = True
         return dynamic.Dynamic(
             dynamic_id=cache_pool.article2dynamic[self.get_cvid()],
+            credential=self.credential,
+        )
+
+    async def turn_to_opus(self) -> "opus.Opus":
+        """
+        将专栏转为对应图文（评论、点赞等数据专栏/动态/图文共享）
+
+        专栏完全包含于图文，因此此函数绝对成功。
+
+        转换后可查看“赞和转发”列表。
+
+        Returns:
+            Opus: 动态实例
+        """
+        if cache_pool.article2dynamic.get(self.get_cvid()) is None:
+            cache_pool.article2dynamic[self.get_cvid()] = (await self.get_all())[
+                "readInfo"
+            ]["dyn_id_str"]
+            cache_pool.dynamic2article[cache_pool.article2dynamic[self.get_cvid()]] = (
+                self.get_cvid()
+            )
+        if (
+            cache_pool.dynamic_is_article.get(
+                cache_pool.article2dynamic[self.get_cvid()]
+            )
+            is None
+        ):
+            cache_pool.dynamic_is_article[
+                cache_pool.article2dynamic[self.get_cvid()]
+            ] = True
+        return opus.Opus(
+            opus_id=cache_pool.article2dynamic[self.get_cvid()],
             credential=self.credential,
         )
 
@@ -856,7 +889,7 @@ class TextNode(Node):
         txt = txt.replace("\t", " ")
         txt = txt.replace(" ", "&emsp;")
         txt = txt.replace(chr(160), "&emsp;")
-        special_chars = ["\\", "*", "$", "<", ">", "|", "~", "_", "[", "]", "(", ")"]
+        special_chars = ["\\", "*", "$", "<", ">", "|", "~", "_"]
         for c in special_chars:
             txt = txt.replace(c, "\\" + c)
         return txt

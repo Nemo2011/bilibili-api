@@ -21,6 +21,7 @@ from . import user, vote
 from .utils.network import Api, Credential
 from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
 from .article import Article
+from .opus import Opus
 from .utils import cache_pool
 
 API = utils.get_api("dynamic")
@@ -91,7 +92,9 @@ async def _name2uid(uname: str, credential: Credential) -> int:
 async def _uid2name(uid: int, credential: Credential) -> str:
     global uid2uname
     if uid2uname.get(uid) is None:
-        uid2uname[uid] = (await user.User(uid, credential=credential).get_user_info())["name"]
+        uid2uname[uid] = (await user.User(uid, credential=credential).get_user_info())[
+            "name"
+        ]
     return uid2uname[uid]
 
 
@@ -554,9 +557,9 @@ class BuildDynamic:
                     else:
                         contents[idx]["biz_id"] = str(uid)
                 elif content["raw_text"] == "@":
-                    contents[idx][
-                        "raw_text"
-                    ] = await _uid2name(content['biz_id'], credential=credential)
+                    contents[idx]["raw_text"] = await _uid2name(
+                        content["biz_id"], credential=credential
+                    )
             if content["type"] == DynamicContentType.VOTE.value:
                 contents[idx]["raw_text"] = (
                     await vote.Vote(vote_id=content["biz_id"]).get_info()
@@ -789,7 +792,7 @@ class Dynamic:
         """
         将专栏发布动态转为对应专栏（评论、点赞等数据专栏/动态/图文共享）
 
-        不会核验。如需核验使用 `await is_article()`。
+        此函数不会核验动态是否为专栏。如需核验使用 `await is_article()`。
 
         转换后可投币。
 
@@ -807,9 +810,9 @@ class Dynamic:
                     self.get_dynamic_id()
                 )
             else:
-                cache_pool.dynamic2article[self.get_dynamic_id()] = (
-                    await self.get_info()
-                )["item"]["basic"]["rid_str"]
+                cache_pool.dynamic2article[self.get_dynamic_id()] = int(
+                    (await self.get_info())["item"]["basic"]["rid_str"]
+                )
             # 所以为什么这里不设置核验呢，~~为了追求和 Article.turn_to_note 一样的对称美~~
             # 考虑 article 和 note 转换，note 初始化可以瞎填，不能保证存在
             # 而转换的时候无需网络请求，因此可能转换完 article 的 is_note 会被造假
@@ -825,6 +828,39 @@ class Dynamic:
             cvid=cache_pool.dynamic2article[self.get_dynamic_id()],
             credential=self.credential,
         )
+        # ~~这么做其实还有一个好处，让人养成转换类之前核验的好习惯。~~
+
+    async def is_opus(self) -> bool:
+        """
+        判断动态是否为图文
+
+        如果是图文，则动态/图文评论/点赞/转发数据共享
+
+        Returns:
+            bool: 是否为图文
+        """
+        if cache_pool.dynamic_is_opus.get(self.__dynamic_id) is None:
+            module_dynamic = (await self.get_info())["item"]["modules"][
+                "module_dynamic"
+            ]
+            if module_dynamic.get("major") is None:
+                cache_pool.dynamic_is_opus[self.__dynamic_id] = False
+            else:
+                cache_pool.dynamic_is_opus[self.__dynamic_id] = (
+                    module_dynamic["major"]["type"] == "MAJOR_TYPE_OPUS"
+                )
+        return cache_pool.dynamic_is_opus[self.__dynamic_id]
+
+    def turn_to_opus(self) -> "Opus":
+        """
+        对图文动态，转换为图文
+
+        此函数不会核验动态是否为图文
+
+        Returns:
+            Opus: 图文对象
+        """
+        return Opus(opus_id=self.__dynamic_id, credential=self.credential)
 
     async def markdown(self) -> str:
         """
@@ -858,7 +894,9 @@ class Dynamic:
                         ):
                             cover = module["major"][key].get("cover")
                             if jump_url.startswith("//"):
-                                jump_url = "https:" + module["major"][key].get("jump_url")
+                                jump_url = "https:" + module["major"][key].get(
+                                    "jump_url"
+                                )
                             title = module["major"][key].get("title")
                             return f"# {title}\n\n![]({cover})\n\n<{jump_url}>\n"
             ret = "" if title is None else "# " + title + "\n\n"
@@ -880,10 +918,6 @@ class Dynamic:
                     "|",
                     "~",
                     "_",
-                    "[",
-                    "]",
-                    "(",
-                    ")",
                 ]
                 for c in special_chars:
                     text = text.replace(c, "\\" + c)
