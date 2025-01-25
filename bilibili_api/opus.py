@@ -57,9 +57,9 @@ class Opus:
 
     async def turn_to_article(self) -> "article.Article":
         """
-        对专栏图文，转换为专栏
+        对专栏图文，转换为专栏（评论、点赞等数据专栏/动态/图文共享）
 
-        此函数不会核验图文是否为专栏
+        如图文无对应专栏将报错。
 
         Returns:
             article.Article: 专栏类
@@ -67,7 +67,7 @@ class Opus:
         # 此处建议先阅读 dynamic.turn_to_article 注释再尝试理解
         if cache_pool.dynamic2article.get(self.__id) is None:
             if not await self.is_article():
-                cache_pool.dynamic2article[self.__id] = self.__id
+                raise ArgsException("提供的动态无对应专栏")
             else:
                 cache_pool.dynamic2article[self.__id] = int(
                     (await self.get_info())["item"]["basic"]["rid_str"]
@@ -111,6 +111,7 @@ class Opus:
             )
         if self.__info.get("fallback"):
             raise ArgsException("传入的 opus_id 不正确")
+        cache_pool.dynamic_is_opus[self.__id] = True
         return self.__info
 
     async def markdown(self) -> str:

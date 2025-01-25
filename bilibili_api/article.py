@@ -181,15 +181,12 @@ class Article:
             cache_pool.dynamic2article[cache_pool.article2dynamic[self.get_cvid()]] = (
                 self.get_cvid()
             )
-        if (
-            cache_pool.dynamic_is_article.get(
-                cache_pool.article2dynamic[self.get_cvid()]
-            )
-            is None
-        ):
-            cache_pool.dynamic_is_article[
-                cache_pool.article2dynamic[self.get_cvid()]
-            ] = True
+        cache_pool.dynamic_is_article[
+            cache_pool.article2dynamic[self.get_cvid()]
+        ] = True
+        cache_pool.dynamic_is_opus[
+            cache_pool.article2dynamic[self.get_cvid()]
+        ] = True
         return dynamic.Dynamic(
             dynamic_id=cache_pool.article2dynamic[self.get_cvid()],
             credential=self.credential,
@@ -213,15 +210,12 @@ class Article:
             cache_pool.dynamic2article[cache_pool.article2dynamic[self.get_cvid()]] = (
                 self.get_cvid()
             )
-        if (
-            cache_pool.dynamic_is_article.get(
-                cache_pool.article2dynamic[self.get_cvid()]
-            )
-            is None
-        ):
-            cache_pool.dynamic_is_article[
-                cache_pool.article2dynamic[self.get_cvid()]
-            ] = True
+        cache_pool.dynamic_is_article[
+            cache_pool.article2dynamic[self.get_cvid()]
+        ] = True
+        cache_pool.dynamic_is_opus[
+            cache_pool.article2dynamic[self.get_cvid()]
+        ] = True
         return opus.Opus(
             opus_id=cache_pool.article2dynamic[self.get_cvid()],
             credential=self.credential,

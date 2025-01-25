@@ -18,7 +18,7 @@ from .utils.utils import get_api, raise_for_statement
 from .utils.picture import Picture
 from .exceptions import ApiException, ArgsException
 from .utils.network import Api, Credential
-from .video import get_cid_info
+from .utils import cache_pool
 from . import article
 
 API = get_api("note")
@@ -205,6 +205,7 @@ class Note:
         )
         # 存入 self.__info 中以备后续调用
         self.__info = resp
+        cache_pool.article_is_note[self.__cvid] = True
         return resp
 
     async def get_images_raw_info(self) -> List["dict"]:

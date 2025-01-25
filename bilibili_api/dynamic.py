@@ -19,7 +19,7 @@ from .utils import utils
 from .utils.picture import Picture
 from . import user, vote
 from .utils.network import Api, Credential
-from .exceptions.DynamicExceedImagesException import DynamicExceedImagesException
+from .exceptions import ArgsException
 from .article import Article
 from .opus import Opus
 from .utils import cache_pool
@@ -792,7 +792,7 @@ class Dynamic:
         """
         将专栏发布动态转为对应专栏（评论、点赞等数据专栏/动态/图文共享）
 
-        此函数不会核验动态是否为专栏。如需核验使用 `await is_article()`。
+        如动态无对应专栏将报错。
 
         转换后可投币。
 
@@ -800,27 +800,12 @@ class Dynamic:
             Article: 专栏实例
         """
         if cache_pool.dynamic2article.get(self.get_dynamic_id()) is None:
-            # 此处使用 is_article 需要调用 get_info
-            # 而获取动态对应专栏也需要 get_info，且请求结果会缓存
-            # 因此最终只会请求一次，可以认为是提前请求
             if not await self.is_article():
-                # 为防止 rid_str 字段其他的值匹配到对应专栏，
-                # 用动态的 id 覆盖
-                cache_pool.dynamic2article[self.get_dynamic_id()] = (
-                    self.get_dynamic_id()
-                )
+                raise ArgsException("提供的动态无对应专栏")
             else:
                 cache_pool.dynamic2article[self.get_dynamic_id()] = int(
                     (await self.get_info())["item"]["basic"]["rid_str"]
                 )
-            # 所以为什么这里不设置核验呢，~~为了追求和 Article.turn_to_note 一样的对称美~~
-            # 考虑 article 和 note 转换，note 初始化可以瞎填，不能保证存在
-            # 而转换的时候无需网络请求，因此可能转换完 article 的 is_note 会被造假
-            # 因此 Note.turn_to_article 没有 cache_pool 缓存
-            # 同理 Article.turn_to_note 也没有缓存，缓存只存在于 await is_note()，有请求
-            # 如果在 Article.turn_to_note 中加入核验，某些情境下会多出请求，因此将核验剥离
-            # 这样既可以实现核验，也可以不核验。
-            # 这里这么做也是这个遵循目的，为此还需要保证将错就错不会造成其他逻辑问题。
             cache_pool.article2dynamic[
                 cache_pool.dynamic2article[self.get_dynamic_id()]
             ] = self.get_dynamic_id()
@@ -828,7 +813,6 @@ class Dynamic:
             cvid=cache_pool.dynamic2article[self.get_dynamic_id()],
             credential=self.credential,
         )
-        # ~~这么做其实还有一个好处，让人养成转换类之前核验的好习惯。~~
 
     async def is_opus(self) -> bool:
         """
