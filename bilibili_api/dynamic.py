@@ -27,6 +27,9 @@ API = utils.get_api("dynamic")
 API_opus = utils.get_api("opus")
 raise_for_statement = utils.raise_for_statement
 
+uid2uname = {}
+uname2uid = {}
+
 
 class DynamicType(Enum):
     """
@@ -73,6 +76,25 @@ class DynamicContentType(Enum):
     VOTE = 4
 
 
+async def _name2uid(uname: str, credential: Credential) -> int:
+    global uname2uid
+    if uname2uid.get(uname) is None:
+        resp = (await user.name2uid(uname, credential=credential))["uid_list"]
+        if len(resp) == 0:
+            return 0
+        if resp[0]["name"] != uname:
+            return 0
+        uname2uid[uname] = resp[0]["uid"]
+    return uname2uid[uname]
+
+
+async def _uid2name(uid: int, credential: Credential) -> str:
+    global uid2uname
+    if uid2uname.get(uid) is None:
+        uid2uname[uid] = (await user.User(uid, credential=credential).get_user_info())["name"]
+    return uid2uname[uid]
+
+
 async def _parse_at(text: str, credential: Credential) -> Tuple[str, str, str]:
     """
     @人格式：“@用户名 ”(注意最后有空格）
@@ -91,15 +113,9 @@ async def _parse_at(text: str, credential: Credential) -> Tuple[str, str, str]:
     names = []
     for match in match_result:
         uname = match.group()
-        try:
-            uid = (await user.name2uid(uname, credential=credential))["uid_list"][0][
-                "uid"
-            ]
-        except KeyError:
+        uid = await _name2uid(uname, credential=credential)
+        if uid == 0:
             continue
-        except IndexError:
-            continue
-
         uid_list.append(str(uid))
         names.append(uname + " ")
     at_uids = ",".join(uid_list)
@@ -180,7 +196,7 @@ class BuildDynamic:
     - 1. 链式调用构建
 
     ``` python
-    BuildDynamic.empty().add_plain_text("114514").add_image(Picture.from_url("https://www.bilibili.com/favicon.ico"))
+    BuildDynamic.empty().add_plain_text("114514").add_image(await Picture.load_url("https://www.bilibili.com/favicon.ico"))
     ```
 
     - 2. 参数构建
@@ -528,23 +544,19 @@ class BuildDynamic:
                             "raw_text": "@",
                         }
                         continue
-                    resp = (
-                        await user.name2uid(
-                            content["raw_text"][1:], credential=credential
-                        )
-                    )["uid_list"][0]
-                    if resp["name"] != content["raw_text"][1:]:
+                    uid = await _name2uid(content["raw_text"][1:], credential)
+                    if uid == 0:
                         contents[idx] = {
                             "biz_id": "",
-                            "type": DynamicContentType.EMOJI.value,
+                            "type": DynamicContentType.TEXT.value,
                             "raw_text": content["raw_text"],
                         }
                     else:
-                        contents[idx]["biz_id"] = str(resp["uid"])
+                        contents[idx]["biz_id"] = str(uid)
                 elif content["raw_text"] == "@":
                     contents[idx][
                         "raw_text"
-                    ] = f"@{(await user.User(uid=content['biz_id']).get_user_info())['name']}"
+                    ] = await _uid2name(content['biz_id'], credential=credential)
             if content["type"] == DynamicContentType.VOTE.value:
                 contents[idx]["raw_text"] = (
                     await vote.Vote(vote_id=content["biz_id"]).get_info()

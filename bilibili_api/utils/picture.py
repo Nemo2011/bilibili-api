@@ -28,7 +28,7 @@ class Picture:
 
         content   (bytes): 图片内容
 
-    可以不实例化，用 `from_url`, `from_content` 或 `from_file` 加载图片。
+    可以不实例化，用 `load_url`, `from_content` 或 `from_file` 加载图片。
     """
 
     height: int = -1

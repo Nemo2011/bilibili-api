@@ -172,10 +172,14 @@ Events:
     ANTI_SPIDER: 反爬虫相关信息。
 
 CallbackData:
-    事件 (str)
     描述 (str)
     数据 (dict)
-    时间 (datetime.datetime)
+
+``` python
+@request_log.on("__ALL__")
+async def handle(desc: str, data: dict) -> None:
+    print(desc, data)
+```
 
 默认启用 Api 和 Anti-Spider 相关信息。
 """
@@ -202,10 +206,14 @@ Events:
     ANTI_SPIDER: 反爬虫相关信息。
 
 CallbackData:
-    事件 (str)
     描述 (str)
     数据 (dict)
-    时间 (datetime.datetime)
+
+``` python
+@request_log.on("__ALL__")
+async def handle(desc: str, data: dict) -> None:
+    print(desc, data)
+```
 
 默认启用 Api 和 Anti-Spider 相关信息。
 """
