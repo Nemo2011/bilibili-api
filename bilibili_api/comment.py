@@ -28,7 +28,7 @@ class CommentResourceType(Enum):
 
     + VIDEO: 视频。
     + ARTICLE: 专栏。
-    + DYNAMIC_DRAW: 画册。
+    + DYNAMIC_DRAW: 画册（图文）。
     + DYNAMIC: 动态（画册也属于动态的一种，只不过画册还有一个专门的 ID）。
     + AUDIO：音频。
     + AUDIO_LIST：歌单。

@@ -39,6 +39,7 @@ from bilibili_api import dynamic
   - [async def get\_lottery\_info()](#async-def-get\_lottery\_info)
   - [async def get\_reaction()](#async-def-get\_reaction)
   - [async def get\_reposts()](#async-def-get\_reposts)
+  - [async def get\_rid()](#async-def-get\_rid)
   - [async def is\_article()](#async-def-is\_article)
   - [async def is\_opus()](#async-def-is\_opus)
   - [async def markdown()](#async-def-markdown)
@@ -427,6 +428,17 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | offset | str, optional | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "0" |
 
 **Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def get_rid()
+
+获取 rid，以传入 `comment.get_comments_lazy` 等函数 oid 参数对评论区进行操作
+
+
+
+**Returns:** int: rid
 
 
 

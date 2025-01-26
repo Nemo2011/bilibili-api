@@ -15,9 +15,9 @@ from bilibili_api import black_room
 - [class BlackRoom()](#class-BlackRoom)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def get\_details()](#async-def-get\_details)
-  - [async def get\_id()](#async-def-get\_id)
+  - [def get\_id()](#def-get\_id)
   - [async def get\_reason()](#async-def-get\_reason)
-  - [async def set\_id()](#async-def-set\_id)
+  - [def set\_id()](#def-set\_id)
 - [class BlackType()](#class-BlackType)
 - [class JuryCase()](#class-JuryCase)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
@@ -119,7 +119,7 @@ from bilibili_api import black_room
 
 
 
-### async def get_id()
+### def get_id()
 
 获取小黑屋 id
 
@@ -141,7 +141,7 @@ from bilibili_api import black_room
 
 
 
-### async def set_id()
+### def set_id()
 
 设置小黑屋 id
 

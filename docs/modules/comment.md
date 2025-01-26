@@ -7,12 +7,11 @@ bilibili_api.comment
 
 关于资源 ID（oid）的一些示例（{}部分为应该传入的参数）。
 
-+ 视频：AV 号：av{170001}。
-+ 专栏：cv{9762979}。
-+ 动态（画册类型）：{116859542}。
-+ 动态（纯文本）：{497080393649439253}。
-+ 课程：ep{5556}
-+ 小黑屋: ban/{2600321}
++ 视频：AV 号：av{170001} `get_aid() / await get_aid() # for Episode`。
++ 专栏：cv{9762979} `get_cvid()`。
++ 动态/图文：{116859542} `await get_rid()`。
++ 课程：ep{5556} `get_epid()`
++ 小黑屋: ban/{2600321} `get_id()`
 
 
 ``` python
@@ -203,7 +202,7 @@ Error Code:
 
 + VIDEO: 视频。
 + ARTICLE: 专栏。
-+ DYNAMIC_DRAW: 画册。
++ DYNAMIC_DRAW: 画册（图文）。
 + DYNAMIC: 动态（画册也属于动态的一种，只不过画册还有一个专门的 ID）。
 + AUDIO：音频。
 + AUDIO_LIST：歌单。

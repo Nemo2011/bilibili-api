@@ -12,10 +12,15 @@ from bilibili_api import opus
 
 - [class Opus()](#class-Opus)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def add\_coins()](#async-def-add\_coins)
   - [async def get\_info()](#async-def-get\_info)
   - [def get\_opus\_id()](#def-get\_opus\_id)
+  - [async def get\_reaction()](#async-def-get\_reaction)
+  - [async def get\_rid()](#async-def-get\_rid)
   - [async def is\_article()](#async-def-is\_article)
   - [async def markdown()](#async-def-markdown)
+  - [async def set\_favorite()](#async-def-set\_favorite)
+  - [async def set\_like()](#async-def-set\_like)
   - [async def turn\_to\_article()](#async-def-turn\_to\_article)
   - [def turn\_to\_dynamic()](#def-turn\_to\_dynamic)
 
@@ -33,6 +38,17 @@ from bilibili_api import opus
 
 ### def \_\_init\_\_()
 
+
+
+
+
+### async def add_coins()
+
+给专栏投币，目前只能投一个
+
+
+
+**Returns:** dict: 调用 API 返回的结果
 
 
 
@@ -59,6 +75,31 @@ from bilibili_api import opus
 
 
 
+### async def get_reaction()
+
+获取点赞、转发
+
+
+| name | type | description |
+| - | - | - |
+| offset | str, optional | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "" |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def get_rid()
+
+获取 rid，以传入 `comment.get_comments_lazy` 等函数 oid 参数对评论区进行操作
+
+
+
+**Returns:** int: rid
+
+
+
+
 ### async def is_article()
 
 获取图文是否同时为专栏
@@ -79,6 +120,34 @@ from bilibili_api import opus
 
 
 **Returns:** str: markdown 内容
+
+
+
+
+### async def set_favorite()
+
+设置图文收藏状态
+
+
+| name | type | description |
+| - | - | - |
+| status | bool, optional | 收藏状态. Defaults to True |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def set_like()
+
+设置图文点赞状态
+
+
+| name | type | description |
+| - | - | - |
+| status | bool, optional | 点赞状态. Defaults to True. |
+
+**Returns:** dict: 调用 API 返回的结果
 
 
 
