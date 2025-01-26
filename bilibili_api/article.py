@@ -175,18 +175,7 @@ class Article:
             Dynamic: 动态实例
         """
         if cache_pool.article2dynamic.get(self.get_cvid()) is None:
-            cache_pool.article2dynamic[self.get_cvid()] = (await self.get_all())[
-                "readInfo"
-            ]["dyn_id_str"]
-            cache_pool.dynamic2article[cache_pool.article2dynamic[self.get_cvid()]] = (
-                self.get_cvid()
-            )
-        cache_pool.dynamic_is_article[
-            cache_pool.article2dynamic[self.get_cvid()]
-        ] = True
-        cache_pool.dynamic_is_opus[
-            cache_pool.article2dynamic[self.get_cvid()]
-        ] = True
+            await self.get_all()
         return dynamic.Dynamic(
             dynamic_id=cache_pool.article2dynamic[self.get_cvid()],
             credential=self.credential,
@@ -204,18 +193,7 @@ class Article:
             Opus: 动态实例
         """
         if cache_pool.article2dynamic.get(self.get_cvid()) is None:
-            cache_pool.article2dynamic[self.get_cvid()] = (await self.get_all())[
-                "readInfo"
-            ]["dyn_id_str"]
-            cache_pool.dynamic2article[cache_pool.article2dynamic[self.get_cvid()]] = (
-                self.get_cvid()
-            )
-        cache_pool.dynamic_is_article[
-            cache_pool.article2dynamic[self.get_cvid()]
-        ] = True
-        cache_pool.dynamic_is_opus[
-            cache_pool.article2dynamic[self.get_cvid()]
-        ] = True
+            await self.get_all()
         return opus.Opus(
             opus_id=cache_pool.article2dynamic[self.get_cvid()],
             credential=self.credential,
@@ -229,9 +207,7 @@ class Article:
             bool: 是否为笔记
         """
         if cache_pool.article_is_note.get(self.get_cvid()) is None:
-            cache_pool.article_is_note[self.get_cvid()] = (await self.get_all())[
-                "readInfo"
-            ]["category"]["id"] in [41, 42]
+            await self.get_all()
         return cache_pool.article_is_note[self.get_cvid()]
 
     def turn_to_note(self) -> "Note":
@@ -608,6 +584,17 @@ class Article:
                     f"https://www.bilibili.com/read/cv{self.__cvid}/?jump_opus=1"
                 )
             )[0]
+            cache_pool.article2dynamic[self.__cvid] = self.__get_all_data["readInfo"][
+                "dyn_id_str"
+            ]
+            cache_pool.dynamic2article[cache_pool.article2dynamic[self.__cvid]] = (
+                self.__cvid
+            )
+            cache_pool.dynamic_is_article[cache_pool.article2dynamic[self.__cvid]] = True
+            cache_pool.dynamic_is_opus[cache_pool.article2dynamic[self.__cvid]] = True
+            cache_pool.article_is_note[self.get_cvid()] = self.__get_all_data["readInfo"][
+                "category"
+            ]["id"] in [41, 42]
         return self.__get_all_data
 
     async def set_like(self, status: bool = True) -> dict:

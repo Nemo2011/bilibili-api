@@ -4,13 +4,12 @@ bilibili_api.opus
 图文相关
 """
 
-import enum
 import yaml
 from typing import Optional
 from . import article
 from . import dynamic
 from .utils.network import Api, Credential
-from .utils.utils import get_api, raise_for_statement
+from .utils.utils import get_api
 from .utils import cache_pool
 from .exceptions import ArgsException
 
@@ -50,9 +49,7 @@ class Opus:
             bool: 是否同时为专栏
         """
         if cache_pool.dynamic_is_article.get(self.__id) is None:
-            cache_pool.dynamic_is_article[self.__id] = (await self.get_info())["item"][
-                "basic"
-            ]["comment_type"] == 12
+            await self.get_info()
         return cache_pool.dynamic_is_article[self.__id]
 
     async def turn_to_article(self) -> "article.Article":
@@ -66,15 +63,9 @@ class Opus:
         """
         # 此处建议先阅读 dynamic.turn_to_article 注释再尝试理解
         if cache_pool.dynamic2article.get(self.__id) is None:
+            await self.get_info()
             if not await self.is_article():
                 raise ArgsException("提供的动态无对应专栏")
-            else:
-                cache_pool.dynamic2article[self.__id] = int(
-                    (await self.get_info())["item"]["basic"]["rid_str"]
-                )
-            cache_pool.article2dynamic[cache_pool.dynamic2article[self.__id]] = (
-                self.__id
-            )
         return article.Article(
             cvid=cache_pool.dynamic2article[self.__id], credential=self.credential
         )
@@ -111,6 +102,16 @@ class Opus:
             )
         if self.__info.get("fallback"):
             raise ArgsException("传入的 opus_id 不正确")
+        cache_pool.dynamic_is_article[self.__dynamic_id] = (
+            self.__detail["item"]["basic"]["comment_type"] == 12
+        )
+        if cache_pool.dynamic_is_article[self.__dynamic_id]:
+            cache_pool.dynamic2article[self.__dynamic_id] = int(
+                self.__detail["item"]["basic"]["rid_str"]
+            )
+            cache_pool.article2dynamic[
+                cache_pool.dynamic2article[self.__dynamic_id]
+            ] = self.__dynamic_id
         cache_pool.dynamic_is_opus[self.__id] = True
         return self.__info
 

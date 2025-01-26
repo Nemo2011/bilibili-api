@@ -773,6 +773,25 @@ class Dynamic:
                 .update_params(**params)
                 .result
             )
+            cache_pool.dynamic_is_article[self.__dynamic_id] = (
+                self.__detail["item"]["basic"]["comment_type"] == 12
+            )
+            if cache_pool.dynamic_is_article[self.__dynamic_id]:
+                cache_pool.dynamic2article[self.__dynamic_id] = int(
+                    self.__detail["item"]["basic"]["rid_str"]
+                )
+                cache_pool.article2dynamic[
+                    cache_pool.dynamic2article[self.__dynamic_id]
+                ] = self.__dynamic_id
+            module_dynamic = self.__detail["item"]["modules"][
+                "module_dynamic"
+            ]
+            if module_dynamic.get("major") is None:
+                cache_pool.dynamic_is_opus[self.__dynamic_id] = False
+            else:
+                cache_pool.dynamic_is_opus[self.__dynamic_id] = (
+                    module_dynamic["major"]["type"] == "MAJOR_TYPE_OPUS"
+                )
         return self.__detail
 
     async def is_article(self) -> bool:
@@ -783,9 +802,7 @@ class Dynamic:
             bool: 是否为专栏
         """
         if cache_pool.dynamic_is_article.get(self.get_dynamic_id()) is None:
-            cache_pool.dynamic_is_article[self.get_dynamic_id()] = (
-                await self.get_info()
-            )["item"]["basic"]["comment_type"] == 12
+            await self.get_info()
         return cache_pool.dynamic_is_article[self.get_dynamic_id()]
 
     async def turn_to_article(self) -> "Article":
@@ -800,15 +817,9 @@ class Dynamic:
             Article: 专栏实例
         """
         if cache_pool.dynamic2article.get(self.get_dynamic_id()) is None:
+            await self.get_info()
             if not await self.is_article():
                 raise ArgsException("提供的动态无对应专栏")
-            else:
-                cache_pool.dynamic2article[self.get_dynamic_id()] = int(
-                    (await self.get_info())["item"]["basic"]["rid_str"]
-                )
-            cache_pool.article2dynamic[
-                cache_pool.dynamic2article[self.get_dynamic_id()]
-            ] = self.get_dynamic_id()
         return Article(
             cvid=cache_pool.dynamic2article[self.get_dynamic_id()],
             credential=self.credential,
@@ -824,15 +835,7 @@ class Dynamic:
             bool: 是否为图文
         """
         if cache_pool.dynamic_is_opus.get(self.__dynamic_id) is None:
-            module_dynamic = (await self.get_info())["item"]["modules"][
-                "module_dynamic"
-            ]
-            if module_dynamic.get("major") is None:
-                cache_pool.dynamic_is_opus[self.__dynamic_id] = False
-            else:
-                cache_pool.dynamic_is_opus[self.__dynamic_id] = (
-                    module_dynamic["major"]["type"] == "MAJOR_TYPE_OPUS"
-                )
+            await self.get_info()
         return cache_pool.dynamic_is_opus[self.__dynamic_id]
 
     def turn_to_opus(self) -> "Opus":
