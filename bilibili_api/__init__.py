@@ -108,14 +108,31 @@ from . import (
     vote,
     watchroom,
 )
-from .clients.curl_cffi import CurlCFFIClient
 
 
 BILIBILI_API_VERSION = "16.3.0"
 
 
-register_client("curl_cffi", CurlCFFIClient)
-select_client("curl_cffi")
+def __register_all_clients():
+    import importlib
+
+    all_clients = [
+        ("curl_cffi", "CurlCFFIClient"),
+        ("aiohttp", "AioHTTPClient"),
+        ("httpx", "HTTPXClient"),
+    ][::-1]
+    for module, client in all_clients:
+        try:
+            importlib.import_module(module)
+        except ModuleNotFoundError:
+            continue
+        client_module = importlib.import_module(name=f".clients.{client}", package="bilibili_api")
+        client_class = eval(f"client_module.{client}")
+        register_client(module, client_class)
+        select_client(module)
+
+
+__register_all_clients()
 
 
 __all__ = [
@@ -134,7 +151,6 @@ __all__ = [
     "CredentialNoBuvid3Exception",
     "CredentialNoDedeUserIDException",
     "CredentialNoSessdataException",
-    "CurlCFFIClient",
     "Danmaku",
     "DanmakuClosedException",
     "DmFontSize",

@@ -47,19 +47,19 @@ class CurlCFFIClient(BiliAPIClient):
         self.__ws_need_close: Dict[int, bool] = {}
         self.__ws_is_closed: Dict[int, bool] = {}
 
-    def get_wrapped_session(self):
+    def get_wrapped_session(self) -> requests.AsyncSession:
         return self.__session
 
-    def set_proxy(self, proxy: str = ""):
+    def set_proxy(self, proxy: str = "") -> None:
         self.__session.proxies = {"all": proxy}
 
-    def set_timeout(self, timeout: float = 0.0):
+    def set_timeout(self, timeout: float = 0.0) -> None:
         self.__session.timeout = timeout
 
-    def set_verify_ssl(self, verify_ssl=True):
+    def set_verify_ssl(self, verify_ssl: bool = True) -> None:
         self.__session.verify = verify_ssl
 
-    def set_trust_env(self, trust_env=True):
+    def set_trust_env(self, trust_env: bool = True) -> None:
         self.__session.trust_env = trust_env
 
     async def request(

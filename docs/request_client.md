@@ -210,7 +210,7 @@ register_client("aiohttp", AioHTTPClient)
 select_client("aiohttp")
 ```
 
-**模块默认使用 `bilibili_api.utils.network.CurlCFFIClient`，注册时使用的名字为 `curl_cffi`。**
+**模块默认使用 `bilibili_api.clients.curl_cffi.CurlCFFIClient`，注册时使用的名字为 `curl_cffi`。**
 
 ``` python
 # 节选自 bilibili_api.utils.network

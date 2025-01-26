@@ -13,6 +13,7 @@
 [![Testing](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml/badge.svg?branch=dev)](https://github.com/Nemo2011/bilibili-api/actions/workflows/testing.yml)
 
 **:warning: 接口可能改动，请及时更新最新版 [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]**
+
 </div>
 
 **注意事项：使用此模块时请仅用于学习和测试，禁止用于非法用途及其他恶劣的社区行为如：恶意刷屏、辱骂黄暴、各种形式的滥用等，违规此模块许可证 `GNU General Public License Version 3` 及此条注意事项而产生的任何后果自负，模块的所有贡献者不负任何责任。**
@@ -41,7 +42,7 @@ Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/ne
 - 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查、下载弹幕、字幕文件[[3]](#脚注)、专栏内容爬取、cookies 刷新等[[4]](#脚注)。
 - 支持采用各种手段避免触发反爬虫风控[[5]](#脚注)。
 - **全部是异步操作**。
-- 基于 `curl_cffi`，支持模仿浏览器指纹进行请求，同时有良好的性能。
+- 支持 `curl_cffi`，支持模仿浏览器指纹进行请求，同时有良好的性能。
 
 # 快速上手
 
@@ -57,7 +58,6 @@ $ pip3 install bilibili-api-dev
 # 最新修改会在 dev 分支
 $ pip3 install git+https://github.com/Nemo2011/bilibili-api.git@dev
 ```
-
 
 接下来我们来获取视频的播放量等信息：
 
@@ -136,6 +136,19 @@ if __name__ == '__main__':
 
 如果你仍然想继续使用同步代码，请参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)
 
+# 模块使用的请求库
+
+考虑到性能和支持浏览器指纹模仿的特性（此特性能有效防止利用指纹识别的反爬虫措施），模块默认会使用 `curl_cffi`，并将其列入了依赖。模块同时也自带对 `aiohttp` 和 `httpx` 的支持。
+
+> 如果没有安装 curl_cffi 库，但安装了 aiohttp 或 httpx 的话，模块大多也能正常使用，只是部分接口会受限。
+
+如果想要使用 `aiohttp` 和 `httpx`，可以利用 `select_client` 进行切换。
+
+``` python
+select_client("aiohttp") # 选择 aiohttp
+select_client("httpx") # 选择 httpx，不支持 WebSocket
+```
+
 # FA♂Q
 
 **Q: 关于 API 调用的正确姿势是什么？**
@@ -171,9 +184,9 @@ request_settings.set_proxy("http://your-proxy.com") # 里头填写你的代理�
 request_settings.set_proxy("http://username:password@your-proxy.com") # 如果需要用户名、密码
 ```
 
-**Q: 我想在项目中使用这个模块，但是我的项目使用其他请求库进行网络请求（如 `aiohttp` 和 `httpx`），想要模块也同时使用它（们），可以吗？**
+**Q: 我想在项目中使用这个模块，但是我的项目使用其他请求库进行网络请求（如 `pycurl`），想要模块也同时使用它（们），可以吗？**
 
-A: 可以，但是你可能要自己动手实现模块和具体请求库的适配。详见  [自定义请求库](https://nemo2011.github.io/bilibili-api/#/request_client)
+A: 可以，但是你可能要自己动手实现模块和具体请求库的适配。详见 [自定义请求库](https://nemo2011.github.io/bilibili-api/#/request_client)
 
 **Q: 怎么没有我想要的功能？**
 
@@ -191,11 +204,11 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 
 # 脚注
 
-+ \[1\] 这里只列出一部分，请以实际 API 为准。
-+ \[2\] 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784> (WTFPL)
-+ \[3\] 部分代码来源：<https://github.com/m13253/danmaku2ass> (GPLv3) <https://github.com/ewwink/python-srt2ass>
-+ \[4\] 思路来源：<https://socialsisteryi.github.io/bilibili-API-collect/docs/login/cookie_refresh.html> (CC-BY-NC 4.0)
-+ \[5\] 大量思路来源 <https://socialsisteryi.github.io/bilibili-API-collect> 中相关讨论。
+- \[1\] 这里只列出一部分，请以实际 API 为准。
+- \[2\] 代码来源：<https://www.zhihu.com/question/381784377/answer/1099438784> (WTFPL)
+- \[3\] 部分代码来源：<https://github.com/m13253/danmaku2ass> (GPLv3) <https://github.com/ewwink/python-srt2ass>
+- \[4\] 思路来源：<https://socialsisteryi.github.io/bilibili-API-collect/docs/login/cookie_refresh.html> (CC-BY-NC 4.0)
+- \[5\] 大量思路来源 <https://socialsisteryi.github.io/bilibili-API-collect> 中相关讨论。
 
 [docs]: https://nemo2011.github.io/bilibili-api
 [docs-github]: https://github.com/nemo2011/bilibili-api/tree/main/docs

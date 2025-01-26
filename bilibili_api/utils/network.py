@@ -148,7 +148,7 @@ Logger: RequestLog().logger
 Extends: AsyncEvent
 
 Events:
-    (CurlCFFIClient)
+    (模块自带 BiliAPIClient)
     REQUEST:   HTTP 请求。
     RESPONSE:  HTTP 响应。
     WS_CREATE: 新建的 Websocket 请求。
@@ -417,9 +417,179 @@ class BiliAPIFile:
 
 
 class BiliAPIClient(ABC):
-    """
+    '''
     请求客户端抽象类。通过对第三方模块请求客户端的封装令模块可对其进行调用。
-    """
+
+    ``` python
+    class BiliAPIClient(ABC):
+        """
+        请求客户端抽象类。通过对第三方模块请求客户端的封装令模块可对其进行调用。
+        """
+
+        @abstractmethod
+        def __init__(
+            self,
+            proxy: str = "",
+            timeout: float = 0.0,
+            verify_ssl: bool = True,
+            trust_env: bool = True,
+            session: Optional[object] = None,
+        ) -> None:
+            """
+            Args:
+                proxy (str, optional): 代理地址. Defaults to "".
+                timeout (float, optional): 请求超时时间. Defaults to 0.0.
+                verify_ssl (bool, optional): 是否验证 SSL. Defaults to True.
+                trust_env (bool, optional): `trust_env`. Defaults to True.
+                session (object, optional): 会话对象. Defaults to None.
+
+            Note: 仅当用户只提供 `session` 参数且用户中途未调用 `set_xxx` 函数才使用用户提供的 `session`。
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        def get_wrapped_session(self) -> object:
+            """
+            获取封装的第三方会话对象
+
+            Returns:
+                object: 第三方会话对象
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        def set_timeout(self, timeout: float = 0.0) -> None:
+            """
+            设置请求超时时间
+
+            Args:
+                timeout (float, optional): 请求超时时间. Defaults to 0.0.
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        def set_proxy(self, proxy: str = "") -> None:
+            """
+            设置代理地址
+
+            Args:
+                proxy (str, optional): 代理地址. Defaults to "".
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        def set_verify_ssl(self, verify_ssl: bool = True) -> None:
+            """
+            设置是否验证 SSL
+
+            Args:
+                verify_ssl (bool, optional): 是否验证 SSL. Defaults to True.
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        def set_trust_env(self, trust_env: bool = True) -> None:
+            """
+            设置 `trust_env`
+
+            Args:
+                trust_env (bool, optional): `trust_env`. Defaults to True.
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        async def request(
+            self,
+            method: str = "",
+            url: str = "",
+            params: dict = {},
+            data: Union[dict, str, bytes] = {},
+            files: Dict[str, BiliAPIFile] = {},
+            headers: dict = {},
+            cookies: dict = {},
+            allow_redirects: bool = False,
+        ) -> BiliAPIResponse:
+            """
+            进行 HTTP 请求
+
+            Args:
+                method (str, optional): 请求方法. Defaults to "".
+                url (str, optional): 请求地址. Defaults to "".
+                params (dict, optional): 请求参数. Defaults to {}.
+                data (Union[dict, str, bytes], optional): 请求数据. Defaults to {}.
+                files (Dict[str, BiliAPIFile], optional): 请求文件. Defaults to {}.
+                headers (dict, optional): 请求头. Defaults to {}.
+                cookies (dict, optional): 请求 Cookies. Defaults to {}.
+                allow_redirects (bool, optional): 是否允许重定向. Defaults to False.
+
+            Returns:
+                BiliAPIResponse: 响应对象
+
+            Note: 无需实现 data 为 str 且 files 不为空的情况。
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        async def ws_create(
+            self, url: str = "", params: dict = {}, headers: dict = {}
+        ) -> int:
+            """
+            创建 WebSocket 连接
+
+            Args:
+                url (str, optional): WebSocket 地址. Defaults to "".
+                params (dict, optional): WebSocket 参数. Defaults to {}.
+                headers (dict, optional): WebSocket 头. Defaults to {}.
+
+            Returns:
+                int: WebSocket 连接编号，用于后续操作。
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        async def ws_send(self, cnt: int, data: bytes) -> None:
+            """
+            发送 WebSocket 数据
+
+            Args:
+                cnt (int): WebSocket 连接编号
+                data (bytes): WebSocket 数据
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
+            """
+            接受 WebSocket 数据
+
+            Args:
+                cnt (int): WebSocket 连接编号
+
+            Returns:
+                Tuple[bytes, BiliWsMsgType]: WebSocket 数据和状态
+
+            Note: 建议实现此函数时支持其他线程关闭不阻塞，除基础状态同时实现 CLOSING, CLOSED。
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        async def ws_close(self, cnt: int) -> None:
+            """
+            关闭 WebSocket 连接
+
+            Args:
+                cnt (int): WebSocket 连接编号
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        async def close(self):
+            """
+            关闭请求客户端，即关闭封装的第三方会话对象
+            """
+            raise NotImplementedError
+    ```
+    '''
 
     @abstractmethod
     def __init__(
