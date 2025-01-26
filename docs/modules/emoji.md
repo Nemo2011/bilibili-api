@@ -11,7 +11,6 @@ from bilibili_api import emoji
 ```
 
 - [async def get\_all\_emoji()](#async-def-get\_all\_emoji)
-- [def get\_all\_emote\_list()](#def-get\_all\_emote\_list)
 - [async def get\_emoji\_detail()](#async-def-get\_emoji\_detail)
 - [async def get\_emoji\_list()](#async-def-get\_emoji\_list)
 
@@ -29,21 +28,6 @@ from bilibili_api import emoji
 
 **Returns:** dict: 调用 API 返回的结果
 
-
-
-
----
-
-## def get_all_emote_list()
-
-获取所有表情包 id <-> 对应文字
-
-
-
-**Returns:** dict: 模块存储的数据 (`last_update` 字段为最后更新时间)
-
-
-如果数据更新时间过早，可能会遗漏新的表情包。此时可用 `get_all_emoji` + `get_emoji_detail` 查询相关信息，或前往 Github 催促更新。
 
 
 

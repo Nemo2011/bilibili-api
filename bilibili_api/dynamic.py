@@ -294,24 +294,18 @@ class BuildDynamic:
         )
         return self
 
-    def add_emoji(self, emoji_id: int) -> "BuildDynamic":
+    def add_emoji(self, emoji: str) -> "BuildDynamic":
         """
         添加表情
 
         Args:
-            emoji_id (int): 表情ID
+            emoji (str): 表情文字
         """
-        with open(
-            os.path.join(os.path.dirname(__file__), "data/emote.json"), encoding="UTF-8"
-        ) as f:
-            emote_info = json.load(f)
-        if str(emoji_id) not in emote_info:
-            raise ValueError("不存在此表情")
         self.contents.append(
             {
                 "biz_id": "",
                 "type": DynamicContentType.EMOJI.value,
-                "raw_text": emote_info[str(emoji_id)],
+                "raw_text": emoji,
             }
         )
         return self
@@ -377,21 +371,11 @@ class BuildDynamic:
             return data
 
         def _get_emojis(text: str) -> List:
-            with open(
-                os.path.join(os.path.dirname(__file__), "data/emote.json"),
-                encoding="UTF-8",
-            ) as f:
-                emote_info = json.load(f)
-            all_emojis = []
-            for key, item in emote_info.items():
-                all_emojis.append(item)
             pattern = re.compile(r"(?<=\[).*?(?=\])")
             match_result = re.finditer(pattern, text)
             emotes = []
             for match in match_result:
                 emote = match.group(0)
-                if f"[{emote}]" not in all_emojis:
-                    continue
                 emotes.append(f"[{emote}]")
             data = []
             last_index = 0

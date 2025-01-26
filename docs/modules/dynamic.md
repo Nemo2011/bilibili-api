@@ -110,7 +110,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| emoji_id | int | 表情ID |
+| emoji | str | 表情文字 |
 
 **Returns:** None
 

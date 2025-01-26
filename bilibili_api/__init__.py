@@ -22,7 +22,6 @@ from .utils.network import (
     BiliWsMsgType,
     BiliAPIFile,
     BiliAPIClient,
-    CurlCFFIClient,
     register_client,
     unregister_client,
     select_client,
@@ -109,9 +108,14 @@ from . import (
     vote,
     watchroom,
 )
+from .clients.curl_cffi import CurlCFFIClient
 
 
 BILIBILI_API_VERSION = "16.3.0"
+
+
+register_client("curl_cffi", CurlCFFIClient)
+select_client("curl_cffi")
 
 
 __all__ = [

@@ -69,20 +69,3 @@ async def get_all_emoji(business: str = "reply", credential: Credential = None) 
     api = API["all"]
     params = {"business": business}
     return await Api(**api, credential=credential).update_params(**params).result
-
-
-def get_all_emote_list() -> dict:
-    """
-    获取所有表情包 id <-> 对应文字
-
-    Returns:
-        dict: 模块存储的数据 (`last_update` 字段为最后更新时间)
-
-    如果数据更新时间过早，可能会遗漏新的表情包。此时可用 `get_all_emoji` + `get_emoji_detail` 查询相关信息，或前往 Github 催促更新。
-    """
-    with open(
-        os.path.join(os.path.dirname(__file__), "data/emote.json"), encoding="utf8"
-    ) as f:
-        data = json.loads(f.read())
-
-    return data
