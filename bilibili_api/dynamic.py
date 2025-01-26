@@ -977,6 +977,15 @@ class Dynamic:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def get_rid(self) -> int:
+        """
+        获取 rid，以传入 `comment.get_comments_lazy` 等函数 oid 参数对评论区进行操作
+
+        Returns:
+            int: rid
+        """
+        return int((await self.get_info())["item"]["basic"]["rid_str"])
+
     async def get_likes(self, pn: int = 1, ps: int = 30) -> dict:
         """
         获取动态点赞列表

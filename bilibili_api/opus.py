@@ -102,16 +102,16 @@ class Opus:
             )
         if self.__info.get("fallback"):
             raise ArgsException("传入的 opus_id 不正确")
-        cache_pool.dynamic_is_article[self.__dynamic_id] = (
-            self.__detail["item"]["basic"]["comment_type"] == 12
+        cache_pool.dynamic_is_article[self.__id] = (
+            self.__info["item"]["basic"]["comment_type"] == 12
         )
-        if cache_pool.dynamic_is_article[self.__dynamic_id]:
-            cache_pool.dynamic2article[self.__dynamic_id] = int(
-                self.__detail["item"]["basic"]["rid_str"]
+        if cache_pool.dynamic_is_article[self.__id]:
+            cache_pool.dynamic2article[self.__id] = int(
+                self.__info["item"]["basic"]["rid_str"]
             )
-            cache_pool.article2dynamic[
-                cache_pool.dynamic2article[self.__dynamic_id]
-            ] = self.__dynamic_id
+            cache_pool.article2dynamic[cache_pool.dynamic2article[self.__id]] = (
+                self.__id
+            )
         cache_pool.dynamic_is_opus[self.__id] = True
         return self.__info
 
@@ -170,3 +170,57 @@ class Opus:
         meta_yaml = yaml.safe_dump(self.__info, allow_unicode=True)
         content = f"---\n{meta_yaml}\n---\n\n{markdown}"
         return content
+
+    async def set_like(self, status: bool) -> dict:
+        """
+        设置图文点赞状态
+
+        Args:
+            status (bool, optional): 点赞状态. Defaults to True.
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        return await self.turn_to_dynamic().set_like(status)
+
+    async def set_favorite(self, status: bool = True) -> dict:
+        """
+        设置图文收藏状态
+
+        Args:
+            status (bool, optional): 收藏状态. Defaults to True
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        return await self.turn_to_dynamic().set_favorite(status)
+
+    async def add_coins(self) -> dict:
+        """
+        给专栏投币，目前只能投一个
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        return await (await self.turn_to_article()).add_coins()
+
+    async def get_reaction(self, offset: str = "") -> dict:
+        """
+        获取点赞、转发
+
+        Args:
+            offset (str, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to ""
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        return await self.turn_to_dynamic().get_reaction(offset=offset)
+
+    async def get_rid(self) -> int:
+        """
+        获取 rid，以传入 `comment.get_comments_lazy` 等函数 oid 参数对评论区进行操作
+
+        Returns:
+            int: rid
+        """
+        return int((await self.get_info())["item"]["basic"]["rid_str"])

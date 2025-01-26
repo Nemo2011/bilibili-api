@@ -221,7 +221,7 @@ class BlackRoom:
         """
         return BlackReasonType((await self.get_details())["reasonType"])
 
-    async def get_id(self) -> int:
+    def get_id(self) -> int:
         """
         获取小黑屋 id
 
@@ -230,7 +230,7 @@ class BlackRoom:
         """
         return self.__id
 
-    async def set_id(self, id_: int) -> None:
+    def set_id(self, id_: int) -> None:
         """
         设置小黑屋 id
 
