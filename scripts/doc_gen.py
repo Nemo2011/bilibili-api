@@ -432,10 +432,15 @@ for module in all_funcs:
         if func[2] == "class" or func[2] == "var":
             if not func[3].startswith("@") and func[3] != "builtins.object":
                 file.write(f"**Extend: {func[3]}**\n\n")
-            if func[0] == "BiliAPIClient":
+            if func[0] in ["BiliAPIClient"]:
                 doc = eval(f"{func[1]}.__doc__")
                 for line in doc.split("\n"):
                     file.write(line[4:] + "\n")
+                file.write("\n\n")
+            elif func[0] in ["request_log"]:
+                doc = eval(f"{func[1]}.__doc__")
+                for line in doc.split("\n"):
+                    file.write(line + "\n")
                 file.write("\n\n")
             else:
                 file.write(parse_docstring1(eval(f"{func[1]}.__doc__")))

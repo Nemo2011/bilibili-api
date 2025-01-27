@@ -148,21 +148,20 @@ Logger: RequestLog().logger
 Extends: AsyncEvent
 
 Events:
-    (模块自带 BiliAPIClient)
-    REQUEST:   HTTP 请求。
-    RESPONSE:  HTTP 响应。
-    WS_CREATE: 新建的 Websocket 请求。
-    WS_RECV:   获得到 WebSocket 请求。
-    WS_SEND:   发送了 WebSocket 请求。
-    WS_CLOSE:  关闭 WebSocket 请求。
-    (Api)
-    API_REQUEST: Api 请求。
-    API_RESPONSE: Api 响应。
-    ANTI_SPIDER: 反爬虫相关信息。
 
-CallbackData:
-    描述 (str)
-    数据 (dict)
+- (模块自带 BiliAPIClient)
+- REQUEST:   HTTP 请求。
+- RESPONSE:  HTTP 响应。
+- WS_CREATE: 新建的 Websocket 请求。
+- WS_RECV:   获得到 WebSocket 请求。
+- WS_SEND:   发送了 WebSocket 请求。
+- WS_CLOSE:  关闭 WebSocket 请求。
+- (Api)
+- API_REQUEST: Api 请求。
+- API_RESPONSE: Api 响应。
+- ANTI_SPIDER: 反爬虫相关信息。
+
+CallbackData: 描述 (str) 数据 (dict)
 
 ``` python
 @request_log.on("__ALL__")
@@ -182,21 +181,20 @@ Logger: RequestLog().logger
 Extends: AsyncEvent
 
 Events:
-    (模块自带 BiliAPIClient)
-    REQUEST:   HTTP 请求。
-    RESPONSE:  HTTP 响应。
-    WS_CREATE: 新建的 Websocket 请求。
-    WS_RECV:   获得到 WebSocket 请求。
-    WS_SEND:   发送了 WebSocket 请求。
-    WS_CLOSE:  关闭 WebSocket 请求。
-    (Api)
-    API_REQUEST: Api 请求。
-    API_RESPONSE: Api 响应。
-    ANTI_SPIDER: 反爬虫相关信息。
 
-CallbackData:
-    描述 (str)
-    数据 (dict)
+- (模块自带 BiliAPIClient)
+- REQUEST:   HTTP 请求。
+- RESPONSE:  HTTP 响应。
+- WS_CREATE: 新建的 Websocket 请求。
+- WS_RECV:   获得到 WebSocket 请求。
+- WS_SEND:   发送了 WebSocket 请求。
+- WS_CLOSE:  关闭 WebSocket 请求。
+- (Api)
+- API_REQUEST: Api 请求。
+- API_RESPONSE: Api 响应。
+- ANTI_SPIDER: 反爬虫相关信息。
+
+CallbackData: 描述 (str) 数据 (dict)
 
 ``` python
 @request_log.on("__ALL__")
