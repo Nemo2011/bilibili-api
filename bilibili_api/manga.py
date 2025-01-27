@@ -154,108 +154,113 @@ class Manga:
         """
         return self.__manga_id
 
-    async def get_info(self) -> dict:
-        """
-        获取漫画信息
+    # async def get_info(self) -> dict:
+    #     """
+    #     # 此函数已失效 2025-01-04
+    #     获取漫画信息
 
-        Returns:
-            dict: 调用 API 返回的结果
-        """
-        api = API["info"]["detail"]
-        params = {"device": "pc", "platform": "web", "nov": 25}
-        data = {"comic_id": self.get_manga_id()}
-        return (
-            await Api(**api, credential=self.credential, no_csrf=True, json_body=True)
-            .update_params(**params)
-            .update_data(**data)
-            .result
-        )
+    #     Returns:
+    #         dict: 调用 API 返回的结果
+    #     """
+    #     api = API["info"]["detail"]
+    #     params = {"device": "pc", "platform": "web", "nov": 25}
+    #     data = {"comic_id": self.get_manga_id()}
+    #     return (
+    #         await Api(**api, credential=self.credential, no_csrf=True, json_body=True)
+    #         .update_params(**params)
+    #         .update_data(**data)
+    #         .result
+    #     )
 
-    async def __get_info_cached(self) -> dict:
-        """
-        获取漫画信息，如果有缓存则使用缓存。
-        """
-        if self.__info == None:
-            self.__info = await self.get_info()
-        return self.__info
+    # async def __get_info_cached(self) -> dict:
+    #     """
+    #     # 此函数已失效 2025-01-04
+    #     获取漫画信息，如果有缓存则使用缓存。
+    #     """
+    #     if self.__info == None:
+    #         self.__info = await self.get_info()
+    #     return self.__info
 
-    async def get_episode_info(
-        self,
-        episode_count: Optional[Union[int, float]] = None,
-        episode_id: Optional[int] = None,
-    ) -> dict:
-        """
-        获取某一话信息
+    # async def get_episode_info(
+    #     self,
+    #     episode_count: Optional[Union[int, float]] = None,
+    #     episode_id: Optional[int] = None,
+    # ) -> dict:
+    #     """
+    #     # 此函数已失效 2025-01-04
+    #     获取某一话信息
 
-        Args:
-            episode_count (int | float | None): 第几话.
+    #     Args:
+    #         episode_count (int | float | None): 第几话.
 
-            episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
+    #         episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
-        Returns:
-            dict: 对应的话信息
+    #     Returns:
+    #         dict: 对应的话信息
 
-        **注意：episode_count 和 episode_id 中必须提供一个参数。**
-        """
-        info = await self.__get_info_cached()
-        for ep in info["ep_list"]:
-            if episode_count == None:
-                if ep["id"] == episode_id:
-                    return ep
-            elif episode_id == None:
-                if ep["ord"] == episode_count:
-                    return ep
-            else:
-                raise ArgsException("episode_count 和 episode_id 中必须提供一个参数。")
-        raise ArgsException("未找到对应的话")
+    #     **注意：episode_count 和 episode_id 中必须提供一个参数。**
+    #     """
+    #     info = await self.__get_info_cached()
+    #     for ep in info["ep_list"]:
+    #         if episode_count == None:
+    #             if ep["id"] == episode_id:
+    #                 return ep
+    #         elif episode_id == None:
+    #             if ep["ord"] == episode_count:
+    #                 return ep
+    #         else:
+    #             raise ArgsException("episode_count 和 episode_id 中必须提供一个参数。")
+    #     raise ArgsException("未找到对应的话")
 
-    async def get_episode_id(
-        self, episode_count: Optional[Union[int, float]] = None
-    ) -> int:
-        """
-        获取某一话的 id
+    # async def get_episode_id(
+    #     self, episode_count: Optional[Union[int, float]] = None
+    # ) -> int:
+    #     """
+    #     # 此函数已失效 2025-01-04
+    #     获取某一话的 id
 
-        Args:
-            episode_count (int | float | None): 第几话.
+    #     Args:
+    #         episode_count (int | float | None): 第几话.
 
-        Returns:
-            int: 对应的话的 id
-        """
-        return (await self.get_episode_info(episode_count=episode_count))["id"]
+    #     Returns:
+    #         int: 对应的话的 id
+    #     """
+    #     return (await self.get_episode_info(episode_count=episode_count))["id"]
 
-    async def get_images_url(
-        self,
-        episode_count: Optional[Union[int, float]] = None,
-        episode_id: Optional[int] = None,
-    ) -> dict:
-        """
-        获取某一话的图片链接。(未经过处理，所有的链接无法直接访问)
+    # async def get_images_url(
+    #     self,
+    #     episode_count: Optional[Union[int, float]] = None,
+    #     episode_id: Optional[int] = None,
+    # ) -> dict:
+    #     """
+    #     # 此函数已失效 2025-01-04
+    #     获取某一话的图片链接。(未经过处理，所有的链接无法直接访问)
 
-        获取的图片 url 请传入 `manga.manga_image_url_turn_to_Picture` 函数以转换为 `Picture` 类。
+    #     获取的图片 url 请传入 `manga.manga_image_url_turn_to_Picture` 函数以转换为 `Picture` 类。
 
-        Args:
-            episode_count (int | float | None): 第几话.
+    #     Args:
+    #         episode_count (int | float | None): 第几话.
 
-            episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
+    #         episode_id    (int | None)        : 对应的话的 id. 可以通过 `get_episode_id` 获取。
 
-        Returns:
-            dict: 调用 API 返回的结果
+    #     Returns:
+    #         dict: 调用 API 返回的结果
 
-        **注意：episode_count 和 episode_id 中必须提供一个参数。**
-        """
-        if episode_id == None:
-            if episode_count == None:
-                raise ArgsException("episode_count 和 episode_id 中必须提供一个参数。")
-            episode_id = await self.get_episode_id(episode_count)
-        api = API["info"]["episode_images"]
-        params = {"device": "pc", "platform": "web", "nov": 25}
-        data = {"ep_id": episode_id}
-        return (
-            await Api(**api, credential=self.credential, no_csrf=True)
-            .update_params(**params)
-            .update_data(**data)
-            .result
-        )
+    #     **注意：episode_count 和 episode_id 中必须提供一个参数。**
+    #     """
+    #     if episode_id == None:
+    #         if episode_count == None:
+    #             raise ArgsException("episode_count 和 episode_id 中必须提供一个参数。")
+    #         episode_id = await self.get_episode_id(episode_count)
+    #     api = API["info"]["episode_images"]
+    #     params = {"device": "pc", "platform": "web", "nov": 25}
+    #     data = {"ep_id": episode_id}
+    #     return (
+    #         await Api(**api, credential=self.credential, no_csrf=True)
+    #         .update_params(**params)
+    #         .update_data(**data)
+    #         .result
+    #     )
 
     # async def get_images(
     #     self,
