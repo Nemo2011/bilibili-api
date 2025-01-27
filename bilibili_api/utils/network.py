@@ -1129,7 +1129,6 @@ async def _get_refresh_csrf(credential: Credential) -> str:
     api = API["operate"]["get_refresh_csrf"]
     cookies = credential.get_cookies()
     cookies["buvid3"] = str(uuid.uuid1())
-    cookies["Domain"] = ".bilibili.com"
     client = get_client()
     resp = await client.request(
         method="GET",
@@ -1160,7 +1159,6 @@ async def _refresh_cookies(credential: Credential) -> Credential:
     }
     cookies = credential.get_cookies()
     cookies["buvid3"] = str(uuid.uuid1())
-    cookies["Domain"] = ".bilibili.com"
     client = get_client()
     resp = await client.request(
         method="POST",
