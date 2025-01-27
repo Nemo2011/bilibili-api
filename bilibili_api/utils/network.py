@@ -182,7 +182,7 @@ Logger: RequestLog().logger
 Extends: AsyncEvent
 
 Events:
-    (CurlCFFIClient)
+    (模块自带 BiliAPIClient)
     REQUEST:   HTTP 请求。
     RESPONSE:  HTTP 响应。
     WS_CREATE: 新建的 Websocket 请求。

@@ -12,12 +12,6 @@ bilibili_api
 from bilibili_api import bilibili_api
 ```
 
-- [class Api()](#class-Api)
-  - [async def request()](#async-def-request)
-  - [def update\_data()](#def-update\_data)
-  - [def update\_files()](#def-update\_files)
-  - [def update\_headers()](#def-update\_headers)
-  - [def update\_params()](#def-update\_params)
 - [class ApiException()](#class-ApiException)
 - [class ArgsException()](#class-ArgsException)
 - [class BiliAPIClient()](#class-BiliAPIClient)
@@ -94,18 +88,12 @@ from bilibili_api import bilibili_api
 - [class WbiRetryTimesExceedException()](#class-WbiRetryTimesExceedException)
 - [def aid2bvid()](#def-aid2bvid)
 - [def bvid2aid()](#def-bvid2aid)
-- [async def get\_bili\_ticket()](#async-def-get\_bili\_ticket)
-- [async def get\_buvid()](#async-def-get\_buvid)
 - [def get\_client()](#def-get\_client)
 - [async def get\_real\_url()](#async-def-get\_real\_url)
 - [def get\_registered\_clients()](#def-get\_registered\_clients)
 - [def get\_selected\_client()](#def-get\_selected\_client)
 - [def get\_session()](#def-get\_session)
-- [async def get\_wbi\_mixin\_key()](#async-def-get\_wbi\_mixin\_key)
 - [async def parse\_link()](#async-def-parse\_link)
-- [def refresh\_bili\_ticket()](#def-refresh\_bili\_ticket)
-- [def refresh\_buvid()](#def-refresh\_buvid)
-- [def refresh\_wbi\_mixin\_key()](#def-refresh\_wbi\_mixin\_key)
 - [def register\_client()](#def-register\_client)
 - [var request\_log](#var-request\_log)
   - [def get\_ignore\_events()](#def-get\_ignore\_events)
@@ -129,91 +117,6 @@ from bilibili_api import bilibili_api
 - [def set\_session()](#def-set\_session)
 - [def sync()](#def-sync)
 - [def unregister\_client()](#def-unregister\_client)
-
----
-
-**@dataclasses.dataclass** 
-
-## class Api()
-
-用于请求的 Api 类
-
-
-| name | type | description |
-| - | - | - |
-| url | str | 请求地址 |
-| method | str | 请求方法 |
-| comment | str, optional | 注释. Defaults to "". |
-| wbi | bool, optional | 是否使用 wbi 鉴权. Defaults to False. |
-| wbi2 | bool, optional | 是否使用参数进一步的 wbi 鉴权. Defaults to False. |
-| bili_ticket | bool, optional | 是否使用 bili_ticket. Defaults to False. |
-| verify | bool, optional | 是否验证凭据. Defaults to False. |
-| no_csrf | bool, optional | 是否不使用 csrf. Defaults to False. |
-| json_body | bool, optional | 是否使用 json 作为载荷. Defaults to False. |
-| ignore_code | bool, optional | 是否忽略返回值 code 的检验. Defaults to False. |
-| data | Dict, optional | 请求载荷. Defaults to {}. |
-| params | Dict, optional | 请求参数. Defaults to {}. |
-| credential | Credential, optional | 凭据. Defaults to Credential(). |
-
-
-### async def request()
-
-向接口发送请求。
-
-
-| name | type | description |
-| - | - | - |
-| raw | bool | 是否不提取 data 或 result 字段。 Defaults to False. |
-| byte | bool | 是否直接返回字节数据。 Defaults to False. |
-
-**Returns:** 接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
-
-
-
-
-### def update_data()
-
-更新 data
-
-
-
-**Returns:** Api: 返回自身
-
-
-
-
-### def update_files()
-
-更新 files
-
-
-
-**Returns:** Api: 返回自身
-
-
-
-
-### def update_headers()
-
-更新 headers
-
-
-
-**Returns:** Api: 返回自身
-
-
-
-
-### def update_params()
-
-更新 params
-
-
-
-**Returns:** Api: 返回自身
-
-
-
 
 ---
 
@@ -1315,35 +1218,6 @@ BV 号转 AV 号。
 
 ---
 
-## async def get_bili_ticket()
-
-获取 bili_ticket
-
-
-| name | type | description |
-| - | - | - |
-| credential | Credential, optional | 凭据. Defaults to None. |
-
-**Returns:** str: bili_ticket
-
-
-
-
----
-
-## async def get_buvid()
-
-获取 buvid3 和 buvid4
-
-
-
-**Returns:** Tuple[str, str]: 第 0 项为 buvid3，第 1 项为 buvid4。
-
-
-
-
----
-
 ## def get_client()
 
 在当前事件循环下获取模块正在使用的请求客户端
@@ -1416,22 +1290,6 @@ BV 号转 AV 号。
 
 ---
 
-## async def get_wbi_mixin_key()
-
-获取 wbi mixin key
-
-
-| name | type | description |
-| - | - | - |
-| credential | Credential, optional | 凭据. Defaults to None. |
-
-**Returns:** str: wbi mixin key
-
-
-
-
----
-
 ## async def parse_link()
 
 调用 yarl 解析 bilibili url 的函数。
@@ -1444,42 +1302,6 @@ BV 号转 AV 号。
 
 **Returns:** Tuple[obj, ResourceType]: (对象，类型) 或 -1,-1 表示出错
 
-
-
-
----
-
-## def refresh_bili_ticket()
-
-刷新 bili_ticket
-
-
-
-**Returns:** None
-
-
-
----
-
-## def refresh_buvid()
-
-刷新 buvid3 和 buvid4
-
-
-
-**Returns:** None
-
-
-
----
-
-## def refresh_wbi_mixin_key()
-
-刷新 wbi mixin key
-
-
-
-**Returns:** None
 
 
 
@@ -1515,7 +1337,7 @@ Logger: RequestLog().logger
 Extends: AsyncEvent
 
 Events:
-(CurlCFFIClient)
+(模块自带 BiliAPIClient)
 REQUEST:   HTTP 请求。
 RESPONSE:  HTTP 响应。
 WS_CREATE: 新建的 Websocket 请求。

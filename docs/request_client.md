@@ -210,14 +210,6 @@ register_client("aiohttp", AioHTTPClient)
 select_client("aiohttp")
 ```
 
-**模块默认使用 `bilibili_api.clients.curl_cffi.CurlCFFIClient`，注册时使用的名字为 `curl_cffi`。**
-
-``` python
-# 节选自 bilibili_api.utils.network
-register_client("curl_cffi", CurlCFFIClient)
-select_client("curl_cffi")
-```
-
 当然也可以取消注册：
 
 ``` python
@@ -237,6 +229,10 @@ sess: curl_cffi.requests.AsyncSession = get_session()
 ```
 
 注意：1、不同事件循环下会话不同，因此 `get_session` 和 `set_session` 都**仅限于当前事件循环。**2、因为第三方请求库已经可以自定义，所以 `get_session` 和 `set_session` 类型注释均使用了 `object`，属于自定义请求库的一种体现。~~此事在 changelog 中亦有记载。~~
+
+**模块默认使用 `bilibili_api.clients.CurlCFFIClient.CurlCFFIClient`，注册时使用的名字为 `curl_cffi`。**
+
+在 `README` 中有提到，如果没有安装 curl_cffi 库，但安装了 aiohttp 或 httpx 的话，模块大多也能正常使用，只是部分接口会受限。此处是这么实现的：以 `httpx`, `aiohttp`, `curl_cffi` 的顺序逐个尝试，如果能正常导入第三方请求库，就会注册相应的 `client`，并切换至相应 `client`。因此选择 `client` 的优先级便是 `curl_cffi` -> `aiohttp` -> `httpx`。
 
 ## 4、`aiohttp` 实战
 

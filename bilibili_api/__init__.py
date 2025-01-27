@@ -34,13 +34,6 @@ from .utils.network import (
     Credential,
     # api
     HEADERS,
-    refresh_buvid,
-    refresh_bili_ticket,
-    refresh_wbi_mixin_key,
-    get_buvid,
-    get_bili_ticket,
-    get_wbi_mixin_key,
-    Api,
 )
 from .utils.geetest import Geetest, GeetestMeta
 from .exceptions import (
@@ -126,7 +119,9 @@ def __register_all_clients():
             importlib.import_module(module)
         except ModuleNotFoundError:
             continue
-        client_module = importlib.import_module(name=f".clients.{client}", package="bilibili_api")
+        client_module = importlib.import_module(
+            name=f".clients.{client}", package="bilibili_api"
+        )
         client_class = eval(f"client_module.{client}")
         register_client(module, client_class)
         select_client(module)
@@ -136,7 +131,6 @@ __register_all_clients()
 
 
 __all__ = [
-    "Api",
     "ApiException",
     "ArgsException",
     "BILIBILI_API_VERSION",
@@ -193,14 +187,11 @@ __all__ = [
     "favorite_list",
     "festival",
     "game",
-    "get_bili_ticket",
-    "get_buvid",
     "get_client",
     "get_real_url",
     "get_registered_clients",
     "get_selected_client",
     "get_session",
-    "get_wbi_mixin_key",
     "homepage",
     "hot",
     "interactive_video",
@@ -213,9 +204,6 @@ __all__ = [
     "opus",
     "parse_link",
     "rank",
-    "refresh_bili_ticket",
-    "refresh_buvid",
-    "refresh_wbi_mixin_key",
     "register_client",
     "request_log",
     "request_settings",
