@@ -4,12 +4,15 @@
 
 ``` python
 import asyncio
-from bilibili_api import credential, watchroom
+from bilibili_api import Credential, watchroom
 from bilibili_api.watchroom import Message, MessageSegment
 
-c = credential.Credential(sessdata=""
-                          , bili_jct=""
-                          , buvid3="")
+c = Credential(
+    sessdata="",
+    bili_jct="",
+    buvid3="",
+)
+
 
 async def main():
     room = await watchroom.create(113, 1678, False, c)
@@ -18,7 +21,7 @@ async def main():
     await room.share()
     await room.send(Message("欢迎！") + MessageSegment("这里是测试放映室。"))
 
+
 if __name__ == "__main__":
     asyncio.run(main())
-
 ```

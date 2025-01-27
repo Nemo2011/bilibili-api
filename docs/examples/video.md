@@ -22,7 +22,7 @@ async def main():
 
 if __name__ == '__main__':
     # 主入口
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 **以下两个方式接口不同，数据略有偏差**
@@ -91,8 +91,10 @@ for dm in dms:
 
 ```python
 import asyncio
-from bilibili_api import video, Credential, HEADERS
-import httpx
+
+import curl_cffi.requests
+from bilibili_api import video, Credential, HEADERS, get_session
+import curl_cffi
 import os
 
 SESSDATA = ""
@@ -104,18 +106,18 @@ FFMPEG_PATH = "ffmpeg"
 
 async def download_url(url: str, out: str, info: str):
     # 下载函数
-    async with httpx.AsyncClient(headers=HEADERS) as sess:
-        resp = await sess.get(url)
-        length = resp.headers.get('content-length')
-        with open(out, 'wb') as f:
-            process = 0
-            for chunk in resp.iter_bytes(1024):
-                if not chunk:
-                    break
-
-                process += len(chunk)
-                print(f'下载 {info} {process} / {length}')
-                f.write(chunk)
+    sess: curl_cffi.requests.AsyncSession = get_session() # 此处使用 curl_cffi
+    resp = await sess.get(url, stream=True, headers=HEADERS)
+    length = resp.headers.get('content-length')
+    with open(out, 'wb') as f:
+        process = 0
+        async for chunk in resp.aiter_content():
+            if not chunk:
+                break
+            process += len(chunk)
+            print(f'下载 {info} {process} / {length}', end="\r")
+            f.write(chunk)
+    print()
 
 async def main():
     # 实例化 Credential 类
@@ -149,6 +151,7 @@ async def main():
 
 if __name__ == '__main__':
     # 主入口
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
+
 ```
 

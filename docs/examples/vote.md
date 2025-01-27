@@ -3,5 +3,5 @@
 ``` python
 from bilibili_api import vote, sync
 
-print(sync(vote.Vote(2773489).get_vote_info()))
+print(sync(vote.Vote(2773489).get_info()))
 ```

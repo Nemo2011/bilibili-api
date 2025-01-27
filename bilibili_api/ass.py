@@ -108,7 +108,7 @@ def export_ass_from_json(file_local, output_local) -> None:
     """
     json2srt(file_local, output_local.replace(".ass", ".srt"))
     srt2ass(output_local.replace(".ass", ".srt"), output_local, "movie")
-    # os.remove(output_local.replace(".ass", ".srt"))
+    os.remove(output_local.replace(".ass", ".srt"))
 
 
 async def make_ass_file_subtitle(

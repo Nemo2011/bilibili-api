@@ -21,3 +21,23 @@ async def main():
 sync(main())
 ```
 
+# 示例：专栏三连
+
+``` python
+from bilibili_api import *
+
+
+async def main() -> None:
+    ar = article.Article(2, credential=Credential(
+        sessdata="",
+        bili_jct=""
+    ))
+    # 点赞
+    await ar.set_like(status=True)
+    # 投币
+    await ar.add_coins()
+    # 收藏
+    await ar.set_favorite(status=True)
+
+sync(main())
+```

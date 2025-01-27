@@ -541,7 +541,7 @@ class BuildDynamic:
                     else:
                         contents[idx]["biz_id"] = str(uid)
                 elif content["raw_text"] == "@":
-                    contents[idx]["raw_text"] = await _uid2name(
+                    contents[idx]["raw_text"] = "@" + await _uid2name(
                         content["biz_id"], credential=credential
                     )
             if content["type"] == DynamicContentType.VOTE.value:

@@ -11,11 +11,13 @@ print(sync(g.get_detail()))
 
 ``` python
 import async_mediawiki as mw # 此库并非十分适配此模块，可能需要简单调教，目前没找到更好的了
-from bilibili_api import game, get_aiohttp_session
+from bilibili_api import game, select_client, get_session
 import asyncio
 
 
 async def main() -> None:
+    # 因为此处使用 async_mediawiki 基于 aiohttp，故需要切换 aiohttp 方能与此库共享会话
+    select_client("aiohttp")
     # BWIKI 基于 MediaWiki 开发，MediaWiki 会暴露一个 api.php，可以通过此进行获取、操作信息
     # bilibili_api 提供获取 api.php 位置相关的 API，然后就需要交给第三方库来进行具体处理。
 
@@ -26,7 +28,7 @@ async def main() -> None:
     api_root = game.get_wiki_api_root(await game.game_name2id("原神"))
 
     # 最后调用第三方库进行操作
-    ys_wiki = mw.Wiki(base_url=api_root, session=get_aiohttp_session())
+    ys_wiki = mw.Wiki(base_url=api_root, session=get_session())
     page = ys_wiki.get_page("胡桃")
     with open("page.txt", "w+") as file:
         file.write(await page.markdown)

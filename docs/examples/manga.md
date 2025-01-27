@@ -1,5 +1,7 @@
 # 示例：下载漫画所有的图片
 
+**Note: 此示例已无限期失效**
+
 ```python
 from bilibili_api import manga, sync
 

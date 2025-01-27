@@ -11,7 +11,7 @@ from bilibili_api import bangumi, sync
 async def main():
     ep = bangumi.Episode(374717)
     # 打印 bv 号
-    print(ep.get_bvid())
+    print(await ep.get_bvid())
 
 sync(main())
 ```
@@ -51,4 +51,94 @@ async def main():
 
 sync(main())
 
+```
+
+# 示例：下载番剧
+
+``` python
+import asyncio
+
+import curl_cffi.requests
+from bilibili_api import bangumi, video, Credential, HEADERS, get_session
+import curl_cffi
+import os
+
+SESSDATA = ""
+BILI_JCT = ""
+BUVID3 = ""
+
+# FFMPEG 路径，查看：http://ffmpeg.org/
+FFMPEG_PATH = "ffmpeg"
+
+MEDIA_ID = 23679586
+
+
+async def download_url(url: str, out: str, info: str):
+    # 下载函数
+    sess: curl_cffi.requests.AsyncSession = get_session()  # 此处使用 curl_cffi
+    resp = await sess.get(url, stream=True, headers=HEADERS)
+    length = resp.headers.get("content-length")
+    with open(out, "wb") as f:
+        process = 0
+        async for chunk in resp.aiter_content():
+            if not chunk:
+                break
+            process += len(chunk)
+            print(f"下载 {info} {process} / {length}", end="\r")
+            f.write(chunk)
+    print()
+
+
+async def main():
+    if not os.path.exists(str(MEDIA_ID)):
+        os.mkdir(str(MEDIA_ID))
+    # 实例化 Credential 类
+    credential = Credential(sessdata=SESSDATA, bili_jct=BILI_JCT, buvid3=BUVID3)
+    # 实例化 Bangumi 类
+    b = bangumi.Bangumi(media_id=MEDIA_ID, credential=credential)
+    # 获取所有剧集
+    for idx, ep in enumerate(await b.get_episodes()):
+        await download_episode(ep, f"{MEDIA_ID}/{idx + 1}.mp4")
+
+
+async def download_episode(ep: bangumi.Episode, out: str):
+    print(f"########## {await ep.get_bvid()} ##########")
+    # 获取视频下载链接
+    download_url_data = await ep.get_download_url()
+    # 解析视频下载信息
+    detecter = video.VideoDownloadURLDataDetecter(data=download_url_data)
+    streams = detecter.detect_best_streams(
+        video_max_quality=video.VideoQuality._1080P,
+        audio_max_quality=video.AudioQuality._192K,
+        no_dolby_audio=True,
+        no_dolby_video=True,
+        no_hdr=True,
+        no_hires=True
+    )
+    # 有 MP4 流 / FLV 流两种可能
+    if detecter.check_video_and_audio_stream():
+        # MP4 流下载
+        await download_url(streams[0].url, "video_temp.m4s", "视频流")
+        await download_url(streams[1].url, "audio_temp.m4s", "音频流")
+        # 混流
+        os.system(
+            f"{FFMPEG_PATH} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy {out}"
+        )
+        # 删除临时文件
+        os.remove("video_temp.m4s")
+        os.remove("audio_temp.m4s")
+    else:
+        # FLV 流下载
+        await download_url(streams[0].url, "flv_temp.flv", "FLV 音视频流")
+        # 转换文件格式
+        os.system(f"{FFMPEG_PATH} -i flv_temp.flv {out}")
+        # 删除临时文件
+        os.remove("flv_temp.flv")
+
+    print(f"已下载为：{out}")
+
+
+if __name__ == "__main__":
+    # 主入口
+    asyncio.run(main())
 ```

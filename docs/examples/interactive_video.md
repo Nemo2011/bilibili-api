@@ -127,7 +127,7 @@ async def main():
         print(data)
     await downloader.start()
 
-asyncio.get_event_loop().run_until_complete(main())
+asyncio.run(main())
 ```
 
 # 示例：提交情节图

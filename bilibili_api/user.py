@@ -608,7 +608,7 @@ class User:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
         # card 字段自动转换成 JSON。
-        if "cards" in data:
+        if data.get("cards"):
             for card in data["cards"]:
                 card["card"] = json.loads(card["card"])
                 card["extend_json"] = json.loads(card["extend_json"])

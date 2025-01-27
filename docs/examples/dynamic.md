@@ -55,3 +55,27 @@ async def main():
 sync(main())
 ```
 
+# 示例：定时发送动态
+
+``` python
+from bilibili_api import dynamic, Credential, sync
+import datetime
+
+async def main():
+    dy = (
+        dynamic.BuildDynamic()
+        .add_text("114514")
+        .add_at(uid=1)          # uid 添加 @
+        .add_at(uname="bishi")  # 昵称添加 @
+        .add_emoji("[tv_doge]")
+        .add_text("1919810")
+        .set_send_time(datetime.datetime(2025, 2, 1, 0, 0, 0)) # 设置定时发送
+    )
+    await dynamic.send_dynamic(dy, credential=Credential(
+        sessdata="",
+        bili_jct=""
+    ))
+
+sync(main())
+
+```
