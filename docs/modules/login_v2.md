@@ -10,6 +10,11 @@ bilibili_api.login_v2
 from bilibili_api import login_v2
 ```
 
+- [class LoginCheck()](#class-LoginCheck)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [async def complete\_check()](#async-def-complete\_check)
+  - [async def fetch\_info()](#async-def-fetch\_info)
+  - [async def send\_sms()](#async-def-send\_sms)
 - [class PhoneNumber()](#class-PhoneNumber)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
 - [class QrCodeLogin()](#class-QrCodeLogin)
@@ -32,6 +37,61 @@ from bilibili_api import login_v2
 - [async def login\_with\_sms()](#async-def-login\_with\_sms)
 - [def search\_countries()](#def-search\_countries)
 - [async def send\_sms()](#async-def-send\_sms)
+
+---
+
+## class LoginCheck()
+
+验证类，如果密码登录需要验证会返回此类
+
+
+
+
+### def \_\_init\_\_()
+
+
+| name | type | description |
+| - | - | - |
+| check_url | str | 验证链接 |
+
+
+### async def complete_check()
+
+完成验证
+
+
+| name | type | description |
+| - | - | - |
+| code | str | 验证码 |
+
+**Returns:** Credential: 凭据类
+
+
+
+
+### async def fetch_info()
+
+获取验证信息
+
+
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def send_sms()
+
+发送验证码
+
+
+| name | type | description |
+| - | - | - |
+| geetest | Geetest | 极验验证码实例，须完成。验证码类型应为 `GeetestType.VERIFY` |
+
+**Returns:** None
+
+
 
 ---
 
@@ -264,9 +324,9 @@ from bilibili_api import login_v2
 | - | - | - |
 | username | str | 用户手机号、邮箱 |
 | password | str | 密码 |
-| geetest | Geetest | 极验验证码实例，须完成 |
+| geetest | Geetest | 极验验证码实例，须完成。验证码类型应为 `GeetestType.LOGIN` |
 
-**Returns:** Union[Credential, Check]: 如果需要验证，会返回 `Check` 类，否则返回 `Credential` 类。
+**Returns:** Union[Credential, LoginCheck]: 如果需要验证，会返回 `LoginCheck` 类，否则返回 `Credential` 类。
 
 
 
@@ -284,7 +344,7 @@ from bilibili_api import login_v2
 | code | str | 验证码 |
 | captcha_id | str | captcha_id，为 `send_sms` 调用返回结果 |
 
-**Returns:** Credential: 凭据类
+**Returns:** Union[Credential, LoginCheck]: 如果需要验证，会返回 `LoginCheck` 类，否则返回 `Credential` 类。
 
 
 
@@ -315,7 +375,7 @@ from bilibili_api import login_v2
 | name | type | description |
 | - | - | - |
 | phonenumber | PhoneNumber | 手机号类 |
-| geetest | Geetest | 极验验证码实例，须完成 |
+| geetest | Geetest | 极验验证码实例，须完成。验证码类型应为 `GeetestType.LOGIN` |
 
 **Returns:** str: captcha_id，需传入 `login_with_sms`
 

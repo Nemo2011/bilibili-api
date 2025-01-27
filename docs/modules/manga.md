@@ -22,9 +22,7 @@ from bilibili_api import manga
 - [class MangaOrderType()](#class-MangaOrderType)
 - [async def get\_followed\_manga()](#async-def-get\_followed\_manga)
 - [async def get\_manga\_home\_recommend()](#async-def-get\_manga\_home\_recommend)
-- [async def get\_manga\_index()](#async-def-get\_manga\_index)
 - [async def get\_manga\_update()](#async-def-get\_manga\_update)
-- [async def get\_raw\_manga\_index()](#async-def-get\_raw\_manga\_index)
 - [async def set\_follow\_manga()](#async-def-set\_follow\_manga)
 
 ---
@@ -205,29 +203,6 @@ from bilibili_api import manga
 
 ---
 
-## async def get_manga_index()
-
-获取漫画索引
-
-
-| name | type | description |
-| - | - | - |
-| area | MangaIndexFilter.Area | 地区。Defaults to MangaIndexFilter.Area.ALL. |
-| order | MangaIndexFilter.Order | 排序。Defaults to MangaIndexFilter.Order.HOT. |
-| status | MangaIndexFilter.Status | 状态。Defaults to MangaIndexFilter.Status.ALL. |
-| payment | MangaIndexFilter.Payment | 支付。Defaults to MangaIndexFilter.Payment.ALL. |
-| style | MangaIndexFilter.Style | 风格。Defaults to MangaIndexFilter.Style.ALL. |
-| pn | int | 页码。Defaults to 1. |
-| ps | int | 每页数量。Defaults to 18. |
-| credential | Credential | 凭据类. Defaults to None. |
-
-**Returns:** List[Manga]: 漫画索引
-
-
-
-
----
-
 ## async def get_manga_update()
 
 获取更新推荐的漫画
@@ -241,29 +216,6 @@ from bilibili_api import manga
 | credential | Credential | 凭据类. Defaults to None. |
 
 **Returns:** List[Manga]: 漫画列表
-
-
-
-
----
-
-## async def get_raw_manga_index()
-
-获取漫画索引
-
-
-| name | type | description |
-| - | - | - |
-| area | MangaIndexFilter.Area | 地区。Defaults to MangaIndexFilter.Area.ALL. |
-| order | MangaIndexFilter.Order | 排序。Defaults to MangaIndexFilter.Order.HOT. |
-| status | MangaIndexFilter.Status | 状态。Defaults to MangaIndexFilter.Status.ALL. |
-| payment | MangaIndexFilter.Payment | 支付。Defaults to MangaIndexFilter.Payment.ALL. |
-| style | MangaIndexFilter.Style | 风格。Defaults to MangaIndexFilter.Style.ALL. |
-| pn | int | 页码。Defaults to 1. |
-| ps | int | 每页数量。Defaults to 18. |
-| credential | Credential | 凭据类. Defaults to None. |
-
-**Returns:** list: 调用 API 返回的结果
 
 
 

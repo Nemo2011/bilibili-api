@@ -60,12 +60,13 @@ from bilibili_api import bilibili_api
   - [def get\_geetest\_server\_url()](#def-get\_geetest\_server\_url)
   - [def get\_info()](#def-get\_info)
   - [def get\_result()](#def-get\_result)
+  - [def get\_test\_type()](#def-get\_test\_type)
   - [def has\_done()](#def-has\_done)
   - [def start\_geetest\_server()](#def-start\_geetest\_server)
   - [def test\_generated()](#def-test\_generated)
+- [class GeetestException()](#class-GeetestException)
 - [class GeetestMeta()](#class-GeetestMeta)
-- [class GeetestServerNotFoundException()](#class-GeetestServerNotFoundException)
-- [class GeetestUndoneException()](#class-GeetestUndoneException)
+- [class GeetestType()](#class-GeetestType)
 - [var HEADERS](#var-HEADERS)
 - [class LiveException()](#class-LiveException)
 - [class LoginError()](#class-LoginError)
@@ -812,6 +813,9 @@ ExClimbWuzhi 失败异常
 创建验证码
 
 
+| name | type | description |
+| - | - | - |
+| type_ | GeetestType | 极验验证码类型。登录为 LOGIN，登录验证为 VERIFY. Defaults to GeetestType.LOGIN. |
 
 **Returns:** None
 
@@ -850,6 +854,17 @@ ExClimbWuzhi 失败异常
 
 
 
+### def get_test_type()
+
+获取测试类型
+
+
+
+**Returns:** GeetestType: 测试类型
+
+
+
+
 ### def has_done()
 
 是否完成
@@ -884,6 +899,17 @@ ExClimbWuzhi 失败异常
 
 ---
 
+## class GeetestException()
+
+**Extend: bilibili_api.exceptions.ApiException.ApiException**
+
+未找到验证码服务器
+
+
+
+
+---
+
 **@dataclasses.dataclass** 
 
 ## class GeetestMeta()
@@ -897,22 +923,14 @@ NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate
 
 ---
 
-## class GeetestServerNotFoundException()
+## class GeetestType()
 
-**Extend: bilibili_api.exceptions.ApiException.ApiException**
+**Extend: enum.Enum**
 
-未找到验证码服务器
+极验验证码类型
 
-
-
-
----
-
-## class GeetestUndoneException()
-
-**Extend: bilibili_api.exceptions.ApiException.ApiException**
-
-验证码未完成
+- LOGIN: 登录
+- VERIFY: 登录验证
 
 
 
