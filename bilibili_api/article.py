@@ -27,6 +27,8 @@ from . import dynamic
 from . import opus
 from .note import Note, NoteType
 
+import html
+
 API = get_api("article")
 
 # 文章颜色表
@@ -918,9 +920,11 @@ class CodeNode(Node):
         self.lang = ""
 
     def markdown(self):
+        self.code = html.unescape(self.code)
         return f"```{self.lang if self.lang else ''}\n{self.code}\n```\n\n"
 
     def json(self):
+        self.code = html.unescape(self.code)
         return {"type": "CodeNode", "code": self.code, "lang": self.lang}
 
 

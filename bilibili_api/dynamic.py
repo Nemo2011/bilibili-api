@@ -911,7 +911,7 @@ class Dynamic:
                 url = pic["url"]
                 if url.startswith("//"):
                     url = f"https:{url}"
-                ret += f"<img width={width} height={height} src={url}> \n"
+                ret += f"![]({url}) \n"
             return ret
 
         content = parse_module_dynamic(info["item"]["modules"]["module_dynamic"])

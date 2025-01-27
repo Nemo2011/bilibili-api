@@ -41,20 +41,18 @@ async def get_initial_state(
         raise e
     else:
         content = resp.decode("utf-8")
-        pattern = re.compile(r"window.__INITIAL_STATE__=(\{.*?\});")
-        match = re.search(pattern, content)
-        if match is None:
-            pattern = re.compile(
-                pattern=r'<script id="__NEXT_DATA__" type="application/json">\s*(.*?)\s*</script>'
-            )
-            match = re.search(pattern, content)
+        pos = content.find("window.__INITIAL_STATE__=")
+        if pos == -1:
+            pos = content.find('<script id="__NEXT_DATA__" type="application/json">')
             content_type = InitialDataType.NEXT_DATA
-            if match is None:
+            if pos == -1:
                 raise ApiException("未找到相关信息")
+            pos += len('<script id="__NEXT_DATA__" type="application/json">')
         else:
             content_type = InitialDataType.INITIAL_STATE
+            pos += len("window.__INITIAL_STATE__=")
         try:
-            content = json.loads(match.group(1))
+            content = json.JSONDecoder().raw_decode(content[pos:])[0]
         except json.JSONDecodeError:
             raise ApiException("信息解析错误")
         return content, content_type

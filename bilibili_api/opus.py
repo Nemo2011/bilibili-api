@@ -12,6 +12,7 @@ from .utils.network import Api, Credential
 from .utils.utils import get_api
 from .utils import cache_pool
 from .exceptions import ArgsException
+import html
 
 
 API = get_api("opus")
@@ -164,7 +165,12 @@ class Opus:
                     url = pic["url"]
                     width = pic["width"]
                     height = pic["height"]
-                    para_raw += f"<img width={width} height={height} src={url}> \n"
+                    para_raw += f"![]({url}) \n"
+            elif para["para_type"] == 7:
+                lang = para["code"]["lang"].lstrip("language-")
+                content = para["code"]["content"]
+                content = html.unescape(content)
+                para_raw = f"``` {lang}\n{content}\n```\n\n"
             markdown += f"{para_raw}\n\n"
 
         meta_yaml = yaml.safe_dump(self.__info, allow_unicode=True)
