@@ -10,13 +10,24 @@ import select
 import threading
 import http.server
 import email.message
-import time
+import enum
 
-from ..exceptions import GeetestUndoneException, GeetestServerNotFoundException
+from ..exceptions import GeetestException
 from .utils import get_api
 from .network import Api
 
 API = get_api("login")
+
+
+class GeetestType(enum.Enum):
+    """
+    极验验证码类型
+
+    - LOGIN: 登录
+    - VERIFY: 登录验证
+    """
+    LOGIN = "password"
+    VERIFY = "safecenter"
 
 
 @dataclass
@@ -129,19 +140,40 @@ class Geetest:
         self.key = ""
         self.thread = None
         self.done = False
+        self.test_type = None
 
-    async def generate_test(self) -> None:
+    async def generate_test(self, type_: GeetestType = GeetestType.LOGIN) -> None:
         """
         创建验证码
+
+        Args:
+            type_ (GeetestType): 极验验证码类型。登录为 LOGIN，登录验证为 VERIFY. Defaults to GeetestType.LOGIN.
         """
-        api = API["password"]["captcha"]
-        json_data = await Api(**api).result
-        self.gt = json_data["geetest"]["gt"]
-        self.challenge = json_data["geetest"]["challenge"]
-        self.key = json_data["token"]
+        api = API[type_.value]["captcha"]
+        json_data = await Api(**api, no_csrf=True).result
+        if type_ == GeetestType.LOGIN:
+            self.gt = json_data["geetest"]["gt"]
+            self.challenge = json_data["geetest"]["challenge"]
+            self.key = json_data["token"]
+        else:
+            self.gt = json_data["gee_gt"]
+            self.challenge = json_data["gee_challenge"]
+            self.key = json_data["recaptcha_token"]
         self.validate = None
         self.seccode = None
         self.done = False
+        self.test_type = type_
+
+    def get_test_type(self) -> GeetestType:
+        """
+        获取测试类型
+
+        Returns:
+            GeetestType: 测试类型
+        """
+        if not self.test_generated():
+            raise GeetestException("未生成过测试。请调用 `generate_test`")
+        return self.test_type
 
     def test_generated(self) -> bool:
         """
@@ -186,7 +218,7 @@ class Geetest:
                 seccode=self.seccode,
             )
         else:
-            raise GeetestUndoneException()
+            raise GeetestException("未完成验证。请调用 `complete_test` 或来到 `get_geetest_server_url` 页面完成验证码。")
 
     def complete_test(self, validate: str, seccode: str) -> None:
         """
@@ -250,6 +282,8 @@ class Geetest:
         """
         开启本地极验验证码服务
         """
+        if self.thread is not None:
+            raise GeetestException("验证码服务已创建。")
         self.thread = ServerThread(self._geetest_urlhandler, "127.0.0.1", 0)
         self.thread.start()
         while not self.thread.error and not self.thread.serving:
@@ -263,7 +297,7 @@ class Geetest:
             str: 链接
         """
         if not self.thread:
-            return GeetestServerNotFoundException()
+            return GeetestException("未创建验证码服务。请调用 `start_geetest_server`")
         return self.thread.url
 
     def close_geetest_server(self) -> None:

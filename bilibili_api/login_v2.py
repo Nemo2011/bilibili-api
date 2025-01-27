@@ -7,21 +7,20 @@ bilibili_api.login_v2
 import json
 import tempfile
 import time
-import uuid
 import base64
 import enum
 
-from .exceptions import GeetestUndoneException
 import rsa
 import os
 import qrcode
 import qrcode_terminal
+import yarl
 from typing import Union, List, Dict
 
 from .utils.utils import get_api, raise_for_statement, to_form_urlencoded
-from .exceptions import LoginError
+from .exceptions import LoginError, GeetestException
 from .utils.network import Api, Credential, get_client, get_buvid
-from .utils.geetest import Geetest
+from .utils.geetest import Geetest, GeetestType
 from .utils.picture import Picture
 
 
@@ -39,7 +38,7 @@ def encrypt(_hash, key, password) -> str:
 
 async def login_with_password(
     username: str, password: str, geetest: Geetest
-) -> Credential:
+) -> Union[Credential, "LoginCheck"]:
     """
     密码登录。
 
@@ -48,13 +47,15 @@ async def login_with_password(
 
         password (str): 密码
 
-        geetest  (Geetest): 极验验证码实例，须完成
+        geetest  (Geetest): 极验验证码实例，须完成。验证码类型应为 `GeetestType.LOGIN`
 
     Returns:
-        Union[Credential, Check]: 如果需要验证，会返回 `Check` 类，否则返回 `Credential` 类。
+        Union[Credential, LoginCheck]: 如果需要验证，会返回 `LoginCheck` 类，否则返回 `Credential` 类。
     """
+    if geetest.get_test_type() != GeetestType.LOGIN:
+        raise GeetestException("验证码类型错误。请使用 GeetestType.LOGIN")
     if not geetest.has_done():
-        raise GeetestUndoneException()
+        raise GeetestException("未完成验证。")
     api_token = API["password"]["get_token"]
     token_data = await Api(**api_token).result
     hash_ = token_data["hash"]
@@ -86,9 +87,9 @@ async def login_with_password(
     login_data = resp.json()
     if login_data["code"] == 0:
         if login_data["data"]["status"] == 1:
-            raise LoginError("需要手机号进一步验证码验证，请直接通过验证码登录")
+            return LoginCheck(login_data["data"]["url"])
         elif login_data["data"]["status"] == 2:
-            raise LoginError("需要手机号进一步验证码验证，请直接通过验证码登录")
+            return LoginCheck(login_data["data"]["url"])
         return Credential(
             sessdata=str(resp.cookies["SESSDATA"]),
             bili_jct=str(resp.cookies["bili_jct"]),
@@ -253,13 +254,15 @@ async def send_sms(phonenumber: PhoneNumber, geetest: Geetest) -> str:
 
     Args:
         phonenumber (PhoneNumber): 手机号类
-        geetest     (Geetest)    : 极验验证码实例，须完成
+        geetest     (Geetest)    : 极验验证码实例，须完成。验证码类型应为 `GeetestType.LOGIN`
 
     Returns:
         str: captcha_id，需传入 `login_with_sms`
     """
+    if geetest.get_test_type() != GeetestType.LOGIN:
+        raise GeetestException("验证码类型错误。请使用 GeetestType.LOGIN")
     if not geetest.has_done():
-        raise GeetestUndoneException()
+        raise GeetestException("未完成验证。")
     api = API["sms"]["send"]
     data = to_form_urlencoded(
         {
@@ -294,7 +297,7 @@ async def send_sms(phonenumber: PhoneNumber, geetest: Geetest) -> str:
 
 async def login_with_sms(
     phonenumber: PhoneNumber, code: str, captcha_id: str
-) -> Credential:
+) -> Union[Credential, "LoginCheck"]:
     """
     验证码登录
 
@@ -304,7 +307,7 @@ async def login_with_sms(
         captcha_id  (str): captcha_id，为 `send_sms` 调用返回结果
 
     Returns:
-        Credential: 凭据类
+        Union[Credential, LoginCheck]: 如果需要验证，会返回 `LoginCheck` 类，否则返回 `Credential` 类。
     """
     api = API["sms"]["login"]
     data = {
@@ -350,7 +353,7 @@ async def login_with_sms(
         )
         return c
     elif return_data["code"] == 0 and return_data["data"]["status"] == 5:
-        raise LoginError("需要验证 请使用二维码方式登录")
+        return LoginCheck(return_data["data"]["url"])
     else:
         raise LoginError(return_data["message"])
 
@@ -542,3 +545,91 @@ class QrCodeLogin:
                 cookies["ac_time_value"] = data["refresh_token"]
                 self.__credential = Credential(**cookies)
                 return QrCodeLoginEvents.DONE
+
+
+class LoginCheck:
+    """
+    验证类，如果密码登录需要验证会返回此类
+    """
+
+    def __init__(self, check_url: str):
+        """
+        Args:
+            check_url (str): 验证链接
+        """
+        self.__url = check_url
+        self.__yarl = yarl.URL(self.__url)
+        self.__token = self.__yarl.query["tmp_token"]
+        self.__id = self.__yarl.query["request_id"]
+        self.__captcha_key = None
+
+    async def fetch_info(self) -> dict:
+        """
+        获取验证信息
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["safecenter"]["check_info"]
+        params = {"tmp_code": self.__token}
+        return await Api(**api).update_params(**params).result
+
+    async def send_sms(self, geetest: Geetest) -> None:
+        """
+        发送验证码
+
+        Args:
+            geetest  (Geetest): 极验验证码实例，须完成。验证码类型应为 `GeetestType.VERIFY`
+        """
+        if geetest.get_test_type() != GeetestType.VERIFY:
+            raise GeetestException("验证码类型错误。请使用 GeetestType.LOGIN")
+        if not geetest.has_done():
+            raise GeetestException("未完成验证。")
+        api = API["safecenter"]["send"]
+        data = {
+            "sms_type": "loginTelCheck",
+            "tmp_code": self.__token,
+            "recaptcha_token": geetest.key,
+            "gee_challenge": geetest.challenge,
+            "gee_gt": geetest.gt,
+            "gee_validate": geetest.validate,
+            "gee_seccode": geetest.seccode,
+        }
+        res = await Api(**api, no_csrf=True).update_data(**data).result
+        self.__captcha_key = res["captcha_key"]
+
+    async def complete_check(self, code: str) -> Credential:
+        """
+        完成验证
+
+        Args:
+            code (str): 验证码
+
+        Returns:
+            Credential: 凭据类
+        """
+        if self.__captcha_key is None:
+            raise LoginError("尚未发送验证码。")
+        api = API["safecenter"]["get_exchange"]
+        data = {
+            "type": "loginTelCheck",
+            "code": code,
+            "tmp_code": self.__token,
+            "request_id": self.__id,
+            "captcha_key": self.__captcha_key,
+        }
+        exchange_code = (await Api(**api, no_csrf=True).update_data(**data).result)["code"]
+        exchange_url = API["safecenter"]["get_cookies"]["url"]
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+            "Referer": "https://passport.bilibili.com/login",
+        }
+        resp = await get_client().request(method="POST", url=exchange_url, data={"code": exchange_code}, headers=headers)
+        credential = Credential(
+            sessdata=resp.cookies["SESSDATA"],
+            bili_jct=resp.cookies["bili_jct"],
+            buvid3=None,
+            dedeuserid=resp.cookies["DedeUserID"],
+            ac_time_value=(resp.json())["data"]["refresh_token"]
+        )
+        return credential
