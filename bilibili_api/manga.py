@@ -20,6 +20,21 @@ from Cryptodome.PublicKey import ECC
 API = get_api("manga")
 
 
+class MangaOrderType(Enum):
+    """
+    漫画排序方式
+
+    - FOLLOW: 追漫顺序
+    - UPDATE: 更新时间
+    - READING: 最近阅读
+    - FREE: 等免
+    """
+    FOLLOW = {"order": 1, "wait_free": 0}
+    UPDATE = {"order": 2, "wait_free": 0}
+    READING = {"order": 3, "wait_free": 0}
+    FREE = {"order": 3, "wait_free": 1}
+
+
 class MangaIndexFilter:
     """
     漫画索引筛选器类。
@@ -389,6 +404,35 @@ async def set_follow_manga(
         await Api(**api, credential=credential)
         .update_params(**params)
         .update_data(**data)
+        .result
+    )
+
+
+async def get_followed_manga(
+    pn: int = 1, ps: int = 15, order: MangaOrderType = MangaOrderType.FOLLOW, credential: Optional[Credential] = None
+) -> List[Manga]:
+    """
+    获取追漫列表
+
+    Args:
+        pn         (int)           : 页码。Defaults to 1.
+        ps         (int)           : 每页数量。Defaults to 18.
+        order      (MangaOrderType): 排序方式。Defaults to MangaOrderType.FOLLOW.
+        credential (Credential)    : 凭据类.
+
+    Returns:
+        List[Manga]: 追漫列表
+    """
+    credential = credential if credential else Credential()
+    credential.raise_for_no_sessdata()
+    api = API["info"]["followed_manga"]
+    params = {"device": "pc", "platform": "web", "nov": 25}
+    data = {"page_num": pn, "page_size": ps}
+    data.update(order.value)
+    return (
+        await Api(**api, credential=credential, no_csrf=True)
+        .update_data(**data)
+        .update_params(**params)
         .result
     )
 

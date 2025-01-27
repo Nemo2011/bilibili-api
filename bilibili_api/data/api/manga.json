@@ -119,6 +119,23 @@
         "page_num": "int: 页码"
       },
       "comment": "获取漫画首页推荐"
+    },
+    "followed_manga": {
+      "url": "https://manga.bilibili.com/twirp/bookshelf.v1.Bookshelf/ListFavorite",
+      "method": "POST",
+      "verify": true,
+      "params": {
+        "device": "str: 设备",
+        "platform": "str: 平台",
+        "nov": "int: 25"
+      },
+      "data": {
+        "page_num": "int: 页码",
+        "page_size": "int: 每页数量",
+        "order": "int: 1 追漫顺序 2 更新时间 3 最近阅读",
+        "wait_free": "int: 是否为等免"
+      },
+      "comment": "获取追漫列表"
     }
   },
   "operate": {
