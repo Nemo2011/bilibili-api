@@ -26,7 +26,7 @@ async def main():
     # 2. 下载音频
     sess: requests.AsyncSession = (
         get_session()
-    )  # bilibili-api 默认使用 aiohttp 作为请求客户端
+    )  # bilibili-api 默认使用 curl_cffi 作为请求客户端
 
     # 创建歌单文件夹
     if not os.path.exists(str(AUDIO_LIST_ID)):
