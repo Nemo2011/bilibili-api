@@ -408,12 +408,6 @@ class AioHTTPClient(BiliAPIClient):
 
 于是，`AioHTTPClient` 就大功告成了。经过测试可以正常处理 http 请求（GET，文件上传）和 WebSocket 连接（直播弹幕）。
 
-## 5、注意事项
-
-目前 bilibili 有许多接口需要通过浏览器指纹才能访问，这种指纹目前阶段仅基于 `curl-impersonate` 的请求库可以伪造，故目前其他流行的请求库，诸如 `aiohttp`, `httpx`，面对部分接口就是无法访问的状态。其中就有获取 `buvid` 的接口。模块在进行网络请求时，如果提供的 `Credential` 没有 `buvid3` 字段，则会从接口中获取、利用接口自行激活，打开请求日志就能看到这一过程。所以如果你**并未使用基于 `curl-impersonate` 的请求库**，也**不携带存在 `buvid3` 字段的 `Credential`**，那么**无论调用什么函数都无法返回结果**，因为模块在获取 `buvid` 阶段就会出现“网络问题”。解决也很简单：浏览器打开 bilibili，复制 cookies 中的 `buvid3` 字段，传入 `Credential`，传入模块的函数/类，即可。
-
-当然并不是说启用了浏览器指纹限制的接口只有获取 `buvid` 的接口一个，其他接口**如果遇到无法获得结果/被风控问题，请先切换回 `curl_cffi` 再次尝试，如果仍有问题再提出 `issues`**。
-
 ## 附录、抽象类完整代码
 
 ``` python

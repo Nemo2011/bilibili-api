@@ -42,7 +42,7 @@ Github 仓库：[https://github.com/nemo2011/bilibili-api](https://github.com/ne
 - 不仅仅是官方提供的 API！还附加：AV 号与 BV 号互转[[2]](#脚注)、连接直播弹幕 Websocket 服务器、视频弹幕反查、下载弹幕、字幕文件[[3]](#脚注)、专栏内容爬取、cookies 刷新等[[4]](#脚注)。
 - 支持采用各种手段避免触发反爬虫风控[[5]](#脚注)。
 - **全部是异步操作**。
-- 支持 `curl_cffi`，支持模仿浏览器指纹进行请求，同时有良好的性能。
+- 支持 `aiohttp` / `httpx`，支持 `curl_cffi` 模仿浏览器指纹进行请求。
 
 # 快速上手
 
@@ -140,7 +140,7 @@ if __name__ == '__main__':
 
 考虑到性能和支持浏览器指纹模仿的特性（此特性能有效防止利用指纹识别的反爬虫措施），模块默认会使用 `curl_cffi`，并将其列入了依赖。模块同时也自带对 `aiohttp` 和 `httpx` 的支持。
 
-> 如果没有安装 curl_cffi 库，但安装了 aiohttp 或 httpx 的话，模块大多也能正常使用，只是部分接口会受限。
+> 如果没有安装 curl_cffi 库，但安装了 aiohttp 或 httpx 的话，模块基本也能正常使用。
 
 如果想要使用 `aiohttp` 和 `httpx`，可以利用 `select_client` 进行切换。
 
