@@ -1,12 +1,12 @@
 {
   "info": {
     "timeline": {
-      "url": "https://api.bilibili.com/pgc/web/timeline", 
-      "method": "GET", 
-      "verify": false, 
+      "url": "https://api.bilibili.com/pgc/web/timeline",
+      "method": "GET",
+      "verify": false,
       "params": {
-        "types": "int: 类型, 1. 番剧, 3. 影视, 4. 国创", 
-        "before": "几天前开始, 0~7", 
+        "types": "int: 类型, 1. 番剧, 3. 影视, 4. 国创",
+        "before": "几天前开始, 0~7",
         "after": "几天后结束, 0~7"
       }
     },
@@ -87,7 +87,7 @@
       "comment": "获取番剧长评"
     },
     "collective_info": {
-      "url": "https://api.bilibili.com/pgc/view/web/season",
+      "url": "https://api.bilibili.com/pgc/view/web/simple/season",
       "method": "GET",
       "verify": false,
       "params": {
@@ -105,7 +105,7 @@
       "comment": "获取一个剧集的全面概括信息"
     },
     "playurl": {
-      "url": "https://api.bilibili.com/pgc/player/web/playurl",
+      "url": "https://api.bilibili.com/pgc/player/web/v2/playurl",
       "method": "GET",
       "verify": false,
       "params": {

@@ -1369,19 +1369,15 @@ class Episode(Video):
         self,
         epid: int,
         credential: Union[Credential, None] = None,
-        initial_state_retry_times: int = 3,
     ):
         """
         Args:
             epid       (int)                 : 番剧 epid
 
             credential (Credential, optional): 凭据. Defaults to None.
-
-            initial_state_retry_times (int)  : 番剧剧集加载初始化信息请求重试次数上限设置. Defaults to 3.
         """
         global episode_data_cache
         self.credential: Credential = credential if credential else Credential()
-        self.__initial_state_retry_times = initial_state_retry_times
         self.__epid: int = epid
         self.bangumi = None
         self.__ep_aid = None
@@ -1398,34 +1394,13 @@ class Episode(Video):
         self.set_bvid = self.__set_bvid_e
 
     async def __fetch_bangumi(self) -> None:
-        for _ in range(self.__initial_state_retry_times + 1):
-            res, content_type = (
-                await self.get_episode_info()
-            )  # 随机 __NEXT_DATA__ 见 https://github.com/Nemo2011/bilibili-api/issues/433
-            try:
-                if content_type == InitialDataType.NEXT_DATA:
-                    content = res["props"]["pageProps"]["dehydratedState"]["queries"][
-                        0
-                    ]["state"]["data"]["result"]["play_view_business_info"]
-                    self.bangumi = Bangumi(
-                        ssid=content["season_info"]["season_id"],
-                        media_id=res["props"]["pageProps"]["dehydratedState"][
-                            "queries"
-                        ][1]["state"]["data"]["media_id"],
-                    )
-                    self.__ep_bvid = content["episode_info"]["bvid"]
-                    self.__ep_aid = bvid2aid(self.__ep_bvid)
-                    return
-                else:  # InitialDataType.INITIAL_STATE
-                    self.bangumi = Bangumi(
-                        ssid=res["mediaInfo"]["season_id"]
-                    )  # 刷不出 INITIAL_STATE 了，暂时不动
-                    self.__ep_bvid = res["epInfo"]["bvid"]
-                    self.__ep_aid = bvid2aid(self.__ep_bvid)
-                    return
-            except:
-                pass
-        raise ApiException("重试达到最大次数")
+        resp = await self.get_download_url()
+        content = resp["play_view_business_info"]
+        self.bangumi = Bangumi(
+            ssid=content["season_info"]["season_id"],
+        )
+        self.__ep_bvid = content["episode_info"]["bvid"]
+        self.__ep_aid = bvid2aid(self.__ep_bvid)
 
     async def get_bvid(self) -> str:
         """
@@ -1534,7 +1509,6 @@ class Episode(Video):
         """
         api = API["info"]["playurl"]
         params = {
-            "avid": await self.get_aid(),
             "ep_id": self.get_epid(),
             "qn": "127",
             "otype": "json",

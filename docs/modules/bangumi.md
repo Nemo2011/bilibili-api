@@ -323,7 +323,6 @@ from bilibili_api import bangumi
 | - | - | - |
 | epid | int | 番剧 epid |
 | credential | Credential, optional | 凭据. Defaults to None. |
-| initial_state_retry_times | int | 番剧剧集加载初始化信息请求重试次数上限设置. Defaults to 3. |
 
 
 ### async def get_ai_conclusion()
