@@ -849,7 +849,7 @@ ExClimbWuzhi 失败异常
 
 
 
-**Returns:** dict: 验证结果
+**Returns:** GeetestMeta: 验证结果
 
 
 
@@ -1289,6 +1289,7 @@ BV 号转 AV 号。
 
 **Returns:** Tuple[str, Type[BiliAPIClient]]: 第 0 项为客户端名称，第 1 项为对应的类
 
+
 **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
 
 
@@ -1334,9 +1335,10 @@ BV 号转 AV 号。
 | - | - | - |
 | name | str | 请求客户端类型名称，用户自定义命名。 |
 | cls | type | 基于 BiliAPIClient 重写后的请求客户端类。 |
-| **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。 |  | 模块默认使用 `curl_cffi` 库作为请求客户端。 |
 
 **Returns:** None
+
+**Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
 
 
 
@@ -1591,9 +1593,10 @@ async def handle(desc: str, data: dict) -> None:
 | name | type | description |
 | - | - | - |
 | name | str | 请求客户端类型名称，用户自定义命名。 |
-| **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。 |  | 模块默认使用 `curl_cffi` 库作为请求客户端。 |
 
 **Returns:** None
+
+**Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
 
 
 
@@ -1638,9 +1641,10 @@ async def handle(desc: str, data: dict) -> None:
 | name | type | description |
 | - | - | - |
 | name | str | 请求客户端类型名称，用户自定义命名。 |
-| **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。 |  | 模块默认使用 `curl_cffi` 库作为请求客户端。 |
 
 **Returns:** None
+
+**Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
 
 
 

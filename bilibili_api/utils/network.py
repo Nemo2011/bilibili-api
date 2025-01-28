@@ -761,6 +761,8 @@ def register_client(name: str, cls: type) -> None:
         name (str): 请求客户端类型名称，用户自定义命名。
         cls  (type): 基于 BiliAPIClient 重写后的请求客户端类。
 
+    Returns: None
+
     **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
     """
     global sessions, session_pool
@@ -777,6 +779,8 @@ def unregister_client(name: str) -> None:
 
     Args:
         name (str): 请求客户端类型名称，用户自定义命名。
+
+    Returns: None
 
     **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
     """
@@ -795,6 +799,8 @@ def select_client(name: str) -> None:
     Args:
         name (str): 请求客户端类型名称，用户自定义命名。
 
+    Returns: None
+
     **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
     """
     global selected_client
@@ -807,6 +813,7 @@ def get_selected_client() -> Tuple[str, Type[BiliAPIClient]]:
 
     Returns:
         Tuple[str, Type[BiliAPIClient]]: 第 0 项为客户端名称，第 1 项为对应的类
+
     **Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
     """
     return selected_client, sessions[selected_client]

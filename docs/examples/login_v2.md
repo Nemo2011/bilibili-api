@@ -12,6 +12,10 @@
 
 > `login` 和 `login_v2` 因 v17.0.0 不再支持同步请求被删除
 
+## Note
+
+bilibili 登录状态由 cookies 保存。因此 `login_v2` 的功能便是模仿网页端登录过程获取登录后的 cookies，这样可以模仿用户登录状态访问 API。
+
 # 示例: 终端简易二维码登录脚本
 
 ``` python
@@ -35,7 +39,7 @@ if __name__ == '__main__':
 # 示例：终端简易密码登录和验证码登录脚本
 
 ``` python
-from bilibili_api import *
+from bilibili_api import Geetest, GeetestType, login_v2, sync
 
 
 async def main() -> None:

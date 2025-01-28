@@ -207,7 +207,7 @@ class Geetest:
         获取结果
 
         Returns:
-            dict: 验证结果
+            GeetestMeta: 验证结果
         """
         if self.done:
             return GeetestMeta(
