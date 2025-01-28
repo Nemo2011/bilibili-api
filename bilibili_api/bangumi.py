@@ -1383,6 +1383,7 @@ class Episode(Video):
         self.__ep_aid = None
         self.__ep_bvid = None
         self.__ep_info_html = None
+        self.__playurl = None
 
         if epid in episode_data_cache.keys():
             self.bangumi = episode_data_cache[epid]["bangumi_class"]
@@ -1507,17 +1508,17 @@ class Episode(Video):
         Returns:
             dict: 调用 API 返回的结果。
         """
-        api = API["info"]["playurl"]
-        params = {
-            "ep_id": self.get_epid(),
-            "qn": "127",
-            "otype": "json",
-            "fnval": 4048,
-            "fourk": 1,
-        }
-        return (
-            await Api(**api, credential=self.credential).update_params(**params).result
-        )
+        if not self.__playurl:
+            api = API["info"]["playurl"]
+            params = {
+                "ep_id": self.get_epid(),
+                "qn": "127",
+                "otype": "json",
+                "fnval": 4048,
+                "fourk": 1,
+            }
+            self.__playurl = await Api(**api, credential=self.credential).update_params(**params).result
+        return self.__playurl
 
     async def get_danmaku_xml(self) -> str:
         """
