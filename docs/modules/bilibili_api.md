@@ -260,6 +260,22 @@ class BiliAPIClient(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def download(
+        self, url: str = "", out: str = "", intro: str = "下载"
+    ) -> None:
+        """
+        下载文件
+
+        模块自带 clients 实现效果：`intro - out [bytes/total]`
+
+        Args:
+            url   (str, optional): 请求地址. Defaults to "".
+            out   (str, optional): 文件地址. Defaults to "".
+            intro (str, optional): 下载信息. Defaults to "".
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
@@ -1290,8 +1306,6 @@ BV 号转 AV 号。
 **Returns:** Tuple[str, Type[BiliAPIClient]]: 第 0 项为客户端名称，第 1 项为对应的类
 
 
-**Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
-
 
 
 ---
@@ -1328,7 +1342,7 @@ BV 号转 AV 号。
 
 ## def register_client()
 
-注册请求客户端，可用于用户自定义请求客户端。
+注册请求客户端并切换，可用于用户自定义请求客户端。
 
 
 | name | type | description |
@@ -1337,8 +1351,6 @@ BV 号转 AV 号。
 | cls | type | 基于 BiliAPIClient 重写后的请求客户端类。 |
 
 **Returns:** None
-
-**Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
 
 
 
@@ -1596,8 +1608,6 @@ async def handle(desc: str, data: dict) -> None:
 
 **Returns:** None
 
-**Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
-
 
 
 ---
@@ -1643,8 +1653,6 @@ async def handle(desc: str, data: dict) -> None:
 | name | str | 请求客户端类型名称，用户自定义命名。 |
 
 **Returns:** None
-
-**Note**: 模块默认使用 `curl_cffi` 库作为请求客户端。
 
 
 
