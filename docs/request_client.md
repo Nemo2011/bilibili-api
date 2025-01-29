@@ -2,9 +2,9 @@
 
 bilibili_api 作为一个爬虫库，自然依靠底层的网络请求库得以实现。具体地，bilibili_api 会在每次运行中使用可持久化的会话对象（`session`），相较于直接一次次地发起请求，这么做可以复用 `TCP` 连接，提高整体性能。
 
-bilibili_api 默认使用 `curl_cffi` 作为底层的第三方请求库，但是第三方请求库可能面临着在具体项目中被更换/替代的需求，例如原来项目就一直用 `aiohttp`，现在又来了一个 `curl_cffi`，二者创建会话不同，`session` 的存在貌似没有了意义，这时候将二者的会话统一至关重要。也有一种可能，bilibili_api 使用的请求库在某些方面不如另一个请求库，而且会对实际造成部分影响，这对你来说很重要，你希望 bilibili_api 能使用那个更好的请求库。（例如 `aiohttp` 容易 `ServerDisconnected`，而 `httpx` 基本不会出现这种问题）因此模块也同时兼容其他的第三方请求库作为底层请求库，在此前提下可以更改模块使用的 `session`（具体如何支持见下文）。
+模块理论上可以支持所有第三方请求库。众所周知，每个网络请求模块实现的逻辑可能不同，api 也可能不同，调用时针对不同的请求库需要使用不同的传参方式和不同的回调方式，乃至是不同的函数和不同的流程。所以事实上，模块高层 API 和底层调用 `session` 进行网络请求的中间存在一个中间层，`client`。`client` 相关代码需要用户自己编写，其需要满足对第三方请求库的 `session` 的封装，对外暴露模块规定的 api，这样子只需要用户在外部重写 `client` 而非重写模块的代码即可实现对请求库的替代。
 
-众所周知，但是每个网络请求模块实现的逻辑可能不同，api 也可能不同，调用时针对不同的请求库需要使用不同的传参方式和不同的回调方式，乃至是不同的函数和不同的流程。那么模块是怎么做到兼容其他第三方请求库的？事实上，这中间存在另一个中间层，`client`。`client` 相关代码需要用户自己编写，其需要满足对第三方请求库的 `session` 的封装，对外暴露模块规定的 api，这样子只需要用户在外部重写 `client` 而非重写模块的代码即可实现对请求库的替代。
+bilibili_api 默认提供 `aiohttp` / `httpx` / `curl_cffi` 的 `client`，但是对应的会话可能面临着在具体项目中被更换/替代的需求，于是模块还支持更改模块使用的 `session`（具体如何支持见下文）。
 
 下文 `client` 均表示 **bilibili_api 在请求中连接 `Api` 类和第三方请求库（诸如 `curl_cffi`, `aiohttp`）的中间层**，`session` 均表示 **第三方请求库（诸如 `curl_cffi`, `aiohttp`）在模块每次运行中使用可持久化的会话对象**。
 
@@ -192,7 +192,7 @@ class BiliAPIClient(ABC):
 
 同时为了防止同一个 `client` 需要同时操控多个 WebSocket 的情况，`client` 应该用数组保留所有创建的 WebSocket 对象，为防止节外生枝，再搞一个 WebSocket 抽象类出来（也是放弃上下文模式的一个原因），`ws_connect` 结束后应返回一个 `int` 作为对应的 WebSocket 对象的“代号”，而不是直接把第三方请求库的 WebSocket 对象返回。之后涉及 WebSocket 的操作均需要传入 `ws_connect` 时候拿到的“代号”，否则 `client` 无法做到辨认具体是哪个 WebSocket 对象。
 
-还有一些杂七杂八的函数需要实现，详情见接下来会提供的 [抽象类完整代码](#附录、抽象类完整代码)。
+还有一些杂七杂八的函数需要实现。详见 [相关文档](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=class-biliapiclient)。
 
 ## 3、写完了我怎么才能真正地用上？
 
@@ -216,23 +216,19 @@ select_client("aiohttp")
 unregister_client("aiohttp")
 ```
 
-前面提到一种需求，即统一 bilibili_api 和外部程序的会话，即让 bilibili_api 去用外部程序的一个 `curl_cffi.requests.AsyncSession`，这时候便能通过 `set_session` 设置。
+部分情况会让 bilibili_api 去用外部程序的会话，这时候便能通过 `set_session` 设置。
 
 ``` python
 set_session(curl_cffi.requests.AsyncSession()) # your specific session
 ```
 
-或者也可以让外部程序使用 bilibili_api 的会话，这时候调用 `get_session` 即可。
+或者让外部程序使用 bilibili_api 的会话，这时候调用 `get_session` 即可。
 
 ``` python
 sess: curl_cffi.requests.AsyncSession = get_session()
 ```
 
 注意：1、不同事件循环下会话不同，因此 `get_session` 和 `set_session` 都**仅限于当前事件循环。**2、因为第三方请求库已经可以自定义，所以 `get_session` 和 `set_session` 类型注释均使用了 `object`，属于自定义请求库的一种体现。~~此事在 changelog 中亦有记载。~~
-
-**模块默认使用 `bilibili_api.clients.CurlCFFIClient.CurlCFFIClient`，注册时使用的名字为 `curl_cffi`。**
-
-在 `README` 中有提到，如果没有安装 curl_cffi 库，但安装了 aiohttp 或 httpx 的话，模块大多也能正常使用，只是部分接口会受限。此处是这么实现的：以 `httpx`, `aiohttp`, `curl_cffi` 的顺序逐个尝试，如果能正常导入第三方请求库，就会注册相应的 `client`，并切换至相应 `client`。因此选择 `client` 的优先级便是 `curl_cffi` -> `aiohttp` -> `httpx`。
 
 ## 4、`aiohttp` 实战
 
@@ -408,218 +404,4 @@ class AioHTTPClient(BiliAPIClient):
 
 于是，`AioHTTPClient` 就大功告成了。经过测试可以正常处理 http 请求（GET，文件上传）和 WebSocket 连接（直播弹幕）。
 
-## 附录、抽象类完整代码
-
-``` python
-@dataclass
-class BiliAPIResponse:
-    """
-    响应对象类。
-    """
-
-    code: int
-    headers: dict
-    cookies: dict
-    raw: bytes
-    url: str
-
-    def utf8_text(self):
-        return self.raw.decode("utf-8")
-
-    def json(self):
-        return json.loads(self.utf8_text())
-
-
-class BiliWsMsgType(Enum):
-    """
-    WebSocket 状态枚举
-    """
-
-    CONTINUATION = 0x0
-    TEXT = 0x1
-    BINARY = 0x2
-    PING = 0x9
-    PONG = 0xA
-    CLOSE = 0x8
-    CLOSING = 0x100
-    CLOSED = 0x101
-
-
-@dataclass
-class BiliAPIFile:
-    """
-    上传文件类。
-    """
-
-    path: str
-    mime_type: str
-
-
-class BiliAPIClient(ABC):
-    """
-    请求客户端抽象类。通过对第三方模块请求客户端的封装令模块可对其进行调用。
-    """
-
-    @abstractmethod
-    def __init__(
-        self,
-        proxy: str = "",
-        timeout: float = 0.0,
-        verify_ssl: bool = True,
-        trust_env: bool = True,
-        session: Optional[object] = None,
-    ) -> None:
-        """
-        Args:
-            proxy (str, optional): 代理地址. Defaults to "".
-            timeout (float, optional): 请求超时时间. Defaults to 0.0.
-            verify_ssl (bool, optional): 是否验证 SSL. Defaults to True.
-            trust_env (bool, optional): `trust_env`. Defaults to True.
-            session (object, optional): 会话对象. Defaults to None.
-
-        Note: 仅当用户只提供 `session` 参数且用户中途未调用 `set_xxx` 函数才使用用户提供的 `session`。
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_wrapped_session(self) -> object:
-        """
-        获取封装的第三方会话对象
-
-        Returns:
-            object: 第三方会话对象
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def set_timeout(self, timeout: float = 0.0) -> None:
-        """
-        设置请求超时时间
-
-        Args:
-            timeout (float, optional): 请求超时时间. Defaults to 0.0.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def set_proxy(self, proxy: str = "") -> None:
-        """
-        设置代理地址
-
-        Args:
-            proxy (str, optional): 代理地址. Defaults to "".
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def set_verify_ssl(self, verify_ssl: bool = True) -> None:
-        """
-        设置是否验证 SSL
-
-        Args:
-            verify_ssl (bool, optional): 是否验证 SSL. Defaults to True.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def set_trust_env(self, trust_env: bool = True) -> None:
-        """
-        设置 `trust_env`
-
-        Args:
-            trust_env (bool, optional): `trust_env`. Defaults to True.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    async def request(
-        self,
-        method: str = "",
-        url: str = "",
-        params: dict = {},
-        data: Union[dict, str, bytes] = {},
-        files: Dict[str, BiliAPIFile] = {},
-        headers: dict = {},
-        cookies: dict = {},
-        allow_redirects: bool = False,
-    ) -> BiliAPIResponse:
-        """
-        进行 HTTP 请求
-
-        Args:
-            method (str, optional): 请求方法. Defaults to "".
-            url (str, optional): 请求地址. Defaults to "".
-            params (dict, optional): 请求参数. Defaults to {}.
-            data (Union[dict, str, bytes], optional): 请求数据. Defaults to {}.
-            files (Dict[str, BiliAPIFile], optional): 请求文件. Defaults to {}.
-            headers (dict, optional): 请求头. Defaults to {}.
-            cookies (dict, optional): 请求 Cookies. Defaults to {}.
-            allow_redirects (bool, optional): 是否允许重定向. Defaults to False.
-
-        Returns:
-            BiliAPIResponse: 响应对象
-
-        Note: 无需实现 data 为 str 且 files 不为空的情况。
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    async def ws_create(
-        self, url: str = "", params: dict = {}, headers: dict = {}
-    ) -> int:
-        """
-        创建 WebSocket 连接
-
-        Args:
-            url (str, optional): WebSocket 地址. Defaults to "".
-            params (dict, optional): WebSocket 参数. Defaults to {}.
-            headers (dict, optional): WebSocket 头. Defaults to {}.
-
-        Returns:
-            int: WebSocket 连接编号，用于后续操作。
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    async def ws_send(self, cnt: int, data: bytes) -> None:
-        """
-        发送 WebSocket 数据
-
-        Args:
-            cnt (int): WebSocket 连接编号
-            data (bytes): WebSocket 数据
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
-        """
-        接受 WebSocket 数据
-
-        Args:
-            cnt (int): WebSocket 连接编号
-
-        Returns:
-            Tuple[bytes, BiliWsMsgType]: WebSocket 数据和状态
-
-        Note: 建议实现此函数时支持其他线程关闭不阻塞，除基础状态同时实现 CLOSING, CLOSED。
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    async def ws_close(self, cnt: int) -> None:
-        """
-        关闭 WebSocket 连接
-
-        Args:
-            cnt (int): WebSocket 连接编号
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    async def close(self):
-        """
-        关闭请求客户端，即关闭封装的第三方会话对象
-        """
-        raise NotImplementedError
-```
+> Note: 1、可以在函数中加入对 request_log 对象的调用，以接入模块默认日志。2、模块默认 `client` 实现见 <https://github.com/nemo2011/bilibili-api/tree/main/bilibili_api/clients> 可供参考。
