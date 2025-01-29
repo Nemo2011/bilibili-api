@@ -28,13 +28,18 @@ from Cryptodome.Cipher import PKCS1_OAEP
 from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
 
-from ..exceptions import (ArgsException, CookiesRefreshException,
-                          CredentialNoAcTimeValueException,
-                          CredentialNoBiliJctException,
-                          CredentialNoBuvid3Exception,
-                          CredentialNoDedeUserIDException,
-                          CredentialNoSessdataException, ExClimbWuzhiException,
-                          ResponseCodeException, WbiRetryTimesExceedException)
+from ..exceptions import (
+    ArgsException,
+    CookiesRefreshException,
+    CredentialNoAcTimeValueException,
+    CredentialNoBiliJctException,
+    CredentialNoBuvid3Exception,
+    CredentialNoDedeUserIDException,
+    CredentialNoSessdataException,
+    ExClimbWuzhiException,
+    ResponseCodeException,
+    WbiRetryTimesExceedException,
+)
 from .AsyncEvent import AsyncEvent
 from .utils import get_api, raise_for_statement
 
@@ -529,7 +534,7 @@ class BiliAPIClient(ABC):
 
         @abstractmethod
         async def download(
-            self, url: str = "", out: str = "", intro: str = "下载"
+            self, url: str = "", headers: dict = {}, out: str = "", intro: str = "下载"
         ) -> None:
             """
             下载文件
@@ -537,9 +542,10 @@ class BiliAPIClient(ABC):
             模块自带 clients 实现效果：`intro - out [bytes/total]`
 
             Args:
-                url   (str, optional): 请求地址. Defaults to "".
-                out   (str, optional): 文件地址. Defaults to "".
-                intro (str, optional): 下载信息. Defaults to "".
+                url     (str, optional) : 请求地址. Defaults to "".
+                out     (str, optional) : 文件地址. Defaults to "".
+                headers (dict, optional): 请求头. Defaults to {}.
+                intro   (str, optional) : 下载信息. Defaults to "".
             """
             raise NotImplementedError
 
@@ -710,7 +716,7 @@ class BiliAPIClient(ABC):
 
     @abstractmethod
     async def download(
-        self, url: str = "", out: str = "", intro: str = "下载"
+        self, url: str = "", headers: dict = {}, out: str = "", intro: str = "下载"
     ) -> None:
         """
         下载文件
@@ -718,9 +724,10 @@ class BiliAPIClient(ABC):
         模块自带 clients 实现效果：`intro - out [bytes/total]`
 
         Args:
-            url   (str, optional): 请求地址. Defaults to "".
-            out   (str, optional): 文件地址. Defaults to "".
-            intro (str, optional): 下载信息. Defaults to "".
+            url     (str, optional) : 请求地址. Defaults to "".
+            out     (str, optional) : 文件地址. Defaults to "".
+            headers (dict, optional): 请求头. Defaults to {}.
+            intro   (str, optional) : 下载信息. Defaults to "".
         """
         raise NotImplementedError
 
@@ -848,7 +855,9 @@ def get_client() -> BiliAPIClient:
         BiliAPIClient: 请求客户端
     """
     if selected_client == "":
-        raise ArgsException("尚未安装第三方请求库或未注册自定义第三方请求库。\n$ pip3 install (curl_cffi==0.8.1.b9|httpx|aiohttp)")
+        raise ArgsException(
+            "尚未安装第三方请求库或未注册自定义第三方请求库。\n$ pip3 install (curl_cffi==0.8.1.b9|httpx|aiohttp)"
+        )
     global session_pool
     pool = session_pool.get(selected_client)
     if pool is None:
@@ -903,7 +912,6 @@ def get_registered_clients() -> Dict[str, Type[BiliAPIClient]]:
 
 @atexit.register
 def __clean() -> None:
-
     """
     程序退出清理操作。
     """

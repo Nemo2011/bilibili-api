@@ -58,9 +58,7 @@ sync(main())
 ``` python
 import asyncio
 
-import curl_cffi.requests
-from bilibili_api import bangumi, video, Credential, HEADERS, get_session
-import curl_cffi
+from bilibili_api import bangumi, video, Credential, HEADERS, get_client
 import os
 
 SESSDATA = ""
@@ -71,22 +69,6 @@ BUVID3 = ""
 FFMPEG_PATH = "ffmpeg"
 
 MEDIA_ID = 23679586
-
-
-async def download_url(url: str, out: str, info: str):
-    # 下载函数
-    sess: curl_cffi.requests.AsyncSession = get_session()  # 此处使用 curl_cffi
-    resp = await sess.get(url, stream=True, headers=HEADERS)
-    length = resp.headers.get("content-length")
-    with open(out, "wb") as f:
-        process = 0
-        async for chunk in resp.aiter_content():
-            if not chunk:
-                break
-            process += len(chunk)
-            print(f"下载 {info} {process} / {length}", end="\r")
-            f.write(chunk)
-    print()
 
 
 async def main():
@@ -118,8 +100,8 @@ async def download_episode(ep: bangumi.Episode, out: str):
     # 有 MP4 流 / FLV 流两种可能
     if detecter.check_video_and_audio_stream():
         # MP4 流下载
-        await download_url(streams[0].url, "video_temp.m4s", "视频流")
-        await download_url(streams[1].url, "audio_temp.m4s", "音频流")
+        await get_client().download(streams[0].url, HEADERS, "video_temp.m4s", "视频流")
+        await get_client().download(streams[1].url, HEADERS, "audio_temp.m4s", "音频流")
         # 混流
         os.system(
             f"{FFMPEG_PATH} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy {out}"
@@ -129,7 +111,7 @@ async def download_episode(ep: bangumi.Episode, out: str):
         os.remove("audio_temp.m4s")
     else:
         # FLV 流下载
-        await download_url(streams[0].url, "flv_temp.flv", "FLV 音视频流")
+        await get_client().download(streams[0].url, HEADERS, "flv_temp.flv", "FLV 音视频流")
         # 转换文件格式
         os.system(f"{FFMPEG_PATH} -i flv_temp.flv {out}")
         # 删除临时文件

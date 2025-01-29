@@ -57,7 +57,7 @@ class AioHTTPClient(BiliAPIClient):
         self.__use_args = True
         self.__args["proxy"] = proxy
 
-    def set_timeout(self, timeout: float=0) -> None:
+    def set_timeout(self, timeout: float = 0) -> None:
         self.__use_args = True
         self.__args["timeout"] = timeout
 
@@ -167,6 +167,18 @@ class AioHTTPClient(BiliAPIClient):
         )
         return bili_api_resp
 
+    async def download(
+        self, url: str = "", headers: dict = {}, out: str = "", intro: str = "下载"
+    ) -> None:
+        async with self.__session.get(url=url, headers=headers) as resp:
+            bts = 0
+            tot = resp.headers.get("content-length")
+            with open(out, "wb") as file:
+                async for chunk in resp.content.iter_chunks():
+                    bts += file.write(chunk[0])
+                    print(f"{intro} - {out} [{bts}/{tot}]", end="\r")
+        print()
+
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
@@ -229,6 +241,7 @@ class AioHTTPClient(BiliAPIClient):
     set_verify_ssl.__doc__ = BiliAPIClient.set_verify_ssl.__doc__
     set_trust_env.__doc__ = BiliAPIClient.set_trust_env.__doc__
     request.__doc__ = BiliAPIClient.request.__doc__
+    download.__doc__ = BiliAPIClient.download.__doc__
     ws_create.__doc__ = BiliAPIClient.ws_create.__doc__
     ws_recv.__doc__ = BiliAPIClient.ws_recv.__doc__
     ws_send.__doc__ = BiliAPIClient.ws_send.__doc__

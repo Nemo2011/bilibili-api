@@ -108,7 +108,7 @@ class HTTPXClient(BiliAPIClient):
             files=files,
             headers=headers,
             cookies=cookies,
-            follow_redirects=allow_redirects
+            follow_redirects=allow_redirects,
         )
         resp_header_items = resp.headers.multi_items()
         resp_headers = {}
@@ -136,6 +136,18 @@ class HTTPXClient(BiliAPIClient):
             },
         )
         return bili_api_resp
+
+    async def download(
+        self, url: str = "", headers: dict = {}, out: str = "", intro: str = "下载"
+    ) -> None:
+        resp = await self.__session.get(url=url, headers=headers)
+        bts = 0
+        tot = resp.headers.get("content-length")
+        with open(out, "wb") as file:
+            async for chunk in resp.aiter_bytes():
+                bts += file.write(chunk)
+                print(f"{intro} - {out} [{bts}/{tot}]", end="\r")
+        print()
 
     async def ws_create(self, *args, **kwargs) -> None:
         """
@@ -179,4 +191,5 @@ class HTTPXClient(BiliAPIClient):
     set_verify_ssl.__doc__ = BiliAPIClient.set_verify_ssl.__doc__
     set_trust_env.__doc__ = BiliAPIClient.set_trust_env.__doc__
     request.__doc__ = BiliAPIClient.request.__doc__
+    download.__doc__ = BiliAPIClient.download.__doc__
     close.__doc__ = BiliAPIClient.close.__doc__

@@ -140,6 +140,18 @@ class CurlCFFIClient(BiliAPIClient):
         )
         return bili_api_resp
 
+    async def download(
+        self, url: str = "", headers: dict = {}, out: str = "", intro: str = "下载"
+    ) -> None:
+        req = await self.__session.get(url=url, headers=headers, stream=True)
+        bts = 0
+        tot = req.headers.get("content-length")
+        with open(out, "wb") as file:
+            async for chunk in req.aiter_content():
+                bts += file.write(chunk)
+                print(f"{intro} - {out} [{bts}/{tot}]", end="\r")
+        print()
+
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
@@ -229,6 +241,7 @@ class CurlCFFIClient(BiliAPIClient):
     set_verify_ssl.__doc__ = BiliAPIClient.set_verify_ssl.__doc__
     set_trust_env.__doc__ = BiliAPIClient.set_trust_env.__doc__
     request.__doc__ = BiliAPIClient.request.__doc__
+    download.__doc__ = BiliAPIClient.download.__doc__
     ws_create.__doc__ = BiliAPIClient.ws_create.__doc__
     ws_recv.__doc__ = BiliAPIClient.ws_recv.__doc__
     ws_send.__doc__ = BiliAPIClient.ws_send.__doc__

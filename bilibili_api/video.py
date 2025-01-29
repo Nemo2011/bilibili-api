@@ -2185,6 +2185,8 @@ class VideoDownloadURLDataDetecter:
             data (dict): `Video.get_download_url` 返回的结果
         """
         self.__data = data
+        if self.__data.get("video_info"): # bangumi
+            self.__data = self.__data["video_info"]
 
     def check_video_and_audio_stream(self) -> bool:
         """
