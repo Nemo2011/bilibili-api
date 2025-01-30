@@ -215,7 +215,7 @@ class BiliAPIClient(ABC):
             int: 下载编号，用于后续操作。
         """
         raise NotImplementedError
-        # 为何没有 chunk_size ? 考虑到 curl_cffi 不支持此参数。那如何设置 chunk_size ? 选一个你喜欢的值。（模块默认使用：1024）
+        # 为何没有 chunk_size ? 考虑到 curl_cffi 不支持此参数。那如何设置 chunk_size ? 选一个你喜欢的值。（模块默认使用：4096）
 
     @abstractmethod
     async def download_chunk(self, cnt: int) -> bytes:
@@ -448,7 +448,7 @@ class AioHTTPClient(BiliAPIClient):
 
     async def download_chunk(self, cnt: int) -> bytes:
         resp = self.__downloads[cnt]
-        data = await anext(resp.content.iter_chunked(1024))
+        data = await anext(resp.content.iter_chunked(4096))
         return data
 
     def download_content_length(self, cnt: int) -> int:

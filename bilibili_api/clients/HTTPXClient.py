@@ -161,7 +161,7 @@ class HTTPXClient(BiliAPIClient):
         )
         self.__download_iter[self.__download_cnt] = self.__downloads[
             self.__download_cnt
-        ].aiter_bytes(1024)
+        ].aiter_bytes(4096)
         return self.__download_cnt
 
     async def download_chunk(self, cnt: int) -> bytes:

@@ -199,7 +199,7 @@ class AioHTTPClient(BiliAPIClient):
 
     async def download_chunk(self, cnt: int) -> bytes:
         resp = self.__downloads[cnt]
-        data = await anext(resp.content.iter_chunked(1024))
+        data = await anext(resp.content.iter_chunked(4096))
         request_log.dispatch(
             "DWN_PART",
             "收到部分下载数据",
