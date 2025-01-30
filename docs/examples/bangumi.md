@@ -71,6 +71,19 @@ FFMPEG_PATH = "ffmpeg"
 MEDIA_ID = 23679586
 
 
+async def download(url: str, out: str, intro: str):
+    dwn_id = await get_client().download_create(url, HEADERS)
+    bts = 0
+    tot = get_client().download_content_length(dwn_id)
+    with open(out, "wb") as file:
+        while True:
+            print(f"{intro} - {out} [{bts} / {tot}]", end="\r")
+            bts += file.write(await get_client().download_chunk(dwn_id))
+            if bts == tot:
+                break
+    print()
+
+
 async def main():
     if not os.path.exists(str(MEDIA_ID)):
         os.mkdir(str(MEDIA_ID))
@@ -100,8 +113,8 @@ async def download_episode(ep: bangumi.Episode, out: str):
     # 有 MP4 流 / FLV 流两种可能
     if detecter.check_video_and_audio_stream():
         # MP4 流下载
-        await get_client().download(streams[0].url, HEADERS, "video_temp.m4s", "视频流")
-        await get_client().download(streams[1].url, HEADERS, "audio_temp.m4s", "音频流")
+        await download(streams[0].url, "video_temp.m4s", "视频流")
+        await download(streams[1].url, "audio_temp.m4s", "音频流")
         # 混流
         os.system(
             f"{FFMPEG_PATH} -i video_temp.m4s -i audio_temp.m4s -vcodec copy -acodec copy {out}"
@@ -111,7 +124,7 @@ async def download_episode(ep: bangumi.Episode, out: str):
         os.remove("audio_temp.m4s")
     else:
         # FLV 流下载
-        await get_client().download(streams[0].url, HEADERS, "flv_temp.flv", "FLV 音视频流")
+        await download(streams[0].url, "flv_temp.flv", "FLV 音视频流")
         # 转换文件格式
         os.system(f"{FFMPEG_PATH} -i flv_temp.flv {out}")
         # 删除临时文件

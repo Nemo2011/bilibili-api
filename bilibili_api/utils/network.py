@@ -135,7 +135,11 @@ class RequestLog(AsyncEvent):
             and not evt in self.get_ignore_events()
         ):
             if evt.startswith("WS_"):
-                self.logger.info(f"WS #{real_data['id']} {desc}: {real_data}")
+                ws_id = real_data.pop("id")
+                self.logger.info(f"WS #{ws_id} {desc}: {real_data}")
+            elif evt.startswith("DWN_"):
+                dwn_id = real_data.pop("id")
+                self.logger.info(f"DWN #{dwn_id} {desc}: {real_data}")
             elif evt == "ANTI_SPIDER":
                 self.logger.info(f"{real_data['msg']}")
             else:
@@ -148,22 +152,25 @@ request_log = RequestLog()
 
 可以添加更多监听器达到更多效果。
 
-Logger: RequestLog().logger
+Logger: request_log.logger
 
 Extends: AsyncEvent
 
 Events:
 
 - (模块自带 BiliAPIClient)
-- REQUEST:   HTTP 请求。
-- RESPONSE:  HTTP 响应。
-- WS_CREATE: 新建的 Websocket 请求。
-- WS_RECV:   获得到 WebSocket 请求。
-- WS_SEND:   发送了 WebSocket 请求。
-- WS_CLOSE:  关闭 WebSocket 请求。
+- REQUEST:     HTTP 请求。
+- RESPONSE:    HTTP 响应。
+- WS_CREATE:   新建的 Websocket 请求。
+- WS_RECV:     获得到 WebSocket 请求。
+- WS_SEND:     发送了 WebSocket 请求。
+- WS_CLOSE:    关闭 WebSocket 请求。
+- DWN_CREATE:  新建下载。
+- DWN_PART:    部分下载。
 - (Api)
 - API_REQUEST: Api 请求。
 - API_RESPONSE: Api 响应。
+- (反爬虫)
 - ANTI_SPIDER: 反爬虫相关信息。
 
 CallbackData: 描述 (str) 数据 (dict)
@@ -181,22 +188,25 @@ request_log.__doc__ = """
 
 可以添加更多监听器达到更多效果。
 
-Logger: RequestLog().logger
+Logger: request_log.logger
 
 Extends: AsyncEvent
 
 Events:
 
 - (模块自带 BiliAPIClient)
-- REQUEST:   HTTP 请求。
-- RESPONSE:  HTTP 响应。
-- WS_CREATE: 新建的 Websocket 请求。
-- WS_RECV:   获得到 WebSocket 请求。
-- WS_SEND:   发送了 WebSocket 请求。
-- WS_CLOSE:  关闭 WebSocket 请求。
+- REQUEST:     HTTP 请求。
+- RESPONSE:    HTTP 响应。
+- WS_CREATE:   新建的 Websocket 请求。
+- WS_RECV:     获得到 WebSocket 请求。
+- WS_SEND:     发送了 WebSocket 请求。
+- WS_CLOSE:    关闭 WebSocket 请求。
+- DWN_CREATE:  新建下载。
+- DWN_PART:    部分下载。
 - (Api)
 - API_REQUEST: Api 请求。
 - API_RESPONSE: Api 响应。
+- (反爬虫)
 - ANTI_SPIDER: 反爬虫相关信息。
 
 CallbackData: 描述 (str) 数据 (dict)
@@ -533,19 +543,46 @@ class BiliAPIClient(ABC):
             raise NotImplementedError
 
         @abstractmethod
-        async def download(
-            self, url: str = "", headers: dict = {}, out: str = "", intro: str = "下载"
-        ) -> None:
+        async def download_create(
+            self,
+            url: str = "",
+            headers: dict = {},
+        ) -> int:
             """
-            下载文件
-
-            模块自带 clients 实现效果：`intro - out [bytes/total]`
+            开始下载文件
 
             Args:
                 url     (str, optional) : 请求地址. Defaults to "".
-                out     (str, optional) : 文件地址. Defaults to "".
                 headers (dict, optional): 请求头. Defaults to {}.
-                intro   (str, optional) : 下载信息. Defaults to "".
+
+            Returns:
+                int: 下载编号，用于后续操作。
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        async def download_chunk(self, cnt: int) -> bytes:
+            """
+            下载部分文件
+
+            Args:
+                cnt    (int): 下载编号
+
+            Returns:
+                bytes: 字节
+            """
+            raise NotImplementedError
+
+        @abstractmethod
+        def download_content_length(self, cnt: int) -> int:
+            """
+            获取下载总字节数
+
+            Args:
+                cnt    (int): 下载编号
+
+            Returns:
+                int: 下载总字节数
             """
             raise NotImplementedError
 
@@ -715,19 +752,46 @@ class BiliAPIClient(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def download(
-        self, url: str = "", headers: dict = {}, out: str = "", intro: str = "下载"
-    ) -> None:
+    async def download_create(
+        self,
+        url: str = "",
+        headers: dict = {},
+    ) -> int:
         """
-        下载文件
-
-        模块自带 clients 实现效果：`intro - out [bytes/total]`
+        开始下载文件
 
         Args:
             url     (str, optional) : 请求地址. Defaults to "".
-            out     (str, optional) : 文件地址. Defaults to "".
             headers (dict, optional): 请求头. Defaults to {}.
-            intro   (str, optional) : 下载信息. Defaults to "".
+
+        Returns:
+            int: 下载编号，用于后续操作。
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def download_chunk(self, cnt: int) -> bytes:
+        """
+        下载部分文件
+
+        Args:
+            cnt    (int): 下载编号
+
+        Returns:
+            bytes: 字节
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def download_content_length(self, cnt: int) -> int:
+        """
+        获取下载总字节数
+
+        Args:
+            cnt    (int): 下载编号
+
+        Returns:
+            int: 下载总字节数
         """
         raise NotImplementedError
 
