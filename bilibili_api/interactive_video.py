@@ -23,7 +23,7 @@ from .exceptions import ApiException
 from .video import Video, VideoDownloadURLDataDetecter
 from .utils.utils import get_api
 from .utils.AsyncEvent import AsyncEvent
-from .utils.network import Api, get_client, get_buvid, Credential
+from .utils.network import HEADERS, Api, get_client, get_buvid, Credential
 
 API = get_api("interactive_video")
 
@@ -704,15 +704,18 @@ class InteractiveVideoDownloaderEvents(enum.Enum):
     """
     互动视频下载器事件枚举
 
-    | event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode |
-    | ----- | ------- | -------- | ---------------- | -------------- | ----------------- |
-    | START | 开始下载 | [x] | [x] | [x] | [x] |
-    | GET | 获取到节点信息 | [x] | [x] | [x] | [x] |
-    | PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] |
-    | PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] |
-    | SUCCESS | 下载成功 | [x] | [x] | [x] | [x] |
-    | ABORTED | 用户暂停 | [x] | [x] | [x] | [x] |
-    | FAILED | 下载失败 | [x] | [x] | [x] | [x] |
+    | event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode | Is Built-In downloader event |
+    | ----- | ------- | -------- | ---------------- | -------------- | ----------------- | ------------------------- |
+    | START | 开始下载 | [x] | [x] | [x] | [x] | [ ] |
+    | GET | 获取到节点信息 | [x] | [x] | [x] | [x] | [ ] |
+    | PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] | [ ] |
+    | DOWNLOAD_START | 开始下载单个文件 | Unknown | Unknown | [ ] | Unknown | [x] |
+    | DOWNLOAD_PART | 文件分块部分完成 | Unknown | Unknown | [ ] | Unknown | [x] |
+    | DOWNLOAD_SUCCESS | 完成下载 | Unknown | Unknown | [ ] | Unknown | [x] |
+    | PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] | [ ] |
+    | SUCCESS | 下载成功 | [x] | [x] | [x] | [x] | [ ] |
+    | ABORTED | 用户暂停 | [x] | [x] | [x] | [x] | [ ] |
+    | FAILED | 下载失败 | [x] | [x] | [x] | [x] | [ ] |
     """
 
     START = "START"
@@ -751,7 +754,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         self,
         video: InteractiveVideo,
         out: str,
-        self_download_func: Coroutine,
+        self_download_func: Coroutine = None,
         downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI,
         stream_detecting_params: dict = {},
         fetching_nodes_retry_times: int = 3,
@@ -762,7 +765,7 @@ class InteractiveVideoDownloader(AsyncEvent):
 
             out                (str)                           : 输出文件地址 (如果模式为 NODE_VIDEOS/NO_PACKAGING 则此参数表示所有节点视频的存放目录)
 
-            self_download_func (Coroutine)                     : 自定义下载函数（需 async 函数）
+            self_download_func (Coroutine)                     : 自定义下载函数（需 async 函数）. Defaults to None.
 
             downloader_mode    (InteractiveVideoDownloaderMode): 下载模式
 
@@ -772,32 +775,48 @@ class InteractiveVideoDownloader(AsyncEvent):
 
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
 
-        为保证视频能被成功下载，请在请求的时候加入 `bilibili_api.HEADERS` 头部。
-
-        `self_download_func` 例子：
-
-        ``` python
-        async def download(url: str, path: str) -> None:
-            sess = requests.AsyncSession()
-            req = await sess.request(method="GET", url=url, headers=HEADERS, stream=True)
-            tot = req.headers.get("content-length")
-            cur = 0
-            with open(path, "wb") as file:
-                async for chunk in req.aiter_content():
-                    cur += file.write(chunk)
-                    print(f"{path} [{cur}/{tot}]", end="\r")
-            print()
-            await asyncio.sleep(1.0)  # give bilibili a rest
-        ```
+        为保证视频能被成功下载，请在自定义下载函数请求的时候加入 `bilibili_api.HEADERS` 头部。
         """
         super().__init__()
         self.__video = video
-        self.__download_func = self_download_func
+        self.__download_func = self_download_func if self_download_func else self.__download
         self.__task = None
         self.__out = out
         self.__mode = downloader_mode
         self.__detect_params = stream_detecting_params
         self.__fetching_nodes_retry_times = fetching_nodes_retry_times
+
+    async def __download(self, url: str, out: str) -> None:
+        dwn_id = await get_client().download_create(url=url, headers=HEADERS)
+
+        if os.path.exists(out):
+            os.remove(out)
+
+        parent = os.path.dirname(out)
+        if not os.path.exists(parent):
+            os.mkdir(parent)
+
+        self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
+
+        bts = 0
+        tot = get_client().download_content_length(dwn_id)
+        start_time = time.perf_counter()
+
+        with open(out, "wb") as f:
+            while True:
+                bts += f.write(await get_client().download_chunk(dwn_id))
+                self.dispatch(
+                    "DOWNLOAD_PART",
+                    {
+                        "done": bts,
+                        "total": tot,
+                        "time": int(time.perf_counter() - start_time),
+                    },
+                )
+                if bts == tot:
+                    break
+
+        self.dispatch("DOWNLOAD_SUCCESS")
 
     async def __main(self) -> None:
         # 初始化

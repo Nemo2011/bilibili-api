@@ -8,30 +8,14 @@ import asyncio
 import os
 
 from colorama import Fore
-from curl_cffi import requests
 
 from bilibili_api import HEADERS, interactive_video, sync, video
-
-
-async def download(url: str, path: str) -> None:
-    sess = requests.AsyncSession()
-    req = await sess.request(method="GET", url=url, headers=HEADERS, stream=True)
-    tot = req.headers.get("content-length")
-    cur = 0
-    with open(path, "wb") as file:
-        async for chunk in req.aiter_content():
-            cur += file.write(chunk)
-            print(f"{path} [{cur}/{tot}]", end="\r")
-    print()
-    await asyncio.sleep(1.0)  # give bilibili a rest
-
 
 def download_interactive_video(bvid: str, out: str):
     ivideo = interactive_video.InteractiveVideo(bvid)
     downloader = interactive_video.InteractiveVideoDownloader(
         ivideo,
         out,
-        self_download_func=download,
         stream_detecting_params={"codecs": [video.VideoCodecs.AVC]},
     )
 
@@ -46,6 +30,14 @@ def download_interactive_video(bvid: str, out: str):
     @downloader.on("PREPARE_DOWNLOAD")
     async def on_prepare_download(data):
         print(f'Start download the video for cid {data["cid"]}')
+
+    @downloader.on("DOWNLOAD_PART")
+    async def on_download_part(data):
+        print(f'{data["done"]} / {data["total"]}', end="\r")
+
+    @downloader.on("DOWNLOAD_SUCCESS")
+    async def on_download_success(adta):
+        print()
 
     @downloader.on("PACKAGING")
     async def on_packaing(data):
