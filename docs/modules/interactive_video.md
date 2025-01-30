@@ -622,30 +622,14 @@ o----|xxx| (TEXT_RIGHT)
 
 `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
 
-为保证视频能被成功下载，请在请求的时候加入 `bilibili_api.HEADERS` 头部。
-
-`self_download_func` 例子：
-
-``` python
-async def download(url: str, path: str) -> None:
-sess = requests.AsyncSession()
-req = await sess.request(method="GET", url=url, headers=HEADERS, stream=True)
-tot = req.headers.get("content-length")
-cur = 0
-with open(path, "wb") as file:
-async for chunk in req.aiter_content():
-cur += file.write(chunk)
-print(f"{path} [{cur}/{tot}]", end="")
-print()
-await asyncio.sleep(1.0)  # give bilibili a rest
-```
+为保证视频能被成功下载，请在自定义下载函数请求的时候加入 `bilibili_api.HEADERS` 头部。
 
 
 | name | type | description |
 | - | - | - |
 | video | InteractiveVideo | 互动视频类 |
 | out | str | 输出文件地址 (如果模式为 NODE_VIDEOS/NO_PACKAGING 则此参数表示所有节点视频的存放目录) |
-| self_download_func | Coroutine | 自定义下载函数（需 async 函数） |
+| self_download_func | Coroutine | 自定义下载函数（需 async 函数）. Defaults to None. |
 | downloader_mode | InteractiveVideoDownloaderMode | 下载模式 |
 | stream_detecting_params | Dict | `VideoDownloadURLDataDetecter` 提取最佳流时传入的参数，可控制视频及音频品质 |
 | fetching_nodes_retry_times | int | 获取节点时的最大重试次数 |
@@ -669,15 +653,18 @@ await asyncio.sleep(1.0)  # give bilibili a rest
 
 互动视频下载器事件枚举
 
-| event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode |
-| ----- | ------- | -------- | ---------------- | -------------- | ----------------- |
-| START | 开始下载 | [x] | [x] | [x] | [x] |
-| GET | 获取到节点信息 | [x] | [x] | [x] | [x] |
-| PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] |
-| PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] |
-| SUCCESS | 下载成功 | [x] | [x] | [x] | [x] |
-| ABORTED | 用户暂停 | [x] | [x] | [x] | [x] |
-| FAILED | 下载失败 | [x] | [x] | [x] | [x] |
+| event | meaning | IVI mode | NODE_VIDEOS mode | DOT_GRAPH mode | NO_PACKAGING mode | Is Built-In downloader event |
+| ----- | ------- | -------- | ---------------- | -------------- | ----------------- | ------------------------- |
+| START | 开始下载 | [x] | [x] | [x] | [x] | [ ] |
+| GET | 获取到节点信息 | [x] | [x] | [x] | [x] | [ ] |
+| PREPARE_DOWNLOAD | 准备下载单个节点 | [x] | [x] | [ ] | [x] | [ ] |
+| DOWNLOAD_START | 开始下载单个文件 | Unknown | Unknown | [ ] | Unknown | [x] |
+| DOWNLOAD_PART | 文件分块部分完成 | Unknown | Unknown | [ ] | Unknown | [x] |
+| DOWNLOAD_SUCCESS | 完成下载 | Unknown | Unknown | [ ] | Unknown | [x] |
+| PACKAGING | 正在打包 | [x] | [ ] | [ ] | [ ] | [ ] |
+| SUCCESS | 下载成功 | [x] | [x] | [x] | [x] | [ ] |
+| ABORTED | 用户暂停 | [x] | [x] | [x] | [x] | [ ] |
+| FAILED | 下载失败 | [x] | [x] | [x] | [x] | [ ] |
 
 
 

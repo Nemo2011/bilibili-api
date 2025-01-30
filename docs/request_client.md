@@ -192,6 +192,58 @@ class BiliAPIClient(ABC):
 
 同时为了防止同一个 `client` 需要同时操控多个 WebSocket 的情况，`client` 应该用数组保留所有创建的 WebSocket 对象，为防止节外生枝，再搞一个 WebSocket 抽象类出来（也是放弃上下文模式的一个原因），`ws_connect` 结束后应返回一个 `int` 作为对应的 WebSocket 对象的“代号”，而不是直接把第三方请求库的 WebSocket 对象返回。之后涉及 WebSocket 的操作均需要传入 `ws_connect` 时候拿到的“代号”，否则 `client` 无法做到辨认具体是哪个 WebSocket 对象。
 
+最后是一个极简的下载器 api (用途：InteractiveVideoDownloader) 如果个人使用且无上面两种用途可以考虑不写，要用的话也能考虑不写，InteractiveVideoDownloader 支持自行传入下载函数，实现下载函数相较于实现下载器 api 有时候会更加简单。
+
+下载器 api 一般处理下载视频/音频文件，因体积较大所以需要进行分块处理，而目前用得较多的相关 api 极其像 aiohttp 的 WebSocket API (上下文+迭代器)，所以此部分模块采用的形式非常像 websocket。
+
+``` python
+    ...
+    @abstractmethod
+    async def download_create(
+        self,
+        url: str = "",
+        headers: dict = {},
+    ) -> int:
+        """
+        开始下载文件
+
+        Args:
+            url     (str, optional) : 请求地址. Defaults to "".
+            headers (dict, optional): 请求头. Defaults to {}.
+
+        Returns:
+            int: 下载编号，用于后续操作。
+        """
+        raise NotImplementedError
+        # 为何没有 chunk_size ? 考虑到 curl_cffi 不支持此参数。那如何设置 chunk_size ? 选一个你喜欢的值。（模块默认使用：1024）
+
+    @abstractmethod
+    async def download_chunk(self, cnt: int) -> bytes:
+        """
+        下载部分文件
+
+        Args:
+            cnt    (int): 下载编号
+
+        Returns:
+            bytes: 字节
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def download_content_length(self, cnt: int) -> int:
+        """
+        获取下载总字节数
+
+        Args:
+            cnt    (int): 下载编号
+
+        Returns:
+            int: 下载总字节数
+        """
+        raise NotImplementedError
+```
+
 还有一些杂七杂八的函数需要实现。详见 [相关文档](https://nemo2011.github.io/bilibili-api/#/modules/bilibili_api?id=class-biliapiclient)。
 
 ## 3、写完了我怎么才能真正地用上？
@@ -370,6 +422,39 @@ class AioHTTPClient(BiliAPIClient):
 ```
 
 此处还好，注意 `files` 需要通过 `FormData` 与 `data` 合并。
+
+然后是下载器部分。~~就是把迭代器拆开了。~~
+
+``` python
+    ...
+    async def download_create(
+        self,
+        url: str = "",
+        headers: dict = {},
+    ) -> int:
+        if self.__need_update_session:
+            await self.__session.close()
+            self.__session = aiohttp.ClientSession(
+                loop=asyncio.get_event_loop(),
+                trust_env=self.__args["trust_env"],
+                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
+            )
+            self.__need_update_session = False
+        self.__download_cnt += 1
+        self.__downloads[self.__download_cnt] = await self.__session.get(
+            url=url, headers=headers
+        )
+        return self.__download_cnt
+
+    async def download_chunk(self, cnt: int) -> bytes:
+        resp = self.__downloads[cnt]
+        data = await anext(resp.content.iter_chunked(1024))
+        return data
+
+    def download_content_length(self, cnt: int) -> int:
+        resp = self.__downloads[cnt]
+        return int(resp.headers.get("content-length", "0"))
+```
 
 最后则是 WebSocket 部分。因为模块规定的 api 基本是 aiohttp WebSocket api 的一部分改编，因此实现起来很容易。
 
