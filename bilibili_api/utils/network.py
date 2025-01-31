@@ -126,7 +126,7 @@ class RequestLog(AsyncEvent):
         """
         self.__on = status
 
-    async def __handle_events(self, data: dict) -> None:
+    def __handle_events(self, data: dict) -> None:
         evt = data["name"]
         desc, real_data = data["data"]
         if (

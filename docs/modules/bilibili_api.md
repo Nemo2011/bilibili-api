@@ -14,6 +14,15 @@ from bilibili_api import bilibili_api
 
 - [class ApiException()](#class-ApiException)
 - [class ArgsException()](#class-ArgsException)
+- [class AsyncEvent()](#class-AsyncEvent)
+  - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def add\_event\_listener()](#def-add\_event\_listener)
+  - [def dispatch()](#def-dispatch)
+  - [def ignore\_event()](#def-ignore\_event)
+  - [def on()](#def-on)
+  - [def remove\_all\_event\_listener()](#def-remove\_all\_event\_listener)
+  - [def remove\_event\_listener()](#def-remove\_event\_listener)
+  - [def remove\_ignore\_events()](#def-remove\_ignore\_events)
 - [class BiliAPIClient()](#class-BiliAPIClient)
 - [class BiliAPIFile()](#class-BiliAPIFile)
 - [class BiliAPIResponse()](#class-BiliAPIResponse)
@@ -138,6 +147,112 @@ API 基类异常。
 
 参数错误。
 
+
+
+
+---
+
+## class AsyncEvent()
+
+发布-订阅模式异步事件类支持。
+
+特殊事件：__ALL__ 所有事件均触发
+
+
+
+
+### def \_\_init\_\_()
+
+
+
+
+
+### def add_event_listener()
+
+注册事件监听器。
+
+
+| name | type | description |
+| - | - | - |
+| name | str | 事件名。 |
+| handler | Union[Callable, Coroutine] | 回调函数。 |
+
+**Returns:** None
+
+
+
+### def dispatch()
+
+异步发布事件。
+
+
+| name | type | description |
+| - | - | - |
+| name | str | 事件名。 |
+| *args, **kwargs:  要传递给函数的参数。 |  | 要传递给函数的参数。 |
+
+**Returns:** None
+
+
+
+### def ignore_event()
+
+忽略指定事件
+
+
+| name | type | description |
+| - | - | - |
+| name | str | 事件名。 |
+
+**Returns:** None
+
+
+
+### def on()
+
+装饰器注册事件监听器。
+
+
+| name | type | description |
+| - | - | - |
+| event_name | str | 事件名。 |
+
+**Returns:** None
+
+
+
+### def remove_all_event_listener()
+
+移除所有事件监听函数
+
+
+
+**Returns:** None
+
+
+
+### def remove_event_listener()
+
+移除事件监听函数。
+
+
+| name | type | description |
+| - | - | - |
+| name | str | 事件名。 |
+| handler | Union[Callable, Coroutine] | 要移除的函数。 |
+
+**Returns:** bool, 是否移除成功。
+
+
+
+
+### def remove_ignore_events()
+
+移除所有忽略事件
+
+
+
+**Returns:** None
 
 
 

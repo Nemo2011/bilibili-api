@@ -5,7 +5,7 @@ bilibili_api.utils.AsyncEvent
 """
 
 import asyncio
-from typing import Callable, Coroutine
+from typing import Callable, Coroutine, Union
 
 
 class AsyncEvent:
@@ -19,13 +19,13 @@ class AsyncEvent:
         self.__handlers = {}
         self.__ignore_events = []
 
-    def add_event_listener(self, name: str, handler: Coroutine) -> None:
+    def add_event_listener(self, name: str, handler: Union[Callable, Coroutine]) -> None:
         """
         注册事件监听器。
 
         Args:
-            name (str):            事件名。
-            handler (Coroutine):   回调异步函数。
+            name    (str)              :            事件名。
+            handler (Union[Callable, Coroutine]):   回调函数。
         """
         name = name.upper()
         if name not in self.__handlers:
@@ -40,7 +40,7 @@ class AsyncEvent:
             event_name (str): 事件名。
         """
 
-        def decorator(func: Coroutine):
+        def decorator(func: Union[Callable, Coroutine]):
             self.add_event_listener(event_name, func)
             return func
 
@@ -52,13 +52,13 @@ class AsyncEvent:
         """
         self.__handlers = {}
 
-    def remove_event_listener(self, name: str, handler: Coroutine) -> bool:
+    def remove_event_listener(self, name: str, handler: Union[Callable, Coroutine]) -> bool:
         """
         移除事件监听函数。
 
         Args:
-            name (str):            事件名。
-            handler (Coroutine):   要移除的函数。
+            name                  (str):            事件名。
+            handler (Union[Callable, Coroutine]):   要移除的函数。
 
         Returns:
             bool, 是否移除成功。
@@ -101,8 +101,10 @@ class AsyncEvent:
 
         name = name.upper()
         if name in self.__handlers:
-            for coroutine in self.__handlers[name]:
-                asyncio.create_task(coroutine(*args, **kwargs))
+            for callableorcoroutine in self.__handlers[name]:
+                obj = callableorcoroutine(*args, **kwargs)
+                if isinstance(obj, Coroutine):
+                    asyncio.create_task(obj)
 
         if name != "__ALL__":
             kwargs.update({"name": name, "data": args})
