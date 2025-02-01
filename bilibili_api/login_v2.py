@@ -10,7 +10,6 @@ import time
 import base64
 import enum
 
-import rsa
 import os
 import qrcode
 import qrcode_terminal
@@ -23,17 +22,18 @@ from .utils.network import Api, Credential, get_client, get_buvid
 from .utils.geetest import Geetest, GeetestType
 from .utils.picture import Picture
 
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Cipher import PKCS1_v1_5
+
 
 API = get_api("login")
 
 
 def encrypt(_hash, key, password) -> str:
-    rsa_key = rsa.PublicKey.load_pkcs1_openssl_pem(key.encode("utf-8"))
-    data = str(
-        base64.b64encode(rsa.encrypt(bytes(_hash + password, "utf-8"), rsa_key)),
-        "utf-8",
+    encryptor = PKCS1_v1_5.new(RSA.importKey(bytes(key, "utf-8")))
+    return str(
+        base64.b64encode(encryptor.encrypt(bytes(_hash + password, "utf-8"))), "utf-8"
     )
-    return data
 
 
 async def login_with_password(
@@ -618,18 +618,25 @@ class LoginCheck:
             "request_id": self.__id,
             "captcha_key": self.__captcha_key,
         }
-        exchange_code = (await Api(**api, no_csrf=True).update_data(**data).result)["code"]
+        exchange_code = (await Api(**api, no_csrf=True).update_data(**data).result)[
+            "code"
+        ]
         exchange_url = API["safecenter"]["get_cookies"]["url"]
         headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
             "Referer": "https://passport.bilibili.com/login",
         }
-        resp = await get_client().request(method="POST", url=exchange_url, data={"code": exchange_code}, headers=headers)
+        resp = await get_client().request(
+            method="POST",
+            url=exchange_url,
+            data={"code": exchange_code},
+            headers=headers,
+        )
         credential = Credential(
             sessdata=resp.cookies["SESSDATA"],
             bili_jct=resp.cookies["bili_jct"],
             buvid3=None,
             dedeuserid=resp.cookies["DedeUserID"],
-            ac_time_value=(resp.json())["data"]["refresh_token"]
+            ac_time_value=(resp.json())["data"]["refresh_token"],
         )
         return credential

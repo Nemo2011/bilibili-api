@@ -11,7 +11,7 @@ from ..utils.network import (
     request_log,
 )
 from ..exceptions import ApiException
-import httpx
+import httpx # pylint: disable=E0401
 from typing import AsyncGenerator, Optional, Dict, Union
 
 

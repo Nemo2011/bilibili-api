@@ -11,7 +11,7 @@ from ..utils.network import (
     BiliWsMsgType,
     request_log,
 )
-import aiohttp
+import aiohttp # pylint: disable=E0401
 from typing import Optional, Dict, Union, Tuple
 import asyncio
 

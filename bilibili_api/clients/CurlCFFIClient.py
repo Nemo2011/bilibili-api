@@ -11,8 +11,8 @@ from ..utils.network import (
     BiliWsMsgType,
     request_log,
 )
-from curl_cffi import requests
-import curl_cffi
+from curl_cffi import requests # pylint: disable=E0401
+import curl_cffi # pylint: disable=E0401
 from typing import Optional, Dict, Union, Tuple, AsyncGenerator
 import asyncio
 
