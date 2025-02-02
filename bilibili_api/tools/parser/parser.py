@@ -54,6 +54,8 @@ class Parser:
         Returns:
             Any: 装换结果
         """
+        if var == ":none":
+            return None
         for key, fn in OPS.items():
             if var.endswith(key):
                 return fn(var.replace(key, ""))
