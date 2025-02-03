@@ -11,7 +11,7 @@ from ..utils.network import (
     request_log,
 )
 from ..exceptions import ApiException
-import httpx # pylint: disable=E0401
+import httpx  # pylint: disable=E0401
 from typing import AsyncGenerator, Optional, Dict, Union
 
 
@@ -26,12 +26,25 @@ class HTTPXClient(BiliAPIClient):
         timeout: float = 0.0,
         verify_ssl: bool = True,
         trust_env: bool = True,
+        http2: bool = False,
         session: Optional[httpx.AsyncClient] = None,
     ) -> None:
+        """
+        Args:
+            proxy (str, optional): 代理地址. Defaults to "".
+            timeout (float, optional): 请求超时时间. Defaults to 0.0.
+            verify_ssl (bool, optional): 是否验证 SSL. Defaults to True.
+            trust_env (bool, optional): `trust_env`. Defaults to True.
+            http2 (bool, optional): 是否使用 HTTP2. Defaults to False.
+            session (object, optional): 会话对象. Defaults to None.
+
+        Note: 仅当用户只提供 `session` 参数且用户中途未调用 `set_xxx` 函数才使用用户提供的 `session`。
+        """
         self.__proxy = proxy
         self.__timeout = timeout
         self.__verify_ssl = verify_ssl
         self.__trust_env = trust_env
+        self.__http2 = http2
         if session:
             self.__session = session
         else:
@@ -40,6 +53,7 @@ class HTTPXClient(BiliAPIClient):
                 proxy=self.__proxy if self.__proxy != "" else None,
                 verify=self.__verify_ssl,
                 trust_env=self.__trust_env,
+                http2=self.__http2,
             )
         self.__downloads: Dict[int, httpx.Response] = {}
         self.__download_iter: Dict[int, AsyncGenerator] = {}
@@ -55,6 +69,7 @@ class HTTPXClient(BiliAPIClient):
             proxy=self.__proxy if self.__proxy != "" else None,
             verify=self.__verify_ssl,
             trust_env=self.__trust_env,
+            http2=self.__http2,
         )
 
     def set_timeout(self, timeout: float = 0.0) -> None:
@@ -68,11 +83,28 @@ class HTTPXClient(BiliAPIClient):
             proxy=self.__proxy if self.__proxy != "" else None,
             verify=self.__verify_ssl,
             trust_env=self.__trust_env,
+            http2=self.__http2,
         )
 
     def set_trust_env(self, trust_env: bool = True) -> None:
         self.__trust_env = trust_env
         self.__session.trust_env = trust_env
+
+    def set_http2(self, http2: bool = False) -> None:
+        """
+        设置是否使用 http2.
+
+        Args:
+            impersonate (str, optional): 是否使用 http2. Defaults to False.
+        """
+        self.__http2 = http2
+        self.__session = httpx.AsyncClient(
+            timeout=self.__timeout,
+            proxy=self.__proxy if self.__proxy != "" else None,
+            verify=self.__verify_ssl,
+            trust_env=self.__trust_env,
+            http2=self.__http2,
+        )
 
     async def request(
         self,
@@ -213,7 +245,6 @@ class HTTPXClient(BiliAPIClient):
     async def close(self) -> None:
         await self.__session.aclose()
 
-    __init__.__doc__ = BiliAPIClient.__init__.__doc__
     get_wrapped_session.__doc__ = BiliAPIClient.get_wrapped_session.__doc__
     set_proxy.__doc__ = BiliAPIClient.set_proxy.__doc__
     set_timeout.__doc__ = BiliAPIClient.set_timeout.__doc__

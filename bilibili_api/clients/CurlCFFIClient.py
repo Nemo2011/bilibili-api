@@ -11,8 +11,8 @@ from ..utils.network import (
     BiliWsMsgType,
     request_log,
 )
-from curl_cffi import requests # pylint: disable=E0401
-import curl_cffi # pylint: disable=E0401
+from curl_cffi import requests  # pylint: disable=E0401
+import curl_cffi  # pylint: disable=E0401
 from typing import Optional, Dict, Union, Tuple, AsyncGenerator
 import asyncio
 
@@ -28,8 +28,22 @@ class CurlCFFIClient(BiliAPIClient):
         timeout: float = 0.0,
         verify_ssl: bool = True,
         trust_env: bool = True,
+        impersonate: str = "chrome131",
+        http2: bool = False,
         session: Optional[requests.AsyncSession] = None,
     ) -> None:
+        """
+        Args:
+            proxy (str, optional): 代理地址. Defaults to "".
+            timeout (float, optional): 请求超时时间. Defaults to 0.0.
+            verify_ssl (bool, optional): 是否验证 SSL. Defaults to True.
+            trust_env (bool, optional): `trust_env`. Defaults to True.
+            impersonate (str, optional): 伪装的浏览器，可参考 curl_cffi 文档. Defaults to chrome131.
+            http2 (bool, optional): 是否使用 HTTP2. Defaults to False.
+            session (object, optional): 会话对象. Defaults to None.
+
+        Note: 仅当用户只提供 `session` 参数且用户中途未调用 `set_xxx` 函数才使用用户提供的 `session`。
+        """
         if session:
             self.__session = session
         else:
@@ -40,7 +54,8 @@ class CurlCFFIClient(BiliAPIClient):
                 proxies={"all": proxy},
                 verify=verify_ssl,
                 trust_env=trust_env,
-                impersonate="chrome131",
+                impersonate=impersonate,
+                http_version=(curl_cffi.CurlHttpVersion.V2_0 if http2 else None),
             )
         self.__ws: Dict[int, requests.AsyncWebSocket] = {}
         self.__ws_cnt: int = 0
@@ -63,6 +78,24 @@ class CurlCFFIClient(BiliAPIClient):
 
     def set_trust_env(self, trust_env: bool = True) -> None:
         self.__session.trust_env = trust_env
+
+    def set_impersonate(self, impersonate: str = "chrome131") -> None:
+        """
+        设置 curl_cffi 伪装的浏览器，可参考 curl_cffi 文档。
+
+        Args:
+            impersonate (str, optional): 伪装的浏览器. Defaults to chrome131.
+        """
+        self.__session.impersonate = impersonate
+
+    def set_http2(self, http2: bool = False) -> None:
+        """
+        设置是否使用 http2.
+
+        Args:
+            impersonate (str, optional): 是否使用 http2. Defaults to False.
+        """
+        self.__session.http_version = curl_cffi.CurlHttpVersion.V2_0 if http2 else None
 
     async def request(
         self,
@@ -258,7 +291,6 @@ class CurlCFFIClient(BiliAPIClient):
     async def close(self) -> None:
         await self.__session.close()
 
-    __init__.__doc__ = BiliAPIClient.__init__.__doc__
     get_wrapped_session.__doc__ = BiliAPIClient.get_wrapped_session.__doc__
     set_proxy.__doc__ = BiliAPIClient.set_proxy.__doc__
     set_timeout.__doc__ = BiliAPIClient.set_timeout.__doc__

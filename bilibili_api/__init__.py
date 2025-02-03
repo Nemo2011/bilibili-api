@@ -26,10 +26,12 @@ from .utils.network import (
     unregister_client,
     select_client,
     get_selected_client,
+    get_available_settings,
+    get_registered_clients,
+    get_registered_available_settings,
     get_client,
     get_session,
     set_session,
-    get_registered_clients,
     # credential
     Credential,
     # api
@@ -108,13 +110,8 @@ BILIBILI_API_VERSION = "17.1.0"
 
 def __register_all_clients():
     import importlib
-
-    all_clients = [
-        ("curl_cffi", "CurlCFFIClient"),
-        ("aiohttp", "AioHTTPClient"),
-        ("httpx", "HTTPXClient"),
-    ][::-1]
-    for module, client in all_clients:
+    from .clients import ALL_PROVIDED_CLIENTS
+    for module, client, settings in ALL_PROVIDED_CLIENTS[::-1]:
         try:
             importlib.import_module(module)
         except ModuleNotFoundError:
@@ -123,7 +120,7 @@ def __register_all_clients():
             name=f".clients.{client}", package="bilibili_api"
         )
         client_class = eval(f"client_module.{client}")
-        register_client(module, client_class)
+        register_client(module, client_class, settings)
 
 
 __register_all_clients()
@@ -187,8 +184,10 @@ __all__ = [
     "favorite_list",
     "festival",
     "game",
+    "get_available_settings",
     "get_client",
     "get_real_url",
+    "get_registered_available_settings",
     "get_registered_clients",
     "get_selected_client",
     "get_session",

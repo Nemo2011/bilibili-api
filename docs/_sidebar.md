@@ -5,7 +5,7 @@
 + [配置](/configuration.md)
 + [获取 vote_id](/vote_id.md)
 + [`.ivi` 文件和 `ivitools` 相关](/ivifile.md)
-+ [自定义请求库](/request_client.md)
++ [模块请求库相关](/request_client.md)
 + API 示例
     + [app.py - 应用程序](/examples/app.md)
     + [article_category.py - 专栏分类](/examples/article_category.md)

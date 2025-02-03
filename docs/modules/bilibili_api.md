@@ -85,6 +85,7 @@ from bilibili_api import bilibili_api
   - [def from\_content()](#def-from\_content)
   - [def from\_file()](#def-from\_file)
   - [async def load\_url()](#async-def-load\_url)
+  - [def resize()](#def-resize)
   - [def to\_file()](#def-to\_file)
   - [async def upload()](#async-def-upload)
   - [async def upload\_by\_note()](#async-def-upload\_by\_note)
@@ -98,8 +99,10 @@ from bilibili_api import bilibili_api
 - [class WbiRetryTimesExceedException()](#class-WbiRetryTimesExceedException)
 - [def aid2bvid()](#def-aid2bvid)
 - [def bvid2aid()](#def-bvid2aid)
+- [def get\_available\_settings()](#def-get\_available\_settings)
 - [def get\_client()](#def-get\_client)
 - [async def get\_real\_url()](#async-def-get\_real\_url)
+- [def get\_registered\_available\_settings()](#def-get\_registered\_available\_settings)
 - [def get\_registered\_clients()](#def-get\_registered\_clients)
 - [def get\_selected\_client()](#def-get\_selected\_client)
 - [def get\_session()](#def-get\_session)
@@ -113,11 +116,14 @@ from bilibili_api import bilibili_api
   - [def set\_on()](#def-set\_on)
   - [def set\_on\_events()](#def-set\_on\_events)
 - [var request\_settings](#var-request\_settings)
+  - [def get()](#def-get)
+  - [def get\_all()](#def-get\_all)
   - [def get\_proxy()](#def-get\_proxy)
   - [def get\_timeout()](#def-get\_timeout)
   - [def get\_trust\_env()](#def-get\_trust\_env)
   - [def get\_verify\_ssl()](#def-get\_verify\_ssl)
   - [def get\_wbi\_retry\_times()](#def-get\_wbi\_retry\_times)
+  - [def set()](#def-set)
   - [def set\_proxy()](#def-set\_proxy)
   - [def set\_timeout()](#def-set\_timeout)
   - [def set\_trust\_env()](#def-set\_trust\_env)
@@ -1147,7 +1153,7 @@ NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate
 | - | - | - |
 | height | int | 高度 |
 | imageType | str | 格式，例如 |
-| size | Any | 尺寸 |
+| size | Any | 大小。单位 KB |
 | url | str | 图片链接 |
 | width | int | 宽度 |
 | content | bytes | 图片内容 |
@@ -1212,6 +1218,21 @@ NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate
 | url | str | 图片链接 |
 
 **Returns:** Picture: 加载后的图片对象
+
+
+
+
+### def resize()
+
+调整大小
+
+
+| name | type | description |
+| - | - | - |
+| width | int | 宽度 |
+| height | int | 高度 |
+
+**Returns:** Picture: `self`
 
 
 
@@ -1395,6 +1416,19 @@ BV 号转 AV 号。
 
 ---
 
+## def get_available_settings()
+
+获取当前支持的设置项
+
+
+
+**Returns:** List[str]: 支持的设置项名称
+
+
+
+
+---
+
 ## def get_client()
 
 在当前事件循环下获取模块正在使用的请求客户端
@@ -1422,6 +1456,19 @@ BV 号转 AV 号。
 
 
 返回值为原 url 类型
+
+
+
+---
+
+## def get_registered_available_settings()
+
+获取所有注册过的 BiliAPIClient 所支持的设置项
+
+
+
+**Returns:** Dict[str, List[str]]: 所有注册过的 BiliAPIClient 所支持的设置项
+
 
 
 
@@ -1492,6 +1539,7 @@ BV 号转 AV 号。
 | - | - | - |
 | name | str | 请求客户端类型名称，用户自定义命名。 |
 | cls | type | 基于 BiliAPIClient 重写后的请求客户端类。 |
+| settings | Dict | 请求客户端在基础设置外的其他设置，键为设置名称，值为设置默认值。Defaults to {}. |
 
 **Returns:** None
 
@@ -1621,6 +1669,33 @@ async def handle(desc: str, data: dict) -> None:
 
 
 
+### def get()
+
+获取某项设置
+
+默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
+
+
+| name | type | description |
+| - | - | - |
+| name | str | 设置名称 |
+
+**Returns:** Any: 设置的值
+
+
+
+
+### def get_all()
+
+获取目前所有的设置项
+
+
+
+**Returns:** dict: 所有的设置项
+
+
+
+
 ### def get_proxy()
 
 获取设置的代理
@@ -1673,6 +1748,22 @@ async def handle(desc: str, data: dict) -> None:
 
 **Returns:** int: wbi 重试次数. Defaults to 3.
 
+
+
+
+### def set()
+
+设置某项设置
+
+默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
+
+
+| name | type | description |
+| - | - | - |
+| name | str | 设置名称 |
+| value | str | 设置的值 |
+
+**Returns:** None
 
 
 
