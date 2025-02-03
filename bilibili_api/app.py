@@ -82,41 +82,16 @@ async def get_loading_images_special(
     Returns:
         dict: 调用 API 返回的结果
     """
-    APPKEY = "1d8b6e7d45233436"
-    APPSEC = "560c52ccd288fed045859ed18bffd973"
-
     ts = int(time.time())
 
     credential = credential if credential is not None else Credential()
 
     api = API["splash"]["brand"]
-    sign_params = (
-        "appkey="
-        + APPKEY
-        + "&mobi_app="
-        + mobi_app
-        + "&platform="
-        + platform
-        + "&screen_height="
-        + str(height)
-        + "&screen_width="
-        + str(width)
-        + "&ts="
-        + str(ts)
-        + APPSEC
-    )
-
-    sign = md5()
-    sign.update(sign_params.encode(encoding="utf-8"))
-    sign = sign.hexdigest()
-
     params = {
-        "appkey": APPKEY,
         "mobi_app": mobi_app,
         "platform": platform,
         "screen_height": height,
         "screen_width": width,
         "ts": ts,
-        "sign": sign,
     }
     return await Api(**api, credential=credential).update_params(**params).result
