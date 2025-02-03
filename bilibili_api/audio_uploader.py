@@ -825,10 +825,10 @@ async def upload_cover(cover: Picture, credential: Credential) -> str:
     """
     api = _API["image"]
     # 小于 3MB
-    raise_for_statement(os.path.getsize(cover) < 1024 * 1024 * 3, "3MB size limit")
+    raise_for_statement(len(cover.content) < 1024 * 1024 * 3, "3MB size limit")
     # 宽高比 1:1
     raise_for_statement(
-        cover.width == cover.height, "width == height, 600 * 600 recommanded"
+        cover.width == cover.height, "width == height, 600 * 600 recommended"
     )
-    files = {"file": cover.content}
+    files = {"file": cover._to_biliapifile()}
     return await Api(**api, credential=credential).update_files(**files).result

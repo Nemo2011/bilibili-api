@@ -20,7 +20,7 @@ class Picture:
 
         imageType (str)  : 格式，例如: png
 
-        size      (Any)  : 尺寸
+        size      (Any)  : 大小。单位 KB
 
         url       (str)  : 图片链接
 
@@ -186,6 +186,29 @@ class Picture:
         with open(new_img_path, "rb") as file:
             self.content = file.read()
         self.__set_picture_meta_from_bytes(new_format)
+        return self
+
+    def resize(self, width: int, height: int) -> "Picture":
+        """
+        调整大小
+
+        Args:
+            width  (int): 宽度
+            height (int): 高度
+
+        Returns:
+            Picture: `self`
+        """
+        tmp_dir = tempfile.gettempdir()
+        img_path = os.path.join(tmp_dir, "test." + self.imageType)
+        open(img_path, "wb").write(self.content)
+        img = Image.open(img_path)
+        img = img.resize((width, height))
+        new_img_path = os.path.join(tmp_dir, "test." + self.imageType)
+        img.save(new_img_path)
+        with open(new_img_path, "rb") as file:
+            self.content = file.read()
+        self.__set_picture_meta_from_bytes(self.imageType)
         return self
 
     def to_file(self, path: str) -> "Picture":
