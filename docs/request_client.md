@@ -131,7 +131,7 @@ async def download(url: str, out: str, intro: str):
 
 #### \_\_init\_\_
 
-两种传参方式：1、所有的设置，字段名称为设置的名字，提供默认值。2、传入一个第三方请求库的会话对象。
+提供两种传参方式：1、传入所有的设置，字段名称为设置的名字，提供默认值。2、传入一个第三方请求库的会话对象。
 
 ```python
 def __init__(
@@ -226,7 +226,7 @@ def download_content_length(self, cnt: int) -> int: ...
 
 有时会在自己编写的 `client` 类中添加设置，例如 `curl_cffi` 的 `impersonate` 参数便应当为设置项。如何实现这个功能？
 
-以此处的 `impersonate` 参数为例子，在 `client` 类中实现 `set_xxx` (在 `CurlCFFIClient` 中实现 `set_impersonate`) 即可。
+以此处的 `impersonate` 参数为例子，先在 `__init__` 中加上 `xxx` 参数（在 `__init__` 中加上 `impersonate` 参数），然后在 `client` 类中实现 `set_xxx` (在 `CurlCFFIClient` 中实现 `set_impersonate`) 即可。
 
 ### 3、注册
 
