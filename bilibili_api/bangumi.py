@@ -1450,12 +1450,7 @@ class Episode(Video):
         Returns:
             int: cid
         """
-        content, content_type = await self.get_episode_info()
-        if content_type == InitialDataType.NEXT_DATA:
-            return content["props"]["pageProps"]["dehydratedState"]["queries"][0][
-                "state"
-            ]["data"]["result"]["play_view_business_info"]["episode_info"]["cid"]
-        return content["epInfo"]["cid"]
+        return (await self.get_download_url())["play_view_business_info"]["episode_info"]["cid"]
 
     async def get_bangumi(self) -> "Bangumi":
         """
