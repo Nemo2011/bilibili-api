@@ -146,7 +146,7 @@
             "method": "POST",
             "verify": false,
             "params": {
-                "sms_type": "str: loginTelCheck",
+                "sms_type": "str: loginTelCheck，如无 requestId 则为 secLogin",
                 "tmp_code": "str: 验证标记代码",
                 "gee_challenge": "str: 极验 challenge",
                 "gee_gt": "str: 极验 gt",
@@ -161,9 +161,20 @@
             "params": {
                 "type": "(str)loginTelCheck",
                 "code": "(int)验证码内容",
-                "tmp_code": "(str)验证标记代码,来自数据处理中的解析出的参数tmp_token",
-                "request_id": "(str)验证请求标记,来自数据处理中的解析出的参数requestId",
+                "tmp_code": "(str)验证标记代码,来自数据处理中的解析出的参数 tmp_token",
+                "request_id": "(str)验证请求标记,来自数据处理中的解析出的参数 requestId",
                 "captcha_key": "(str)验证秘钥,来自申请验证码的captcha_key（data->captcha_key）"
+            },
+            "comment": "获取交换验证码"
+        },
+        "get_exchange_no_request_id": {
+            "url": "https://passport.bilibili.com/x/safecenter/sec/verify",
+            "method": "POST",
+            "params": {
+              "verify_type": "(str)sms",
+              "code": "(int)验证码内容",
+              "tmp_code": "(str)验证标记代码,来自数据处理中的解析出的参数 tmp_token",
+              "captcha_key": "(str)验证秘钥,来自申请验证码的captcha_key（data->captcha_key）"
             },
             "comment": "获取交换验证码"
         },
@@ -171,7 +182,8 @@
             "url": "https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
             "method": "POST",
             "params": {
-                "code": "str: 交换代码"
+                "code": "str: 交换代码",
+                "go_url": "(str)https://passport.bilibili.com/pc/passport/risk/secTip?gourl=https%3A%2F%2Fwww.bilibili.com%2F&bind_tel=1 如果无 requestId 则提供"
             },
             "comment": "获取 cookies (头部会执行 set-cookies)"
         }

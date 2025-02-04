@@ -560,7 +560,7 @@ class LoginCheck:
         self.__url = check_url
         self.__yarl = yarl.URL(self.__url)
         self.__token = self.__yarl.query["tmp_token"]
-        self.__id = self.__yarl.query["request_id"]
+        self.__id = self.__yarl.query.get("request_id")
         self.__captcha_key = None
 
     async def fetch_info(self) -> dict:
@@ -587,7 +587,7 @@ class LoginCheck:
             raise GeetestException("未完成验证。")
         api = API["safecenter"]["send"]
         data = {
-            "sms_type": "loginTelCheck",
+            "sms_type": "loginTelCheck" if self.__id else "secLogin",
             "tmp_code": self.__token,
             "recaptcha_token": geetest.key,
             "gee_challenge": geetest.challenge,
@@ -608,28 +608,42 @@ class LoginCheck:
         Returns:
             Credential: 凭据类
         """
-        if self.__captcha_key is None:
-            raise LoginError("尚未发送验证码。")
-        api = API["safecenter"]["get_exchange"]
-        data = {
-            "type": "loginTelCheck",
-            "code": code,
-            "tmp_code": self.__token,
-            "request_id": self.__id,
-            "captcha_key": self.__captcha_key,
-        }
-        exchange_code = (await Api(**api, no_csrf=True).update_data(**data).result)[
-            "code"
-        ]
-        exchange_url = API["safecenter"]["get_cookies"]["url"]
         headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
-            "Referer": "https://passport.bilibili.com/login",
+            "Referer": self.__url,
         }
+        if self.__captcha_key is None:
+            raise LoginError("尚未发送验证码。")
+        if self.__id:
+            api = API["safecenter"]["get_exchange"]
+            data = {
+                "type": "loginTelCheck",
+                "code": code,
+                "tmp_code": self.__token,
+                "request_id": self.__id,
+                "captcha_key": self.__captcha_key,
+            }
+        else:
+            api = API["safecenter"]["get_exchange_no_request_id"]
+            data = {
+                "verify_type": "sms",
+                "tmp_code": self.__token,
+                "captcha_key": self.__captcha_key,
+                "code": code,
+            }
+        exchange_code = (
+            await Api(**api, no_csrf=True, headers=headers).update_data(**data).result
+        )["code"]
+        exchange_url = API["safecenter"]["get_cookies"]["url"]
+        exchange_data = {"code": exchange_code}
+        if self.__id is None:
+            exchange_data["go_url"] = (
+                "https://passport.bilibili.com/pc/passport/risk/secTip?gourl=https%3A%2F%2Fwww.bilibili.com%2F&bind_tel=1"
+            )
         resp = await get_client().request(
             method="POST",
             url=exchange_url,
-            data={"code": exchange_code},
+            data=exchange_data,
             headers=headers,
         )
         credential = Credential(
