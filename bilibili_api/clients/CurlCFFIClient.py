@@ -108,6 +108,10 @@ class CurlCFFIClient(BiliAPIClient):
         cookies: dict = {},
         allow_redirects: bool = False,
     ) -> BiliAPIResponse:
+        if headers.get("User-Agent"):
+            headers.pop("User-Agent")
+        if headers.get("user-agent"):
+            headers.pop("user-agent")
         request_log.dispatch(
             "REQUEST",
             "发起请求",
@@ -180,6 +184,10 @@ class CurlCFFIClient(BiliAPIClient):
         url: str = "",
         headers: dict = {},
     ) -> int:
+        if headers.get("User-Agent"):
+            headers.pop("User-Agent")
+        if headers.get("user-agent"):
+            headers.pop("user-agent")
         self.__download_cnt += 1
         request_log.dispatch(
             "DWN_CREATE",
@@ -212,6 +220,10 @@ class CurlCFFIClient(BiliAPIClient):
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
+        if headers.get("User-Agent"):
+            headers.pop("User-Agent")
+        if headers.get("user-agent"):
+            headers.pop("user-agent")
         self.__ws_cnt += 1
         request_log.dispatch(
             "WS_CREATE",
