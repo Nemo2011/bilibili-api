@@ -463,6 +463,9 @@ class Video:
             "fnval": 4048,
             "fourk": 1,
             "gaia_source": "",
+            "from_client": "BROWSER",
+            "is_main_page": "false",
+            "need_fragment": "false",
             "isGaiaAvoided": "true",
             "web_location": 1315873,
             "voice_balance": 1,
@@ -2154,28 +2157,14 @@ class FLVStreamDownloadURL:
 
 
 @dataclass
-class HTML5MP4DownloadURL:
+class MP4StreamDownloadURL:
     """
     (@dataclass)
 
-    可供 HTML5 播放的 mp4 视频流
+    MP4 视频流
 
     Attributes:
         url           (str): HTML5 mp4 视频流
-    """
-
-    url: str
-
-
-@dataclass
-class EpisodeTryMP4DownloadURL:
-    """
-    (@dataclass)
-
-    番剧/课程试看的 mp4 播放流
-
-    Attributes:
-        url           (str): 番剧试看的 mp4 播放流
     """
 
     url: str
@@ -2206,51 +2195,24 @@ class VideoDownloadURLDataDetecter:
 
     def check_video_and_audio_stream(self) -> bool:
         """
-        判断是否为音视频分离流
+        判断是否为 DASH （音视频分离）
 
         Returns:
-            bool: 是否为音视频分离流
+            bool: 是否为 DASH
         """
         if "dash" in self.__data.keys():
             return True
         return False
 
-    def check_flv_stream(self) -> bool:
+    def check_flv_mp4_stream(self) -> bool:
         """
-        判断是否为 FLV 视频流
+        判断是否为 FLV / MP4 流
 
         Returns:
-            bool: 是否为 FLV 视频流
+            bool: 是否为 FLV / MP4 流
         """
         if "durl" in self.__data.keys():
-            if self.__data["format"].startswith("flv"):
-                return True
-        return False
-
-    def check_html5_mp4_stream(self) -> bool:
-        """
-        判断是否为 HTML5 可播放的 mp4 视频流
-
-        Returns:
-            bool: 是否为 HTML5 可播放的 mp4 视频流
-        """
-        if "durl" in self.__data.keys():
-            if self.__data["format"].startswith("mp4"):
-                if self.__data.get("is_html5") == True:
-                    return True
-        return False
-
-    def check_episode_try_mp4_stream(self):
-        """
-        判断是否为番剧/课程试看的 mp4 视频流
-
-        Returns:
-            bool: 是否为番剧试看的 mp4 视频流
-        """
-        if "durl" in self.__data.keys():
-            if self.__data["format"].startswith("mp4"):
-                if self.__data.get("is_html5") != True:
-                    return True
+            return True
         return False
 
     def detect_all(self):
@@ -2288,8 +2250,7 @@ class VideoDownloadURLDataDetecter:
             VideoStreamDownloadURL,
             AudioStreamDownloadURL,
             FLVStreamDownloadURL,
-            HTML5MP4DownloadURL,
-            EpisodeTryMP4DownloadURL,
+            MP4StreamDownloadURL,
         ]
     ]:
         """
@@ -2321,19 +2282,15 @@ class VideoDownloadURLDataDetecter:
         Returns:
             List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 提取出来的视频/音频流
 
-        **参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
+        **参数仅能在音视频流分离的情况下产生作用，flv / mp4 流下以下参数均没有作用**
         """
         if "durl" in self.__data.keys():
             if self.__data["format"].startswith("flv"):
                 # FLV 视频流
                 return [FLVStreamDownloadURL(url=self.__data["durl"][0]["url"])]
             else:
-                if self.check_html5_mp4_stream():
-                    # HTML5 MP4 视频流
-                    return [HTML5MP4DownloadURL(url=self.__data["durl"][0]["url"])]
-                else:
-                    # 会员番剧试看 MP4 流
-                    return [EpisodeTryMP4DownloadURL(url=self.__data["durl"][0]["url"])]
+                # MP4 视频流
+                return [MP4StreamDownloadURL(url=self.__data["durl"][0]["url"])]
         else:
             # 正常情况
             streams = []
@@ -2440,11 +2397,13 @@ class VideoDownloadURLDataDetecter:
         no_dolby_audio: bool = False,
         no_hdr: bool = False,
         no_hires: bool = False,
-    ) -> Union[
-        List[FLVStreamDownloadURL],
-        List[HTML5MP4DownloadURL],
-        List[EpisodeTryMP4DownloadURL],
-        List[Union[VideoStreamDownloadURL, AudioStreamDownloadURL, None]],
+    ) -> List[
+        Union[
+            VideoStreamDownloadURL,
+            AudioStreamDownloadURL,
+            FLVStreamDownloadURL,
+            MP4StreamDownloadURL,
+        ]
     ]:
         """
         提取出分辨率、音质等信息最好的音视频流。
@@ -2477,12 +2436,8 @@ class VideoDownloadURLDataDetecter:
 
         **以上参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
         """
-        if self.check_flv_stream():
-            return self.detect_all()  # type: ignore
-        elif self.check_html5_mp4_stream():
-            return self.detect_all()  # type: ignore
-        elif self.check_episode_try_mp4_stream():
-            return self.detect_all()  # type: ignore
+        if self.check_flv_mp4_stream():
+            return self.detect_all()
         else:
             data = self.detect(
                 video_max_quality=video_max_quality,

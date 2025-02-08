@@ -127,7 +127,7 @@ async def main():
     detecter = video.VideoDownloadURLDataDetecter(data=download_url_data)
     streams = detecter.detect_best_streams()
     # 有 MP4 流 / FLV 流两种可能
-    if detecter.check_flv_stream() == True:
+    if detecter.check_flv_mp4_stream() == True:
         # FLV 流下载
         await download(streams[0].url, "flv_temp.flv", "下载 FLV 音视频流")
         # 转换文件格式
