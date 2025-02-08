@@ -69,7 +69,7 @@ $ pip3 install aiohttp
 $ pip3 install httpx
 
 # curl_cffi
-$ pip3 install "curl_cffi>=0.8.1b9"
+$ pip3 install "curl_cffi"
 ```
 
 接下来我们来获取视频的播放量等信息：

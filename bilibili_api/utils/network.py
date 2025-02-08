@@ -983,7 +983,7 @@ def get_client() -> BiliAPIClient:
     """
     if selected_client == "":
         raise ArgsException(
-            "尚未安装第三方请求库或未注册自定义第三方请求库。\n$ pip3 install (curl_cffi==0.8.1b9|httpx|aiohttp)"
+            "尚未安装第三方请求库或未注册自定义第三方请求库。\n$ pip3 install (curl_cffi|httpx|aiohttp)"
         )
     global session_pool
     pool = session_pool.get(selected_client)
