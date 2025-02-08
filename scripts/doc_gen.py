@@ -57,7 +57,6 @@ ignored_funcs = [
     "parse_tv_resp",
     "photo",
     "qrcode_image",
-    "start",
     "update_qrcode_data",
     "update_tv_qrcode_data",
     "verify_tv_login_status",

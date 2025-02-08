@@ -13,6 +13,7 @@ from bilibili_api import audio_uploader
 - [class AudioUploader()](#class-AudioUploader)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def abort()](#async-def-abort)
+  - [async def start()](#async-def-start)
 - [class AudioUploaderEvents()](#class-AudioUploaderEvents)
 - [class AuthorInfo()](#class-AuthorInfo)
 - [class CompilationCategories()](#class-CompilationCategories)
@@ -62,6 +63,16 @@ from bilibili_api import audio_uploader
 ### async def abort()
 
 中断更改
+
+
+
+**Returns:** None
+
+
+
+### async def start()
+
+开始上传
 
 
 

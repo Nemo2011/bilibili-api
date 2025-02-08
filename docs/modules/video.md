@@ -904,12 +904,20 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 - CLICKBAIT(): 不良封面/标题
 - POLITICAL_RUMORS(): 涉政谣言
 - SOCIAL_RUMORS(): 涉社会事件谣言
-- COVID_RUMORS(): 疫情谣言
 - UNREAL_EVENT(): 虚假不实消息
 - OTHER(): 有其他问题
 - LEAD_WAR(): 引战
 - CANNOT_CHARGE(): 不能参加充电
 - UNREAL_COPYRIGHT(source: str): 转载/自制类型错误
+- ILLEGAL_POPULARIZE(): 违规推广
+- ILLEGAL_OTHER(): 其他不规范行为
+- DANGEROUS(): 危险行为
+- OTHER_NEW(): 其他
+- COOPERATE_INFRINGEMENT(): 企业商誉侵权
+- INFRINGEMENT(): 侵权申诉
+- VIDEO_INFRINGEMENT(): 盗搬稿件-路人举报
+- DISCOMFORT(): 观感不适
+- ILLEGAL_URL(): 违法信息外链
 
 
 

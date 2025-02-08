@@ -20,6 +20,7 @@ from bilibili_api import session
   - [def on()](#def-on)
   - [async def reply()](#async-def-reply)
   - [async def run()](#async-def-run)
+  - [async def start()](#async-def-start)
 - [async def fetch\_session\_msgs()](#async-def-fetch\_session\_msgs)
 - [async def get\_at()](#async-def-get\_at)
 - [async def get\_likes()](#async-def-get\_likes)
@@ -149,6 +150,19 @@ from bilibili_api import session
 ### async def run()
 
 非阻塞异步爬虫 定时发送请求获取消息
+
+
+| name | type | description |
+| - | - | - |
+| exclude_self: bool 是否排除自己发出的消息，默认排除 |  | bool 是否排除自己发出的消息，默认排除 |
+
+**Returns:** None
+
+
+
+### async def start()
+
+阻塞异步启动 通过调用 self.close() 后可断开连接
 
 
 | name | type | description |

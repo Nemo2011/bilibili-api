@@ -14,6 +14,7 @@ from bilibili_api import video_uploader
 - [class VideoEditor()](#class-VideoEditor)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def abort()](#async-def-abort)
+  - [async def start()](#async-def-start)
 - [class VideoEditorEvents()](#class-VideoEditorEvents)
 - [class VideoMeta()](#class-VideoMeta)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
@@ -26,6 +27,7 @@ from bilibili_api import video_uploader
 - [class VideoUploader()](#class-VideoUploader)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def abort()](#async-def-abort)
+  - [async def start()](#async-def-start)
 - [class VideoUploaderEvents()](#class-VideoUploaderEvents)
 - [class VideoUploaderPage()](#class-VideoUploaderPage)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
@@ -110,6 +112,17 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 **Returns:** None
+
+
+
+### async def start()
+
+开始更改
+
+
+
+**Returns:** dict: 返回带有 bvid 和 aid 的字典。
+
 
 
 
@@ -336,6 +349,17 @@ meta 保留字段：videos, cover
 
 
 **Returns:** None
+
+
+
+### async def start()
+
+开始上传
+
+
+
+**Returns:** dict: 返回带有 bvid 和 aid 的字典。
+
 
 
 

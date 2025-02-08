@@ -78,12 +78,20 @@ class VideoAppealReasonType:
     - CLICKBAIT(): 不良封面/标题
     - POLITICAL_RUMORS(): 涉政谣言
     - SOCIAL_RUMORS(): 涉社会事件谣言
-    - COVID_RUMORS(): 疫情谣言
     - UNREAL_EVENT(): 虚假不实消息
     - OTHER(): 有其他问题
     - LEAD_WAR(): 引战
     - CANNOT_CHARGE(): 不能参加充电
     - UNREAL_COPYRIGHT(source: str): 转载/自制类型错误
+    - ILLEGAL_POPULARIZE(): 违规推广
+    - ILLEGAL_OTHER(): 其他不规范行为
+    - DANGEROUS(): 危险行为
+    - OTHER_NEW(): 其他
+    - COOPERATE_INFRINGEMENT(): 企业商誉侵权
+    - INFRINGEMENT(): 侵权申诉
+    - VIDEO_INFRINGEMENT(): 盗搬稿件-路人举报
+    - DISCOMFORT(): 观感不适
+    - ILLEGAL_URL(): 违法信息外链
     """
 
     ILLEGAL = lambda: 2
@@ -96,11 +104,19 @@ class VideoAppealReasonType:
     CLICKBAIT = lambda: 10013
     POLITICAL_RUMORS = lambda: 10014
     SOCIAL_RUMORS = lambda: 10015
-    COVID_RUMORS = lambda: 10016
     UNREAL_EVENT = lambda: 10017
     OTHER = lambda: 1
     LEAD_WAR = lambda: 9
     CANNOT_CHARGE = lambda: 10
+    ILLEGAL_POPULARIZE = lambda: 10018
+    ILLEGAL_OTHER = lambda: 10019
+    DANGEROUS = lambda: 10020
+    OTHER_NEW = lambda: 10022
+    COOPERATE_INFRINGEMENT = lambda: 10023
+    INFRINGEMENT = lambda: 10024
+    VIDEO_INFRINGEMENT = lambda: 10026
+    DISCOMFORT = lambda: 10021
+    ILLEGAL_URL = lambda: 10025
 
     @staticmethod
     def PLAGIARISM(bvid: str):

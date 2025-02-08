@@ -61,6 +61,7 @@ from bilibili_api import interactive_video
 - [class InteractiveVideoDownloader()](#class-InteractiveVideoDownloader)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def abort()](#async-def-abort)
+  - [async def start()](#async-def-start)
 - [class InteractiveVideoDownloaderEvents()](#class-InteractiveVideoDownloaderEvents)
 - [class InteractiveVideoDownloaderMode()](#class-InteractiveVideoDownloaderMode)
 - [def get\_ivi\_file\_meta()](#def-get\_ivi\_file\_meta)
@@ -638,6 +639,16 @@ o----|xxx| (TEXT_RIGHT)
 ### async def abort()
 
 中断下载
+
+
+
+**Returns:** None
+
+
+
+### async def start()
+
+开始下载
 
 
 

@@ -48,6 +48,7 @@ from bilibili_api import live
   - [async def send\_gift\_silver()](#async-def-send\_gift\_silver)
   - [async def send\_popular\_ticket()](#async-def-send\_popular\_ticket)
   - [async def sign\_up\_dahanghai()](#async-def-sign\_up\_dahanghai)
+  - [async def start()](#async-def-start)
   - [async def stop()](#async-def-stop)
   - [async def unban\_user()](#async-def-unban\_user)
   - [async def update\_news()](#async-def-update\_news)
@@ -590,6 +591,20 @@ Events：
 | name | type | description |
 | - | - | - |
 | task_id | int, optional | 签到任务 ID. Defaults to 1447 |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
+### async def start()
+
+开始直播
+
+
+| name | type | description |
+| - | - | - |
+| area_id | int | 直播分区id（子分区id）。可使用 live_area 模块查询。 |
 
 **Returns:** dict: 调用 API 返回的结果
 
