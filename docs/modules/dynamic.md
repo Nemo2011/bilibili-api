@@ -291,8 +291,8 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| up_choose_comment | [bool | 精选评论flag |
-| close_comment | [bool | 关闭评论flag |
+| up_choose_comment | bool | 精选评论flag |
+| close_comment | bool | 关闭评论flag |
 
 **Returns:** None
 

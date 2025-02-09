@@ -165,7 +165,7 @@ async def make_ass_file_subtitle(
                 f.write(json.dumps(req))
             export_ass_from_json(file_dir, out)
             return
-    raise ValueError("没有找到指定字幕")
+    raise ArgsException("没有找到指定字幕")
 
 
 async def make_ass_file_danmakus_protobuf(
@@ -173,7 +173,6 @@ async def make_ass_file_danmakus_protobuf(
     page: int = 0,
     out="test.ass",
     cid: Union[int, None] = None,
-    credential: Union[Credential, None] = None,
     date=None,
     font_name="Simsun",
     font_size=25.0,
@@ -195,8 +194,6 @@ async def make_ass_file_danmakus_protobuf(
 
         cid         (int | None, optional)                   : cid. Defaults to None.
 
-        credential  (Credential | None, optional)            : 凭据. Defaults to None.
-
         date        (datetime.date, optional)                : 获取时间. Defaults to None.
 
         font_name   (str, optional)                          : 字体. Defaults to "Simsun".
@@ -209,9 +206,6 @@ async def make_ass_file_danmakus_protobuf(
 
         static_time (float, optional)                        : 静态弹幕持续时间. Defaults to 5.
     """
-    credential = credential if credential else Credential()
-    if date:
-        credential.raise_for_no_sessdata()
     if isinstance(obj, Video):
         v = obj
         if isinstance(obj, Episode):
@@ -241,7 +235,7 @@ async def make_ass_file_danmakus_protobuf(
         stage_size = (1440, 1080)
         danmakus = await obj.get_danmakus()
     else:
-        raise ValueError("请传入 Video/Episode/CheeseVideo 类！")
+        raise ArgsException("请传入 Video/Episode/CheeseVideo 类！")
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write("<i>")
         for d in danmakus:
@@ -322,7 +316,7 @@ async def make_ass_file_danmakus_xml(
         stage_size = (1440, 1080)
         xml_content = await obj.get_danmaku_xml()
     else:
-        raise ValueError("请传入 Video/Episode/CheeseVideo 类！")
+        raise ArgsException("请传入 Video/Episode/CheeseVideo 类！")
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write(xml_content)
     export_ass_from_xml(

@@ -827,6 +827,10 @@ Credential 类未提供 sessdata 时的异常。
 
 ### def \_\_init\_\_()
 
+大会员专属颜色文字填充：http://i0.hdslb.com/bfs/dm/9dcd329e617035b45d2041ac889c49cb5edd3e44.png
+
+大会员专属颜色背景填充：http://i0.hdslb.com/bfs/dm/ba8e32ae03a0a3f70f4e51975a965a9ddce39d50.png
+
 
 | name | type | description |
 | - | - | - |
@@ -845,8 +849,6 @@ Credential 类未提供 sessdata 时的异常。
 | pool | int, optional | 池。Defaults to 0. |
 | attr | int, optional | 暂不清楚。 Defaults to -1. |
 | uid | int, optional | 弹幕发送者 UID。Defaults to -1. |
-| 大会员专属颜色文字填充：http://i0.hdslb.com/bfs/dm/9dcd329e617035b45d2041ac889c49cb5edd3e44.png |  | //i0.hdslb.com/bfs/dm/9dcd329e617035b45d2041ac889c49cb5edd3e44.png |
-| 大会员专属颜色背景填充：http://i0.hdslb.com/bfs/dm/ba8e32ae03a0a3f70f4e51975a965a9ddce39d50.png |  | //i0.hdslb.com/bfs/dm/ba8e32ae03a0a3f70f4e51975a965a9ddce39d50.png |
 
 
 **@staticmethod** 
@@ -875,7 +877,8 @@ Credential 类未提供 sessdata 时的异常。
 
 
 
-**Returns:** None
+**Returns:** xml
+
 
 
 

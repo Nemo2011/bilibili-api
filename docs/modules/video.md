@@ -15,9 +15,8 @@ from bilibili_api import video
 - [class AudioQuality()](#class-AudioQuality)
 - [class AudioStreamDownloadURL()](#class-AudioStreamDownloadURL)
 - [class DanmakuOperatorType()](#class-DanmakuOperatorType)
-- [class EpisodeTryMP4DownloadURL()](#class-EpisodeTryMP4DownloadURL)
 - [class FLVStreamDownloadURL()](#class-FLVStreamDownloadURL)
-- [class HTML5MP4DownloadURL()](#class-HTML5MP4DownloadURL)
+- [class MP4StreamDownloadURL()](#class-MP4StreamDownloadURL)
 - [class Video()](#class-Video)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def add\_tag()](#async-def-add\_tag)
@@ -74,9 +73,7 @@ from bilibili_api import video
 - [class VideoCodecs()](#class-VideoCodecs)
 - [class VideoDownloadURLDataDetecter()](#class-VideoDownloadURLDataDetecter)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
-  - [def check\_episode\_try\_mp4\_stream()](#def-check\_episode\_try\_mp4\_stream)
-  - [def check\_flv\_stream()](#def-check\_flv\_stream)
-  - [def check\_html5\_mp4\_stream()](#def-check\_html5\_mp4\_stream)
+  - [def check\_flv\_mp4\_stream()](#def-check\_flv\_mp4\_stream)
   - [def check\_video\_and\_audio\_stream()](#def-check\_video\_and\_audio\_stream)
   - [def detect()](#def-detect)
   - [def detect\_all()](#def-detect\_all)
@@ -142,22 +139,6 @@ from bilibili_api import video
 
 **@dataclasses.dataclass** 
 
-## class EpisodeTryMP4DownloadURL()
-
-(@dataclass)
-
-番剧/课程试看的 mp4 播放流
-
-
-| name | type | description |
-| - | - | - |
-| url | str | 番剧试看的 mp4 播放流 |
-
-
----
-
-**@dataclasses.dataclass** 
-
 ## class FLVStreamDownloadURL()
 
 (@dataclass)
@@ -174,11 +155,11 @@ FLV 视频流
 
 **@dataclasses.dataclass** 
 
-## class HTML5MP4DownloadURL()
+## class MP4StreamDownloadURL()
 
 (@dataclass)
 
-可供 HTML5 播放的 mp4 视频流
+MP4 视频流
 
 
 | name | type | description |
@@ -993,46 +974,24 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | data | Dict | `Video.get_download_url` 返回的结果 |
 
 
-### def check_episode_try_mp4_stream()
+### def check_flv_mp4_stream()
 
-判断是否为番剧/课程试看的 mp4 视频流
-
-
-
-**Returns:** bool: 是否为番剧试看的 mp4 视频流
+判断是否为 FLV / MP4 流
 
 
 
-
-### def check_flv_stream()
-
-判断是否为 FLV 视频流
-
-
-
-**Returns:** bool: 是否为 FLV 视频流
-
-
-
-
-### def check_html5_mp4_stream()
-
-判断是否为 HTML5 可播放的 mp4 视频流
-
-
-
-**Returns:** bool: 是否为 HTML5 可播放的 mp4 视频流
+**Returns:** bool: 是否为 FLV / MP4 流
 
 
 
 
 ### def check_video_and_audio_stream()
 
-判断是否为音视频分离流
+判断是否为 DASH （音视频分离）
 
 
 
-**Returns:** bool: 是否为音视频分离流
+**Returns:** bool: 是否为 DASH
 
 
 
@@ -1059,7 +1018,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 **Returns:** List[VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | HTML5MP4DownloadURL | EpisodeTryMP4DownloadURL]: 提取出来的视频/音频流
 
 
-**参数仅能在音视频流分离的情况下产生作用，flv / mp4 试看流 / html5 mp4 流下以下参数均没有作用**
+**参数仅能在音视频流分离的情况下产生作用，flv / mp4 流下以下参数均没有作用**
 
 
 

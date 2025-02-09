@@ -61,6 +61,10 @@ class Danmaku:
         uid: int = -1,
     ):
         """
+        大会员专属颜色文字填充：http://i0.hdslb.com/bfs/dm/9dcd329e617035b45d2041ac889c49cb5edd3e44.png
+
+        大会员专属颜色背景填充：http://i0.hdslb.com/bfs/dm/ba8e32ae03a0a3f70f4e51975a965a9ddce39d50.png
+
         Args:
             text      (str)                             : 弹幕文本。
 
@@ -91,10 +95,6 @@ class Danmaku:
             attr      (int, optional)                   : 暂不清楚。 Defaults to -1.
 
             uid       (int, optional)                   : 弹幕发送者 UID。Defaults to -1.
-
-        大会员专属颜色文字填充：http://i0.hdslb.com/bfs/dm/9dcd329e617035b45d2041ac889c49cb5edd3e44.png
-
-        大会员专属颜色背景填充：http://i0.hdslb.com/bfs/dm/ba8e32ae03a0a3f70f4e51975a965a9ddce39d50.png
         """
         self.text = text
         self.dm_time = dm_time
@@ -141,6 +141,9 @@ class Danmaku:
     def to_xml(self):
         """
         将弹幕转换为 xml 格式弹幕
+
+        Returns:
+            xml
         """
         txt = self.text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         string = f'<d p="{self.dm_time},{self.mode},{self.font_size},{int(self.color, 16)},{self.send_time},{self.pool},{self.crc32_id},{self.id_},11">{txt}</d>'
