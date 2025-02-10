@@ -1,6 +1,6 @@
 beautifulsoup4~=4.13.3
 colorama~=0.4.6
-lxml~=5.3.0
+lxml~=5.3.1
 pyyaml~=6.0
 brotli~=1.1.0
 qrcode~=8.0
