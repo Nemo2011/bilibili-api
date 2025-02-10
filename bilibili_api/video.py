@@ -1197,7 +1197,7 @@ class Video:
             cid        (int | None, optional): cid. Defaults to None.
 
         Return:
-            xml 文件源
+            str: xml 文件源
         """
         if cid is None:
             if page_index is None:
@@ -1498,7 +1498,7 @@ class Video:
             cid (int | None): 分 P ID,从视频信息中获取
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         if cid is None:
             raise ArgsException("需要 cid")
@@ -1519,7 +1519,7 @@ class Video:
             epid (int | None): 番剧分集 ID,从番剧信息中获取
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         if cid is None:
             raise ArgsException("需要 cid")
@@ -1632,7 +1632,7 @@ class Video:
         获取弹幕快照
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         api = API["danmaku"]["snapshot"]
 
@@ -1658,7 +1658,7 @@ class Video:
 
             cid(int | None, optional)       : 分 P 编码
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         if cid is None:
             if page_index is None:
@@ -1686,7 +1686,7 @@ class Video:
             cid(int | None)       : 分 P 编码
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         if cid is None:
             if page_index is None:
@@ -1707,7 +1707,7 @@ class Video:
         添加视频至稍后再看列表
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()
@@ -1722,7 +1722,7 @@ class Video:
         从稍后再看列表删除视频
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         self.credential.raise_for_no_sessdata()
         self.credential.raise_for_no_bili_jct()

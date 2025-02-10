@@ -61,7 +61,7 @@ class AsyncEvent:
             handler (Union[Callable, Coroutine]):   要移除的函数。
 
         Returns:
-            bool, 是否移除成功。
+            bool: 是否移除成功。
         """
         name = name.upper()
         if name in self.__handlers:
@@ -92,7 +92,7 @@ class AsyncEvent:
 
         Args:
             name (str):       事件名。
-            *args, **kwargs:  要传递给函数的参数。
+            *args, **kwargs (Any):  要传递给函数的参数。
         """
         if len(args) == 0 and len(kwargs.keys()) == 0:
             args = [{}]

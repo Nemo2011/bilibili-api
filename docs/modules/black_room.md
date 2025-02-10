@@ -96,7 +96,7 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### def \_\_init\_\_()
@@ -104,8 +104,8 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| black_room_id | int | 小黑屋 id |
-| credential | Credential \| None, optional | 凭据类. Defaults to None. |
+| `black_room_id` | `int` | 小黑屋 id |
+| `credential` | `Credential \| None, optional` | 凭据类. Defaults to None. |
 
 
 ### async def get_details()
@@ -114,7 +114,7 @@ from bilibili_api import black_room
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -125,7 +125,7 @@ from bilibili_api import black_room
 
 
 
-**Returns:** int: 小黑屋 id
+**Returns:** `int`:  小黑屋 id
 
 
 
@@ -136,7 +136,7 @@ from bilibili_api import black_room
 
 
 
-**Returns:** BlackReasonType: 封禁原因枚举类
+**Returns:** `BlackReasonType`:  封禁原因枚举类
 
 
 
@@ -148,9 +148,8 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| id_ | int | 小黑屋 id |
+| `id_` | `int` | 小黑屋 id |
 
-**Returns:** None
 
 
 
@@ -190,8 +189,8 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| case_id | str | 案件 id |
-| credential | Credential | 凭据类 |
+| `case_id` | `str` | 案件 id |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### async def get_details()
@@ -200,7 +199,7 @@ from bilibili_api import black_room
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -212,10 +211,10 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| pn | int, optional | 页数. Defaults to 1. |
-| ps | int, optional | 每页数量. Defaults to 20. |
+| `pn` | `int, optional` | 页数. Defaults to 1. |
+| `ps` | `int, optional` | 每页数量. Defaults to 20. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -227,12 +226,12 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| opinion | JuryVoteOpinion | 投票选项类型 |
-| is_insider | bool | 是否观看此类视频 |
-| is_anonymous | bool | 是否匿名投票 |
-| reason | str, optional | 投票理由. Defaults to None. |
+| `opinion` | `JuryVoteOpinion` | 投票选项类型 |
+| `is_insider` | `bool` | 是否观看此类视频 |
+| `is_anonymous` | `bool` | 是否匿名投票 |
+| `reason` | `str, optional` | 投票理由. Defaults to None. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -269,12 +268,11 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| from_ | BlackFrom | 违规来源. Defaults to BlackFrom.ALL. |
-| type_ | int | 违规类型. Defaults to BlackType.ALL. |
-| pn | int | 页数. Defaults to 1. |
-| credential | Credential \| None | 凭据. Defaults to None. |
+| `from_` | `BlackFrom` | 违规来源. Defaults to BlackFrom.ALL. |
+| `type_` | `int` | 违规类型. Defaults to BlackType.ALL. |
+| `pn` | `int` | 页数. Defaults to 1. |
+| `credential` | `Credential \| None` | 凭据. Defaults to None. |
 
-**Returns:** None
 
 
 
@@ -287,11 +285,11 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
-| pn | int, optional | 页数. Defaults to 1. |
-| ps | int, optional | 每页数量. Defaults to 20. |
+| `credential` | `Credential` | 凭据类 |
+| `pn` | `int, optional` | 页数. Defaults to 1. |
+| `ps` | `int, optional` | 每页数量. Defaults to 20. |
 
-**Returns:** List[JuryCase]: 仲裁案件列表
+**Returns:** `List[JuryCase]`:  仲裁案件列表
 
 
 
@@ -305,9 +303,9 @@ from bilibili_api import black_room
 
 | name | type | description |
 | - | - | - |
-| credential | Credential \| None, optional | 凭据类. Defaults to None. |
+| `credential` | `Credential \| None, optional` | 凭据类. Defaults to None. |
 
-**Returns:** JuryCase: 案件类
+**Returns:** `JuryCase`:  案件类
 
 
 

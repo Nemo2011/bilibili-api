@@ -35,8 +35,8 @@ from bilibili_api import vote
 
 | name | type | description |
 | - | - | - |
-| vote_id | int | vote_id, 获取：https |
-| credential | Credential | 凭据类 |
+| `vote_id` | `int` | vote_id, 获取：https |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### def \_\_init\_\_()
@@ -44,8 +44,8 @@ from bilibili_api import vote
 
 | name | type | description |
 | - | - | - |
-| vote_id | int | vote_id, 获取：https |
-| credential | Credential | 凭据类，非必要. |
+| `vote_id` | `int` | vote_id, 获取：https |
+| `credential` | `Credential` | 凭据类，非必要. |
 
 
 ### async def get_info()
@@ -54,7 +54,7 @@ from bilibili_api import vote
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -65,7 +65,7 @@ from bilibili_api import vote
 
 
 
-**Returns:** str: 投票标题
+**Returns:** `str`:  投票标题
 
 
 
@@ -76,7 +76,7 @@ from bilibili_api import vote
 
 
 
-**Returns:** int: 投票 id
+**Returns:** `int`:  投票 id
 
 
 
@@ -88,16 +88,16 @@ from bilibili_api import vote
 
 | name | type | description |
 | - | - | - |
-| vote_id | int | vote_id |
-| title | str | 投票标题 |
-| _type | VoteType | 投票类型 |
-| choice_cnt | int | 最多几项 |
-| duration | int | 投票持续秒数 常用 |
-| choices | VoteChoices | 投票选项 |
-| credential | Credential | Credential 枚举类 |
-| desc | Optional[str], optional | 投票描述. Defaults to None. |
+| `vote_id` | `int` | vote_id |
+| `title` | `str` | 投票标题 |
+| `_type` | `VoteType` | 投票类型 |
+| `choice_cnt` | `int` | 最多几项 |
+| `duration` | `int` | 投票持续秒数 常用 |
+| `choices` | `VoteChoices` | 投票选项 |
+| `credential` | `Credential` | Credential 枚举类 |
+| `desc` | `Optional[str], optional` | 投票描述. Defaults to None. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -124,10 +124,9 @@ from bilibili_api import vote
 
 | name | type | description |
 | - | - | - |
-| desc | str | 选项描述 |
-| image | str, Picture, optional | 选项的图片链接，用于图片投票。支持 Picture 类. Defaults to None. |
+| `desc` | `str` | 选项描述 |
+| `image` | `str, Picture, optional` | 选项的图片链接，用于图片投票。支持 Picture 类. Defaults to None. |
 
-**Returns:** None
 
 
 
@@ -137,7 +136,7 @@ from bilibili_api import vote
 
 
 
-**Returns:** dict: choices
+**Returns:** `dict`:  choices
 
 
 
@@ -149,9 +148,8 @@ from bilibili_api import vote
 
 | name | type | description |
 | - | - | - |
-| index | int | 选项索引 |
+| `index` | `int` | 选项索引 |
 
-**Returns:** None
 
 
 
@@ -178,15 +176,15 @@ from bilibili_api import vote
 
 | name | type | description |
 | - | - | - |
-| title | str | 投票标题 |
-| _type | VoteType | 投票类型 |
-| choice_cnt | int | 最多几项 |
-| duration | int | 投票持续秒数 常用 |
-| choices | VoteChoices | 投票选项 |
-| credential | Credential | Credential |
-| desc | Optional[str], optional | 投票描述. Defaults to None. |
+| `title` | `str` | 投票标题 |
+| `_type` | `VoteType` | 投票类型 |
+| `choice_cnt` | `int` | 最多几项 |
+| `duration` | `int` | 投票持续秒数 常用 |
+| `choices` | `VoteChoices` | 投票选项 |
+| `credential` | `Credential` | Credential |
+| `desc` | `Optional[str], optional` | 投票描述. Defaults to None. |
 
-**Returns:** Vote: Vote 类
+**Returns:** `Vote`:  Vote 类
 
 
 

@@ -164,7 +164,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -177,7 +177,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -191,9 +191,9 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 搜索关键词 |
+| `keyword` | `str` | 搜索关键词 |
 
-**Returns:** List[str]: 关键词列表
+**Returns:** `List[str]`:  关键词列表
 
 
 
@@ -207,10 +207,10 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 搜索关键词 |
-| page | int | 页码. Defaults to 1. |
+| `keyword` | `str` | 搜索关键词 |
+| `page` | `int` | 页码. Defaults to 1. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -226,19 +226,19 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 搜索关键词 |
-| search_type | SearchObjectType \| None, optional | 搜索类型 |
-| order_type | OrderUser \| OrderLiveRoom \| OrderArticle \| OrderVideo \| None, optional | 排序分类类型 |
-| time_range | int, optional | 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上 |
-| video_zone_type | int \| ZoneTypes \| None, optional | 话题类型，指定 tid (可使用 video_zone 模块查询) |
-| order_sort | int \| None, optional | 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1 |
-| category_id | CategoryTypeArticle \| CategoryTypePhoto \| int \| None, optional | 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效 |
-| time_start | str, optional | 指定开始时间，与结束时间搭配使用，格式为："YYYY-MM-DD" |
-| time_end | str, optional | 指定结束时间，与开始时间搭配使用，格式为："YYYY-MM-DD" |
-| page | int, optional | 页码 |
-| page_size | int, optional | 每一页的数据大小 |
+| `keyword` | `str` | 搜索关键词 |
+| `search_type` | `SearchObjectType \| None, optional` | 搜索类型 |
+| `order_type` | `OrderUser \| OrderLiveRoom \| OrderArticle \| OrderVideo \| None, optional` | 排序分类类型 |
+| `time_range` | `int, optional` | 指定时间，自动转换到指定区间，只在视频类型下生效 有四种：10分钟以下，10-30分钟，30-60分钟，60分钟以上 |
+| `video_zone_type` | `int \| ZoneTypes \| None, optional` | 话题类型，指定 tid (可使用 video_zone 模块查询) |
+| `order_sort` | `int \| None, optional` | 用户粉丝数及等级排序顺序 默认为0 由高到低：0 由低到高：1 |
+| `category_id` | `CategoryTypeArticle \| CategoryTypePhoto \| int \| None, optional` | 专栏/相簿分区筛选，指定分类，只在相册和专栏类型下生效 |
+| `time_start` | `str, optional` | 指定开始时间，与结束时间搭配使用，格式为："YYYY-MM-DD" |
+| `time_end` | `str, optional` | 指定结束时间，与开始时间搭配使用，格式为："YYYY-MM-DD" |
+| `page` | `int, optional` | 页码 |
+| `page_size` | `int, optional` | 每一页的数据大小 |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -252,12 +252,12 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 搜索关键词 |
-| page_num | int | 页码. Defaults to 1. |
-| page_size | int | 每一页的数据大小. Defaults to 30. |
-| order | OrderCheese | 排序方式. Defaults to OrderCheese.RECOMMEND |
+| `keyword` | `str` | 搜索关键词 |
+| `page_num` | `int` | 页码. Defaults to 1. |
+| `page_size` | `int` | 每一页的数据大小. Defaults to 30. |
+| `order` | `OrderCheese` | 排序方式. Defaults to OrderCheese.RECOMMEND |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -271,9 +271,9 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 搜索关键词 |
+| `keyword` | `str` | 搜索关键词 |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -287,12 +287,12 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 搜索关键词 |
-| page_num | int | 页码. Defaults to 1. |
-| page_size | int | 每一页的数据大小. Defaults to 9. |
-| credential | Credential | 凭据类. Defaults to None. |
+| `keyword` | `str` | 搜索关键词 |
+| `page_num` | `int` | 页码. Defaults to 1. |
+| `page_size` | `int` | 每一页的数据大小. Defaults to 9. |
+| `credential` | `Credential` | 凭据类. Defaults to None. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

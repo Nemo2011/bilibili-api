@@ -44,7 +44,7 @@ from bilibili_api import channel_series
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类. Defaults to None. |
+| `credential` | `Credential` | 凭据类. Defaults to None. |
 
 
 ### def \_\_init\_\_()
@@ -52,10 +52,10 @@ from bilibili_api import channel_series
 
 | name | type | description |
 | - | - | - |
-| uid | int | 用户 uid. Defaults to -1. |
-| type_ | ChannelSeriesType | 合集与列表类型. Defaults to ChannelSeriesType.SERIES. |
-| id_ | int | season_id 或 series_id. Defaults to -1. |
-| credential | Credential | 凭证. Defaults to None. |
+| `uid` | `int` | 用户 uid. Defaults to -1. |
+| `type_` | `ChannelSeriesType` | 合集与列表类型. Defaults to ChannelSeriesType.SERIES. |
+| `id_` | `int` | season_id 或 series_id. Defaults to -1. |
+| `credential` | `Credential` | 凭证. Defaults to None. |
 
 
 ### async def get_meta()
@@ -64,7 +64,7 @@ from bilibili_api import channel_series
 
 
 
-**Returns:** 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -75,11 +75,11 @@ from bilibili_api import channel_series
 
 | name | type | description |
 | - | - | - |
-| sort | ChannelOrder | 排序方式 |
-| pn | int | 页数，默认为 1 |
-| ps | int | 每一页显示的视频数量 |
+| `sort` | `ChannelOrder` | 排序方式 |
+| `pn` | `int` | 页数，默认为 1 |
+| `ps` | `int` | 每一页显示的视频数量 |
 
-**Returns:** 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -109,11 +109,11 @@ from bilibili_api import channel_series
 
 | name | type | description |
 | - | - | - |
-| series_id | int | 旧版合集 id。 |
-| aids | List[int] | 视频 aid 列表。 |
-| credential | Credential | 凭据类。 |
+| `series_id` | `int` | 旧版合集 id。 |
+| `aids` | `List[int]` | 视频 aid 列表。 |
+| `credential` | `Credential` | 凭据类。 |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -127,13 +127,13 @@ from bilibili_api import channel_series
 
 | name | type | description |
 | - | - | - |
-| name | str | 列表名称。 |
-| aids | List[int] | 要加入列表的视频的 aid 列表。 |
-| keywords | List[str] | 列表的关键词。 |
-| description | str | 列表的描述。 |
-| credential | Credential \| None | 凭据类。 |
+| `name` | `str` | 列表名称。 |
+| `aids` | `List[int]` | 要加入列表的视频的 aid 列表。 |
+| `keywords` | `List[str]` | 列表的关键词。 |
+| `description` | `str` | 列表的描述。 |
+| `credential` | `Credential \| None` | 凭据类。 |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -147,11 +147,11 @@ from bilibili_api import channel_series
 
 | name | type | description |
 | - | - | - |
-| series_id | int | 旧版合集 id。 |
-| aids | List[int] | 视频 aid 列表。 |
-| credential | Credential | 凭据类。 |
+| `series_id` | `int` | 旧版合集 id。 |
+| `aids` | `List[int]` | 视频 aid 列表。 |
+| `credential` | `Credential` | 凭据类。 |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -165,10 +165,10 @@ from bilibili_api import channel_series
 
 | name | type | description |
 | - | - | - |
-| series_id | int | 旧版合集 id。 |
-| credential | Credential | 凭据类。 |
+| `series_id` | `int` | 旧版合集 id。 |
+| `credential` | `Credential` | 凭据类。 |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -182,10 +182,9 @@ from bilibili_api import channel_series
 
 | name | type | description |
 | - | - | - |
-| season_id | int | 合集 id |
-| status | bool | 是否订阅状态. Defaults to True. |
+| `season_id` | `int` | 合集 id |
+| `status` | `bool` | 是否订阅状态. Defaults to True. |
 
-**Returns:** None
 
 
 

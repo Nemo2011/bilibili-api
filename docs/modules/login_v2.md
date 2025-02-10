@@ -52,7 +52,7 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| check_url | str | 验证链接 |
+| `check_url` | `str` | 验证链接 |
 
 
 ### async def complete_check()
@@ -62,9 +62,9 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| code | str | 验证码 |
+| `code` | `str` | 验证码 |
 
-**Returns:** Credential: 凭据类
+**Returns:** `Credential`:  凭据类
 
 
 
@@ -75,7 +75,7 @@ from bilibili_api import login_v2
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -87,9 +87,8 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| geetest | Geetest | 极验验证码实例，须完成。验证码类型应为 `GeetestType.VERIFY` |
+| `geetest` | `Geetest` | 极验验证码实例，须完成。验证码类型应为 `GeetestType.VERIFY` |
 
-**Returns:** None
 
 
 
@@ -107,8 +106,8 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| number | str | 手机号 |
-| country | str | 地区/地区码，如 +86 |
+| `number` | `str` | 手机号 |
+| `country` | `str` | 地区/地区码，如 +86 |
 
 
 ---
@@ -127,7 +126,7 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| platform | QrCodeLoginChannel, optional | 平台. (web/tv) Defaults to QrCodeLoginChannel.WEB. |
+| `platform` | `QrCodeLoginChannel, optional` | 平台. (web/tv) Defaults to QrCodeLoginChannel.WEB. |
 
 
 ### async def check_state()
@@ -136,7 +135,7 @@ from bilibili_api import login_v2
 
 
 
-**Returns:** QrCodeLoginEvents: 二维码登录状态
+**Returns:** `QrCodeLoginEvents`:  二维码登录状态
 
 
 
@@ -147,7 +146,6 @@ from bilibili_api import login_v2
 
 
 
-**Returns:** None
 
 
 
@@ -157,7 +155,7 @@ from bilibili_api import login_v2
 
 
 
-**Returns:** Credential: 凭据
+**Returns:** `Credential`:  凭据
 
 
 
@@ -168,7 +166,7 @@ from bilibili_api import login_v2
 
 
 
-**Returns:** Picture: 二维码
+**Returns:** `Picture`:  二维码
 
 
 
@@ -179,7 +177,7 @@ from bilibili_api import login_v2
 
 
 
-**Returns:** str: 二维码的终端字符串
+**Returns:** `str`:  二维码的终端字符串
 
 
 
@@ -190,7 +188,7 @@ from bilibili_api import login_v2
 
 
 
-**Returns:** bool: 是否已经成功登录
+**Returns:** `bool`:  是否已经成功登录
 
 
 
@@ -201,7 +199,7 @@ from bilibili_api import login_v2
 
 
 
-**Returns:** bool: 是否已有二维码
+**Returns:** `bool`:  是否已有二维码
 
 
 
@@ -245,9 +243,9 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| country | str | 地区名 |
+| `country` | `str` | 地区名 |
 
-**Returns:** int: 对应的代码，没有返回 -1
+**Returns:** `int`:  对应的代码，没有返回 -1
 
 
 
@@ -260,7 +258,7 @@ from bilibili_api import login_v2
 
 
 
-**Returns:** List[dict]: 地区列表
+**Returns:** `List[dict]`:  地区列表
 
 
 
@@ -274,9 +272,9 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| code | int | 地区吗 |
+| `code` | `int` | 地区吗 |
 
-**Returns:** int: 对应的代码，没有返回 -1
+**Returns:** `int`:  对应的代码，没有返回 -1
 
 
 
@@ -290,9 +288,9 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| code | Union[str, int] | 代码 |
+| `code` | `Union[str, int]` | 代码 |
 
-**Returns:** bool: 是否存在
+**Returns:** `bool`:  是否存在
 
 
 
@@ -306,9 +304,9 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 关键词 |
+| `keyword` | `str` | 关键词 |
 
-**Returns:** bool: 是否存在
+**Returns:** `bool`:  是否存在
 
 
 
@@ -322,11 +320,11 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| username | str | 用户手机号、邮箱 |
-| password | str | 密码 |
-| geetest | Geetest | 极验验证码实例，须完成。验证码类型应为 `GeetestType.LOGIN` |
+| `username` | `str` | 用户手机号、邮箱 |
+| `password` | `str` | 密码 |
+| `geetest` | `Geetest` | 极验验证码实例，须完成。验证码类型应为 `GeetestType.LOGIN` |
 
-**Returns:** Union[Credential, LoginCheck]: 如果需要验证，会返回 `LoginCheck` 类，否则返回 `Credential` 类。
+**Returns:** `Union[Credential, LoginCheck]`:  如果需要验证，会返回 `LoginCheck` 类，否则返回 `Credential` 类。
 
 
 
@@ -340,11 +338,11 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| phonenumber | str | 手机号类 |
-| code | str | 验证码 |
-| captcha_id | str | captcha_id，为 `send_sms` 调用返回结果 |
+| `phonenumber` | `str` | 手机号类 |
+| `code` | `str` | 验证码 |
+| `captcha_id` | `str` | captcha_id，为 `send_sms` 调用返回结果 |
 
-**Returns:** Union[Credential, LoginCheck]: 如果需要验证，会返回 `LoginCheck` 类，否则返回 `Credential` 类。
+**Returns:** `Union[Credential, LoginCheck]`:  如果需要验证，会返回 `LoginCheck` 类，否则返回 `Credential` 类。
 
 
 
@@ -358,9 +356,9 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 关键词 |
+| `keyword` | `str` | 关键词 |
 
-**Returns:** List[dict]: 地区列表
+**Returns:** `List[dict]`:  地区列表
 
 
 
@@ -374,10 +372,10 @@ from bilibili_api import login_v2
 
 | name | type | description |
 | - | - | - |
-| phonenumber | PhoneNumber | 手机号类 |
-| geetest | Geetest | 极验验证码实例，须完成。验证码类型应为 `GeetestType.LOGIN` |
+| `phonenumber` | `PhoneNumber` | 手机号类 |
+| `geetest` | `Geetest` | 极验验证码实例，须完成。验证码类型应为 `GeetestType.LOGIN` |
 
-**Returns:** str: captcha_id，需传入 `login_with_sms`
+**Returns:** `str`:  captcha_id，需传入 `login_with_sms`
 
 
 

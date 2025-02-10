@@ -283,7 +283,7 @@ class InteractiveJumpingCommand:
         执行操作
 
         Returns:
-            List[InteractiveVariable]
+            List[InteractiveVariable]: 所有变量的最终值
         """
         if self.__command == "":
             return self.__vars

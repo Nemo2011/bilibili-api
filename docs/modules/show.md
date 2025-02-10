@@ -73,11 +73,11 @@ isBuyerValid (bool): 默认为 True
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | Credential 对象 |
-| target_buyer | BuyerInfo | 购票人 |
-| project_id | int | 展出id |
-| session | Session | Session 对象 |
-| ticket | Ticket | Ticket 对象 |
+| `credential` | `Credential` | Credential 对象 |
+| `target_buyer` | `BuyerInfo` | 购票人 |
+| `project_id` | `int` | 展出id |
+| `session` | `Session` | Session 对象 |
+| `ticket` | `Ticket` | Ticket 对象 |
 
 
 ### async def create_order()
@@ -86,7 +86,7 @@ isBuyerValid (bool): 默认为 True
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -97,7 +97,7 @@ isBuyerValid (bool): 默认为 True
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -151,9 +151,9 @@ sale_end (str): 开售结束时间
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 登录凭证 |
+| `credential` | `Credential` | 登录凭证 |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -167,9 +167,9 @@ sale_end (str): 开售结束时间
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 登录凭证 |
+| `credential` | `Credential` | 登录凭证 |
 
-**Returns:** list[BuyerInfo]: BuyerInfo对象列表
+**Returns:** `list[BuyerInfo]`:  BuyerInfo对象列表
 
 
 
@@ -183,9 +183,9 @@ sale_end (str): 开售结束时间
 
 | name | type | description |
 | - | - | - |
-| project_id | int | 项目id |
+| `project_id` | `int` | 项目id |
 
-**Returns:** list[Session]: 存放场次对象的list
+**Returns:** `list[Session]`:  存放场次对象的list
 
 
 
@@ -199,9 +199,9 @@ sale_end (str): 开售结束时间
 
 | name | type | description |
 | - | - | - |
-| project_id | int | 项目id |
+| `project_id` | `int` | 项目id |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

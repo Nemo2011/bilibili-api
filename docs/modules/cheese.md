@@ -58,7 +58,7 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### def \_\_init\_\_()
@@ -69,9 +69,9 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| season_id | int | ssid |
-| ep_id | int | 单集 ep_id |
-| credential | Credential | 凭据类 |
+| `season_id` | `int` | ssid |
+| `ep_id` | `int` | 单集 ep_id |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### async def get_list()
@@ -80,7 +80,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** List[CheeseVideo]: 课程视频列表
+**Returns:** `List[CheeseVideo]`:  课程视频列表
 
 
 
@@ -91,7 +91,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -102,7 +102,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** 调用 API 所得的结果。
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -113,7 +113,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** int: 季度 id
+**Returns:** `int`:  季度 id
 
 
 
@@ -125,9 +125,8 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| ep_id | int | epid |
+| `ep_id` | `int` | epid |
 
-**Returns:** None
 
 
 
@@ -138,9 +137,8 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| season_id | int | 季度 id |
+| `season_id` | `int` | 季度 id |
 
-**Returns:** None
 
 
 
@@ -154,8 +152,8 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
-| cheese | CheeseList | 所属的课程 |
+| `credential` | `Credential` | 凭据类 |
+| `cheese` | `CheeseList` | 所属的课程 |
 
 
 ### def \_\_init\_\_()
@@ -163,8 +161,8 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| epid | int | 单集 ep_id |
-| credential | Credential | 凭据类 |
+| `epid` | `int` | 单集 ep_id |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### async def get_aid()
@@ -173,7 +171,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** int: aid
+**Returns:** `int`:  aid
 
 
 
@@ -184,7 +182,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** CheeseList: 所属课程
+**Returns:** `CheeseList`:  所属课程
 
 
 
@@ -195,7 +193,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** int: cid
+**Returns:** `int`:  cid
 
 
 
@@ -206,7 +204,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -217,7 +215,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** str: 文件源
+**Returns:** `str`:  文件源
 
 
 
@@ -229,11 +227,11 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| date | datetime.Date \| None, optional | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
-| from_seg | int, optional | 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None. |
-| to_seg | int, optional | 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None. |
+| `date` | `datetime.Date \| None, optional` | 指定日期后为获取历史弹幕，精确到年月日。Defaults to None. |
+| `from_seg` | `int, optional` | 从第几段开始(0 开始编号，None 为从第一段开始，一段 6 分钟). Defaults to None. |
+| `to_seg` | `int, optional` | 到第几段结束(0 开始编号，None 为到最后一段，包含编号的段，一段 6 分钟). Defaults to None. |
 
-**Returns:** List[Danmaku]: Danmaku 类的列表。
+**Returns:** `List[Danmaku]`:  Danmaku 类的列表。
 
 
 注意：
@@ -249,7 +247,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -260,7 +258,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** int: epid
+**Returns:** `int`:  epid
 
 
 
@@ -271,7 +269,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** dict: 视频元数据
+**Returns:** `dict`:  视频元数据
 
 
 
@@ -282,7 +280,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -293,7 +291,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** int: 视频已投币数量。
+**Returns:** `int`:  视频已投币数量。
 
 
 
@@ -304,7 +302,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -315,7 +313,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -326,7 +324,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** bool: 视频是否已收藏。
+**Returns:** `bool`:  视频是否已收藏。
 
 
 
@@ -337,7 +335,7 @@ from bilibili_api import cheese
 
 
 
-**Returns:** bool: 视频是否点赞过。
+**Returns:** `bool`:  视频是否点赞过。
 
 
 
@@ -349,9 +347,9 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| status | bool, optional | 点赞状态。Defaults to True. |
+| `status` | `bool, optional` | 点赞状态。Defaults to True. |
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -363,10 +361,10 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| num | int, optional | 硬币数量，为 1 ~ 2 个。Defaults to 1. |
-| like | bool, optional | 是否同时点赞。Defaults to False. |
+| `num` | `int, optional` | 硬币数量，为 1 ~ 2 个。Defaults to 1. |
+| `like` | `bool, optional` | 是否同时点赞。Defaults to False. |
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -378,9 +376,9 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| danmaku | Danmaku \| None | Danmaku 类。Defaults to None. |
+| `danmaku` | `Danmaku \| None` | Danmaku 类。Defaults to None. |
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -392,9 +390,8 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| epid | int | epid |
+| `epid` | `int` | epid |
 
-**Returns:** None
 
 
 
@@ -405,10 +402,10 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| add_media_ids | List[int], optional | 要添加到的收藏夹 ID. Defaults to []. |
-| del_media_ids | List[int], optional | 要移出的收藏夹 ID. Defaults to []. |
+| `add_media_ids` | `List[int], optional` | 要添加到的收藏夹 ID. Defaults to []. |
+| `del_media_ids` | `List[int], optional` | 要移出的收藏夹 ID. Defaults to []. |
 
-**Returns:** dict: 调用 API 返回结果。
+**Returns:** `dict`:  调用 API 返回结果。
 
 
 

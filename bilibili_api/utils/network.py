@@ -1114,7 +1114,7 @@ class Credential:
         是否提供 dedeuserid。
 
         Returns:
-            bool。
+            bool: 是否提供 dedeuserid。
         """
         return self.dedeuserid is not None and self.sessdata != ""
 
@@ -1123,7 +1123,7 @@ class Credential:
         是否提供 sessdata。
 
         Returns:
-            bool。
+            bool: 是否提供 sessdata。
         """
         return self.sessdata is not None and self.sessdata != ""
 
@@ -1132,7 +1132,7 @@ class Credential:
         是否提供 bili_jct。
 
         Returns:
-            bool。
+            bool: 是否提供 bili_jct。
         """
         return self.bili_jct is not None and self.sessdata != ""
 
@@ -1141,7 +1141,7 @@ class Credential:
         是否提供 buvid3
 
         Returns:
-            bool.
+            bool: 是否提供 buvid3
         """
         return self.buvid3 is not None and self.sessdata != ""
 
@@ -1150,7 +1150,7 @@ class Credential:
         是否提供 ac_time_value
 
         Returns:
-            bool.
+            bool: 是否提供 ac_time_value
         """
         return self.ac_time_value is not None and self.sessdata != ""
 

@@ -65,13 +65,15 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 | name | type | description |
 | - | - | - |
-| bvid | str | 稿件 BVID |
-| meta | Dict | 视频信息 |
-| cover_path | str | 封面路径. Defaults to None(不更换封面). |
-| credential | Credential | 凭据类. Defaults to None. |
+| `bvid` | `str` | 稿件 BVID |
+| `meta` | `Dict` | 视频信息 |
+| `cover_path` | `str` | 封面路径. Defaults to None(不更换封面). |
+| `credential` | `Credential` | 凭据类. Defaults to None. |
 
 
 ### def \_\_init\_\_()
+
+meta 参数示例: (保留 video, cover, tid, aid 字段)
 
 ``` json
 {
@@ -98,11 +100,10 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 | name | type | description |
 | - | - | - |
-| bvid | str | 稿件 BVID |
-| meta | Dict | 视频信息 |
-| cover | str \| Picture | 封面地址. Defaults to None(不更改封面). |
-| credential | Credential \| None | 凭据类. Defaults to None. |
-| meta 参数示例: |  | (保留 video, cover, tid, aid 字段) |
+| `bvid` | `str` | 稿件 BVID |
+| `meta` | `Dict` | 视频信息 |
+| `cover` | `str \| Picture` | 封面地址. Defaults to None(不更改封面). |
+| `credential` | `Credential \| None` | 凭据类. Defaults to None. |
 
 
 ### async def abort()
@@ -111,7 +112,6 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-**Returns:** None
 
 
 
@@ -121,7 +121,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-**Returns:** dict: 返回带有 bvid 和 aid 的字典。
+**Returns:** `dict`:  返回带有 bvid 和 aid 的字典。
 
 
 
@@ -168,28 +168,28 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 | name | type | description |
 | - | - | - |
-| tid | int | 分区 id |
-| title | str | 视频标题，最多 80 字 |
-| desc | str | 视频简介，最多 2000 字 |
-| cover | Union[Picture, str] | 封面，可以传入路径 |
-| tags | List[str], str | 标签列表，传入 List 或者传入 str 以 "," 为分隔符，至少 1 个 Tag，最多 10 个 |
-| topic | Optional[Union[int, Topic]] | 活动主题，应该从 video_uploader.get_available_topics(tid) 获取，可选 |
-| mission_id | Optional[int] | 任务 id，与 topic 一同获取传入 |
-| original | bool | 是否原创，默认原创 |
-| source | Optional[str] | 转载来源，非原创应该提供 |
-| recreate | Optional[bool] | 是否允许转载. 可选，默认为不允许二创 |
-| no_reprint | Optional[bool] | 未经允许是否禁止转载. 可选，默认为允许转载 |
-| open_elec | Optional[bool] | 是否开启充电. 可选，默认为关闭充电 |
-| up_selection_reply | Optional[bool] | 是否开启评论精选. 可选，默认为关闭评论精选 |
-| up_close_danmu | Optional[bool] | 是否关闭弹幕. 可选，默认为开启弹幕 |
-| up_close_reply | Optional[bool] | 是否关闭评论. 可选，默认为开启评论 |
-| lossless_music | Optional[bool] | 是否开启无损音乐. 可选，默认为关闭无损音乐 |
-| dolby | Optional[bool] | 是否开启杜比音效. 可选，默认为关闭杜比音效 |
-| subtitle | Optional[Dict] | 字幕信息，可选 |
-| dynamic | Optional[str] | 粉丝动态，可选，最多 233 字 |
-| neutral_mark | Optional[str] | 创作者声明，可选 |
-| delay_time | Optional[Union[int, datetime]] | 定时发布时间，可选 |
-| porder | Optional[VideoPorderMeta] | 商业相关参数，可选 |
+| `tid` | `int` | 分区 id |
+| `title` | `str` | 视频标题，最多 80 字 |
+| `desc` | `str` | 视频简介，最多 2000 字 |
+| `cover` | `Union[Picture, str]` | 封面，可以传入路径 |
+| `tags` | `List[str], str` | 标签列表，传入 List 或者传入 str 以 "," 为分隔符，至少 1 个 Tag，最多 10 个 |
+| `topic` | `Optional[Union[int, Topic]]` | 活动主题，应该从 video_uploader.get_available_topics(tid) 获取，可选 |
+| `mission_id` | `Optional[int]` | 任务 id，与 topic 一同获取传入 |
+| `original` | `bool` | 是否原创，默认原创 |
+| `source` | `Optional[str]` | 转载来源，非原创应该提供 |
+| `recreate` | `Optional[bool]` | 是否允许转载. 可选，默认为不允许二创 |
+| `no_reprint` | `Optional[bool]` | 未经允许是否禁止转载. 可选，默认为允许转载 |
+| `open_elec` | `Optional[bool]` | 是否开启充电. 可选，默认为关闭充电 |
+| `up_selection_reply` | `Optional[bool]` | 是否开启评论精选. 可选，默认为关闭评论精选 |
+| `up_close_danmu` | `Optional[bool]` | 是否关闭弹幕. 可选，默认为开启弹幕 |
+| `up_close_reply` | `Optional[bool]` | 是否关闭评论. 可选，默认为开启评论 |
+| `lossless_music` | `Optional[bool]` | 是否开启无损音乐. 可选，默认为关闭无损音乐 |
+| `dolby` | `Optional[bool]` | 是否开启杜比音效. 可选，默认为关闭杜比音效 |
+| `subtitle` | `Optional[Dict]` | 字幕信息，可选 |
+| `dynamic` | `Optional[str]` | 粉丝动态，可选，最多 233 字 |
+| `neutral_mark` | `Optional[str]` | 创作者声明，可选 |
+| `delay_time` | `Optional[Union[int, datetime]]` | 定时发布时间，可选 |
+| `porder` | `Optional[VideoPorderMeta]` | 商业相关参数，可选 |
 
 
 ### async def verify()
@@ -202,7 +202,6 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 
 
-**Returns:** None
 
 
 
@@ -293,11 +292,11 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 | name | type | description |
 | - | - | - |
-| pages | List[VideoUploaderPage] | 分 P 列表 |
-| meta | VideoMeta, Dict | 视频信息 |
-| credential | Credential | 凭据 |
-| cover_path | str | 封面路径 |
-| line | Lines, Optional | 线路. Defaults to None. 不选择则自动测速选择 |
+| `pages` | `List[VideoUploaderPage]` | 分 P 列表 |
+| `meta` | `VideoMeta, Dict` | 视频信息 |
+| `credential` | `Credential` | 凭据 |
+| `cover_path` | `str` | 封面路径 |
+| `line` | `Lines, Optional` | 线路. Defaults to None. 不选择则自动测速选择 |
 
 
 ### def \_\_init\_\_()
@@ -335,11 +334,11 @@ meta 保留字段：videos, cover
 
 | name | type | description |
 | - | - | - |
-| pages | List[VideoUploaderPage] | 分 P 列表 |
-| meta | VideoMeta, Dict | 视频信息 |
-| credential | Credential | 凭据 |
-| cover | Union[str, Picture] | 封面路径或者封面对象. Defaults to ""，传入 meta 类型为 VideoMeta 时可不传 |
-| line: |  | (Lines, Optional) |
+| `pages` | `List[VideoUploaderPage]` | 分 P 列表 |
+| `meta` | `VideoMeta, Dict` | 视频信息 |
+| `credential` | `Credential` | 凭据 |
+| `cover` | `Union[str, Picture]` | 封面路径或者封面对象. Defaults to ""，传入 meta 类型为 VideoMeta 时可不传 |
+| `line` | `Lines, Optional` | 线路. Defaults to None. 不选择则自动测速选择 |
 
 
 ### async def abort()
@@ -348,7 +347,6 @@ meta 保留字段：videos, cover
 
 
 
-**Returns:** None
 
 
 
@@ -358,7 +356,7 @@ meta 保留字段：videos, cover
 
 
 
-**Returns:** dict: 返回带有 bvid 和 aid 的字典。
+**Returns:** `dict`:  返回带有 bvid 和 aid 的字典。
 
 
 
@@ -409,9 +407,9 @@ Events:
 
 | name | type | description |
 | - | - | - |
-| path | str | 视频文件路径 |
-| title | str | 视频标题 |
-| description | str, optional | 视频简介. Defaults to "". |
+| `path` | `str` | 视频文件路径 |
+| `title` | `str` | 视频标题 |
+| `description` | `str, optional` | 视频简介. Defaults to "". |
 
 
 ### def get_size()
@@ -420,7 +418,7 @@ Events:
 
 
 
-**Returns:** int: 文件大小
+**Returns:** `int`:  文件大小
 
 
 
@@ -433,7 +431,6 @@ Events:
 
 
 
-**Returns:** None
 
 
 
@@ -446,10 +443,10 @@ Events:
 
 | name | type | description |
 | - | - | - |
-| tid | int, optional | 分区 ID. Defaults to 0. |
-| credential | Credential, optional | 凭据. Defaults to None. |
+| `tid` | `int, optional` | 分区 ID. Defaults to 0. |
+| `credential` | `Credential, optional` | 凭据. Defaults to None. |
 
-**Returns:** dict API 调用返回结果
+**Returns:** `dict`:  API 调用返回结果
 
 
 
@@ -462,7 +459,7 @@ Events:
 
 
 
-**Returns:** str: 封面 URL
+**Returns:** `str`:  封面 URL
 
 
 

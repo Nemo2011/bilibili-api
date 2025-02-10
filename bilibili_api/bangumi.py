@@ -1118,7 +1118,7 @@ class Bangumi:
         番剧上传者信息 出差或者原版
 
         Returns:
-            Api 相关字段
+            dict: Api 相关字段
         """
         if not self.__up_info:
             await self.__fetch_raw()
@@ -1129,7 +1129,7 @@ class Bangumi:
         原始初始化数据
 
         Returns:
-            Api 相关字段
+            dict: Api 相关字段
         """
         if not self.__raw:
             await self.__fetch_raw()
@@ -1599,7 +1599,7 @@ class Episode(Video):
         获取视频上一次播放的记录，字幕和地区信息。需要分集的 cid, 返回数据中含有json字幕的链接
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         return await super().get_player_info(await self.get_cid(), self.get_epid())
 
@@ -1608,7 +1608,7 @@ class Episode(Video):
         获取字幕信息
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         return (await self.get_player_info()).get("subtitle")
 
@@ -1655,7 +1655,7 @@ class Episode(Video):
         获取高能进度条
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         return await super().get_pbp(0)
 

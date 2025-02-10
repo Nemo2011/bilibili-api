@@ -33,7 +33,7 @@ from bilibili_api import game
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### def \_\_init\_\_()
@@ -41,8 +41,8 @@ from bilibili_api import game
 
 | name | type | description |
 | - | - | - |
-| game_id | int | 游戏 id |
-| credential | Credential | 凭据类. Defaults to None. |
+| `game_id` | `int` | 游戏 id |
+| `credential` | `Credential` | 凭据类. Defaults to None. |
 
 
 ### async def get_detail()
@@ -51,7 +51,7 @@ from bilibili_api import game
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -62,7 +62,7 @@ from bilibili_api import game
 
 
 
-**Returns:** int: 游戏 id
+**Returns:** `int`:  游戏 id
 
 
 
@@ -73,7 +73,7 @@ from bilibili_api import game
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -84,7 +84,7 @@ from bilibili_api import game
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -95,7 +95,7 @@ from bilibili_api import game
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -106,7 +106,7 @@ from bilibili_api import game
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -138,9 +138,9 @@ from bilibili_api import game
 
 | name | type | description |
 | - | - | - |
-| game_name | str | 游戏名 |
+| `game_name` | `str` | 游戏名 |
 
-**Returns:** str: 游戏编码
+**Returns:** `str`:  游戏编码
 
 
 
@@ -154,11 +154,11 @@ from bilibili_api import game
 
 | name | type | description |
 | - | - | - |
-| rank_type | GameRankType | 游戏排行榜类型 |
-| page_num | int, optional | 页码. Defaults to 1. |
-| page_size | int, optional | 每页游戏数量. Defaults to 20. |
+| `rank_type` | `GameRankType` | 游戏排行榜类型 |
+| `page_num` | `int, optional` | 页码. Defaults to 1. |
+| `page_size` | `int, optional` | 每页游戏数量. Defaults to 20. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -172,10 +172,10 @@ from bilibili_api import game
 
 | name | type | description |
 | - | - | - |
-| page_num | int, optional | 页码. Defaults to 1. |
-| page_size | int, optional | 每页游戏数量. Defaults to 20. |
+| `page_num` | `int, optional` | 页码. Defaults to 1. |
+| `page_size` | `int, optional` | 每页游戏数量. Defaults to 20. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -189,9 +189,9 @@ from bilibili_api import game
 
 | name | type | description |
 | - | - | - |
-| game_id | str | 游戏编码 |
+| `game_id` | `str` | 游戏编码 |
 
-**Returns:** str: 游戏 WIKI 对应的 api 链接
+**Returns:** `str`:  游戏 WIKI 对应的 api 链接
 
 
 

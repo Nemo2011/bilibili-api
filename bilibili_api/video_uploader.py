@@ -708,7 +708,7 @@ class VideoUploader(AsyncEvent):
 
             cover        (Union[str, Picture])    : 封面路径或者封面对象. Defaults to ""，传入 meta 类型为 VideoMeta 时可不传
 
-            line:        (Lines, Optional)        : 线路. Defaults to None. 不选择则自动测速选择
+            line         (Lines, Optional)        : 线路. Defaults to None. 不选择则自动测速选择
 
         建议传入 VideoMeta 对象，避免参数有误
 
@@ -1325,7 +1325,7 @@ async def get_missions(
         credential (Credential, optional): 凭据. Defaults to None.
 
     Returns:
-        dict API 调用返回结果
+        dict: API 调用返回结果
     """
     api = _API["missions"]
 
@@ -1391,15 +1391,6 @@ class VideoEditor(AsyncEvent):
         credential: Union[Credential, None] = None,
     ):
         """
-        Args:
-            bvid (str)                    : 稿件 BVID
-
-            meta (dict)                   : 视频信息
-
-            cover (str | Picture)         : 封面地址. Defaults to None(不更改封面).
-
-            credential (Credential | None): 凭据类. Defaults to None.
-
         meta 参数示例: (保留 video, cover, tid, aid 字段)
 
         ``` json
@@ -1423,6 +1414,15 @@ class VideoEditor(AsyncEvent):
             "web_os": "const int: 2"
         }
         ```
+
+        Args:
+            bvid (str)                    : 稿件 BVID
+
+            meta (dict)                   : 视频信息
+
+            cover (str | Picture)         : 封面地址. Defaults to None(不更改封面).
+
+            credential (Credential | None): 凭据类. Defaults to None.
         """
         super().__init__()
         self.bvid = bvid

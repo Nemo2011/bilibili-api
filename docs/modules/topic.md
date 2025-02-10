@@ -30,7 +30,7 @@ from bilibili_api import topic
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### def \_\_init\_\_()
@@ -38,8 +38,8 @@ from bilibili_api import topic
 
 | name | type | description |
 | - | - | - |
-| topic_id | int | 话题 id |
-| credential | Credential | 凭据类 |
+| `topic_id` | `int` | 话题 id |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### async def get_cards()
@@ -51,11 +51,11 @@ from bilibili_api import topic
 
 | name | type | description |
 | - | - | - |
-| ps | int | 数据数量. Defaults to 100. |
-| offset | Optional, str | 偏移量. 生成格式为 f'{页码}_{页码*数据量]}' 如'2_40' Defaults to None. |
-| sort_by | TopicCardsSortBy | 排序方式. Defaults to TopicCardsSortBy.HOT. |
+| `ps` | `int` | 数据数量. Defaults to 100. |
+| `offset` | `Optional, str` | 偏移量. 生成格式为 f'{页码}_{页码*数据量]}' 如'2_40' Defaults to None. |
+| `sort_by` | `TopicCardsSortBy` | 排序方式. Defaults to TopicCardsSortBy.HOT. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -66,7 +66,7 @@ from bilibili_api import topic
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -77,7 +77,7 @@ from bilibili_api import topic
 
 
 
-**Returns:** int: 话题 id
+**Returns:** `int`:  话题 id
 
 
 
@@ -89,9 +89,9 @@ from bilibili_api import topic
 
 | name | type | description |
 | - | - | - |
-| status | bool | 是否设置点赞. Defaults to True. |
+| `status` | `bool` | 是否设置点赞. Defaults to True. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -103,9 +103,9 @@ from bilibili_api import topic
 
 | name | type | description |
 | - | - | - |
-| status | bool | 是否设置收藏. Defaults to True. |
+| `status` | `bool` | 是否设置收藏. Defaults to True. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -134,9 +134,9 @@ from bilibili_api import topic
 
 | name | type | description |
 | - | - | - |
-| numbers | int | 话题数量. Defaults to 33. |
+| `numbers` | `int` | 话题数量. Defaults to 33. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -152,11 +152,11 @@ from bilibili_api import topic
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 搜索关键词 |
-| ps | int | 每页数量. Defaults to 20. |
-| pn | int | 页数. Defaults to 1. |
+| `keyword` | `str` | 搜索关键词 |
+| `ps` | `int` | 每页数量. Defaults to 20. |
+| `pn` | `int` | 页数. Defaults to 1. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

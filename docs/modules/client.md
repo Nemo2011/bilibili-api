@@ -20,7 +20,7 @@ from bilibili_api import client
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

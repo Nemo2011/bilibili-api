@@ -698,7 +698,7 @@ class LiveRoom:
         更新公告
 
         Args:
-            content: 最多60字符
+            content (str): 最多 60 字符
 
         Returns:
             dict: 调用 API 返回的结果

@@ -35,9 +35,9 @@ from bilibili_api import video_tag
 
 | name | type | description |
 | - | - | - |
-| tag_name | str \| None | 标签名. Defaults to None. |
-| tag_id | int \| None | 标签 id. Defaults to None. |
-| credential | Credential | 凭据类. Defaults to None. |
+| `tag_name` | `str \| None` | 标签名. Defaults to None. |
+| `tag_id` | `int \| None` | 标签 id. Defaults to None. |
+| `credential` | `Credential` | 凭据类. Defaults to None. |
 
 
 ### async def get_similar_tags()
@@ -46,7 +46,7 @@ from bilibili_api import video_tag
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -57,7 +57,7 @@ from bilibili_api import video_tag
 
 
 
-**Returns:** int: 标签 id
+**Returns:** `int`:  标签 id
 
 
 
@@ -68,7 +68,7 @@ from bilibili_api import video_tag
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -79,7 +79,7 @@ from bilibili_api import video_tag
 
 
 
-**Returns:** str: 标签名
+**Returns:** `str`:  标签名
 
 
 
@@ -90,7 +90,7 @@ from bilibili_api import video_tag
 
 
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -101,7 +101,7 @@ from bilibili_api import video_tag
 
 
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 

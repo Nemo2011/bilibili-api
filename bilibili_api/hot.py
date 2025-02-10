@@ -33,7 +33,7 @@ async def get_weekly_hot_videos_list() -> dict:
     获取每周必看列表(仅概述)
 
     Returns:
-        调用 API 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API_rank["info"]["weekly_series"]
     return await Api(**api).result

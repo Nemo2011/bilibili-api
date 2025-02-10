@@ -289,9 +289,9 @@ class Event:
         信息事件类型
 
         Args:
-            data: 接收到的事件详细信息
+            data (dict): 接收到的事件详细信息
 
-            self_uid: 用户自身 UID
+            self_uid (int): 用户自身 UID
         """
         self.__dict__.update(data)
         self.uid = self_uid
@@ -479,7 +479,7 @@ class Session(AsyncEvent):
         非阻塞异步爬虫 定时发送请求获取消息
 
         Args:
-            exclude_self: bool 是否排除自己发出的消息，默认排除
+            exclude_self (bool): 是否排除自己发出的消息，默认排除
         """
 
         # 获取自身UID 用于后续判断消息是发送还是接收
@@ -558,7 +558,7 @@ class Session(AsyncEvent):
         阻塞异步启动 通过调用 self.close() 后可断开连接
 
         Args:
-            exclude_self: bool 是否排除自己发出的消息，默认排除
+            exclude_self (bool): 是否排除自己发出的消息，默认排除
         """
 
         await self.run(exclude_self)
@@ -573,9 +573,9 @@ class Session(AsyncEvent):
         快速回复消息
 
         Args:
-            event  :  Event          要回复的消息
+            event  (Event)         : 要回复的消息
 
-            content:  str | Picture  要回复的文字内容
+            content (str | Picture): 要回复的文字内容
 
         Returns:
             dict: 调用接口返回的内容。

@@ -1136,7 +1136,7 @@ async def create_subscribe_group(name: str, credential: Credential) -> dict:
         credential (Credential): Credential
 
     Returns:
-        API 调用返回结果。
+        dict: API 调用返回结果。
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -1157,7 +1157,7 @@ async def delete_subscribe_group(group_id: int, credential: Credential) -> dict:
         credential (Credential): Credential
 
     Returns:
-        调用 API 返回结果
+        dict: 调用 API 返回结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -1182,7 +1182,7 @@ async def rename_subscribe_group(
         credential (Credential): Credential
 
     Returns:
-        调用 API 返回结果
+        dict: 调用 API 返回结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -1207,7 +1207,7 @@ async def set_subscribe_group(
         credential (Credential): Credential
 
     Returns:
-        API 调用结果
+        dict: API 调用结果
     """
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
@@ -1465,11 +1465,11 @@ async def get_self_notes_info(
     获取自己的笔记列表
 
     Args:
-        page_num: 页码
+        page_num (int): 页码
 
-        page_size: 每页项数
+        page_size (int): 每页项数
 
-        credential(Credential): 凭据类
+        credential (Credential): 凭据类
 
     Returns:
         dict: 调用 API 返回的结果
@@ -1492,11 +1492,11 @@ async def get_self_public_notes_info(
     获取自己的公开笔记列表
 
     Args:
-        page_num: 页码
+        page_num (int): 页码
 
-        page_size: 每页项数
+        page_size (int): 每页项数
 
-        credential(Credential): 凭据类
+        credential (Credential): 凭据类
 
     Returns:
         dict: 调用 API 返回的结果

@@ -340,12 +340,11 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| oid | int, lsit | 指定稿件 |
-| rpid | int, lsit | 指定评论 |
-| archive_type | ArchiveType | 稿件类型 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `oid` | `int, lsit` | 指定稿件 |
+| `rpid` | `int, lsit` | 指定评论 |
+| `archive_type` | `ArchiveType` | 稿件类型 |
 
-**Returns:** None
 
 
 
@@ -358,10 +357,9 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| oid | int | 稿件 oid |
-| dmids | List[int], int | 弹幕 id，可以传入列表和 int |
+| `oid` | `int` | 稿件 oid |
+| `dmids` | `List[int], int` | 弹幕 id，可以传入列表和 int |
 
-**Returns:** None
 
 
 
@@ -374,11 +372,11 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| oid | int | 稿件 oid |
-| dmids | List[int], int | 弹幕 id，可以传入列表和 int |
-| is_subtitle | bool | 是否为字幕 |
+| `oid` | `int` | 稿件 oid |
+| `dmids` | `List[int], int` | 弹幕 id，可以传入列表和 int |
+| `is_subtitle` | `bool` | 是否为字幕 |
 
-**Returns:** dict: API 返回信息
+**Returns:** `dict`:  API 返回信息
 
 
 
@@ -392,11 +390,11 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| oid | int | 稿件 oid |
-| dmids | List[int], int | 弹幕 id，可以传入列表和 int |
-| state | int, Optional | 弹幕状态 1 删除 2 保护 3 取消保护 |
+| `oid` | `int` | 稿件 oid |
+| `dmids` | `List[int], int` | 弹幕 id，可以传入列表和 int |
+| `state` | `int, Optional` | 弹幕状态 1 删除 2 保护 3 取消保护 |
 
-**Returns:** dict: API 返回信息
+**Returns:** `dict`:  API 返回信息
 
 
 
@@ -410,10 +408,10 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| graph_type | ArticleInfoType | 图表类型。 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `graph_type` | `ArticleInfoType` | 图表类型。 |
 
-**Returns:** dict: 文章图表数据。
+**Returns:** `dict`:  文章图表数据。
 
 
 
@@ -427,9 +425,9 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
+| `credentials` | `Credential` | Credential 凭据。 |
 
-**Returns:** dict: 内容管理文集信息。
+**Returns:** `dict`:  内容管理文集信息。
 
 
 
@@ -443,9 +441,9 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
+| `credentials` | `Credential` | Credential 凭据。 |
 
-**Returns:** dict: 文章概览数据。
+**Returns:** `dict`:  文章概览数据。
 
 
 
@@ -459,10 +457,10 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| rank_type | ArticleInfoType | 排行依据。 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `rank_type` | `ArticleInfoType` | 排行依据。 |
 
-**Returns:** dict: 文章排行数据。
+**Returns:** `dict`:  文章排行数据。
 
 
 
@@ -476,9 +474,9 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
+| `credentials` | `Credential` | Credential 凭据。 |
 
-**Returns:** dict: 文章阅读终端数据。
+**Returns:** `dict`:  文章阅读终端数据。
 
 
 
@@ -492,12 +490,12 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| pn | int | 页码 |
-| status | UploadManagerArticleStatus | 稿件状态 |
-| sort | UploadManagerSort | 稿件排序 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `pn` | `int` | 页码 |
+| `status` | `UploadManagerArticleStatus` | 稿件状态 |
+| `sort` | `UploadManagerSort` | 稿件排序 |
 
-**Returns:** dict: 内容管理文章信息。
+**Returns:** `dict`:  内容管理文章信息。
 
 
 
@@ -511,17 +509,17 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| oid | Optional, int | 指定稿件 |
-| keyword | Optional, str | 关键词 |
-| archive_type | ArchiveType | 稿件类型 |
-| order | CommentManagerOrder | 排序字段 |
-| filter | int | 筛选器，作用未知 |
-| pn | int | 页码 |
-| ps | int | 每页项数 |
-| charge_plus_filter | bool | charge_plus_filter |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `oid` | `Optional, int` | 指定稿件 |
+| `keyword` | `Optional, str` | 关键词 |
+| `archive_type` | `ArchiveType` | 稿件类型 |
+| `order` | `CommentManagerOrder` | 排序字段 |
+| `filter` | `int` | 筛选器，作用未知 |
+| `pn` | `int` | 页码 |
+| `ps` | `int` | 每页项数 |
+| `charge_plus_filter` | `bool` | charge_plus_filter |
 
-**Returns:** dict: 评论管理评论信息。
+**Returns:** `dict`:  评论管理评论信息。
 
 
 
@@ -535,9 +533,9 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
+| `credentials` | `Credential` | Credential 凭据。 |
 
-**Returns:** dict: 视频对比数据。
+**Returns:** `dict`:  视频对比数据。
 
 
 
@@ -551,26 +549,26 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | Credential 凭据 |
-| oid | int | 稿件oid，用逗号分隔 |
-| select_type | DanmakuType | 弹幕类型 |
-| archive_type | ArchiveType | 稿件类型 |
-| mids | List[int], int | 用户mids，用逗号分隔或者直接 int |
-| keyword | str | 关键词 |
-| progress_from | int | 进度开始 |
-| progress_to | int | 进度结束 |
-| ctime_from | datetime.datetime | 创建时间起始 |
-| ctime_to | datetime.datetime | 创建时间结束 |
-| modes | DanmakuMode | 弹幕模式。 |
-| pool | DanmakuPool | 弹幕池 |
-| attrs | Unknown | 弹幕属性，未知参数 |
-| order | DanmakuOrder | 排序字段 |
-| sort | DanmakuSort | 排序方式 |
-| pn | int | 页码。 |
-| ps | int | 每页项数。 |
-| cp_filter | bool | 是否过滤CP弹幕。未知参数，默认为 False |
+| `credential` | `Credential` | Credential 凭据 |
+| `oid` | `int` | 稿件oid，用逗号分隔 |
+| `select_type` | `DanmakuType` | 弹幕类型 |
+| `archive_type` | `ArchiveType` | 稿件类型 |
+| `mids` | `List[int], int` | 用户mids，用逗号分隔或者直接 int |
+| `keyword` | `str` | 关键词 |
+| `progress_from` | `int` | 进度开始 |
+| `progress_to` | `int` | 进度结束 |
+| `ctime_from` | `datetime.datetime` | 创建时间起始 |
+| `ctime_to` | `datetime.datetime` | 创建时间结束 |
+| `modes` | `DanmakuMode` | 弹幕模式。 |
+| `pool` | `DanmakuPool` | 弹幕池 |
+| `attrs` | `Unknown` | 弹幕属性，未知参数 |
+| `order` | `DanmakuOrder` | 排序字段 |
+| `sort` | `DanmakuSort` | 排序方式 |
+| `pn` | `int` | 页码。 |
+| `ps` | `int` | 每页项数。 |
+| `cp_filter` | `bool` | 是否过滤CP弹幕。未知参数，默认为 False |
 
-**Returns:** dict: 弹幕搜索结果
+**Returns:** `dict`:  弹幕搜索结果
 
 
 
@@ -584,11 +582,11 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| period | FanGraphPeriod | 时间段。 |
-| graph_type | FanGraphType | 图表类型。 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `period` | `FanGraphPeriod` | 时间段。 |
+| `graph_type` | `FanGraphType` | 图表类型。 |
 
-**Returns:** dict: 粉丝图表数据。
+**Returns:** `dict`:  粉丝图表数据。
 
 
 
@@ -602,10 +600,10 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| period | FanGraphPeriod | 时间段。 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `period` | `FanGraphPeriod` | 时间段。 |
 
-**Returns:** dict: 粉丝概览数据。
+**Returns:** `dict`:  粉丝概览数据。
 
 
 
@@ -619,11 +617,11 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| period | GraphPeriod | 时间段。 |
-| graph_type | GraphType | 图表类型。 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `period` | `GraphPeriod` | 时间段。 |
+| `graph_type` | `GraphType` | 图表类型。 |
 
-**Returns:** dict: 视频统计图表数据。
+**Returns:** `dict`:  视频统计图表数据。
 
 
 
@@ -637,10 +635,10 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| period | GraphPeriod | 时间段。 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `period` | `GraphPeriod` | 时间段。 |
 
-**Returns:** dict: 视频概览数据。
+**Returns:** `dict`:  视频概览数据。
 
 
 
@@ -654,11 +652,11 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | Credential 凭据。 |
-| pn | int | 页码。 |
-| ps | int | 每页项数。 |
+| `credential` | `Credential` | Credential 凭据。 |
+| `pn` | `int` | 页码。 |
+| `ps` | `int` | 每页项数。 |
 
-**Returns:** dict: 弹幕管理最近弹幕信息。
+**Returns:** `dict`:  弹幕管理最近弹幕信息。
 
 
 
@@ -672,9 +670,9 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
+| `credentials` | `Credential` | Credential 凭据。 |
 
-**Returns:** dict: 内容管理视频草稿信息。
+**Returns:** `dict`:  内容管理视频草稿信息。
 
 
 
@@ -688,10 +686,10 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| copyright | Copyright | 版权类型。 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `copyright` | `Copyright` | 版权类型。 |
 
-**Returns:** dict: 稿件播放完成率对比数据。
+**Returns:** `dict`:  稿件播放完成率对比数据。
 
 
 
@@ -705,9 +703,9 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
+| `credentials` | `Credential` | Credential 凭据。 |
 
-**Returns:** dict: 视频来源分布数据。
+**Returns:** `dict`:  视频来源分布数据。
 
 
 
@@ -721,9 +719,9 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
+| `credentials` | `Credential` | Credential 凭据。 |
 
-**Returns:** dict: 视频分区排行数据。
+**Returns:** `dict`:  视频分区排行数据。
 
 
 
@@ -737,15 +735,15 @@ from bilibili_api import creative_center
 
 | name | type | description |
 | - | - | - |
-| credentials | Credential | Credential 凭据。 |
-| is_interative | bool | 是否为互动视频 |
-| pn | int | 页码 |
-| ps | int | 每页项数 |
-| tid: |  | (VideoZoneTypes, None, int) |
-| status | UploadManagerStatus | 稿件状态 |
-| order | UploadManagerOrder | 稿件排序 |
+| `credentials` | `Credential` | Credential 凭据。 |
+| `is_interative` | `bool` | 是否为互动视频 |
+| `pn` | `int` | 页码 |
+| `ps` | `int` | 每页项数 |
+| `tid` | `VideoZoneTypes, None, int` | 分区 |
+| `status` | `UploadManagerStatus` | 稿件状态 |
+| `order` | `UploadManagerOrder` | 稿件排序 |
 
-**Returns:** dict: 内容管理视频信息。
+**Returns:** `dict`:  内容管理视频信息。
 
 
 

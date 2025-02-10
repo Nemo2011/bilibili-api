@@ -45,11 +45,11 @@ from bilibili_api import note
 
 | name | type | description |
 | - | - | - |
-| cvid | int | 公开笔记 ID (对应专栏的 cvid) (公开笔记必要) |
-| aid | int | 稿件 ID（oid_type 为 0 时是 avid） (私有笔记必要) |
-| note_id | int | 私有笔记 ID (私有笔记必要) |
-| note_type | str | 笔记类型 (private, public) |
-| credential | Credential, optional | Credential. Defaults to None. |
+| `cvid` | `int` | 公开笔记 ID (对应专栏的 cvid) (公开笔记必要) |
+| `aid` | `int` | 稿件 ID（oid_type 为 0 时是 avid） (私有笔记必要) |
+| `note_id` | `int` | 私有笔记 ID (私有笔记必要) |
+| `note_type` | `str` | 笔记类型 (private, public) |
+| `credential` | `Credential, optional` | Credential. Defaults to None. |
 
 
 ### async def add_coins()
@@ -60,7 +60,7 @@ from bilibili_api import note
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -73,7 +73,6 @@ from bilibili_api import note
 
 
 
-**Returns:** None
 
 
 
@@ -83,7 +82,7 @@ from bilibili_api import note
 
 
 
-**Returns:** int: aid
+**Returns:** `int`:  aid
 
 
 
@@ -96,7 +95,7 @@ from bilibili_api import note
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -107,7 +106,7 @@ from bilibili_api import note
 
 
 
-**Returns:** int: 公开笔记 cvid
+**Returns:** `int`:  公开笔记 cvid
 
 
 
@@ -118,7 +117,7 @@ from bilibili_api import note
 
 
 
-**Returns:** list: 图片信息
+**Returns:** `list`:  图片信息
 
 
 
@@ -129,7 +128,7 @@ from bilibili_api import note
 
 
 
-**Returns:** list: 图片信息
+**Returns:** `list`:  图片信息
 
 
 
@@ -140,7 +139,7 @@ from bilibili_api import note
 
 
 
-**Returns:** dict: 笔记信息
+**Returns:** `dict`:  笔记信息
 
 
 
@@ -151,7 +150,7 @@ from bilibili_api import note
 
 
 
-**Returns:** int: note_id
+**Returns:** `int`:  note_id
 
 
 
@@ -162,7 +161,7 @@ from bilibili_api import note
 
 
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -173,7 +172,7 @@ from bilibili_api import note
 
 
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -186,7 +185,7 @@ from bilibili_api import note
 
 
 
-**Returns:** dict: JSON 数据
+**Returns:** `dict`:  JSON 数据
 
 
 
@@ -199,7 +198,7 @@ from bilibili_api import note
 
 
 
-**Returns:** str: Markdown 内容
+**Returns:** `str`:  Markdown 内容
 
 
 
@@ -213,9 +212,9 @@ from bilibili_api import note
 
 | name | type | description |
 | - | - | - |
-| status | bool, optional | 收藏状态. Defaults to True |
+| `status` | `bool, optional` | 收藏状态. Defaults to True |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -229,9 +228,9 @@ from bilibili_api import note
 
 | name | type | description |
 | - | - | - |
-| status | bool, optional | 点赞状态. Defaults to True |
+| `status` | `bool, optional` | 点赞状态. Defaults to True |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -242,7 +241,7 @@ from bilibili_api import note
 
 
 
-**Returns:** Note: 专栏类
+**Returns:** `Note`:  专栏类
 
 
 
@@ -267,10 +266,10 @@ from bilibili_api import note
 
 | name | type | description |
 | - | - | - |
-| img | Picture | 图片 |
-| credential | Credential | 凭据类 |
+| `img` | `Picture` | 图片 |
+| `credential` | `Credential` | 凭据类 |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

@@ -25,9 +25,9 @@ from bilibili_api import homepage
 
 | name | type | description |
 | - | - | - |
-| credential | Credential \| None | 凭据类 |
+| `credential` | `Credential \| None` | 凭据类 |
 
-**Returns:** 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -42,9 +42,9 @@ from bilibili_api import homepage
 
 | name | type | description |
 | - | - | - |
-| credential | Credential \| None | 凭据类 |
+| `credential` | `Credential \| None` | 凭据类 |
 
-**Returns:** 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -58,7 +58,7 @@ from bilibili_api import homepage
 
 
 
-**Returns:** 调用 API 返回的结果。
+**Returns:** `dict`:  调用 API 返回的结果。
 
 
 
@@ -72,9 +72,9 @@ from bilibili_api import homepage
 
 | name | type | description |
 | - | - | - |
-| credential | Credential \| None | 凭据类 |
+| `credential` | `Credential \| None` | 凭据类 |
 
-**Returns:** 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

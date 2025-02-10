@@ -53,7 +53,7 @@ def get_area_info_by_id(id: int) -> Tuple[Union[dict, None], Union[dict, None]]:
         id (int): 分区的 id。
 
     Returns:
-        `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+        Tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     global live_area_data
     if not live_area_data:

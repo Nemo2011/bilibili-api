@@ -105,7 +105,7 @@ class CheeseList:
         获取教程元数据
 
         Returns:
-            调用 API 所得的结果。
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["meta"]
         params = {"season_id": await self.get_season_id()}
@@ -639,7 +639,7 @@ class CheeseVideo:
         获取高能进度条
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         cid = await self.get_cid()
         api = API_video["info"]["pbp"]

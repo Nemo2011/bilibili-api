@@ -18,7 +18,7 @@ async def get_top_photo() -> dict:
     例如：b 站的风叶穿行，通过这个 API 获取的图片就是风叶穿行的图片。
 
     Returns:
-        调用 API 返回的结果。
+        dict: 调用 API 返回的结果。
     """
     api = API["info"]["top_photo"]
     params = {"resource_id": 142}
@@ -34,7 +34,7 @@ async def get_links(credential: Union[Credential, None] = None):
         credential (Credential | None): 凭据类
 
     Returns:
-        调用 API 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["links"]
     params = {"pf": 0, "ids": 4694}
@@ -50,7 +50,7 @@ async def get_popularize(credential: Union[Credential, None] = None):
         credential(Credential | None): 凭据类
 
     Returns:
-        调用 API 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["popularize"]
     params = {"pf": 0, "ids": 34}
@@ -65,7 +65,7 @@ async def get_videos(credential: Union[Credential, None] = None):
         credential (Credential | None): 凭据类
 
     Returns:
-        调用 API 返回的结果
+        dict: 调用 API 返回的结果
     """
     api = API["info"]["videos"]
     return await Api(**api, credential=credential).result

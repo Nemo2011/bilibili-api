@@ -375,7 +375,7 @@ async def create(
         credential (Credential): 凭据
 
     Returns:
-        Watchroom：放映室
+        Watchroom: 放映室
     """
     global watch_room_bangumi_cache
 
@@ -412,7 +412,7 @@ async def match(
         season_type (str): 季度类型
 
     Returns:
-        Watchroom：放映室
+        Watchroom: 放映室
     """
     if credential is None:
         credential = Credential()

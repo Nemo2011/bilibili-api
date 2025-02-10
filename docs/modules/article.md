@@ -41,7 +41,7 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### def \_\_init\_\_()
@@ -49,8 +49,8 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| cvid | int | cv 号 |
-| credential | Credential \| None, optional | 凭据. Defaults to None. |
+| `cvid` | `int` | cv 号 |
+| `credential` | `Credential \| None, optional` | 凭据. Defaults to None. |
 
 
 ### async def add_coins()
@@ -59,7 +59,7 @@ from bilibili_api import article
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -72,7 +72,6 @@ from bilibili_api import article
 
 
 
-**Returns:** None
 
 
 
@@ -82,7 +81,7 @@ from bilibili_api import article
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -93,7 +92,7 @@ from bilibili_api import article
 
 
 
-**Returns:** int: cvid
+**Returns:** `int`:  cvid
 
 
 
@@ -104,7 +103,7 @@ from bilibili_api import article
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -115,7 +114,7 @@ from bilibili_api import article
 
 
 
-**Returns:** bool: 是否为笔记
+**Returns:** `bool`:  是否为笔记
 
 
 
@@ -128,7 +127,7 @@ from bilibili_api import article
 
 
 
-**Returns:** dict: JSON 数据
+**Returns:** `dict`:  JSON 数据
 
 
 
@@ -141,7 +140,7 @@ from bilibili_api import article
 
 
 
-**Returns:** str: Markdown 内容
+**Returns:** `str`:  Markdown 内容
 
 
 
@@ -153,9 +152,9 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| status | bool, optional | 收藏状态. Defaults to True |
+| `status` | `bool, optional` | 收藏状态. Defaults to True |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -167,9 +166,9 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| status | bool, optional | 点赞状态. Defaults to True |
+| `status` | `bool, optional` | 点赞状态. Defaults to True |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -184,7 +183,7 @@ from bilibili_api import article
 
 
 
-**Returns:** Dynamic: 动态实例
+**Returns:** `Dynamic`:  动态实例
 
 
 
@@ -195,7 +194,7 @@ from bilibili_api import article
 
 
 
-**Returns:** Note: 笔记实例
+**Returns:** `Note`:  笔记实例
 
 
 
@@ -210,7 +209,7 @@ from bilibili_api import article
 
 
 
-**Returns:** Opus: 动态实例
+**Returns:** `Opus`:  动态实例
 
 
 
@@ -224,7 +223,7 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### def \_\_init\_\_()
@@ -232,8 +231,8 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| rlid | int | 文集 id |
-| credential | Credential \| None, optional | 凭据类. Defaults to None. |
+| `rlid` | `int` | 文集 id |
+| `credential` | `Credential \| None, optional` | 凭据类. Defaults to None. |
 
 
 ### async def get_content()
@@ -242,7 +241,7 @@ from bilibili_api import article
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -253,7 +252,7 @@ from bilibili_api import article
 
 
 
-**Returns:** int: rlid
+**Returns:** `int`:  rlid
 
 
 
@@ -283,9 +282,9 @@ from bilibili_api import article
 
 | name | type | description |
 | - | - | - |
-| rank_type | ArticleRankingType | 排行榜类别. Defaults to ArticleRankingType.YESTERDAY. |
+| `rank_type` | `ArticleRankingType` | 排行榜类别. Defaults to ArticleRankingType.YESTERDAY. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

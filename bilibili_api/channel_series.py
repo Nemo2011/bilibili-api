@@ -106,7 +106,7 @@ class ChannelSeries:
         获取元数据
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         if not self.meta:
             await self.__fetch_meta()
@@ -125,7 +125,7 @@ class ChannelSeries:
             ps(int)           : 每一页显示的视频数量
 
         Returns:
-            调用 API 返回的结果
+            dict: 调用 API 返回的结果
         """
         if self.__uid == -1:
             await self.__fetch_meta()

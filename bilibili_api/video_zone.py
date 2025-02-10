@@ -25,7 +25,7 @@ def get_zone_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, None]
         tid (int): 频道的 tid。
 
     Returns:
-        `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+        Tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     with open(
         os.path.join(os.path.dirname(__file__), "data/video_zone.json"), encoding="utf8"

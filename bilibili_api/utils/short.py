@@ -14,14 +14,12 @@ async def get_real_url(short_url: str, credential: Optional[Credential] = None) 
     获取短链接跳转目标，以进行操作。
 
     Args:
-        short_url(str): 短链接。
+        short_url (str): 短链接。
 
-        credential(Credential | None): 凭据类。
+        credential (Credential | None): 凭据类。
 
     Returns:
-        目标链接（如果不是有效的链接会报错）
-
-        返回值为原 url 类型
+        str: 目标链接（如果不是有效的链接会报错）
     """
     credential = credential if credential else Credential()
 

@@ -325,20 +325,27 @@ def parse_docstring(doc: str):
                     .replace("union", "Union")
                     .replace("|", "\|")
                 )
+                # print(line)
+                # assert argtype != ""
                 table.append((argname, argtype, arginfo))
             elif state == 2:
                 ret += line + "\n"
                 state = 3
             else:
                 note += line + "\n"
-    if ret.replace(" ", "").replace("\n", "") == "":
-        ret = "None\n"
-    ret = "**Returns:** " + ret
+    if ret.replace(" ", "").replace("\n", "") != "":
+        rettype = ret.split(":")[0]
+        retdesc = "".join(ret.split(":")[1:])
+        # print(ret.split(":"))
+        # assert retdesc != ""
+        ret = f"**Returns:** `{rettype}`: {retdesc}"
+    else:
+        ret = ""
     mdstring = f"{info}\n"
     if table != []:
         mdstring += "| name | type | description |\n| - | - | - |\n"
         for arg in table:
-            mdstring += f"| {arg[0]} | {arg[1]} | {arg[2]} |\n"
+            mdstring += f"| `{arg[0]}` | `{arg[1]}` | {arg[2]} |\n"
     mdstring += f"\n{ret}\n{note}\n\n"
     return mdstring
 
@@ -379,12 +386,14 @@ def parse_docstring1(doc: str):
                     .replace("union", "Union")
                     .replace("|", "\|")
                 )
+                # print(line)
+                # assert argtype != ""
                 table.append((argname, argtype, arginfo))
     mdstring = f"{info}\n"
     if table != []:
         mdstring += "| name | type | description |\n| - | - | - |\n"
         for arg in table:
-            mdstring += f"| {arg[0]} | {arg[1]} | {arg[2]} |\n"
+            mdstring += f"| `{arg[0]}` | `{arg[1]}` | {arg[2]} |\n"
     mdstring += f"\n\n"
     return mdstring
 

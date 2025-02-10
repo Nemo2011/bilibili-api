@@ -30,7 +30,7 @@ def sync(
         obj (Coroutine | Future): 异步函数
 
     Returns:
-        该异步函数的返回值
+        Any: 该异步函数的返回值
     """
     try:
         asyncio.get_running_loop()

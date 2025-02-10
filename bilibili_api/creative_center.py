@@ -561,7 +561,7 @@ async def get_video_upload_manager_info(
 
         ps (int): 每页项数
 
-        tid: (VideoZoneTypes, None, int): 分区
+        tid (VideoZoneTypes, None, int): 分区
 
         status (UploadManagerStatus): 稿件状态
 

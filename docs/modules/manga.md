@@ -34,7 +34,7 @@ from bilibili_api import manga
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类。 |
+| `credential` | `Credential` | 凭据类。 |
 
 
 ### def \_\_init\_\_()
@@ -42,8 +42,8 @@ from bilibili_api import manga
 
 | name | type | description |
 | - | - | - |
-| manga_id | int | 漫画 id |
-| credential | Credential \| None | 凭据类. Defaults to None. |
+| `manga_id` | `int` | 漫画 id |
+| `credential` | `Credential \| None` | 凭据类. Defaults to None. |
 
 
 ### def get_manga_id()
@@ -52,7 +52,7 @@ from bilibili_api import manga
 
 
 
-**Returns:** int: 漫画的 id
+**Returns:** `int`:  漫画的 id
 
 
 
@@ -173,12 +173,12 @@ from bilibili_api import manga
 
 | name | type | description |
 | - | - | - |
-| pn | int | 页码。Defaults to 1. |
-| ps | int | 每页数量。Defaults to 18. |
-| order | MangaOrderType | 排序方式。Defaults to MangaOrderType.FOLLOW. |
-| credential | Credential | 凭据类. |
+| `pn` | `int` | 页码。Defaults to 1. |
+| `ps` | `int` | 每页数量。Defaults to 18. |
+| `order` | `MangaOrderType` | 排序方式。Defaults to MangaOrderType.FOLLOW. |
+| `credential` | `Credential` | 凭据类. |
 
-**Returns:** List[Manga]: 追漫列表
+**Returns:** `List[Manga]`:  追漫列表
 
 
 
@@ -192,11 +192,11 @@ from bilibili_api import manga
 
 | name | type | description |
 | - | - | - |
-| pn | int | 页码。Defaults to 1. |
-| seed | Optional, str | Unknown param，无需传入. |
-| credential | Credential | 凭据类. Defaults to None. |
+| `pn` | `int` | 页码。Defaults to 1. |
+| `seed` | `Optional, str` | Unknown param，无需传入. |
+| `credential` | `Credential` | 凭据类. Defaults to None. |
 
-**Returns:** List[Manga]: 漫画列表
+**Returns:** `List[Manga]`:  漫画列表
 
 
 
@@ -210,12 +210,12 @@ from bilibili_api import manga
 
 | name | type | description |
 | - | - | - |
-| date | Union[str, datetime.datetime] | 日期，默认为今日。 |
-| pn | int | 页码。Defaults to 1. |
-| ps | int | 每页数量。Defaults to 8. |
-| credential | Credential | 凭据类. Defaults to None. |
+| `date` | `Union[str, datetime.datetime]` | 日期，默认为今日。 |
+| `pn` | `int` | 页码。Defaults to 1. |
+| `ps` | `int` | 每页数量。Defaults to 8. |
+| `credential` | `Credential` | 凭据类. Defaults to None. |
 
-**Returns:** List[Manga]: 漫画列表
+**Returns:** `List[Manga]`:  漫画列表
 
 
 
@@ -229,11 +229,10 @@ from bilibili_api import manga
 
 | name | type | description |
 | - | - | - |
-| manga | Manga | 漫画类。 |
-| status | bool | 设置是否追漫。是为 True，否为 False。Defaults to True. |
-| credential | Credential | 凭据类。 |
+| `manga` | `Manga` | 漫画类。 |
+| `status` | `bool` | 设置是否追漫。是为 True，否为 False。Defaults to True. |
+| `credential` | `Credential` | 凭据类。 |
 
-**Returns:** None
 
 
 

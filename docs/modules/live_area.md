@@ -44,7 +44,6 @@ from bilibili_api import live_area
 
 
 
-**Returns:** None
 
 
 
@@ -57,9 +56,9 @@ from bilibili_api import live_area
 
 | name | type | description |
 | - | - | - |
-| id | int | 分区的 id。 |
+| `id` | `int` | 分区的 id。 |
 
-**Returns:** `Tuple[dict | None, dict | None]`: 第一个是主分区，第二个是子分区，没有时返回 None。
+**Returns:** `Tuple[dict | None, dict | None]`:  第一个是主分区，第二个是子分区，没有时返回 None。
 
 
 
@@ -73,9 +72,9 @@ from bilibili_api import live_area
 
 | name | type | description |
 | - | - | - |
-| name | str | 分区的名称。 |
+| `name` | `str` | 分区的名称。 |
 
-**Returns:** Tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
+**Returns:** `Tuple[dict | None, dict | None]`:  第一个是主分区，第二个是子分区，没有时返回 None。
 
 
 
@@ -88,7 +87,7 @@ from bilibili_api import live_area
 
 
 
-**Returns:** List[dict]: 所有分区的数据
+**Returns:** `List[dict]`:  所有分区的数据
 
 
 
@@ -102,7 +101,7 @@ from bilibili_api import live_area
 
 
 
-**Returns:** dict: 所有分区的数据
+**Returns:** `dict`:  所有分区的数据
 
 
 
@@ -116,11 +115,11 @@ from bilibili_api import live_area
 
 | name | type | description |
 | - | - | - |
-| area_id | int | 分区 id |
-| page | int | 第几页. Defaults to 1. |
-| order | LiveRoomOrder | 直播间排序方式. Defaults to LiveRoomOrder.RECOMMEND. |
+| `area_id` | `int` | 分区 id |
+| `page` | `int` | 第几页. Defaults to 1. |
+| `order` | `LiveRoomOrder` | 直播间排序方式. Defaults to LiveRoomOrder.RECOMMEND. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

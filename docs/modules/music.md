@@ -42,7 +42,7 @@ from bilibili_api import music
 
 | name | type | description |
 | - | - | - |
-| music_id | str | 音乐 id，例如 MA436038343856245020 |
+| `music_id` | `str` | 音乐 id，例如 MA436038343856245020 |
 
 
 ### async def get_info()
@@ -51,7 +51,7 @@ from bilibili_api import music
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -62,7 +62,7 @@ from bilibili_api import music
 
 
 
-**Returns:** str: 音乐 id
+**Returns:** `str`:  音乐 id
 
 
 
@@ -73,7 +73,7 @@ from bilibili_api import music
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -158,9 +158,9 @@ from bilibili_api import music
 
 | name | type | description |
 | - | - | - |
-| credential | Credential \| None | 凭据类. Defaults to None. |
+| `credential` | `Credential \| None` | 凭据类. Defaults to None. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -174,14 +174,13 @@ from bilibili_api import music
 
 | name | type | description |
 | - | - | - |
-| keyword | str | 关键词. Defaults to None. |
-| lang | MusicIndexTags.Lang | 语言. Defaults to MusicIndexTags.Lang.ALL |
-| genre | MusicIndexTags.Genre | 类型. Defaults to MusicIndexTags.Genre.ALL |
-| order | MusicOrder | 排序方式. Defaults to OrderAudio.NEW |
-| page_num | int | 页码. Defaults to 1. |
-| page_size | int | 每页的数据大小. Defaults to 10. |
+| `keyword` | `str` | 关键词. Defaults to None. |
+| `lang` | `MusicIndexTags.Lang` | 语言. Defaults to MusicIndexTags.Lang.ALL |
+| `genre` | `MusicIndexTags.Genre` | 类型. Defaults to MusicIndexTags.Genre.ALL |
+| `order` | `MusicOrder` | 排序方式. Defaults to OrderAudio.NEW |
+| `page_num` | `int` | 页码. Defaults to 1. |
+| `page_size` | `int` | 每页的数据大小. Defaults to 10. |
 
-**Returns:** None
 
 
 

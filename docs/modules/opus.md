@@ -33,7 +33,7 @@ from bilibili_api import opus
 
 | name | type | description |
 | - | - | - |
-| credential | Credential | 凭据类 |
+| `credential` | `Credential` | 凭据类 |
 
 
 ### def \_\_init\_\_()
@@ -48,7 +48,7 @@ from bilibili_api import opus
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -59,7 +59,7 @@ from bilibili_api import opus
 
 
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -70,7 +70,7 @@ from bilibili_api import opus
 
 
 
-**Returns:** int: 图文 idd
+**Returns:** `int`:  图文 idd
 
 
 
@@ -82,9 +82,9 @@ from bilibili_api import opus
 
 | name | type | description |
 | - | - | - |
-| offset | str, optional | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "" |
+| `offset` | `str, optional` | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to "" |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -95,7 +95,7 @@ from bilibili_api import opus
 
 
 
-**Returns:** int: rid
+**Returns:** `int`:  rid
 
 
 
@@ -108,7 +108,7 @@ from bilibili_api import opus
 
 
 
-**Returns:** bool: 是否同时为专栏
+**Returns:** `bool`:  是否同时为专栏
 
 
 
@@ -119,7 +119,7 @@ from bilibili_api import opus
 
 
 
-**Returns:** str: markdown 内容
+**Returns:** `str`:  markdown 内容
 
 
 
@@ -131,9 +131,9 @@ from bilibili_api import opus
 
 | name | type | description |
 | - | - | - |
-| status | bool, optional | 收藏状态. Defaults to True |
+| `status` | `bool, optional` | 收藏状态. Defaults to True |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -145,9 +145,9 @@ from bilibili_api import opus
 
 | name | type | description |
 | - | - | - |
-| status | bool, optional | 点赞状态. Defaults to True. |
+| `status` | `bool, optional` | 点赞状态. Defaults to True. |
 
-**Returns:** dict: 调用 API 返回的结果
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
@@ -160,7 +160,7 @@ from bilibili_api import opus
 
 
 
-**Returns:** article.Article: 专栏类
+**Returns:** `article.Article`:  专栏类
 
 
 
@@ -173,7 +173,7 @@ from bilibili_api import opus
 
 
 
-**Returns:** dynamic.Dynamic: 对应的动态类
+**Returns:** `dynamic.Dynamic`:  对应的动态类
 
 
 
