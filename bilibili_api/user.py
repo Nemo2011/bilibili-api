@@ -199,6 +199,20 @@ class OrderType(Enum):
     asc = "asc"
 
 
+class OpusType(Enum):
+    """
+    图文类型
+
+    + ALL: 所有
+    + ARTICLE: 属于专栏的图文
+    + DYNAMIC: 不属于专栏（但为动态）的图文
+    """
+
+    ALL = "all"
+    ARTICLE = "article"
+    DYNAMIC = "dynamic"
+
+
 async def name2uid(names: Union[str, List[str]], credential: Credential = None):
     """
     将用户名转为 uid
@@ -1007,15 +1021,40 @@ class User:
         视频三联特效
 
         Returns:
-            dict: 调用 API 返回的结果。
+            dict: 调用 API 返回的结果
         """
         api = API["info"]["uplikeimg"]
         params = {"vmid": self.get_uid()}
-        return await Api(**api).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
+    async def get_opus(self, type_: OpusType = OpusType.ALL, offset: str = "") -> dict:
+        """
+        获取用户发布过的图文
+
+        Args:
+            type_  (OpusType, optional): 获取的图文类型. Defaults to OpusType.ALL.
+            offset (str, optional)     : 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。对应返回结果的 `["offset"]` Defaults to "".
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        api = API["info"]["opus"]
+        params = {
+            "host_mid": self.get_uid(),
+            "offset": offset,
+            "type": type_.value,
+            "web_location": "333.1387",
+            "w_webid": await self.get_access_id(),
+        }
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_access_id(self) -> str:
         """
-        获取用户 access_id 如未过期直接从本地获取 防止重复请求
+        获取用户 access_id (w_webid) 如未过期直接从本地获取 防止重复请求
 
         Returns:
             str: access_id

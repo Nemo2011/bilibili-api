@@ -19,6 +19,7 @@ from bilibili_api import user
 - [class HistoryBusinessType()](#class-HistoryBusinessType)
 - [class HistoryType()](#class-HistoryType)
 - [class MedialistOrder()](#class-MedialistOrder)
+- [class OpusType()](#class-OpusType)
 - [class OrderType()](#class-OrderType)
 - [class RelationType()](#class-RelationType)
 - [class User()](#class-User)
@@ -42,6 +43,7 @@ from bilibili_api import user
   - [async def get\_live\_info()](#async-def-get\_live\_info)
   - [async def get\_masterpiece()](#async-def-get\_masterpiece)
   - [async def get\_media\_list()](#async-def-get\_media\_list)
+  - [async def get\_opus()](#async-def-get\_opus)
   - [async def get\_overview\_stat()](#async-def-get\_overview\_stat)
   - [async def get\_relation()](#async-def-get\_relation)
   - [async def get\_relation\_info()](#async-def-get\_relation\_info)
@@ -228,6 +230,21 @@ medialist排序顺序。
 
 ---
 
+## class OpusType()
+
+**Extend: enum.Enum**
+
+图文类型
+
++ ALL: 所有
++ ARTICLE: 属于专栏的图文
++ DYNAMIC: 不属于专栏（但为动态）的图文
+
+
+
+
+---
+
 ## class OrderType()
 
 **Extend: enum.Enum**
@@ -278,7 +295,7 @@ medialist排序顺序。
 
 ### async def get_access_id()
 
-获取用户 access_id 如未过期直接从本地获取 防止重复请求
+获取用户 access_id (w_webid) 如未过期直接从本地获取 防止重复请求
 
 
 
@@ -547,6 +564,21 @@ medialist排序顺序。
 
 
 
+### async def get_opus()
+
+获取用户发布过的图文
+
+
+| name | type | description |
+| - | - | - |
+| type_ | OpusType, optional | 获取的图文类型. Defaults to OpusType.ALL. |
+| offset | str, optional | 偏移量。每次请求可获取下次请求对应的偏移量，类似单向链表。对应返回结果的 `["offset"]` Defaults to "". |
+
+**Returns:** dict: 调用 API 返回的结果
+
+
+
+
 ### async def get_overview_stat()
 
 获取用户的简易订阅和投稿信息。
@@ -673,7 +705,7 @@ medialist排序顺序。
 
 
 
-**Returns:** dict: 调用 API 返回的结果。
+**Returns:** dict: 调用 API 返回的结果
 
 
 

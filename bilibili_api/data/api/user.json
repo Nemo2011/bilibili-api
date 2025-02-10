@@ -48,7 +48,8 @@
       "wbi": true,
       "wbi2": true,
       "params": {
-        "mid": "int: uid"
+        "mid": "int: uid",
+        "w_webid": "str: w_webid"
       },
       "comment": "用户基本信息"
     },
@@ -123,7 +124,8 @@
       "verify": false,
       "wbi": true,
       "params": {
-        "mid": "int: uid"
+        "mid": "int: uid",
+        "w_webid": "str: w_webid"
       },
       "comment": "直播间基本信息"
     },
@@ -138,7 +140,8 @@
         "ps": "const int: 30",
         "tid": "int: 分区 ID，0 表示全部",
         "pn": "int: 页码",
-        "keyword": "str: 关键词，可为空"
+        "keyword": "str: 关键词，可为空",
+        "w_webid": "str: w_webid"
       },
       "comment": "搜索用户视频"
     },
@@ -520,6 +523,19 @@
       "verify": true,
       "wbi": true,
       "comment": "获取与某用户的关系"
+    },
+    "opus": {
+      "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/opus/feed/space",
+      "method": "GET",
+      "wbi": true,
+      "params": {
+        "host_mid": "int: uid",
+        "page": "int: 页码 非必要，且貌似对结果影响不大",
+        "offset": "int: 动态偏移用，第一页为空",
+        "type": "str: all / article / dynamic",
+        "web_location": "333.1387",
+        "w_webid":"str: w_webid"
+      }
     }
   },
   "operate": {
