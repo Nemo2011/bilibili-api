@@ -1,4 +1,4 @@
-# Module bilibili_api.py
+# Module bilibili_api
 
 
 bilibili_api
@@ -9,7 +9,7 @@ bilibili_api
 
 
 ``` python
-from bilibili_api import bilibili_api
+from bilibili_api import ...
 ```
 
 - [class ApiException()](#class-ApiException)

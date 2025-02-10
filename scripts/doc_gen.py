@@ -395,9 +395,12 @@ for module in all_funcs:
     docs_dir = "./docs/modules/" + module[0][0] + ".md"
     file = open(docs_dir, "w+")
     print("BEGIN", module[0][0])
-    file.write(
-        f"# Module {module[0][0]}.py\n\n{eval(f'{module[0][1]}.__doc__')}\n\n``` python\nfrom bilibili_api import {module[0][0]}\n```\n\n"
-    )
+    if module[0][0] != "bilibili_api":
+        file.write(
+            f"# Module {module[0][0]}.py\n\n{eval(f'{module[0][1]}.__doc__')}\n\n``` python\nfrom bilibili_api import {module[0][0]}\n```\n\n"
+        )
+    else:
+        file.write(f"# Module bilibili_api\n\n{eval(f'{module[0][1]}.__doc__')}\n\n``` python\nfrom bilibili_api import ...\n```\n\n")
     print("GENERATING TOC")
     last_data_class = -114514
     for idx, func in enumerate(module[1:]):
