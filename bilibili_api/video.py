@@ -1020,42 +1020,44 @@ class Video:
             cid = await self.__get_cid_by_index(page_index)
 
         view = await self.get_danmaku_view(cid=cid)
-        special_dms = view["special_dms"][0]
-        dm_content = await Api(
-            url=special_dms, method="GET", credential=self.credential
-        ).request(byte=True)
-        reader = BytesReader(dm_content)
+        if not view.get("special_dms"):
+            return []
         dms: List[SpecialDanmaku] = []
-        while not reader.has_end():
-            spec_dm = SpecialDanmaku("")
-            type_ = reader.varint() >> 3
-            if type_ == 1:
-                reader_ = BytesReader(reader.bytes_string())
-                while not reader_.has_end():
-                    type__ = reader_.varint() >> 3
-                    if type__ == 1:
-                        spec_dm.id_ = reader_.varint()
-                    elif type__ == 3:
-                        spec_dm.mode = reader_.varint()
-                    elif type__ == 4:
-                        reader_.varint()
-                    elif type__ == 5:
-                        reader_.varint()
-                    elif type__ == 6:
-                        reader_.string()
-                    elif type__ == 7:
-                        spec_dm.content = reader_.string()
-                    elif type__ == 8:
-                        reader_.varint()
-                    elif type__ == 11:
-                        spec_dm.pool = reader_.varint()
-                    elif type__ == 12:
-                        spec_dm.id_str = reader_.string()
-                    else:
-                        continue
-            else:
-                continue
-            dms.append(spec_dm)
+        for special_dms in view["special_dms"]:
+            dm_content = await Api(
+                url=special_dms, method="GET", credential=self.credential
+            ).request(byte=True)
+            reader = BytesReader(dm_content)
+            while not reader.has_end():
+                spec_dm = SpecialDanmaku("")
+                type_ = reader.varint() >> 3
+                if type_ == 1:
+                    reader_ = BytesReader(reader.bytes_string())
+                    while not reader_.has_end():
+                        type__ = reader_.varint() >> 3
+                        if type__ == 1:
+                            spec_dm.id_ = reader_.varint()
+                        elif type__ == 3:
+                            spec_dm.mode = reader_.varint()
+                        elif type__ == 4:
+                            reader_.varint()
+                        elif type__ == 5:
+                            reader_.varint()
+                        elif type__ == 6:
+                            reader_.string()
+                        elif type__ == 7:
+                            spec_dm.content = reader_.string()
+                        elif type__ == 8:
+                            reader_.varint()
+                        elif type__ == 11:
+                            spec_dm.pool = reader_.varint()
+                        elif type__ == 12:
+                            spec_dm.id_str = reader_.string()
+                        else:
+                            continue
+                else:
+                    continue
+                dms.append(spec_dm)
         return dms
 
     async def get_history_danmaku_index(
@@ -2190,7 +2192,7 @@ class VideoDownloadURLDataDetecter:
             data (dict): `Video.get_download_url` 返回的结果
         """
         self.__data = data
-        if self.__data.get("video_info"): # bangumi
+        if self.__data.get("video_info"):  # bangumi
             self.__data = self.__data["video_info"]
 
     def check_video_and_audio_stream(self) -> bool:
