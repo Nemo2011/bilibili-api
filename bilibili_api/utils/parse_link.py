@@ -28,6 +28,7 @@ from ..cheese import CheeseList, CheeseVideo
 from ..interactive_video import InteractiveVideo
 from ..favorite_list import FavoriteList, FavoriteListType
 from ..user import User, ChannelSeries, ChannelSeriesType, get_self_info
+from ..opus import Opus
 
 from .initial_state import get_initial_state
 
@@ -53,6 +54,7 @@ class ResourceType(Enum):
     + TOPIC: 话题
     + MANGA: 漫画
     + NOTE: 笔记
+    + OPUS: 图文
     + FAILED: 错误
     """
 
@@ -75,6 +77,7 @@ class ResourceType(Enum):
     TOPIC = "topic"
     MANGA = "manga"
     NOTE = "note"
+    OPUS = "opus"
     FAILED = "failed"
 
 
@@ -216,7 +219,7 @@ async def parse_link(url: str, credential: Union[Credential, None] = None) -> Un
             obj = (manga, ResourceType.MANGA)
         opus_dynamic = parse_opus_dynamic(url, credential)  # type: ignore
         if not opus_dynamic == -1:
-            obj = (opus_dynamic, ResourceType.DYNAMIC)
+            obj = (opus_dynamic, ResourceType.OPUS)
 
         if obj == None or obj[0] == None:
             return (-1, ResourceType.FAILED)
@@ -647,5 +650,5 @@ def parse_nianshizhiwang(url: URL) -> None:
 def parse_opus_dynamic(url: URL, credential: Credential) -> Union[Dynamic, int]:
     # https://www.bilibili.com/opus/767674573455884292
     if url.host == "www.bilibili.com" and url.parts[:2] == ("/", "opus"):
-        return Dynamic(dynamic_id=int(url.parts[-1]), credential=credential)
+        return Opus(opus_id=int(url.parts[-1]), credential=credential)
     return -1
