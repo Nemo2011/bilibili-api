@@ -24,20 +24,25 @@ from bilibili_api import interactive_video
   - [def get\_video()](#def-get\_video)
 - [class InteractiveJumpingCommand()](#class-InteractiveJumpingCommand)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def get\_command()](#def-get\_command)
+  - [def get\_vars()](#def-get\_vars)
   - [def run\_command()](#def-run\_command)
 - [class InteractiveJumpingCondition()](#class-InteractiveJumpingCondition)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def get\_condition()](#def-get\_condition)
   - [def get\_result()](#def-get\_result)
+  - [def get\_vars()](#def-get\_vars)
 - [class InteractiveNode()](#class-InteractiveNode)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def get\_children()](#async-def-get\_children)
   - [def get\_cid()](#def-get\_cid)
   - [async def get\_info()](#async-def-get\_info)
+  - [def get\_jumping\_command()](#def-get\_jumping\_command)
   - [def get\_jumping\_condition()](#def-get\_jumping\_condition)
   - [async def get\_jumping\_type()](#async-def-get\_jumping\_type)
   - [def get\_node\_id()](#def-get\_node\_id)
   - [def get\_self\_button()](#def-get\_self\_button)
-  - [async def get\_vars()](#async-def-get\_vars)
+  - [def get\_vars()](#def-get\_vars)
   - [def get\_video()](#def-get\_video)
   - [def is\_default()](#def-is\_default)
 - [class InteractiveNodeJumpingType()](#class-InteractiveNodeJumpingType)
@@ -232,6 +237,28 @@ o----|xxx| (TEXT_RIGHT)
 | `command` | `str` | 公式 |
 
 
+### def get_command()
+
+获取表达式
+
+
+
+**Returns:** `str`:  表达式
+
+
+
+
+### def get_vars()
+
+获取公式中的变量
+
+
+
+**Returns:** `List[InteractiveVariable]`:  变量
+
+
+
+
 ### def run_command()
 
 执行操作
@@ -261,6 +288,17 @@ o----|xxx| (TEXT_RIGHT)
 | `condition` | `str` | 公式 |
 
 
+### def get_condition()
+
+获取表达式
+
+
+
+**Returns:** `str`:  表达式
+
+
+
+
 ### def get_result()
 
 计算公式获得结果
@@ -268,6 +306,17 @@ o----|xxx| (TEXT_RIGHT)
 
 
 **Returns:** `bool`:  是否成立
+
+
+
+
+### def get_vars()
+
+获取公式中的变量
+
+
+
+**Returns:** `List[InteractiveVariable]`:  变量
 
 
 
@@ -329,6 +378,17 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
+### def get_jumping_command()
+
+获取跳转时执行的语句，已自动执行，无需手动调用
+
+
+
+**Returns:** `InteractiveJumpingCommand`:  执行的语句
+
+
+
+
 ### def get_jumping_condition()
 
 获取跳转条件
@@ -371,7 +431,7 @@ o----|xxx| (TEXT_RIGHT)
 
 
 
-### async def get_vars()
+### def get_vars()
 
 获取节点的所有变量
 
