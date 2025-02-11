@@ -175,8 +175,10 @@ Events:
 
 CallbackData: 描述 (str) 数据 (dict)
 
+示例：
+
 ``` python
-@request_log.on("__ALL__")
+@request_log.on("REQUEST")
 async def handle(desc: str, data: dict) -> None:
     print(desc, data)
 ```
@@ -211,8 +213,10 @@ Events:
 
 CallbackData: 描述 (str) 数据 (dict)
 
+示例：
+
 ``` python
-@request_log.on("__ALL__")
+@request_log.on("REQUEST")
 async def handle(desc: str, data: dict) -> None:
     print(desc, data)
 ```

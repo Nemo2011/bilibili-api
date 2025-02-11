@@ -1291,6 +1291,7 @@ NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate
 + TOPIC: 话题
 + MANGA: 漫画
 + NOTE: 笔记
++ OPUS: 图文
 + FAILED: 错误
 
 
@@ -1563,8 +1564,10 @@ Events:
 
 CallbackData: 描述 (str) 数据 (dict)
 
+示例：
+
 ``` python
-@request_log.on("__ALL__")
+@request_log.on("REQUEST")
 async def handle(desc: str, data: dict) -> None:
     print(desc, data)
 ```
