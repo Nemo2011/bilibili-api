@@ -9,7 +9,7 @@ assignees: ''
 
 **Python 版本：** 3.x.y
 
-**模块版本：** x.y.z
+**模块版本：** x.y.z <!--可使用 bilibili_api.BILIBILI_API_VERSION 或 pip3 show bilibili-api-python 查询-->
 
 **运行环境：** Windows / Linux / MacOS
 

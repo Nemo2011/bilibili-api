@@ -945,6 +945,10 @@ def get_selected_client() -> Tuple[str, Type[BiliAPIClient]]:
     Returns:
         Tuple[str, Type[BiliAPIClient]]: 第 0 项为客户端名称，第 1 项为对应的类
     """
+    if selected_client == "":
+        raise ArgsException(
+            "尚未安装第三方请求库或未注册自定义第三方请求库。\n$ pip3 install (curl_cffi|httpx|aiohttp)"
+        )
     return selected_client, sessions[selected_client]
 
 
@@ -955,6 +959,10 @@ def get_available_settings() -> List[str]:
     Returns:
         List[str]: 支持的设置项名称
     """
+    if selected_client == "":
+        raise ArgsException(
+            "尚未安装第三方请求库或未注册自定义第三方请求库。\n$ pip3 install (curl_cffi|httpx|aiohttp)"
+        )
     return client_settings[selected_client]
 
 
