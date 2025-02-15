@@ -51,3 +51,6 @@ packages = [
     "py.typed",
     "requirements.txt",
 ]
+
+[project.entry-points.pyinstaller40]
+"hook-dirs" = "bilibili_api._pyinstaller.entry_points:get_hook_dirs"
