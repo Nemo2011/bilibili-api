@@ -236,11 +236,18 @@
       "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space",
       "method": "GET",
       "verify": false,
+      "wbi": true,
+      "wbi2": true,
       "params": {
         "host_mid": "int: uid",
         "offset": "int: 动态偏移用，第一页为 0",
         "timezone_offset": "int: -400",
-        "features": "str: itemOpusStyle"
+        "features": "str: itemOpusStyle",
+        "x-bili-device-req-json": {
+          "platform": "str: sweb",
+          "device": "str: pc"
+        },
+        "x-bili-web-req-json": { "spm_id": "str: 333.1368" }
       },
       "comment": "用户动态信息"
     },
@@ -534,7 +541,7 @@
         "offset": "int: 动态偏移用，第一页为空",
         "type": "str: all / article / dynamic",
         "web_location": "333.1387",
-        "w_webid":"str: w_webid"
+        "w_webid": "str: w_webid"
       }
     }
   },

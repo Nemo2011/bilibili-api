@@ -198,7 +198,12 @@
       "params": {
         "timezone_offset":"int: 时区偏移量",
         "dynamic_id": "int: 动态 ID",
-        "features":"str: 默认 itemOpusStyle"
+        "features":"str: 默认 itemOpusStyle",
+        "x-bili-device-req-json": {
+          "platform": "str: sweb",
+          "device": "str: pc"
+        },
+        "x-bili-web-req-json": { "spm_id": "str: 333.1368" }
       },
       "comment": "动态详细信息"
     },

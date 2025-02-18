@@ -642,8 +642,10 @@ class User:
         params = {
             "host_mid": self.__uid,
             "offset": offset,
-            "features": "itemOpusStyle",
+            "features": "itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,forwardListHidden,decorationCard,commentsNewVersion,onlyfansAssetsV2,ugcDelete,onlyfansQaCard",
             "timezone_offset": -480,
+            "x-bili-device-req-json": '{"platform":"web","device":"pc"}',
+            "x-bili-web-req-json": '{"spm_id":"333.1387"}',
         }
         data = (
             await Api(**api, credential=self.credential).update_params(**params).result
