@@ -767,9 +767,7 @@ class Dynamic:
                 cache_pool.article2dynamic[
                     cache_pool.dynamic2article[self.__dynamic_id]
                 ] = self.__dynamic_id
-            module_dynamic = self.__detail["item"]["modules"][
-                "module_dynamic"
-            ]
+            module_dynamic = self.__detail["item"]["modules"]["module_dynamic"]
             if module_dynamic.get("major") is None:
                 cache_pool.dynamic_is_opus[self.__dynamic_id] = False
             else:
@@ -1161,9 +1159,60 @@ async def get_dynamic_page_info(
     features: str = "itemOpusStyle",
     pn: int = 1,
     offset: Optional[int] = None,
-) -> List[Dynamic]:
+) -> dict:
     """
     获取动态页动态信息
+
+    获取全部动态或者相应类型需传入 _type
+
+    获取指定 UP 主动态需传入 host_mid
+
+    Args:
+        credential (Credential): 凭据类.
+
+        _type      (DynamicType, optional): 动态类型. Defaults to DynamicType.ALL.
+
+        host_mid   (int, optional): 获取对应 UP 主动态的 mid. Defaults to None.
+
+        features   (str, optional): 默认 itemOpusStyle.
+
+        pn         (int, optional): 页码. Defaults to 1.
+
+        offset     (int, optional): 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None.
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+
+    api = API["info"]["dynamic_page_info"]
+    params = {
+        "timezone_offset": -480,
+        "features": features,
+        "page": pn,
+    }
+    params.update({"offset": offset} if offset else {})
+    if _type:  # 全部动态
+        params["type"] = _type.value
+    elif host_mid:  # 指定 UP 主动态
+        params["host_mid"] = host_mid
+    elif not _type:
+        api["params"].pop("type")
+    elif not host_mid:
+        api["params"].pop("host_mid")
+
+    return await Api(**api, credential=credential).update_params(**params).result
+
+
+async def get_dynamic_page_list(
+    credential: Credential,
+    _type: Optional[DynamicType] = None,
+    host_mid: Optional[int] = None,
+    features: str = "itemOpusStyle",
+    pn: int = 1,
+    offset: Optional[int] = None,
+) -> List[Dynamic]:
+    """
+    获取动态页动态列表
 
     获取全部动态或者相应类型需传入 _type
 

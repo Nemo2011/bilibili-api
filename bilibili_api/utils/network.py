@@ -60,7 +60,7 @@ class RequestLog(AsyncEvent):
             )
             self.logger.addHandler(handler)
         self.__on = False
-        self.__on_events = [
+        self.__on_events: List[str] = [
             "API_REQUEST",
             "API_RESPONSE",
             "ANTI_SPIDER",
@@ -69,42 +69,42 @@ class RequestLog(AsyncEvent):
             "WS_SEND",
             "WS_CLOSE",
         ]
-        self.__ignore_events = []
+        self.__ignore_events: List[str] = []
         self.add_event_listener("__ALL__", self.__handle_events)
 
-    def get_on_events(self) -> dict:
+    def get_on_events(self) -> List[str]:
         """
         获取日志输出支持的事件类型
 
         Returns:
-            dict: 日志输出支持的事件类型
+            List[str]: 日志输出支持的事件类型
         """
         return self.__on_events
 
-    def set_on_events(self, events: dict) -> None:
+    def set_on_events(self, events: List[str]) -> None:
         """
         设置日志输出支持的事件类型
 
         Args:
-            events (dict): 日志输出支持的事件类型
+            events (List[str]): 日志输出支持的事件类型
         """
         self.__on_events = events
 
-    def get_ignore_events(self) -> dict:
+    def get_ignore_events(self) -> List[str]:
         """
         获取日志输出排除的事件类型
 
         Returns:
-            dict: 日志输出排除的事件类型
+            List[str]: 日志输出排除的事件类型
         """
         return self.__ignore_events
 
-    def set_ignore_events(self, events: dict) -> None:
+    def set_ignore_events(self, events: List[str]) -> None:
         """
         设置日志输出排除的事件类型
 
         Args:
-            events (dict): 日志输出排除的事件类型
+            events (List[str]): 日志输出排除的事件类型
         """
         self.__ignore_events = events
 
@@ -261,7 +261,7 @@ class RequestSettings:
         """
         return self.__settings[name]
 
-    def set(self, name: str, value: str) -> Any:
+    def set(self, name: str, value: Any) -> None:
         """
         设置某项设置
 

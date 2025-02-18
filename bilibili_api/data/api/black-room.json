@@ -2,7 +2,7 @@
     "black_room": {
         "info": {
             "url": "https://api.bilibili.com/x/credit/blocked/list",
-            "method": "GET", 
+            "method": "GET",
             "verify": false,
             "params": {
                 "btype": "int: 违规来源",
@@ -13,7 +13,7 @@
         },
         "detail": {
             "url": "https://api.bilibili.com/x/credit/blocked/info",
-            "method": "GET", 
+            "method": "GET",
             "verify": false,
             "params": {
                 "id": "小黑屋 id"
@@ -63,7 +63,7 @@
             "comment": "进行仲裁投票"
         },
         "case_list": {
-            "url": "https://api.bilibili.com/x/credit/v2/jury/case/list?pn=1&ps=20",
+            "url": "https://api.bilibili.com/x/credit/v2/jury/case/list",
             "method": "GET",
             "verify": true,
             "params": {

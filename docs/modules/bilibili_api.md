@@ -1582,7 +1582,7 @@ async def handle(desc: str, data: dict) -> None:
 
 
 
-**Returns:** `dict`:  日志输出排除的事件类型
+**Returns:** `List[str]`:  日志输出排除的事件类型
 
 
 
@@ -1593,7 +1593,7 @@ async def handle(desc: str, data: dict) -> None:
 
 
 
-**Returns:** `dict`:  日志输出支持的事件类型
+**Returns:** `List[str]`:  日志输出支持的事件类型
 
 
 
@@ -1616,7 +1616,7 @@ async def handle(desc: str, data: dict) -> None:
 
 | name | type | description |
 | - | - | - |
-| `events` | `Dict` | 日志输出排除的事件类型 |
+| `events` | `List[str]` | 日志输出排除的事件类型 |
 
 
 
@@ -1640,7 +1640,7 @@ async def handle(desc: str, data: dict) -> None:
 
 | name | type | description |
 | - | - | - |
-| `events` | `Dict` | 日志输出支持的事件类型 |
+| `events` | `List[str]` | 日志输出支持的事件类型 |
 
 
 

@@ -27,6 +27,7 @@ from bilibili_api import black_room
 - [class JuryVoteOpinion()](#class-JuryVoteOpinion)
 - [async def get\_blocked\_list()](#async-def-get\_blocked\_list)
 - [async def get\_jury\_case\_list()](#async-def-get\_jury\_case\_list)
+- [async def get\_jury\_case\_raw()](#async-def-get\_jury\_case\_raw)
 - [async def get\_next\_jury\_case()](#async-def-get\_next\_jury\_case)
 
 ---
@@ -290,6 +291,24 @@ from bilibili_api import black_room
 | `ps` | `int, optional` | 每页数量. Defaults to 20. |
 
 **Returns:** `List[JuryCase]`:  仲裁案件列表
+
+
+
+
+---
+
+## async def get_jury_case_raw()
+
+获取仲裁案件列表
+
+
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential` | 凭据类 |
+| `pn` | `int, optional` | 页数. Defaults to 1. |
+| `ps` | `int, optional` | 每页数量. Defaults to 20. |
+
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

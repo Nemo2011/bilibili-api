@@ -54,6 +54,7 @@ from bilibili_api import dynamic
 - [async def delete\_schedule()](#async-def-delete\_schedule)
 - [async def get\_dynamic\_page\_UPs\_info()](#async-def-get\_dynamic\_page\_UPs\_info)
 - [async def get\_dynamic\_page\_info()](#async-def-get\_dynamic\_page\_info)
+- [async def get\_dynamic\_page\_list()](#async-def-get\_dynamic\_page\_list)
 - [async def get\_live\_users()](#async-def-get\_live\_users)
 - [async def get\_new\_dynamic\_users()](#async-def-get\_new\_dynamic\_users)
 - [async def get\_schedules\_list()](#async-def-get\_schedules\_list)
@@ -621,6 +622,31 @@ scene 参数
 ## async def get_dynamic_page_info()
 
 获取动态页动态信息
+
+获取全部动态或者相应类型需传入 _type
+
+获取指定 UP 主动态需传入 host_mid
+
+
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential` | 凭据类. |
+| `_type` | `DynamicType, optional` | 动态类型. Defaults to DynamicType.ALL. |
+| `host_mid` | `int, optional` | 获取对应 UP 主动态的 mid. Defaults to None. |
+| `features` | `str, optional` | 默认 itemOpusStyle. |
+| `pn` | `int, optional` | 页码. Defaults to 1. |
+| `offset` | `int, optional` | 偏移值（下一页的第一个动态 ID，为该请求结果中的 offset 键对应的值），类似单向链表. Defaults to None. |
+
+**Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
+---
+
+## async def get_dynamic_page_list()
+
+获取动态页动态列表
 
 获取全部动态或者相应类型需传入 _type
 
