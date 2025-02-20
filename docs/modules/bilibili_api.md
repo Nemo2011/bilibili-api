@@ -889,6 +889,14 @@ Credential 类未提供 sessdata 时的异常。
 
 字体大小枚举。
 
+- EXTREME_SMALL
+- SUPER_SMALL
+- SMALL
+- NORMAL
+- BIG
+- SUPER_BIG
+- EXTREME_BIG
+
 
 
 
@@ -899,6 +907,14 @@ Credential 类未提供 sessdata 时的异常。
 **Extend: enum.Enum**
 
 弹幕模式枚举。
+
+- FLY: 飞行弹幕
+- TOP: 置顶弹幕
+- BOTTOM: 底部弹幕
+- REVERSE: 反向弹幕
+- ADVANCE: 高级弹幕
+- CODE: 代码弹幕 (基于 flash 实现)
+- SPECIAL: BAS 弹幕
 
 
 
