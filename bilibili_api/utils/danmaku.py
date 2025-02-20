@@ -34,6 +34,7 @@ class DmMode(Enum):
     TOP = 5
     BOTTOM = 4
     REVERSE = 6
+    CODE = 8
     SPECIAL = 9
 
 
