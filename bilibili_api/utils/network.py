@@ -34,6 +34,7 @@ from ..exceptions import (
     CredentialNoAcTimeValueException,
     CredentialNoBiliJctException,
     CredentialNoBuvid3Exception,
+    CredentialNoBuvid4Exception,
     CredentialNoDedeUserIDException,
     CredentialNoSessdataException,
     ExClimbWuzhiException,
@@ -246,10 +247,14 @@ class RequestSettings:
             "trust_env": True,
         }
         self.__wbi_retry_times = 3
+        self.__enable_auto_buvid = True
+        self.__enable_bili_ticket = False
 
     def get(self, name: str) -> Any:
         """
         获取某项设置
+
+        不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
 
         默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -264,6 +269,8 @@ class RequestSettings:
     def set(self, name: str, value: Any) -> None:
         """
         设置某项设置
+
+        不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
 
         默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -367,9 +374,47 @@ class RequestSettings:
         """
         self.__wbi_retry_times = wbi_retry_times
 
+    def get_enable_auto_buvid(self) -> bool:
+        """
+        获取设置的是否自动生成 buvid
+
+        Returns:
+            bool: 是否自动生成 buvid. Defaults to True.
+        """
+        return self.__enable_auto_buvid
+
+    def set_enable_auto_buvid(self, enable_auto_buvid: bool) -> None:
+        """
+        设置是否自动生成 buvid
+
+        Args:
+            enable_auto_buvid (bool): 是否自动生成 buvid.
+        """
+        self.__enable_auto_buvid = enable_auto_buvid
+
+    def get_enable_bili_ticket(self) -> bool:
+        """
+        获取设置的是否使用 bili_ticket
+
+        Returns:
+            bool: 是否使用 bili_ticket. Defaults to True.
+        """
+        return self.__enable_bili_ticket
+
+    def set_enable_bili_ticket(self, enable_bili_ticket: bool) -> None:
+        """
+        设置是否使用 bili_ticket
+
+        Args:
+            enable_bili_ticket (bool): 是否使用 bili_ticket.
+        """
+        self.__enable_bili_ticket = enable_bili_ticket
+
     def get_all(self) -> dict:
         """
         获取目前所有的设置项
+
+        不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
 
         Returns:
             dict: 所有的设置项
@@ -1074,6 +1119,7 @@ class Credential:
         sessdata: Union[str, None] = None,
         bili_jct: Union[str, None] = None,
         buvid3: Union[str, None] = None,
+        buvid4: Union[str, None] = None,
         dedeuserid: Union[str, None] = None,
         ac_time_value: Union[str, None] = None,
     ) -> None:
@@ -1086,6 +1132,8 @@ class Credential:
             bili_jct   (str | None, optional): 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None.
 
             buvid3     (str | None, optional): 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None.
+
+            buvid4     (str | None, optional): 浏览器 Cookies 中的 BUVID4 字段值. Defaults to None.
 
             dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
 
@@ -1100,6 +1148,7 @@ class Credential:
         )
         self.bili_jct = bili_jct
         self.buvid3 = buvid3
+        self.buvid4 = buvid4
         self.dedeuserid = dedeuserid
         self.ac_time_value = ac_time_value
 
@@ -1113,6 +1162,7 @@ class Credential:
         cookies = {
             "SESSDATA": self.sessdata if self.sessdata else "",
             "buvid3": self.buvid3 if self.buvid3 else "",
+            "buvid4": self.buvid4 if self.buvid4 else "",
             "bili_jct": self.bili_jct if self.bili_jct else "",
             "ac_time_value": self.ac_time_value if self.ac_time_value else "",
         }
@@ -1128,7 +1178,7 @@ class Credential:
         Returns:
             bool: 是否提供 dedeuserid。
         """
-        return self.dedeuserid is not None and self.sessdata != ""
+        return self.dedeuserid is not None and self.dedeuserid != ""
 
     def has_sessdata(self) -> bool:
         """
@@ -1146,7 +1196,7 @@ class Credential:
         Returns:
             bool: 是否提供 bili_jct。
         """
-        return self.bili_jct is not None and self.sessdata != ""
+        return self.bili_jct is not None and self.bili_jct != ""
 
     def has_buvid3(self) -> bool:
         """
@@ -1155,7 +1205,16 @@ class Credential:
         Returns:
             bool: 是否提供 buvid3
         """
-        return self.buvid3 is not None and self.sessdata != ""
+        return self.buvid3 is not None and self.buvid3 != ""
+
+    def has_buvid4(self) -> bool:
+        """
+        是否提供 buvid4
+
+        Returns:
+            bool: 是否提供 buvid4
+        """
+        return self.buvid4 is not None and self.buvid4 != ""
 
     def has_ac_time_value(self) -> bool:
         """
@@ -1164,7 +1223,7 @@ class Credential:
         Returns:
             bool: 是否提供 ac_time_value
         """
-        return self.ac_time_value is not None and self.sessdata != ""
+        return self.ac_time_value is not None and self.ac_time_value != ""
 
     def raise_for_no_sessdata(self):
         """
@@ -1186,6 +1245,13 @@ class Credential:
         """
         if not self.has_buvid3():
             raise CredentialNoBuvid3Exception()
+
+    def raise_for_no_buvid4(self):
+        """
+        没有提供 buvid3 时抛出异常。
+        """
+        if not self.has_buvid4():
+            raise CredentialNoBuvid4Exception()
 
     def raise_for_no_dedeuserid(self):
         """
@@ -1244,12 +1310,13 @@ class Credential:
         c.sessdata = cookies.get("SESSDATA")
         c.bili_jct = cookies.get("bili_jct")
         c.buvid3 = cookies.get("buvid3")
+        c.buvid3 = cookies.get("buvid4")
         c.dedeuserid = cookies.get("DedeUserID")
         c.ac_time_value = cookies.get("ac_time_value")
         return c
 
     def __str__(self):
-        return f"SESSDATA: {self.sessdata}; bili_jct: {self.bili_jct}; buvid3: {self.buvid3}; DedeUserID: {self.dedeuserid}; ac_time_value: {self.ac_time_value}"
+        return f"SESSDATA: {self.sessdata}; bili_jct: {self.bili_jct}; buvid3: {self.buvid3}; buvid4: {self.buvid4}; DedeUserID: {self.dedeuserid}; ac_time_value: {self.ac_time_value}"
 
 
 """
@@ -1960,8 +2027,6 @@ class Api:
 
         wbi2 (bool, optional): 是否使用参数进一步的 wbi 鉴权. Defaults to False.
 
-        bili_ticket (bool, optional): 是否使用 bili_ticket. Defaults to False.
-
         verify (bool, optional): 是否验证凭据. Defaults to False.
 
         no_csrf (bool, optional): 是否不使用 csrf. Defaults to False.
@@ -1982,7 +2047,6 @@ class Api:
     comment: str = ""
     wbi: bool = False
     wbi2: bool = False
-    bili_ticket: bool = False
     verify: bool = False
     no_csrf: bool = False
     json_body: bool = False
@@ -2086,11 +2150,13 @@ class Api:
             self.data["csrf_token"] = self.credential.bili_jct
         # 处理 cookies
         cookies = self.credential.get_cookies()
-        if cookies["buvid3"] == "":
-            cookies["buvid3"] = (await get_buvid())[0]
+        if (cookies["buvid3"] == "" or cookies["buvid4"] == "") and request_settings.get_enable_auto_buvid():
+            buvids = await get_buvid()
+            cookies["buvid3"] = buvids[0]
+            cookies["buvid4"] = buvids[1]
         cookies["opus-goback"] = "1"
         # bili_ticket
-        if self.bili_ticket:
+        if request_settings.get_enable_bili_ticket():
             cookies["bili_ticket"] = await get_bili_ticket(self.credential)
             cookies["bili_ticket_expires"] = str(int(time.time()) + 2 * 86400)
         # APP 鉴权

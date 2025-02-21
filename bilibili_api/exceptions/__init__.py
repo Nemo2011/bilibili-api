@@ -14,6 +14,7 @@ from .ResponseCodeException import *
 from .DanmakuClosedException import *
 from .LiveException import *
 from .CredentialNoBuvid3Exception import *
+from .CredentialNoBuvid4Exception import *
 from .CredentialNoBiliJctException import *
 from .CredentialNoSessdataException import *
 from .CredentialNoDedeUserIDException import *

@@ -4,7 +4,6 @@
       "url": "https://manga.bilibili.com/twirp/comic.v1.Comic/ComicDetail",
       "method": "POST",
       "verify": false,
-      "bili_ticket": true,
       "params": {
         "device": "str: 设备",
         "platform": "str: 平台",
