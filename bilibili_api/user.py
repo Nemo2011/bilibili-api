@@ -256,7 +256,6 @@ class User:
             credential = Credential()
         self.credential: Credential = credential
         self.__self_info = None
-        self.__access_id: Union[str, None] = None
 
     async def get_user_info(self) -> dict:
         """
@@ -1061,31 +1060,7 @@ class User:
         Returns:
             str: access_id
         """
-        if self.__access_id is not None:
-            if not await self.is_access_id_expired():
-                return self.__access_id
-
-        render_data: dict = await get_user_dynamic_render_data(self.__uid)
-        self.__access_id = render_data["access_id"]
-
-        return self.__access_id
-
-    async def is_access_id_expired(self) -> bool:
-        """
-        判断用户 access_id 是否过期 access_id 为 JWT 解析 Payload 内容判断是否有效
-
-        Returns:
-            bool: 是否有效
-        """
-        if self.__access_id is None:
-            return False
-
-        payload = jwt.decode(jwt=self.__access_id, options={"verify_signature": False})
-        created_at: int = payload["iat"]
-        ttl: int = payload["ttl"]
-        current_timestamp: int = int(time.time())
-
-        return (created_at + ttl) <= current_timestamp
+        return await get_user_dynamic_render_data(self.__uid)
 
 
 async def get_self_info(credential: Credential) -> dict:

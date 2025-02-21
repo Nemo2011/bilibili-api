@@ -1,14 +1,20 @@
 import json
 from re import Match, Pattern, compile
+import time
 from typing import Any
 from urllib.parse import unquote
 
 from ..exceptions import ApiException, NetworkException
 from .network import HEADERS, get_client
 
+import jwt
+
 RENDER_DATA_PATTERN: Pattern[str] = compile(
     r"<script id=\"__RENDER_DATA__\" type=\"application/json\">(.*?)</script>"
 )
+
+access_ids = {}
+last_timestamp = {}
 
 
 async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
@@ -18,6 +24,8 @@ async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
     :param uid: 用户ID 示例参数: 208259
     :return: 用户动态页面服务端渲染提取数据结构
     """
+    if access_ids.get(uid) and last_timestamp[uid] > int(time.time()):
+        return access_ids[uid]
 
     dynamic_url: str = "https://space.bilibili.com/{}/dynamic".format(uid)
 
@@ -33,7 +41,11 @@ async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
 
     script_render_data: str = match.group(1)
     try:
-        extract_json = json.loads(unquote(script_render_data))
-        return extract_json
+        access_ids[uid] = json.loads(unquote(script_render_data))["access_id"]
+        payload = jwt.decode(jwt=access_ids[uid], options={"verify_signature": False})
+        created_at: int = payload["iat"]
+        ttl: int = payload["ttl"]
+        last_timestamp[uid] = created_at + ttl
+        return access_ids[uid]
     except json.JSONDecodeError as e:
         raise ApiException("序列化用户动态页渲染数据异常" + str(e))
