@@ -59,7 +59,6 @@ from bilibili_api import user
   - [async def get\_user\_info()](#async-def-get\_user\_info)
   - [async def get\_user\_medal()](#async-def-get\_user\_medal)
   - [async def get\_videos()](#async-def-get\_videos)
-  - [async def is\_access\_id\_expired()](#async-def-is\_access\_id\_expired)
   - [async def modify\_relation()](#async-def-modify\_relation)
   - [async def set\_space\_notice()](#async-def-set\_space\_notice)
   - [async def top\_followers()](#async-def-top\_followers)
@@ -763,17 +762,6 @@ medialist排序顺序。
 | `order` | `VideoOrder, optional` | 排序方式. Defaults to VideoOrder.PUBDATE |
 
 **Returns:** `dict`:  调用接口返回的内容。
-
-
-
-
-### async def is_access_id_expired()
-
-判断用户 access_id 是否过期 access_id 为 JWT 解析 Payload 内容判断是否有效
-
-
-
-**Returns:** `bool`:  是否有效
 
 
 
