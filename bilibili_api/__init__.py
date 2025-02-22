@@ -36,6 +36,7 @@ from .utils.network import (
     Credential,
     # api
     HEADERS,
+    bili_simple_download,
 )
 from .utils.AsyncEvent import AsyncEvent
 from .utils.geetest import Geetest, GeetestMeta, GeetestType
@@ -174,6 +175,7 @@ __all__ = [
     "audio",
     "audio_uploader",
     "bangumi",
+    "bili_simple_download",
     "black_room",
     "bvid2aid",
     "channel_series",

@@ -101,6 +101,7 @@ from bilibili_api import ...
 - [class VideoUploadException()](#class-VideoUploadException)
 - [class WbiRetryTimesExceedException()](#class-WbiRetryTimesExceedException)
 - [def aid2bvid()](#def-aid2bvid)
+- [async def bili\_simple\_download()](#async-def-bili\_simple\_download)
 - [def bvid2aid()](#def-bvid2aid)
 - [def get\_available\_settings()](#def-get\_available\_settings)
 - [def get\_client()](#def-get\_client)
@@ -1438,6 +1439,26 @@ AV 号转 BV 号。
 | `aid` | `int` | AV 号。 |
 
 **Returns:** `str`:  BV 号。
+
+
+
+
+---
+
+## async def bili_simple_download()
+
+适用于下载 bilibili 链接的简易终端下载函数
+
+默认会携带 HEADERS 访问链接，避免 403
+
+用途举例：下载 video.get_download_url 返回结果中的链接
+
+
+| name | type | description |
+| - | - | - |
+| `url` | `str` | 链接 |
+| `out` | `str` | 输出地址 |
+| `intro` | `str` | 下载简述 |
 
 
 

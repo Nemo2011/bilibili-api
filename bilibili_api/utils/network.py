@@ -2294,4 +2294,29 @@ class Api:
         return await self.request()
 
 
+async def bili_simple_download(url: str, out: str, intro: str):
+    """
+    适用于下载 bilibili 链接的简易终端下载函数
+
+    默认会携带 HEADERS 访问链接，避免 403
+
+    用途举例：下载 video.get_download_url 返回结果中的链接
+
+    Args:
+        url   (str): 链接
+        out   (str): 输出地址
+        intro (str): 下载简述
+    """
+    dwn_id = await get_client().download_create(url, HEADERS)
+    bts = 0
+    tot = get_client().download_content_length(dwn_id)
+    with open(out, "wb") as file:
+        while True:
+            bts += file.write(await get_client().download_chunk(dwn_id))
+            print(f"{intro} - {out} [{bts} / {tot}]", end="\r")
+            if bts == tot:
+                break
+    print()
+
+
 ################################################## END Api ##################################################
