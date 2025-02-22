@@ -16,6 +16,13 @@ request_settings.set_proxy("http://example.com")
 request_settings.set_timeout(1.0)
 ```
 
+## 设置是否验证 ssl / 使用环境变量
+
+```python
+request_settings.set_verify_ssl(False)
+request_settings.set_trust_env(True)
+```
+
 ## 打印请求日志
 
 ```python
@@ -45,6 +52,22 @@ request_log 默认只打印以下类型信息：
 
 ```python
 request_settings.set_wbi_retry_times(10) # defaults to 3
+```
+
+## 设置 `buvid` 自动生成
+
+> `buvid` 是访问 B 站时可能需要提供的 cookie 系列，分为 `buvid3` 和 `buvid4` 字段。如果不提供部分接口可能受限。模块在用户未提供 credential 或 credential 中无 `buvid3` 或 `buvid4` 字段时，会自动生成一组 `buvid`，但过程中需要进行网络请求，此功能可通过这项设置关闭。
+
+```python
+request_settings.set_enable_auto_buvid(False)
+```
+
+## 设置 `bili_ticket` 自动生成
+
+> `bili_ticket` 是访问 B 站时可能需要提供的 cookie 系列，分为 `bili_ticket` 和 `bili_ticket_expires` 字段。提供 `bili_ticket` 有时可以达到一些玄学效果。默认不启用，可以通过此项设置启用。
+
+```python
+request_settings.set_enable_bili_ticket(True)
 ```
 
 ## 额外设置
