@@ -37,7 +37,7 @@ async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
     response_content_text: str = response.utf8_text()
     match: Match = RENDER_DATA_PATTERN.search(response_content_text)
     if match is None:
-        raise ApiException("未匹配到用户动态页渲染数据")
+        return None # 有的时候无需 w_webid
 
     script_render_data: str = match.group(1)
     try:
