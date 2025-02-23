@@ -1920,12 +1920,13 @@ async def _get_bili_ticket(credential: Optional[Credential] = None) -> str:
 __buvid3 = ""
 __buvid4 = ""
 __bili_ticket = ""
+__bili_ticket_expires = 0
 __wbi_mixin_key = ""
 
 
 def refresh_buvid() -> None:
     """
-    刷新 buvid3 和 buvid4
+    刷新模块自动生成的 buvid3 和 buvid4
     """
     global __buvid3, __buvid4
     __buvid3 = ""
@@ -1936,8 +1937,9 @@ def refresh_bili_ticket() -> None:
     """
     刷新 bili_ticket
     """
-    global __bili_ticket
+    global __bili_ticket, __bili_ticket_expires
     __bili_ticket = ""
+    __bili_ticket_expires = 0
 
 
 def refresh_wbi_mixin_key() -> None:
@@ -1969,7 +1971,7 @@ async def get_buvid() -> Tuple[str, str]:
     return (__buvid3, __buvid4)
 
 
-async def get_bili_ticket(credential: Optional[Credential] = None) -> str:
+async def get_bili_ticket(credential: Optional[Credential] = None) -> Tuple[str, str]:
     """
     获取 bili_ticket
 
@@ -1977,17 +1979,20 @@ async def get_bili_ticket(credential: Optional[Credential] = None) -> str:
         credential (Credential, optional): 凭据. Defaults to None.
 
     Returns:
-        str: bili_ticket
+        Tuple[str, str]: bili_ticket, bili_ticket_expires
     """
-    global __bili_ticket
+    global __bili_ticket, __bili_ticket_expires
+    if time.time() > int(__bili_ticket_expires):
+        refresh_bili_ticket()
     if __bili_ticket == "":
         __bili_ticket = await _get_bili_ticket(credential)
+        __bili_ticket_expires = str(int(time.time()) + 3 * 86400)
         request_log.dispatch(
             "ANTI_SPIDER",
             "反爬虫",
             {"msg": f"获取 bili_ticket 成功: [{__bili_ticket}]"},
         )
-    return __bili_ticket
+    return __bili_ticket, __bili_ticket_expires
 
 
 async def get_wbi_mixin_key(credential: Optional[Credential] = None) -> str:
@@ -2157,8 +2162,7 @@ class Api:
         cookies["opus-goback"] = "1"
         # bili_ticket
         if request_settings.get_enable_bili_ticket():
-            cookies["bili_ticket"] = await get_bili_ticket(self.credential)
-            cookies["bili_ticket_expires"] = str(int(time.time()) + 2 * 86400)
+            cookies["bili_ticket"], cookies["bili_ticket_expires"] = await get_bili_ticket(self.credential)
         # APP 鉴权
         if self.sign:
             if self.method in ["POST", "DELETE", "PATCH"]:
@@ -2277,7 +2281,7 @@ class Api:
                 return await self._request(raw=raw, byte=byte)
             except ResponseCodeException as e:
                 # -403 时尝试重新获取 wbi_mixin_key 可能过期了
-                if e.code == -403:
+                if e.code == -403 and self.wbi:
                     refresh_wbi_mixin_key()
                     continue
                 # 不是 -403 错误直接报错

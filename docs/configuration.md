@@ -48,7 +48,7 @@ request_log 默认只打印以下类型信息：
 
 ## 设置 `wbi` 请求重试次数上限
 
-> `wbi` 为 B 站对用户相关 API 采取的一个反爬虫措施，需要传入一些经过加密的参数，否则请求可能会被驳回。每次计算此参数的之后，这个值有失效可能，届时模块会自动重新计算这个参数新的值，进行重试。当重试次数超过一定次数 (`settings.wbi_retry_times`) 后，模块将发出报错。
+> `wbi` 为 B 站对用户相关 API 采取的一个反爬虫措施，需要传入一些经过加密的参数，否则请求可能会被驳回。每次计算此参数的之后，这个值有失效可能，届时模块会 **自动重新计算** 这个参数新的值，进行重试。当重试次数超过一定次数 (`settings.wbi_retry_times`) 后，模块将发出报错。
 
 ```python
 request_settings.set_wbi_retry_times(10) # defaults to 3
@@ -58,6 +58,8 @@ request_settings.set_wbi_retry_times(10) # defaults to 3
 
 > `buvid` 是访问 B 站时可能需要提供的 cookie 系列，分为 `buvid3` 和 `buvid4` 字段。如果不提供部分接口可能受限。模块在用户未提供 credential 或 credential 中无 `buvid3` 或 `buvid4` 字段时，会自动生成一组 `buvid`，但过程中需要进行网络请求，此功能可通过这项设置关闭。
 
+> 自动生成的 `buvid` 若有必要，需要用户 **手动刷新**。(`refresh_buvid`)
+
 ```python
 request_settings.set_enable_auto_buvid(False)
 ```
@@ -65,6 +67,8 @@ request_settings.set_enable_auto_buvid(False)
 ## 设置 `bili_ticket` 自动生成
 
 > `bili_ticket` 是访问 B 站时可能需要提供的 cookie 系列，分为 `bili_ticket` 和 `bili_ticket_expires` 字段。提供 `bili_ticket` 有时可以达到一些玄学效果。默认不启用，可以通过此项设置启用。
+
+> `bili_ticket` 过期后模块会 **自动重新计算**
 
 ```python
 request_settings.set_enable_bili_ticket(True)
