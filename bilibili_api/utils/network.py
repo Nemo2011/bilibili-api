@@ -1942,9 +1942,9 @@ def refresh_bili_ticket() -> None:
     __bili_ticket_expires = 0
 
 
-def refresh_wbi_mixin_key() -> None:
+def recalculate_wbi() -> None:
     """
-    刷新 wbi mixin key
+    重新计算 wbi 的参数
     """
     global __wbi_mixin_key
     __wbi_mixin_key = ""
@@ -2282,7 +2282,7 @@ class Api:
             except ResponseCodeException as e:
                 # -403 时尝试重新获取 wbi_mixin_key 可能过期了
                 if e.code == -403 and self.wbi:
-                    refresh_wbi_mixin_key()
+                    recalculate_wbi()
                     continue
                 # 不是 -403 错误直接报错
                 raise e
