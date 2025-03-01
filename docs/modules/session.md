@@ -348,6 +348,8 @@ from bilibili_api import session
 
 给用户发送私聊信息。目前仅支持纯文本。
 
+调用 API 需要发送者用户的 UID，可将此携带在凭据类的 DedeUserID 字段，不携带模块将自动获取对应 UID。
+
 
 | name | type | description |
 | - | - | - |

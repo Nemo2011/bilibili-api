@@ -363,6 +363,8 @@ async def send_msg(
     """
     给用户发送私聊信息。目前仅支持纯文本。
 
+    调用 API 需要发送者用户的 UID，可将此携带在凭据类的 DedeUserID 字段，不携带模块将自动获取对应 UID。
+
     Args:
         credential  (Credential)   : 凭证
 
@@ -379,8 +381,11 @@ async def send_msg(
     credential.raise_for_no_bili_jct()
 
     api = API["operate"]["send_msg"]
-    self_info = await get_self_info(credential)
-    sender_uid = self_info["mid"]
+    if credential.has_dedeuserid() and int(credential.dedeuserid) != 0:
+        sender_uid = int(credential.dedeuserid)
+    else:
+        self_info = await get_self_info(credential)
+        sender_uid = self_info["mid"]
 
     if msg_type == EventType.TEXT:
         real_content = json.dumps({"content": content})
@@ -416,7 +421,17 @@ async def send_msg(
         "build": 0,
         "mobi_app": "web",
     }
-    return await Api(**api, credential=credential).update_data(**data).result
+    query = {
+        "w_sender_uid": sender_uid,
+        "w_receiver_id": receiver_id,
+    }
+
+    return (
+        await Api(**api, credential=credential)
+        .update_params(**query)
+        .update_data(**data)
+        .result
+    )
 
 
 class Session(AsyncEvent):

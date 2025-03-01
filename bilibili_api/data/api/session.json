@@ -89,6 +89,7 @@
         "url": "https://api.vc.bilibili.com/web_im/v1/web_im/send_msg",
         "method": "POST",
         "verify": true,
+        "wbi": true,
         "data": {
           "msg[sender_uid]": "int: 自己的 UID",
           "msg[receiver_id]": "int: 对方 UID",
@@ -96,6 +97,10 @@
           "msg[msg_type]": "int: 消息类型",
           "msg[msg_status]": "const int: 0",
           "msg[content]": "str: 消息内容"
+        },
+        "params": {
+          "sender_uid": "int: 自己的 UID",
+          "receiver_id": "int: 对方 UID"
         },
         "comment": "给用户发信息"
       }
