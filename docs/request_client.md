@@ -10,7 +10,7 @@
 
 |           | 优先级 | request | stream | WebSocket | 额外网络请求设置                                                           |
 | --------- | ------ | ------- | ------ | --------- | -------------------------------------------------------------------------- |
-| curl_cffi | 3      | ✅      | ✅     | ✅        | - `impersonate` defaults to `chrome131` <br> - `http2` defaults to `False` |
+| curl_cffi | 3      | ✅      | ✅     | ✅        | - `impersonate` defaults to ` ` <br> - `http2` defaults to `False` |
 | aiohttp   | 2      | ✅      | ✅     | ✅        |                                                                            |
 | httpx     | 1      | ✅      | ✅     | ❌        | `http2` defaults to `False`                                                |
 

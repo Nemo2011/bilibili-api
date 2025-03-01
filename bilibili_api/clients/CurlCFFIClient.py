@@ -28,7 +28,7 @@ class CurlCFFIClient(BiliAPIClient):
         timeout: float = 0.0,
         verify_ssl: bool = True,
         trust_env: bool = True,
-        impersonate: str = "chrome131",
+        impersonate: str = "",
         http2: bool = False,
         session: Optional[requests.AsyncSession] = None,
     ) -> None:
@@ -38,7 +38,7 @@ class CurlCFFIClient(BiliAPIClient):
             timeout (float, optional): 请求超时时间. Defaults to 0.0.
             verify_ssl (bool, optional): 是否验证 SSL. Defaults to True.
             trust_env (bool, optional): `trust_env`. Defaults to True.
-            impersonate (str, optional): 伪装的浏览器，可参考 curl_cffi 文档. Defaults to chrome131.
+            impersonate (str, optional): 伪装的浏览器，可参考 curl_cffi 文档. Defaults to "".
             http2 (bool, optional): 是否使用 HTTP2. Defaults to False.
             session (object, optional): 会话对象. Defaults to None.
 
@@ -79,12 +79,12 @@ class CurlCFFIClient(BiliAPIClient):
     def set_trust_env(self, trust_env: bool = True) -> None:
         self.__session.trust_env = trust_env
 
-    def set_impersonate(self, impersonate: str = "chrome131") -> None:
+    def set_impersonate(self, impersonate: str = "") -> None:
         """
         设置 curl_cffi 伪装的浏览器，可参考 curl_cffi 文档。
 
         Args:
-            impersonate (str, optional): 伪装的浏览器. Defaults to chrome131.
+            impersonate (str, optional): 伪装的浏览器. Defaults to "".
         """
         self.__session.impersonate = impersonate
 
@@ -108,9 +108,9 @@ class CurlCFFIClient(BiliAPIClient):
         cookies: dict = {},
         allow_redirects: bool = False,
     ) -> BiliAPIResponse:
-        if headers.get("User-Agent"):
+        if headers.get("User-Agent") and self.__session.impersonate != "":
             headers.pop("User-Agent")
-        if headers.get("user-agent"):
+        if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
         request_log.dispatch(
             "REQUEST",
@@ -184,9 +184,9 @@ class CurlCFFIClient(BiliAPIClient):
         url: str = "",
         headers: dict = {},
     ) -> int:
-        if headers.get("User-Agent"):
+        if headers.get("User-Agent") and self.__session.impersonate != "":
             headers.pop("User-Agent")
-        if headers.get("user-agent"):
+        if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
         self.__download_cnt += 1
         request_log.dispatch(
@@ -220,9 +220,9 @@ class CurlCFFIClient(BiliAPIClient):
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
-        if headers.get("User-Agent"):
+        if headers.get("User-Agent") and self.__session.impersonate != "":
             headers.pop("User-Agent")
-        if headers.get("user-agent"):
+        if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
         self.__ws_cnt += 1
         request_log.dispatch(

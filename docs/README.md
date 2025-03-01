@@ -158,9 +158,18 @@ if __name__ == '__main__':
 ``` python
 from bilibili_api import select_client
 
-select_client("curl_cffi") # 选择 curl_cffi
+select_client("curl_cffi") # 选择 curl_cffi，支持伪装浏览器的 TLS / JA3 / Fingerprint
 select_client("aiohttp") # 选择 aiohttp
 select_client("httpx") # 选择 httpx，不支持 WebSocket
+```
+
+curl_cffi 支持伪装浏览器的 TLS / JA3 / Fingerprint，但需要手动设置。
+
+``` python
+from bilibili_api import request_settings
+
+request_settings.set("impersonate", "chrome131") # 第二参数数值参考 curl_cffi 文档
+# https://curl-cffi.readthedocs.io/en/latest/impersonate.html
 ```
 
 # FA♂Q
