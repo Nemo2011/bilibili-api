@@ -131,6 +131,7 @@ class Topic:
             "topic_id": self.get_topic_id(),
             "page_size": ps,
             "sort_by": sort_by.value,
+            "source": "Web",
         }
         if offset:
             params.update({"offset": offset})

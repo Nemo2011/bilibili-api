@@ -4,13 +4,15 @@ bilibili_api.opus
 图文相关
 """
 
+import asyncio
 import yaml
-from typing import Optional
+from typing import Dict, List, Optional
 from . import article
 from . import dynamic
 from .utils.network import Api, Credential
-from .utils.utils import get_api
+from .utils.utils import get_api, img_auto_scheme
 from .utils import cache_pool
+from .utils.picture import Picture
 from .exceptions import ArgsException
 import html
 
@@ -176,6 +178,42 @@ class Opus:
         meta_yaml = yaml.safe_dump(self.__info, allow_unicode=True)
         content = f"---\n{meta_yaml}\n---\n\n{markdown}"
         return content
+
+    async def get_images_raw_info(self) -> List[Dict]:
+        """
+        获取图文所有图片原始信息
+
+        Returns:
+            list: 图片信息
+        """
+        await self.get_info()
+
+        result = []
+        content = {"module_content": {"paragraphs": []}}
+
+        for module in self.__info["item"]["modules"]:
+            if module.get("module_content"):
+                content = module
+
+        for para in content["module_content"]["paragraphs"]:
+            if para["para_type"] == 2:
+                for pic in para["pic"]["pics"]:
+                    result.append(pic)
+
+        return result
+
+    async def get_images(self) -> List["Picture"]:
+        """
+        获取图文所有图片并转为 Picture 类
+
+        Returns:
+            list: 图片信息
+        """
+        result = []
+        images_raw_info = await self.get_images_raw_info()
+        for image in images_raw_info:
+            result.append(await Picture().load_url(url=img_auto_scheme(image["url"])))
+        return result
 
     async def set_like(self, status: bool) -> dict:
         """

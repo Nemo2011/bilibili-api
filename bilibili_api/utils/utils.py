@@ -245,3 +245,15 @@ def to_timestamps(time_start, time_end):
         raise ValueError(
             f"输入错误: {e}. 请确保使用 'YYYY-MM-DD' 格式，并且起始时间早于结束时间。"
         )
+
+
+def img_auto_scheme(url: str) -> str:
+    """
+    自动补全图片链接的 scheme
+
+    Returns:
+        str: 带有 scheme 的 url
+    """
+    if url.startswith("//"):
+        return "https://" + url
+    return url

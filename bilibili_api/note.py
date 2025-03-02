@@ -14,7 +14,7 @@ from yarl import URL
 
 from .utils.initial_state import get_initial_state
 
-from .utils.utils import get_api, raise_for_statement
+from .utils.utils import get_api, raise_for_statement, img_auto_scheme
 from .utils.picture import Picture
 from .exceptions import ApiException, ArgsException
 from .utils.network import Api, Credential
@@ -236,7 +236,7 @@ class Note:
         result = []
         images_raw_info = await self.get_images_raw_info()
         for image in images_raw_info:
-            result.append(await Picture().load_url(url=f'https:{image["url"]}'))
+            result.append(await Picture().load_url(url=img_auto_scheme(image["url"])))
         return result
 
     async def get_all(self) -> dict:

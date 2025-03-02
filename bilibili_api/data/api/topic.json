@@ -10,14 +10,14 @@
             "comment": "获取话题简介"
         },
         "cards": {
-            "url": "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/topic",
+            "url": "https://app.bilibili.com/x/topic/web/details/cards",
             "method": "GET",
             "params": {
                 "topic_id": "int: 话题 id",
                 "page_size": "int: 数据数量",
                 "sort_by": "int: 排序方式 1推荐 2热门 3最新",
                 "source": "Web",
-                "features": "opusBigCover"
+                "offset": "str"
             },
             "verify": false,
             "comment": "获取话题详情"

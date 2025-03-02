@@ -43,11 +43,16 @@ async def get_initial_state(
         content = resp.decode("utf-8")
         pos = content.find("window.__INITIAL_STATE__=")
         if pos == -1:
-            pos = content.find('<script id="__NEXT_DATA__" type="application/json">')
-            content_type = InitialDataType.NEXT_DATA
+            pos = content.find("window.__initialState = ")
             if pos == -1:
-                raise ApiException("未找到相关信息")
-            pos += len('<script id="__NEXT_DATA__" type="application/json">')
+                pos = content.find('<script id="__NEXT_DATA__" type="application/json">')
+                if pos == -1:
+                    raise ApiException("未找到相关信息")
+                content_type = InitialDataType.NEXT_DATA
+                pos += len('<script id="__NEXT_DATA__" type="application/json">')
+            else:
+                content_type = InitialDataType.INITIAL_STATE
+                pos += len("window.__initialState = ")
         else:
             content_type = InitialDataType.INITIAL_STATE
             pos += len("window.__INITIAL_STATE__=")
