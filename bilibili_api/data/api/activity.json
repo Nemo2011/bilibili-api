@@ -1,0 +1,17 @@
+{
+  "info": {
+    "list": {
+      "url": "https://api.bilibili.com/x/activity/page/list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "plat": "str: 1,3",
+        "mold": "int: 0",
+        "http": "int: 3",
+        "pn": "int: 页数",
+        "ps": "int: 每页大小"
+      },
+      "comment": "获取活动列表"
+    }
+  }
+}

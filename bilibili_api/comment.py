@@ -9,7 +9,11 @@ bilibili_api.comment
 + 专栏：cv{9762979} `get_cvid()`。
 + 动态/图文：{116859542} `await get_rid()`。
 + 课程：ep{5556} `get_epid()`
++ 音频：au{13998} `get_auid()`
++ 歌单：am{26241} `get_amid()`
 + 小黑屋: ban/{2600321} `get_id()`
++ 漫画：mc{32749} `get_manga_id()`
++ 活动: {16279} `await get_activity_aid()`
 """
 
 from enum import Enum
@@ -35,6 +39,7 @@ class CommentResourceType(Enum):
     + CHEESE: 课程
     + BLACK_ROOM: 小黑屋
     + MANGA: 漫画
+    + ACTIVITY: 活动
     """
 
     VIDEO = 1
@@ -46,6 +51,7 @@ class CommentResourceType(Enum):
     CHEESE = 33
     BLACK_ROOM = 6
     MANGA = 22
+    ACTIVITY = 4
 
 
 class OrderType(Enum):

@@ -68,6 +68,7 @@ from .exceptions import (
     WbiRetryTimesExceedException,
 )
 from . import (
+    activity,
     app,
     article_category,
     article,
@@ -172,6 +173,7 @@ __all__ = [
     "VideoUploadException",
     "WbiRetryTimesExceedException",
     "aid2bvid",
+    "activity",
     "app",
     "article",
     "article_category",

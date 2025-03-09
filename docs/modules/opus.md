@@ -13,6 +13,8 @@ from bilibili_api import opus
 - [class Opus()](#class-Opus)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def add\_coins()](#async-def-add\_coins)
+  - [async def get\_images()](#async-def-get\_images)
+  - [async def get\_images\_raw\_info()](#async-def-get\_images\_raw\_info)
   - [async def get\_info()](#async-def-get\_info)
   - [def get\_opus\_id()](#def-get\_opus\_id)
   - [async def get\_reaction()](#async-def-get\_reaction)
@@ -49,6 +51,28 @@ from bilibili_api import opus
 
 
 **Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
+### async def get_images()
+
+获取图文所有图片并转为 Picture 类
+
+
+
+**Returns:** `list`:  图片信息
+
+
+
+
+### async def get_images_raw_info()
+
+获取图文所有图片原始信息
+
+
+
+**Returns:** `list`:  图片信息
 
 
 
