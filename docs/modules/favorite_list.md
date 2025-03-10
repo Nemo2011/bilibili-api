@@ -77,6 +77,8 @@ from bilibili_api import favorite_list
 
 获取收藏夹所有内容的 ID。
 
+**注意：接口针对番剧剧集视频返回的 id / bvid 实际上对应的是其 epid**
+
 
 
 **Returns:** `dict`:  调用 API 返回的结果

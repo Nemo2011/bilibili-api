@@ -10,10 +10,49 @@ bilibili_api.homepage
 from bilibili_api import homepage
 ```
 
+- [async def get\_favorite\_list\_and\_toview()](#async-def-get\_favorite\_list\_and\_toview)
+- [async def get\_favorite\_list\_content()](#async-def-get\_favorite\_list\_content)
 - [async def get\_links()](#async-def-get\_links)
 - [async def get\_popularize()](#async-def-get\_popularize)
 - [async def get\_top\_photo()](#async-def-get\_top\_photo)
 - [async def get\_videos()](#async-def-get\_videos)
+
+---
+
+## async def get_favorite_list_and_toview()
+
+获取首页右上角视频相关列表（收藏夹+稍后再看）
+
+收藏夹具体内容在 `get_favorite_list_content` 接口
+
+
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential` | 凭据类 |
+
+**Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
+---
+
+## async def get_favorite_list_content()
+
+获取首页右上角视频相关列表（收藏夹+稍后再看）的具体内容
+
+稍后再看具体内容在 `get_favorite_list_and_toview` 接口
+
+
+| name | type | description |
+| - | - | - |
+| `media_id` | `int` | 收藏夹 id |
+| `credential` | `Credential` | 凭据类 |
+
+**Returns:** `dict`:  调用 API 返回的结果
+
+
+
 
 ---
 
