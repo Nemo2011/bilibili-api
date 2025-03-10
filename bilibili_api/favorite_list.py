@@ -191,13 +191,18 @@ class FavoriteList:
         """
         获取收藏夹所有内容的 ID。
 
+        **注意：接口针对番剧剧集视频返回的 id / bvid 实际上对应的是其 epid**
+
         Returns:
             dict: 调用 API 返回的结果
         """
         raise_for_statement(self.__media_id != None, "视频收藏夹需要 media_id")
 
         api = API["info"]["list_content_id_list"]
-        params = {"media_id": self.__media_id}
+        params = {
+            "media_id": self.__media_id,
+            "platform": "web",
+        }
 
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -223,7 +228,7 @@ async def get_video_favorite_list(
         dict: 调用 API 返回的结果
     """
     api = API["info"]["list_list"]
-    params = {"up_mid": uid, "type": 2}
+    params = {"up_mid": uid, "type": 2, "web_location": "333.1387"}
 
     if video is not None:
         params["rid"] = video.get_aid()
@@ -271,6 +276,8 @@ async def get_video_favorite_list_content(
         "order": order.value,
         "tid": tid,
         "type": mode.value,
+        "platform": "web",
+        "web_location": "333.1387",
     }
 
     if keyword is not None:

@@ -7,7 +7,8 @@
       "params": {
         "up_mid": "int: 用户 UID",
         "type": "int?: 资源类型，2 视频。",
-        "rid": "int?: 资源 ID"
+        "rid": "int?: 资源 ID",
+        "web_location": "333.1387"
       },
       "comment": "获取收藏夹列表。提供 type 和 rid 时会同时提供对该资源收藏情况。"
     },
@@ -31,7 +32,9 @@
         "keyword": "str?: 关键词搜索。",
         "order": "str: 排序方式。mtime 最近收藏，view 最多播放，pubtime 最新投稿。",
         "type": "int: 收藏夹类型。目前固定 0。",
-        "tid": "int: 分区 ID。0 为全部分区。"
+        "tid": "int: 分区 ID。0 为全部分区。",
+        "platform": "web",
+        "web_location": "333.1387"
       },
       "comment": "获取收藏夹列表内容。"
     },
@@ -40,7 +43,8 @@
       "method": "GET",
       "verify": false,
       "params": {
-        "media_id": "int: 收藏夹 ID"
+        "media_id": "int: 收藏夹 ID",
+        "platform": "web"
       },
       "comment": "获取收藏夹所有内容的 ID。"
     },
