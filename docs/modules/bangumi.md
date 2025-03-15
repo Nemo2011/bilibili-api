@@ -54,7 +54,9 @@ from bilibili_api import bangumi
   - [async def recall\_danmaku()](#async-def-recall\_danmaku)
   - [async def send\_danmaku()](#async-def-send\_danmaku)
   - [async def set\_epid()](#async-def-set\_epid)
+  - [async def set\_favorite()](#async-def-set\_favorite)
   - [async def submit\_subtitle()](#async-def-submit\_subtitle)
+  - [async def turn\_to\_video()](#async-def-turn\_to\_video)
 - [class IndexFilter()](#class-IndexFilter)
   - [class Area()](#class-Area)
   - [class Copyright()](#class-Copyright)
@@ -547,6 +549,21 @@ from bilibili_api import bangumi
 
 
 
+### async def set_favorite()
+
+设置视频收藏状况。
+
+
+| name | type | description |
+| - | - | - |
+| `add_media_ids` | `List[int], optional` | 要添加到的收藏夹 ID. Defaults to []. |
+| `del_media_ids` | `List[int], optional` | 要移出的收藏夹 ID. Defaults to []. |
+
+**Returns:** `dict`:  调用 API 返回结果。
+
+
+
+
 ### async def submit_subtitle()
 
 上传字幕
@@ -580,6 +597,17 @@ from bilibili_api import bangumi
 | `sign` | `bool` | 是否署名 |
 
 **Returns:** `dict`:  API 调用返回结果
+
+
+
+
+### async def turn_to_video()
+
+将番剧剧集对象转换为视频
+
+
+
+**Returns:** `Video`:  视频对象
 
 
 

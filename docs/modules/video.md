@@ -54,6 +54,7 @@ from bilibili_api import video
   - [async def has\_favoured()](#async-def-has\_favoured)
   - [async def has\_liked()](#async-def-has\_liked)
   - [async def has\_liked\_danmakus()](#async-def-has\_liked\_danmakus)
+  - [async def is\_episode()](#async-def-is\_episode)
   - [async def is\_forbid\_note()](#async-def-is\_forbid\_note)
   - [async def like()](#async-def-like)
   - [async def like\_danmaku()](#async-def-like\_danmaku)
@@ -67,6 +68,7 @@ from bilibili_api import video
   - [async def share()](#async-def-share)
   - [async def submit\_subtitle()](#async-def-submit\_subtitle)
   - [async def triple()](#async-def-triple)
+  - [async def turn\_to\_episode()](#async-def-turn\_to\_episode)
 - [class VideoAppealReasonType()](#class-VideoAppealReasonType)
   - [def PLAGIARISM()](#def-PLAGIARISM)
   - [def UNREAL\_COPYRIGHT()](#def-UNREAL\_COPYRIGHT)
@@ -657,6 +659,17 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
+### async def is_episode()
+
+判断视频是否是番剧
+
+
+
+**Returns:** `bool`:  是否是番剧
+
+
+
+
 ### async def is_forbid_note()
 
 是否禁止笔记。
@@ -791,6 +804,8 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 设置视频收藏状况。
 
+**如果视频是番剧 `await is_bangumi()`，请转为 `Episode` 类收藏**
+
 
 | name | type | description |
 | - | - | - |
@@ -860,6 +875,17 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 **Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
+### async def turn_to_episode()
+
+将视频转换为番剧
+
+
+
+**Returns:** `Episode`:  番剧对象
 
 
 

@@ -17,10 +17,12 @@ from enum import Enum
 from inspect import iscoroutine, isfunction
 from functools import cmp_to_key
 from dataclasses import dataclass
-from typing import Any, List, Union, Optional
+from typing import Any, List, Union, Optional, Type
+
+from yarl import URL
 
 from .utils.aid_bvid_transformer import bvid2aid, aid2bvid
-from .utils.utils import get_api
+from .utils.utils import get_api, raise_for_statement
 from .utils.AsyncEvent import AsyncEvent
 from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku, SpecialDanmaku
@@ -246,6 +248,38 @@ class Video:
         # 存入 self.__info 中以备后续调用
         self.__info = resp
         return resp
+
+    async def is_episode(self) -> bool:
+        """
+        判断视频是否是番剧
+
+        Returns:
+            bool: 是否是番剧
+        """
+        info = await self.__get_info_cached()
+        if not info.get("redirect_url"):
+            return False
+        url = URL(info.get("redirect_url"))
+        if url.host == "www.bilibili.com" and len(url.parts) >= 3:
+            if url.parts[1] == "bangumi" and url.parts[2] == "play":
+                return True
+        return False
+
+    async def turn_to_episode(self) -> "Episode":
+        """
+        将视频转换为番剧
+
+        Returns:
+            Episode: 番剧对象
+        """
+        from .bangumi import Episode
+
+        raise_for_statement(await self.is_episode(), "视频不属于番剧")
+
+        info = await self.__get_info_cached()
+        url = URL(info.get("redirect_url"))
+        epid = int(url.parts[3][2:])
+        return Episode(epid=epid)
 
     async def get_detail(self) -> dict:
         """
@@ -1462,6 +1496,8 @@ class Video:
         """
         设置视频收藏状况。
 
+        **如果视频是番剧 `await is_bangumi()`，请转为 `Episode` 类收藏**
+
         Args:
             add_media_ids (List[int], optional): 要添加到的收藏夹 ID. Defaults to [].
 
@@ -1729,6 +1765,9 @@ class Video:
         api = get_api("toview")["operate"]["del"]
         datas = {"viewed": "false", "aid": await self.__get_aid()}
         return await Api(**api, credential=self.credential).update_data(**datas).result
+
+
+from .bangumi import Episode
 
 
 class VideoOnlineMonitor(AsyncEvent):

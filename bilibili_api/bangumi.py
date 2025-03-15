@@ -12,7 +12,7 @@ bilibili_api.bangumi
 
 import datetime
 from enum import Enum
-from typing import Any, List, Tuple, Union, Optional
+from typing import Any, List, Tuple, Union, Optional, Type
 
 from .video import Video
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
@@ -23,9 +23,10 @@ from .utils.initial_state import (
     get_initial_state,
     InitialDataType,
 )
-from .exceptions import ApiException
+from .exceptions import ApiException, ArgsException
 
 API = get_api("bangumi")
+API_video = get_api("video")
 
 
 episode_data_cache = {}
@@ -1394,6 +1395,15 @@ class Episode(Video):
         self.set_aid = self.__set_aid_e
         self.set_bvid = self.__set_bvid_e
 
+    async def turn_to_video(self) -> Video:
+        """
+        将番剧剧集对象转换为视频
+
+        Returns:
+            Video: 视频对象
+        """
+        return Video(aid=await self.get_aid(), credential=self.credential)
+
     async def __fetch_bangumi(self) -> None:
         resp = await self.get_download_url()
         content = resp["play_view_business_info"]
@@ -1450,7 +1460,9 @@ class Episode(Video):
         Returns:
             int: cid
         """
-        return (await self.get_download_url())["play_view_business_info"]["episode_info"]["cid"]
+        return (await self.get_download_url())["play_view_business_info"][
+            "episode_info"
+        ]["cid"]
 
     async def get_bangumi(self) -> "Bangumi":
         """
@@ -1496,6 +1508,37 @@ class Episode(Video):
             await self.__fetch_bangumi()
         return self.bangumi
 
+    async def set_favorite(
+        self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
+    ) -> dict:
+        """
+        设置视频收藏状况。
+
+        Args:
+            add_media_ids (List[int], optional): 要添加到的收藏夹 ID. Defaults to [].
+
+            del_media_ids (List[int], optional): 要移出的收藏夹 ID. Defaults to [].
+
+        Returns:
+            dict: 调用 API 返回结果。
+        """
+        if len(add_media_ids) + len(del_media_ids) == 0:
+            raise ArgsException(
+                "对收藏夹无修改。请至少提供 add_media_ids 和 del_media_ids 中的其中一个。"
+            )
+
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API_video["operate"]["favorite"]
+        data = {
+            "rid": await self.get_aid(),
+            "type": 42,
+            "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
+            "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
+        }
+        return await Api(**api, credential=self.credential).update_data(**data).result
+
     async def get_download_url(self) -> dict:
         """
         获取番剧剧集下载信息。
@@ -1512,7 +1555,11 @@ class Episode(Video):
                 "fnval": 4048,
                 "fourk": 1,
             }
-            self.__playurl = await Api(**api, credential=self.credential).update_params(**params).result
+            self.__playurl = (
+                await Api(**api, credential=self.credential)
+                .update_params(**params)
+                .result
+            )
         return self.__playurl
 
     async def get_danmaku_xml(self) -> str:
