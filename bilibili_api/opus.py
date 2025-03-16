@@ -173,6 +173,8 @@ class Opus:
                 content = para["code"]["content"]
                 content = html.unescape(content)
                 para_raw = f"``` {lang}\n{content}\n```\n\n"
+            if para["align"] == 1:
+                para_raw = f"<center>\n\n{para_raw}\n\n</center>"
             markdown += f"{para_raw}\n\n"
 
         meta_yaml = yaml.safe_dump(self.__info, allow_unicode=True)
