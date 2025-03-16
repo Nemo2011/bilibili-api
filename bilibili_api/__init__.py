@@ -112,7 +112,7 @@ from . import (
 )
 
 
-BILIBILI_API_VERSION = "17.1.3"
+BILIBILI_API_VERSION = "17.1.4"
 
 
 def __register_all_clients():
