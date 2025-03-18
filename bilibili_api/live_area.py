@@ -8,10 +8,10 @@ import os
 import copy
 import json
 from enum import Enum
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from .utils.utils import get_api
-from .utils.network import Api
+from .utils.network import Api, Credential
 from .live import get_area_info
 from .exceptions import ApiException
 
@@ -143,21 +143,27 @@ def get_area_list_sub() -> dict:
 
 
 async def get_list_by_area(
-    area_id: int, page: int = 1, order: LiveRoomOrder = LiveRoomOrder.RECOMMEND
+    area_id: int,
+    page: int = 1,
+    order: LiveRoomOrder = LiveRoomOrder.RECOMMEND,
+    credential: Optional[Credential] = None,
 ) -> dict:
     """
     根据分区获取直播间列表
 
     Args:
-        area_id (int)          : 分区 id
+        area_id    (int)                 : 分区 id
 
-        page    (int)          : 第几页. Defaults to 1.
+        page       (int)                 : 第几页. Defaults to 1.
 
-        order   (LiveRoomOrder): 直播间排序方式. Defaults to LiveRoomOrder.RECOMMEND.
+        order      (LiveRoomOrder)       : 直播间排序方式. Defaults to LiveRoomOrder.RECOMMEND.
+
+        credential (Credential, optional): 凭据类. Defaults to None.
 
     Returns:
         dict: 调用 API 返回的结果
     """
+    credential = credential if credential else Credential()
     api = API["info"]["list"]
     params = {
         "platform": "web",
@@ -166,4 +172,4 @@ async def get_list_by_area(
         "page": page,
         "sort_type": order.value,
     }
-    return await Api(**api).update_params(**params).result
+    return await Api(**api, credential=credential).update_params(**params).result
