@@ -30,8 +30,9 @@
       "comment": "获取推广的项目"
     },
     "videos": {
-      "url": "https://api.bilibili.com/x/web-interface/index/top/rcmd",
+      "url": "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd",
       "method": "GET",
+      "wbi": true,
       "verify": false,
       "comment": "获取主页推荐的视频"
     }
