@@ -1310,7 +1310,7 @@ class Credential:
         c.sessdata = cookies.get("SESSDATA")
         c.bili_jct = cookies.get("bili_jct")
         c.buvid3 = cookies.get("buvid3")
-        c.buvid3 = cookies.get("buvid4")
+        c.buvid4 = cookies.get("buvid4")
         c.dedeuserid = cookies.get("DedeUserID")
         c.ac_time_value = cookies.get("ac_time_value")
         return c
