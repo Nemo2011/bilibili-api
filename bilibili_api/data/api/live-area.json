@@ -3,6 +3,7 @@
     "list": {
       "url": "https://api.live.bilibili.com/xlive/web-interface/v1/second/getList",
       "method": "GET",
+      "wbi": true,
       "params": {
         "platform": "str: web",
         "parent_area_id": "int: 主分区 id",
