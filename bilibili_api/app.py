@@ -1,97 +1,396 @@
 """
-bilibili_api.app
+bilibili_api.ass
 
-手机 APP 相关
+有关 ASS 文件的操作
 """
 
-import time
-from hashlib import md5
-from typing import Union
+import os
+import json
+from tempfile import gettempdir
+from typing import Union, Optional
 
-from .utils.utils import get_api
+from .video import Video
+from .bangumi import Episode
+from .cheese import CheeseVideo
+from .utils.srt2ass import srt2ass
+from .utils.danmaku2ass import Danmaku2ASS
 from .utils.network import Api, Credential
+from .exceptions.ArgsException import ArgsException
 
-API = get_api("app")
+
+def json2srt(input_path: str, output_path: str):
+    data = json.load(open(input_path, "r"))
+    # 修复默认GBK编码报错
+    with open(output_path, "w+", encoding='utf-8') as file:
+        for cnt, comment in enumerate(data["body"]):
+            file.write("{}\n{}:{}:{},{} --> {}:{}:{},{}\n{}\n\n".format(
+                    cnt + 1,
+                    str(int(comment["from"]) // 3600).zfill(2),
+                    str(int(comment["from"]) // 60 % 60).zfill(2),
+                    str(int(comment["from"]) % 60).zfill(2),
+                    str(
+                        int(round(comment["from"] - int(comment["from"]), 2) * 100)
+                    ).zfill(2),
+                    str(int(comment["to"] - 0.01) // 3600).zfill(2),
+                    str(int(comment["to"] - 0.01) // 60 % 60).zfill(2),
+                    str(int(comment["to"] - 0.01) % 60).zfill(2),
+                    str(
+                        int(
+                            round(comment["to"] - 0.01 - int(comment["to"] - 0.01), 2)
+                            * 100
+                        )
+                    ).zfill(2),
+                    comment["content"],
+                )
+            )
+
+def json2lrc(input_path: str, output_path: str):
+    data = json.load(open(input_path, "r"))
+    # 修复默认GBK编码报错
+    with open(output_path, "w+", encoding='utf-8') as file:
+        for cnt, comment in enumerate(data["body"]):
+            file.write("[{}:{}:{}]{}\n[{}:{}:{}]\n".format(
+                    str(int(comment["from"]) // 3600).zfill(2),
+                    str(int(comment["from"]) // 60 % 60).zfill(2),
+                    str(int(comment["from"]) % 60).zfill(2),
+                    comment["content"],
+                    str(int(comment["to"] - 0.01) // 3600).zfill(2),
+                    str(int(comment["to"] - 0.01) // 60 % 60).zfill(2),
+                    str(int(comment["to"] - 0.01) % 60).zfill(2),
+                )
+            )
 
 
-async def get_loading_images(
-    mobi_app: str = "android",
-    platform: str = "android",
-    height: int = 1920,
-    width: int = 1080,
-    build: int = 999999999,
-    birth: str = "",
-    credential: Union[Credential, None] = None,
-):
+def json2json(input_path: str, output_path: str):
+    with open(input_path, "r", encoding='utf-8') as f:
+        data = json.load(f)
+    
+    jsonResult = []
+    for cnt, comment in enumerate(data["body"]):
+        jsonResult.append({
+            "cnt": cnt + 1,
+            "start_time": float(comment["from"]),
+            "content": comment["content"],
+            "end_time": float(comment["to"] - 0.01)
+        })
+    
+    with open(output_path, "w", encoding='utf-8') as file:
+        json.dump(jsonResult, file, ensure_ascii=False, indent=2)
+
+
+def export_ass_from_xml(
+    file_local,
+    output_local,
+    stage_size,
+    font_name,
+    font_size,
+    alpha,
+    fly_time,
+    static_time,
+) -> None:
     """
-    获取开屏启动画面
+    以一个 XML 文件创建 ASS
+
+    一定看清楚 Arguments!
 
     Args:
-        build      (int, optional)              : 客户端内部版本号
-
-        mobi_app   (str, optional)              : android / iphone / ipad
-
-        platform   (str, optional)              : android / ios    / ios
-
-        height     (int, optional)              : 屏幕高度
-
-        width      (int, optional)              : 屏幕宽度
-
-        birth      (str, optional)              : 生日日期(四位数，例 0101)
-
-        credential (Credential | None, optional): 凭据. Defaults to None.
-
-    Returns:
-        dict: 调用 API 返回的结果
+        file_local   (str)       : 文件输入
+        output_local (str)       : 文件输出
+        stage_size   (tuple(int)): 视频大小
+        font_name    (str)       : 字体
+        font_size    (float)     : 字体大小
+        alpha        (float)     : 透明度(0-1)
+        fly_time     (float)     : 滚动弹幕持续时间
+        static_time  (float)     : 静态弹幕持续时间
     """
-    credential = credential if credential is not None else Credential()
+    Danmaku2ASS(
+        input_files=file_local,
+        input_format="Bilibili",
+        output_file=output_local,
+        stage_width=stage_size[0],
+        stage_height=stage_size[1],
+        reserve_blank=0,
+        font_face=font_name,
+        font_size=font_size,
+        text_opacity=alpha,
+        duration_marquee=fly_time,
+        duration_still=static_time,
+    )
 
-    api = API["splash"]["list"]
-    params = {
-        "build": build,
-        "mobi_app": mobi_app,
-        "platform": platform,
-        "height": height,
-        "width": width,
-        "birth": birth,
-    }
-    return await Api(**api, credential=credential).update_params(**params).result
 
-
-async def get_loading_images_special(
-    mobi_app: str = "android",
-    platform: str = "android",
-    height: int = 1920,
-    width: int = 1080,
-    credential: Union[Credential, None] = None,
-):
+def export_ass_from_srt(file_local, output_local) -> None:
     """
-    获取特殊开屏启动画面
+    转换 srt 至 ass
 
     Args:
-        mobi_app   (str, optional)              : android / iphone / ipad
+        file_local   (str): 文件位置
 
-        platform   (str, optional)              : android / ios    / ios
-
-        height     (str, optional)              : 屏幕高度
-
-        width      (str, optional)              : 屏幕宽度
-
-        credential (Credential | None, optional): 凭据. Defaults to None.
-
-    Returns:
-        dict: 调用 API 返回的结果
+        output_local (str): 输出位置
     """
-    ts = int(time.time())
+    srt2ass(file_local, output_local, "movie")
 
-    credential = credential if credential is not None else Credential()
+def export_format_from_json(file_local, output_local, format) -> None:
+    """
+    转换 json 至 目标格式
 
-    api = API["splash"]["brand"]
-    params = {
-        "mobi_app": mobi_app,
-        "platform": platform,
-        "screen_height": height,
-        "screen_width": width,
-        "ts": ts,
-    }
-    return await Api(**api, credential=credential).update_params(**params).result
+    Args:
+        file_local   (str): 文件位置
+
+        output_local (str): 输出位置
+
+        format       (str): 文本格式(srt、lrc)
+    """
+    if(format == 'srt'):
+        json2srt(file_local, output_local)
+    elif(format == 'lrc'):
+        json2lrc(file_local, output_local)
+    elif(format == 'json'):
+        json2json(file_local, output_local)
+        
+
+def export_ass_from_json(file_local, output_local) -> None:
+    """
+    转换 json 至 ass
+
+    Args:
+        file_local   (str): 文件位置
+
+        output_local (str): 输出位置
+    """
+    json2srt(file_local, output_local.replace(".ass", ".srt"))
+    srt2ass(output_local.replace(".ass", ".srt"), output_local, "movie")
+    os.remove(output_local.replace(".ass", ".srt"))
+
+
+async def make_ass_file_subtitle(
+    obj: Union[Video, Episode],
+    page_index: Optional[int] = 0,
+    cid: Optional[int] = None,
+    out: Optional[str] = "test.ass",
+    out_format: Optional[str] = 'ass',
+    lan_name: Optional[str] = "中文（自动生成）",
+    lan_code: Optional[str] = "ai-zh",
+    credential: Optional[Credential] = None,
+) -> None:
+    """
+    生成视频字幕文件
+
+    Args:
+        obj        (Union[Video,Episode]): 对象
+
+        page_index (int, optional)       : 分 P 索引
+
+        cid        (int, optional)       : cid
+
+        out        (str, optional)       : 输出位置. Defaults to "test.ass".
+
+        out_format (str, optional)       : 设置输出格式，ass、lrc、srt、json
+
+        lan_name   (str, optional)       : 字幕名，如”中文（自动生成）“,是简介的 subtitle 项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）".
+
+        lan_code   (str, optional)       : 字幕语言代码，如 ”中文（自动翻译）” 和 ”中文（自动生成）“ 为 "ai-zh"
+
+        credential (Credential, optional): Credential 类. 必须在此处或传入的视频 obj 中传入凭据，两者均存在则优先此处
+    """
+    # 目测必须得有 Credential 才能获取字幕
+    credential = credential if credential else Credential()
+    if credential.has_sessdata():
+        obj.credential = credential
+    elif not obj.credential.has_sessdata():
+        credential.raise_for_no_sessdata()
+
+    if isinstance(obj, Episode):
+        info = await obj.get_player_info(cid=await obj.get_cid(), epid=obj.get_epid())
+    else:
+        if cid == None:
+            if page_index == None:
+                raise ArgsException("page_index 和 cid 至少提供一个。")
+            cid = await obj.get_cid(page_index=page_index)
+        info = await obj.get_player_info(cid=cid)
+    json_files = info["subtitle"]["subtitles"]
+    for subtitle in json_files:
+        if subtitle["lan_doc"] == lan_name or subtitle["lan"] == lan_code:
+            url = subtitle["subtitle_url"]
+            if isinstance(obj, Episode) or "https:" not in url:
+                url = "https:" + url
+            req = await Api(url=url, method="GET").request(raw=True)
+            file_dir = gettempdir() + "/" + "subtitle.json"
+            with open(file_dir, "w+") as f:
+                f.write(json.dumps(req))
+
+            if out_format == 'ass':
+                export_ass_from_json(file_dir, out)
+            elif out_format == 'srt':
+                export_format_from_json(file_dir, out, 'srt')
+            elif out_format == 'lrc':
+                export_format_from_json(file_dir, out, 'lrc')
+            elif out_format == 'json':
+                export_format_from_json(file_dir, out, 'json')
+            else:
+                raise ArgsException("错误的格式")
+            
+            return
+    raise ArgsException("没有找到指定字幕")
+
+
+async def make_ass_file_danmakus_protobuf(
+    obj: Union[Video, Episode, CheeseVideo],
+    page: int = 0,
+    out="test.ass",
+    cid: Union[int, None] = None,
+    date=None,
+    font_name="Simsun",
+    font_size=25.0,
+    alpha=1,
+    fly_time=7,
+    static_time=5,
+) -> None:
+    """
+    生成视频弹幕文件
+
+    来源：protobuf
+
+    Args:
+        obj         (Union[Video,Episode,CheeseVideo])       : 对象
+
+        page        (int, optional)                          : 分 P 号. Defaults to 0.
+
+        out         (str, optional)                          : 输出文件. Defaults to "test.ass"
+
+        cid         (int | None, optional)                   : cid. Defaults to None.
+
+        date        (datetime.date, optional)                : 获取时间. Defaults to None.
+
+        font_name   (str, optional)                          : 字体. Defaults to "Simsun".
+
+        font_size   (float, optional)                        : 字体大小. Defaults to 25.0.
+
+        alpha       (float, optional)                        : 透明度(0-1). Defaults to 1.
+
+        fly_time    (float, optional)                        : 滚动弹幕持续时间. Defaults to 7.
+
+        static_time (float, optional)                        : 静态弹幕持续时间. Defaults to 5.
+    """
+    if isinstance(obj, Video):
+        v = obj
+        if isinstance(obj, Episode):
+            cid = 0
+        else:
+            if cid is None:
+                if page is None:
+                    raise ArgsException("page_index 和 cid 至少提供一个。")
+                # type: ignore
+                cid = await v._Video__get_cid_by_index(page)
+        try:
+            info = await v.get_info()
+        except:
+            info = {"dimension": {"width": 1440, "height": 1080}}
+        width = info["dimension"]["width"]
+        height = info["dimension"]["height"]
+        if width == 0:
+            width = 1440
+        if height == 0:
+            height = 1080
+        stage_size = (width, height)
+        if isinstance(obj, Episode):
+            danmakus = await v.get_danmakus()
+        else:
+            danmakus = await v.get_danmakus(cid=cid, date=date)  # type: ignore
+    elif isinstance(obj, CheeseVideo):
+        stage_size = (1440, 1080)
+        danmakus = await obj.get_danmakus()
+    else:
+        raise ArgsException("请传入 Video/Episode/CheeseVideo 类！")
+    with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
+        file.write("<i>")
+        for d in danmakus:
+            file.write(d.to_xml())
+        file.write("</i>")
+    export_ass_from_xml(
+        gettempdir() + "/danmaku_temp.xml",
+        out,
+        stage_size,
+        font_name,
+        font_size,
+        alpha,
+        fly_time,
+        static_time,
+    )
+
+
+async def make_ass_file_danmakus_xml(
+    obj: Union[Video, Episode, CheeseVideo],
+    page: int = 0,
+    out="test.ass",
+    cid: Union[int, None] = None,
+    font_name="Simsun",
+    font_size=25.0,
+    alpha=1,
+    fly_time=7,
+    static_time=5,
+) -> None:
+    """
+    生成视频弹幕文件
+
+    来源：xml
+
+    Args:
+        obj         (Union[Video,Episode,Cheese]): 对象
+
+        page        (int, optional)              : 分 P 号. Defaults to 0.
+
+        out         (str, optional)              : 输出文件. Defaults to "test.ass".
+
+        cid         (int | None, optional)       : cid. Defaults to None.
+
+        font_name   (str, optional)              : 字体. Defaults to "Simsun".
+
+        font_size   (float, optional)            : 字体大小. Defaults to 25.0.
+
+        alpha       (float, optional)            : 透明度(0-1). Defaults to 1.
+
+        fly_time    (float, optional)            : 滚动弹幕持续时间. Defaults to 7.
+
+        static_time (float, optional)            : 静态弹幕持续时间. Defaults to 5.
+    """
+    if isinstance(obj, Video):
+        v = obj
+        if isinstance(obj, Episode):
+            cid = 0
+        else:
+            if cid is None:
+                if page is None:
+                    raise ArgsException("page_index 和 cid 至少提供一个。")
+                cid = await v._Video__get_cid_by_index(page)  # type: ignore
+        try:
+            info = await v.get_info()
+        except:
+            info = {"dimension": {"width": 1440, "height": 1080}}
+        width = info["dimension"]["width"]
+        height = info["dimension"]["height"]
+        if width == 0:
+            width = 1440
+        if height == 0:
+            height = 1080
+        stage_size = (width, height)
+        if isinstance(obj, Episode):
+            xml_content = await v.get_danmaku_xml()
+        else:
+            xml_content = await v.get_danmaku_xml(cid=cid)  # type: ignore
+    elif isinstance(obj, CheeseVideo):
+        stage_size = (1440, 1080)
+        xml_content = await obj.get_danmaku_xml()
+    else:
+        raise ArgsException("请传入 Video/Episode/CheeseVideo 类！")
+    with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
+        file.write(xml_content)
+    export_ass_from_xml(
+        gettempdir() + "/danmaku_temp.xml",
+        out,
+        stage_size,
+        font_name,
+        font_size,
+        alpha,
+        fly_time,
+        static_time,
+    )
