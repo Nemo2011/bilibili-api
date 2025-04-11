@@ -20,10 +20,10 @@ from .exceptions.ArgsException import ArgsException
 
 def json2srt(input_path: str, output_path: str):
     data = json.load(open(input_path, "r"))
-    with open(output_path, "w+") as file:
+    # 修复默认GBK编码报错
+    with open(output_path, "w+", encoding='utf-8') as file:
         for cnt, comment in enumerate(data["body"]):
-            file.write(
-                "{}\n{}:{}:{},{} --> {}:{}:{},{}\n{}\n\n".format(
+            file.write("{}\n{}:{}:{},{} --> {}:{}:{},{}\n{}\n\n".format(
                     cnt + 1,
                     str(int(comment["from"]) // 3600).zfill(2),
                     str(int(comment["from"]) // 60 % 60).zfill(2),
@@ -43,6 +43,39 @@ def json2srt(input_path: str, output_path: str):
                     comment["content"],
                 )
             )
+
+def json2lrc(input_path: str, output_path: str):
+    data = json.load(open(input_path, "r"))
+    # 修复默认GBK编码报错
+    with open(output_path, "w+", encoding='utf-8') as file:
+        for cnt, comment in enumerate(data["body"]):
+            file.write("[{}:{}:{}]{}\n[{}:{}:{}]\n".format(
+                    str(int(comment["from"]) // 3600).zfill(2),
+                    str(int(comment["from"]) // 60 % 60).zfill(2),
+                    str(int(comment["from"]) % 60).zfill(2),
+                    comment["content"],
+                    str(int(comment["to"] - 0.01) // 3600).zfill(2),
+                    str(int(comment["to"] - 0.01) // 60 % 60).zfill(2),
+                    str(int(comment["to"] - 0.01) % 60).zfill(2),
+                )
+            )
+
+
+def json2json(input_path: str, output_path: str):
+    with open(input_path, "r", encoding='utf-8') as f:
+        data = json.load(f)
+    
+    jsonResult = []
+    for cnt, comment in enumerate(data["body"]):
+        jsonResult.append({
+            "cnt": cnt + 1,
+            "start_time": float(comment["from"]),
+            "content": comment["content"],
+            "end_time": float(comment["to"] - 0.01)
+        })
+    
+    with open(output_path, "w", encoding='utf-8') as file:
+        json.dump(jsonResult, file, ensure_ascii=False, indent=2)
 
 
 def export_ass_from_xml(
@@ -96,6 +129,24 @@ def export_ass_from_srt(file_local, output_local) -> None:
     """
     srt2ass(file_local, output_local, "movie")
 
+def export_format_from_json(file_local, output_local, format) -> None:
+    """
+    转换 json 至 目标格式
+
+    Args:
+        file_local   (str): 文件位置
+
+        output_local (str): 输出位置
+
+        format       (str): 文本格式(srt、lrc)
+    """
+    if(format == 'srt'):
+        json2srt(file_local, output_local)
+    elif(format == 'lrc'):
+        json2lrc(file_local, output_local)
+    elif(format == 'json'):
+        json2json(file_local, output_local)
+        
 
 def export_ass_from_json(file_local, output_local) -> None:
     """
@@ -116,6 +167,7 @@ async def make_ass_file_subtitle(
     page_index: Optional[int] = 0,
     cid: Optional[int] = None,
     out: Optional[str] = "test.ass",
+    out_format: Optional[str] = 'ass',
     lan_name: Optional[str] = "中文（自动生成）",
     lan_code: Optional[str] = "ai-zh",
     credential: Optional[Credential] = None,
@@ -131,6 +183,8 @@ async def make_ass_file_subtitle(
         cid        (int, optional)       : cid
 
         out        (str, optional)       : 输出位置. Defaults to "test.ass".
+
+        out_format (str, optional)       : 设置输出格式，ass、lrc、srt、json
 
         lan_name   (str, optional)       : 字幕名，如”中文（自动生成）“,是简介的 subtitle 项的'list'项中的弹幕的'lan_doc'属性。Defaults to "中文（自动生成）".
 
@@ -163,7 +217,18 @@ async def make_ass_file_subtitle(
             file_dir = gettempdir() + "/" + "subtitle.json"
             with open(file_dir, "w+") as f:
                 f.write(json.dumps(req))
-            export_ass_from_json(file_dir, out)
+
+            if out_format == 'ass':
+                export_ass_from_json(file_dir, out)
+            elif out_format == 'srt':
+                export_format_from_json(file_dir, out, 'srt')
+            elif out_format == 'lrc':
+                export_format_from_json(file_dir, out, 'lrc')
+            elif out_format == 'json':
+                export_format_from_json(file_dir, out, 'json')
+            else:
+                raise ArgsException("错误的格式")
+            
             return
     raise ArgsException("没有找到指定字幕")
 
