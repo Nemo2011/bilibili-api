@@ -11,7 +11,8 @@ maintainers = [
     { name = "MoyuScript" },
     { name = "Nemo2011" },
 ]
-dynamic = ["version", "readme", "dependencies"]
+# 不要在 dynamic 中包含 dependencies
+dynamic = ["version", "readme"]
 license = { text = "GPL-3.0-or-later" }
 description = "The fork of module bilibili-api. 哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。"
 requires-python = ">=3.9"
@@ -26,11 +27,29 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 scripts = { "ivitools" = "bilibili_api.tools.ivitools.__main__:main" }
+# 直接在此处定义依赖
+dependencies = [
+    "apscheduler~=3.11.0",
+    "beautifulsoup4~=4.13.3",
+    "brotli~=1.1.0",
+    "colorama~=0.4.6",
+    "httpx==1.0.0b0",
+    "lxml~=5.3.1",
+    "pillow~=11.1.0",
+    "pycryptodomex~=3.21.0",
+    "pyjwt~=2.10.1",
+    "pyyaml~=6.0",
+    "qrcode~=8.0",
+    "qrcode_terminal~=0.8",
+    "setuptools>=78.1.0",
+    "yarl~=1.18.3",
+]
 
 [tool.setuptools.dynamic]
 version = { attr = "bilibili_api.BILIBILI_API_VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
-dependencies = { file = ["requirements.txt"] }
+# 删除这一行，因为我们已经静态定义了依赖
+# dependencies = { file = ["requirements.txt"] }
 
 [tool.setuptools]
 packages = [
