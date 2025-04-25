@@ -1161,7 +1161,8 @@ class LiveDanmaku(AsyncEvent):
                 self.dispatch("VIEW", callback_info)
                 self.dispatch("ALL", callback_info)
 
-            elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE:
+            elif info["datapack_type"] == LiveDanmaku.DATAPACK_TYPE_NOTICE and "cmd" in info["data"]:
+                # https://github.com/Nemo2011/bilibili-api/issues/913#issuecomment-2789372339
                 # 直播间弹幕、礼物等信息
                 callback_info["type"] = info["data"]["cmd"]
 
