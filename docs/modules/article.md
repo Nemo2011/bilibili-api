@@ -16,6 +16,7 @@ from bilibili_api import article
   - [async def fetch\_content()](#async-def-fetch\_content)
   - [async def get\_all()](#async-def-get\_all)
   - [def get\_cvid()](#def-get\_cvid)
+  - [async def get\_detail()](#async-def-get\_detail)
   - [async def get\_info()](#async-def-get\_info)
   - [async def is\_note()](#async-def-is\_note)
   - [def json()](#def-json)
@@ -93,6 +94,17 @@ from bilibili_api import article
 
 
 **Returns:** `int`:  cvid
+
+
+
+
+### async def get_detail()
+
+获取专栏详细信息
+
+
+
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 
