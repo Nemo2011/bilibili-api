@@ -11,7 +11,7 @@ maintainers = [
     { name = "MoyuScript" },
     { name = "Nemo2011" },
 ]
-dynamic = ["version", "readme", "dependencies"]
+dynamic = ["version", "readme"]  # 移除了 "dependencies"
 license = { text = "GPL-3.0-or-later" }
 description = "The fork of module bilibili-api. 哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。"
 requires-python = ">=3.9"
@@ -30,7 +30,7 @@ scripts = { "ivitools" = "bilibili_api.tools.ivitools.__main__:main" }
 [tool.setuptools.dynamic]
 version = { attr = "bilibili_api.BILIBILI_API_VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
-dependencies = { file = ["requirements.txt"] }
+dependencies = { file = ["requirements.txt"] }  # 保留静态依赖项
 
 [tool.setuptools]
 packages = [
