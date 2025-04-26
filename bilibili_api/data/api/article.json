@@ -9,6 +9,15 @@
       },
       "comment": "专栏信息数据"
     },
+    "detail": {
+      "url": "https://api.bilibili.com/x/article/view",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "id": "int: cv 号"
+      },
+      "comment": "专栏信息数据"
+    },
     "list": {
       "url": "https://api.bilibili.com/x/article/list/web/articles",
       "method": "GET",

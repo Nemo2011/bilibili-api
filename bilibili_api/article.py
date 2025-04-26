@@ -573,6 +573,20 @@ class Article:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def get_detail(self) -> dict:
+        """
+        获取专栏详细信息
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+
+        api = API["info"]["detail"]
+        params = {"id": self.__cvid}
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
+
     async def get_all(self) -> dict:
         """
         一次性获取专栏尽可能详细数据，包括原始内容、标签、发布时间、标题、相关专栏推荐等
@@ -592,11 +606,13 @@ class Article:
             cache_pool.dynamic2article[cache_pool.article2dynamic[self.__cvid]] = (
                 self.__cvid
             )
-            cache_pool.dynamic_is_article[cache_pool.article2dynamic[self.__cvid]] = True
+            cache_pool.dynamic_is_article[cache_pool.article2dynamic[self.__cvid]] = (
+                True
+            )
             cache_pool.dynamic_is_opus[cache_pool.article2dynamic[self.__cvid]] = True
-            cache_pool.article_is_note[self.get_cvid()] = self.__get_all_data["readInfo"][
-                "category"
-            ]["id"] in [41, 42]
+            cache_pool.article_is_note[self.get_cvid()] = self.__get_all_data[
+                "readInfo"
+            ]["category"]["id"] in [41, 42]
         return self.__get_all_data
 
     async def set_like(self, status: bool = True) -> dict:
