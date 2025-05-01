@@ -1554,6 +1554,13 @@ class Episode(Video):
                 "otype": "json",
                 "fnval": 4048,
                 "fourk": 1,
+                "gaia_source": "",
+                "from_client": "BROWSER",
+                "is_main_page": "false",
+                "need_fragment": "false",
+                "isGaiaAvoided": "true",
+                "web_location": 1315873,
+                "voice_balance": 1,
             }
             self.__playurl = (
                 await Api(**api, credential=self.credential)
