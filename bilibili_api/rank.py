@@ -51,14 +51,14 @@ class RankType(Enum):
     - Dance: 舞蹈
     - Game: 游戏
     - Knowledge: 知识
-    - Technology: 科技
+    - Technology: 科技数码
     - Sports: 运动
     - Car: 汽车
     - Life: 生活
     - Food: 美食
     - Animal: 动物圈
     - Kitchen: 鬼畜
-    - Fashion: 时尚
+    - Fashion: 时尚美妆
     - Ent: 娱乐
     - Cinephile: 影视
     - Movie: 电影
@@ -73,21 +73,21 @@ class RankType(Enum):
     GuochuangAnime = {"api_type": "pgc", "season_type": 4}
     Guochuang = {"api_type": "x", "rid": 168, "type": "all"}
     Documentary = {"api_type": "pgc", "season_type": 3}
-    Douga = {"api_type": "x", "rid": 1, "type": "all"}
-    Music = {"api_type": "x", "rid": 3, "type": "all"}
-    Dance = {"api_type": "x", "rid": 129, "type": "all"}
-    Game = {"api_type": "x", "rid": 4, "type": "all"}
-    Knowledge = {"api_type": "x", "rid": 36, "type": "all"}
-    Technology = {"api_type": "x", "rid": 188, "type": "all"}
-    Sports = {"api_type": "x", "rid": 234, "type": "all"}
-    Car = {"api_type": "x", "rid": 223, "type": "all"}
+    Douga = {"api_type": "x", "rid": 1005, "type": "all"}
+    Music = {"api_type": "x", "rid": 1003, "type": "all"}
+    Dance = {"api_type": "x", "rid": 1004, "type": "all"}
+    Game = {"api_type": "x", "rid": 1008, "type": "all"}
+    Knowledge = {"api_type": "x", "rid": 1010, "type": "all"}
+    Technology = {"api_type": "x", "rid": 1012, "type": "all"}
+    Sports = {"api_type": "x", "rid": 1018, "type": "all"}
+    Car = {"api_type": "x", "rid": 1013, "type": "all"}
     Life = {"api_type": "x", "rid": 160, "type": "all"}
-    Food = {"api_type": "x", "rid": 211, "type": "all"}
-    Animal = {"api_type": "x", "rid": 217, "type": "all"}
-    Kichiku = {"api_type": "x", "rid": 119, "type": "all"}
-    Fashion = {"api_type": "x", "rid": 155, "type": "all"}
-    Ent = {"api_type": "x", "rid": 5, "type": "all"}
-    Cinephile = {"api_type": "x", "rid": 181, "type": "all"}
+    Food = {"api_type": "x", "rid": 1020, "type": "all"}
+    Animal = {"api_type": "x", "rid": 1024, "type": "all"}
+    Kichiku = {"api_type": "x", "rid": 1007, "type": "all"}
+    Fashion = {"api_type": "x", "rid": 1014, "type": "all"}
+    Ent = {"api_type": "x", "rid": 1002, "type": "all"}
+    Cinephile = {"api_type": "x", "rid": 1001, "type": "all"}
     Movie = {"api_type": "pgc", "season_type": 2}
     TV = {"api_type": "pgc", "season_type": 5}
     Variety = {"api_type": "pgc", "season_type": 7}
