@@ -40,6 +40,7 @@ from ..exceptions import (
     ExClimbWuzhiException,
     ResponseCodeException,
     WbiRetryTimesExceedException,
+    NetworkException,
 )
 from .AsyncEvent import AsyncEvent
 from .utils import get_api, raise_for_statement
@@ -2189,6 +2190,9 @@ class Api:
     def _process_response(
         self, resp: BiliAPIResponse, raw: bool = False
     ) -> Union[int, str, dict, None]:
+        # 检查状态码
+        if resp.code != 200:
+            raise NetworkException(resp.code, resp.msg)
         # 检查响应头 Content-Length
         content_length = resp.headers.get("content-length")
         if content_length and int(content_length) == 0:
