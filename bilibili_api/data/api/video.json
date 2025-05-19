@@ -490,7 +490,7 @@
       "comment": "编辑弹幕"
     },
     "snapshot": {
-      "url": "http://api.bilibili.com/x/v2/dm/ajax",
+      "url": "https://api.bilibili.com/x/v2/dm/ajax",
       "method": "GET",
       "verify": false,
       "params": {
@@ -499,7 +499,7 @@
       "comment": "获取弹幕快照"
     },
     "recall": {
-      "url": "http://api.bilibili.com/x/dm/recall",
+      "url": "https://api.bilibili.com/x/dm/recall",
       "method": "GET",
       "verify": false,
       "data": {

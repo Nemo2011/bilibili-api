@@ -179,7 +179,7 @@ async def request(
     files: Dict[str, BiliAPIFile] = {},
     headers: dict = {},
     cookies: dict = {},
-    allow_redirects: bool = False,
+    allow_redirects: bool = True,
 ) -> BiliAPIResponse: ...
 ```
 

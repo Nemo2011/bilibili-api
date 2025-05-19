@@ -24,9 +24,7 @@ async def get_real_url(short_url: str, credential: Optional[Credential] = None) 
     credential = credential if credential else Credential()
 
     try:
-        resp = await get_client().request(
-            method="HEAD", url=str(short_url), allow_redirects=True
-        )
+        resp = await get_client().request(method="HEAD", url=short_url)
         u = resp.url
 
         return str(u)

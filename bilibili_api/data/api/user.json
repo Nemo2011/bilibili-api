@@ -54,7 +54,7 @@
       "comment": "用户基本信息"
     },
     "space_notice": {
-      "url": "http://api.bilibili.com/x/space/notice",
+      "url": "https://api.bilibili.com/x/space/notice",
       "method": "GET",
       "verify": false,
       "params": {
@@ -558,7 +558,7 @@
       "comment": "用户关系操作"
     },
     "set_space_notice": {
-      "url": "http://api.bilibili.com/x/space/notice/set",
+      "url": "https://api.bilibili.com/x/space/notice/set",
       "method": "POST",
       "verify": true,
       "params": {

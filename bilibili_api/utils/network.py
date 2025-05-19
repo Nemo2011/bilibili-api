@@ -598,7 +598,7 @@ class BiliAPIClient(ABC):
             files: Dict[str, BiliAPIFile] = {},
             headers: dict = {},
             cookies: dict = {},
-            allow_redirects: bool = False,
+            allow_redirects: bool = True,
         ) -> BiliAPIResponse:
             """
             进行 HTTP 请求
@@ -611,7 +611,7 @@ class BiliAPIClient(ABC):
                 files (Dict[str, BiliAPIFile], optional): 请求文件. Defaults to {}.
                 headers (dict, optional): 请求头. Defaults to {}.
                 cookies (dict, optional): 请求 Cookies. Defaults to {}.
-                allow_redirects (bool, optional): 是否允许重定向. Defaults to False.
+                allow_redirects (bool, optional): 是否允许重定向. Defaults to True.
 
             Returns:
                 BiliAPIResponse: 响应对象
@@ -807,7 +807,7 @@ class BiliAPIClient(ABC):
         files: Dict[str, BiliAPIFile] = {},
         headers: dict = {},
         cookies: dict = {},
-        allow_redirects: bool = False,
+        allow_redirects: bool = True,
     ) -> BiliAPIResponse:
         """
         进行 HTTP 请求
@@ -820,7 +820,7 @@ class BiliAPIClient(ABC):
             files (Dict[str, BiliAPIFile], optional): 请求文件. Defaults to {}.
             headers (dict, optional): 请求头. Defaults to {}.
             cookies (dict, optional): 请求 Cookies. Defaults to {}.
-            allow_redirects (bool, optional): 是否允许重定向. Defaults to False.
+            allow_redirects (bool, optional): 是否允许重定向. Defaults to True.
 
         Returns:
             BiliAPIResponse: 响应对象
@@ -2192,7 +2192,7 @@ class Api:
     ) -> Union[int, str, dict, None]:
         # 检查状态码
         if resp.code != 200:
-            raise NetworkException(resp.code, resp.msg)
+            raise NetworkException(resp.code, resp.utf8_text())
         # 检查响应头 Content-Length
         content_length = resp.headers.get("content-length")
         if content_length and int(content_length) == 0:
