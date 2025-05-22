@@ -276,6 +276,8 @@ class CurlCFFIClient(BiliAPIClient):
             except curl_cffi.CurlError as e:
                 if e.code == curl_cffi.CurlECode.AGAIN:
                     pass
+                elif e.code == curl_cffi.CurlECode.GOT_NOTHING:
+                    return (b"", BiliWsMsgType.CLOSED)
                 else:
                     raise e
         if flags & curl_cffi.CurlWsFlag.CLOSE:
