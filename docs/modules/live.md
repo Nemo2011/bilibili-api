@@ -15,6 +15,7 @@ from bilibili_api import live
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def connect()](#async-def-connect)
   - [async def disconnect()](#async-def-disconnect)
+  - [def get\_live\_room()](#def-get\_live\_room)
   - [def get\_status()](#def-get\_status)
 - [class LiveFormat()](#class-LiveFormat)
 - [class LiveProtocol()](#class-LiveProtocol)
@@ -146,6 +147,17 @@ Events：
 断开连接
 
 
+
+
+
+
+### def get_live_room()
+
+获取对应直播间对象
+
+
+
+**Returns:** `LiveRoom`:  直播间对象
 
 
 
@@ -377,7 +389,7 @@ Events：
 
 ### async def get_room_id()
 
-获取直播间 id
+获取直播间真实 id
 
 
 
@@ -441,11 +453,11 @@ Events：
 
 ### async def get_ruid()
 
-获取真实房间 id
+获取 ruid
 
 
 
-**Returns:** `int`:  真实房间 id
+**Returns:** `int`:  ruid
 
 
 
