@@ -35,6 +35,7 @@ from bilibili_api import ...
   - [async def check\_refresh()](#async-def-check\_refresh)
   - [async def check\_valid()](#async-def-check\_valid)
   - [def from\_cookies()](#def-from\_cookies)
+  - [async def get\_buvid\_cookies()](#async-def-get\_buvid\_cookies)
   - [def get\_cookies()](#def-get\_cookies)
   - [def has\_ac\_time\_value()](#def-has\_ac\_time\_value)
   - [def has\_bili\_jct()](#def-has\_bili\_jct)
@@ -637,6 +638,17 @@ Cookies 刷新错误。
 | `cookies` | `Dict, optional` | Cookies. Defaults to {}. |
 
 **Returns:** `Credential`:  凭据类
+
+
+
+
+### async def get_buvid_cookies()
+
+获取请求 Cookies 字典，自动补充 buvid 字段
+
+
+
+**Returns:** `dict`:  请求 Cookies 字典
 
 
 

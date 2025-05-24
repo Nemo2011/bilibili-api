@@ -129,14 +129,14 @@ RankAPIType.PGC 排行榜时间类型
 - Dance: 舞蹈
 - Game: 游戏
 - Knowledge: 知识
-- Technology: 科技
+- Technology: 科技数码
 - Sports: 运动
 - Car: 汽车
 - Life: 生活
 - Food: 美食
 - Animal: 动物圈
 - Kitchen: 鬼畜
-- Fashion: 时尚
+- Fashion: 时尚美妆
 - Ent: 娱乐
 - Cinephile: 影视
 - Movie: 电影

@@ -20,7 +20,9 @@ from bilibili_api import ass
 
 生成视频弹幕文件
 
-来源：protobuf
+弹幕数据来源于 protobuf 接口
+
+编码默认采用 utf-8
 
 
 | name | type | description |
@@ -45,7 +47,9 @@ from bilibili_api import ass
 
 生成视频弹幕文件
 
-来源：xml
+弹幕数据来源于 xml 接口
+
+编码默认采用 utf-8
 
 
 | name | type | description |
@@ -68,6 +72,8 @@ from bilibili_api import ass
 ## async def make_ass_file_subtitle()
 
 生成视频字幕文件
+
+编码默认采用 utf-8
 
 
 | name | type | description |
