@@ -1172,6 +1172,25 @@ class Credential:
 
         return cookies
 
+    async def get_buvid_cookies(self) -> dict:
+        """
+        获取请求 Cookies 字典，自动补充 buvid 字段
+
+        Returns:
+            dict: 请求 Cookies 字典
+        """
+        cookies = {
+            "SESSDATA": self.sessdata if self.sessdata else "",
+            "buvid3": self.buvid3 if self.buvid3 else (await get_buvid())[0],
+            "buvid4": self.buvid4 if self.buvid4 else (await get_buvid())[1],
+            "bili_jct": self.bili_jct if self.bili_jct else "",
+            "ac_time_value": self.ac_time_value if self.ac_time_value else "",
+        }
+        if self.dedeuserid:
+            cookies.update({"DedeUserID": self.dedeuserid})
+
+        return cookies
+
     def has_dedeuserid(self) -> bool:
         """
         是否提供 dedeuserid。

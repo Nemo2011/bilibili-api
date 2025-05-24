@@ -555,7 +555,7 @@ class AudioUploader(AsyncEvent):
                 "version": "2.6.0",
                 "build": 2060400,
             },
-            cookies=self.credential.get_cookies(),
+            cookies=await self.credential.get_buvid_cookies(),
             headers=HEADERS.copy(),
         )
         if resp.code >= 400:
