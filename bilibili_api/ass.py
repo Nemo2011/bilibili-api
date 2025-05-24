@@ -20,7 +20,7 @@ from .exceptions.ArgsException import ArgsException
 
 def json2srt(input_path: str, output_path: str):
     data = json.load(open(input_path, "r"))
-    with open(output_path, "w+") as file:
+    with open(output_path, "w+", encoding="utf-8") as file:
         for cnt, comment in enumerate(data["body"]):
             file.write(
                 "{}\n{}:{}:{},{} --> {}:{}:{},{}\n{}\n\n".format(
@@ -123,6 +123,8 @@ async def make_ass_file_subtitle(
     """
     生成视频字幕文件
 
+    编码默认采用 utf-8
+
     Args:
         obj        (Union[Video,Episode]): 对象
 
@@ -161,7 +163,7 @@ async def make_ass_file_subtitle(
                 url = "https:" + url
             req = await Api(url=url, method="GET").request(raw=True)
             file_dir = gettempdir() + "/" + "subtitle.json"
-            with open(file_dir, "w+") as f:
+            with open(file_dir, "w+", encoding="utf-8") as f:
                 f.write(json.dumps(req))
             export_ass_from_json(file_dir, out)
             return
@@ -183,7 +185,9 @@ async def make_ass_file_danmakus_protobuf(
     """
     生成视频弹幕文件
 
-    来源：protobuf
+    弹幕数据来源于 protobuf 接口
+
+    编码默认采用 utf-8
 
     Args:
         obj         (Union[Video,Episode,CheeseVideo])       : 对象
@@ -267,7 +271,9 @@ async def make_ass_file_danmakus_xml(
     """
     生成视频弹幕文件
 
-    来源：xml
+    弹幕数据来源于 xml 接口
+
+    编码默认采用 utf-8
 
     Args:
         obj         (Union[Video,Episode,Cheese]): 对象

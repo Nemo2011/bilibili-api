@@ -48,7 +48,9 @@
       "wbi": true,
       "verify": false,
       "params": {
-        "id": "int: 真实房间号"
+        "id": "int: 真实房间号",
+        "type": "int: 0",
+        "web_location": "444.8"
       },
       "comment": "获取聊天弹幕服务器配置信息(websocket)"
     },

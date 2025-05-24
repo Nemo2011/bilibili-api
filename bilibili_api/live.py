@@ -17,7 +17,7 @@ import brotli
 
 from .utils.utils import get_api, raise_for_statement
 from .utils.danmaku import Danmaku
-from .utils.network import Credential, Api, HEADERS, get_client, BiliWsMsgType
+from .utils.network import Credential, Api, HEADERS, get_client, BiliWsMsgType, get_buvid
 from .utils.AsyncEvent import AsyncEvent
 from .exceptions.LiveException import LiveException
 
@@ -228,7 +228,7 @@ class LiveRoom:
             dict: 调用 API 返回的结果
         """
         api = API["info"]["danmu_info"]
-        params = {"id": self.room_display_id}
+        params = {"id": self.room_display_id, "type": 0, "web_location": "444.8"}
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
         )
@@ -1042,7 +1042,7 @@ class LiveDanmaku(AsyncEvent):
         # 连接直播间
         self.logger.debug("准备连接直播间")
         self.__client = get_client()
-        available_hosts: List[dict] = conf["host_list"]
+        available_hosts: List[dict] = conf["host_list"][::-1]
         retry = self.max_retry
         host = None
 
@@ -1195,7 +1195,9 @@ class LiveDanmaku(AsyncEvent):
             "type": 2,
             "key": token,
         }
-        data = json.dumps(verifyData).encode()
+        if not self.credential.has_buvid3():
+            verifyData["buvid"] = (await get_buvid())[0]
+        data = json.dumps(verifyData, separators=(',', ':')).encode()
         await self.__send(
             data, self.PROTOCOL_VERSION_HEARTBEAT, self.DATAPACK_TYPE_VERIFY
         )
