@@ -128,6 +128,7 @@ class LiveRoom:
             self.credential: Credential = credential
 
         self.__ruid = None
+        self.__real_id = None
 
     async def start(self, area_id: int) -> dict:
         """
@@ -181,6 +182,7 @@ class LiveRoom:
 
         # 缓存真实房间 ID
         self.__ruid = resp["uid"]
+        self.__real_id = resp["room_id"]
         return resp
 
     async def get_emoticons(self) -> dict:
@@ -207,11 +209,14 @@ class LiveRoom:
         Returns:
             int: 直播间 id
         """
-        return (await self.get_room_play_info())["room_id"]
+        if self.__real_id is None:
+            await self.get_room_play_info()
+
+        return self.__real_id
 
     async def __get_ruid(self) -> int:
         """
-        获取 ruid，若有缓存则使用缓存
+        获取直播的 up 的 uid (ruid)，若有缓存则使用缓存
         """
         if self.__ruid is None:
             await self.get_room_play_info()
@@ -220,7 +225,7 @@ class LiveRoom:
 
     async def get_ruid(self) -> int:
         """
-        获取 ruid
+        获取直播的 up 的 uid (ruid)
 
         Returns:
             int: ruid
@@ -1049,8 +1054,7 @@ class LiveDanmaku(AsyncEvent):
         self.logger.info(f"准备连接直播间 {self.room_display_id}")
         # 获取真实房间号
         self.logger.debug("正在获取真实房间号")
-        info = await self.room.get_room_play_info()
-        self.__room_real_id = info["room_id"]
+        self.__room_real_id = await self.room.get_room_id()
         self.logger.debug(f"获取成功，真实房间号：{self.__room_real_id}")
 
         # 获取直播服务器配置
@@ -1238,7 +1242,7 @@ class LiveDanmaku(AsyncEvent):
                     "pf": "web",
                     "hb": str(
                         base64.b64encode(
-                            f"60|{await self.room.get_room_id()}|1|0".encode("utf-8")
+                            f"60|{self.__room_real_id}|1|0".encode("utf-8")
                         ),
                         "utf-8",
                     ),
