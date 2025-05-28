@@ -975,9 +975,7 @@ class LiveDanmaku(AsyncEvent):
         self.__heartbeat_timer = 60.0
         self.__heartbeat_timer_web = 60.0
         self.err_reason: str = ""
-        self.room = LiveRoom(
-            room_display_id=self.room_display_id, credential=credential
-        )
+        self.room = None
 
         # logging
         self.logger = logging.getLogger(f"LiveDanmaku_{self.room_display_id}")
@@ -1050,6 +1048,10 @@ class LiveDanmaku(AsyncEvent):
         入口
         """
         self.__status = self.STATUS_CONNECTING
+
+        self.room = LiveRoom(
+            room_display_id=self.room_display_id, credential=self.credential
+        )
 
         self.logger.info(f"准备连接直播间 {self.room_display_id}")
         # 获取真实房间号
