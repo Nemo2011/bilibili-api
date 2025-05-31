@@ -453,7 +453,7 @@ Events：
 
 ### async def get_ruid()
 
-获取 ruid
+获取直播的 up 的 uid (ruid)
 
 
 
