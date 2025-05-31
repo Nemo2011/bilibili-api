@@ -455,7 +455,7 @@ medialist排序顺序。
 
 | name | type | description |
 | - | - | - |
-| `offset` | `str, optional` | 该值为第一次调用本方法时，数据中会有个 next_offset 字段，指向下一动态列表第一条动态（类似单向链表）。根据上一次获取结果中的 next_offset 字段值，循环填充该值即可获取到全部动态。0 为从头开始。Defaults to 0. |
+| `offset` | `int, optional` | 该值为第一次调用本方法时，数据中会有个 next_offset 字段，指向下一动态列表第一条动态（类似单向链表）。根据上一次获取结果中的 next_offset 字段值，循环填充该值即可获取到全部动态。0 为从头开始。Defaults to 0. |
 | `need_top` | `bool, optional` | 显示置顶动态. Defaults to False. |
 
 **Returns:** `dict`:  调用接口返回的内容。
