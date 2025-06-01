@@ -283,7 +283,12 @@ class RequestSettings:
         self.__settings[name] = value
         for _, pool in session_pool.items():
             for _, client in pool.items():
-                client.__getattribute__(f"set_{name}")(value)
+                try:
+                    client.__getattribute__(f"set_{name}")(value)
+                except AttributeError:
+                    pass
+                except Exception as e:
+                    raise e
 
     def get_proxy(self) -> str:
         """
