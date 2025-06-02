@@ -1100,6 +1100,50 @@ class Dynamic:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
+    async def set_top(self) -> dict:
+        """
+        置顶动态
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["set_top"]
+        params = {
+            "csrf": self.credential.bili_jct,
+        }
+        data = {"dyn_str": str(self.get_dynamic_id())}
+        return (
+            await Api(**api, credential=self.credential)
+            .update_params(**params)
+            .update_data(**data)
+            .result
+        )
+
+    async def remove_top(self) -> dict:
+        """
+        取消置顶动态
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self.credential.raise_for_no_sessdata()
+        self.credential.raise_for_no_bili_jct()
+
+        api = API["operate"]["rm_top"]
+        params = {
+            "csrf": self.credential.bili_jct,
+        }
+        data = {"dyn_str": str(self.get_dynamic_id())}
+        return (
+            await Api(**api, credential=self.credential)
+            .update_params(**params)
+            .update_data(**data)
+            .result
+        )
+
 
 async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> dict:
     """

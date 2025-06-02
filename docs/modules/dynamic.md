@@ -43,9 +43,11 @@ from bilibili_api import dynamic
   - [async def is\_article()](#async-def-is\_article)
   - [async def is\_opus()](#async-def-is\_opus)
   - [async def markdown()](#async-def-markdown)
+  - [async def remove\_top()](#async-def-remove\_top)
   - [async def repost()](#async-def-repost)
   - [async def set\_favorite()](#async-def-set\_favorite)
   - [async def set\_like()](#async-def-set\_like)
+  - [async def set\_top()](#async-def-set\_top)
   - [async def turn\_to\_article()](#async-def-turn\_to\_article)
   - [def turn\_to\_opus()](#def-turn\_to\_opus)
 - [class DynamicContentType()](#class-DynamicContentType)
@@ -467,6 +469,17 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
+### async def remove_top()
+
+取消置顶动态
+
+
+
+**Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
 ### async def repost()
 
 转发动态
@@ -503,6 +516,17 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | name | type | description |
 | - | - | - |
 | `status` | `bool, optional` | 点赞状态. Defaults to True. |
+
+**Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
+### async def set_top()
+
+置顶动态
+
+
 
 **Returns:** `dict`:  调用 API 返回的结果
 

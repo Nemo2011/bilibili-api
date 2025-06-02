@@ -151,6 +151,34 @@
         "extension": "const str: {\"emoji_type\":1}"
       },
       "comment": "转发"
+    },
+    "set_top": {
+      "url": "https://api.bilibili.com/x/dynamic/feed/space/set_top",
+      "method": "POST",
+      "verify": true,
+      "json_body": true,
+      "no_csrf": true,
+      "params": {
+        "csrf": "str: bili_jct"
+      },
+      "data": {
+        "dyn_str": "int: 动态 ID"
+      },
+      "comment": "添加置顶"
+    },
+    "rm_top": {
+      "url": "https://api.bilibili.com/x/dynamic/feed/space/rm_top",
+      "method": "POST",
+      "verify": true,
+      "json_body": true,
+      "no_csrf": true,
+      "params": {
+        "csrf": "str: bili_jct"
+      },
+      "data": {
+        "dyn_str": "int: 动态 ID"
+      },
+      "comment": "取消置顶"
     }
   },
   "info": {
