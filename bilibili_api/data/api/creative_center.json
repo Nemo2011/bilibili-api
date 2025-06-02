@@ -243,5 +243,25 @@
             },
             "comment": "操作弹幕池"
         }
+    },
+    "archive": {
+        "edits": {
+            "url": "https://member.bilibili.com/x/web/archive/history/list",
+            "method": "GET",
+            "verify": true,
+            "params": {
+                "bvid": "str: BVID"
+            },
+            "comment": "获取自己的稿件编辑记录"
+        },
+        "pages": {
+            "url": "https://member.bilibili.com/x/web/archive/parts",
+            "method": "GET",
+            "verify": true,
+            "params": {
+              "aid": "str: AID"
+            },
+            "comment": "获取稿件分 P 详细"
+        }
     }
 }

@@ -33,6 +33,8 @@ from bilibili_api import creative_center
 - [async def del\_danmaku()](#async-def-del\_danmaku)
 - [async def edit\_danmaku\_pool()](#async-def-edit\_danmaku\_pool)
 - [async def edit\_danmaku\_state()](#async-def-edit\_danmaku\_state)
+- [async def get\_archive\_edits()](#async-def-get\_archive\_edits)
+- [async def get\_archive\_parts()](#async-def-get\_archive\_parts)
 - [async def get\_article\_graph()](#async-def-get\_article\_graph)
 - [async def get\_article\_list\_upload\_manager\_info()](#async-def-get\_article\_list\_upload\_manager\_info)
 - [async def get\_article\_overview()](#async-def-get\_article\_overview)
@@ -395,6 +397,38 @@ from bilibili_api import creative_center
 | `state` | `int, Optional` | 弹幕状态 1 删除 2 保护 3 取消保护 |
 
 **Returns:** `dict`:  API 返回信息
+
+
+
+
+---
+
+## async def get_archive_edits()
+
+获取自己的单个稿件的编辑记录
+
+
+| name | type | description |
+| - | - | - |
+| `video` | `Video` | 视频对象。请在视频对象中传入凭据类。 |
+
+**Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
+---
+
+## async def get_archive_parts()
+
+获取自己的单个稿件的分 P 信息
+
+
+| name | type | description |
+| - | - | - |
+| `video` | `Video` | 视频对象。请在视频对象中传入凭据类。 |
+
+**Returns:** `dict`:  调用 API 返回的结果
 
 
 

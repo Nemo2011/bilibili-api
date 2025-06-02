@@ -11,6 +11,7 @@ from typing import List, Union, Optional
 from datetime import datetime
 
 from .video_zone import VideoZoneTypes
+from .video import Video
 from .utils.utils import get_api
 from .utils.network import Api, Credential
 
@@ -931,3 +932,41 @@ async def edit_danmaku_pool(
 
     api = API["danmaku-manager"]["pool"]
     return await Api(**api, credential=credential).update_data(**data).result
+
+
+"""
+单个稿件相关
+
+from: https://github.com/SocialSisterYi/bilibili-API-collect/issues/1286
+from: https://github.com/SocialSisterYi/bilibili-API-collect/issues/1285
+"""
+
+
+async def get_archive_edits(video: Video) -> dict:
+    """
+    获取自己的单个稿件的编辑记录
+
+    Args:
+        video (Video): 视频对象。请在视频对象中传入凭据类。
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["archive"]["edits"]
+    params = {"bvid": video.get_bvid()}
+    return await Api(**api, credential=video.credential).update_params(**params).result
+
+
+async def get_archive_parts(video: Video) -> dict:
+    """
+    获取自己的单个稿件的分 P 信息
+
+    Args:
+        video (Video): 视频对象。请在视频对象中传入凭据类。
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["archive"]["pages"]
+    params = {"aid": video.get_aid()}
+    return await Api(**api, credential=video.credential).update_params(**params).result
