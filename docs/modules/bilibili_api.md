@@ -1363,6 +1363,7 @@ NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate
 + MANGA: 漫画
 + NOTE: 笔记
 + OPUS: 图文
++ DLC: 收藏集
 + FAILED: 错误
 
 

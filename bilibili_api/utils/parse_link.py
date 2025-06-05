@@ -29,6 +29,7 @@ from ..interactive_video import InteractiveVideo
 from ..favorite_list import FavoriteList, FavoriteListType
 from ..user import User, ChannelSeries, ChannelSeriesType, get_self_info
 from ..opus import Opus
+from ..garb import DLC
 
 from .initial_state import get_initial_state
 
@@ -55,6 +56,7 @@ class ResourceType(Enum):
     + MANGA: 漫画
     + NOTE: 笔记
     + OPUS: 图文
+    + DLC: 收藏集
     + FAILED: 错误
     """
 
@@ -78,6 +80,7 @@ class ResourceType(Enum):
     MANGA = "manga"
     NOTE = "note"
     OPUS = "opus"
+    DLC = "dlc"
     FAILED = "failed"
 
 
@@ -220,6 +223,9 @@ async def parse_link(url: str, credential: Union[Credential, None] = None) -> Un
         opus_dynamic = parse_opus_dynamic(url, credential)  # type: ignore
         if not opus_dynamic == -1:
             obj = (opus_dynamic, ResourceType.OPUS)
+        garb = parse_garb(url, credential)
+        if not garb == -1:
+            obj = (garb, ResourceType.DLC)
 
         if obj == None or obj[0] == None:
             return (-1, ResourceType.FAILED)
@@ -651,4 +657,11 @@ def parse_opus_dynamic(url: URL, credential: Credential) -> Union[Dynamic, int]:
     # https://www.bilibili.com/opus/767674573455884292
     if url.host == "www.bilibili.com" and url.parts[:2] == ("/", "opus"):
         return Opus(opus_id=int(url.parts[-1]), credential=credential)
+    return -1
+
+
+def parse_garb(url: URL, credential: Credential) -> Union[DLC, int]:
+    # https://www.bilibili.com/blackboard/activity-Mz9T5bO5Q3.html?id=154&type=dlc&f_source=ogv&from=video.task
+    if url.host == "www.bilibili.com" and url.parts[:3] == ("/", "blackboard", "activity-Mz9T5bO5Q3.html"):
+        return DLC(act_id=int(url.query["id"]), credential=credential)
     return -1

@@ -1,0 +1,75 @@
+{
+  "common": {
+    "search": {
+      "url": "https://api.bilibili.com/x/garb/v2/mall/home/search",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "key_word": "str: 关键词",
+        "pn": "int: 当前页数",
+        "ps": "int: 每页返回数据的最大值",
+        "csrf": "str: bili_jct"
+      },
+      "comment": "搜索装扮/收藏集"
+    },
+    "list": {
+      "url": "https://api.bilibili.com/x/garb/v2/mall/partition/item/list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "group_id": "int: 0 装扮 22 头像挂件 5 动态卡片",
+        "part_id": "int: 6 装扮 1 头像挂件 2 动态卡片",
+        "sort_type": "int: 0 默认排序 1 按销量排序 2 按最新上架时间排序",
+        "pn": "int: 当前页数",
+        "ps": "int: 每页返回数据的最大值",
+        "csrf": "str: bili_jct"
+      },
+      "comment": "获取收藏集/装扮列表"
+    }
+  },
+  "dlc": {
+    "basic": {
+      "url": "https://api.bilibili.com/x/vas/dlc_act/act/basic",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "act_id": "int: 收藏集活动 id",
+        "csrf": "str: bili_jct"
+      },
+      "comment": "获取收藏集基本信息"
+    },
+    "detail": {
+      "url": "https://api.bilibili.com/x/vas/dlc_act/lottery_home_detail",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "act_id": "int: 收藏集活动 id",
+        "lottery_id": "int: 收藏集抽奖 id",
+        "csrf": "str: bili_jct"
+      },
+      "comment": "获取收藏集详细"
+    },
+    "list": {
+      "url": "https://api.bilibili.com/x/vas/dlc_act/act/list",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "scene": "int: 1",
+        "site": "int: 类似于列表，接口将返回 [site:site + 20]",
+        "csrf": "str: bili_jct"
+      },
+      "comment": "获取收藏集列表"
+    }
+  },
+  "garb": {
+    "detail": {
+      "url": "https://api.bilibili.com/x/garb/v2/mall/suit/detail",
+      "method": "GET",
+      "verify": false,
+      "params": {
+        "item_id": "int: 装扮 id",
+        "csrf": "str: bili_jct"
+      }
+    }
+  }
+}
