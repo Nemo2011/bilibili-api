@@ -185,7 +185,7 @@ async def get_rank(
     Returns:
         dict: 调用 API 返回的结果
     """
-    params = {}
+    params = {"web_location": "333.934"}
 
     # 确定 API 接口类型
     if type_.value["api_type"] == RankAPIType.V2.value:
