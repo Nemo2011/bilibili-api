@@ -4,6 +4,7 @@ bilibili_api.clients.curl_cffi
 CurlCFFIClient 实现
 """
 
+from select import select
 from ..utils.network import (
     BiliAPIClient,
     BiliAPIFile,
@@ -256,6 +257,11 @@ class CurlCFFIClient(BiliAPIClient):
         ws = self.__ws[cnt]
         chunks = []
         flags = 0
+        sock_fd = ws.curl.getinfo(curl_cffi.CurlInfo.ACTIVESOCKET)
+        if sock_fd == curl_cffi.aio.CURL_SOCKET_BAD:
+            raise curl_cffi.WebSocketError(
+                "Invalid active socket", curl_cffi.CurlECode.NO_CONNECTION_AVAILABLE
+            )
         while True:
             if self.__ws_is_closed[cnt]:
                 return (b"", BiliWsMsgType.CLOSED)
@@ -275,7 +281,7 @@ class CurlCFFIClient(BiliAPIClient):
                     break
             except curl_cffi.CurlError as e:
                 if e.code == curl_cffi.CurlECode.AGAIN:
-                    pass
+                    _, _, _ = select([sock_fd], [], [], 0.5)
                 elif e.code == curl_cffi.CurlECode.GOT_NOTHING:
                     return (b"", BiliWsMsgType.CLOSED)
                 else:
