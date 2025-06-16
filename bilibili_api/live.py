@@ -1214,7 +1214,8 @@ class LiveDanmaku(AsyncEvent):
             try:
                 info = await get_self_info(self.credential)
                 self.credential.dedeuserid = str(info["uid"])
-            except:
+            except Exception as e:
+                self.logger.warning(f"获取用户信息失败，使用匿名身份: {e}")
                 self.credential.dedeuserid = 0
         verifyData = {
             "uid": int(self.credential.dedeuserid),
