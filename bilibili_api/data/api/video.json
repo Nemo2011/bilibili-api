@@ -336,7 +336,7 @@
       "comment": "取消订阅标签"
     },
     "appeal": {
-      "url": "https://api.bilibili.com/x/web-interface/archive/appeal",
+      "url": "https://api.bilibili.com/x/web-interface/appeal/v2/submit",
       "method": "POST",
       "verify": true,
       "data": {
