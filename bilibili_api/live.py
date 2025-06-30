@@ -960,6 +960,7 @@ class LiveDanmaku(AsyncEvent):
             credential      (Credential | None, optional): 凭据. Defaults to None.
             max_retry       (int, optional)              : 连接出错后最大重试次数. Defaults to 5
             retry_after     (int, optional)              : 连接出错后重试间隔时间（秒）. Defaults to 1
+            max_retry_for_credential (int, optional)     : 获取用户信息最大重试次数. Defaults to 5
         """
         super().__init__()
 
@@ -1235,7 +1236,7 @@ class LiveDanmaku(AsyncEvent):
                     self.credential.dedeuserid = 0
                     self.logger.warning("获取用户信息失败，使用匿名身份连接")
 
- 
+
         verifyData = {
             "uid": int(self.credential.dedeuserid),
             "roomid": self.__room_real_id,

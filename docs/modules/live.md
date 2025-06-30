@@ -131,6 +131,7 @@ Events：
 | `credential` | `Credential \| None, optional` | 凭据. Defaults to None. |
 | `max_retry` | `int, optional` | 连接出错后最大重试次数. Defaults to 5 |
 | `retry_after` | `int, optional` | 连接出错后重试间隔时间（秒）. Defaults to 1 |
+| `max_retry_for_credential` | `int, optional` | 获取用户信息最大重试次数. Defaults to 5 |
 
 
 ### async def connect()
