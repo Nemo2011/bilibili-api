@@ -144,7 +144,7 @@ class LiveRoom:
         data = {
             "area_v2": area_id,
             "room_id": self.room_display_id,
-            "platform": "pc",
+            "platform": "pc_link",
             "csrf": self.credential.bili_jct,
             "csrf_token": self.credential.bili_jct,
         }
@@ -161,6 +161,7 @@ class LiveRoom:
         api = API["info"]["stop"]
         data = {
             "room_id": self.room_display_id,
+            "platform": "pc_link",
         }
         resp = await Api(**api, credential=self.credential).update_data(**data).result
         return resp
