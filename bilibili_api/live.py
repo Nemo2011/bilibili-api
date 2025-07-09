@@ -1128,6 +1128,7 @@ def parse_interact_word_v2(bt: bytes) -> dict:
                 ret6["user_head_frame"] = parse_user_head_frame(br6.bytes_string())
             elif type6 == 8:
                 ret6["parse_guard_leader"] = parse_guard_leader(br6.bytes_string())
+        return ret6
 
     def parse_user_anchor_relation(bt8: bytes) -> dict:
         ret8 = {}
