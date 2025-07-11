@@ -893,6 +893,175 @@ class LiveRoom:
         return await Api(**api, credential=self.credential).update_data(**data).result
 
 
+def parse_user_info(bt6: bytes) -> dict:
+    def parse_base(bt7: bytes) -> dict:
+        ret7 = {}
+        br7 = BytesReader(stream=bt7)
+        while not br7.has_end():
+            type7 = br7.varint() >> 3
+            if type7 == 1:
+                ret7["name"] = br7.string()
+            elif type7 == 2:
+                ret7["face"] = br7.string()
+            elif type7 == 3:
+                ret7["name_color"] = br7.varint()
+            elif type7 == 4:
+                ret7["is_mystery"] = br7.bool()
+            elif type7 == 5:
+                ret7["risk_ctrl_info"] = {}
+                br114514 = BytesReader(stream=br7.bytes_string())
+                while not br114514.has_end():
+                    if (br114514.varint() >> 3) == 1:
+                        ret7["risk_ctrl_info"]["name"] = br114514.string()
+                    elif (br114514.varint() >> 3) == 2:
+                        ret7["risk_ctrl_info"]["face"] = br114514.string()
+            elif type7 == 6:
+                ret7["account_info"] = {}
+                br114514 = BytesReader(stream=br7.bytes_string())
+                while not br114514.has_end():
+                    if (br114514.varint() >> 3) == 1:
+                        ret7["account_info"]["name"] = br114514.string()
+                    elif (br114514.varint() >> 3) == 2:
+                        ret7["account_info"]["face"] = br114514.string()
+            elif type7 == 7:
+                ret7["official_info"] = {}
+                br114514 = BytesReader(stream=br7.bytes_string())
+                while not br114514.has_end():
+                    if (br114514.varint() >> 3) == 1:
+                        ret7["official_info"]["role"] = br114514.varint()
+                    elif (br114514.varint() >> 3) == 2:
+                        ret7["official_info"]["title"] = br114514.string()
+                    elif (br114514.varint() >> 3) == 2:
+                        ret7["official_info"]["desc"] = br114514.string()
+                    elif (br114514.varint() >> 3) == 2:
+                        ret7["official_info"]["type"] = br114514.varint()
+            elif type7 == 8:
+                ret7["name_color_str"] = br7.string()
+        return ret7
+
+    def parse_level(bt7: bytes) -> dict:
+        ret7 = {}
+        br7 = BytesReader(stream=bt7)
+        while not br7.has_end():
+            type7 = br7.varint() >> 3
+            if type7 == 1:
+                ret7["name"] = br7.string()
+            elif type7 == 2:
+                ret7["level"] = br7.varint()
+            elif type7 == 3:
+                ret7["color_start"] = br7.varint()
+            elif type7 == 4:
+                ret7["color_end"] = br7.varint()
+            elif type7 == 5:
+                ret7["color_border"] = br7.varint()
+            elif type7 == 6:
+                ret7["color"] = br7.varint()
+            elif type7 == 7:
+                ret7["id"] = br7.varint()
+            elif type7 == 8:
+                ret7["have_medal_type"] = br7.varint()
+            elif type7 == 9:
+                ret7["is_light"] = br7.varint()
+            elif type7 == 10:
+                ret7["ruid"] = br7.varint()
+            elif type7 == 11:
+                ret7["guard_level"] = br7.varint()
+            elif type7 == 12:
+                ret7["score"] = br7.varint()
+            elif type7 == 13:
+                ret7["guard_icon"] = br7.string()
+            elif type7 == 14:
+                ret7["honor_icon"] = br7.string()
+            elif type7 == 15:
+                ret7["v2_medal_color_start"] = br7.string()
+            elif type7 == 16:
+                ret7["v2_medal_color_end"] = br7.string()
+            elif type7 == 17:
+                ret7["v2_medal_color_border"] = br7.string()
+            elif type7 == 18:
+                ret7["v2_medal_color_text"] = br7.string()
+            elif type7 == 19:
+                ret7["v2_medal_color_level"] = br7.string()
+            elif type7 == 20:
+                ret7["user_receive_count"] = br7.varint()
+        return ret7
+
+    def parse_wealth(bt7: bytes) -> dict:
+        ret7 = {}
+        br7 = BytesReader(stream=bt7)
+        while not br7.has_end():
+            type7 = br7.varint() >> 3
+            if type7 == 1:
+                ret7["level"] = br7.varint()
+            elif type7 == 2:
+                ret7["dm_icon_key"] = br7.string()
+        return ret7
+
+    def parse_title(bt7: bytes) -> dict:
+        ret7 = {}
+        br7 = BytesReader(stream=bt7)
+        while not br7.has_end():
+            type7 = br7.varint() >> 3
+            if type7 == 1:
+                ret7["old_title_css_id"] = br7.string()
+            elif type7 == 2:
+                ret7["title_css_id"] = br7.string()
+        return ret7
+
+    def parse_guard(bt7: bytes) -> dict:
+        ret7 = {}
+        br7 = BytesReader(stream=bt7)
+        while not br7.has_end():
+            type7 = br7.varint() >> 3
+            if type7 == 1:
+                ret7["level"] = br7.varint()
+            elif type7 == 2:
+                ret7["expired_str"] = br7.string()
+        return ret7
+
+    def parse_user_head_frame(bt7: bytes) -> dict:
+        ret7 = {}
+        br7 = BytesReader(stream=bt7)
+        while not br7.has_end():
+            type7 = br7.varint() >> 3
+            if type7 == 1:
+                ret7["id"] = br7.varint()
+            elif type7 == 2:
+                ret7["frame_img"] = br7.string()
+        return ret7
+
+    def parse_guard_leader(bt7: bytes) -> dict:
+        ret7 = {}
+        br7 = BytesReader(stream=bt7)
+        while not br7.has_end():
+            type7 = br7.varint() >> 3
+            if type7 == 1:
+                ret7["is_guard_leader"] = br7.bool()
+        return ret7
+
+    ret6 = {}
+    br6 = BytesReader(stream=bt6)
+    while not br6.has_end():
+        type6 = br6.varint() >> 3
+        if type6 == 1:
+            ret6["uid"] = br6.varint()
+        elif type6 == 2:
+            ret6["base"] = parse_base(br6.bytes_string())
+        elif type6 == 3:
+            ret6["medal"] = parse_level(br6.bytes_string())
+        elif type6 == 4:
+            ret6["wealth"] = parse_wealth(br6.bytes_string())
+        elif type6 == 5:
+            ret6["title"] = parse_title(br6.bytes_string())
+        elif type6 == 6:
+            ret6["guard"] = parse_guard(br6.bytes_string())
+        elif type6 == 7:
+            ret6["user_head_frame"] = parse_user_head_frame(br6.bytes_string())
+        elif type6 == 8:
+            ret6["parse_guard_leader"] = parse_guard_leader(br6.bytes_string())
+    return ret6
+
+
 def parse_interact_word_v2(bt: bytes) -> dict:
     def parse_fans_medal_info(bt2: bytes) -> dict:
         ret2 = {}
@@ -962,174 +1131,6 @@ def parse_interact_word_v2(bt: bytes) -> dict:
                 ret5["is_lighted"] = br5.varint()
         return ret5
 
-    def parse_user_info(bt6: bytes) -> dict:
-        def parse_base(bt7: bytes) -> dict:
-            ret7 = {}
-            br7 = BytesReader(stream=bt7)
-            while not br7.has_end():
-                type7 = br7.varint() >> 3
-                if type7 == 1:
-                    ret7["name"] = br7.string()
-                elif type7 == 2:
-                    ret7["face"] = br7.string()
-                elif type7 == 3:
-                    ret7["name_color"] = br7.varint()
-                elif type7 == 4:
-                    ret7["is_mystery"] = br7.bool()
-                elif type7 == 5:
-                    ret7["risk_ctrl_info"] = {}
-                    br114514 = BytesReader(stream=br7.bytes_string())
-                    while not br114514.has_end():
-                        if (br114514.varint() >> 3) == 1:
-                            ret7["risk_ctrl_info"]["name"] = br114514.string()
-                        elif (br114514.varint() >> 3) == 2:
-                            ret7["risk_ctrl_info"]["face"] = br114514.string()
-                elif type7 == 6:
-                    ret7["account_info"] = {}
-                    br114514 = BytesReader(stream=br7.bytes_string())
-                    while not br114514.has_end():
-                        if (br114514.varint() >> 3) == 1:
-                            ret7["account_info"]["name"] = br114514.string()
-                        elif (br114514.varint() >> 3) == 2:
-                            ret7["account_info"]["face"] = br114514.string()
-                elif type7 == 7:
-                    ret7["official_info"] = {}
-                    br114514 = BytesReader(stream=br7.bytes_string())
-                    while not br114514.has_end():
-                        if (br114514.varint() >> 3) == 1:
-                            ret7["official_info"]["role"] = br114514.varint()
-                        elif (br114514.varint() >> 3) == 2:
-                            ret7["official_info"]["title"] = br114514.string()
-                        elif (br114514.varint() >> 3) == 2:
-                            ret7["official_info"]["desc"] = br114514.string()
-                        elif (br114514.varint() >> 3) == 2:
-                            ret7["official_info"]["type"] = br114514.varint()
-                elif type7 == 8:
-                    ret7["name_color_str"] = br7.string()
-            return ret7
-
-        def parse_level(bt7: bytes) -> dict:
-            ret7 = {}
-            br7 = BytesReader(stream=bt7)
-            while not br7.has_end():
-                type7 = br7.varint() >> 3
-                if type7 == 1:
-                    ret7["name"] = br7.string()
-                elif type7 == 2:
-                    ret7["level"] = br7.varint()
-                elif type7 == 3:
-                    ret7["color_start"] = br7.varint()
-                elif type7 == 4:
-                    ret7["color_end"] = br7.varint()
-                elif type7 == 5:
-                    ret7["color_border"] = br7.varint()
-                elif type7 == 6:
-                    ret7["color"] = br7.varint()
-                elif type7 == 7:
-                    ret7["id"] = br7.varint()
-                elif type7 == 8:
-                    ret7["have_medal_type"] = br7.varint()
-                elif type7 == 9:
-                    ret7["is_light"] = br7.varint()
-                elif type7 == 10:
-                    ret7["ruid"] = br7.varint()
-                elif type7 == 11:
-                    ret7["guard_level"] = br7.varint()
-                elif type7 == 12:
-                    ret7["score"] = br7.varint()
-                elif type7 == 13:
-                    ret7["guard_icon"] = br7.string()
-                elif type7 == 14:
-                    ret7["honor_icon"] = br7.string()
-                elif type7 == 15:
-                    ret7["v2_medal_color_start"] = br7.string()
-                elif type7 == 16:
-                    ret7["v2_medal_color_end"] = br7.string()
-                elif type7 == 17:
-                    ret7["v2_medal_color_border"] = br7.string()
-                elif type7 == 18:
-                    ret7["v2_medal_color_text"] = br7.string()
-                elif type7 == 19:
-                    ret7["v2_medal_color_level"] = br7.string()
-                elif type7 == 20:
-                    ret7["user_receive_count"] = br7.varint()
-            return ret7
-
-        def parse_wealth(bt7: bytes) -> dict:
-            ret7 = {}
-            br7 = BytesReader(stream=bt7)
-            while not br7.has_end():
-                type7 = br7.varint() >> 3
-                if type7 == 1:
-                    ret7["level"] = br7.varint()
-                elif type7 == 2:
-                    ret7["dm_icon_key"] = br7.string()
-            return ret7
-
-        def parse_title(bt7: bytes) -> dict:
-            ret7 = {}
-            br7 = BytesReader(stream=bt7)
-            while not br7.has_end():
-                type7 = br7.varint() >> 3
-                if type7 == 1:
-                    ret7["old_title_css_id"] = br7.string()
-                elif type7 == 2:
-                    ret7["title_css_id"] = br7.string()
-            return ret7
-
-        def parse_guard(bt7: bytes) -> dict:
-            ret7 = {}
-            br7 = BytesReader(stream=bt7)
-            while not br7.has_end():
-                type7 = br7.varint() >> 3
-                if type7 == 1:
-                    ret7["level"] = br7.varint()
-                elif type7 == 2:
-                    ret7["expired_str"] = br7.string()
-            return ret7
-
-        def parse_user_head_frame(bt7: bytes) -> dict:
-            ret7 = {}
-            br7 = BytesReader(stream=bt7)
-            while not br7.has_end():
-                type7 = br7.varint() >> 3
-                if type7 == 1:
-                    ret7["id"] = br7.varint()
-                elif type7 == 2:
-                    ret7["frame_img"] = br7.string()
-            return ret7
-
-        def parse_guard_leader(bt7: bytes) -> dict:
-            ret7 = {}
-            br7 = BytesReader(stream=bt7)
-            while not br7.has_end():
-                type7 = br7.varint() >> 3
-                if type7 == 1:
-                    ret7["is_guard_leader"] = br7.bool()
-            return ret7
-
-        ret6 = {}
-        br6 = BytesReader(stream=bt6)
-        while not br6.has_end():
-            type6 = br6.varint() >> 3
-            if type6 == 1:
-                ret6["uid"] = br6.varint()
-            elif type6 == 2:
-                ret6["base"] = parse_base(br6.bytes_string())
-            elif type6 == 3:
-                ret6["medal"] = parse_level(br6.bytes_string())
-            elif type6 == 4:
-                ret6["wealth"] = parse_wealth(br6.bytes_string())
-            elif type6 == 5:
-                ret6["title"] = parse_title(br6.bytes_string())
-            elif type6 == 6:
-                ret6["guard"] = parse_guard(br6.bytes_string())
-            elif type6 == 7:
-                ret6["user_head_frame"] = parse_user_head_frame(br6.bytes_string())
-            elif type6 == 8:
-                ret6["parse_guard_leader"] = parse_guard_leader(br6.bytes_string())
-        return ret6
-
     def parse_user_anchor_relation(bt8: bytes) -> dict:
         ret8 = {}
         br8 = BytesReader(stream=bt8)
@@ -1154,9 +1155,9 @@ def parse_interact_word_v2(bt: bytes) -> dict:
         elif type_ == 3:
             ret["uname_color"] = br.string()
         elif type_ == 4:
-            ret["identities"] = []
-            for _ in range(br.varint()):
-                ret["identities"].append(br.varint())
+            if not ret.get("identities"):
+                ret["identities"] = []
+            ret["identities"].append(br.varint())
         elif type_ == 5:
             ret["msg_type"] = br.varint()
         elif type_ == 6:
@@ -1198,6 +1199,46 @@ def parse_interact_word_v2(bt: bytes) -> dict:
     return ret
 
 
+def parse_online_rank_v3(bt: bytes) -> dict:
+    def parse_gold_rank_broadcast_item(ht: bytes) -> dict:
+        item = {}
+        reader = BytesReader(stream=ht)
+        while not reader.has_end():
+            t = reader.varint() >> 3
+            if t == 1:
+                item["uid"] = reader.varint()
+            elif t == 2:
+                item["face"] = reader.string()
+            elif t == 3:
+                item["score"] = reader.string()
+            elif t == 4:
+                item["uname"] = reader.string()
+            elif t == 5:
+                item["rank"] = reader.varint()
+            elif t == 6:
+                item["guard_level"] = reader.varint()
+            elif t == 7:
+                item["is_mystery"] = reader.bool()
+            elif t == 8:
+                item["user_info"] = parse_user_info(reader.bytes_string())
+        return item
+    ret = {}
+    br = BytesReader(stream=bt)
+    while not br.has_end():
+        type_ = br.varint() >> 3
+        if type_ == 1:
+            ret["rank_type"] = br.varint()
+        elif type_ == 2:
+            if not ret.get("list"):
+                ret["list"] = []
+            ret["list"].append(parse_gold_rank_broadcast_item(br.bytes_string()))
+        elif type_ == 3:
+            if not ret.get("online_list"):
+                ret["online_list"] = []
+            ret["online_list"].append(parse_gold_rank_broadcast_item(br.bytes_string()))
+    return ret
+
+
 class LiveDanmaku(AsyncEvent):
     """
     Websocket 实时获取直播弹幕
@@ -1206,13 +1247,14 @@ class LiveDanmaku(AsyncEvent):
 
     Logger: LiveDanmaku().logger
 
-    Events：
+    Events:
     + DANMU_MSG: 用户发送弹幕
     + SEND_GIFT: 礼物
-    + COMBO_SEND：礼物连击
-    + GUARD_BUY：续费大航海
-    + SUPER_CHAT_MESSAGE：醒目留言（SC）
-    + SUPER_CHAT_MESSAGE_JPN：醒目留言（带日语翻译？）
+    + COMBO_SEND: 礼物连击
+    + GUARD_BUY: 续费大航海
+    + SUPER_CHAT_MESSAGE: 醒目留言(SC)
+    + SUPER_CHAT_MESSAGE_JPN: 醒目留言(带日语翻译?)
+    + SUPER_CHAT_MESSAGE_DELETE: 醒目留言删除
     + WELCOME: 老爷进入房间
     + WELCOME_GUARD: 房管进入房间
     + NOTICE_MSG: 系统通知（全频道广播之类的）
@@ -1221,8 +1263,65 @@ class LiveDanmaku(AsyncEvent):
     + ROOM_REAL_TIME_MESSAGE_UPDATE: 粉丝数等更新
     + ENTRY_EFFECT: 进场特效
     + ROOM_RANK: 房间排名更新
-    + INTERACT_WORD_V2: 用户进入直播间
+    + INTERACT_WORD_V2: 用户进入直播间 (*)
     + ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个 xx 小时榜
+    + DM_INTERACTION: 交互信息合并
+    + USER_TOAST_MSG: 用户庆祝消息
+    + GIFT_STAR_PROCESS: 礼物星球点亮
+    + SPECIAL_GIFT: 特殊礼物
+    + ONLINE_RANK_V3: 直播间高能榜 (*)
+    + LOG_IN_NOTICE: 未登录通知
+    + ONLINE_RANK_TOP3: 用户到达直播间高能榜前三名的消息
+    + POPULAR_RANK_CHANGED: 直播间在人气榜的排名改变
+    + HOT_RANK_CHANGED / HOT_RANK_CHANGED_V2: 直播间限时热门榜排名改变
+    + HOT_RANK_SETTLEMENT / HOT_RANK_SETTLEMENT_V2: 限时热门榜上榜信息
+    + LIKE_INFO_V3_CLICK: 直播间用户点赞
+    + LIKE_INFO_V3_UPDATE: 直播间点赞数更新
+    + POPULARITY_RED_POCKET_START: 直播间发红包弹幕
+    + POPULARITY_RED_POCKET_NEW: 直播间红包
+    + POPULARITY_RED_POCKET_WINNER_LIST: 直播间抢到红包的用户
+    + WATCHED_CHANGE: 直播间看过人数
+    + ENTRY_EFFECT_MUST_RECEIVE: 必须接受的用户进场特效
+    + FULL_SCREEN_SPECIAL_EFFECT: 全屏特效
+    + AREA_RANK_CHANGED: 直播间在所属分区的排名改变
+    + COMMON_NOTICE_DANMAKU: 广播通知弹幕信息
+    + ROOM_CHANGE: 直播间信息更改
+    + ROOM_CONTENT_AUDIT_REPORT: 直播间内容审核报告
+    + SUPER_CHAT_ENTRANCE: 醒目留言按钮
+    + WIDGET_BANNER: 顶部横幅
+    + WIDGET_WISH_LIST: 礼物心愿单进度
+    + WIDGET_WISH_INFO: 礼物星球信息
+    + STOP_LIVE_ROOM_LIST: 下播的直播间
+    + SYS_MSG: 系统信息
+    + WARNING: 警告
+    + CUT_OFF: 切断
+    + CUT_OFF_V2: 切断V2
+    + ANCHOR_ECOLOGY_LIVING_DIALOG: 直播对话框
+    + CHANGE_ROOM_INFO: 直播间背景图片修改
+    + ROOM_SKIN_MSG: 直播间皮肤变更
+    + ROOM_SILENT_ON: 开启等级禁言
+    + ROOM_SILENT_OFF: 关闭等级禁言
+    + ROOM_BLOCK_MSG: 指定观众禁言
+    + ROOM_ADMINS: 房管列表
+    + room_admin_entrance: 设立房管
+    + ROOM_ADMIN_REVOKE: 撤销房管
+    + ANCHOR_LOT_CHECKSTATUS: 天选时刻合法检查
+    + ANCHOR_LOT_START: 天选时刻开始
+    + ANCHOR_LOT_END: 天选时刻结束
+    + ANCHOR_LOT_AWARD: 天选时刻中奖者
+    + ANCHOR_LOT_NOTICE: 天选时刻通知
+    + VOICE_JOIN_SWITCH: 语音连麦开关
+    + VIDEO_CONNECTION_JOIN_START: 邀请视频连线
+    + VIDEO_CONNECTION_MSG: 视频连线信息
+    + VIDEO_CONNECTION_JOIN_END: 结束视频连线
+    + PLAY_TAG: 直播进度条节点标签
+    + OTHER_SLICE_LOADING_RESULT: 直播剪辑
+    + GOTO_BUY_FLOW: 有人购买主播推荐商品
+    + HOT_BUY_NUM: 热抢提示
+    + WEALTH_NOTIFY: 荣耀等级通知
+    + MESSAGEBOX_USER_MEDAL_CHANGE: 粉丝勋章更新
+    + MESSAGEBOX_USER_GAIN_MEDAL: 获得粉丝勋章
+    + FANS_CLUB_POKE_GIFT_NOTICE: 粉丝团戳一戳礼物通知
     + ===========================
     + 本模块自定义事件：
     + ==========================
@@ -1231,6 +1330,8 @@ class LiveDanmaku(AsyncEvent):
     + DISCONNECT: 断开连接（传入连接状态码参数）
     + TIMEOUT: 心跳响应超时
     + VERIFICATION_SUCCESSFUL: 认证成功
+
+    (*: 包含 protobuf 格式数据的事件，模块将自动解析 protobuf 数据格式并连同原数据一同返回)
     """
 
     PROTOCOL_VERSION_RAW_JSON = 0
@@ -1512,6 +1613,7 @@ class LiveDanmaku(AsyncEvent):
                     info["data"]["cmd"] = "DANMU_MSG"
 
                 # https://github.com/Nemo2011/bilibili-api/issues/952
+                # https://github.com/SocialSisterYi/bilibili-API-collect/issues/1332
                 if callback_info["type"] == "INTERACT_WORD_V2":
                     pb = info["data"]["data"]["pb"]
                     pb_unbase64 = base64.b64decode(pb)
@@ -1525,6 +1627,22 @@ class LiveDanmaku(AsyncEvent):
                         pb_decode_status = "success"
                     info["data"]["data"] = {
                         "dmscore": info["data"]["data"]["dmscore"],
+                        "pb": info["data"]["data"]["pb"],
+                        "pb_decoded": pb_decoded,
+                        "pb_decode_message": pb_decode_status,
+                    }
+                if callback_info["type"] == "ONLINE_RANK_V3":
+                    pb = info["data"]["data"]["pb"]
+                    pb_unbase64 = base64.b64decode(pb)
+                    pb_decoded = {}
+                    pb_decode_status = ""
+                    try:
+                        pb_decoded = parse_online_rank_v3(pb_unbase64)
+                    except:
+                        pb_decode_status = "error"
+                    else:
+                        pb_decode_status = "success"
+                    info["data"]["data"] = {
                         "pb": info["data"]["data"]["pb"],
                         "pb_decoded": pb_decoded,
                         "pb_decode_message": pb_decode_status,

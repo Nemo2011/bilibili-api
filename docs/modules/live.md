@@ -64,7 +64,6 @@ from bilibili_api import live
 - [async def get\_self\_live\_info()](#async-def-get\_self\_live\_info)
 - [async def get\_self\_live\_watching\_history()](#async-def-get\_self\_live\_watching\_history)
 - [async def get\_unlive\_followers\_info()](#async-def-get\_unlive\_followers\_info)
-- [def parse\_interact\_word\_v2()](#def-parse\_interact\_word\_v2)
 
 ---
 
@@ -94,13 +93,14 @@ Extends: AsyncEvent
 
 Logger: LiveDanmaku().logger
 
-Events：
+Events:
 + DANMU_MSG: 用户发送弹幕
 + SEND_GIFT: 礼物
-+ COMBO_SEND：礼物连击
-+ GUARD_BUY：续费大航海
-+ SUPER_CHAT_MESSAGE：醒目留言（SC）
-+ SUPER_CHAT_MESSAGE_JPN：醒目留言（带日语翻译？）
++ COMBO_SEND: 礼物连击
++ GUARD_BUY: 续费大航海
++ SUPER_CHAT_MESSAGE: 醒目留言(SC)
++ SUPER_CHAT_MESSAGE_JPN: 醒目留言(带日语翻译?)
++ SUPER_CHAT_MESSAGE_DELETE: 醒目留言删除
 + WELCOME: 老爷进入房间
 + WELCOME_GUARD: 房管进入房间
 + NOTICE_MSG: 系统通知（全频道广播之类的）
@@ -109,8 +109,65 @@ Events：
 + ROOM_REAL_TIME_MESSAGE_UPDATE: 粉丝数等更新
 + ENTRY_EFFECT: 进场特效
 + ROOM_RANK: 房间排名更新
-+ INTERACT_WORD_V2: 用户进入直播间
++ INTERACT_WORD_V2: 用户进入直播间 (*)
 + ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个 xx 小时榜
++ DM_INTERACTION: 交互信息合并
++ USER_TOAST_MSG: 用户庆祝消息
++ GIFT_STAR_PROCESS: 礼物星球点亮
++ SPECIAL_GIFT: 特殊礼物
++ ONLINE_RANK_V3: 直播间高能榜 (*)
++ LOG_IN_NOTICE: 未登录通知
++ ONLINE_RANK_TOP3: 用户到达直播间高能榜前三名的消息
++ POPULAR_RANK_CHANGED: 直播间在人气榜的排名改变
++ HOT_RANK_CHANGED / HOT_RANK_CHANGED_V2: 直播间限时热门榜排名改变
++ HOT_RANK_SETTLEMENT / HOT_RANK_SETTLEMENT_V2: 限时热门榜上榜信息
++ LIKE_INFO_V3_CLICK: 直播间用户点赞
++ LIKE_INFO_V3_UPDATE: 直播间点赞数更新
++ POPULARITY_RED_POCKET_START: 直播间发红包弹幕
++ POPULARITY_RED_POCKET_NEW: 直播间红包
++ POPULARITY_RED_POCKET_WINNER_LIST: 直播间抢到红包的用户
++ WATCHED_CHANGE: 直播间看过人数
++ ENTRY_EFFECT_MUST_RECEIVE: 必须接受的用户进场特效
++ FULL_SCREEN_SPECIAL_EFFECT: 全屏特效
++ AREA_RANK_CHANGED: 直播间在所属分区的排名改变
++ COMMON_NOTICE_DANMAKU: 广播通知弹幕信息
++ ROOM_CHANGE: 直播间信息更改
++ ROOM_CONTENT_AUDIT_REPORT: 直播间内容审核报告
++ SUPER_CHAT_ENTRANCE: 醒目留言按钮
++ WIDGET_BANNER: 顶部横幅
++ WIDGET_WISH_LIST: 礼物心愿单进度
++ WIDGET_WISH_INFO: 礼物星球信息
++ STOP_LIVE_ROOM_LIST: 下播的直播间
++ SYS_MSG: 系统信息
++ WARNING: 警告
++ CUT_OFF: 切断
++ CUT_OFF_V2: 切断V2
++ ANCHOR_ECOLOGY_LIVING_DIALOG: 直播对话框
++ CHANGE_ROOM_INFO: 直播间背景图片修改
++ ROOM_SKIN_MSG: 直播间皮肤变更
++ ROOM_SILENT_ON: 开启等级禁言
++ ROOM_SILENT_OFF: 关闭等级禁言
++ ROOM_BLOCK_MSG: 指定观众禁言
++ ROOM_ADMINS: 房管列表
++ room_admin_entrance: 设立房管
++ ROOM_ADMIN_REVOKE: 撤销房管
++ ANCHOR_LOT_CHECKSTATUS: 天选时刻合法检查
++ ANCHOR_LOT_START: 天选时刻开始
++ ANCHOR_LOT_END: 天选时刻结束
++ ANCHOR_LOT_AWARD: 天选时刻中奖者
++ ANCHOR_LOT_NOTICE: 天选时刻通知
++ VOICE_JOIN_SWITCH: 语音连麦开关
++ VIDEO_CONNECTION_JOIN_START: 邀请视频连线
++ VIDEO_CONNECTION_MSG: 视频连线信息
++ VIDEO_CONNECTION_JOIN_END: 结束视频连线
++ PLAY_TAG: 直播进度条节点标签
++ OTHER_SLICE_LOADING_RESULT: 直播剪辑
++ GOTO_BUY_FLOW: 有人购买主播推荐商品
++ HOT_BUY_NUM: 热抢提示
++ WEALTH_NOTIFY: 荣耀等级通知
++ MESSAGEBOX_USER_MEDAL_CHANGE: 粉丝勋章更新
++ MESSAGEBOX_USER_GAIN_MEDAL: 获得粉丝勋章
++ FANS_CLUB_POKE_GIFT_NOTICE: 粉丝团戳一戳礼物通知
 + ===========================
 + 本模块自定义事件：
 + ==========================
@@ -119,6 +176,8 @@ Events：
 + DISCONNECT: 断开连接（传入连接状态码参数）
 + TIMEOUT: 心跳响应超时
 + VERIFICATION_SUCCESSFUL: 认证成功
+
+(*: 包含 protobuf 格式数据的事件，模块将自动解析 protobuf 数据格式并连同原数据一同返回)
 
 
 
@@ -845,16 +904,6 @@ pages = math.ceil(info['data']['guards'] / 10)
 | `page_size` | `int, optional` | 每页数量 Defaults to 30. |
 
 **Returns:** `dict`:  调用 API 返回的结果
-
-
-
-
----
-
-## def parse_interact_word_v2()
-
-
-
 
 
 

@@ -83,6 +83,9 @@ ignored_funcs = [
     "get_geetest",
     "get_safecenter_geetest",
     "login_with_key",
+    "parse_online_rank_v3",
+    "parse_interact_word_v2",
+    "parse_user_info",
 ]
 
 ignored_vars = [
