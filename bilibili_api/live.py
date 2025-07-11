@@ -1894,3 +1894,21 @@ async def create_live_reserve(
         "from": 1,
     }
     return await Api(**api, credential=credential).update_data(**data).result
+
+
+async def get_self_live_watching_history(
+    credential: Credential
+) -> dict:
+    """
+    获取用户直播观看记录
+
+    Args:
+        credential (Credential): 凭据类
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    credential.raise_for_no_sessdata()
+
+    api = API["info"]["live_history"]
+    return await Api(**api, credential=credential).result

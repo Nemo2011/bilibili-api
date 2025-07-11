@@ -62,7 +62,9 @@ from bilibili_api import live
 - [async def get\_self\_dahanghai\_info()](#async-def-get\_self\_dahanghai\_info)
 - [async def get\_self\_info()](#async-def-get\_self\_info)
 - [async def get\_self\_live\_info()](#async-def-get\_self\_live\_info)
+- [async def get\_self\_live\_watching\_history()](#async-def-get\_self\_live\_watching\_history)
 - [async def get\_unlive\_followers\_info()](#async-def-get\_unlive\_followers\_info)
+- [def parse\_interact\_word\_v2()](#def-parse\_interact\_word\_v2)
 
 ---
 
@@ -107,7 +109,7 @@ Events：
 + ROOM_REAL_TIME_MESSAGE_UPDATE: 粉丝数等更新
 + ENTRY_EFFECT: 进场特效
 + ROOM_RANK: 房间排名更新
-+ INTERACT_WORD: 用户进入直播间
++ INTERACT_WORD_V2: 用户进入直播间
 + ACTIVITY_BANNER_UPDATE_V2: 好像是房间名旁边那个 xx 小时榜
 + ===========================
 + 本模块自定义事件：
@@ -816,6 +818,22 @@ pages = math.ceil(info['data']['guards'] / 10)
 
 ---
 
+## async def get_self_live_watching_history()
+
+获取用户直播观看记录
+
+
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential` | 凭据类 |
+
+**Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
+---
+
 ## async def get_unlive_followers_info()
 
 获取关注列表中未在直播的直播间信息，包括上次开播时间，上次开播的类别，直播间公告，是否有录播等。
@@ -827,6 +845,16 @@ pages = math.ceil(info['data']['guards'] / 10)
 | `page_size` | `int, optional` | 每页数量 Defaults to 30. |
 
 **Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
+---
+
+## def parse_interact_word_v2()
+
+
+
 
 
 

@@ -297,6 +297,12 @@
         "pagesize": "每页数量，过多可能报错 默认：30"
       },
       "comment": "获取关注列表中未在直播的直播间信息, 包括上次开播时间, 上次开播的类别, 直播间公告, 是否有录播等."
+    },
+    "live_history": {
+      "url": "https://api.live.bilibili.com/xlive/web-ucenter/v1/history/get_history_by_uid",
+      "method": "GET",
+      "verify": true,
+      "comment": "获取用户直播观看历史."
     }
   },
   "operate": {
