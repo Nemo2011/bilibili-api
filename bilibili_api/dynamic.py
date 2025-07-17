@@ -98,40 +98,52 @@ async def _uid2name(uid: int, credential: Credential) -> str:
     return uid2uname[uid]
 
 
+
+
 async def _parse_at(text: str, credential: Credential) -> Tuple[str, str, str]:
     """
-    @人格式：“@用户名 ”(注意最后有空格）
+    解析文本中的@提及，其格式为“@用户名 ”（以空格结尾）或“@用户名:”。
 
-    Args:
-        text       (str)       : 原始文本
-        credential (Credential): 凭据类，必须提供
+    参数:
+        text         (str)        : 原始文本。
+        credential   (Credential): 凭据类对象，用于查询UID。
 
-    Returns:
-        tuple(str, str(int[]), str(dict)): 替换后文本，解析出艾特的 UID 列表，AT 数据
+    返回:
+        一个元组，依次包含原始文本、逗号分隔的UID字符串，以及JSON格式的控制数据。
     """
-    text += " "
-    pattern = re.compile(r"(?<=@).*?(?=\s)")
-    match_result = re.finditer(pattern, text)
+    # 这个正则表达式专门用于处理包含空格的用户名。它会捕获：
+    # 捕获组1: '@' 符号。
+    # 捕获组2: 用户名字符串 (使用非贪婪匹配来捕获任意字符)。
+    # 捕获组3: 必须是空格或冒号的终止符。
+    pattern = re.compile(r"(@)(.*?)( |:)")
+
     uid_list = []
-    names = []
-    for match in match_result:
-        uname = match.group()
+    ctrl = []
+
+    # 使用单次循环效率更高且更健栢，可从根本上避免潜在的 ValueError。
+    for match in pattern.finditer(text):
+        # .group(2) 中是提取出的用户名, 例如："Bilibili 官方账号"
+        uname = match.group(2)
+
         uid = await _name2uid(uname, credential=credential)
         if uid == 0:
             continue
-        uid_list.append(str(uid))
-        names.append(uname + " ")
-    at_uids = ",".join(uid_list)
-    ctrl = []
-    last_index = 0
-    for i, name in enumerate(names):
-        index = text.index(f"@{name}", last_index)
-        last_index = index + 1
-        length = 2 + len(name)
-        ctrl.append(
-            {"location": index, "type": 1, "length": length, "data": int(uid_list[i])}
-        )
 
+        uid_list.append(str(uid))
+
+        # 为了与Bilibili API保持兼容，我们复现了原始代码中独特的length计算逻辑。
+        # 该逻辑等同于：len(完整的匹配字符串) + 1。
+        # 完整的匹配字符串即 match.group(0)，例如："@Bilibili :"
+        calculated_length = len(match.group(0)) + 1
+
+        ctrl.append({
+            "location": match.start(1),  # '@' 符号的起始索引
+            "type": 1,
+            "length": calculated_length,
+            "data": int(uid)
+        })
+
+    at_uids = ",".join(uid_list)
     return text, at_uids, json.dumps(ctrl, ensure_ascii=False)
 
 
@@ -589,7 +601,7 @@ class BuildDynamic:
         return self.options
 
 
-async def send_dynamic(info: BuildDynamic, credential: Credential):
+async def send_dynamic(info: BuildDynamic, credential: Credential,web_repost_src=None):
     """
     发送动态
 
@@ -635,7 +647,11 @@ async def send_dynamic(info: BuildDynamic, credential: Credential):
         data["dyn_req"]["attach_card"]["common_card"] = info.get_attach_card()
     else:
         data["dyn_req"]["attach_card"] = None
+    if web_repost_src:
+        data['web_repost_src'] = web_repost_src
+        data['dyn_req']['scene']=5
     params = {"csrf": credential.bili_jct}
+    
     send_result = (
         await Api(**api, credential=credential, json_body=True)
         .update_data(**data)
