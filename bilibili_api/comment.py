@@ -15,9 +15,11 @@ bilibili_api.comment
 + 漫画：mc{32749} `get_manga_id()`
 + 活动: {16279} `await get_activity_aid()`
 """
-
+import json
 from enum import Enum
 from typing import Union, Optional
+
+from bilibili_api import Picture
 
 from .utils.utils import get_api
 from .utils.network import Api, Credential
@@ -346,6 +348,7 @@ async def send_comment(
     root: Union[int, None] = None,
     parent: Union[int, None] = None,
     credential: Union[None, Credential] = None,
+    pic: Union[Picture, None] = None
 ) -> dict:
     """
     通用发送评论 API。
@@ -385,7 +388,12 @@ async def send_comment(
         "type": type_.value,
         "message": text,
         "plat": 1,
+        "ordering": "heat",
+        "jsonp": "jsonp",
     }
+
+    if pic:
+        data["pictures"] = json.dumps(pic.to_json())
 
     if root is None and parent is None:
         # 直接回复资源
@@ -478,3 +486,4 @@ async def get_comments_lazy(
         "web_location": "1315875",
     }
     return await Api(**api, credential=credential).update_params(**params).result
+

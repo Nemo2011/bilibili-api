@@ -228,3 +228,6 @@ class Picture:
         img.save(path, save_all=(True if self.imageType in ["webp", "gif"] else False))
         self.url = "file://" + path
         return self
+
+    def to_json(self) -> list[dict]:
+        return [{"img_src":self.url,"img_width":self.width,"img_height":self.height,"img_size":self.size}]

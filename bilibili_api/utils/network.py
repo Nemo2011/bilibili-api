@@ -1037,7 +1037,7 @@ def get_registered_available_settings() -> Dict[str, List[str]]:
     return client_settings
 
 
-def get_client() -> BiliAPIClient:
+def get_client(timeout=None) -> BiliAPIClient:
     """
     在当前事件循环下获取模块正在使用的请求客户端
 
@@ -1058,6 +1058,8 @@ def get_client() -> BiliAPIClient:
         kwargs = {}
         for piece in client_settings[selected_client]:
             kwargs[piece] = request_settings.get(piece)
+        if timeout:
+            kwargs["timeout"] = timeout
         session = sessions[selected_client](**kwargs)
         session_pool[selected_client][loop] = session
     return session
@@ -1128,6 +1130,7 @@ class Credential:
         buvid4: Union[str, None] = None,
         dedeuserid: Union[str, None] = None,
         ac_time_value: Union[str, None] = None,
+        proxy: Union[str, None] = None,
     ) -> None:
         """
         各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
@@ -1157,6 +1160,7 @@ class Credential:
         self.buvid4 = buvid4
         self.dedeuserid = dedeuserid
         self.ac_time_value = ac_time_value
+        self.proxy= proxy
 
     def get_cookies(self) -> dict:
         """
@@ -2070,6 +2074,7 @@ class Api:
         params (dict, optional): 请求参数. Defaults to {}.
 
         credential (Credential, optional): 凭据. Defaults to Credential().
+        self_timeout (int, optional): 请求时间.
     """
 
     url: str
@@ -2087,6 +2092,7 @@ class Api:
     files: Dict[str, BiliAPIFile] = field(default_factory=dict)
     headers: dict = field(default_factory=dict)
     credential: Credential = field(default_factory=Credential)
+    self_timeout:int = None
 
     def __post_init__(self) -> None:
         self.method = self.method.upper()
@@ -2097,6 +2103,7 @@ class Api:
         self.files = {k: "" for k in self.files.keys()}
         self.headers = {k: "" for k in self.headers.keys()}
         self.credential = self.credential if self.credential else Credential()
+        self.self_timeout = self.self_timeout 
 
     def update_data(self, **kwargs) -> "Api":
         """
@@ -2268,7 +2275,8 @@ class Api:
             self.__dict__,
         )
         config: dict = await self._prepare_request()
-        client: BiliAPIClient = get_client()
+        client: BiliAPIClient = get_client(self.self_timeout)
+        client.set_proxy(self.credential.proxy)
         resp: BiliAPIResponse = await client.request(**config)
         ret: Union[int, str, dict, bytes, None]
         if byte:

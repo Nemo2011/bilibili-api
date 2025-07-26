@@ -26,5 +26,16 @@
             "business": "使用场景 reply/dynamic"
         },
         "comment": "获取所有表情包"
+    },
+    "add": {
+        "url": "https://api.bilibili.com/x/emote/package/add",
+        "method": "POST",
+        "verify": true,
+        "params": {
+            "package_id": "表情包ip",
+            "business": "使用场景 reply/dynamic",
+            "csrf": "凭证"
+        },
+        "comment": "添加表情包"
     }
 }

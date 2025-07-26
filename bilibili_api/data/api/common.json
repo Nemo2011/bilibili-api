@@ -15,6 +15,8 @@
       "url": "https://api.bilibili.com/x/v2/reply/add",
       "method": "POST",
       "verify": true,
+      "wbi": true,
+      "wbi2": true,
       "data": {
         "oid": "int: 各种类型 id",
         "type": "int: 1 视频，12 专栏，11 画册（图文）动态，17 文字动态，14 音频，19 歌单。下同。",
