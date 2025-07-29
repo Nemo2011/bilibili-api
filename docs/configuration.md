@@ -4,10 +4,29 @@
 from bilibili_api import request_settings, request_log
 ```
 
+## 配置项
+
+| name | type | default | is_bilibili_api_providing | curl_cffi | aiohttp | httpx |
+| - | - | - | - | - | - | - |
+| proxy | str | ` ` | ❌ | ✅ | ✅ | ✅ |
+| timeout | float | `30.0` | ❌ | ✅ | ✅ | ✅ |
+| verify_ssl | bool | `True` | ❌ | ✅ | ✅ | ✅ |
+| trust_env | bool | `True` | ❌ | ✅ | ✅ | ✅ |
+| impersonate | str | ` ` | ❌ | ✅ | ❌ | ❌ |
+| http2 | bool | `False` | ❌ | ✅ | ❌ | ✅ |
+| wbi_retry_times | int | `3` | ✅ | \\ | \\ | \\ |
+| enable_auto_buvid | bool | `True` | ✅ | \\ | \\ | \\ |
+| enable_bili_ticket | bool | `False` | ✅ | \\ | \\ | \\ |
+
+
 ## 代理
 
 ```python
+# 1. 通过 request_settings 设置
 request_settings.set_proxy("http://example.com")
+# 2. 通过 Credential 传入
+cred = Credential(..., proxy="http://example.com")
+func(..., credential=cred)
 ```
 
 ## web 请求超时设置

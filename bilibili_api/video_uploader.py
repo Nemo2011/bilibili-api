@@ -82,6 +82,8 @@ async def _probe() -> dict:
     # api = _API["probe"]
     # info = await Api(**api).update_params(r="probe").result # 不实时获取线路直接用 LINES_INFO
     min_cost, fastest_line = 30, None
+    legacy_timeout = request_settings.get_timeout()
+    request_settings.set_timeout(30) # 测试时设置为 30
     for line in LINES_INFO.values():
         start = time.perf_counter()
         data = bytes(int(1024 * 0.1 * 1024))  # post 0.1MB
@@ -97,6 +99,7 @@ async def _probe() -> dict:
             cost_time = request_settings.get_timeout()
         if cost_time < min_cost:
             min_cost, fastest_line = cost_time, line
+    request_settings.set_timeout(legacy_timeout)
     return fastest_line
 
 

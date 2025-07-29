@@ -602,6 +602,7 @@ Cookies 刷新错误。
 | `buvid4` | `str \| None, optional` | 浏览器 Cookies 中的 BUVID4 字段值. Defaults to None. |
 | `dedeuserid` | `str \| None, optional` | 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None. |
 | `ac_time_value` | `str \| None, optional` | 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None. |
+| `proxy` | `str \| None, optional` | 凭据类可选择携带的代理. Defaults to None. |
 
 
 ### async def check_refresh()

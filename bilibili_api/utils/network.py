@@ -235,15 +235,15 @@ async def handle(desc: str, data: dict) -> None:
 
 sessions: Dict[str, Type["BiliAPIClient"]] = {}
 session_pool: Dict[str, Dict[asyncio.AbstractEventLoop, "BiliAPIClient"]] = {}
+lazy_settings: Dict[str, Dict[asyncio.AbstractEventLoop, Dict[str, Any]]] = {}
 client_settings: Dict[str, list] = {}
 selected_client: str = ""
-
 
 class RequestSettings:
     def __init__(self):
         self.__settings: dict = {
             "proxy": "",
-            "timeout": 5.0,
+            "timeout": 30.0,
             "verify_ssl": True,
             "trust_env": True,
         }
@@ -279,16 +279,13 @@ class RequestSettings:
             name  (str): 设置名称
             value (str): 设置的值
         """
-        global session_pool
+        if value == self.__settings.get(name):
+            return
+        global lazy_settings
         self.__settings[name] = value
-        for _, pool in session_pool.items():
+        for _, pool in lazy_settings.items():
             for _, client in pool.items():
-                try:
-                    client.__getattribute__(f"set_{name}")(value)
-                except AttributeError:
-                    pass
-                except Exception as e:
-                    raise e
+                client[name] = value
 
     def get_proxy(self) -> str:
         """
@@ -948,7 +945,7 @@ def register_client(name: str, cls: type, settings: dict = {}) -> None:
         cls      (type): 基于 BiliAPIClient 重写后的请求客户端类。
         settings (dict): 请求客户端在基础设置外的其他设置，键为设置名称，值为设置默认值。Defaults to {}.
     """
-    global sessions, session_pool
+    global sessions, session_pool, lazy_settings
     raise_for_statement(
         issubclass(cls, BiliAPIClient), "传入的类型需要继承 BiliAPIClient"
     )
@@ -959,6 +956,7 @@ def register_client(name: str, cls: type, settings: dict = {}) -> None:
         request_settings.set(key, value)
     client_settings[name] = DEFAULT_SETTINGS.copy()
     client_settings[name] += list(settings.keys())
+    lazy_settings[name] = {}
 
 
 def unregister_client(name: str) -> None:
@@ -1037,7 +1035,7 @@ def get_registered_available_settings() -> Dict[str, List[str]]:
     return client_settings
 
 
-def get_client(timeout=None) -> BiliAPIClient:
+def get_client() -> BiliAPIClient:
     """
     在当前事件循环下获取模块正在使用的请求客户端
 
@@ -1058,10 +1056,18 @@ def get_client(timeout=None) -> BiliAPIClient:
         kwargs = {}
         for piece in client_settings[selected_client]:
             kwargs[piece] = request_settings.get(piece)
-        if timeout:
-            kwargs["timeout"] = timeout
         session = sessions[selected_client](**kwargs)
         session_pool[selected_client][loop] = session
+        lazy_settings[selected_client][loop] = {}
+    else:
+        for name, value in lazy_settings[selected_client][loop].items():
+            try:
+                session.__getattribute__(f"set_{name}")(value)
+            except AttributeError:
+                pass
+            except Exception as e:
+                raise e
+        lazy_settings[selected_client][loop] = {}
     return session
 
 
@@ -1147,6 +1153,8 @@ class Credential:
             dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
 
             ac_time_value (str | None, optional): 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None.
+
+            proxy (str | None, optional): 凭据类可选择携带的代理. Defaults to None.
         """
         self.sessdata = (
             None
@@ -1160,7 +1168,7 @@ class Credential:
         self.buvid4 = buvid4
         self.dedeuserid = dedeuserid
         self.ac_time_value = ac_time_value
-        self.proxy= proxy
+        self.proxy = proxy
 
     def get_cookies(self) -> dict:
         """
@@ -2074,7 +2082,6 @@ class Api:
         params (dict, optional): 请求参数. Defaults to {}.
 
         credential (Credential, optional): 凭据. Defaults to Credential().
-        self_timeout (int, optional): 请求时间.
     """
 
     url: str
@@ -2092,7 +2099,6 @@ class Api:
     files: Dict[str, BiliAPIFile] = field(default_factory=dict)
     headers: dict = field(default_factory=dict)
     credential: Credential = field(default_factory=Credential)
-    self_timeout:int = None
 
     def __post_init__(self) -> None:
         self.method = self.method.upper()
@@ -2103,7 +2109,6 @@ class Api:
         self.files = {k: "" for k in self.files.keys()}
         self.headers = {k: "" for k in self.headers.keys()}
         self.credential = self.credential if self.credential else Credential()
-        self.self_timeout = self.self_timeout 
 
     def update_data(self, **kwargs) -> "Api":
         """
@@ -2274,9 +2279,12 @@ class Api:
             "Api 发起请求",
             self.__dict__,
         )
+        legacy_proxy = None
+        if self.credential.proxy:
+            legacy_proxy = request_settings.get_proxy()
+            request_settings.set_proxy(self.credential.proxy)
         config: dict = await self._prepare_request()
-        client: BiliAPIClient = get_client(self.self_timeout)
-        client.set_proxy(self.credential.proxy)
+        client: BiliAPIClient = get_client()
         resp: BiliAPIResponse = await client.request(**config)
         ret: Union[int, str, dict, bytes, None]
         if byte:
@@ -2288,6 +2296,8 @@ class Api:
             "Api 获得响应",
             {"result": ret},
         )
+        if self.credential.proxy:
+            request_settings.set_proxy(legacy_proxy)
         return ret
 
     async def request(

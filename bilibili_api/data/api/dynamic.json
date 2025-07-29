@@ -4,7 +4,6 @@
       "url": "https://api.bilibili.com/x/dynamic/feed/draw/upload_bfs",
       "method": "POST",
       "verify": true,
-      "self_timeout": 30,
       "data": {
         "biz": "const str: draw",
         "category": "const str: daily"
