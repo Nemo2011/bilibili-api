@@ -91,6 +91,7 @@ from bilibili_api import ...
   - [async def load\_url()](#async-def-load\_url)
   - [def resize()](#def-resize)
   - [def to\_file()](#def-to\_file)
+  - [def to\_json()](#def-to\_json)
   - [async def upload()](#async-def-upload)
   - [async def upload\_by\_note()](#async-def-upload\_by\_note)
 - [class ResourceType()](#class-ResourceType)
@@ -1306,6 +1307,17 @@ NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate
 | `path` | `str` | 下载地址。 |
 
 **Returns:** `Picture`:  `self`
+
+
+
+
+### def to_json()
+
+转换为 bilibili api 中的 json 格式，提供图片链接/长宽/大小
+
+
+
+**Returns:** `dict`:  图片链接/长宽/大小
 
 
 

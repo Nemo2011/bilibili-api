@@ -22,8 +22,17 @@
         "type": "int: 1 视频，12 专栏，11 画册（图文）动态，17 文字动态，14 音频，19 歌单。下同。",
         "message": "str: 评论内容",
         "plat": "const int: 1",
+        "statistics": { "appId": 100, "platform": 5 },
         "root": "int: 根评论 rpid，即在谁的评论下面回复，为空时在 oid 下直接评论",
-        "parent": "int: 父评论 rpid，即回复谁的评论，为空时在 oid 下直接评论"
+        "parent": "int: 父评论 rpid，即回复谁的评论，为空时在 oid 下直接评论",
+        "pictures": [
+          {
+            "img_src": "str: 图片地址",
+            "img_width": "int: 图片宽度",
+            "img_height": "int: 图片高度",
+            "img_size": "int: 图片大小"
+          }
+        ]
       },
       "comment": "发送评论"
     },

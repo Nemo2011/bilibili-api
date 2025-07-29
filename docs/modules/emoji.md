@@ -10,9 +10,27 @@ bilibili_api.emoji
 from bilibili_api import emoji
 ```
 
+- [async def add\_emoji()](#async-def-add\_emoji)
 - [async def get\_all\_emoji()](#async-def-get\_all\_emoji)
 - [async def get\_emoji\_detail()](#async-def-get\_emoji\_detail)
 - [async def get\_emoji\_list()](#async-def-get\_emoji\_list)
+
+---
+
+## async def add_emoji()
+
+获取所有表情包
+
+
+| name | type | description |
+| - | - | - |
+| `business` | `str` | 使用场景, reply / dynamic |
+| `credential` | `Credential` | 登录凭证. Defaults to None. |
+
+**Returns:** `dict`:  调用 API 返回的结果
+
+
+
 
 ---
 

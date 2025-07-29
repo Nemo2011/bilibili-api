@@ -8,6 +8,7 @@ from PIL import Image
 
 from .network import Credential, get_client, BiliAPIFile
 
+
 @dataclass
 class Picture:
     """
@@ -148,6 +149,7 @@ class Picture:
         self.height = res["image_height"]
         self.width = res["image_width"]
         self.url = res["image_url"]
+        self.size = res["img_size"]
         self.content = (await self.load_url(self.url)).content
         return self
 
@@ -229,5 +231,18 @@ class Picture:
         self.url = "file://" + path
         return self
 
-    def to_json(self) -> list[dict]:
-        return [{"img_src":self.url,"img_width":self.width,"img_height":self.height,"img_size":self.size}]
+    def to_json(self) -> dict:
+        """
+        转换为 bilibili api 中的 json 格式，提供图片链接/长宽/大小
+
+        Returns:
+            dict: 图片链接/长宽/大小
+        """
+        return [
+            {
+                "img_src": self.url,
+                "img_width": self.width,
+                "img_height": self.height,
+                "img_size": self.size,
+            }
+        ]

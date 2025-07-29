@@ -328,6 +328,7 @@ Error Code:
 | `type_` | `CommentsResourceType` | 资源类型枚举。 |
 | `root` | `int, optional` | 根评论 ID, Defaults to None. |
 | `parent` | `int, optional` | 父评论 ID, Defaults to None. |
+| `pic` | `Union[Picture, List[Picture]], optional` | 图片, Defaults to None. |
 | `credential` | `Credential` | 凭据 |
 
 **Returns:** `dict`:  调用 API 返回的结果
