@@ -1607,8 +1607,11 @@ class LiveDanmaku(AsyncEvent):
                 # 直播间弹幕、礼物等信息
                 callback_info["type"] = info["data"]["cmd"]
 
-                # DANMU_MSG 事件名特殊：DANMU_MSG:4:0:2:2:2:0，需取出事件名，暂不知格式
-                if callback_info["type"].find("DANMU_MSG") > -1:
+                # DANMU_MSG 事件名特殊：DANMU_MSG:4:0:2:2:2:0，需取出事件名，暂不知格式                
+                if callback_info["type"].find("RECALL_DANMU_MSG") > -1:
+                    callback_info["type"]="RECALL_DANMU_MSG"
+                    info["data"]["cmd"] = "RECALL_DANMU_MSG"
+                elif callback_info["type"].find("DANMU_MSG") > -1:
                     callback_info["type"] = "DANMU_MSG"
                     info["data"]["cmd"] = "DANMU_MSG"
 
