@@ -360,7 +360,7 @@ async def login_with_sms(
 
 class QrCodeLoginChannel(enum.Enum):
     """
-    二维码登陆渠道
+    二维码登录渠道
 
     - WEB: 网页端
     - TV: TV
@@ -388,7 +388,7 @@ class QrCodeLoginEvents(enum.Enum):
 
 class QrCodeLogin:
     """
-    二维码登陆类
+    二维码登录类
 
     支持网页端/TV端
     """
