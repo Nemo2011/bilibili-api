@@ -114,7 +114,7 @@ from bilibili_api import login_v2
 
 ## class QrCodeLogin()
 
-二维码登陆类
+二维码登录类
 
 支持网页端/TV端
 
@@ -210,7 +210,7 @@ from bilibili_api import login_v2
 
 **Extend: enum.Enum**
 
-二维码登陆渠道
+二维码登录渠道
 
 - WEB: 网页端
 - TV: TV
