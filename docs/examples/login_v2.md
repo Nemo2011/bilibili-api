@@ -1,6 +1,6 @@
 ## Overview
 
-`login_v2` 是对登陆模块的一次彻底的重写，主要有以下改动：
+`login_v2` 是对登录模块的一次彻底的重写，主要有以下改动：
 
 - **将所有同步操作迁移至异步**
 - 将 `login` 和 `login_func` 所有功能合并，即把 `login` 功能拆分，结合 `login_func` 进行制作
@@ -61,7 +61,7 @@ async def main() -> None:
         username = input("username:")                                       # 手机号/邮箱
         password = input("password:")                                       # 密码
         cred = await login_v2.login_with_password(
-            username=username, password=password, geetest=gee               # 调用接口登陆
+            username=username, password=password, geetest=gee               # 调用接口登录
         )
 
     # 2. 验证码登录
@@ -71,7 +71,7 @@ async def main() -> None:
         print("captcha_id:", captcha_id)                                    # 顺便获得对应的 captcha_id
         code = input("code: ")
         cred = await login_v2.login_with_sms(
-            phonenumber=phone, code=code, captcha_id=captcha_id             # 调用接口登陆
+            phonenumber=phone, code=code, captcha_id=captcha_id             # 调用接口登录
         )
 
     # 安全验证
@@ -87,7 +87,7 @@ async def main() -> None:
         print("result:", gee.get_result())
         await cred.send_sms(gee)                                            # 发送验证码
         code = input("code:")
-        cred = await cred.complete_check(code)                              # 调用接口登陆
+        cred = await cred.complete_check(code)                              # 调用接口登录
 
     print("cookies:", cred.get_cookies())                                   # 获得 cookies
 

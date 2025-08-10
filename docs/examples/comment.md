@@ -21,7 +21,7 @@ async def main():
 
         replies = c['replies']
         if replies is None:
-            # 未登陆时只能获取到前20条评论
+            # 未登录时只能获取到前20条评论
             # 此时增加页码会导致c为空字典
             break
 
@@ -68,7 +68,7 @@ async def main():
         pag = c["cursor"]["pagination_reply"]["next_offset"]
         replies = c['replies']
         if replies is None:
-            # 未登陆时只能获取到前20条评论
+            # 未登录时只能获取到前20条评论
             # 此时增加页码会导致c为空字典
             break
 
