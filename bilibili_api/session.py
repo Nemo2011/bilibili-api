@@ -174,7 +174,7 @@ async def get_likes(
 
 
 async def get_at(
-    credential: Credential, last_uid: int = None, at_time: int = None
+    credential: Credential, last_uid: int = None, at_time: int = None, last_id: int = None
 ) -> dict:
     """
     获取收到的 AT
@@ -190,7 +190,9 @@ async def get_at(
         dict: 调用 API 返回的结果
     """
     api = API["session"]["at"]
-    params = {"id": last_uid, "at_time": at_time}
+    if last_id is None:
+        last_id = last_uid
+    params = {"id": last_id, "at_time": at_time}
     return await Api(**api, credential=credential).update_params(**params).result
 
 
