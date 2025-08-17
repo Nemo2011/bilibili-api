@@ -1067,7 +1067,7 @@ def parse_interact_word_v2(bt: bytes) -> dict:
         ret2 = {}
         br2 = BytesReader(stream=bt2)
         while not br2.has_end():
-            type2 = br.varint() >> 3
+            type2 = br2.varint() >> 3
             if type2 == 1:
                 ret2["target_id"] = br2.varint()
             elif type2 == 2:
@@ -1607,7 +1607,7 @@ class LiveDanmaku(AsyncEvent):
                 # 直播间弹幕、礼物等信息
                 callback_info["type"] = info["data"]["cmd"]
 
-                # DANMU_MSG 事件名特殊：DANMU_MSG:4:0:2:2:2:0，需取出事件名，暂不知格式                
+                # DANMU_MSG 事件名特殊：DANMU_MSG:4:0:2:2:2:0，需取出事件名，暂不知格式
                 if callback_info["type"].find("RECALL_DANMU_MSG") > -1:
                     callback_info["type"]="RECALL_DANMU_MSG"
                     info["data"]["cmd"] = "RECALL_DANMU_MSG"
