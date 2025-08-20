@@ -385,6 +385,10 @@ medialist排序顺序。
 未处理数据。不推荐。
 
 
+| name | type | description |
+| - | - | - |
+| `pn` | `int` | 页码. Defaults to 1. |
+| `ps` | `int` | 每页大小. Defaults to 20 (max). |
 
 **Returns:** `dict`:  调用接口返回的结果
 

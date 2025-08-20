@@ -913,7 +913,7 @@ class User:
             .result
         )
 
-    async def get_channel_list(self) -> dict:
+    async def get_channel_list(self, pn: int = 1, ps: int = 20) -> dict:
         """
         查看用户所有的频道（包括新版）和部分视频。
 
@@ -921,20 +921,15 @@ class User:
 
         未处理数据。不推荐。
 
+        Args:
+            pn (int): 页码. Defaults to 1.
+            ps (int): 每页大小. Defaults to 20 (max).
+
         Returns:
             dict: 调用接口返回的结果
         """
         api = API["info"]["channel_list"]
-        params = {"mid": self.__uid, "page_num": 1, "page_size": 1}
-        res = (
-            await Api(**api, wbi=True, credential=self.credential)
-            .update_params(**params)
-            .result
-        )
-        items = res["items_lists"]["page"]["total"]
-        if items == 0:
-            items = 1
-        params["page_size"] = items
+        params = {"mid": self.__uid, "page_num": pn, "page_size": ps}
         return (
             await Api(**api, wbi=True, credential=self.credential)
             .update_params(**params)
@@ -950,9 +945,21 @@ class User:
         """
         from . import channel_series
 
-        channel_data = await self.get_channel_list()
+        season_list = []
+        series_list = []
+        tot, cur, pn = 0, 0, 1
+        channel_data = await self.get_channel_list(pn=pn, ps=20)
+        season_list = channel_data["items_lists"]["seasons_list"]
+        series_list = channel_data["items_lists"]["series_list"]
+        tot, cur = channel_data["items_lists"]["page"]["total"], channel_data["items_lists"]["page"]["page_size"]
+        while cur < tot:
+            pn += 1
+            channel_data = await self.get_channel_list(pn=pn, ps=20)
+            season_list += channel_data["items_lists"]["seasons_list"]
+            series_list += channel_data["items_lists"]["series_list"]
+            cur += channel_data["items_lists"]["page"]["page_size"]
         channels = []
-        for item in channel_data["items_lists"]["seasons_list"]:
+        for item in season_list:
             id_ = item["meta"]["season_id"]
             meta = item["meta"]
             channel_series.channel_meta_cache[
@@ -963,7 +970,7 @@ class User:
                     self.__uid, ChannelSeriesType.SEASON, id_, self.credential
                 )
             )
-        for item in channel_data["items_lists"]["series_list"]:
+        for item in series_list:
             id_ = item["meta"]["series_id"]
             meta = item["meta"]
             channel_series.channel_meta_cache[

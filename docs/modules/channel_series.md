@@ -13,7 +13,10 @@ from bilibili_api import channel_series
 - [class ChannelOrder()](#class-ChannelOrder)
 - [class ChannelSeries()](#class-ChannelSeries)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def get\_id()](#def-get\_id)
   - [async def get\_meta()](#async-def-get\_meta)
+  - [async def get\_owner()](#async-def-get\_owner)
+  - [def get\_type()](#def-get\_type)
   - [async def get\_videos()](#async-def-get\_videos)
 - [class ChannelSeriesType()](#class-ChannelSeriesType)
 - [async def add\_aids\_to\_series()](#async-def-add\_aids\_to\_series)
@@ -44,6 +47,10 @@ from bilibili_api import channel_series
 
 | name | type | description |
 | - | - | - |
+| `id` | `int` | 合集与列表的 id, season_id 或 series_id. |
+| `is_new` | `int` | 是否为新版合集. 1 为是, 0 为否. |
+| `owner` | `User` | 合集列表对应用户. |
+| `meta` | `Dict` | 合集与列表基本信息. |
 | `credential` | `Credential` | 凭据类. Defaults to None. |
 
 
@@ -58,6 +65,17 @@ from bilibili_api import channel_series
 | `credential` | `Credential` | 凭证. Defaults to None. |
 
 
+### def get_id()
+
+获取 season_id / series_id
+
+
+
+**Returns:** `int`:  season_id / series_id
+
+
+
+
 ### async def get_meta()
 
 获取元数据
@@ -65,6 +83,28 @@ from bilibili_api import channel_series
 
 
 **Returns:** `dict`:  调用 API 返回的结果
+
+
+
+
+### async def get_owner()
+
+获取合集列表对应用户
+
+
+
+**Returns:** `user.User`:  对应用户
+
+
+
+
+### def get_type()
+
+获取合集与列表类型
+
+
+
+**Returns:** `ChannelSeriesType`:  合集与列表类型
 
 
 

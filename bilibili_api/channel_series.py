@@ -11,6 +11,8 @@ from typing import List, Union, Optional
 from .utils.utils import get_api, raise_for_statement
 from .utils.network import Api, HEADERS, Credential
 
+from . import user
+
 API_USER = get_api("user")
 API = get_api("channel-series")
 
@@ -47,6 +49,10 @@ class ChannelSeries:
     合集与列表类
 
     Attributes:
+        id (int): 合集与列表的 id, season_id 或 series_id.
+        is_new (int): 是否为新版合集. 1 为是, 0 为否.
+        owner (User): 合集列表对应用户.
+        meta (dict): 合集与列表基本信息.
         credential (Credential): 凭据类. Defaults to None.
     """
 
@@ -101,6 +107,24 @@ class ChannelSeries:
             self.__uid = self.meta["mid"]
             self.owner = User(self.__uid, credential=self.credential)
 
+    def get_type(self) -> ChannelSeriesType:
+        """
+        获取合集与列表类型
+
+        Returns:
+            ChannelSeriesType: 合集与列表类型
+        """
+        return ChannelSeriesType(self.is_new)
+
+    def get_id(self) -> int:
+        """
+        获取 season_id / series_id
+
+        Returns:
+            int: season_id / series_id
+        """
+        return self.id_
+
     async def get_meta(self) -> dict:
         """
         获取元数据
@@ -111,6 +135,17 @@ class ChannelSeries:
         if not self.meta:
             await self.__fetch_meta()
         return self.meta  # type: ignore
+
+    async def get_owner(self) -> "user.User":
+        """
+        获取合集列表对应用户
+
+        Returns:
+            user.User: 对应用户
+        """
+        if self.__uid == -1:
+            await self.__fetch_meta()
+        return self.owner
 
     async def get_videos(
         self, sort: ChannelOrder = ChannelOrder.DEFAULT, pn: int = 1, ps: int = 100
