@@ -502,7 +502,6 @@ class Video:
             "need_fragment": "false",
             "isGaiaAvoided": "true",
             "web_location": 1315873,
-            "voice_balance": 1,
         }
         return (
             await Api(**api, credential=self.credential, wbi=True)

@@ -1560,7 +1560,6 @@ class Episode(Video):
                 "need_fragment": "false",
                 "isGaiaAvoided": "true",
                 "web_location": 1315873,
-                "voice_balance": 1,
             }
             self.__playurl = (
                 await Api(**api, credential=self.credential)
