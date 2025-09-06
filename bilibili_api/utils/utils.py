@@ -217,7 +217,7 @@ def raise_for_statement(statement: bool, msg: str = "未满足条件") -> None:
 def to_form_urlencoded(data: dict) -> str:
     temp = []
     for [k, v] in data.items():
-        temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
+        temp.append(f"{k}={quote(str(v), safe='')}")
 
     return "&".join(temp)
 

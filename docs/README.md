@@ -162,15 +162,6 @@ select_client("aiohttp") # 选择 aiohttp
 select_client("httpx") # 选择 httpx，不支持 WebSocket
 ```
 
-curl_cffi 支持伪装浏览器的 TLS / JA3 / Fingerprint，但需要手动设置。
-
-``` python
-from bilibili_api import request_settings
-
-request_settings.set("impersonate", "chrome131") # 第二参数数值参考 curl_cffi 文档
-# https://curl-cffi.readthedocs.io/en/latest/impersonate.html
-```
-
 # FA♂Q
 
 **Q: 关于 API 调用的正确姿势是什么？**

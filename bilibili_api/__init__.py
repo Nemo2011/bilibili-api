@@ -36,8 +36,6 @@ from .utils.network import (
     get_buvid,
     get_bili_ticket,
     recalculate_wbi,
-    refresh_buvid,
-    refresh_bili_ticket,
     # credential
     Credential,
     # api
@@ -220,8 +218,6 @@ __all__ = [
     "parse_link",
     "rank",
     "recalculate_wbi",
-    "refresh_bili_ticket",
-    "refresh_buvid",
     "register_client",
     "request_log",
     "request_settings",

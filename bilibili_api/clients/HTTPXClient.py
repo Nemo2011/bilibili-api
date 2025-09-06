@@ -95,7 +95,7 @@ class HTTPXClient(BiliAPIClient):
         设置是否使用 http2.
 
         Args:
-            impersonate (str, optional): 是否使用 http2. Defaults to False.
+            http2 (str, optional): 是否使用 http2. Defaults to False.
         """
         self.__http2 = http2
         self.__session = httpx.AsyncClient(
