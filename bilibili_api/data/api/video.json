@@ -388,6 +388,18 @@
         "bvid": "str: 视频 BV 号"
       },
       "comment": "上传字幕"
+    },
+    "report_history": {
+      "url": "https://api.bilibili.com/x/v2/history/report",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号",
+        "cid": "int: 视频 cid",
+        "progress": "int: 观看进度（默认0）秒 ",
+        "csrf": "str: csrf"
+      },
+      "comment": "上报观看历史"
     }
   },
   "danmaku": {

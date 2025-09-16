@@ -1766,6 +1766,38 @@ class Video:
         datas = {"viewed": "false", "aid": await self.__get_aid()}
         return await Api(**api, credential=self.credential).update_data(**datas).result
 
+    async def report_watch_history(
+            self,
+            progress: int = 0,
+            page_index: Union[int, None] = 0,
+            cid: Union[int, None] = None
+    ) -> dict:
+        """
+        上报观看历史
+        Args:
+            progress        (int):          观看进度 (单位 秒)
+            page_index      (int | None):   分 P 序号
+            cid             (int | None):   分 P ID,从视频信息中获取
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+
+        if cid is None:
+            if page_index is None:
+                raise ArgsException("page_index 和 cid 至少提供一个。")
+
+            cid = await self.get_cid(page_index=page_index)
+
+        api = get_api("video")["operate"]["report_history"]
+        data = {
+            "aid": self.get_aid(),
+            "cid": cid,
+            "progress": progress,
+            "csrf": self.credential.bili_jct,
+        }
+        return await Api(**api, credential=self.credential).update_data(**data).request(raw=True)
+
 
 from .bangumi import Episode
 

@@ -69,6 +69,7 @@ from bilibili_api import video
   - [async def submit\_subtitle()](#async-def-submit\_subtitle)
   - [async def triple()](#async-def-triple)
   - [async def turn\_to\_episode()](#async-def-turn\_to\_episode)
+  - [async def report\_watch\_history()](#async-def-report_watch_history)
 - [class VideoAppealReasonType()](#class-VideoAppealReasonType)
   - [def PLAGIARISM()](#def-PLAGIARISM)
   - [def UNREAL\_COPYRIGHT()](#def-UNREAL\_COPYRIGHT)
@@ -886,6 +887,22 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 **Returns:** `Episode`:  番剧对象
+
+
+
+### async def report_watch_history()
+
+上报播放历史
+
+
+| name | type | description |
+| - | - | - |
+| `progress` | `int` | 观看进度 (单位 秒) |
+| `page_index` | `int \| None` | 分 P 号 |
+| `cid` | `int \| None` | 分 P 编码 |
+
+
+**Returns:** `dict`: 调用 API 返回的结果
 
 
 

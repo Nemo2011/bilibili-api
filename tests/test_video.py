@@ -254,3 +254,6 @@ async def test_zj_get_relation():
 
 async def test_zk_get_online():
     return await video.get_online()
+
+async def test_zl_report_watch_history():
+    return await video.report_watch_history()
