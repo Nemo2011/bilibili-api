@@ -21,6 +21,7 @@ from typing import Any, List, Union, Optional, Type
 
 from yarl import URL
 
+from . import user
 from .utils.aid_bvid_transformer import bvid2aid, aid2bvid
 from .utils.utils import get_api, raise_for_statement
 from .utils.AsyncEvent import AsyncEvent
@@ -1798,6 +1799,33 @@ class Video:
         }
         return await Api(**api, credential=self.credential).update_data(**data).request(raw=True)
 
+    async def report_start_watching(self, page_index: Union[int, None] = 0) -> dict:
+        """
+        上报开始观看
+        该接口亦被用于计算播放量, 播放量更新不是实时的
+        该接口使用似乎存在 200 播放限制, 请勿滥用!
+        Args:
+            page_index      (int | None):   分 P 序号
+
+        Returns:
+            dict: 调用 API 返回的结果
+        """
+        self_info = await user.get_self_info(self.credential)
+
+        if page_index is None:
+            raise ArgsException("必须提供 page_index")
+
+        cid = await self.get_cid(page_index=page_index)
+
+        api = get_api("video")["operate"]["report_start_watching"]
+        data = {
+            "aid": await self.__get_aid(),
+            "cid": cid,
+            "mid": self_info["mid"],
+            "part": page_index,
+            "csrf": self.credential.bili_jct,
+        }
+        return await Api(**api, credential=self.credential).update_data(**data).request(raw=True)
 
 from .bangumi import Episode
 

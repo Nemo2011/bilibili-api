@@ -400,6 +400,19 @@
         "csrf": "str: csrf"
       },
       "comment": "上报观看历史"
+    },
+    "report_start_watching": {
+      "url": "https://api.bilibili.com/x/click-interface/click/web/h5",
+      "method": "POST",
+      "verify": true,
+      "data": {
+        "aid": "int: av 号",
+        "cid": "int: 视频 cid",
+        "mid": "int: 用户 UID",
+        "part": "int: 视频分 P 的编号",
+        "csrf": "str: csrf"
+      },
+      "comment": "上报开始观看"
     }
   },
   "danmaku": {

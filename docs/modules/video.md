@@ -890,6 +890,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
+
 ### async def report_watch_history()
 
 上报播放历史
@@ -900,6 +901,25 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | `progress` | `int` | 观看进度 (单位 秒) |
 | `page_index` | `int \| None` | 分 P 号 |
 | `cid` | `int \| None` | 分 P 编码 |
+
+
+**Returns:** `dict`: 调用 API 返回的结果
+
+
+
+
+### async def report_start_watching()
+
+上报开始观看
+
+> 该接口亦被用于计算播放量, 播放量更新不是实时的
+>
+> 该接口使用似乎存在 200 播放限制, 请勿滥用!
+
+
+| name | type | description |
+| - | - | - |
+| `page_index` | `int \| None` | 分 P 号 |
 
 
 **Returns:** `dict`: 调用 API 返回的结果
