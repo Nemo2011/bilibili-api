@@ -728,8 +728,8 @@ class User:
         """
         api = API["info"]["all_followings"]
         params = {"mid": self.__uid}
-        data = await Api(**api).update_params(**params).request(raw=True)
-        return data["card"]["attentions"]
+        data = await Api(**api, credential=self.credential).update_params(**params).request(raw=True)
+        return data["data"]
 
     async def get_followers(
         self, pn: int = 1, ps: int = 100, desc: bool = True
