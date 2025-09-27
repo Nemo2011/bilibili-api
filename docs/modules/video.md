@@ -69,6 +69,8 @@ from bilibili_api import video
   - [async def submit\_subtitle()](#async-def-submit\_subtitle)
   - [async def triple()](#async-def-triple)
   - [async def turn\_to\_episode()](#async-def-turn\_to\_episode)
+  - [async def report\_watch\_history()](#async-def-report\_watch\_history)
+  - [async def report\_start\_watching()](#async-def-report\_start\_watching)
 - [class VideoAppealReasonType()](#class-VideoAppealReasonType)
   - [def PLAGIARISM()](#def-PLAGIARISM)
   - [def UNREAL\_COPYRIGHT()](#def-UNREAL\_COPYRIGHT)
@@ -886,6 +888,42 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 **Returns:** `Episode`:  番剧对象
+
+
+
+
+### async def report_watch_history()
+
+上报播放历史
+
+
+| name | type | description |
+| - | - | - |
+| `progress` | `int` | 观看进度 (单位 秒) |
+| `page_index` | `int \| None` | 分 P 号 |
+| `cid` | `int \| None` | 分 P 编码 |
+
+
+**Returns:** `dict`: 调用 API 返回的结果
+
+
+
+
+### async def report_start_watching()
+
+上报开始观看
+
+> 该接口亦被用于计算播放量, 播放量更新不是实时的
+>
+> 该接口使用似乎存在 200 播放限制, 请勿滥用!
+
+
+| name | type | description |
+| - | - | - |
+| `page_index` | `int \| None` | 分 P 号 |
+
+
+**Returns:** `dict`: 调用 API 返回的结果
 
 
 
