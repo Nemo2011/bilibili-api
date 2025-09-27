@@ -33,6 +33,8 @@ from .utils.network import (
     get_session,
     set_session,
     # anti spider
+    get_buvid,
+    get_bili_ticket,
     recalculate_wbi,
     refresh_buvid,
     refresh_bili_ticket,
@@ -197,6 +199,8 @@ __all__ = [
     "game",
     "garb",
     "get_available_settings",
+    "get_bili_ticket",
+    "get_buvid",
     "get_client",
     "get_real_url",
     "get_registered_available_settings",

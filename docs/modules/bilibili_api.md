@@ -106,6 +106,8 @@ from bilibili_api import ...
 - [async def bili\_simple\_download()](#async-def-bili\_simple\_download)
 - [def bvid2aid()](#def-bvid2aid)
 - [def get\_available\_settings()](#def-get\_available\_settings)
+- [async def get\_bili\_ticket()](#async-def-get\_bili\_ticket)
+- [async def get\_buvid()](#async-def-get\_buvid)
 - [def get\_client()](#def-get\_client)
 - [async def get\_real\_url()](#async-def-get\_real\_url)
 - [def get\_registered\_available\_settings()](#def-get\_registered\_available\_settings)
@@ -1516,6 +1518,35 @@ BV 号转 AV 号。
 
 
 **Returns:** `List[str]`:  支持的设置项名称
+
+
+
+
+---
+
+## async def get_bili_ticket()
+
+获取 bili_ticket
+
+
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential, optional` | 凭据. Defaults to None. |
+
+**Returns:** `Tuple[str, str]`:  bili_ticket, bili_ticket_expires
+
+
+
+
+---
+
+## async def get_buvid()
+
+获取 buvid3 和 buvid4
+
+
+
+**Returns:** `Tuple[str, str]`:  第 0 项为 buvid3，第 1 项为 buvid4。
 
 
 
