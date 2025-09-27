@@ -489,20 +489,18 @@ class Video:
 
         api = API["info"]["playurl"]
         params = {
+            "qn": "127",
+            "fnval": 4048,
+            "fnver": 0,
+            "fourk": 1,
+            "voice_balance": 1,
+            "gaia_source": "pre-load",
+            "isGaiaAvoided": "true",
             "avid": await self.__get_aid(),
             "bvid": await self.__get_bvid(),
             "cid": cid,
-            "qn": "127",
-            "fnver": 0,
-            "fnval": 4048,
-            "fourk": 1,
-            "gaia_source": "",
             "from_client": "BROWSER",
-            "is_main_page": "false",
-            "need_fragment": "false",
-            "isGaiaAvoided": "true",
             "web_location": 1315873,
-            "voice_balance": 1,
         }
         return (
             await Api(**api, credential=self.credential, wbi=True)
