@@ -277,9 +277,9 @@
       "comment": "获取用户关注列表（不是自己只能访问前 5 页）"
     },
     "all_followings": {
-      "url": "https://account.bilibili.com/api/member/getCardByMid",
+      "url": "https://api.bilibili.com/x/web-interface/attentions",
       "method": "GET",
-      "verify": false,
+      "verify": true,
       "params": {
         "mid": "int: uid"
       },
