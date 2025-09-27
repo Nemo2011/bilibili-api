@@ -198,8 +198,8 @@ from bilibili_api import session
 | name | type | description |
 | - | - | - |
 | `credential` | `Credential` | 凭据类. |
-| `last_id` | `Optional, int` | 最后一个 ID |
-| `at_time` | `Optional, int` | 最后一个点赞发送时间 |
+| `last_uid` | `Optional, int` | 最后一个 ID. 用于翻页。Defaults to None. |
+| `at_time` | `Optional, int` | 最后一个点赞发送时间. 用于翻页。Defaults to None. |
 
 **Returns:** `dict`:  调用 API 返回的结果
 
@@ -216,8 +216,8 @@ from bilibili_api import session
 | name | type | description |
 | - | - | - |
 | `credential` | `Credential` | 凭据类. |
-| `last_id` | `Optional, int` | 最后一个 ID |
-| `like_time` | `Optional, int` | 最后一个点赞发送时间 |
+| `last_id` | `Optional, int` | 最后一个 ID. 用于翻页。Defaults to None. |
+| `like_time` | `Optional, int` | 最后一个点赞发送时间. 用于翻页。Defaults to None. |
 
 **Returns:** `dict`:  调用 API 返回的结果
 
@@ -234,8 +234,8 @@ from bilibili_api import session
 | name | type | description |
 | - | - | - |
 | `credential` | `Credential` | 凭据类. |
-| `last_reply_id` | `Optional, int` | 最后一个评论的 ID |
-| `reply_time` | `Optional, int` | 最后一个评论发送时间 |
+| `last_reply_id` | `Optional, int` | 最后一个评论的 ID. 用于翻页。Defaults to None. |
+| `reply_time` | `Optional, int` | 最后一个评论发送时间. 用于翻页。Defaults to None. |
 
 **Returns:** `dict`:  调用 API 返回的结果
 
