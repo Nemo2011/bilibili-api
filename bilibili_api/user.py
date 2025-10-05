@@ -1060,7 +1060,7 @@ class User:
         Returns:
             str: access_id
         """
-        return await get_user_dynamic_render_data(self.__uid)
+        return await get_user_dynamic_render_data(self.__uid, self.credential)
 
 
 async def get_self_info(credential: Credential) -> dict:
