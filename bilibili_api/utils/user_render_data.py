@@ -5,7 +5,7 @@ from typing import Any
 from urllib.parse import unquote
 
 from ..exceptions import ApiException, NetworkException
-from .network import HEADERS, get_client
+from .network import Credential, HEADERS, get_client
 
 import jwt
 
@@ -17,7 +17,7 @@ access_ids = {}
 last_timestamp = {}
 
 
-async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
+async def get_user_dynamic_render_data(uid: int, credential: Credential) -> dict[str, Any]:
     """
     获取用户动态页面加载静态渲染数据 获取部分接口需要的 w_webid 关键参数
 
@@ -30,7 +30,8 @@ async def get_user_dynamic_render_data(uid: int) -> dict[str, Any]:
     dynamic_url: str = "https://space.bilibili.com/{}/dynamic".format(uid)
 
     session = get_client()
-    response = await session.request(method="GET", url=dynamic_url, headers=HEADERS)
+    response = await session.request(method="GET", url=dynamic_url,
+                                     headers=HEADERS, cookies=credential.get_cookies())
     if response.code != 200:
         raise NetworkException(response.code, "")
 
