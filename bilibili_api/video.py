@@ -466,6 +466,7 @@ class Video:
         self,
         page_index: Union[int, None] = None,
         cid: Union[int, None] = None,
+        html5: bool = False,
     ) -> dict:
         """
         获取视频下载信息。
@@ -478,6 +479,8 @@ class Video:
             page_index (int | None, optional) : 分 P 号，从 0 开始。Defaults to None
 
             cid        (int | None, optional) : 分 P 的 ID。Defaults to None
+
+            html5      (bool, optional)       : 是否选择移动端 HTML5 播放流（仅支持 MP4 格式）
 
         Returns:
             dict: 调用 API 返回的结果。
@@ -494,7 +497,6 @@ class Video:
             "fnval": 4048,
             "fnver": 0,
             "fourk": 1,
-            "voice_balance": 1,
             "gaia_source": "pre-load",
             "isGaiaAvoided": "true",
             "avid": await self.__get_aid(),
@@ -502,6 +504,7 @@ class Video:
             "cid": cid,
             "from_client": "BROWSER",
             "web_location": 1315873,
+            "platform": "html5" if html5 else "pc"
         }
         return (
             await Api(**api, credential=self.credential, wbi=True)
