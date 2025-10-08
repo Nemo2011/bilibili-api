@@ -10,11 +10,11 @@
 
 |           | 优先级 | request | stream | WebSocket | 额外网络请求设置                                                           |
 | --------- | ------ | ------- | ------ | --------- | -------------------------------------------------------------------------- |
-| curl_cffi | 3      | ✅      | ✅     | ✅        | - `impersonate` defaults to ` ` <br> - `http2` defaults to `False` |
+| curl_cffi | 3      | ✅      | ✅     | ✅        |                                                                            |
 | aiohttp   | 2      | ✅      | ✅     | ✅        |                                                                            |
 | httpx     | 1      | ✅      | ✅     | ❌        | `http2` defaults to `False`                                                |
 
-名为 `impersonate` 的设置决定了 curl_cffi 模仿哪个浏览器的指纹，名为 `http2` 的设置决定了 curl_cffi / httpx 是否启用 HTTP2。[这些设置如何启用？](https://nemo2011.github.io/bilibili-api/#/configuration)
+名为 `http2` 的设置决定了 httpx 是否启用 HTTP2。[这些设置如何启用？](https://nemo2011.github.io/bilibili-api/#/configuration)
 
 ### 2、切换请求库
 

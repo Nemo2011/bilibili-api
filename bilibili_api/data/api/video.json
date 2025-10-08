@@ -24,6 +24,8 @@
       "url": "https://api.bilibili.com/x/web-interface/wbi/view/detail",
       "method": "GET",
       "verify": false,
+      "wbi": true,
+      "wbi2": true,
       "params": {
         "aid": "int: av 号",
         "bvid": "string: BV 号",
@@ -96,6 +98,8 @@
       "url": "https://api.bilibili.com/x/player/wbi/playurl",
       "method": "GET",
       "verify": false,
+      "wbi": true,
+      "wbi2": true,
       "params": {
         "avid": "int: av 号",
         "cid": "int: 分 P 编号",
@@ -169,7 +173,7 @@
     "get_player_info": {
       "url": "https://api.bilibili.com/x/player/wbi/v2",
       "method": "GET",
-      "verify": true,
+      "verify": false,
       "wbi": true,
       "wbi2": true,
       "data": {

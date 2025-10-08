@@ -30,7 +30,7 @@ async def main() -> None:
     while not qr.has_done():                                            # 在完成扫描前轮询
         print(await qr.check_state())                                   # 检查状态
         time.sleep(1)                                                   # 轮训间隔建议 >=1s
-    print(qr.get_credential().get_cookies())                            # 获取 Credential 类，打印其 Cookies 信息
+    print(await qr.get_credential().get_cookies())                      # 获取 Credential 类，打印其 Cookies 信息
 
 if __name__ == '__main__':
     sync(main())
@@ -89,7 +89,7 @@ async def main() -> None:
         code = input("code:")
         cred = await cred.complete_check(code)                              # 调用接口登录
 
-    print("cookies:", cred.get_cookies())                                   # 获得 cookies
+    print("cookies:", await cred.get_cookies())                             # 获得 cookies
 
 if __name__ == "__main__":
     sync(main())

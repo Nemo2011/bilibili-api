@@ -657,7 +657,7 @@ Cookies 刷新错误。
 
 
 
-### def get_cookies()
+### async def get_cookies()
 
 获取请求 Cookies 字典
 
@@ -1663,28 +1663,6 @@ BV 号转 AV 号。
 
 ---
 
-## def refresh_bili_ticket()
-
-刷新 bili_ticket
-
-
-
-
-
-
----
-
-## def refresh_buvid()
-
-刷新模块自动生成的 buvid3 和 buvid4
-
-
-
-
-
-
----
-
 ## def register_client()
 
 注册请求客户端并切换，可用于用户自定义请求客户端。
@@ -1864,17 +1842,6 @@ async def handle(desc: str, data: dict) -> None:
 
 
 
-### def get_enable_bili_ticket()
-
-获取设置的是否使用 bili_ticket
-
-
-
-**Returns:** `bool`:  是否使用 bili_ticket. Defaults to True.
-
-
-
-
 ### def get_proxy()
 
 获取设置的代理
@@ -1955,18 +1922,6 @@ async def handle(desc: str, data: dict) -> None:
 | name | type | description |
 | - | - | - |
 | `enable_auto_buvid` | `bool` | 是否自动生成 buvid. |
-
-
-
-
-### def set_enable_bili_ticket()
-
-设置是否使用 bili_ticket
-
-
-| name | type | description |
-| - | - | - |
-| `enable_bili_ticket` | `bool` | 是否使用 bili_ticket. |
 
 
 
