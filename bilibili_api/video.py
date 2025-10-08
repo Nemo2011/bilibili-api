@@ -480,7 +480,7 @@ class Video:
 
             cid        (int | None, optional) : 分 P 的 ID。Defaults to None
 
-            html5      (bool, optional)       : 是否选择移动端 HTML5 播放流（仅支持 MP4 格式）
+            html5      (bool, optional)       : 是否选择移动端 HTML5 播放流（仅支持 MP4 格式）此时获得的媒体流访问无需鉴权。
 
         Returns:
             dict: 调用 API 返回的结果。
@@ -504,8 +504,10 @@ class Video:
             "cid": cid,
             "from_client": "BROWSER",
             "web_location": 1315873,
-            "platform": "html5" if html5 else "pc"
         }
+        if html5:
+            params["platform"] = "html5"
+            params["high_quality"] = "1"
         return (
             await Api(**api, credential=self.credential, wbi=True)
             .update_params(**params)

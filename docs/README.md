@@ -6,7 +6,7 @@
 
 [![API 数量](https://img.shields.io/badge/API%20数量-400+-blue)][api.json]
 [![LICENSE](https://img.shields.io/badge/LICENSE-GPLv3+-red)][LICENSE]
-[![Python](https://img.shields.io/badge/python-3.13|3.12|3.11|3.10|3.9-blue)](https://www.python.org)
+[![Python](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org)
 [![Stable Version](https://img.shields.io/pypi/v/bilibili-api-python?label=stable)][pypi]
 [![Pre-release Version](https://img.shields.io/github/v/release/Nemo2011/bilibili-api?label=pre-release&include_prereleases&sort=semver)][pypi-dev]
 [![STARS](https://img.shields.io/github/stars/nemo2011/bilibili-api?color=yellow&label=Github%20Stars)][stargazers]
@@ -234,7 +234,6 @@ A: 由于该模块比较特殊，是爬虫模块，如果 b 站的接口变更�
 
 [docs]: https://nemo2011.github.io/bilibili-api
 [docs-github]: https://github.com/nemo2011/bilibili-api/tree/main/docs
-[docs-gitee]: https://gitee.com/nemo2011/bilibili-api/tree/main/docs
 [api.json]: https://github.com/nemo2011/bilibili-api/tree/main/bilibili_api/data/api/
 [license]: https://github.com/nemo2011/bilibili-api/tree/main/LICENSE
 [stargazers]: https://github.com/nemo2011/bilibili-api/stargazers

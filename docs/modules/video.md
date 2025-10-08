@@ -408,7 +408,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | - | - | - |
 | `page_index` | `int \| None, optional` | 分 P 号，从 0 开始。Defaults to None |
 | `cid` | `int \| None, optional` | 分 P 的 ID。Defaults to None |
-| `html5` | `bool, optional` | 是否选择移动端 HTML5 播放流（仅支持 MP4 格式） |
+| `html5` | `bool, optional` | 是否选择移动端 HTML5 播放流（仅支持 MP4 格式）此时获得的媒体流访问无需鉴权。 |
 
 **Returns:** `dict`:  调用 API 返回的结果。
 
