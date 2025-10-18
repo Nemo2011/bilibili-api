@@ -94,6 +94,8 @@ async def login_with_password(
             sessdata=str(resp.cookies["SESSDATA"]),
             bili_jct=str(resp.cookies["bili_jct"]),
             dedeuserid=str(resp.cookies["DedeUserID"]),
+            dedeuserid_ckmd5=str(resp.cookies["DedeUserID__ckMd5"]),
+            sid=str(resp.cookies["sid"]),
             ac_time_value=login_data["data"]["refresh_token"],
         )
     else:
@@ -333,25 +335,14 @@ async def login_with_sms(
     )
     return_data = res.json()
     if return_data["code"] == 0 and return_data["data"]["status"] != 5:
-        url = return_data["data"]["url"]
-        cookies_list = url.split("?")[1].split("&")
-        sessdata = ""
-        bili_jct = ""
-        dede = ""
-        for cookie in cookies_list:
-            if cookie[:8] == "SESSDATA":
-                sessdata = cookie[9:]
-            if cookie[:8] == "bili_jct":
-                bili_jct = cookie[9:]
-            if cookie[:11].upper() == "DEDEUSERID=":
-                dede = cookie[11:]
-        c = Credential(
-            sessdata=sessdata,
-            bili_jct=bili_jct,
-            dedeuserid=dede,
+        return Credential(
+            sessdata=str(res.cookies["SESSDATA"]),
+            bili_jct=str(res.cookies["bili_jct"]),
+            dedeuserid=str(res.cookies["DedeUserID"]),
+            dedeuserid_ckmd5=str(res.cookies["DedeUserID__ckMd5"]),
+            sid=str(res.cookies["sid"]),
             ac_time_value=return_data["data"]["refresh_token"],
         )
-        return c
     elif return_data["code"] == 0 and return_data["data"]["status"] == 5:
         return LoginCheck(return_data["data"]["url"])
     else:
@@ -489,9 +480,11 @@ class QrCodeLogin:
             api = API["qrcode"]["web"]["get_events"]
             params = {"qrcode_key": self.__qr_key}
             events = (
-                await Api(credential=Credential(), **api).update_params(**params).result
+                await Api(credential=Credential(), **api)
+                .update_params(**params)
+                .request(bili_res=True)
             )
-            code = events["code"]
+            code = events.json()["code"]
             if code == 86101:
                 return QrCodeLoginEvents.SCAN
             elif code == 86090:
@@ -499,24 +492,13 @@ class QrCodeLogin:
             elif code == 86038:
                 return QrCodeLoginEvents.TIMEOUT
             else:
-                cred_url = events["url"]
-                ac_time_value = events["refresh_token"]
-                cookies_list = cred_url.split("?")[1].split("&")
-                sessdata = ""
-                bili_jct = ""
-                dedeuserid = ""
-                for cookie in cookies_list:
-                    if cookie[:8] == "SESSDATA":
-                        sessdata = cookie[9:]
-                    if cookie[:8] == "bili_jct":
-                        bili_jct = cookie[9:]
-                    if cookie[:11].upper() == "DEDEUSERID=":
-                        dedeuserid = cookie[11:]
                 self.__credential = Credential(
-                    sessdata=sessdata,
-                    bili_jct=bili_jct,
-                    dedeuserid=dedeuserid,
-                    ac_time_value=ac_time_value,
+                    sessdata=str(events.cookies["SESSDATA"]),
+                    bili_jct=str(events.cookies["bili_jct"]),
+                    dedeuserid=str(events.cookies["DedeUserID"]),
+                    dedeuserid_ckmd5=str(events.cookies["DedeUserID__ckMd5"]),
+                    sid=str(events.cookies["sid"]),
+                    ac_time_value=events.json()["data"]["refresh_token"],
                 )
                 return QrCodeLoginEvents.DONE
         else:
@@ -525,25 +507,22 @@ class QrCodeLogin:
             events = (
                 await Api(credential=Credential(), no_csrf=True, **api)
                 .update_data(**data)
-                .request(raw=True)
+                .request(bili_res=True)
             )
-            code = events["code"]
+            code = events.json()["code"]
             if code == 86039:
                 return QrCodeLoginEvents.SCAN
             elif code == 86038:
                 return QrCodeLoginEvents.TIMEOUT
             else:
-                data = events["data"]
-                cookies = {}
-                for cookie in data["cookie_info"]["cookies"]:
-                    if cookie["name"] == "SESSDATA":
-                        cookies["sessdata"] = cookie["value"]
-                    elif cookie["name"] == "bili_jct":
-                        cookies["bili_jct"] = cookie["value"]
-                    elif cookie["name"] == "DedeUserID":
-                        cookies["dedeuserid"] = cookie["value"]
-                cookies["ac_time_value"] = data["refresh_token"]
-                self.__credential = Credential(**cookies)
+                self.__credential = Credential(
+                    sessdata=str(events.cookies["SESSDATA"]),
+                    bili_jct=str(events.cookies["bili_jct"]),
+                    dedeuserid=str(events.cookies["DedeUserID"]),
+                    dedeuserid_ckmd5=str(events.cookies["DedeUserID__ckMd5"]),
+                    sid=str(events.cookies["sid"]),
+                    ac_time_value=events.json()["data"]["refresh_token"],
+                )
                 return QrCodeLoginEvents.DONE
 
 
@@ -647,10 +626,11 @@ class LoginCheck:
             headers=headers,
         )
         credential = Credential(
-            sessdata=resp.cookies["SESSDATA"],
-            bili_jct=resp.cookies["bili_jct"],
-            buvid3=None,
-            dedeuserid=resp.cookies["DedeUserID"],
+            sessdata=str(resp.cookies["SESSDATA"]),
+            bili_jct=str(resp.cookies["bili_jct"]),
+            dedeuserid=str(resp.cookies["DedeUserID"]),
+            dedeuserid_ckmd5=str(resp.cookies["DedeUserID__ckMd5"]),
+            sid=str(resp.cookies["sid"]),
             ac_time_value=(resp.json())["data"]["refresh_token"],
         )
         return credential

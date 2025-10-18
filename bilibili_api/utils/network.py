@@ -257,6 +257,7 @@ class RequestSettings:
         }
         self.__wbi_retry_times = 3
         self.__enable_auto_buvid = True
+        self.__enable_bili_ticket = False
 
     def get(self, name: str) -> Any:
         """
@@ -401,6 +402,24 @@ class RequestSettings:
             enable_auto_buvid (bool): 是否自动生成 buvid.
         """
         self.__enable_auto_buvid = enable_auto_buvid
+
+    def get_enable_bili_ticket(self) -> bool:
+        """
+        获取设置的是否使用 bili_ticket
+
+        Returns:
+            bool: 是否使用 bili_ticket. Defaults to True.
+        """
+        return self.__enable_bili_ticket
+
+    def set_enable_bili_ticket(self, enable_bili_ticket: bool) -> None:
+        """
+        设置是否使用 bili_ticket
+
+        Args:
+            enable_bili_ticket (bool): 是否使用 bili_ticket.
+        """
+        self.__enable_bili_ticket = enable_bili_ticket
 
     def get_all(self) -> dict:
         """
@@ -1119,6 +1138,20 @@ def _get_time_milli() -> int:
 class Credential:
     """
     凭据类，用于各种请求操作的验证。
+
+    以下字段获取方式见 https://nemo2011.github.io/bilibili-api/#/get-credential.md
+
+    重要 cookies:
+        SESSDATA (sessdata); bili_jct; DedeUserId (dedeuserid); DedeUserId__ckMd5 (dedeuserid_ckmd5); sid
+
+    本地 cookies:
+        b_nut; b_lsid; uuid_infoc
+
+    网络生成反爬 cookies:
+        buvid3; buvid4; buvid_fp; bili_ticket; bili_ticket_expires
+
+    非 cookies:
+        ac_time_value; proxy
     """
 
     _refresh_lock: asyncio.Lock = asyncio.Lock()
@@ -1139,6 +1172,7 @@ class Credential:
         buvid4: Union[str, None] = None,
         dedeuserid: Union[str, None] = None,
         dedeuserid_ckmd5: Union[str, None] = None,
+        sid: Union[str, None] = None,
         ac_time_value: Union[str, None] = None,
         proxy: Union[str, None] = None,
     ) -> None:
@@ -1146,17 +1180,21 @@ class Credential:
         各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
         Args:
-            sessdata   (str | None, optional): 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None.
+            sessdata   (str | None, optional)      : 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None.
 
-            bili_jct   (str | None, optional): 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None.
+            bili_jct   (str | None, optional)      : 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None.
 
-            buvid3     (str | None, optional): 浏览器 Cookies 中的 buvid3 字段值. Defaults to None.
+            buvid3     (str | None, optional)      : 浏览器 Cookies 中的 buvid3 字段值. Defaults to None.
 
-            buvid4     (str | None, optional): 浏览器 Cookies 中的 buvid4 字段值. Defaults to None.
+            buvid4     (str | None, optional)      : 浏览器 Cookies 中的 buvid4 字段值. Defaults to None.
 
-            dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
+            dedeuserid (str | None, optional)      : 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
 
-            ac_time_value (str | None, optional): 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None.
+            dedeuserid_ckmd5 (str | None, optional): 浏览器 Cookies 中的 DedeUserID__ckMd5 字段值. Defaults to None.
+
+            sid (str | None, optional)             : 浏览器 Cookies 中的 sid 字段值. Defaults to None.
+
+            ac_time_value (str | None, optional)   : 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None.
 
             proxy (str | None, optional): 凭据类可选择携带的代理. Defaults to None.
         """
@@ -1177,6 +1215,7 @@ class Credential:
         self.buvid4 = buvid4
         self.dedeuserid = dedeuserid
         self.dedeuserid_ckmd5 = dedeuserid_ckmd5
+        self.sid = sid
         self.ac_time_value = ac_time_value
         self.proxy = proxy
 
@@ -1214,9 +1253,10 @@ class Credential:
             dict: 请求 Cookies 字典
         """
         if self.buvid3 is None and request_settings.get_enable_auto_buvid():
-            self.buvid3, self.buvid4 = await get_buvid()
+            await get_buvid(self)
 
-        _ = await get_bili_ticket(self)
+        if request_settings.get_enable_bili_ticket():
+            await get_bili_ticket(self)
 
         browser_fingerprint = get_browser_fingerprint()
 
@@ -1396,7 +1436,11 @@ class Credential:
         c.buvid4 = cookies.get("buvid4")
         c.dedeuserid = cookies.get("DedeUserID")
         c.dedeuserid_ckmd5 = cookies.get("DedeUserID__ckMd5")
-        c.ac_time_value = cookies.get("ac_time_value")
+        c.ac_time_value = (
+            cookies.get("ac_time_value")
+            if cookies.get("ac_time_value")
+            else ac_time_value
+        )
         c.b_lsid = cookies.get("b_lsid")
         c.b_nut = cookies.get("b_nut")
         c.uuid_infoc = cookies.get("_uuid")
@@ -1407,7 +1451,6 @@ class Credential:
             else None
         )
         c.buvid_fp = cookies.get("buvid_fp")
-        c.ac_time_value = ac_time_value
         return c
 
     def __str__(self):
@@ -1497,6 +1540,7 @@ async def _refresh_cookies(credential: Credential) -> Credential:
         bili_jct=resp.cookies["bili_jct"],
         dedeuserid=resp.cookies["DedeUserID"],
         dedeuserid_ckmd5=resp.cookies["DedeUserID__ckMd5"],
+        sid=resp.cookies["sid"],
         ac_time_value=resp.json()["data"]["refresh_token"],
     )
     await _confirm_refresh(credential, new_credential)
@@ -1520,72 +1564,11 @@ async def _confirm_refresh(
 ################################################## BEGIN Anti-Spider ##################################################
 
 
-OE = [
-    46,
-    47,
-    18,
-    2,
-    53,
-    8,
-    23,
-    32,
-    15,
-    50,
-    10,
-    31,
-    58,
-    3,
-    45,
-    35,
-    27,
-    43,
-    5,
-    49,
-    33,
-    9,
-    42,
-    19,
-    29,
-    28,
-    14,
-    39,
-    12,
-    38,
-    41,
-    13,
-    37,
-    48,
-    7,
-    16,
-    24,
-    55,
-    40,
-    61,
-    26,
-    17,
-    0,
-    1,
-    60,
-    51,
-    30,
-    4,
-    22,
-    25,
-    54,
-    21,
-    56,
-    59,
-    6,
-    63,
-    57,
-    62,
-    11,
-    36,
-    20,
-    34,
-    44,
-    52,
-]
+OE = list(
+    base64.b64decode(
+        b"Li8SAjUIFyAPMgofOgMtIxsrBTEhCSoTHRwOJwwmKQ0lMAcQGDcoPRoRAAE8Mx4EFhk2FTg7Bj85PgskFCIsNA=="
+    )
+)
 APPKEY = "4409e2ce8ffd12b8"
 APPSEC = "59b43e04ad6965f34319062b478f83dd"
 HEADERS = {}
@@ -1645,7 +1628,9 @@ async def _get_spi_buvid() -> tuple[dict, str]:
     api = API["info"]["spi"]
     client = get_client()
     response = await client.request(
-        method="GET", url=api["url"], headers=HEADERS.copy()
+        method="GET",
+        url=api["url"],
+        headers=HEADERS.copy(),
     )
     return (
         (response).json()["data"],
@@ -1662,7 +1647,9 @@ class _CookieJsonDecoder(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parse_string = self.cookie_scanstring
-        self.scan_once = scanner.py_make_scanner(self)  # pyright: ignore[reportAttributeAccessIssue]
+        self.scan_once = scanner.py_make_scanner(
+            self
+        )  # pyright: ignore[reportAttributeAccessIssue]
 
     @staticmethod
     def cookie_scanstring(*args, **kwargs):
@@ -1677,7 +1664,7 @@ class _CookieJsonDecoder(json.JSONDecoder):
         return (val, end)
 
 
-async def _active_buvid(credential: Credential) -> None:
+async def _gen_buvid_fp(buvid3: str, buvid4: str, credential: Credential) -> None:
     MOD = 1 << 64
 
     def rotate_left(x: int, k: int) -> int:
@@ -1917,19 +1904,21 @@ async def _active_buvid(credential: Credential) -> None:
                 "8a1c": 0,
                 "d52f": "not available",
                 "adca": browser_fingerprint["navigator"]["platform"],
-                "80c9": [
+                "80c9": (
                     [
-                        plugin["name"],
-                        plugin["description"],
                         [
-                            [mime_type, mime_type_suffix.get(mime_type, "")]
-                            for mime_type in plugin["__mimeTypes"]
-                        ],
+                            plugin["name"],
+                            plugin["description"],
+                            [
+                                [mime_type, mime_type_suffix.get(mime_type, "")]
+                                for mime_type in plugin["__mimeTypes"]
+                            ],
+                        ]
+                        for plugin in plugins["plugins"]
                     ]
-                    for plugin in plugins["plugins"]
-                ]
-                if mime_type_suffix
-                else "not available",
+                    if mime_type_suffix
+                    else "not available"
+                ),
                 "13ab": base64.b64encode(
                     random.randbytes(random.randrange(15, 20)) + png_suffix
                 ).decode(encoding="ascii")[:-20],
@@ -1963,14 +1952,8 @@ async def _active_buvid(credential: Credential) -> None:
             separators=(",", ":"),
         )
 
-    api = API["operate"]["active"]
     client = get_client()
     uuid = credential.uuid_infoc
-    b_lsid = credential.b_lsid
-    b_nut = credential.b_nut
-    buvid3 = credential.buvid3
-    buvid4 = credential.buvid4
-    assert uuid and b_lsid and b_nut and buvid3 and buvid4
     headers = HEADERS.copy()
     homepage_html = await client.request(
         method="GET",
@@ -1978,15 +1961,22 @@ async def _active_buvid(credential: Credential) -> None:
         headers=headers,
         cookies={
             "buvid3": buvid3,
-            "b_nut": b_nut,
-            "b_lsid": b_lsid,
-            "_uuid": uuid,
             "buvid4": buvid4,
+            "b_nut": credential.b_nut,
+            "b_lsid": credential.b_lsid,
+            "_uuid": credential.uuid_infoc,
         },
     )
-    _ = await get_bili_ticket(credential)
     payload = get_payload(uuid, homepage_html.utf8_text())
-    buvid_fp = gen_buvid_fp(payload, 31)
+    return gen_buvid_fp(payload, 31), payload
+
+
+async def _active_buvid(
+    buvid3: str, buvid4: str, buvid_fp: str, payload: str, credential: Credential
+) -> str:
+    api = API["operate"]["active"]
+    client = get_client()
+    headers = HEADERS.copy()
     headers["Content-Type"] = "application/json"
     resp = await client.request(
         method="POST",
@@ -1995,16 +1985,16 @@ async def _active_buvid(credential: Credential) -> None:
         headers=headers,
         cookies={
             "buvid3": buvid3,
-            "b_nut": b_nut,
-            "b_lsid": b_lsid,
-            "_uuid": uuid,
             "buvid4": buvid4,
             "buvid_fp": buvid_fp,
+            "b_nut": credential.b_nut,
+            "b_lsid": credential.b_lsid,
+            "_uuid": credential.uuid_infoc,
         },
     )
     data = resp.json()
     if data["code"] != 0:
-        raise ExClimbWuzhiException(data["code"], data["msg"])
+        raise ExClimbWuzhiException(data["code"], data["message"])
 
 
 async def _get_nav(credential: Optional[Credential] = None) -> dict:
@@ -2149,6 +2139,8 @@ async def _get_bili_ticket(credential: Credential) -> Optional[tuple[str, int]]:
 
 
 __wbi_mixin_key: Optional[str] = None
+__bili_ticket: Optional[str] = None
+__bili_ticket_expires: Optional[str] = None
 
 
 def recalculate_wbi() -> None:
@@ -2163,8 +2155,11 @@ async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
     """
     获取 buvid3 和 buvid4
 
+    Args:
+        credential (Credential, optional): 凭据. Defaults to None.
+
     Returns:
-        Tuple[str, str]: 第 0 项为 buvid3，第 1 项为 buvid4。
+        Tuple[str, str, str]: 第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
     """
     if credential is None:
         credential = Credential()
@@ -2174,15 +2169,20 @@ async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
         credential.b_nut = b_nut
         credential.buvid3 = spi["b_3"]
         credential.buvid4 = spi["b_4"]
-        await _active_buvid(credential)
+        credential.buvid_fp, payload = await _gen_buvid_fp(
+            credential.buvid3, credential.buvid4, credential
+        )
+        await _active_buvid(
+            credential.buvid3, credential.buvid4, credential.buvid_fp, payload, credential
+        )
         request_log.dispatch(
             "ANTI_SPIDER",
             "反爬虫",
             {
-                "msg": f"激活 buvid3 / buvid4 成功: 3 [{credential.buvid3}] 4 [{credential.buvid4}]"
+                "msg": f"激活 buvid3 / buvid4 成功: 3 [{credential.buvid3}] 4 [{credential.buvid4}] fp [{credential.buvid_fp}]"
             },
         )
-    return (credential.buvid3, credential.buvid4)
+    return (credential.buvid3, credential.buvid4, credential.buvid_fp)
 
 
 async def get_bili_ticket(
@@ -2204,16 +2204,17 @@ async def get_bili_ticket(
         or not credential.bili_ticket_expires
         or time.time() > credential.bili_ticket_expires
     ):
-        bili_ticket = await _get_bili_ticket(credential)
-        if not bili_ticket:
+        resp = await _get_bili_ticket(credential)
+        if not resp:
             return None
-        credential.bili_ticket, credential.bili_ticket_expires = bili_ticket
+        credential.bili_ticket, credential.bili_ticket_expires = resp
         request_log.dispatch(
             "ANTI_SPIDER",
             "反爬虫",
-            {"msg": f"获取 bili_ticket 成功: [{credential.bili_ticket}]"},
+            {
+                "msg": f"获取 bili_ticket 成功: [{credential.bili_ticket}] expires [{credential.bili_ticket_expires}]"
+            },
         )
-        assert credential.bili_ticket and credential.bili_ticket_expires
     return credential.bili_ticket, str(credential.bili_ticket_expires)
 
 
@@ -2454,48 +2455,51 @@ class Api:
         return real_data
 
     async def _request(
-        self, raw: bool = False, byte: bool = False
-    ) -> Union[int, str, dict, bytes, None]:
+        self, raw: bool = False, byte: bool = False, bili_res: bool = False
+    ) -> Union[int, str, dict, bytes, BiliAPIResponse, None]:
         request_log.dispatch(
             "API_REQUEST",
             "Api 发起请求",
             self.__dict__,
         )
+
         legacy_proxy = None
         if self.credential.proxy:
             legacy_proxy = request_settings.get_proxy()
             request_settings.set_proxy(self.credential.proxy)
+
         config: dict = await self._prepare_request()
         client: BiliAPIClient = get_client()
         resp: BiliAPIResponse = await client.request(**config)
         ret: Union[int, str, dict, bytes, None]
+
         if byte:
             ret = resp.raw
+        elif bili_res:
+            ret = resp
         else:
             ret = self._process_response(resp=resp, raw=raw)
+
+        if self.credential.proxy:
+            request_settings.set_proxy(legacy_proxy)
+
         request_log.dispatch(
             "API_RESPONSE",
             "Api 获得响应",
             {"result": ret},
         )
-
-        if self.url == get_api("video")["info"]["get_player_info"]["url"] and (
-            sid := resp.cookies.get("sid")
-        ):
-            self.credential.sid = sid
-        if self.credential.proxy:
-            request_settings.set_proxy(legacy_proxy)
         return ret
 
     async def request(
-        self, raw: bool = False, byte: bool = False
-    ) -> Union[int, str, dict, bytes, None]:
+        self, raw: bool = False, byte: bool = False, bili_res: bool = False
+    ) -> Union[int, str, dict, bytes, BiliAPIResponse, None]:
         """
         向接口发送请求。
 
         Args:
-            raw  (bool): 是否不提取 data 或 result 字段。 Defaults to False.
-            byte (bool): 是否直接返回字节数据。 Defaults to False.
+            raw      (bool): 是否不提取 data 或 result 字段。 Defaults to False.
+            byte     (bool): 是否直接返回字节数据。 Defaults to False.
+            bili_res (bool): 是否直接返回 BiliAPIResponse 对象。 Defaults to False.
 
         Returns:
             接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
@@ -2511,7 +2515,7 @@ class Api:
                 )
             loop -= 1
             try:
-                return await self._request(raw=raw, byte=byte)
+                return await self._request(raw=raw, byte=byte, bili_res=bili_res)
             except ResponseCodeException as e:
                 # -403 时尝试重新获取 wbi_mixin_key 可能过期了
                 if e.code == -403 and self.wbi:
