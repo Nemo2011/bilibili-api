@@ -662,6 +662,10 @@ def parse_opus_dynamic(url: URL, credential: Credential) -> Union[Dynamic, int]:
 
 def parse_garb(url: URL, credential: Credential) -> Union[DLC, int]:
     # https://www.bilibili.com/blackboard/activity-Mz9T5bO5Q3.html?id=154&type=dlc&f_source=ogv&from=video.task
-    if url.host == "www.bilibili.com" and url.parts[:3] == ("/", "blackboard", "activity-Mz9T5bO5Q3.html"):
+    if url.host == "www.bilibili.com" and url.parts[:3] == (
+        "/",
+        "blackboard",
+        "activity-Mz9T5bO5Q3.html",
+    ):
         return DLC(act_id=int(url.query["id"]), credential=credential)
     return -1

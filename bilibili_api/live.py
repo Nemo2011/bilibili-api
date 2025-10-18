@@ -1222,6 +1222,7 @@ def parse_online_rank_v3(bt: bytes) -> dict:
             elif t == 8:
                 item["user_info"] = parse_user_info(reader.bytes_string())
         return item
+
     ret = {}
     br = BytesReader(stream=bt)
     while not br.has_end():
@@ -1609,7 +1610,7 @@ class LiveDanmaku(AsyncEvent):
 
                 # DANMU_MSG 事件名特殊：DANMU_MSG:4:0:2:2:2:0，需取出事件名，暂不知格式
                 if callback_info["type"].find("RECALL_DANMU_MSG") > -1:
-                    callback_info["type"]="RECALL_DANMU_MSG"
+                    callback_info["type"] = "RECALL_DANMU_MSG"
                     info["data"]["cmd"] = "RECALL_DANMU_MSG"
                 elif callback_info["type"].find("DANMU_MSG") > -1:
                     callback_info["type"] = "DANMU_MSG"
@@ -2017,9 +2018,7 @@ async def create_live_reserve(
     return await Api(**api, credential=credential).update_data(**data).result
 
 
-async def get_self_live_watching_history(
-    credential: Credential
-) -> dict:
+async def get_self_live_watching_history(credential: Credential) -> dict:
     """
     获取用户直播观看记录
 

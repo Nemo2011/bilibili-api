@@ -21,7 +21,7 @@ def __ensure_event_loop() -> None:
 
 
 def sync(
-    coroutine: Union[Coroutine[Any, Any, T], AsyncioFuture, ConcurrentFuture]
+    coroutine: Union[Coroutine[Any, Any, T], AsyncioFuture, ConcurrentFuture],
 ) -> T:
     """
     同步执行异步函数，使用可参考 [同步执行异步代码](https://nemo2011.github.io/bilibili-api/#/sync-executor)

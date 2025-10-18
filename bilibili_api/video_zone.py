@@ -141,7 +141,7 @@ def get_zone_list_sub() -> dict:
 
 
 async def get_zone_videos_count_today(
-    credential: Union[Credential, None] = None
+    credential: Union[Credential, None] = None,
 ) -> dict:
     """
     获取每个分区当日最新投稿数量

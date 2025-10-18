@@ -119,6 +119,7 @@ BILIBILI_API_VERSION = "17.3.0"
 def __register_all_clients():
     import importlib
     from .clients import ALL_PROVIDED_CLIENTS
+
     for module, client, settings in ALL_PROVIDED_CLIENTS[::-1]:
         try:
             importlib.import_module(module)

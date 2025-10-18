@@ -174,7 +174,10 @@ async def get_likes(
 
 
 async def get_at(
-    credential: Credential, last_uid: int = None, at_time: int = None, last_id: int = None
+    credential: Credential,
+    last_uid: int = None,
+    at_time: int = None,
+    last_id: int = None,
 ) -> dict:
     """
     获取收到的 AT

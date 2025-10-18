@@ -2173,7 +2173,11 @@ async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
             credential.buvid3, credential.buvid4, credential
         )
         await _active_buvid(
-            credential.buvid3, credential.buvid4, credential.buvid_fp, payload, credential
+            credential.buvid3,
+            credential.buvid4,
+            credential.buvid_fp,
+            payload,
+            credential,
         )
         request_log.dispatch(
             "ANTI_SPIDER",

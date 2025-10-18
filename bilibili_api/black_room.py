@@ -338,9 +338,7 @@ async def get_next_jury_case(credential: Credential) -> JuryCase:
     )
 
 
-async def get_jury_case_raw(
-    credential: Credential, pn: int = 1, ps: int = 20
-) -> dict:
+async def get_jury_case_raw(credential: Credential, pn: int = 1, ps: int = 20) -> dict:
     """
     获取仲裁案件列表
 

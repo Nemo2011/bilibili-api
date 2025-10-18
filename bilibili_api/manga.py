@@ -29,6 +29,7 @@ class MangaOrderType(Enum):
     - READING: 最近阅读
     - FREE: 等免
     """
+
     FOLLOW = {"order": 1, "wait_free": 0}
     UPDATE = {"order": 2, "wait_free": 0}
     READING = {"order": 3, "wait_free": 0}
@@ -409,7 +410,10 @@ async def set_follow_manga(
 
 
 async def get_followed_manga(
-    pn: int = 1, ps: int = 15, order: MangaOrderType = MangaOrderType.FOLLOW, credential: Optional[Credential] = None
+    pn: int = 1,
+    ps: int = 15,
+    order: MangaOrderType = MangaOrderType.FOLLOW,
+    credential: Optional[Credential] = None,
 ) -> List[Manga]:
     """
     获取追漫列表

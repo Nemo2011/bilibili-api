@@ -11,6 +11,7 @@ from colorama import Fore
 
 from bilibili_api import HEADERS, interactive_video, sync, video
 
+
 def download_interactive_video(bvid: str, out: str):
     ivideo = interactive_video.InteractiveVideo(bvid)
     downloader = interactive_video.InteractiveVideoDownloader(

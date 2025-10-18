@@ -504,7 +504,7 @@ class Video:
             "cid": cid,
             "from_client": "BROWSER",
             "web_location": 1315873,
-            "platform": "html5" if html5 else "pc"
+            "platform": "html5" if html5 else "pc",
         }
         return (
             await Api(**api, credential=self.credential, wbi=True)
@@ -1769,10 +1769,10 @@ class Video:
         return await Api(**api, credential=self.credential).update_data(**datas).result
 
     async def report_watch_history(
-            self,
-            progress: int = 0,
-            page_index: Union[int, None] = 0,
-            cid: Union[int, None] = None
+        self,
+        progress: int = 0,
+        page_index: Union[int, None] = 0,
+        cid: Union[int, None] = None,
     ) -> dict:
         """
         上报观看历史
@@ -1798,7 +1798,11 @@ class Video:
             "progress": progress,
             "csrf": self.credential.bili_jct,
         }
-        return await Api(**api, credential=self.credential).update_data(**data).request(raw=True)
+        return (
+            await Api(**api, credential=self.credential)
+            .update_data(**data)
+            .request(raw=True)
+        )
 
     async def report_start_watching(self, page_index: Union[int, None] = 0) -> dict:
         """
@@ -1826,7 +1830,12 @@ class Video:
             "part": page_index,
             "csrf": self.credential.bili_jct,
         }
-        return await Api(**api, credential=self.credential).update_data(**data).request(raw=True)
+        return (
+            await Api(**api, credential=self.credential)
+            .update_data(**data)
+            .request(raw=True)
+        )
+
 
 from .bangumi import Episode
 

@@ -17,7 +17,9 @@ access_ids = {}
 last_timestamp = {}
 
 
-async def get_user_dynamic_render_data(uid: int, credential: Credential) -> dict[str, Any]:
+async def get_user_dynamic_render_data(
+    uid: int, credential: Credential
+) -> dict[str, Any]:
     """
     获取用户动态页面加载静态渲染数据 获取部分接口需要的 w_webid 关键参数
 
@@ -30,15 +32,16 @@ async def get_user_dynamic_render_data(uid: int, credential: Credential) -> dict
     dynamic_url: str = "https://space.bilibili.com/{}/dynamic".format(uid)
 
     session = get_client()
-    response = await session.request(method="GET", url=dynamic_url,
-                                     headers=HEADERS, cookies=credential.get_cookies())
+    response = await session.request(
+        method="GET", url=dynamic_url, headers=HEADERS, cookies=credential.get_cookies()
+    )
     if response.code != 200:
         raise NetworkException(response.code, "")
 
     response_content_text: str = response.utf8_text()
     match: Match = RENDER_DATA_PATTERN.search(response_content_text)
     if match is None:
-        return None # 有的时候无需 w_webid
+        return None  # 有的时候无需 w_webid
 
     script_render_data: str = match.group(1)
     try:

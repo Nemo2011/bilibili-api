@@ -52,4 +52,3 @@ async def get_activity_aid(url: str) -> dict:
         int: 活动 aid，若活动无 aid 返回 -1
     """
     return int((await get_activity_info(url))["BaseInfo"].get("aid", "0"))
-

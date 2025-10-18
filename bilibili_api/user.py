@@ -728,7 +728,9 @@ class User:
         """
         api = API["info"]["all_followings"]
         params = {"mid": self.__uid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_followers(
         self, pn: int = 1, ps: int = 100, desc: bool = True
@@ -950,7 +952,10 @@ class User:
         channel_data = await self.get_channel_list(pn=pn, ps=20)
         season_list = channel_data["items_lists"]["seasons_list"]
         series_list = channel_data["items_lists"]["series_list"]
-        tot, cur = channel_data["items_lists"]["page"]["total"], channel_data["items_lists"]["page"]["page_size"]
+        tot, cur = (
+            channel_data["items_lists"]["page"]["total"],
+            channel_data["items_lists"]["page"]["page_size"],
+        )
         while cur < tot:
             pn += 1
             channel_data = await self.get_channel_list(pn=pn, ps=20)
