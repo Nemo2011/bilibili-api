@@ -25,7 +25,7 @@ import random
 import re
 import struct
 import time
-from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast, get_args
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 import urllib.parse
 
 from Cryptodome.Cipher import PKCS1_OAEP
@@ -33,7 +33,6 @@ from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
 from bs4 import BeautifulSoup
 import chompjs
-from curl_cffi import requests
 
 from ..exceptions import (
     ArgsException,
@@ -258,12 +257,16 @@ class RequestSettings:
         self.__wbi_retry_times = 3
         self.__enable_auto_buvid = True
         self.__enable_bili_ticket = False
+        self.__enable_buvid_global_persistence = False
+        self.__enable_bili_ticket_global_persistence = False
+        self.__enable_fpgen = False
+        self.__fpgen_args = {}
 
     def get(self, name: str) -> Any:
         """
         获取某项设置
 
-        不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
+        不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
 
         默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -279,7 +282,7 @@ class RequestSettings:
         """
         设置某项设置
 
-        不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
+        不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
 
         默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -420,6 +423,84 @@ class RequestSettings:
             enable_bili_ticket (bool): 是否使用 bili_ticket.
         """
         self.__enable_bili_ticket = enable_bili_ticket
+
+    def get_enable_buvid_global_persistence(self) -> bool:
+        """
+        获取设置的是否使用全局可持久化 buvid
+
+        Returns:
+            bool: 是否使用全局可持久化 buvid. Defalts to False.
+        """
+        return self.__enable_buvid_global_persistence
+
+    def set_enable_buvid_global_persistence(
+        self, enable_buvid_global_persistence: bool
+    ) -> None:
+        """
+        设置是否使用全局可持久化 buvid
+
+        Args:
+            enable_buvid_global_persistence (bool): 是否使用全局可持久化 buvid.
+        """
+        self.__enable_buvid_global_persistence = enable_buvid_global_persistence
+
+    def get_enable_bili_ticket_global_persistence(self) -> bool:
+        """
+        获取设置的是否使用全局可持久化 bili_ticket
+
+        Returns:
+            bool: 是否使用全局可持久化 bili_ticket. Defalts to False.
+        """
+        return self.__enable_bili_ticket_global_persistence
+
+    def set_enable_bili_ticket_global_persistence(
+        self, enable_bili_ticket_global_persistence: bool
+    ) -> None:
+        """
+        设置是否使用全局可持久化 buvid
+
+        Args:
+            enable_bili_ticket_global_persistence (bool): 是否使用全局可持久化 buvid.
+        """
+        self.__enable_bili_ticket_global_persistence = (
+            enable_bili_ticket_global_persistence
+        )
+
+    def get_enable_fpgen(self) -> bool:
+        """
+        获取是否使用 fpgen
+
+        Returns:
+            bool: 是否使用 fpgen. Defaults to False.
+        """
+        return self.__enable_fpgen
+
+    def set_enable_fpgen(self, enable_fpgen: bool) -> None:
+        """
+        设置是否使用 fpgen
+
+        Args:
+            enable_fpgen (bool): 是否使用 fpgen
+        """
+        self.__enable_fpgen = enable_fpgen
+
+    def get_fpgen_args(self) -> dict:
+        """
+        获取调用 fpgen 的参数
+
+        Returns:
+            dict: 调用 fpgen 的参数
+        """
+        return self.__fpgen_args
+
+    def set_fpgen_args(self, fpgen_args: dict) -> None:
+        """
+        设置调用 fpgen 的参数
+
+        Args:
+            fpgen_args (dict): 调用 fpgen 的参数
+        """
+        self.__fpgen_args = fpgen_args
 
     def get_all(self) -> dict:
         """
@@ -1135,6 +1216,23 @@ def _get_time_milli() -> int:
     return int(time.time() * 1000)
 
 
+def _gen_b_lsid() -> str:
+    return f"{random.randbytes(4).hex().upper()}_{hex(_get_time_milli())[2:].upper()}"
+
+
+def _gen_uuid_infoc() -> str:
+    def gen_part(x: int) -> str:
+        return "".join([random.choice(mp) for _ in range(x)])
+
+    t = _get_time_milli() % 100000
+    mp = list("123456789ABCDEF") + ["10"]
+    pck = [8, 4, 4, 4, 12]
+
+    return (
+        "-".join([gen_part(length) for length in pck]) + str(t).ljust(5, "0") + "infoc"
+    )
+
+
 class Credential:
     """
     凭据类，用于各种请求操作的验证。
@@ -1142,16 +1240,27 @@ class Credential:
     以下字段获取方式见 https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
     重要 cookies:
-        SESSDATA (sessdata); bili_jct; DedeUserId (dedeuserid); DedeUserId__ckMd5 (dedeuserid_ckmd5); sid
+     - `SESSDATA` (`sessdata`);
+     - `bili_jct`;
+     - `DedeUserId` (`dedeuserid`);
+     - `DedeUserId__ckMd5` (`dedeuserid_ckmd5`);
+     - `sid`
 
-    本地 cookies:
-        b_nut; b_lsid; uuid_infoc
+    本地生成 cookies:
+     - `b_nut`;
+     - `b_lsid`;
+     - `uuid_infoc`;
+     - `buvid_fp`
 
-    网络生成反爬 cookies:
-        buvid3; buvid4; buvid_fp; bili_ticket; bili_ticket_expires
+    网络请求生成反爬 cookies:
+     - `buvid3`;
+     - `buvid4`;
+     - `bili_ticket`;
+     - `bili_ticket_expires`
 
     非 cookies:
-        ac_time_value; proxy
+     - `ac_time_value` (存储在 Local Storage 中);
+     - `proxy` (请求时使用的代理)
     """
 
     _refresh_lock: asyncio.Lock = asyncio.Lock()
@@ -1219,31 +1328,10 @@ class Credential:
         self.ac_time_value = ac_time_value
         self.proxy = proxy
 
-    @staticmethod
-    def _gen_b_lsid() -> str:
-        return (
-            f"{random.randbytes(4).hex().upper()}_{hex(_get_time_milli())[2:].upper()}"
-        )
-
-    @staticmethod
-    def _gen_uuid_infoc() -> str:
-        def gen_part(x: int) -> str:
-            return "".join([random.choice(mp) for _ in range(x)])
-
-        t = _get_time_milli() % 100000
-        mp = list("123456789ABCDEF") + ["10"]
-        pck = [8, 4, 4, 4, 12]
-
-        return (
-            "-".join([gen_part(length) for length in pck])
-            + str(t).ljust(5, "0")
-            + "infoc"
-        )
-
     def gen_local_cookies(self) -> None:
         self.b_nut = str(int(time.time()))
-        self.b_lsid = self._gen_b_lsid()
-        self.uuid_infoc = self._gen_uuid_infoc()
+        self.b_lsid = _gen_b_lsid()
+        self.uuid_infoc = _gen_uuid_infoc()
 
     async def get_cookies(self) -> dict[str, str]:
         """
@@ -1267,7 +1355,9 @@ class Credential:
             "_uuid": self.uuid_infoc,
             "buvid4": self.buvid4,
             "bili_ticket": self.bili_ticket,
-            "bili_ticket_expires": str(self.bili_ticket_expires),
+            "bili_ticket_expires": (
+                str(self.bili_ticket_expires) if self.bili_ticket_expires else None
+            ),
             "buvid_fp": self.buvid_fp,
             "SESSDATA": self.sessdata,
             "bili_jct": self.bili_jct,
@@ -1279,14 +1369,20 @@ class Credential:
 
         return dict((k, v) for k, v in cookies.items() if v is not None)
 
-    async def get_buvid_cookies(self) -> dict:
+    def get_core_cookies(self) -> dict:
         """
-        获取请求 Cookies 字典，自动补充 buvid 字段
+        返回部分核心 cookies，需要登录获取，可用于复制 Credential 对象
 
-        Returns:
-            dict: 请求 Cookies 字典
+        包含 SESSDATA, bili_jct, sid, DedeUserID, ac_time_value
         """
-        return await self.get_cookies()
+        return {
+            "SESSDATA": self.sessdata,
+            "bili_jct": self.bili_jct,
+            "DedeUserID": self.dedeuserid,
+            "DedeUserID__ckMd5": self.dedeuserid_ckmd5,
+            "sid": self.sid,
+            "ac_time_value": self.ac_time_value,
+        }
 
     def has_dedeuserid(self) -> bool:
         """
@@ -1580,12 +1676,11 @@ browser_fingerprint = None
 def get_browser_fingerprint() -> dict:
     global browser_fingerprint
     if browser_fingerprint is None:
-        try:
+        if request_settings.get_enable_fpgen():
             import fpgen
-        except ImportError:
-            request_log.logger.warning(
-                "fpgen not installed. Using static browser fingerprint. Install 'fpgen' for dynamic fingerprinting."
-            )
+
+            browser_fingerprint = fpgen.generate(**request_settings.get_fpgen_args())
+        else:
             with open(
                 os.path.join(
                     os.path.dirname(__file__), "../data/browser_fingerprint.json"
@@ -1593,34 +1688,6 @@ def get_browser_fingerprint() -> dict:
                 encoding="utf-8",
             ) as f:
                 browser_fingerprint = json.load(f)
-                return browser_fingerprint
-
-        browser_fingerprint = fpgen.generate(
-            strict=True,
-            browser="Chrome",
-            os="Windows",
-            languages=["zh-CN", "zh"],
-            location={
-                "country": "CN",
-            },
-            client={
-                "browser": {
-                    "major": tuple(
-                        version
-                        for browser in cast(
-                            tuple[requests.impersonate.BrowserTypeLiteral, ...],
-                            get_args(requests.impersonate.BrowserTypeLiteral),
-                        )
-                        if (
-                            version_str := browser.removeprefix("chrome"),
-                            version_str != browser,
-                        )[-1]
-                        and version_str.isnumeric()
-                        and (version := int(version_str), version > 104)[-1]
-                    )
-                }
-            },
-        )
     return browser_fingerprint
 
 
@@ -2139,8 +2206,7 @@ async def _get_bili_ticket(credential: Credential) -> Optional[tuple[str, int]]:
 
 
 __wbi_mixin_key: Optional[str] = None
-__bili_ticket: Optional[str] = None
-__bili_ticket_expires: Optional[str] = None
+__credential = Credential(sessdata="global", bili_jct="global")
 
 
 def recalculate_wbi() -> None:
@@ -2153,7 +2219,7 @@ def recalculate_wbi() -> None:
 
 async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
     """
-    获取 buvid3 和 buvid4
+    获取 buvid3 和 buvid4，若提供凭据类将自动在 credential 中设置相关字段
 
     Args:
         credential (Credential, optional): 凭据. Defaults to None.
@@ -2161,6 +2227,31 @@ async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
     Returns:
         Tuple[str, str, str]: 第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
     """
+    global __credential
+    if (
+        request_settings.get_enable_buvid_global_persistence()
+        and credential
+        and credential.sessdata != "global"
+    ):
+        await get_buvid(__credential)
+        (
+            credential.buvid3,
+            credential.buvid4,
+            credential.buvid_fp,
+            credential.b_nut,
+            credential.b_lsid,
+            credential.uuid_infoc,
+        ) = (
+            __credential.buvid3,
+            __credential.buvid4,
+            __credential.buvid_fp,
+            __credential.b_nut,
+            __credential.b_lsid,
+            __credential.uuid_infoc,
+        )
+        return (credential.buvid3, credential.buvid4, credential.buvid_fp)
+    if request_settings.get_enable_buvid_global_persistence() and credential is None:
+        return await get_buvid(__credential)
     if credential is None:
         credential = Credential()
     if credential.buvid3 is None or credential.buvid4 is None:
@@ -2193,7 +2284,7 @@ async def get_bili_ticket(
     credential: Optional[Credential] = None,
 ) -> Optional[Tuple[str, str]]:
     """
-    获取 bili_ticket
+    获取 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段
 
     Args:
         credential (Credential, optional): 凭据. Defaults to None.
@@ -2201,6 +2292,23 @@ async def get_bili_ticket(
     Returns:
         Tuple[str, str]: bili_ticket, bili_ticket_expires
     """
+    global __credential
+    if (
+        request_settings.get_enable_bili_ticket_global_persistence()
+        and credential
+        and credential.sessdata != "global"
+    ):
+        await get_bili_ticket(__credential)
+        credential.bili_ticket, credential.bili_ticket_expires = (
+            __credential.bili_ticket,
+            __credential.bili_ticket_expires,
+        )
+        return credential.bili_ticket, str(credential.bili_ticket_expires)
+    if (
+        request_settings.get_enable_bili_ticket_global_persistence()
+        and credential is None
+    ):
+        return await get_bili_ticket(__credential)
     if credential is None:
         credential = Credential()
     if (
@@ -2562,6 +2670,29 @@ async def bili_simple_download(url: str, out: str, intro: str):
             if bts == tot:
                 break
     print()
+
+
+def configure_dynamic_fingerprint(os: str, browser: str, version: int) -> None:
+    """
+    快速设置 curl_cffi + fpgen 浏览器模拟
+
+    Args:
+        os (str): 系统
+        browser (str): 浏览器
+        version (int): 浏览器版本
+    """
+    select_client("curl_cffi")
+    request_settings.set("impersonate", browser.lower() + str(version))
+    fpgen_args = {
+        "strict": True,
+        "browser": browser.title(),
+        "os": os,
+        "languages": ["zh-CN", "zh"],
+        "location": {"country": "CN"},
+        "client": {"browser": {"major": version}},
+    }
+    request_settings.set_enable_fpgen(True)
+    request_settings.set_fpgen_args(fpgen_args)
 
 
 ################################################## END Api ##################################################

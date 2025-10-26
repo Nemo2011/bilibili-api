@@ -64,7 +64,7 @@ async def search_garb_dlc_raw(
         "key_word": keyword,
         "pn": pn,
         "ps": ps,
-        "csrf": (await credential.get_cookies())["bili_jct"],
+        "csrf": credential.get_core_cookies()["bili_jct"],
     }
     return await Api(**api, credential=credential).update_params(**params).result
 
@@ -119,7 +119,7 @@ class DLC:
             api = API["dlc"]["basic"]
             params = {
                 "act_id": self.__act_id,
-                "csrf": (await self.credential.get_cookies())["bili_jct"],
+                "csrf": self.credential.get_core_cookies()["bili_jct"],
             }
             self.__basic_info = (
                 await Api(**api, credential=self.credential)
@@ -151,7 +151,7 @@ class DLC:
         params = {
             "act_id": self.__act_id,
             "lottery_id": await self.get_lottery_id(),
-            "csrf": (await self.credential.get_cookies())["bili_jct"],
+            "csrf": self.credential.get_core_cookies()["bili_jct"],
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -205,7 +205,7 @@ class Garb:
         api = API["garb"]["detail"]
         params = {
             "item_id": self.__item_id,
-            "csrf": (await self.credential.get_cookies())["bili_jct"],
+            "csrf": self.credential.get_core_cookies()["bili_jct"],
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -300,7 +300,7 @@ async def get_garb_dlc_items_raw(
         "sort_type": sort.value,
         "pn": pn,
         "ps": ps,
-        "csrf": (await credential.get_cookies())["bili_jct"],
+        "csrf": credential.get_core_cookies()["bili_jct"],
     }
     params.update(type_.value)
     return await Api(**api, credential=credential).update_params(**params).result

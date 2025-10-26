@@ -33,7 +33,7 @@ async def get_user_dynamic_render_data(
 
     session = get_client()
     response = await session.request(
-        method="GET", url=dynamic_url, headers=HEADERS, cookies=credential.get_cookies()
+        method="GET", url=dynamic_url, headers=HEADERS, cookies=await credential.get_cookies()
     )
     if response.code != 200:
         raise NetworkException(response.code, "")

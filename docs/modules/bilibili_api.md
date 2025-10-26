@@ -34,9 +34,9 @@ from bilibili_api import ...
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def check\_refresh()](#async-def-check\_refresh)
   - [async def check\_valid()](#async-def-check\_valid)
-  - [def from\_cookies()](#def-from\_cookies)
-  - [async def get\_buvid\_cookies()](#async-def-get\_buvid\_cookies)
-  - [def get\_cookies()](#def-get\_cookies)
+  - [def gen\_local\_cookies()](#def-gen\_local\_cookies)
+  - [async def get\_cookies()](#async-def-get\_cookies)
+  - [def get\_core\_cookies()](#def-get\_core\_cookies)
   - [def has\_ac\_time\_value()](#def-has\_ac\_time\_value)
   - [def has\_bili\_jct()](#def-has\_bili\_jct)
   - [def has\_buvid3()](#def-has\_buvid3)
@@ -105,6 +105,7 @@ from bilibili_api import ...
 - [def aid2bvid()](#def-aid2bvid)
 - [async def bili\_simple\_download()](#async-def-bili\_simple\_download)
 - [def bvid2aid()](#def-bvid2aid)
+- [def configure\_dynamic\_fingerprint()](#def-configure\_dynamic\_fingerprint)
 - [def get\_available\_settings()](#def-get\_available\_settings)
 - [async def get\_bili\_ticket()](#async-def-get\_bili\_ticket)
 - [async def get\_buvid()](#async-def-get\_buvid)
@@ -116,8 +117,6 @@ from bilibili_api import ...
 - [def get\_session()](#def-get\_session)
 - [async def parse\_link()](#async-def-parse\_link)
 - [def recalculate\_wbi()](#def-recalculate\_wbi)
-- [def refresh\_bili\_ticket()](#def-refresh\_bili\_ticket)
-- [def refresh\_buvid()](#def-refresh\_buvid)
 - [def register\_client()](#def-register\_client)
 - [var request\_log](#var-request\_log)
   - [def get\_ignore\_events()](#def-get\_ignore\_events)
@@ -131,6 +130,10 @@ from bilibili_api import ...
   - [def get\_all()](#def-get\_all)
   - [def get\_enable\_auto\_buvid()](#def-get\_enable\_auto\_buvid)
   - [def get\_enable\_bili\_ticket()](#def-get\_enable\_bili\_ticket)
+  - [def get\_enable\_bili\_ticket\_global\_persistence()](#def-get\_enable\_bili\_ticket\_global\_persistence)
+  - [def get\_enable\_buvid\_global\_persistence()](#def-get\_enable\_buvid\_global\_persistence)
+  - [def get\_enable\_fpgen()](#def-get\_enable\_fpgen)
+  - [def get\_fpgen\_args()](#def-get\_fpgen\_args)
   - [def get\_proxy()](#def-get\_proxy)
   - [def get\_timeout()](#def-get\_timeout)
   - [def get\_trust\_env()](#def-get\_trust\_env)
@@ -139,6 +142,10 @@ from bilibili_api import ...
   - [def set()](#def-set)
   - [def set\_enable\_auto\_buvid()](#def-set\_enable\_auto\_buvid)
   - [def set\_enable\_bili\_ticket()](#def-set\_enable\_bili\_ticket)
+  - [def set\_enable\_bili\_ticket\_global\_persistence()](#def-set\_enable\_bili\_ticket\_global\_persistence)
+  - [def set\_enable\_buvid\_global\_persistence()](#def-set\_enable\_buvid\_global\_persistence)
+  - [def set\_enable\_fpgen()](#def-set\_enable\_fpgen)
+  - [def set\_fpgen\_args()](#def-set\_fpgen\_args)
   - [def set\_proxy()](#def-set\_proxy)
   - [def set\_timeout()](#def-set\_timeout)
   - [def set\_trust\_env()](#def-set\_trust\_env)
@@ -589,6 +596,31 @@ Cookies 刷新错误。
 
 凭据类，用于各种请求操作的验证。
 
+以下字段获取方式见 https://nemo2011.github.io/bilibili-api/#/get-credential.md
+
+重要 cookies:
+ - `SESSDATA` (`sessdata`);
+ - `bili_jct`;
+ - `DedeUserId` (`dedeuserid`);
+ - `DedeUserId__ckMd5` (`dedeuserid_ckmd5`);
+ - `sid`
+
+本地生成 cookies:
+ - `b_nut`;
+ - `b_lsid`;
+ - `uuid_infoc`;
+ - `buvid_fp`
+
+网络请求生成反爬 cookies:
+ - `buvid3`;
+ - `buvid4`;
+ - `bili_ticket`;
+ - `bili_ticket_expires`
+
+非 cookies:
+ - `ac_time_value` (存储在 Local Storage 中);
+ - `proxy` (请求时使用的代理)
+
 
 
 
@@ -601,10 +633,12 @@ Cookies 刷新错误。
 | - | - | - |
 | `sessdata` | `str \| None, optional` | 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None. |
 | `bili_jct` | `str \| None, optional` | 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None. |
-| `buvid3` | `str \| None, optional` | 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None. |
-| `buvid4` | `str \| None, optional` | 浏览器 Cookies 中的 BUVID4 字段值. Defaults to None. |
+| `buvid3` | `str \| None, optional` | 浏览器 Cookies 中的 buvid3 字段值. Defaults to None. |
+| `buvid4` | `str \| None, optional` | 浏览器 Cookies 中的 buvid4 字段值. Defaults to None. |
 | `dedeuserid` | `str \| None, optional` | 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None. |
-| `ac_time_value` | `str \| None, optional` | 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None. |
+| `dedeuserid_ckmd5` | `str \| None, optional` | 浏览器 Cookies 中的 DedeUserID__ckMd5 字段值. Defaults to None. |
+| `sid` | `str \| None, optional` | 浏览器 Cookies 中的 sid 字段值. Defaults to None. |
+| `ac_time_value` | `str \| None, optional` | 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None. |
 | `proxy` | `str \| None, optional` | 凭据类可选择携带的代理. Defaults to None. |
 
 
@@ -630,29 +664,10 @@ Cookies 刷新错误。
 
 
 
-**@staticmethod** 
-
-### def from_cookies()
-
-从 cookies 新建 Credential
-
-
-| name | type | description |
-| - | - | - |
-| `cookies` | `Dict, optional` | Cookies. Defaults to {}. |
-
-**Returns:** `Credential`:  凭据类
+### def gen_local_cookies()
 
 
 
-
-### async def get_buvid_cookies()
-
-获取请求 Cookies 字典，自动补充 buvid 字段
-
-
-
-**Returns:** `dict`:  请求 Cookies 字典
 
 
 
@@ -664,6 +679,17 @@ Cookies 刷新错误。
 
 
 **Returns:** `dict`:  请求 Cookies 字典
+
+
+
+
+### def get_core_cookies()
+
+返回部分核心 cookies，需要登录获取，可用于复制 Credential 对象
+
+包含 SESSDATA, bili_jct, sid, DedeUserID, ac_time_value
+
+
 
 
 
@@ -1511,6 +1537,22 @@ BV 号转 AV 号。
 
 ---
 
+## def configure_dynamic_fingerprint()
+
+快速设置 curl_cffi + fpgen 浏览器模拟
+
+
+| name | type | description |
+| - | - | - |
+| `os` | `str` | 系统 |
+| `browser` | `str` | 浏览器 |
+| `version` | `int` | 浏览器版本 |
+
+
+
+
+---
+
 ## def get_available_settings()
 
 获取当前支持的设置项
@@ -1526,7 +1568,7 @@ BV 号转 AV 号。
 
 ## async def get_bili_ticket()
 
-获取 bili_ticket
+获取 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段
 
 
 | name | type | description |
@@ -1542,11 +1584,14 @@ BV 号转 AV 号。
 
 ## async def get_buvid()
 
-获取 buvid3 和 buvid4
+获取 buvid3 和 buvid4，若提供凭据类将自动在 credential 中设置相关字段
 
 
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential, optional` | 凭据. Defaults to None. |
 
-**Returns:** `Tuple[str, str]`:  第 0 项为 buvid3，第 1 项为 buvid4。
+**Returns:** `Tuple[str, str, str]`:  第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
 
 
 
@@ -1804,7 +1849,7 @@ async def handle(desc: str, data: dict) -> None:
 
 获取某项设置
 
-不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
+不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
 
 默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -1838,6 +1883,61 @@ async def handle(desc: str, data: dict) -> None:
 
 
 **Returns:** `bool`:  是否自动生成 buvid. Defaults to True.
+
+
+
+
+### def get_enable_bili_ticket()
+
+获取设置的是否使用 bili_ticket
+
+
+
+**Returns:** `bool`:  是否使用 bili_ticket. Defaults to True.
+
+
+
+
+### def get_enable_bili_ticket_global_persistence()
+
+获取设置的是否使用全局可持久化 bili_ticket
+
+
+
+**Returns:** `bool`:  是否使用全局可持久化 bili_ticket. Defalts to False.
+
+
+
+
+### def get_enable_buvid_global_persistence()
+
+获取设置的是否使用全局可持久化 buvid
+
+
+
+**Returns:** `bool`:  是否使用全局可持久化 buvid. Defalts to False.
+
+
+
+
+### def get_enable_fpgen()
+
+获取是否使用 fpgen
+
+
+
+**Returns:** `bool`:  是否使用 fpgen. Defaults to False.
+
+
+
+
+### def get_fpgen_args()
+
+获取调用 fpgen 的参数
+
+
+
+**Returns:** `dict`:  调用 fpgen 的参数
 
 
 
@@ -1901,7 +2001,7 @@ async def handle(desc: str, data: dict) -> None:
 
 设置某项设置
 
-不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
+不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
 
 默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -1922,6 +2022,66 @@ async def handle(desc: str, data: dict) -> None:
 | name | type | description |
 | - | - | - |
 | `enable_auto_buvid` | `bool` | 是否自动生成 buvid. |
+
+
+
+
+### def set_enable_bili_ticket()
+
+设置是否使用 bili_ticket
+
+
+| name | type | description |
+| - | - | - |
+| `enable_bili_ticket` | `bool` | 是否使用 bili_ticket. |
+
+
+
+
+### def set_enable_bili_ticket_global_persistence()
+
+设置是否使用全局可持久化 buvid
+
+
+| name | type | description |
+| - | - | - |
+| `enable_bili_ticket_global_persistence` | `bool` | 是否使用全局可持久化 buvid. |
+
+
+
+
+### def set_enable_buvid_global_persistence()
+
+设置是否使用全局可持久化 buvid
+
+
+| name | type | description |
+| - | - | - |
+| `enable_buvid_global_persistence` | `bool` | 是否使用全局可持久化 buvid. |
+
+
+
+
+### def set_enable_fpgen()
+
+设置是否使用 fpgen
+
+
+| name | type | description |
+| - | - | - |
+| `enable_fpgen` | `bool` | 是否使用 fpgen |
+
+
+
+
+### def set_fpgen_args()
+
+设置调用 fpgen 的参数
+
+
+| name | type | description |
+| - | - | - |
+| `fpgen_args` | `Dict` | 调用 fpgen 的参数 |
 
 
 

@@ -41,6 +41,7 @@ from .utils.network import (
     # api
     HEADERS,
     bili_simple_download,
+    configure_dynamic_fingerprint,
 )
 from .utils.AsyncEvent import AsyncEvent
 from .utils.geetest import Geetest, GeetestMeta, GeetestType
@@ -190,6 +191,7 @@ __all__ = [
     "cheese",
     "client",
     "comment",
+    "configure_dynamic_fingerprint",
     "creative_center",
     "dynamic",
     "emoji",
