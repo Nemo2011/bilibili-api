@@ -190,6 +190,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 | `neutral_mark` | `Optional[str]` | 创作者声明，可选 |
 | `delay_time` | `Optional[Union[int, datetime]]` | 定时发布时间，可选 |
 | `porder` | `Optional[VideoPorderMeta]` | 商业相关参数，可选 |
+| `watermark` | `Optional[bool]` | 是否添加水印，可选 |
 
 
 ### async def verify()
