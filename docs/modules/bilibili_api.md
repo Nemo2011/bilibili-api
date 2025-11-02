@@ -647,8 +647,7 @@ Cookies 刷新错误。
  - `bili_ticket_expires`
 
 非 cookies:
- - `ac_time_value` (存储在 Local Storage 中);
- - `proxy` (请求时使用的代理)
+ - `ac_time_value` (存储在 Local Storage 中)
 
 
 
@@ -668,7 +667,6 @@ Cookies 刷新错误。
 | `dedeuserid_ckmd5` | `str \| None, optional` | 浏览器 Cookies 中的 DedeUserID__ckMd5 字段值. Defaults to None. |
 | `sid` | `str \| None, optional` | 浏览器 Cookies 中的 sid 字段值. Defaults to None. |
 | `ac_time_value` | `str \| None, optional` | 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None. |
-| `proxy` | `str \| None, optional` | 凭据类可选择携带的代理. Defaults to None. |
 
 
 ### async def check_refresh()

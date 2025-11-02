@@ -1851,8 +1851,7 @@ class Credential:
      - `bili_ticket_expires`
 
     非 cookies:
-     - `ac_time_value` (存储在 Local Storage 中);
-     - `proxy` (请求时使用的代理)
+     - `ac_time_value` (存储在 Local Storage 中)
     """
 
     _refresh_lock: asyncio.Lock = asyncio.Lock()
@@ -1875,7 +1874,6 @@ class Credential:
         dedeuserid_ckmd5: Union[str, None] = None,
         sid: Union[str, None] = None,
         ac_time_value: Union[str, None] = None,
-        proxy: Union[str, None] = None,
     ) -> None:
         """
         各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
@@ -1896,8 +1894,6 @@ class Credential:
             sid (str | None, optional)             : 浏览器 Cookies 中的 sid 字段值. Defaults to None.
 
             ac_time_value (str | None, optional)   : 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None.
-
-            proxy (str | None, optional): 凭据类可选择携带的代理. Defaults to None.
         """
         if (buvid3 or buvid4) and not (buvid3 and buvid4):
             raise ValueError("Buvid3 and buvid4 should be provided at the same time.")
@@ -1918,7 +1914,6 @@ class Credential:
         self.dedeuserid_ckmd5 = dedeuserid_ckmd5
         self.sid = sid
         self.ac_time_value = ac_time_value
-        self.proxy = proxy
 
     def gen_local_cookies(self) -> None:
         self.b_nut = str(int(time.time()))
@@ -3165,11 +3160,6 @@ class Api:
             self.__dict__,
         )
 
-        legacy_proxy = None
-        if self.credential.proxy:
-            legacy_proxy = request_settings.get_proxy()
-            request_settings.set_proxy(self.credential.proxy)
-
         config: dict = await self._prepare_request()
         client: BiliAPIClient = get_client()
         resp: BiliAPIResponse = await client.request(**config)
@@ -3181,9 +3171,6 @@ class Api:
             ret = resp
         else:
             ret = self._process_response(resp=resp, raw=raw)
-
-        if self.credential.proxy:
-            request_settings.set_proxy(legacy_proxy)
 
         request_log.dispatch(
             "API_RESPONSE",
