@@ -136,7 +136,7 @@ class Opus:
             if module.get("module_content"):
                 content = module
 
-        markdown = f'# {title["module_title"]["text"]}\n\n'
+        markdown = f"# {title['module_title']['text']}\n\n"
 
         for para in content["module_content"]["paragraphs"]:
             para_raw = ""

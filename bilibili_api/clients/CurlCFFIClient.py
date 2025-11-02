@@ -121,7 +121,7 @@ class CurlCFFIClient(BiliAPIClient):
                 multipart.addpart(
                     name=key,
                     content_type=item.mime_type,
-                    filename=f'{cnt}.{item.path.split(".")[1]}',
+                    filename=f"{cnt}.{item.path.split('.')[1]}",
                     local_path=item.path,
                 )
                 cnt += 1

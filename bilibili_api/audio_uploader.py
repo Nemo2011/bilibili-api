@@ -572,7 +572,7 @@ class AudioUploader(AsyncEvent):
             )
             raise ApiException(json.dumps(preupload))
 
-        url = f'https:{preupload["endpoint"]}/{preupload["upos_uri"].removeprefix("upos://")}'
+        url = f"https:{preupload['endpoint']}/{preupload['upos_uri'].removeprefix('upos://')}"
         headers = HEADERS.copy()
         headers["x-upos-auth"] = preupload["auth"]
 

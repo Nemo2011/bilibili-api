@@ -84,7 +84,9 @@ class ResourceType(Enum):
     FAILED = "failed"
 
 
-async def parse_link(url: str, credential: Union[Credential, None] = None) -> Union[
+async def parse_link(
+    url: str, credential: Union[Credential, None] = None
+) -> Union[
     Tuple[Video, Literal[ResourceType.VIDEO]],
     Tuple[InteractiveVideo, Literal[ResourceType.INTERACTIVE_VIDEO]],
     Tuple[Bangumi, Literal[ResourceType.BANGUMI]],
@@ -153,7 +155,8 @@ async def parse_link(url: str, credential: Union[Credential, None] = None) -> Un
                 return (User(info["mid"], credential=credential), ResourceType.USER)
 
         channel = parse_season_series(
-            url, credential  # type: ignore
+            url,
+            credential,  # type: ignore
         )  # 不需要 real_url，提前处理
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES)  # type: ignore
@@ -259,7 +262,9 @@ async def auto_convert_video(
     return (video, ResourceType.VIDEO)
 
 
-async def check_short_name(name: str, credential: Credential) -> Union[
+async def check_short_name(
+    name: str, credential: Credential
+) -> Union[
     Tuple[Video, Literal[ResourceType.VIDEO]],
     Tuple[Episode, Literal[ResourceType.EPISODE]],
     Tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]],
@@ -643,7 +648,11 @@ def parse_note(url: URL, credential: Credential) -> Union[Note, int]:
     if url.host == "www.bilibili.com" and url.parts[1:4] == ("h5", "note-app", "view"):
         if url.query.get("cvid") == None:
             return -1
-        return Note(cvid=int(url.query.get("cvid")), note_type=NoteType.PUBLIC, credential=credential)  # type: ignore
+        return Note(
+            cvid=int(url.query.get("cvid")),
+            note_type=NoteType.PUBLIC,
+            credential=credential,
+        )  # type: ignore
     return -1
 
 

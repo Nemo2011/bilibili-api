@@ -43,7 +43,7 @@ async def upload_cover(cover: Picture, credential: Credential) -> str:
     pic = cover if isinstance(cover, Picture) else Picture().from_file(cover)
     cover = pic.convert_format("png")
     data = {
-        "cover": f'data:image/png;base64,{base64.b64encode(pic.content).decode("utf-8")}'
+        "cover": f"data:image/png;base64,{base64.b64encode(pic.content).decode('utf-8')}"
     }
     return (await Api(**api, credential=credential).update_data(**data).result)["url"]
 
@@ -91,7 +91,7 @@ async def _probe() -> dict:
         try:
             await client.request(
                 method="POST",
-                url=f'https:{line["probe_url"]}',
+                url=f"https:{line['probe_url']}",
                 data=data,
             )
             cost_time = time.perf_counter() - start
@@ -653,7 +653,7 @@ class VideoMeta:
         # await self._pre() # 缓存于 bilibili_api\data\video_uploader_meta_pre.json
         error_tags = await self._check_tags()
         if len(error_tags) != 0:
-            raise ValueError(f'以下 tags 不合法: {",".join(error_tags)}')
+            raise ValueError(f"以下 tags 不合法: {','.join(error_tags)}")
 
         if not self._check_tid():
             raise ValueError(f"tid {self.tid} 不合法")
@@ -750,7 +750,9 @@ class VideoUploader(AsyncEvent):
         self.cover = (
             self.meta.cover
             if isinstance(self.meta, VideoMeta)
-            else cover if isinstance(cover, Picture) else Picture().from_file(cover)
+            else cover
+            if isinstance(cover, Picture)
+            else Picture().from_file(cover)
         )
         self.line = line
         self.__task: Union[Task, None] = None
@@ -1078,14 +1080,14 @@ class VideoUploader(AsyncEvent):
             r"//upos-(sz|cs)-upcdn(bda2|ws|qn)\.bilivideo\.com", preupload["endpoint"]
         ):
             preupload["endpoint"] = re.sub(
-                r"upcdn(bda2|qn|ws)", f'upcdn{line["upcdn"]}', preupload["endpoint"]
+                r"upcdn(bda2|qn|ws)", f"upcdn{line['upcdn']}", preupload["endpoint"]
             )
         return preupload  # tbh not needed since it is ref type
 
     @staticmethod
     def _get_upload_url(preupload: dict) -> str:
         # 上传目标 URL
-        return f'https:{preupload["endpoint"]}/{preupload["upos_uri"].removeprefix("upos://")}'
+        return f"https:{preupload['endpoint']}/{preupload['upos_uri'].removeprefix('upos://')}"
 
     async def _upload_chunk(
         self,
@@ -1249,7 +1251,7 @@ class VideoUploader(AsyncEvent):
         data = resp.json()
 
         if data["OK"] != 1:
-            err = ResponseCodeException(-1, f'提交分 P 失败，原因: {data["message"]}')
+            err = ResponseCodeException(-1, f"提交分 P 失败，原因: {data['message']}")
             self.dispatch(
                 VideoUploaderEvents.PAGE_SUBMIT_FAILED.value,
                 {"page": page, "err": err},

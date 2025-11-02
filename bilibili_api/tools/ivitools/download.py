@@ -26,15 +26,15 @@ def download_interactive_video(bvid: str, out: str):
 
     @downloader.on("GET")
     async def on_get(data):
-        print(f'Get node {data["title"]} (node_id: {data["node_id"]}). ')
+        print(f"Get node {data['title']} (node_id: {data['node_id']}). ")
 
     @downloader.on("PREPARE_DOWNLOAD")
     async def on_prepare_download(data):
-        print(f'Start download the video for cid {data["cid"]}')
+        print(f"Start download the video for cid {data['cid']}")
 
     @downloader.on("DOWNLOAD_PART")
     async def on_download_part(data):
-        print(f'{data["done"]} / {data["total"]}', end="\r")
+        print(f"{data['done']} / {data['total']}", end="\r")
 
     @downloader.on("DOWNLOAD_SUCCESS")
     async def on_download_success(adta):

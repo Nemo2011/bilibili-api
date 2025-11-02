@@ -59,7 +59,7 @@ class UposFileUploader:
         self.file = file
         self.preupload = preupload
         self._upload_id = preupload["upload_id"]
-        self._upload_url = f'https:{preupload["endpoint"]}/{preupload["upos_uri"].removeprefix("upos://")}'
+        self._upload_url = f"https:{preupload['endpoint']}/{preupload['upos_uri'].removeprefix('upos://')}"
         self._session = get_client()
 
     async def upload(self) -> dict:
@@ -231,5 +231,5 @@ class UposFileUploader:
         data = resp.json()
 
         if data["OK"] != 1:
-            err = ResponseCodeException(-1, f'提交分 P 失败，原因: {data["message"]}')
+            err = ResponseCodeException(-1, f"提交分 P 失败，原因: {data['message']}")
             raise err

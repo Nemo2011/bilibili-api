@@ -2034,8 +2034,8 @@ class VideoOnlineMonitor(AsyncEvent):
 
             elif d["type"] == VideoOnlineMonitor.Datapack.SERVER_HEARTBEAT.value:
                 # 心跳包反馈，同时包含在线人数。
-                self.logger.debug(f'收到服务器心跳包反馈，编号：{d["number"]}')
-                self.logger.info(f'实时观看人数：{d["data"]["data"]["room"]["online"]}')
+                self.logger.debug(f"收到服务器心跳包反馈，编号：{d['number']}")
+                self.logger.info(f"实时观看人数：{d['data']['data']['room']['online']}")
                 self.dispatch("ONLINE", d["data"])
 
             elif d["type"] == VideoOnlineMonitor.Datapack.DANMAKU.value:

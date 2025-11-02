@@ -351,7 +351,9 @@ class Article:
                             node = FontSizeNode()
                             node_list.append(node)
 
-                            node.size = int(re.search(r"font-size-(\d\d)", className)[1])  # type: ignore
+                            node.size = int(
+                                re.search(r"font-size-(\d\d)", className)[1]
+                            )  # type: ignore
                             node.children = await parse(e)
 
                         elif "color" in className:

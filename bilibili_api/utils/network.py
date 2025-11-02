@@ -29,8 +29,7 @@ from functools import reduce
 from inspect import iscoroutinefunction, isfunction
 from json import scanner
 from json.decoder import scanstring
-from typing import (Any, Callable, Coroutine, Dict, List, Optional, Tuple,
-                    Type, Union)
+from typing import Any, Callable, Coroutine, Dict, List, Optional, Tuple, Type, Union
 
 import chompjs
 from bs4 import BeautifulSoup
@@ -38,15 +37,21 @@ from Cryptodome.Cipher import PKCS1_OAEP
 from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
 
-from ..exceptions import (ArgsException, CookiesRefreshException,
-                          CredentialNoAcTimeValueException,
-                          CredentialNoBiliJctException,
-                          CredentialNoBuvid3Exception,
-                          CredentialNoBuvid4Exception,
-                          CredentialNoDedeUserIDException,
-                          CredentialNoSessdataException, ExClimbWuzhiException,
-                          FilterException, NetworkException,
-                          ResponseCodeException, WbiRetryTimesExceedException)
+from ..exceptions import (
+    ArgsException,
+    CookiesRefreshException,
+    CredentialNoAcTimeValueException,
+    CredentialNoBiliJctException,
+    CredentialNoBuvid3Exception,
+    CredentialNoBuvid4Exception,
+    CredentialNoDedeUserIDException,
+    CredentialNoSessdataException,
+    ExClimbWuzhiException,
+    FilterException,
+    NetworkException,
+    ResponseCodeException,
+    WbiRetryTimesExceedException,
+)
 from .AsyncEvent import AsyncEvent
 from .utils import get_api, raise_for_statement
 
@@ -1160,7 +1165,9 @@ class _BiliAPIClient:
                             raise FilterException("pre", pre["name"])
                     if pre["async_function"]:
                         try:
-                            flag, after_filter = await pre["async_function"](self, key, kwargs)
+                            flag, after_filter = await pre["async_function"](
+                                self, key, kwargs
+                            )
                         except:
                             raise FilterException("pre", pre["name"])
                     if flag == BiliFilterFlags.SET_PARAMS:
@@ -1192,12 +1199,16 @@ class _BiliAPIClient:
                     request_log.dispatch("DO_POST_FILTER", "执行后置过滤器", log)
                     if post["function"]:
                         try:
-                            flag, after_filter = post["function"](self, key, ret, kwargs)
+                            flag, after_filter = post["function"](
+                                self, key, ret, kwargs
+                            )
                         except:
                             raise FilterException("post", post["name"])
                     if post["async_function"]:
                         try:
-                            flag, after_filter = await post["async_function"](self, key, ret, kwargs)
+                            flag, after_filter = await post["async_function"](
+                                self, key, ret, kwargs
+                            )
                         except:
                             raise FilterException("post", post["name"])
                     if flag == BiliFilterFlags.SET_RETURN:
@@ -1532,7 +1543,10 @@ def get_registered_pre_filters(
     ret = []
     for pre in pres:
         if (
-            ((pre["on"] and func in pre["on"]) and (pre["clients"] and client in pre["clients"]))
+            (
+                (pre["on"] and func in pre["on"])
+                and (pre["clients"] and client in pre["clients"])
+            )
             or (pre["trigger"] and pre["trigger"](client, func))
         ) and pre["function"]:
             ret.append(pre)
@@ -1559,7 +1573,10 @@ def get_registered_post_filters(
     ret = []
     for post in posts:
         if (
-            ((post["on"] and func in post["on"]) and (post["clients"] and client in post["clients"]))
+            (
+                (post["on"] and func in post["on"])
+                and (post["clients"] and client in post["clients"])
+            )
             or (post["trigger"] and post["trigger"](client, func))
         ) and post["function"]:
             ret.append(post)
@@ -1588,7 +1605,10 @@ async def async_get_registered_pre_filters(
     ret = []
     for pre in pres:
         if (
-            ((pre["on"] and func in pre["on"]) and (pre["clients"] and client in pre["clients"]))
+            (
+                (pre["on"] and func in pre["on"])
+                and (pre["clients"] and client in pre["clients"])
+            )
             or (pre["trigger"] and pre["trigger"](client, func))
             or (pre["async_trigger"] and await pre["async_trigger"](client, func))
         ) and (pre["function"] or pre["async_function"]):
@@ -1618,7 +1638,10 @@ async def async_get_registered_post_filters(
     ret = []
     for post in posts:
         if (
-            ((post["on"] and func in post["on"]) and (post["clients"] and client in post["clients"]))
+            (
+                (post["on"] and func in post["on"])
+                and (post["clients"] and client in post["clients"])
+            )
             or (post["trigger"] and post["trigger"](client, func))
             or (post["async_trigger"] and await post["async_trigger"](client, func))
         ) and (post["function"] or post["async_function"]):
@@ -2283,9 +2306,7 @@ class _CookieJsonDecoder(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parse_string = self.cookie_scanstring
-        self.scan_once = scanner.py_make_scanner(
-            self
-        )  # pyright: ignore[reportAttributeAccessIssue]
+        self.scan_once = scanner.py_make_scanner(self)  # pyright: ignore[reportAttributeAccessIssue]
 
     @staticmethod
     def cookie_scanstring(*args, **kwargs):

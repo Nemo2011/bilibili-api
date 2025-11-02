@@ -1210,11 +1210,26 @@ class InteractiveVideoDownloader(AsyncEvent):
                     for cur_node_child in cur_node_children:
                         script_label = ""
                         if cur_node_child.get_jumping_condition().get_condition() != "":  # type: ignore
-                            script_label = script_label + "Condition: [" + cur_node_child.get_jumping_condition().get_condition() + "]"  # type: ignore
+                            script_label = (
+                                script_label
+                                + "Condition: ["
+                                + cur_node_child.get_jumping_condition().get_condition()
+                                + "]"
+                            )  # type: ignore
                             if cur_node_child.get_jumping_command().get_command() != "":  # type: ignore
-                                script_label = script_label + "\nNative Command: [" + cur_node_child.get_jumping_command().get_command() + "]"  # type: ignore
+                                script_label = (
+                                    script_label
+                                    + "\nNative Command: ["
+                                    + cur_node_child.get_jumping_command().get_command()
+                                    + "]"
+                                )  # type: ignore
                         elif cur_node_child.get_jumping_command().get_command() != "":  # type: ignore
-                            script_label = script_label + "\nNative Command: [" + cur_node_child.get_jumping_command().get_command() + "]"  # type: ignore
+                            script_label = (
+                                script_label
+                                + "\nNative Command: ["
+                                + cur_node_child.get_jumping_command().get_command()
+                                + "]"
+                            )  # type: ignore
                         scripts.append(
                             {
                                 "from": cur_node.get_node_id(),
@@ -1230,7 +1245,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                     )
         graph_content = "digraph {\nfontname=FangSong\nnode [fontname=FangSong]\n"
         for script in scripts:
-            graph_content += f'\t{script["from"]} -> {script["to"]}'
+            graph_content += f"\t{script['from']} -> {script['to']}"
             if script["label"] != "":
                 graph_content += f' [label="{script["label"]}"]\n'
             else:

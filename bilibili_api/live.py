@@ -1509,7 +1509,9 @@ class LiveDanmaku(AsyncEvent):
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
-                self.__ws = await self.__client.ws_create(url=uri, headers=HEADERS.copy())
+                self.__ws = await self.__client.ws_create(
+                    url=uri, headers=HEADERS.copy()
+                )
 
                 @self.on("VERIFICATION_SUCCESSFUL")
                 async def on_verification_successful(data):
@@ -1716,9 +1718,11 @@ class LiveDanmaku(AsyncEvent):
                         "utf-8",
                     ),
                 }
-                await Api(**api, credential=self.credential).update_params(
-                    **params
-                ).result
+                await (
+                    Api(**api, credential=self.credential)
+                    .update_params(**params)
+                    .result
+                )
                 self.__heartbeat_timer_web = 60
             await asyncio.sleep(1.0)
             self.__heartbeat_timer_web -= 1
