@@ -854,12 +854,12 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
 
         bts = 0
-        tot = get_client().download_content_length(dwn_id)
+        tot = get_client().download_content_length(cnt=dwn_id)
         start_time = time.perf_counter()
 
         with open(out, "wb") as f:
             while True:
-                bts += f.write(await get_client().download_chunk(dwn_id))
+                bts += f.write(await get_client().download_chunk(cnt=dwn_id))
                 self.dispatch(
                     "DOWNLOAD_PART",
                     {

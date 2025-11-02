@@ -2,52 +2,51 @@
 bilibili_api.utils.network
 
 与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。
+
+现在已经变成核心功能大杂烩了
 """
 
-from abc import ABC, abstractmethod
 import asyncio
 import atexit
 import base64
 import binascii
-from dataclasses import dataclass, field
-from email.utils import parsedate_to_datetime
-from enum import Enum
-from functools import reduce
 import hashlib
 import hmac
 import io
 import json
-from json import scanner
-from json.decoder import scanstring
 import logging
 import os
 import random
 import re
 import struct
 import time
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
 import urllib.parse
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from email.utils import parsedate_to_datetime
+from enum import Enum
+from functools import reduce
+from inspect import iscoroutinefunction, isfunction
+from json import scanner
+from json.decoder import scanstring
+from typing import (Any, Callable, Coroutine, Dict, List, Optional, Tuple,
+                    Type, Union)
 
+import chompjs
+from bs4 import BeautifulSoup
 from Cryptodome.Cipher import PKCS1_OAEP
 from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
-from bs4 import BeautifulSoup
-import chompjs
 
-from ..exceptions import (
-    ArgsException,
-    CookiesRefreshException,
-    CredentialNoAcTimeValueException,
-    CredentialNoBiliJctException,
-    CredentialNoBuvid3Exception,
-    CredentialNoBuvid4Exception,
-    CredentialNoDedeUserIDException,
-    CredentialNoSessdataException,
-    ExClimbWuzhiException,
-    NetworkException,
-    ResponseCodeException,
-    WbiRetryTimesExceedException,
-)
+from ..exceptions import (ArgsException, CookiesRefreshException,
+                          CredentialNoAcTimeValueException,
+                          CredentialNoBiliJctException,
+                          CredentialNoBuvid3Exception,
+                          CredentialNoBuvid4Exception,
+                          CredentialNoDedeUserIDException,
+                          CredentialNoSessdataException, ExClimbWuzhiException,
+                          FilterException, NetworkException,
+                          ResponseCodeException, WbiRetryTimesExceedException)
 from .AsyncEvent import AsyncEvent
 from .utils import get_api, raise_for_statement
 
@@ -180,6 +179,9 @@ Events:
 - API_RESPONSE: Api 响应。
 - (反爬虫)
 - ANTI_SPIDER: 反爬虫相关信息。
+- (过滤器)
+- DO_PRE_FILTER: 执行前置过滤器。
+- DO_POST_FILTER: 执行后置过滤器
 
 CallbackData: 描述 (str) 数据 (dict)
 
@@ -218,6 +220,8 @@ Events:
 - API_RESPONSE: Api 响应。
 - (反爬虫)
 - ANTI_SPIDER: 反爬虫相关信息。
+- (过滤器)
+- DO_FILTER: 执行过滤器。
 
 CallbackData: 描述 (str) 数据 (dict)
 
@@ -809,7 +813,7 @@ class BiliAPIClient(ABC):
             raise NotImplementedError
 
         @abstractmethod
-        async def close(self):
+        async def close(self) -> None:
             """
             关闭请求客户端，即关闭封装的第三方会话对象
             """
@@ -1025,6 +1029,199 @@ class BiliAPIClient(ABC):
         raise NotImplementedError
 
 
+__registered_pre = []
+__registered_post = []
+
+
+class BiliFilterFlags(Enum):
+    """
+    过滤器行为枚举
+
+    - CONTINUE: 继续下一个过滤器
+    - SET_PARAMS: 设置函数的参数 (仅后置过滤器)
+    - SET_RETURN: 设置返回值 (仅前置过滤器)
+    - EXECUTE_NOW: 直接运行函数 (仅前置过滤器)
+    - RETURN_NOW: 直接作为函数返回值返回
+    - BACK: 回到上一个过滤器
+    - SKIP: 跳过下一个过滤器
+    - GOTO: 跳到任意一个过滤器 需通过 `(async_)get_registered_(pre|post)_filters` 查询对应过滤器的下标
+    """
+
+    CONTINUE = 0
+    SET_PARAMS = 1
+    SET_RETURN = 2
+    EXECUTE_NOW = 3
+    RETURN_NOW = 4
+    BACK = 5
+    SKIP = 6
+    GOTO = 7
+
+
+class _BiliAPIClient:
+    """
+    BiliAPIClient 包装，用于执行过滤器。
+    """
+
+    def __init__(self, client_name, client, *args, **kwargs):
+        self.client = client
+        self.__client__ = client_name
+
+    def __getattr__(self, key: str) -> Any:
+        obj = getattr(self.client, key)
+        if not (isfunction(obj) or iscoroutinefunction(obj)):
+            return obj
+
+        def method_wrapper(method: Callable) -> Callable:
+            def wrapped_method(**kwargs) -> Any:
+                res = kwargs
+                pres = get_registered_pre_filters(
+                    client=self.__client__, func=key, in_priority=True
+                )
+                i = 0
+                while i < len(pres):
+                    pre = pres[i]
+                    log = {
+                        "name": pre["name"],
+                        "priority": pre["priority"],
+                        "client": self.__client__,
+                        "action": key,
+                    }
+                    request_log.dispatch("DO_PRE_FILTER", "执行前置过滤器", log)
+                    try:
+                        flag, after_filter = pre["function"](self, key, kwargs)
+                    except:
+                        raise FilterException("pre", pre["name"])
+                    if flag == BiliFilterFlags.SET_PARAMS:
+                        res = after_filter
+                    elif flag == BiliFilterFlags.EXECUTE_NOW:
+                        break
+                    elif flag == BiliFilterFlags.RETURN_NOW:
+                        return after_filter
+                    elif flag == BiliFilterFlags.BACK:
+                        i = max(0, i - 1)
+                    elif flag == BiliFilterFlags.SKIP:
+                        i += 1
+                    elif flag == BiliFilterFlags.GOTO:
+                        i = after_filter - 1
+                    i += 1
+                ret = method(**res)
+                posts = get_registered_post_filters(
+                    client=self.__client__, func=key, in_priority=True
+                )
+                j = 0
+                while j < len(pres):
+                    post = posts[j]
+                    log = {
+                        "name": post["name"],
+                        "priority": post["priority"],
+                        "client": self.__client__,
+                        "action": key,
+                    }
+                    request_log.dispatch("DO_POST_FILTER", "执行后置过滤器", log)
+                    try:
+                        flag, after_filter = post["function"](self, key, ret, kwargs)
+                    except:
+                        raise FilterException("post", post["name"])
+                    if flag == BiliFilterFlags.SET_RETURN:
+                        ret = after_filter
+                    elif flag == BiliFilterFlags.RETURN_NOW:
+                        return after_filter
+                    elif flag == BiliFilterFlags.BACK:
+                        j = max(0, j - 1)
+                    elif flag == BiliFilterFlags.SKIP:
+                        j += 1
+                    elif flag == BiliFilterFlags.GOTO:
+                        j = after_filter - 1
+                    j += 1
+                return ret
+
+            return wrapped_method
+
+        def coroutine_wrapper(coroutine: Coroutine) -> Coroutine:
+            async def wrapped_amethod(**kwargs) -> Any:
+                res = kwargs
+                pres = await async_get_registered_pre_filters(
+                    client=self.__client__, func=key, in_priority=True
+                )
+                i = 0
+                while i < len(pres):
+                    pre = pres[i]
+                    log = {
+                        "name": pre["name"],
+                        "priority": pre["priority"],
+                        "client": self.__client__,
+                        "action": key,
+                    }
+                    request_log.dispatch("DO_PRE_FILTER", "执行前置过滤器", log)
+                    if pre["function"]:
+                        try:
+                            flag, after_filter = pre["function"](self, key, kwargs)
+                        except:
+                            raise FilterException("pre", pre["name"])
+                    if pre["async_function"]:
+                        try:
+                            flag, after_filter = await pre["async_function"](self, key, kwargs)
+                        except:
+                            raise FilterException("pre", pre["name"])
+                    if flag == BiliFilterFlags.SET_PARAMS:
+                        res = after_filter
+                    elif flag == BiliFilterFlags.EXECUTE_NOW:
+                        break
+                    elif flag == BiliFilterFlags.RETURN_NOW:
+                        return after_filter
+                    elif flag == BiliFilterFlags.BACK:
+                        i = max(0, i - 1)
+                    elif flag == BiliFilterFlags.SKIP:
+                        i += 1
+                    elif flag == BiliFilterFlags.GOTO:
+                        i = after_filter - 1
+                    i += 1
+                ret = await coroutine(**res)
+                posts = await async_get_registered_post_filters(
+                    client=self.__client__, func=key, in_priority=True
+                )
+                j = 0
+                while j < len(posts):
+                    post = posts[j]
+                    log = {
+                        "name": post["name"],
+                        "priority": post["priority"],
+                        "client": self.__client__,
+                        "action": key,
+                    }
+                    request_log.dispatch("DO_POST_FILTER", "执行后置过滤器", log)
+                    if post["function"]:
+                        try:
+                            flag, after_filter = post["function"](self, key, ret, kwargs)
+                        except:
+                            raise FilterException("post", post["name"])
+                    if post["async_function"]:
+                        try:
+                            flag, after_filter = await post["async_function"](self, key, ret, kwargs)
+                        except:
+                            raise FilterException("post", post["name"])
+                    if flag == BiliFilterFlags.SET_RETURN:
+                        ret = after_filter
+                    elif flag == BiliFilterFlags.RETURN_NOW:
+                        return after_filter
+                    elif flag == BiliFilterFlags.BACK:
+                        j = max(0, j - 1)
+                    elif flag == BiliFilterFlags.SKIP:
+                        j += 1
+                    elif flag == BiliFilterFlags.GOTO:
+                        j = after_filter - 1
+                    j += 1
+                return ret
+
+            return wrapped_amethod
+
+        if isfunction(obj):
+            return method_wrapper(obj)
+        if iscoroutinefunction(obj):
+            return coroutine_wrapper(obj)
+        return None
+
+
 def register_client(name: str, cls: type, settings: dict = {}) -> None:
     """
     注册请求客户端并切换，可用于用户自定义请求客户端。
@@ -1145,7 +1342,7 @@ def get_client() -> BiliAPIClient:
         kwargs = {}
         for piece in client_settings[selected_client]:
             kwargs[piece] = request_settings.get(piece)
-        session = sessions[selected_client](**kwargs)
+        session = _BiliAPIClient(selected_client, sessions[selected_client](**kwargs))
         session_pool[selected_client][loop] = session
         lazy_settings[selected_client][loop] = {}
     else:
@@ -1183,6 +1380,378 @@ def set_session(session: object) -> None:
         raise ArgsException("未找到用户指定的请求客户端。")
     loop = asyncio.get_event_loop()
     session_pool[selected_client][loop] = sessions[selected_client](session=session)
+
+
+def register_pre_filter(
+    name: str,
+    func: Optional[Callable] = None,
+    async_func: Optional[Coroutine] = None,
+    clients: Optional[List[str]] = None,
+    on: Optional[List[str]] = None,
+    trigger: Optional[Callable] = None,
+    async_trigger: Optional[Coroutine] = None,
+    priority: int = 0,
+) -> None:
+    """
+    注册/修改前置过滤器
+
+    触发方式1: 当请求客户端设置值位于 `clients` 中且执行函数名称位于 `on` 中触发。
+    触发方式2: `trigger(client, on) == True` 或 `await async_trigger(client, on)` 时触发。
+
+    执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
+
+    Args:
+        name          (str)                : 名称，若重复则为修改对应过滤器。
+        func          (Callable, optional) : 执行的函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)`
+        async_func    (Coroutine, optional): 执行的异步函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)`
+        clients       (List[str], optional): 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。
+        on            (List[str], optional): 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。
+        trigger       (Callable, optional) : 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
+        async_trigger (Coroutine, optional): 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
+        priority      (int, optional)      : 优先级，数字越小越优先执行。Defaults to 0.
+    """
+    global __registered_pre
+    raise_for_statement(
+        (clients and on) or (trigger or async_trigger), "至少提供一种触发方式"
+    )
+    raise_for_statement(func or async_func, "至少提供一个函数")
+    filt = {
+        "name": name,
+        "function": func,
+        "async_function": async_func,
+        "clients": clients,
+        "on": on,
+        "trigger": trigger,
+        "async_trigger": async_trigger,
+        "priority": priority,
+    }
+    for i, pre in enumerate(__registered_pre):
+        if pre["name"] == name:
+            __registered_pre[i] = filt
+            return
+    __registered_pre.append(filt)
+
+
+def register_post_filter(
+    name: str,
+    func: Optional[Callable] = None,
+    async_func: Optional[Coroutine] = None,
+    clients: Optional[List[str]] = None,
+    on: Optional[List[str]] = None,
+    trigger: Optional[Callable] = None,
+    async_trigger: Optional[Coroutine] = None,
+    priority: int = 0,
+) -> None:
+    """
+    注册/修改后置过滤器
+
+    触发方式1: 当请求客户端设置值位于 `clients` 中且执行函数名称位于 `on` 中触发。
+    触发方式2: `trigger(client, on) == True` 或 `await async_trigger(client, on)` 时触发。
+
+    执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
+
+    Args:
+        name          (str)                : 名称，若重复则为修改对应过滤器。
+        func          (Callable, optional) : 执行的函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)`
+        async_func    (Coroutine, optional): 执行的异步函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)`
+        clients       (List[str], optional): 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。
+        on            (List[str], optional): 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。
+        trigger       (Callable, optional) : 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
+        async_trigger (Coroutine, optional): 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
+        priority      (int, optional)      : 优先级，数字越小越优先执行。Defaults to 0.
+    """
+    global __registered_post
+    raise_for_statement(
+        (clients and on) or (trigger or async_trigger), "至少提供一种触发方式"
+    )
+    raise_for_statement(func or async_func, "至少提供一个函数")
+    filt = {
+        "name": name,
+        "function": func,
+        "async_function": async_func,
+        "clients": clients,
+        "on": on,
+        "trigger": trigger,
+        "async_trigger": async_trigger,
+        "priority": priority,
+    }
+    for i, post in enumerate(__registered_post):
+        if post["name"] == name:
+            __registered_post[i] = filt
+            return
+    __registered_post.append(filt)
+
+
+def get_all_registered_pre_filters(in_priority: bool = True) -> List[dict]:
+    """
+    获取所有已注册的前置过滤器
+
+    Args:
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的前置过滤器
+    """
+    if in_priority:
+        return sorted(__registered_pre, key=lambda pre: pre["priority"])
+    return __registered_pre
+
+
+def get_all_registered_post_filters(in_priority: bool = True) -> List[dict]:
+    """
+    获取所有已注册的后置过滤器
+
+    Args:
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的后置过滤器
+    """
+    if in_priority:
+        return sorted(__registered_post, key=lambda post: post["priority"])
+    return __registered_post
+
+
+def get_registered_pre_filters(
+    client: str,
+    func: str,
+    in_priority: bool = True,
+) -> List[dict]:
+    """
+    通过请求客户端及其函数筛选已注册的前置过滤器
+
+    Args:
+        client      (str) : 请求客户端.
+        func        (str) : 执行函数名.
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的前置过滤器
+    """
+    pres = get_all_registered_pre_filters(in_priority=in_priority)
+    ret = []
+    for pre in pres:
+        if (
+            ((pre["on"] and func in pre["on"]) and (pre["clients"] and client in pre["clients"]))
+            or (pre["trigger"] and pre["trigger"](client, func))
+        ) and pre["function"]:
+            ret.append(pre)
+    return ret
+
+
+def get_registered_post_filters(
+    client: List[str] = [],
+    func: List[str] = [],
+    in_priority: bool = True,
+) -> List[dict]:
+    """
+    通过请求客户端及其函数筛选已注册的后置过滤器
+
+    Args:
+        client      (str) : 请求客户端.
+        func        (str) : 执行函数名.
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的后置过滤器
+    """
+    posts = get_all_registered_post_filters(in_priority=in_priority)
+    ret = []
+    for post in posts:
+        if (
+            ((post["on"] and func in post["on"]) and (post["clients"] and client in post["clients"]))
+            or (post["trigger"] and post["trigger"](client, func))
+        ) and post["function"]:
+            ret.append(post)
+    return ret
+
+
+async def async_get_registered_pre_filters(
+    client: str,
+    func: str,
+    in_priority: bool = True,
+) -> List[dict]:
+    """
+    通过请求客户端及其函数筛选已注册的前置过滤器，支持异步触发器和过滤器。
+
+    Args:
+        client      (str) : 请求客户端.
+        func        (str) : 执行函数名.
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的后置过滤器
+    """
+    pres = __registered_pre
+    if in_priority:
+        pres.sort(key=lambda pre: pre["priority"])
+    ret = []
+    for pre in pres:
+        if (
+            ((pre["on"] and func in pre["on"]) and (pre["clients"] and client in pre["clients"]))
+            or (pre["trigger"] and pre["trigger"](client, func))
+            or (pre["async_trigger"] and await pre["async_trigger"](client, func))
+        ) and (pre["function"] or pre["async_function"]):
+            ret.append(pre)
+    return ret
+
+
+async def async_get_registered_post_filters(
+    client: List[str] = [],
+    func: List[str] = [],
+    in_priority: bool = True,
+) -> List[dict]:
+    """
+    通过请求客户端及其函数筛选已注册的后置过滤器，支持异步触发器和过滤器。
+
+    Args:
+        client      (str) : 请求客户端.
+        func        (str) : 执行函数名.
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的后置过滤器
+    """
+    posts = __registered_post
+    if in_priority:
+        posts.sort(key=lambda post: post["priority"])
+    ret = []
+    for post in posts:
+        if (
+            ((post["on"] and func in post["on"]) and (post["clients"] and client in post["clients"]))
+            or (post["trigger"] and post["trigger"](client, func))
+            or (post["async_trigger"] and await post["async_trigger"](client, func))
+        ) and (post["function"] or post["async_function"]):
+            ret.append(post)
+    return ret
+
+
+def unregister_pre_filter(name: str) -> None:
+    """
+    取消注册前置过滤器
+
+    Args:
+        name (str): 过滤器名称
+    """
+    global __registered_pre
+    for i, pre in enumerate(__registered_pre):
+        if pre["name"] == name:
+            del __registered_pre[i]
+            return
+
+
+def unregister_post_filter(name: str) -> None:
+    """
+    取消注册后置过滤器
+
+    Args:
+        name (str): 过滤器名称
+    """
+    global __registered_post
+    for i, post in enumerate(__registered_post):
+        if post["name"] == name:
+            del __registered_post[i]
+            return
+
+
+def __register_builtin_log_filters():
+    def request_pre(client, key, params):
+        request_log.dispatch("REQUEST", "发起请求", params)
+        return BiliFilterFlags.CONTINUE, None
+
+    def request_post(client, key, ret, params):
+        request_log.dispatch(
+            "RESPONSE",
+            "获得响应",
+            {
+                "code": ret.code,
+                "headers": ret.headers,
+                "cookies": ret.cookies,
+                "data": ret.raw,
+                "url": ret.url,
+            },
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def dwn_create_post(client, key, ret, params):
+        params.update({"id": ret})
+        request_log.dispatch("DWN_CREATE", "开始下载", params)
+        return BiliFilterFlags.CONTINUE, None
+
+    def dwn_chunk_post(client, key, ret, params):
+        request_log.dispatch(
+            "DWN_PART", "收到部分下载数据", {"id": params["cnt"], "data": ret}
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_create_post(client, key, ret, params):
+        params.update({"id": ret})
+        request_log.dispatch("WS_CREATE", "开始 WebSocket 连接", params)
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_recv_post(client, key, ret, params):
+        request_log.dispatch(
+            "WS_RECV",
+            "收到 WebSocket 数据",
+            {"id": params["cnt"], "data": ret[0], "flags": ret[1].value},
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_send_pre(client, key, params):
+        request_log.dispatch(
+            "WS_SEND",
+            "发送 WebSocket 请求",
+            {"id": params["cnt"], "data": params["data"]},
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_close_pre(client, key, params):
+        request_log.dispatch("WS_CLOSE", "关闭 WebSOcket 请求", {"id": params["cnt"]})
+        return BiliFilterFlags.CONTINUE, None
+
+    register_pre_filter(
+        name="__builtin_log_request",
+        func=request_pre,
+        trigger=lambda client, key: key == "request",
+    )
+    register_post_filter(
+        name="__builtin_log_request",
+        func=request_post,
+        trigger=lambda client, key: key == "request",
+    )
+    register_post_filter(
+        name="__builtin_log_dwn_create",
+        func=dwn_create_post,
+        trigger=lambda client, key: key == "download_create",
+    )
+    register_post_filter(
+        name="__builtin_log_dwn_chunk",
+        func=dwn_chunk_post,
+        trigger=lambda client, key: key == "download_chunk",
+    )
+    register_post_filter(
+        name="__builtin_log_ws_create",
+        func=ws_create_post,
+        trigger=lambda client, key: key == "ws_create",
+    )
+    register_post_filter(
+        name="__builtin_log_ws_recv",
+        func=ws_recv_post,
+        trigger=lambda client, key: key == "ws_recv",
+    )
+    register_pre_filter(
+        name="__builtin_log_ws_send",
+        func=ws_send_pre,
+        trigger=lambda client, key: key == "ws_send",
+    )
+    register_pre_filter(
+        name="__builtin_log_ws_close",
+        func=ws_close_pre,
+        trigger=lambda client, key: key == "ws_close",
+    )
+
+
+__register_builtin_log_filters()
 
 
 @atexit.register
@@ -2660,12 +3229,12 @@ async def bili_simple_download(url: str, out: str, intro: str):
         out   (str): 输出地址
         intro (str): 下载简述
     """
-    dwn_id = await get_client().download_create(url, HEADERS)
+    dwn_id = await get_client().download_create(url=url, headers=HEADERS)
     bts = 0
-    tot = get_client().download_content_length(dwn_id)
+    tot = get_client().download_content_length(cnt=dwn_id)
     with open(out, "wb") as file:
         while True:
-            bts += file.write(await get_client().download_chunk(dwn_id))
+            bts += file.write(await get_client().download_chunk(cnt=dwn_id))
             print(f"{intro} - {out} [{bts} / {tot}]", end="\r")
             if bts == tot:
                 break

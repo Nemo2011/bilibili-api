@@ -117,20 +117,6 @@ class HTTPXClient(BiliAPIClient):
         cookies: dict = {},
         allow_redirects: bool = True,
     ) -> BiliAPIResponse:
-        request_log.dispatch(
-            "REQUEST",
-            "发起请求",
-            {
-                "method": method,
-                "url": url,
-                "params": params,
-                "data": data,
-                "files": files,
-                "headers": headers,
-                "cookies": cookies,
-                "allow_redirects": allow_redirects,
-            },
-        )
         if files != {}:
             requests_like_files = {}
             for key, item in files.items():
@@ -159,17 +145,6 @@ class HTTPXClient(BiliAPIClient):
             raw=resp.content,
             url=resp.url,
         )
-        request_log.dispatch(
-            "RESPONSE",
-            "获得响应",
-            {
-                "code": bili_api_resp.code,
-                "headers": bili_api_resp.headers,
-                "cookies": bili_api_resp.cookies,
-                "data": bili_api_resp.raw,
-                "url": bili_api_resp.url,
-            },
-        )
         return bili_api_resp
 
     async def download_create(
@@ -178,15 +153,6 @@ class HTTPXClient(BiliAPIClient):
         headers: dict = {},
     ) -> int:
         self.__download_cnt += 1
-        request_log.dispatch(
-            "DWN_CREATE",
-            "开始下载",
-            {
-                "id": self.__download_cnt,
-                "url": url,
-                "headers": headers,
-            },
-        )
         req = self.__session.build_request(method="GET", url=url, headers=headers)
         self.__downloads[self.__download_cnt] = await self.__session.send(
             req, stream=True
@@ -199,11 +165,6 @@ class HTTPXClient(BiliAPIClient):
     async def download_chunk(self, cnt: int) -> bytes:
         iter = self.__download_iter[cnt]
         data = await anext(iter)
-        request_log.dispatch(
-            "DWN_PART",
-            "收到部分下载数据",
-            {"id": cnt, "data": data},
-        )
         return data
 
     def download_content_length(self, cnt: int) -> int:

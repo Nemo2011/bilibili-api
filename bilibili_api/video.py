@@ -1955,7 +1955,7 @@ class VideoOnlineMonitor(AsyncEvent):
         self.logger.info("主动断开连接。")
         self.dispatch("DISCONNECTED")
         await self.__cancel_all_tasks()
-        await self.__client.ws_close(self.__ws)
+        await self.__client.ws_close(cnt=self.__ws)
 
     async def __main(self):
         """
@@ -1983,7 +1983,7 @@ class VideoOnlineMonitor(AsyncEvent):
         # 连接服务器
         self.logger.debug("准备连接服务器...")
         self.__client = get_client()
-        self.__ws = await self.__client.ws_create(uri)
+        self.__ws = await self.__client.ws_create(url=uri)
 
         # 发送认证信息
         self.logger.debug("服务器连接成功，准备发送认证信息...")
@@ -1994,8 +1994,8 @@ class VideoOnlineMonitor(AsyncEvent):
         }
         verify_info = json.dumps(verify_info, separators=(",", ":"))
         await self.__client.ws_send(
-            self.__ws,
-            self.__pack(
+            cnt=self.__ws,
+            data=self.__pack(
                 VideoOnlineMonitor.Datapack.CLIENT_VERIFY, 1, verify_info.encode()
             ),
         )
@@ -2003,7 +2003,7 @@ class VideoOnlineMonitor(AsyncEvent):
         # 循环接收消息
         while True:
             try:
-                data, flag = await self.__client.ws_recv(self.__ws)
+                data, flag = await self.__client.ws_recv(cnt=self.__ws)
             except:
                 self.logger.warning("连接被异常断开")
                 await self.__cancel_all_tasks()
@@ -2071,8 +2071,8 @@ class VideoOnlineMonitor(AsyncEvent):
         while True:
             self.logger.debug(f"发送心跳包，编号：{index}")
             await self.__client.ws_send(
-                self.__ws,
-                self.__pack(
+                cnt=self.__ws,
+                data=self.__pack(
                     VideoOnlineMonitor.Datapack.CLIENT_HEARTBEAT,
                     index,
                     b"[object Object]",

@@ -28,6 +28,7 @@ from bilibili_api import ...
 - [class BiliAPIResponse()](#class-BiliAPIResponse)
   - [def json()](#def-json)
   - [def utf8\_text()](#def-utf8\_text)
+- [class BiliFilterFlags()](#class-BiliFilterFlags)
 - [class BiliWsMsgType()](#class-BiliWsMsgType)
 - [class CookiesRefreshException()](#class-CookiesRefreshException)
 - [class Credential()](#class-Credential)
@@ -106,6 +107,8 @@ from bilibili_api import ...
 - [async def bili\_simple\_download()](#async-def-bili\_simple\_download)
 - [def bvid2aid()](#def-bvid2aid)
 - [def configure\_dynamic\_fingerprint()](#def-configure\_dynamic\_fingerprint)
+- [def get\_all\_registered\_post\_filters()](#def-get\_all\_registered\_post\_filters)
+- [def get\_all\_registered\_pre\_filters()](#def-get\_all\_registered\_pre\_filters)
 - [def get\_available\_settings()](#def-get\_available\_settings)
 - [async def get\_bili\_ticket()](#async-def-get\_bili\_ticket)
 - [async def get\_buvid()](#async-def-get\_buvid)
@@ -113,11 +116,15 @@ from bilibili_api import ...
 - [async def get\_real\_url()](#async-def-get\_real\_url)
 - [def get\_registered\_available\_settings()](#def-get\_registered\_available\_settings)
 - [def get\_registered\_clients()](#def-get\_registered\_clients)
+- [def get\_registered\_post\_filters()](#def-get\_registered\_post\_filters)
+- [def get\_registered\_pre\_filters()](#def-get\_registered\_pre\_filters)
 - [def get\_selected\_client()](#def-get\_selected\_client)
 - [def get\_session()](#def-get\_session)
 - [async def parse\_link()](#async-def-parse\_link)
 - [def recalculate\_wbi()](#def-recalculate\_wbi)
 - [def register\_client()](#def-register\_client)
+- [def register\_post\_filter()](#def-register\_post\_filter)
+- [def register\_pre\_filter()](#def-register\_pre\_filter)
 - [var request\_log](#var-request\_log)
   - [def get\_ignore\_events()](#def-get\_ignore\_events)
   - [def get\_on\_events()](#def-get\_on\_events)
@@ -155,6 +162,8 @@ from bilibili_api import ...
 - [def set\_session()](#def-set\_session)
 - [def sync()](#def-sync)
 - [def unregister\_client()](#def-unregister\_client)
+- [def unregister\_post\_filter()](#def-unregister\_post\_filter)
+- [def unregister\_pre\_filter()](#def-unregister\_pre\_filter)
 
 ---
 
@@ -494,7 +503,7 @@ class BiliAPIClient(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def close(self):
+    async def close(self) -> None:
         """
         关闭请求客户端，即关闭封装的第三方会话对象
         """
@@ -554,6 +563,26 @@ class BiliAPIClient(ABC):
 
 
 **Returns:** `str`:  utf8 文字
+
+
+
+
+---
+
+## class BiliFilterFlags()
+
+**Extend: enum.Enum**
+
+过滤器行为枚举
+
+- CONTINUE: 继续下一个过滤器
+- SET_PARAMS: 设置函数的参数 (仅后置过滤器)
+- SET_RETURN: 设置返回值 (仅前置过滤器)
+- EXECUTE_NOW: 直接运行函数 (仅前置过滤器)
+- RETURN_NOW: 直接作为函数返回值返回
+- BACK: 回到上一个过滤器
+- SKIP: 跳过下一个过滤器
+- GOTO: 跳到任意一个过滤器 需通过 `(async_)get_registered_(pre|post)_filters` 查询对应过滤器的下标
 
 
 
@@ -1553,6 +1582,38 @@ BV 号转 AV 号。
 
 ---
 
+## def get_all_registered_post_filters()
+
+获取所有已注册的后置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `in_priority` | `bool` | 是否排序. Defaults to True. |
+
+**Returns:** `List[dict]`:  已注册的后置过滤器
+
+
+
+
+---
+
+## def get_all_registered_pre_filters()
+
+获取所有已注册的前置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `in_priority` | `bool` | 是否排序. Defaults to True. |
+
+**Returns:** `List[dict]`:  已注册的前置过滤器
+
+
+
+
+---
+
 ## def get_available_settings()
 
 获取当前支持的设置项
@@ -1654,6 +1715,42 @@ BV 号转 AV 号。
 
 ---
 
+## def get_registered_post_filters()
+
+通过请求客户端及其函数筛选已注册的后置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `client` | `str` | 请求客户端. |
+| `func` | `str` | 执行函数名. |
+| `in_priority` | `bool` | 是否排序. Defaults to True. |
+
+**Returns:** `List[dict]`:  已注册的后置过滤器
+
+
+
+
+---
+
+## def get_registered_pre_filters()
+
+通过请求客户端及其函数筛选已注册的前置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `client` | `str` | 请求客户端. |
+| `func` | `str` | 执行函数名. |
+| `in_priority` | `bool` | 是否排序. Defaults to True. |
+
+**Returns:** `List[dict]`:  已注册的前置过滤器
+
+
+
+
+---
+
 ## def get_selected_client()
 
 获取用户选择的请求客户端名称和对应的类
@@ -1724,6 +1821,58 @@ BV 号转 AV 号。
 
 ---
 
+## def register_post_filter()
+
+注册/修改后置过滤器
+
+触发方式1: 当请求客户端设置值位于 `clients` 中且执行函数名称位于 `on` 中触发。
+触发方式2: `trigger(client, on) == True` 或 `await async_trigger(client, on)` 时触发。
+
+执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
+
+
+| name | type | description |
+| - | - | - |
+| `name` | `str` | 名称，若重复则为修改对应过滤器。 |
+| `func` | `Callable, optional` | 执行的函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `async_func` | `Coroutine, optional` | 执行的异步函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `clients` | `List[str], optional` | 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。 |
+| `on` | `List[str], optional` | 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。 |
+| `trigger` | `Callable, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
+| `async_trigger` | `Coroutine, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
+| `priority` | `int, optional` | 优先级，数字越小越优先执行。Defaults to 0. |
+
+
+
+
+---
+
+## def register_pre_filter()
+
+注册/修改前置过滤器
+
+触发方式1: 当请求客户端设置值位于 `clients` 中且执行函数名称位于 `on` 中触发。
+触发方式2: `trigger(client, on) == True` 或 `await async_trigger(client, on)` 时触发。
+
+执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
+
+
+| name | type | description |
+| - | - | - |
+| `name` | `str` | 名称，若重复则为修改对应过滤器。 |
+| `func` | `Callable, optional` | 执行的函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `async_func` | `Coroutine, optional` | 执行的异步函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `clients` | `List[str], optional` | 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。 |
+| `on` | `List[str], optional` | 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。 |
+| `trigger` | `Callable, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
+| `async_trigger` | `Coroutine, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
+| `priority` | `int, optional` | 优先级，数字越小越优先执行。Defaults to 0. |
+
+
+
+
+---
+
 ## var request_log
 
 **Extend: AsyncEvent**
@@ -1753,6 +1902,8 @@ Events:
 - API_RESPONSE: Api 响应。
 - (反爬虫)
 - ANTI_SPIDER: 反爬虫相关信息。
+- (过滤器)
+- DO_FILTER: 执行过滤器。
 
 CallbackData: 描述 (str) 数据 (dict)
 
@@ -2200,6 +2351,34 @@ async def handle(desc: str, data: dict) -> None:
 | name | type | description |
 | - | - | - |
 | `name` | `str` | 请求客户端类型名称，用户自定义命名。 |
+
+
+
+
+---
+
+## def unregister_post_filter()
+
+取消注册后置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `name` | `str` | 过滤器名称 |
+
+
+
+
+---
+
+## def unregister_pre_filter()
+
+取消注册前置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `name` | `str` | 过滤器名称 |
 
 
 

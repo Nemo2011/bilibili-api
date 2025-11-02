@@ -32,6 +32,16 @@ from .utils.network import (
     get_client,
     get_session,
     set_session,
+    # filter
+    BiliFilterFlags,
+    register_pre_filter,
+    register_post_filter,
+    unregister_pre_filter,
+    unregister_post_filter,
+    get_all_registered_pre_filters,
+    get_all_registered_post_filters,
+    get_registered_pre_filters,
+    get_registered_post_filters,
     # anti spider
     get_buvid,
     get_bili_ticket,
@@ -121,15 +131,15 @@ def __register_all_clients():
     import importlib
     from .clients import ALL_PROVIDED_CLIENTS
 
-    for module, client, settings in ALL_PROVIDED_CLIENTS[::-1]:
+    for module, client_name, settings in ALL_PROVIDED_CLIENTS[::-1]:
         try:
             importlib.import_module(module)
         except ModuleNotFoundError:
             continue
         client_module = importlib.import_module(
-            name=f".clients.{client}", package="bilibili_api"
+            name=f".clients.{client_name}", package="bilibili_api"
         )
-        client_class = eval(f"client_module.{client}")
+        client_class = eval(f"client_module.{client_name}")
         register_client(module, client_class, settings)
 
 
@@ -138,12 +148,13 @@ __register_all_clients()
 
 __all__ = [
     "ApiException",
-    "AsyncEvent",
     "ArgsException",
+    "AsyncEvent",
     "BILIBILI_API_VERSION",
     "BiliAPIClient",
     "BiliAPIFile",
     "BiliAPIResponse",
+    "BiliFilterFlags",
     "BiliWsMsgType",
     "CookiesRefreshException",
     "Credential",
@@ -175,8 +186,8 @@ __all__ = [
     "StatementException",
     "VideoUploadException",
     "WbiRetryTimesExceedException",
-    "aid2bvid",
     "activity",
+    "aid2bvid",
     "app",
     "article",
     "article_category",
@@ -199,6 +210,8 @@ __all__ = [
     "festival",
     "game",
     "garb",
+    "get_all_registered_post_filters",
+    "get_all_registered_pre_filters",
     "get_available_settings",
     "get_bili_ticket",
     "get_buvid",
@@ -206,6 +219,8 @@ __all__ = [
     "get_real_url",
     "get_registered_available_settings",
     "get_registered_clients",
+    "get_registered_post_filters",
+    "get_registered_pre_filters",
     "get_selected_client",
     "get_session",
     "homepage",
@@ -222,6 +237,8 @@ __all__ = [
     "rank",
     "recalculate_wbi",
     "register_client",
+    "register_post_filter",
+    "register_pre_filter",
     "request_log",
     "request_settings",
     "search",
@@ -232,6 +249,8 @@ __all__ = [
     "sync",
     "topic",
     "unregister_client",
+    "unregister_post_filter",
+    "unregister_pre_filter",
     "user",
     "video",
     "video_tag",

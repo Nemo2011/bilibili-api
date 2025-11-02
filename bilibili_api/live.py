@@ -1451,7 +1451,7 @@ class LiveDanmaku(AsyncEvent):
             self.__tasks.pop().cancel()
 
         self.__status = self.STATUS_CLOSED
-        await self.__client.ws_close(self.__ws)  # type: ignore
+        await self.__client.ws_close(cnt=self.__ws)  # type: ignore
 
         self.logger.info("连接已关闭")
 
@@ -1487,7 +1487,7 @@ class LiveDanmaku(AsyncEvent):
         async def on_timeout(ev):
             # 连接超时
             self.err_reason = "心跳响应超时"
-            await self.__client.ws_close(self.__ws)  # type: ignore
+            await self.__client.ws_close(cnt=self.__ws)  # type: ignore
 
         while True:
             self.err_reason = ""
@@ -1509,7 +1509,7 @@ class LiveDanmaku(AsyncEvent):
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
-                self.__ws = await self.__client.ws_create(uri, headers=HEADERS.copy())
+                self.__ws = await self.__client.ws_create(url=uri, headers=HEADERS.copy())
 
                 @self.on("VERIFICATION_SUCCESSFUL")
                 async def on_verification_successful(data):
@@ -1524,7 +1524,7 @@ class LiveDanmaku(AsyncEvent):
 
                 while True:
                     try:
-                        data, flag = await self.__client.ws_recv(self.__ws)
+                        data, flag = await self.__client.ws_recv(cnt=self.__ws)
                     except Exception as e:
                         self.__status = self.STATUS_ERROR
                         self.logger.error("出现错误")
@@ -1551,7 +1551,7 @@ class LiveDanmaku(AsyncEvent):
 
             except Exception as e:
                 if self.__ws:
-                    await self.__client.ws_close(self.__ws)
+                    await self.__client.ws_close(cnt=self.__ws)
                 self.logger.warning(e)
                 if retry <= 0 or len(available_hosts) == 0:
                     self.logger.error("无法连接服务器")
@@ -1735,7 +1735,7 @@ class LiveDanmaku(AsyncEvent):
         while True:
             if self.__heartbeat_timer == 0:
                 self.logger.debug("发送 WebSocket 心跳包")
-                await self.__client.ws_send(self.__ws, HEARTBEAT)
+                await self.__client.ws_send(cnt=self.__ws, data=HEARTBEAT)
             elif self.__heartbeat_timer <= -30:
                 # 视为已异常断开连接，发布 TIMEOUT 事件
                 self.dispatch("TIMEOUT")
@@ -1754,7 +1754,7 @@ class LiveDanmaku(AsyncEvent):
         """
         data = self.__pack(data, protocol_version, datapack_type)
         self.logger.debug(f"发送原始数据：{data}")
-        await self.__client.ws_send(self.__ws, data)
+        await self.__client.ws_send(cnt=self.__ws, data=data)
 
     @staticmethod
     def __pack(data: bytes, protocol_version: int, datapack_type: int) -> bytes:

@@ -113,20 +113,7 @@ class CurlCFFIClient(BiliAPIClient):
             headers.pop("User-Agent")
         if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
-        request_log.dispatch(
-            "REQUEST",
-            "发起请求",
-            {
-                "method": method,
-                "url": url,
-                "params": params,
-                "data": data,
-                "files": files,
-                "headers": headers,
-                "cookies": cookies,
-                "allow_redirects": allow_redirects,
-            },
-        )
+
         if files != {}:
             cnt = 1
             multipart = curl_cffi.CurlMime()
@@ -167,17 +154,6 @@ class CurlCFFIClient(BiliAPIClient):
             url=resp.url,
         )
 
-        request_log.dispatch(
-            "RESPONSE",
-            "获得响应",
-            {
-                "code": bili_api_resp.code,
-                "headers": bili_api_resp.headers,
-                "cookies": bili_api_resp.cookies,
-                "data": bili_api_resp.raw,
-                "url": bili_api_resp.url,
-            },
-        )
         return bili_api_resp
 
     async def download_create(
@@ -190,15 +166,6 @@ class CurlCFFIClient(BiliAPIClient):
         if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
         self.__download_cnt += 1
-        request_log.dispatch(
-            "DWN_CREATE",
-            "开始下载",
-            {
-                "id": self.__download_cnt,
-                "url": url,
-                "headers": headers,
-            },
-        )
         self.__downloads[self.__download_cnt] = await self.__session.get(
             url=url, headers=headers, stream=True
         )
@@ -207,11 +174,6 @@ class CurlCFFIClient(BiliAPIClient):
     async def download_chunk(self, cnt: int) -> bytes:
         resp = self.__downloads[cnt]
         data = await anext(resp.aiter_content())
-        request_log.dispatch(
-            "DWN_PART",
-            "收到部分下载数据",
-            {"id": cnt, "data": data},
-        )
         return data
 
     def download_content_length(self, cnt: int) -> int:
@@ -226,16 +188,6 @@ class CurlCFFIClient(BiliAPIClient):
         if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
         self.__ws_cnt += 1
-        request_log.dispatch(
-            "WS_CREATE",
-            "开始 WebSocket 连接",
-            {
-                "id": self.__ws_cnt,
-                "url": url,
-                "params": params,
-                "headers": headers,
-            },
-        )
         ws = await self.__session.ws_connect(url, params=params, headers=headers)
         self.__ws[self.__ws_cnt] = ws
         self.__ws_is_closed[self.__ws_cnt] = False
@@ -245,11 +197,6 @@ class CurlCFFIClient(BiliAPIClient):
     async def ws_send(self, cnt: int, data: bytes) -> None:
         if self.__ws_need_close[cnt] or self.__ws_is_closed[cnt]:
             return
-        request_log.dispatch(
-            "WS_SEND",
-            "发送 WebSocket 数据",
-            {"id": cnt, "data": data},
-        )
         ws = self.__ws[cnt]
         await ws.send_binary(data)
 
@@ -271,11 +218,6 @@ class CurlCFFIClient(BiliAPIClient):
                 loop = self.__session.loop
                 chunk, frame = await loop.run_in_executor(None, ws.curl.ws_recv)
                 flags = frame.flags
-                request_log.dispatch(
-                    "WS_RECV",
-                    "收到 WebSocket 数据",
-                    {"id": cnt, "data": chunk, "flags": flags},
-                )
                 chunks.append(chunk)
                 if frame.bytesleft == 0 and flags & curl_cffi.CurlWsFlag.CONT == 0:
                     break
@@ -300,11 +242,6 @@ class CurlCFFIClient(BiliAPIClient):
             return
         ws = self.__ws[cnt]
         self.__ws_need_close[cnt] = True
-        request_log.dispatch(
-            "WS_CLOSE",
-            "关闭 WebSocket 请求",
-            {"id": cnt},
-        )
         ws.terminate()  # It's better to terminate than close.
         self.__ws_is_closed[cnt] = True
 
