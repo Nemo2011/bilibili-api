@@ -1,33 +1,33 @@
-r"""
+"""
 bilibili_api.live
 
 直播相关
 """
 
-import json
-import time
-import base64
-import struct
 import asyncio
+import base64
+import json
 import logging
+import struct
+import time
 from enum import Enum
 from typing import Any, List, Union
 
 import brotli
 
-from .utils.utils import get_api, raise_for_statement
+from .exceptions.LiveException import LiveException
+from .utils.AsyncEvent import AsyncEvent
+from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku
 from .utils.network import (
-    Credential,
-    Api,
     HEADERS,
-    get_client,
+    Api,
     BiliWsMsgType,
+    Credential,
     get_buvid,
+    get_client,
 )
-from .utils.AsyncEvent import AsyncEvent
-from .exceptions.LiveException import LiveException
-from .utils.BytesReader import BytesReader
+from .utils.utils import get_api, raise_for_statement
 
 API = get_api("live")
 

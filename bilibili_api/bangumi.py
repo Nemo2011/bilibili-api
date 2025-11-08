@@ -12,18 +12,18 @@ bilibili_api.bangumi
 
 import datetime
 from enum import Enum
-from typing import Any, List, Tuple, Union, Optional, Type
+from typing import List, Optional, Tuple, Union
 
-from .video import Video
+from .exceptions import ApiException, ArgsException
 from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.danmaku import Danmaku
-from .utils.utils import get_api, raise_for_statement
-from .utils.network import Api, Credential
 from .utils.initial_state import (
-    get_initial_state,
     InitialDataType,
+    get_initial_state,
 )
-from .exceptions import ApiException, ArgsException
+from .utils.network import Api, Credential
+from .utils.utils import get_api
+from .video import Video
 
 API = get_api("bangumi")
 API_video = get_api("video")

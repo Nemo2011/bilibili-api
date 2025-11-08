@@ -4,17 +4,17 @@ bilibili_api.utils.geetest
 极验
 """
 
-from dataclasses import dataclass
+import email.message
+import enum
+import http.server
 import os
 import select
 import threading
-import http.server
-import email.message
-import enum
+from dataclasses import dataclass
 
 from ..exceptions import GeetestException
-from .utils import get_api
 from .network import Api
+from .utils import get_api
 
 API = get_api("login")
 

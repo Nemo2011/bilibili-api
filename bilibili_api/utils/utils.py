@@ -7,10 +7,11 @@ bilibili_api.utils.utils
 import json
 import os
 import random
-from typing import List, TypeVar
-from ..exceptions import StatementException
 from datetime import datetime
+from typing import List, TypeVar
 from urllib.parse import quote
+
+from ..exceptions import StatementException
 
 
 def get_api(field: str, *args) -> dict:

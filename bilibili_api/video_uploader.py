@@ -4,29 +4,29 @@ bilibili_api.video_uploader
 视频上传
 """
 
-import os
-import json
-import time
-import base64
-import re
 import asyncio
-from enum import Enum
-from typing import List, Union, Optional
-from copy import copy, deepcopy
-from asyncio.tasks import Task, create_task
+import base64
+import json
+import os
+import re
+import time
 from asyncio.exceptions import CancelledError
+from asyncio.tasks import Task, create_task
+from copy import copy, deepcopy
 from datetime import datetime
+from enum import Enum
+from typing import List, Optional, Union
 
-from .video import Video
-from .topic import Topic
-from .utils.utils import get_api
-from .utils.picture import Picture
-from .utils.AsyncEvent import AsyncEvent
-from .utils.aid_bvid_transformer import bvid2aid
 from .exceptions.ApiException import ApiException
-from .utils.network import Api, get_client, Credential, request_settings
 from .exceptions.NetworkException import NetworkException
 from .exceptions.ResponseCodeException import ResponseCodeException
+from .topic import Topic
+from .utils.aid_bvid_transformer import bvid2aid
+from .utils.AsyncEvent import AsyncEvent
+from .utils.network import Api, Credential, get_client, request_settings
+from .utils.picture import Picture
+from .utils.utils import get_api
+from .video import Video
 
 _API = get_api("video_uploader")
 

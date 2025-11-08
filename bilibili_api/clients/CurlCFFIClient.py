@@ -4,18 +4,19 @@ bilibili_api.clients.curl_cffi
 CurlCFFIClient 实现
 """
 
+import asyncio
 from select import select
+from typing import AsyncGenerator, Dict, Optional, Tuple, Union
+
+import curl_cffi  # pylint: disable=E0401
+from curl_cffi import requests  # pylint: disable=E0401
+
 from ..utils.network import (
     BiliAPIClient,
     BiliAPIFile,
     BiliAPIResponse,
     BiliWsMsgType,
-    request_log,
 )
-from curl_cffi import requests  # pylint: disable=E0401
-import curl_cffi  # pylint: disable=E0401
-from typing import Optional, Dict, Union, Tuple, AsyncGenerator
-import asyncio
 
 
 class CurlCFFIClient(BiliAPIClient):

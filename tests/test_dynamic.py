@@ -1,9 +1,9 @@
 # bilibili_api.dynamic
 
-from time import time, sleep
 from datetime import datetime
+from time import sleep, time
 
-from bilibili_api import Picture, ResponseCodeException, user, dynamic
+from bilibili_api import Picture, ResponseCodeException, dynamic, user
 
 from . import common
 

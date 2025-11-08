@@ -2,14 +2,14 @@
 bilibili_api.utils.upos
 """
 
-import os
-import json
 import asyncio
+import json
+import os
 from asyncio.tasks import create_task
 
-from .network import get_client, BiliAPIClient
 from ..exceptions.NetworkException import NetworkException
 from ..exceptions.ResponseCodeException import ResponseCodeException
+from .network import BiliAPIClient, get_client
 
 
 class UposFile:

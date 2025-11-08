@@ -4,16 +4,16 @@ bilibili_api.live_area
 直播间分区相关操作。
 """
 
-import os
 import copy
 import json
+import os
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
 
-from .utils.utils import get_api
-from .utils.network import Api, Credential
-from .live import get_area_info
 from .exceptions import ApiException
+from .live import get_area_info
+from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 API = get_api("live-area")
 

@@ -2,7 +2,7 @@
 
 import asyncio
 
-from bilibili_api import user, bvid2aid
+from bilibili_api import bvid2aid, user
 
 try:
     from . import common
@@ -11,8 +11,8 @@ try:
 except:
     credential = None
     print("导入凭据未成功")
-import time
 import random
+import time
 
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
 

@@ -1,8 +1,8 @@
 # Recommend cpython 3.13
 
+import json
 import os
 import sys
-import json
 
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), ".."))
 

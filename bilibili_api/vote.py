@@ -7,11 +7,11 @@ bilibili_api.vote
 """
 
 from enum import Enum
-from typing import Union, Optional
+from typing import Optional, Union
 
-from .utils.utils import get_api
-from .utils.picture import Picture
 from .utils.network import Api, Credential
+from .utils.picture import Picture
+from .utils.utils import get_api
 
 API = get_api("vote")
 

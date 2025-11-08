@@ -5,9 +5,10 @@ bilibili_api.utils.sync
 """
 
 import asyncio
-from typing import Any, TypeVar, Coroutine, Union
 from asyncio.futures import Future as AsyncioFuture
-from concurrent.futures import Future as ConcurrentFuture, ThreadPoolExecutor
+from concurrent.futures import Future as ConcurrentFuture
+from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Coroutine, TypeVar, Union
 
 T = TypeVar("T")
 

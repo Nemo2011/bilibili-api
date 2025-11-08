@@ -1,9 +1,9 @@
 import re
 from enum import Enum
 from inspect import isclass
-from inspect import isfunction as isFn
 from inspect import iscoroutinefunction as isAsync
-from typing import Any, Dict, List, Tuple, Optional
+from inspect import isfunction as isFn
+from typing import Any, Dict, List, Optional, Tuple
 
 import bilibili_api
 

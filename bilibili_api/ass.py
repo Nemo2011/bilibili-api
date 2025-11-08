@@ -4,18 +4,18 @@ bilibili_api.ass
 有关 ASS 文件的操作
 """
 
-import os
 import json
+import os
 from tempfile import gettempdir
-from typing import Union, Optional
+from typing import Optional, Union
 
-from .video import Video
 from .bangumi import Episode
 from .cheese import CheeseVideo
-from .utils.srt2ass import srt2ass
+from .exceptions.ArgsException import ArgsException
 from .utils.danmaku2ass import Danmaku2ASS
 from .utils.network import Api, Credential
-from .exceptions.ArgsException import ArgsException
+from .utils.srt2ass import srt2ass
+from .video import Video
 
 
 def json2srt(input_path: str, output_path: str):

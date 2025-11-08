@@ -7,8 +7,8 @@ bilibili_api.rank
 from enum import Enum
 from typing import Union
 
-from .utils.utils import get_api
 from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 API = get_api("rank")
 

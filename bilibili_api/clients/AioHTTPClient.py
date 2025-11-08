@@ -4,16 +4,17 @@ bilibili_api.clients.aiohttp
 AioHTTPClient 实现
 """
 
+import asyncio
+from typing import Dict, Optional, Tuple, Union
+
+import aiohttp  # pylint: disable=E0401
+
 from ..utils.network import (
     BiliAPIClient,
     BiliAPIFile,
     BiliAPIResponse,
     BiliWsMsgType,
-    request_log,
 )
-import aiohttp  # pylint: disable=E0401
-from typing import Optional, Dict, Union, Tuple
-import asyncio
 
 
 class AioHTTPClient(BiliAPIClient):

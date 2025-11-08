@@ -4,18 +4,12 @@ bilibili_api.manga
 漫画相关操作
 """
 
-import base64
 import datetime
 from enum import Enum
-from urllib.parse import urlparse
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Optional, Union
 
+from bilibili_api.utils.network import Api, Credential
 from bilibili_api.utils.utils import get_api
-from bilibili_api.exceptions import ArgsException
-from bilibili_api.utils.picture import Picture
-from bilibili_api.utils.network import HEADERS, Api, Credential
-
-from Cryptodome.PublicKey import ECC
 
 API = get_api("manga")
 

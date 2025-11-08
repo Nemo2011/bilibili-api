@@ -4,27 +4,25 @@ bilibili_api.login_v2
 登录
 """
 
-import json
-import tempfile
-import time
 import base64
 import enum
-
+import json
 import os
+import tempfile
+import time
+from typing import Dict, List, Union
+
 import qrcode
 import qrcode_terminal
 import yarl
-from typing import Union, List, Dict
-
-from .utils.utils import get_api, raise_for_statement, to_form_urlencoded
-from .exceptions import LoginError, GeetestException
-from .utils.network import Api, Credential, get_client, get_buvid
-from .utils.geetest import Geetest, GeetestType
-from .utils.picture import Picture
-
-from Cryptodome.PublicKey import RSA
 from Cryptodome.Cipher import PKCS1_v1_5
+from Cryptodome.PublicKey import RSA
 
+from .exceptions import GeetestException, LoginError
+from .utils.geetest import Geetest, GeetestType
+from .utils.network import Api, Credential, get_buvid, get_client
+from .utils.picture import Picture
+from .utils.utils import get_api, raise_for_statement, to_form_urlencoded
 
 API = get_api("login")
 

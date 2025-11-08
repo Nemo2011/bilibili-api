@@ -4,13 +4,10 @@ bilibili_api.emoji
 表情包相关
 """
 
-from .utils.utils import get_api
+from typing import List, Union
+
 from .utils.network import Api, Credential
-
-from typing import Union, List
-
-import os
-import json
+from .utils.utils import get_api
 
 API = get_api("emoji")
 

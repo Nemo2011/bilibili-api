@@ -5,18 +5,14 @@ bilibili_api.user
 """
 
 import json
-import random
-import time
 from enum import Enum
-from typing import List, Union, Tuple
+from typing import List, Tuple, Union
 
-import jwt
-
-from .utils.utils import get_api, join, raise_for_statement
-from .utils.user_render_data import get_user_dynamic_render_data
-from .exceptions import ResponseCodeException
-from .utils.network import Api, HEADERS, Credential
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
+from .exceptions import ResponseCodeException
+from .utils.network import Api, Credential
+from .utils.user_render_data import get_user_dynamic_render_data
+from .utils.utils import get_api, join, raise_for_statement
 
 API = get_api("user")
 

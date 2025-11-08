@@ -1,13 +1,19 @@
+"""
+bilibili_api.utils.user_render_data
+
+用户动态页面加载静态渲染数据相关
+"""
+
 import json
-from re import Match, Pattern, compile
 import time
+from re import Match, Pattern, compile
 from typing import Any
 from urllib.parse import unquote
 
-from ..exceptions import ApiException, NetworkException
-from .network import Credential, HEADERS, get_client
-
 import jwt
+
+from ..exceptions import ApiException, NetworkException
+from .network import HEADERS, Credential, get_client
 
 RENDER_DATA_PATTERN: Pattern[str] = compile(
     r"<script id=\"__RENDER_DATA__\" type=\"application/json\">(.*?)</script>"

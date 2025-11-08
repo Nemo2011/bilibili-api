@@ -1,16 +1,16 @@
-import os
-import sys
 import copy
 import enum
 import json
-import time
+import os
 import random
 import shutil
+import sys
+import time
 import zipfile
 from random import random as rand
 from typing import List, Tuple, Union
 
-from PyQt6 import QtGui, QtCore, QtWidgets, QtMultimedia, QtMultimediaWidgets
+from PyQt6 import QtCore, QtGui, QtMultimedia, QtMultimediaWidgets, QtWidgets
 
 
 class InteractiveVariable:

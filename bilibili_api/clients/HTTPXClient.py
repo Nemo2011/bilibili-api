@@ -4,15 +4,16 @@ bilibili_api.clients.httpx
 HTTPXClient 实现
 """
 
+from typing import AsyncGenerator, Dict, Optional, Union
+
+import httpx  # pylint: disable=E0401
+
+from ..exceptions import ApiException
 from ..utils.network import (
     BiliAPIClient,
     BiliAPIFile,
     BiliAPIResponse,
-    request_log,
 )
-from ..exceptions import ApiException
-import httpx  # pylint: disable=E0401
-from typing import AsyncGenerator, Optional, Dict, Union
 
 
 class HTTPXClient(BiliAPIClient):

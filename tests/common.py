@@ -2,7 +2,6 @@ import os
 
 from bilibili_api import Credential
 
-
 _credential_instance = None
 
 

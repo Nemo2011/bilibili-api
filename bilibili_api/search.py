@@ -4,14 +4,13 @@ bilibili_api.search
 搜索
 """
 
-import json
 from enum import Enum
-from typing import List, Union, Callable
-from .utils.utils import to_timestamps
-from .utils.utils import get_api
-from .video_zone import VideoZoneTypes
-from .utils.network import Api, Credential
+from typing import List, Union
+
 from .exceptions import ArgsException
+from .utils.network import Api, Credential
+from .utils.utils import get_api, to_timestamps
+from .video_zone import VideoZoneTypes
 
 API = get_api("search")
 

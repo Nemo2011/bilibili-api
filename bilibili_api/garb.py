@@ -4,10 +4,11 @@ bilibili_api.garb
 装扮/收藏集相关
 """
 
-from .utils.network import Credential, Api
-from .utils.utils import get_api
-from typing import Union, List, Tuple
 from enum import Enum
+from typing import List, Tuple, Union
+
+from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 dlc_lottery_id = {}
 

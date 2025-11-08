@@ -6,8 +6,8 @@ bilibili_api.homepage
 
 from typing import Union
 
-from .utils.utils import get_api
 from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 API = get_api("homepage")
 

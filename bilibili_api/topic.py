@@ -5,12 +5,11 @@ bilibili_api.topic
 """
 
 from enum import Enum
-from typing import Union, Optional
+from typing import Optional, Union
 
-from . import dynamic
 from .user import get_self_info
-from .utils.utils import get_api
 from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 API = get_api("topic")
 

@@ -5,33 +5,32 @@ bilibili_api.utils.parse_link
 """
 
 from enum import Enum
-from typing import Tuple, Union, Literal
+from typing import Literal, Tuple, Union
 
 from yarl import URL
 
-from ..game import Game
-from ..manga import Manga
-from ..topic import Topic
-from ..video import Video
-from ..exceptions import *
-from .utils import get_api
-from ..live import LiveRoom
-from ..dynamic import Dynamic
-from .short import get_real_url
-from ..note import Note, NoteType
-from ..black_room import BlackRoom
-from .network import Credential, Api
+from ..article import Article, ArticleList
 from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
-from ..article import Article, ArticleList
+from ..black_room import BlackRoom
 from ..cheese import CheeseList, CheeseVideo
-from ..interactive_video import InteractiveVideo
+from ..dynamic import Dynamic
+from ..exceptions import *
 from ..favorite_list import FavoriteList, FavoriteListType
-from ..user import User, ChannelSeries, ChannelSeriesType, get_self_info
-from ..opus import Opus
+from ..game import Game
 from ..garb import DLC
-
+from ..interactive_video import InteractiveVideo
+from ..live import LiveRoom
+from ..manga import Manga
+from ..note import Note, NoteType
+from ..opus import Opus
+from ..topic import Topic
+from ..user import ChannelSeries, ChannelSeriesType, User, get_self_info
+from ..video import Video
 from .initial_state import get_initial_state
+from .network import Api, Credential
+from .short import get_real_url
+from .utils import get_api
 
 
 class ResourceType(Enum):

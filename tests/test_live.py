@@ -1,11 +1,11 @@
 # bilibili_api.live
 
-import time
 import random
+import time
 
 from bilibili_api import live
-from bilibili_api.utils.danmaku import Danmaku
 from bilibili_api.exceptions import ResponseCodeException
+from bilibili_api.utils.danmaku import Danmaku
 
 from .common import get_credential
 

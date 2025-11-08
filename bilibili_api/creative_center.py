@@ -6,14 +6,14 @@ bilibili_api.creative_center
 务必携带 Credential 信息，否则无法获取到数据。
 """
 
-from enum import Enum
-from typing import List, Union, Optional
 from datetime import datetime
+from enum import Enum
+from typing import List, Optional, Union
 
-from .video_zone import VideoZoneTypes
-from .video import Video
-from .utils.utils import get_api
 from .utils.network import Api, Credential
+from .utils.utils import get_api
+from .video import Video
+from .video_zone import VideoZoneTypes
 
 API = get_api("creative_center")
 

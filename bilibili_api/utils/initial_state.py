@@ -4,13 +4,12 @@ bilibili_api.utils.initial_state
 用于获取页码的初始化信息
 """
 
-import re
 import json
 from enum import Enum
 from typing import Tuple
 
 from ..exceptions import *
-from .network import Api, Credential, HEADERS
+from .network import Api, Credential
 
 
 class InitialDataType(Enum):

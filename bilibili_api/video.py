@@ -6,34 +6,34 @@ bilibili_api.video
 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 """
 
-import re
-import os
-import json
-import struct
 import asyncio
-import logging
 import datetime
-from enum import Enum
-from inspect import iscoroutine, isfunction
-from functools import cmp_to_key
+import json
+import logging
+import os
+import re
+import struct
 from dataclasses import dataclass
-from typing import Any, List, Union, Optional, Type
+from enum import Enum
+from functools import cmp_to_key
+from inspect import iscoroutine, isfunction
+from typing import Any, List, Optional, Union
 
 from yarl import URL
 
 from . import user
-from .utils.aid_bvid_transformer import bvid2aid, aid2bvid
-from .utils.utils import get_api, raise_for_statement
+from .exceptions import (
+    ArgsException,
+    DanmakuClosedException,
+    NetworkException,
+    ResponseException,
+)
+from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.AsyncEvent import AsyncEvent
 from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku, SpecialDanmaku
-from .utils.network import Credential, Api, get_client, BiliWsMsgType
-from .exceptions import (
-    ArgsException,
-    NetworkException,
-    ResponseException,
-    DanmakuClosedException,
-)
+from .utils.network import Api, BiliWsMsgType, Credential, get_client
+from .utils.utils import get_api, raise_for_statement
 
 API = get_api("video")
 

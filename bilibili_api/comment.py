@@ -18,15 +18,14 @@ bilibili_api.comment
 
 import json
 from enum import Enum
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 from bilibili_api import Picture
 
 from .dynamic import upload_image
-
-from .utils.utils import get_api
-from .utils.network import Api, Credential
 from .exceptions.ArgsException import ArgsException
+from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 API = get_api("common")
 

@@ -12,16 +12,16 @@ bilibili_api.cheese
 还有，课程的 season_id 和 ep_id 不与番剧相通，井水不犯河水，请不要错用!
 """
 
-import json
 import datetime
+import json
 from typing import Any, List, Union
 
-from .utils.utils import get_api
-from .utils.danmaku import Danmaku
-from .utils.BytesReader import BytesReader
+from .exceptions import DanmakuClosedException, NetworkException, ResponseException
 from .exceptions.ArgsException import ArgsException
+from .utils.BytesReader import BytesReader
+from .utils.danmaku import Danmaku
 from .utils.network import Api, Credential
-from .exceptions import NetworkException, ResponseException, DanmakuClosedException
+from .utils.utils import get_api
 
 API = get_api("cheese")
 API_video = get_api("video")
