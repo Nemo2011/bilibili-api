@@ -12,6 +12,7 @@ import base64
 import binascii
 import hashlib
 import hmac
+import inspect
 import io
 import json
 import logging
@@ -269,13 +270,14 @@ class RequestSettings:
         self.__enable_buvid_global_persistence = False
         self.__enable_bili_ticket_global_persistence = False
         self.__enable_fpgen = False
+        self.__global_credential = None
         self.__fpgen_args = {}
 
     def get(self, name: str) -> Any:
         """
         获取某项设置
 
-        不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
+        不可用于 `wbi_retry_times` `enable_***` `fpgen_args` `global_credential`
 
         默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -510,6 +512,24 @@ class RequestSettings:
             fpgen_args (dict): 调用 fpgen 的参数
         """
         self.__fpgen_args = fpgen_args
+
+    def get_global_credential(self) -> "Optional[Credential]":
+        """
+        获取全局凭据类
+
+        Returns:
+            Optional[Credential]: 全局凭据类
+        """
+        return self.__global_credential
+
+    def set_global_credential(self, global_credential: "Optional[Credential]") -> None:
+        """
+        设置全局凭据类
+
+        Args:
+            global_credential (Optional[Credential]): 全局凭据类
+        """
+        self.__global_credential = global_credential
 
     def get_all(self) -> dict:
         """
@@ -1093,7 +1113,7 @@ class _BiliAPIClient:
                     }
                     request_log.dispatch("DO_PRE_FILTER", "执行前置过滤器", log)
                     try:
-                        flag, after_filter = pre["function"](self, key, kwargs)
+                        flag, after_filter = pre["function"](self.client, key, kwargs)
                     except:
                         raise FilterException("pre", pre["name"])
                     if flag == BiliFilterFlags.SET_PARAMS:
@@ -1124,7 +1144,9 @@ class _BiliAPIClient:
                     }
                     request_log.dispatch("DO_POST_FILTER", "执行后置过滤器", log)
                     try:
-                        flag, after_filter = post["function"](self, key, ret, kwargs)
+                        flag, after_filter = post["function"](
+                            self.client, key, ret, kwargs
+                        )
                     except:
                         raise FilterException("post", post["name"])
                     if flag == BiliFilterFlags.SET_RETURN:
@@ -1160,15 +1182,17 @@ class _BiliAPIClient:
                     request_log.dispatch("DO_PRE_FILTER", "执行前置过滤器", log)
                     if pre["function"]:
                         try:
-                            flag, after_filter = pre["function"](self, key, kwargs)
+                            flag, after_filter = pre["function"](
+                                self.client, key, kwargs
+                            )
                         except:
                             raise FilterException("pre", pre["name"])
                     if pre["async_function"]:
                         try:
                             flag, after_filter = await pre["async_function"](
-                                self, key, kwargs
+                                self.client, key, kwargs
                             )
-                        except:
+                        except Exception:
                             raise FilterException("pre", pre["name"])
                     if flag == BiliFilterFlags.SET_PARAMS:
                         res = after_filter
@@ -1200,14 +1224,14 @@ class _BiliAPIClient:
                     if post["function"]:
                         try:
                             flag, after_filter = post["function"](
-                                self, key, ret, kwargs
+                                self.client, key, ret, kwargs
                             )
                         except:
                             raise FilterException("post", post["name"])
                     if post["async_function"]:
                         try:
                             flag, after_filter = await post["async_function"](
-                                self, key, ret, kwargs
+                                self.client, key, ret, kwargs
                             )
                         except:
                             raise FilterException("post", post["name"])
@@ -1736,45 +1760,97 @@ def __register_builtin_log_filters():
         name="__builtin_log_request",
         func=request_pre,
         trigger=lambda client, key: key == "request",
+        priority=998244353,
     )
     register_post_filter(
         name="__builtin_log_request",
         func=request_post,
         trigger=lambda client, key: key == "request",
+        priority=-998244353,
     )
     register_post_filter(
         name="__builtin_log_dwn_create",
         func=dwn_create_post,
         trigger=lambda client, key: key == "download_create",
+        priority=-998244353,
     )
     register_post_filter(
         name="__builtin_log_dwn_chunk",
         func=dwn_chunk_post,
         trigger=lambda client, key: key == "download_chunk",
+        priority=-998244353,
     )
     register_post_filter(
         name="__builtin_log_ws_create",
         func=ws_create_post,
         trigger=lambda client, key: key == "ws_create",
+        priority=-998244353,
     )
     register_post_filter(
         name="__builtin_log_ws_recv",
         func=ws_recv_post,
         trigger=lambda client, key: key == "ws_recv",
+        priority=-998244353,
     )
     register_pre_filter(
         name="__builtin_log_ws_send",
         func=ws_send_pre,
         trigger=lambda client, key: key == "ws_send",
+        priority=998244353,
     )
     register_pre_filter(
         name="__builtin_log_ws_close",
         func=ws_close_pre,
         trigger=lambda client, key: key == "ws_close",
+        priority=998244353,
+    )
+
+
+def __register_global_credential_filter():
+    async def add_credential(client, key, params):
+        gcred = request_settings.get_global_credential()
+        if not gcred:
+            return BiliFilterFlags.CONTINUE, None
+        sig = inspect.signature(getattr(client, key))
+
+        def check_refreshing_urls(cred: Credential) -> bool:
+            if (cred.buvid3 is None and request_settings.get_enable_auto_buvid()) or (
+                (
+                    cred.bili_ticket is None
+                    or not cred.bili_ticket_expires
+                    or time.time() > cred.bili_ticket_expires
+                )
+                and request_settings.get_enable_bili_ticket()
+            ):  # need refresh
+                if params.get("url") in [
+                    "https://api.bilibili.com/x/frontend/finger/spi_v2", # buvid3 / buvid4
+                    "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket", # bili_ticket
+                    "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi", # exclimbwuzhi
+                    "https://api.bilibili.com/x/web-interface/nav", # wbi
+                ]:
+                    return False
+            return True
+
+        if "cookies" in sig.parameters.keys():
+            print(params["url"])
+            if not check_refreshing_urls(gcred):
+                if not params.get("cookies"):
+                    params["cookies"] = {}
+                params["cookies"] |= gcred.get_core_cookies()
+            else:
+                params["cookies"] = await gcred.get_cookies()
+        return BiliFilterFlags.SET_PARAMS, params
+
+    register_pre_filter(
+        name="__builtin_global_credential",
+        async_func=add_credential,
+        trigger=lambda client, key: True,
+        priority=0,
     )
 
 
 __register_builtin_log_filters()
+__register_global_credential_filter()
 
 
 @atexit.register
@@ -1952,7 +2028,7 @@ class Credential:
             "DedeUserID__ckMd5": self.dedeuserid_ckmd5,
             "sid": self.sid,
             "browser_resolution": f"{browser_fingerprint['window']['innerWidth']}-{browser_fingerprint['window']['innerHeight']}",
-            "opus-goback": "1", # 确保需要旧版的时候可以跳转到旧版页面
+            "opus-goback": "1",  # 确保需要旧版的时候可以跳转到旧版页面
         }
 
         return dict((k, v) for k, v in cookies.items() if v is not None)
@@ -2302,7 +2378,9 @@ class _CookieJsonDecoder(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parse_string = self.cookie_scanstring
-        self.scan_once = scanner.py_make_scanner(self)  # pyright: ignore[reportAttributeAccessIssue]
+        self.scan_once = scanner.py_make_scanner(
+            self
+        )  # pyright: ignore[reportAttributeAccessIssue]
 
     @staticmethod
     def cookie_scanstring(*args, **kwargs):
