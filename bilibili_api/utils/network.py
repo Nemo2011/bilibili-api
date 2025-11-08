@@ -1952,6 +1952,7 @@ class Credential:
             "DedeUserID__ckMd5": self.dedeuserid_ckmd5,
             "sid": self.sid,
             "browser_resolution": f"{browser_fingerprint['window']['innerWidth']}-{browser_fingerprint['window']['innerHeight']}",
+            "opus-goback": "1", # 确保需要旧版的时候可以跳转到旧版页面
         }
 
         return dict((k, v) for k, v in cookies.items() if v is not None)
