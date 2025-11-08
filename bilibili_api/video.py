@@ -266,21 +266,21 @@ class Video:
                 return True
         return False
 
-    async def turn_to_episode(self) -> "Episode":
+    async def turn_to_episode(self) -> "bangumi.Episode":
         """
         将视频转换为番剧
 
         Returns:
             Episode: 番剧对象
         """
-        from .bangumi import Episode
+        from . import bangumi
 
         raise_for_statement(await self.is_episode(), "视频不属于番剧")
 
         info = await self.__get_info_cached()
         url = URL(info.get("redirect_url"))
         epid = int(url.parts[3][2:])
-        return Episode(epid=epid)
+        return bangumi.Episode(epid=epid)
 
     async def get_detail(self) -> dict:
         """
@@ -1837,7 +1837,7 @@ class Video:
         )
 
 
-from .bangumi import Episode
+from . import bangumi
 
 
 class VideoOnlineMonitor(AsyncEvent):

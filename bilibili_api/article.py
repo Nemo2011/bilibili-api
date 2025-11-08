@@ -15,7 +15,6 @@ import yaml
 from bs4 import BeautifulSoup, element
 from yarl import URL
 
-from . import dynamic, opus
 from .exceptions.NetworkException import ApiException
 from .note import Note, NoteType
 from .utils import cache_pool
@@ -661,6 +660,9 @@ class Article:
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     # TODO: 专栏上传/编辑/删除
+
+
+from . import dynamic, opus
 
 
 class Node:
