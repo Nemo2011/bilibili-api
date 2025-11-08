@@ -1823,10 +1823,10 @@ def __register_global_credential_filter():
                 and request_settings.get_enable_bili_ticket()
             ):  # need refresh
                 if params.get("url") in [
-                    "https://api.bilibili.com/x/frontend/finger/spi_v2", # buvid3 / buvid4
-                    "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket", # bili_ticket
-                    "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi", # exclimbwuzhi
-                    "https://api.bilibili.com/x/web-interface/nav", # wbi
+                    "https://api.bilibili.com/x/frontend/finger/spi_v2",  # buvid3 / buvid4
+                    "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket",  # bili_ticket
+                    "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi",  # exclimbwuzhi
+                    "https://api.bilibili.com/x/web-interface/nav",  # wbi
                 ]:
                     return False
             return True
@@ -1991,6 +1991,20 @@ class Credential:
         self.sid = sid
         self.ac_time_value = ac_time_value
 
+        if not (
+            sessdata
+            or bili_jct
+            or buvid3
+            or buvid4
+            or dedeuserid
+            or dedeuserid_ckmd5
+            or sid
+            or ac_time_value
+        ):
+            self.__blank = True
+        else:
+            self.__blank = False
+
     def gen_local_cookies(self) -> None:
         self.b_nut = str(int(time.time()))
         self.b_lsid = _gen_b_lsid()
@@ -2003,11 +2017,36 @@ class Credential:
         Returns:
             dict: 请求 Cookies 字典
         """
-        if self.buvid3 is None and request_settings.get_enable_auto_buvid():
-            await get_buvid(self)
+        if self.__blank:
+            if request_settings.get_enable_auto_buvid():
+                await get_buvid(_credential)
+            if request_settings.get_enable_bili_ticket():
+                await get_bili_ticket(_credential)
+            (
+                self.buvid3,
+                self.buvid4,
+                self.buvid_fp,
+                self.b_lsid,
+                self.b_nut,
+                self.uuid_infoc,
+                self.bili_ticket,
+                self.bili_ticket_expires,
+            ) = (
+                _credential.buvid3,
+                _credential.buvid4,
+                _credential.buvid_fp,
+                _credential.b_lsid,
+                _credential.b_nut,
+                _credential.uuid_infoc,
+                _credential.bili_ticket,
+                _credential.bili_ticket_expires,
+            )
+        else:
+            if self.buvid3 is None and request_settings.get_enable_auto_buvid():
+                await get_buvid(self)
 
-        if request_settings.get_enable_bili_ticket():
-            await get_bili_ticket(self)
+            if request_settings.get_enable_bili_ticket():
+                await get_bili_ticket(self)
 
         browser_fingerprint = get_browser_fingerprint()
 
@@ -2189,7 +2228,7 @@ class Credential:
         Returns:
             Credential: 凭据类
         """
-        c = cls()
+        c = cls(sessdata="_", bili_jct="_")
         c.sessdata = cookies.get("SESSDATA")
         c.bili_jct = cookies.get("bili_jct")
         c.buvid3 = cookies.get("buvid3")
@@ -2870,7 +2909,7 @@ async def _get_bili_ticket(credential: Credential) -> Optional[tuple[str, int]]:
 
 
 __wbi_mixin_key: Optional[str] = None
-__credential = Credential(sessdata="global", bili_jct="global")
+_credential = Credential(sessdata="global", bili_jct="global")
 
 
 def recalculate_wbi() -> None:
@@ -2891,13 +2930,13 @@ async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
     Returns:
         Tuple[str, str, str]: 第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
     """
-    global __credential
+    global _credential
     if (
         request_settings.get_enable_buvid_global_persistence()
         and credential
         and credential.sessdata != "global"
     ):
-        await get_buvid(__credential)
+        await get_buvid(_credential)
         (
             credential.buvid3,
             credential.buvid4,
@@ -2906,16 +2945,16 @@ async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
             credential.b_lsid,
             credential.uuid_infoc,
         ) = (
-            __credential.buvid3,
-            __credential.buvid4,
-            __credential.buvid_fp,
-            __credential.b_nut,
-            __credential.b_lsid,
-            __credential.uuid_infoc,
+            _credential.buvid3,
+            _credential.buvid4,
+            _credential.buvid_fp,
+            _credential.b_nut,
+            _credential.b_lsid,
+            _credential.uuid_infoc,
         )
         return (credential.buvid3, credential.buvid4, credential.buvid_fp)
     if request_settings.get_enable_buvid_global_persistence() and credential is None:
-        return await get_buvid(__credential)
+        return await get_buvid(_credential)
     if credential is None:
         credential = Credential()
     if credential.buvid3 is None or credential.buvid4 is None:
@@ -2956,23 +2995,23 @@ async def get_bili_ticket(
     Returns:
         Tuple[str, str]: bili_ticket, bili_ticket_expires
     """
-    global __credential
+    global _credential
     if (
         request_settings.get_enable_bili_ticket_global_persistence()
         and credential
         and credential.sessdata != "global"
     ):
-        await get_bili_ticket(__credential)
+        await get_bili_ticket(_credential)
         credential.bili_ticket, credential.bili_ticket_expires = (
-            __credential.bili_ticket,
-            __credential.bili_ticket_expires,
+            _credential.bili_ticket,
+            _credential.bili_ticket_expires,
         )
         return credential.bili_ticket, str(credential.bili_ticket_expires)
     if (
         request_settings.get_enable_bili_ticket_global_persistence()
         and credential is None
     ):
-        return await get_bili_ticket(__credential)
+        return await get_bili_ticket(_credential)
     if credential is None:
         credential = Credential()
     if (
