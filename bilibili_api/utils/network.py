@@ -1122,9 +1122,22 @@ class _BiliAPIClient:
         cnt = copy.deepcopy(CLIENT_FUNC_CNT)
         lock.release()
 
+        def arg_convert(args, kwargs) -> dict:
+            ret = kwargs
+            args = list(args)
+            sig = inspect.signature(obj)
+            for name, _ in list(sig.parameters.items()):
+                if len(args) == 0:
+                    break
+                ret[name] = args.pop(0)
+            for name, param in list(sig.parameters.items()):
+                if name not in ret.keys():
+                    ret[name] = param.default
+            return ret
+
         def method_wrapper(method: Callable) -> Callable:
-            def wrapped_method(**kwargs) -> Any:
-                res = kwargs
+            def wrapped_method(*args, **kwargs) -> Any:
+                res = arg_convert(args, kwargs)
                 pres = get_registered_pre_filters(
                     client=self.__client__, func=key, in_priority=True
                 )
@@ -1195,8 +1208,8 @@ class _BiliAPIClient:
             return wrapped_method
 
         def coroutine_wrapper(coroutine: Coroutine) -> Coroutine:
-            async def wrapped_amethod(**kwargs) -> Any:
-                res = kwargs
+            async def wrapped_amethod(*args, **kwargs) -> Any:
+                res = arg_convert(args, kwargs)
                 pres = await async_get_registered_pre_filters(
                     client=self.__client__, func=key, in_priority=True
                 )
