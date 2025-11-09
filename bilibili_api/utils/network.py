@@ -1854,15 +1854,12 @@ def __register_global_credential_filter():
                 )
                 and request_settings.get_enable_bili_ticket()
             ):  # need refresh
-                if (
-                    params.get("url")
-                    in [
-                        "https://api.bilibili.com/x/frontend/finger/spi_v2",  # buvid3 / buvid4
-                        "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket",  # bili_ticket
-                        "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi",  # exclimbwuzhi
-                        "https://api.bilibili.com/x/web-interface/nav",  # wbi
-                    ]
-                ):
+                if params.get("url") in [
+                    "https://api.bilibili.com/x/frontend/finger/spi_v2",  # buvid3 / buvid4
+                    "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket",  # bili_ticket
+                    "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi",  # exclimbwuzhi
+                    "https://api.bilibili.com/x/web-interface/nav",  # wbi
+                ]:
                     return False
             return True
 
@@ -2431,7 +2428,10 @@ OE = list(
 )
 APPKEY = "4409e2ce8ffd12b8"
 APPSEC = "59b43e04ad6965f34319062b478f83dd"
-HEADERS = {}
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Referer": "https://www.bilibili.com/",
+}
 API = get_api("credential")
 
 browser_fingerprint = None
