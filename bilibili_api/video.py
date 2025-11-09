@@ -507,7 +507,7 @@ class Video:
             "platform": "html5" if html5 else "pc",
         }
         return (
-            await Api(**api, credential=self.credential, wbi=True)
+            await Api(**api, credential=self.credential)
             .update_params(**params)
             .result
         )
