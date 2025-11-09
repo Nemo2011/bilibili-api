@@ -2491,7 +2491,9 @@ class _CookieJsonDecoder(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parse_string = self.cookie_scanstring
-        self.scan_once = scanner.py_make_scanner(self)  # pyright: ignore[reportAttributeAccessIssue]
+        self.scan_once = scanner.py_make_scanner(
+            self
+        )  # pyright: ignore[reportAttributeAccessIssue]
 
     @staticmethod
     def cookie_scanstring(*args, **kwargs):
@@ -3279,12 +3281,11 @@ class Api:
             "data": self.data,
             "files": self.files,
             "cookies": cookies,
-            "headers": dict(
+            "headers": self.headers
+            | dict(
                 (k, v[0] if v and isinstance(v, list) else v)
                 for k, v in get_browser_fingerprint()["headers"].items()
-            )
-            | {"Referer": "https://www.bilibili.com/"}
-            | self.headers,
+            ),
         }
         # json_body
         if self.json_body:
