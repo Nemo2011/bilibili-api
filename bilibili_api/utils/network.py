@@ -3281,7 +3281,7 @@ class Api:
             "data": self.data,
             "files": self.files,
             "cookies": cookies,
-            "headers": self.headers
+            "headers": (HEADERS.copy() if len(self.headers) == 0 else self.headers)
             | dict(
                 (k, v[0] if v and isinstance(v, list) else v)
                 for k, v in get_browser_fingerprint()["headers"].items()
