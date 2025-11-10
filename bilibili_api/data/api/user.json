@@ -427,7 +427,7 @@
         "ts": "int: 时间戳"
       },
       "verify": true,
-      "comment": "获取事件"
+      "comment": "获取事件 [deprecated]"
     },
     "public_notes": {
       "url": "https://api.bilibili.com/x/note/publish/list/user",

@@ -1423,22 +1423,22 @@ async def check_nickname(nick_name: str) -> Tuple[bool, str]:
         return True, ""
 
 
-async def get_self_events(ts: int = 0, credential: Union[Credential, None] = None):
-    """
-    获取自己入站后每一刻的事件
+# async def get_self_events(ts: int = 0, credential: Union[Credential, None] = None):
+#     """
+#     获取自己入站后每一刻的事件
 
-    Args:
-        ts(int, optional)                      : 时间戳. Defaults to 0.
+#     Args:
+#         ts(int, optional)                      : 时间戳. Defaults to 0.
 
-        credential(Credential | None, optional): 凭据. Defaults to None.
+#         credential(Credential | None, optional): 凭据. Defaults to None.
 
-    Returns:
-        dict: 调用 API 返回的结果
-    """
-    credential = credential if credential else Credential()
-    api = API["info"]["events"]
-    params = {"ts": ts}
-    return await Api(**api, credential=credential).update_params(**params).result
+#     Returns:
+#         dict: 调用 API 返回的结果
+#     """
+#     credential = credential if credential else Credential()
+#     api = API["info"]["events"]
+#     params = {"ts": ts}
+#     return await Api(**api, credential=credential).update_params(**params).result
 
 
 async def get_self_notes_info(

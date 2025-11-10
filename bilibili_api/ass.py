@@ -18,7 +18,7 @@ from .utils.network import Api, Credential
 from .exceptions.ArgsException import ArgsException
 
 
-def json2srt(input_path: str, output_path: str):
+def _json2srt(input_path: str, output_path: str):
     data = json.load(open(input_path, "r"))
     with open(output_path, "w+", encoding="utf-8") as file:
         for cnt, comment in enumerate(data["body"]):
@@ -45,7 +45,7 @@ def json2srt(input_path: str, output_path: str):
             )
 
 
-def export_ass_from_xml(
+def _export_ass_from_xml(
     file_local,
     output_local,
     stage_size,
@@ -85,19 +85,7 @@ def export_ass_from_xml(
     )
 
 
-def export_ass_from_srt(file_local, output_local) -> None:
-    """
-    转换 srt 至 ass
-
-    Args:
-        file_local   (str): 文件位置
-
-        output_local (str): 输出位置
-    """
-    srt2ass(file_local, output_local, "movie")
-
-
-def export_ass_from_json(file_local, output_local) -> None:
+def _export_ass_from_json(file_local, output_local) -> None:
     """
     转换 json 至 ass
 
@@ -106,8 +94,8 @@ def export_ass_from_json(file_local, output_local) -> None:
 
         output_local (str): 输出位置
     """
-    json2srt(file_local, output_local.replace(".ass", ".srt"))
-    srt2ass(output_local.replace(".ass", ".srt"), output_local, "movie")
+    _json2srt(file_local, output_local.replace(".ass", ".srt"))
+    srt2ass(output_local.replace(".ass", ".srt"), output_local)
     os.remove(output_local.replace(".ass", ".srt"))
 
 
@@ -165,7 +153,7 @@ async def make_ass_file_subtitle(
             file_dir = gettempdir() + "/" + "subtitle.json"
             with open(file_dir, "w+", encoding="utf-8") as f:
                 f.write(json.dumps(req))
-            export_ass_from_json(file_dir, out)
+            _export_ass_from_json(file_dir, out)
             return
     raise ArgsException("没有找到指定字幕")
 
@@ -245,7 +233,7 @@ async def make_ass_file_danmakus_protobuf(
         for d in danmakus:
             file.write(d.to_xml())
         file.write("</i>")
-    export_ass_from_xml(
+    _export_ass_from_xml(
         gettempdir() + "/danmaku_temp.xml",
         out,
         stage_size,
@@ -325,7 +313,7 @@ async def make_ass_file_danmakus_xml(
         raise ArgsException("请传入 Video/Episode/CheeseVideo 类！")
     with open(gettempdir() + "/danmaku_temp.xml", "w+", encoding="utf-8") as file:
         file.write(xml_content)
-    export_ass_from_xml(
+    _export_ass_from_xml(
         gettempdir() + "/danmaku_temp.xml",
         out,
         stage_size,
