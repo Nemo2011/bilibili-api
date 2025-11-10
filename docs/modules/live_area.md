@@ -10,27 +10,12 @@ bilibili_api.live_area
 from bilibili_api import live_area
 ```
 
-- [class LiveRoomOrder()](#class-LiveRoomOrder)
 - [async def fetch\_live\_area\_data()](#async-def-fetch\_live\_area\_data)
 - [def get\_area\_info\_by\_id()](#def-get\_area\_info\_by\_id)
 - [def get\_area\_info\_by\_name()](#def-get\_area\_info\_by\_name)
 - [def get\_area\_list()](#def-get\_area\_list)
 - [def get\_area\_list\_sub()](#def-get\_area\_list\_sub)
 - [async def get\_list\_by\_area()](#async-def-get\_list\_by\_area)
-
----
-
-## class LiveRoomOrder()
-
-**Extend: enum.Enum**
-
-直播间排序方式
-
-- RECOMMEND: 综合
-- NEW: 最新
-
-
-
 
 ---
 
@@ -117,7 +102,7 @@ from bilibili_api import live_area
 | - | - | - |
 | `area_id` | `int` | 分区 id |
 | `page` | `int` | 第几页. Defaults to 1. |
-| `order` | `LiveRoomOrder` | 直播间排序方式. Defaults to LiveRoomOrder.RECOMMEND. |
+| `order` | `LiveRoomOrder` | 直播间排序方式. 访问接口后查询 `new_tags` 字段对应 `sort_type`。Defaults to "" (综合). |
 | `credential` | `Credential, optional` | 凭据类. Defaults to None. |
 
 **Returns:** `dict`:  调用 API 返回的结果

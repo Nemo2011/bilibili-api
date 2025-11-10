@@ -25,3 +25,4 @@ from .ExClimbWuzhiException import *
 from .GeetestException import *
 from .WbiRetryTimesExceedException import *
 from .CookiesRefreshException import *
+from .InitialStateException import *

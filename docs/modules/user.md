@@ -71,7 +71,6 @@ from bilibili_api import user
 - [async def edit\_self\_info()](#async-def-edit\_self\_info)
 - [async def get\_self\_black\_list()](#async-def-get\_self\_black\_list)
 - [async def get\_self\_coins()](#async-def-get\_self\_coins)
-- [async def get\_self\_events()](#async-def-get\_self\_events)
 - [async def get\_self\_experience\_log()](#async-def-get\_self\_experience\_log)
 - [async def get\_self\_friends()](#async-def-get\_self\_friends)
 - [async def get\_self\_history()](#async-def-get\_self\_history)
@@ -951,23 +950,6 @@ medialist排序顺序。
 
 
 **Returns:** `int`:  硬币数量
-
-
-
-
----
-
-## async def get_self_events()
-
-获取自己入站后每一刻的事件
-
-
-| name | type | description |
-| - | - | - |
-| `ts` | `int, optional` | 时间戳. Defaults to 0. |
-| `credential` | `Credential \| None, optional` | 凭据. Defaults to None. |
-
-**Returns:** `dict`:  调用 API 返回的结果
 
 
 

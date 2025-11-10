@@ -14,6 +14,7 @@ from .utils.utils import get_api
 from .utils.network import Api, Credential
 from .live import get_area_info
 from .exceptions import ApiException
+from .utils.user_render_data import get_webid
 
 API = get_api("live-area")
 
@@ -31,18 +32,6 @@ async def fetch_live_area_data() -> None:
     """
     global live_area_data
     live_area_data = await get_area_info()
-
-
-class LiveRoomOrder(Enum):
-    """
-    直播间排序方式
-
-    - RECOMMEND: 综合
-    - NEW: 最新
-    """
-
-    RECOMMEND = ""
-    NEW = "live_time"
 
 
 def get_area_info_by_id(id: int) -> Tuple[Union[dict, None], Union[dict, None]]:
@@ -145,7 +134,7 @@ def get_area_list_sub() -> dict:
 async def get_list_by_area(
     area_id: int,
     page: int = 1,
-    order: LiveRoomOrder = LiveRoomOrder.RECOMMEND,
+    order: str = "",
     credential: Optional[Credential] = None,
 ) -> dict:
     """
@@ -156,7 +145,7 @@ async def get_list_by_area(
 
         page       (int)                 : 第几页. Defaults to 1.
 
-        order      (LiveRoomOrder)       : 直播间排序方式. Defaults to LiveRoomOrder.RECOMMEND.
+        order      (LiveRoomOrder)       : 直播间排序方式. 访问接口后查询 `new_tags` 字段对应 `sort_type`。Defaults to "" (综合).
 
         credential (Credential, optional): 凭据类. Defaults to None.
 
@@ -165,11 +154,18 @@ async def get_list_by_area(
     """
     credential = credential if credential else Credential()
     api = API["info"]["list"]
+    parent_area_id = get_area_info_by_id(area_id)[0]["id"]
+    area_id = 0 if (get_area_info_by_id(area_id)[1] == None) else area_id
     params = {
         "platform": "web",
-        "parent_area_id": get_area_info_by_id(area_id)[0]["id"],
-        "area_id": 0 if (get_area_info_by_id(area_id)[1] == None) else area_id,
+        "parent_area_id": parent_area_id,
+        "area_id": area_id,
         "page": page,
-        "sort_type": order.value,
+        "sort_type": order,
+        "web_location": "444.253",
+        "w_webid": await get_webid(
+            f"https://live.bilibili.com/p/eden/area-tags?areaId={area_id}&parentAreaId={parent_area_id}",
+            credential=credential,
+        ),
     }
     return await Api(**api, credential=credential).update_params(**params).result
