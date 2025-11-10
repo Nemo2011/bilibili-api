@@ -18,7 +18,7 @@ def fileopen(input_file):
     tmp = ""
     for enc in encodings:
         try:
-            with io.open(input_file, mode="r", encoding=enc) as fd:
+            with open(input_file, mode="r", encoding=enc) as fd:
                 tmp = fd.read()
                 break
         except:
@@ -102,28 +102,10 @@ Style: TopRight,Arial,30,&H00FFFFFF,&H000000FF,&H00282828,&H00000000,0,0,0,0,100
 [Events]
 Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text"""
 
-    if sub_type == "anime":
-        head_str = """[Script Info]
-; This is an Advanced Sub Station Alpha v4+ script.
-Title: Default Aegisub file
-ScriptType: v4.00+
-WrapStyle: 0
-ScaledBorderAndShadow: yes
-YCbCr Matrix: TV.709
-PlayResX: 1920
-PlayResY: 1080
-[V4+ Styles]
-Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Verdana,60,&H00FFFFFF,&H000000FF,&H00282828,&H00000000,-1,0,0,0,100.2,100,0,0,1,3.75,0,2,0,0,79,1
-Style: BottomRight,Arial,30,&H00FFFFFF,&H000000FF,&H00282828,&H00000000,0,0,0,0,100,100,0,0,1,2,2,3,10,10,10,1
-Style: TopLeft,Arial,30,&H00FFFFFF,&H000000FF,&H00282828,&H00000000,0,0,0,0,100,100,0,0,1,2,2,7,10,10,10,1
-Style: TopRight,Arial,30,&H00FFFFFF,&H000000FF,&H00282828,&H00000000,0,0,0,0,100,100,0,0,1,2,2,9,10,10,10,1
-[Events]
-Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text"""
     output_str = utf8bom + head_str + "\n" + subLines
     #    output_str = output_str.encode(encoding)
 
-    with io.open(output_file, "w", encoding="utf8") as output:
+    with open(output_file, "w", encoding="utf8") as output:
         output.write(output_str)
 
     output_file = output_file.replace("\\", "\\\\")
