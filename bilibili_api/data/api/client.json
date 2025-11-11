@@ -4,5 +4,11 @@
         "method": "GET",
         "verify": false,
         "comment": "通过 IP 获取地理位置"
+    },
+    "live_zone": {
+        "url": "https://api.live.bilibili.com/xlive/web-room/v1/index/getIpInfo",
+        "method": "GET",
+        "verify": false,
+        "comment": "通过 IP 获取地理位置"
     }
 }

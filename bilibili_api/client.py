@@ -30,3 +30,14 @@ async def get_zone() -> dict:
 #     """
 #     api = API["info"]
 #     return await Api(**api).result
+
+
+async def get_zone_live() -> dict:
+    """
+    通过 IP 获取地理位置 (直播接口)
+
+    Returns:
+        dict: 调用 API 返回的结果
+    """
+    api = API["live_zone"]
+    return await Api(**api).result
