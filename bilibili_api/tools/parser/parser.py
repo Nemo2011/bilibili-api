@@ -1,9 +1,7 @@
 import re
 from enum import Enum
-from inspect import isclass
-from inspect import isfunction, ismethod
-from inspect import iscoroutinefunction as isAsync
-from typing import Any, Dict, List, Tuple, Optional
+from inspect import isclass, iscoroutinefunction, isfunction, ismethod
+from typing import Any, Dict, List, Optional, Tuple
 
 import bilibili_api
 
@@ -58,9 +56,9 @@ class Parser:
             return None
         for key, fn in OPS.items():
             if var.endswith(key):
-                return fn(var.replace(key, ""))
+                return fn(var.removesuffix(key))
         if var.endswith(":parse"):
-            obj, err = await self.parse(var.replace(":parse", ""))
+            obj, err = await self.parse(var.removesuffix(":parse"))
             if err is None:
                 return obj
 
@@ -121,8 +119,6 @@ class Parser:
                 else:
                     kwargs[arg[0]] = await self.transform(arg[1])
 
-            # print(position, func, args, kwargs)
-
             # 开始转移
             if isinstance(position, dict):
                 position = position.get(func, None)
@@ -132,7 +128,7 @@ class Parser:
                 position = getattr(position, func, None)
 
             # 赋值参数
-            if isAsync(position):
+            if iscoroutinefunction(position):
                 position = await position(*args, **kwargs)
             elif isfunction(position) or ismethod(position):
                 position = position(*args, **kwargs)
