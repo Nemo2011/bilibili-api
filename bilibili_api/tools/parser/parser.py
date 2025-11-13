@@ -1,7 +1,7 @@
 import re
 from enum import Enum
 from inspect import isclass
-from inspect import isfunction as isFn
+from inspect import isfunction, ismethod
 from inspect import iscoroutinefunction as isAsync
 from typing import Any, Dict, List, Tuple, Optional
 
@@ -134,7 +134,7 @@ class Parser:
             # 赋值参数
             if isAsync(position):
                 position = await position(*args, **kwargs)
-            elif isFn(position):
+            elif isfunction(position) or ismethod(position):
                 position = position(*args, **kwargs)
             elif isclass(position) and not issubclass(position, Enum):
                 position = position(*args, **kwargs)
