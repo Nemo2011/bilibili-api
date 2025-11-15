@@ -1,148 +1,101 @@
 import re
 from enum import Enum
 from inspect import isclass, iscoroutinefunction, isfunction, ismethod
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Union
 
 import bilibili_api
 
-FUNC = re.compile(r"[^\.\(]+")
-ARGS = re.compile(r"[^,\(\)]*[,\)]")
-SENTENCES = re.compile(r"\w+(?:\([^\)]*\))?\.?")
-OPS = {
-    ":int": int,
-    ":float": float,
-    ":bool": lambda s: s == "True",
-}
+SENTENCES = re.compile(r"\w+(?:\([^\)]*\))?\.?")  # 将一条长指令分解成若干语句
+FUNC = re.compile(r"[^\.\(]+")  # 从语句中获取要调用的函数或方法名
+ARGS = re.compile(r"[^,\(\)]*[,\)]")  # 从语句中获取参数值或指名参数值
 
 
-class Parser:
+class ParseError(Exception):
     """
-    解析器
+    解析错误
     """
 
-    def __init__(self, params: Dict[str, str]):
-        self.valid = True
-        self.params = params
+    def __init__(self, operations: List[Dict[str, Union[str, List[Any], Dict[str, Any]]]]):
+        super().__init__(operations[-1]["sentence"])
+        self.operations = operations
 
-    async def __aenter__(self):
-        """
-        解析前准备
 
-        把 params 中的参数先解析了
-        """
-        for key, val in self.params.items():
-            obj, err = await self.parse(val)
-            if err is None:
-                if isinstance(obj, bilibili_api.Credential):
-                    self.valid = await obj.check_valid()
-                self.params[key] = obj
-        return self
+async def parse(path: str, params: Optional[Dict[str, str]] = None) -> Any:
+    """
+    解析字符串
 
-    async def __aexit__(self, type, value, trace): ...
+    Args:
+        path (str): 需要解析的字符串
 
-    async def transform(self, var: str) -> Any:
-        """
-        类型装换函数
+        params (Dict[str, str], Optional): 自定义参数
 
-        通过在字符串后加上 `:int` `:float` `:bool` `:parse` 等操作符来实现
+    Returns:
+        Any: 解析结果
+    """
+    # 常规解析
+    if params is None:
+        params = {}
+    v = params.get(path, None)
+    if v is not None:
+        return v
+    elif path.startswith("'") and path.endswith("'"):
+        return path[1:-1]
+    elif path.startswith('"') and path.endswith('"'):
+        return path[1:-1]
+    elif path == "None":
+        return None
+    elif path == "True":
+        return True
+    elif path == "False":
+        return False
+    elif path.removeprefix("-").isdigit():
+        return int(path)
+    elif path.removeprefix("-").replace(".", "", 1).isdigit() and path.count(".") < 2:
+        return float(path)
 
-        Args:
-            var (str): 需要转换的字符串
+    # 当前解析到的位置
+    position: Any = bilibili_api  # 起始点
+    # 操作集
+    operations: List[Dict[str, Union[str, List[Any], Dict[str, Any]]]] = []
+    # 遍历指令
+    for sentence in SENTENCES.findall(path):
+        # 分解执行的函数名、参数、指名参数
+        func: str = FUNC.findall(sentence)[0]
+        flags: List[str] = ARGS.findall(sentence)
+        args, kwargs = [], {}
 
-        Returns:
-            Any: 装换结果
-        """
-        if var == ":none":
-            return None
-        for key, fn in OPS.items():
-            if var.endswith(key):
-                return fn(var.removesuffix(key))
-        if var.endswith(":parse"):
-            obj, err = await self.parse(var.removesuffix(":parse"))
-            if err is None:
-                return obj
+        for flag in flags:
+            # 去除句尾的逗号或小括号
+            flag = flag[:-1]
+            if flag == "":
+                continue
 
-        # 是请求时 params 中定义的变量 获取出来 不是的话返回原字符
-        return self.params.get(var, var)
-
-    async def parse(self, path: str) -> Tuple[Any, Optional[str]]:
-        """
-        分析指令
-
-        Args:
-            path (str): 需要解析的 token 对应库中的路径
-
-        Returns:
-            Any: 最终数据 若解析失败为 None
-
-            str: 错误信息 若解析成功为 None
-        """
-        # 纯数字
-        if (
-            path.replace(":int", "")
-            .replace(":float", "")
-            .replace(".", "")
-            .replace("-", "")
-            .isdigit()
-        ):
-            return await self.transform(path), None
-
-        # 指令列表
-        sentences = SENTENCES.findall(path)
-        # 起始点
-        position: Any = bilibili_api
-
-        async def inner() -> Optional[str]:
-            """
-            递归取值
-
-            Returns:
-                str: 错误信息 若解析成功为 None
-            """
-            nonlocal position
-            # 分解执行的函数名、参数、指名参数
-            sentence = sentences.pop(0)
-            func: str = FUNC.findall(sentence)[0]
-            flags: List[str] = ARGS.findall(sentence)
-            args, kwargs = [], {}
-
-            for flag in flags:
-                # 去除句尾的逗号或小括号
-                flag = flag[:-1]
-                if flag == "":
-                    continue
-
-                # 通过判断是否有等号存入参数列表或指名参数字典
-                arg = flag.split("=")
-                if len(arg) == 1:
-                    args.append(await self.transform(arg[0]))
-                else:
-                    kwargs[arg[0]] = await self.transform(arg[1])
-
-            # 开始转移
-            if isinstance(position, dict):
-                position = position.get(func, None)
-            elif isinstance(position, list):
-                position = position[int(func)]
+            # 通过判断是否有等号存入参数列表或指名参数字典
+            arg = flag.split("=")
+            if len(arg) == 1:
+                args.append(await parse(arg[0], params))
             else:
-                position = getattr(position, func, None)
+                kwargs[arg[0]] = await parse(arg[1], params)
 
-            # 赋值参数
-            if iscoroutinefunction(position):
-                position = await position(*args, **kwargs)
-            elif isfunction(position) or ismethod(position):
-                position = position(*args, **kwargs)
-            elif isclass(position) and not issubclass(position, Enum):
-                position = position(*args, **kwargs)
+        operations.append({"sentence": sentence, "func": func, "args": args, "kwargs": kwargs})
 
-            # 为空返回出错语句
-            # 否则检查是否分析完全部语句
-            # 是则返回 None 否继续递归
-            if position is None:
-                return sentence
-            if len(sentences) == 0:
-                return None
-            return await inner()
+        # 开始转移
+        if isinstance(position, dict):
+            position = position.get(func, None)
+        elif isinstance(position, list):
+            position = position[int(func)]
+        else:
+            position = getattr(position, func, None)
 
-        msg = await inner()
-        return position, msg
+        # 函数调用或创建对象
+        if iscoroutinefunction(position):
+            position = await position(*args, **kwargs)
+        elif isfunction(position) or ismethod(position):
+            position = position(*args, **kwargs)
+        elif isclass(position) and not issubclass(position, Enum):
+            position = position(*args, **kwargs)
+
+        # 当前位置为空则抛出操作集
+        if position is None:
+            raise ParseError(operations)
+    return position
