@@ -870,6 +870,8 @@ class InteractiveVideoDownloader(AsyncEvent):
                 if bts == tot:
                     break
 
+        await get_client().download_close(cnt=dwn_id)
+
         self.dispatch("DOWNLOAD_SUCCESS")
 
     async def __main(self) -> None:

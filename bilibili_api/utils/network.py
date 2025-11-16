@@ -196,6 +196,7 @@ Events:
 - WS_CLOSE:    关闭 WebSocket 请求。
 - DWN_CREATE:  新建下载。
 - DWN_PART:    部分下载。
+- DWN_CLOSE:   结束下载。
 - (Api)
 - API_REQUEST: Api 请求。
 - API_RESPONSE: Api 响应。
@@ -237,6 +238,7 @@ Events:
 - WS_CLOSE:    关闭 WebSocket 请求。
 - DWN_CREATE:  新建下载。
 - DWN_PART:    部分下载。
+- DWN_CLOSE:   结束下载。
 - (Api)
 - API_REQUEST: Api 请求。
 - API_RESPONSE: Api 响应。
@@ -801,6 +803,16 @@ class BiliAPIClient(ABC):
             raise NotImplementedError
 
         @abstractmethod
+        async def download_close(self, cnt: int) -> None:
+            """
+            结束下载
+
+            Args:
+                cnt    (int): 下载编号
+            """
+            raise NotImplementedError
+
+        @abstractmethod
         async def ws_create(
             self, url: str = "", params: dict = {}, headers: dict = {}
         ) -> int:
@@ -1006,6 +1018,16 @@ class BiliAPIClient(ABC):
 
         Returns:
             int: 下载总字节数
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def download_close(self, cnt: int) -> None:
+        """
+        结束下载
+
+        Args:
+            cnt    (int): 下载编号
         """
         raise NotImplementedError
 
@@ -1776,6 +1798,12 @@ def __register_builtin_log_filters():
         )
         return BiliFilterFlags.CONTINUE, None
 
+    def dwn_close_post(cnt, ins, client, key, ret, params):
+        request_log.dispatch(
+            "DWN_CLOSE", "结束下载", {"id": params["cnt"]}
+        )
+        return BiliFilterFlags.CONTINUE, None
+
     def ws_create_post(cnt, ins, client, key, ret, params):
         params.update({"id": ret})
         request_log.dispatch("WS_CREATE", "开始 WebSocket 连接", params)
@@ -1823,6 +1851,12 @@ def __register_builtin_log_filters():
         name="__builtin_log_dwn_chunk",
         func=dwn_chunk_post,
         trigger=lambda client, key: key == "download_chunk",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_dwn_close",
+        func=dwn_close_post,
+        trigger=lambda client, key: key == "download_close",
         priority=-998244353,
     )
     register_post_filter(
@@ -3435,6 +3469,7 @@ async def bili_simple_download(url: str, out: str, intro: str):
             print(f"{intro} - {out} [{bts} / {tot}]", end="\r")
             if bts == tot:
                 break
+    await get_client().download_close(cnt=dwn_id)
     print()
 
 

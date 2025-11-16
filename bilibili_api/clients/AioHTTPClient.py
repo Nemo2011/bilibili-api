@@ -143,6 +143,8 @@ class AioHTTPClient(BiliAPIClient):
             raw=await resp.read(),
             url=str(resp.url),
         )
+        resp.release()
+        await resp.wait_for_close()
         return bili_api_resp
 
     async def download_create(
@@ -172,6 +174,12 @@ class AioHTTPClient(BiliAPIClient):
     def download_content_length(self, cnt: int) -> int:
         resp = self.__downloads[cnt]
         return int(resp.headers.get("content-length", "0"))
+
+    async def download_close(self, cnt: int) -> None:
+        resp = self.__downloads[cnt]
+        resp.release()
+        await resp.wait_for_close()
+        del self.__downloads[cnt]
 
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
