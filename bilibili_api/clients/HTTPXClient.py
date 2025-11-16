@@ -215,6 +215,11 @@ class HTTPXClient(BiliAPIClient):
         await resp.aclose()
         del self.__downloads[cnt]
         del self.__download_iter[cnt]
+        request_log.dispatch(
+            "DWN_CLOSE",
+            "结束下载",
+            {"id": cnt},
+        )
 
     async def ws_create(self, *args, **kwargs) -> None:
         """

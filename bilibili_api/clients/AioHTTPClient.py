@@ -218,6 +218,11 @@ class AioHTTPClient(BiliAPIClient):
         resp.release()
         await resp.wait_for_close()
         del self.__downloads[cnt]
+        request_log.dispatch(
+            "DWN_CLOSE",
+            "结束下载",
+            {"id": cnt},
+        )
 
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
