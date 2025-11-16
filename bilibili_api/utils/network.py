@@ -1877,7 +1877,6 @@ def __register_global_credential_filter():
             return True
 
         if "cookies" in sig.parameters.keys():
-            print(params["url"])
             if not check_refreshing_urls(gcred):
                 if not params.get("cookies"):
                     params["cookies"] = {}
