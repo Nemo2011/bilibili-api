@@ -2476,9 +2476,12 @@ async def _get_spi_buvid() -> tuple[dict, str]:
         url=api["url"],
         headers=HEADERS.copy(),
     )
+    date = response.headers.get("date", None)
+    if not date:
+        date = response.headers["Date"]
     return (
         (response).json()["data"],
-        str(int(parsedate_to_datetime(response.headers["date"]).timestamp())),
+        str(int(parsedate_to_datetime(date).timestamp())),
     )
 
 
@@ -3281,11 +3284,7 @@ class Api:
             "data": self.data,
             "files": self.files,
             "cookies": cookies,
-            "headers": (HEADERS.copy() if len(self.headers) == 0 else self.headers)
-            | dict(
-                (k, v[0] if v and isinstance(v, list) else v)
-                for k, v in get_browser_fingerprint()["headers"].items()
-            ),
+            "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
         }
         # json_body
         if self.json_body:
