@@ -1,11 +1,11 @@
-### 这是一个解析器
+## 这是一个后端请求转发接口
 
 ```python
 # 需要单独安装 fastapi 和 uvicorn
 
-from bilibili_api.tools.parser import get_fastapi
-
 import uvicorn
+
+from bilibili_api.tools.parser import get_fastapi
 
 if __name__ == "__main__":
     uvicorn.run(get_fastapi(), host="0.0.0.0", port=9000)
@@ -19,11 +19,9 @@ if __name__ == "__main__":
 
 </div>
 
----
-
 ### 起因
 
-很久很久之前，我刚来到这个仓库，当时有个 Issue #31 他说：
+很久很久之前，我刚来到这个仓库，当时有个 Issue [#31](https://github.com/Nemo2011/bilibili-api/issues/31) 说：
 
 > 这个包可以在脚手架里用吗，我在vue-cli开发模式下启动直接提示跨域
 
@@ -31,13 +29,9 @@ if __name__ == "__main__":
 
 开始我不懂啥意思，直到后来我也写了点 vue ，用到了 bilibili 的接口发现跨域，我就打算按照那个方法写后端。
 
-但是一个个重新写接口名再找对应函数确实很累，所以我写了这个解析器
-
----
+但是一个个重新写接口名再找对应函数确实很累，所以我写了这个解析函数。
 
 ### 用法
-
-这段代码我已经部署在阿里云的函数计算里了，域名：[https://aliyun.nana7mi.link](https://aliyun.nana7mi.link)
 
 ```python
 from bilibili_api import user, sync
@@ -48,53 +42,42 @@ async def main():
 print(sync(main()))
 ```
 
-上述代码现在只需要一个链接：[https://aliyun.nana7mi.link/user.User(2).get_user_info()](https://aliyun.nana7mi.link/user.User(2).get_user_info()) 就能实现。
+上述代码现在只需要一个链接就能实现。
 
-或者指定参数名称：[https://aliyun.nana7mi.link/user.User(uid=2).get_user_info()](https://aliyun.nana7mi.link/user.User(uid=2).get_user_info())
+[http://localhost:9000/user.User(2).get_user_info()](http://localhost:9000/user.User(2).get_user_info())
 
-属于是从接口来回接口去了。
+你也可以使用指名参数。
 
-类似的还有 [https://aliyun.nana7mi.link/live.LiveRoom(21452505).get_room_info()](https://aliyun.nana7mi.link/live.LiveRoom(21452505).get_room_info())
-
----
+[http://localhost:9000/user.User(uid=2).get_user_info()](http://localhost:9000/user.User(uid=2).get_user_info())
 
 ### FAQ
 
 > Q1. 这个有什么用呢？
 
-前端访问不跨域了。
+前端不直接访问原接口，而是通过这个后端进行请求转发，就不会跨域了。
 
-> Q2. 为什么要解析器，直接用 eval() 不好吗？
+> Q2. 为什么要解析函数，直接用 `eval()` 不好吗？
 
-有安全隐患，用解析器这样一步一步调用比较安全。
+有安全隐患，用解析函数一步一步调用比较安全。
 
----
+> Q3. 参数值除了可以使用数字，还支持什么呢？
+
+常规值支持整数、浮点数 `None` `True` `False` 以及 `"` 或 `'` 开头并结尾的字符串。
+
+[http://localhost:9000/video.Video(bvid="BV1ju411T7so").get_aid()](http://localhost:9000/video.Video(bvid="BV1ju411T7so").get_aid())
+
+此外，你也可以使用一个可被解析的值作为参数值，例如：
+
+[http://localhost:9000/channel_series.ChannelSeries(id_=1845727,uid=148524702,type_=channel_series.ChannelSeriesType.SEASON).get_meta()](http://localhost:9000/channel_series.ChannelSeries(id_=1845727,uid=148524702,type_=channel_series.ChannelSeriesType.SEASON).get_meta())
 
 ### 进阶用法
 
-使用网址 params 请求参数储存值。
+使用请求参数 `query` 储存值，接着在函数中使用 `type` 作为参数值。
 
-[https://aliyun.nana7mi.link/comment.get_comments(708326075350908930,type,1:int)?type=comment.CommentResourceType.DYNAMIC](https://aliyun.nana7mi.link/comment.get_comments(708326075350908930,type,1:int)?type=comment.CommentResourceType.DYNAMIC)
+[http://localhost:9000/comment.get_comments(708326075350908930,type,1)?type=comment.CommentResourceType.DYNAMIC](http://localhost:9000/comment.get_comments(708326075350908930,type,1)?type=comment.CommentResourceType.DYNAMIC)
 
-这个变量是另一个需要被解析的文本，为什么不直接放在网址里呢？因为放前面会被当做字符串传进去。
+使用 `.key` 的方式对获取的字典结果取值，获得更精细数据，节省带宽。使用 `.index` 的方式对列表结果取元素，例如：
 
-同时为了不让所有参数都以字符串传入，还加了类型标注，在变量后使用类似 `:int` 的方式来强制转换，目前支持 `:int` `:float` `:bool` `:none` `:parse`。
+[http://localhost:9000/user.User(2).get_user_info().elec.show_info.list.0.uname](http://localhost:9000/user.User(2).get_user_info().elec.show_info.list.0.uname)
 
-其中 `:parse` 较为特殊，它的作用是解析前面这个字符串，用前面这个网址举例
-
-[https://aliyun.nana7mi.link/comment.get_comments(708326075350908930,comment.CommentResourceType.DYNAMIC:parse,1:int)](https://aliyun.nana7mi.link/comment.get_comments(708326075350908930,comment.CommentResourceType.DYNAMIC:parse,1:int))
-
----
-
-### 再高级一点呢
-
-使用 `?max_age=86400` 参数设置为期 86400 秒的缓存。
-
-在获取的字典结果后再使用 `.key` 的方式获得更精细数据，节省带宽，例如：
-
-[https://aliyun.nana7mi.link/user.User(2).get_user_info().face?max_age=86400](https://aliyun.nana7mi.link/user.User(2).get_user_info().face?max_age=86400)
-
-对于列表结果可以使用 `.index` 的方式获取列表中对应元素，例如：
-
-[https://aliyun.nana7mi.link/user.User(660303135).get_dynamics(0:int).cards.3.card](https://aliyun.nana7mi.link/user.User(660303135).get_dynamics(0:int).cards.3.card)
-
+使用 `?max_age=86400` 请求参数设置缓存，这里是 `86400` 秒。

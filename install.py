@@ -5,8 +5,8 @@ print("初始化开发环境中...")
 
 current_file_dir = os.path.dirname(__file__)
 
-# 安装 pylint
-os.system("pip3 install pylint")
+# 安装 pylint (linting) mypy (doc_gen)
+os.system("pip3 install pylint mypy")
 
 # 初始化 Githooks
 print("初始化 GitHooks 中...")

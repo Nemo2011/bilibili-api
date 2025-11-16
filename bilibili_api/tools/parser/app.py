@@ -1,23 +1,15 @@
-from typing import Any, Dict
+import json
+from typing import Dict
 
 from fastapi import FastAPI, Request, Response
 
-from .parser import Parser
+import bilibili_api
+
+from .parser import ParseError, parse
 
 
-def Result(code: int, data: Any) -> dict:
-    """
-    请求结果
-
-    Args:
-        code (int): 状态码
-
-        data (Any): 返回数据
-
-    Result:
-        dict: 返回体
-    """
-    return {"code": code, "data" if code == 0 else "error": data}
+def format_error(e: Exception) -> str:
+    return e.__class__.__name__ + (f": {e}" if str(e) else "")
 
 
 async def bilibili_api_web(
@@ -42,26 +34,65 @@ async def bilibili_api_web(
             例如 `?uid=434334701&roomid=21452505`
 
     Returns:
-        dict: 解析结果
+        dict: 响应体
     """
-    # 返回头设置
     vars: Dict[str, str] = dict(request.query_params)
     max_age = vars.pop("max_age", None)
     if max_age is not None:
         response.headers["Cache-Control"] = f"max-age={max_age}"
     response.headers["Access-Control-Allow-Origin"] = "*"
 
-    # 先判断是否有效 再分析
+    for key, val in vars.items():
+        try:
+            obj = await parse(val)
+        except ParseError as e:
+            return {
+                "code": 1,
+                "error": f"参数 {key} 解析出错: {format_error(e)}",
+                "operations": e.operations,
+            }
+        except Exception as e:
+            return {
+                "code": 2,
+                "error": f"参数 {key} 未知错误: {format_error(e)}",
+            }
+        if isinstance(obj, bilibili_api.Credential):
+            try:
+                if not await obj.check_valid():
+                    return {
+                        "code": 3,
+                        "error": f"参数 {key} 凭证失效",
+                    }
+            except Exception as e:
+                return {
+                    "code": 4,
+                    "error": f"参数 {key} 凭证验证出错: {format_error(e)}",
+                }
+        vars[key] = obj
     try:
-        async with Parser(vars) as parser:
-            if not parser.valid:
-                return Result(1, "Credential 验证失败")
-            obj, err = await parser.parse(path)  # 什么 golang 写法
-            if err is None:
-                return Result(0, obj)
-            return Result(2, f"解析语句 {err} 错误")
+        obj = await parse(path, vars)
+    except ParseError as e:
+        return {
+            "code": 5,
+            "error": f"指令解析出错: {format_error(e)}",
+            "operations": e.operations,
+        }
     except Exception as e:
-        return Result(3, f"未知错误 {e}")
+        return {
+            "code": 6,
+            "error": f"指令未知错误: {format_error(e)}",
+        }
+    try:
+        json.dumps(obj)  # 尝试序列化
+        return {
+            "code": 0,
+            "data": obj,
+        }
+    except Exception as e:
+        return {
+            "code": 7,
+            "error": f"序列化响应体出错: {format_error(e)}",
+        }
 
 
 def get_fastapi(app_run_path: str = "/{path}") -> FastAPI:
