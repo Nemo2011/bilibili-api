@@ -169,6 +169,7 @@ Events:
 - WS_CLOSE:    关闭 WebSocket 请求。
 - DWN_CREATE:  新建下载。
 - DWN_PART:    部分下载。
+- DWN_CLOSE:   结束下载。
 - (Api)
 - API_REQUEST: Api 请求。
 - API_RESPONSE: Api 响应。
@@ -207,6 +208,7 @@ Events:
 - WS_CLOSE:    关闭 WebSocket 请求。
 - DWN_CREATE:  新建下载。
 - DWN_PART:    部分下载。
+- DWN_CLOSE:   结束下载。
 - (Api)
 - API_REQUEST: Api 请求。
 - API_RESPONSE: Api 响应。
@@ -667,6 +669,16 @@ class BiliAPIClient(ABC):
             raise NotImplementedError
 
         @abstractmethod
+        async def download_close(self, cnt: int) -> None:
+            """
+            结束下载
+
+            Args:
+                cnt    (int): 下载编号
+            """
+            raise NotImplementedError
+
+        @abstractmethod
         async def ws_create(
             self, url: str = "", params: dict = {}, headers: dict = {}
         ) -> int:
@@ -872,6 +884,16 @@ class BiliAPIClient(ABC):
 
         Returns:
             int: 下载总字节数
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    async def download_close(self, cnt: int) -> None:
+        """
+        结束下载
+
+        Args:
+            cnt    (int): 下载编号
         """
         raise NotImplementedError
 
@@ -2366,6 +2388,7 @@ async def bili_simple_download(url: str, out: str, intro: str):
             print(f"{intro} - {out} [{bts} / {tot}]", end="\r")
             if bts == tot:
                 break
+    await get_client().download_close(cnt=dwn_id)
     print()
 
 

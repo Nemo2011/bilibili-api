@@ -189,7 +189,7 @@ class HTTPXClient(BiliAPIClient):
         )
         req = self.__session.build_request(method="GET", url=url, headers=headers)
         self.__downloads[self.__download_cnt] = await self.__session.send(
-            req, stream=True
+            req, stream=True, follow_redirects=True
         )
         self.__download_iter[self.__download_cnt] = self.__downloads[
             self.__download_cnt
@@ -209,6 +209,12 @@ class HTTPXClient(BiliAPIClient):
     def download_content_length(self, cnt: int) -> int:
         resp = self.__downloads[cnt]
         return int(resp.headers.get("content-length", "0"))
+
+    async def download_close(self, cnt: int) -> None:
+        resp = self.__downloads[cnt]
+        await resp.aclose()
+        del self.__downloads[cnt]
+        del self.__download_iter[cnt]
 
     async def ws_create(self, *args, **kwargs) -> None:
         """

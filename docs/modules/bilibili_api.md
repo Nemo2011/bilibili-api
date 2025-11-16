@@ -434,6 +434,16 @@ class BiliAPIClient(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def download_close(self, cnt: int) -> None:
+        """
+        结束下载
+
+        Args:
+            cnt    (int): 下载编号
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
@@ -1725,6 +1735,7 @@ Events:
 - WS_CLOSE:    关闭 WebSocket 请求。
 - DWN_CREATE:  新建下载。
 - DWN_PART:    部分下载。
+- DWN_CLOSE:   结束下载。
 - (Api)
 - API_REQUEST: Api 请求。
 - API_RESPONSE: Api 响应。
