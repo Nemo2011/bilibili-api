@@ -9,8 +9,6 @@ from typing import Dict, Optional, Tuple, Union
 
 import aiohttp  # pylint: disable=E0401
 
-import copy
-
 from ..utils.network import (
     BiliAPIClient,
     BiliAPIFile,

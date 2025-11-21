@@ -5,8 +5,6 @@ CurlCFFIClient 实现
 """
 
 import asyncio
-import copy
-from select import select
 from typing import AsyncGenerator, Dict, Optional, Tuple, Union
 
 import curl_cffi  # pylint: disable=E0401
@@ -218,48 +216,24 @@ class CurlCFFIClient(BiliAPIClient):
 
     async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
         ws = self.__ws[cnt]
-        chunks = []
-        flags = 0
-        sock_fd = ws.curl.getinfo(curl_cffi.CurlInfo.ACTIVESOCKET)
-        if sock_fd == curl_cffi.aio.CURL_SOCKET_BAD:
-            raise curl_cffi.WebSocketError(
-                "Invalid active socket", curl_cffi.CurlECode.NO_CONNECTION_AVAILABLE
-            )
-        while True:
-            if self.__ws_is_closed[cnt]:
+        try:
+            msg, flags = await ws.recv()
+        except curl_cffi.CurlError as e:
+            if e.code == curl_cffi.CurlECode.GOT_NOTHING:
                 return (b"", BiliWsMsgType.CLOSED)
-            if self.__ws_need_close[cnt]:
-                return (b"", BiliWsMsgType.CLOSING)
-            try:
-                loop = self.__session.loop
-                chunk, frame = await loop.run_in_executor(None, ws.curl.ws_recv)
-                flags = frame.flags
-                chunks.append(chunk)
-                if frame.bytesleft == 0 and flags & curl_cffi.CurlWsFlag.CONT == 0:
-                    break
-            except curl_cffi.CurlError as e:
-                if e.code == curl_cffi.CurlECode.AGAIN:
-                    _, _, _ = select([sock_fd], [], [], 0.5)
-                elif e.code == curl_cffi.CurlECode.GOT_NOTHING:
-                    return (b"", BiliWsMsgType.CLOSED)
-                else:
-                    raise e
+            else:
+                raise e
         if flags & curl_cffi.CurlWsFlag.CLOSE:
             return (b"", BiliWsMsgType.CLOSE)
-        by = b"".join(chunks)
         if flags & curl_cffi.CurlWsFlag.TEXT:
-            return (by, BiliWsMsgType.TEXT)
+            return (msg, BiliWsMsgType.TEXT)
         if flags & curl_cffi.CurlWsFlag.PING:
-            return (by, BiliWsMsgType.PING)
-        return (by, BiliWsMsgType.BINARY)
+            return (msg, BiliWsMsgType.PING)
+        return (msg, BiliWsMsgType.BINARY)
 
     async def ws_close(self, cnt: int) -> None:
-        if self.__ws_need_close[cnt] or self.__ws_is_closed[cnt]:
-            return
         ws = self.__ws[cnt]
-        self.__ws_need_close[cnt] = True
-        ws.terminate()  # It's better to terminate than close.
-        self.__ws_is_closed[cnt] = True
+        await ws.close()
 
     async def close(self) -> None:
         await self.__session.close()

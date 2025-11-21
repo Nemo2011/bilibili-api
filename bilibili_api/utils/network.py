@@ -1831,7 +1831,7 @@ def __register_builtin_log_filters():
         return BiliFilterFlags.CONTINUE, None
 
     def ws_close_pre(cnt, ins, client, key, params):
-        request_log.dispatch("WS_CLOSE", "关闭 WebSOcket 请求", {"id": params["cnt"]})
+        request_log.dispatch("WS_CLOSE", "关闭 WebSocket 请求", {"id": params["cnt"]})
         return BiliFilterFlags.CONTINUE, None
 
     register_pre_filter(
