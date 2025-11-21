@@ -9,6 +9,8 @@ from typing import Dict, Optional, Tuple, Union
 
 import aiohttp  # pylint: disable=E0401
 
+import copy
+
 from ..utils.network import (
     BiliAPIClient,
     BiliAPIFile,
@@ -53,6 +55,10 @@ class AioHTTPClient(BiliAPIClient):
         self.__downloads: Dict[int, aiohttp.ClientResponse] = {}
         self.__download_cnt: int = 0
 
+        self.__session_update_lock = asyncio.Lock()
+        self.__ws_cnt_lock = asyncio.Lock()
+        self.__down_cnt_lock = asyncio.Lock()
+
     def get_wrapped_session(self) -> aiohttp.ClientSession:
         return self.__session
 
@@ -74,6 +80,18 @@ class AioHTTPClient(BiliAPIClient):
         self.__args["trust_env"] = trust_env
         self.__need_update_session = True
 
+    async def __auto_update_session(self) -> None:
+        await self.__session_update_lock.acquire()
+        if self.__need_update_session:
+            await self.__session.close()
+            self.__session = aiohttp.ClientSession(
+                loop=asyncio.get_event_loop(),
+                trust_env=self.__args["trust_env"],
+                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
+            )
+            self.__need_update_session = False
+        self.__session_update_lock.release()
+
     async def request(
         self,
         method: str = "",
@@ -85,14 +103,7 @@ class AioHTTPClient(BiliAPIClient):
         cookies: dict = {},
         allow_redirects: bool = True,
     ) -> BiliAPIResponse:
-        if self.__need_update_session:
-            await self.__session.close()
-            self.__session = aiohttp.ClientSession(
-                loop=asyncio.get_event_loop(),
-                trust_env=self.__args["trust_env"],
-                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
-            )
-            self.__need_update_session = False
+        await self.__auto_update_session()
         if files:
             form = aiohttp.FormData()
             if isinstance(data, str):
@@ -152,19 +163,15 @@ class AioHTTPClient(BiliAPIClient):
         url: str = "",
         headers: dict = {},
     ) -> int:
-        if self.__need_update_session:
-            await self.__session.close()
-            self.__session = aiohttp.ClientSession(
-                loop=asyncio.get_event_loop(),
-                trust_env=self.__args["trust_env"],
-                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
-            )
-            self.__need_update_session = False
+        await self.__auto_update_session()
+        await self.__down_cnt_lock.acquire()
         self.__download_cnt += 1
-        self.__downloads[self.__download_cnt] = await self.__session.get(
+        cnt = self.__download_cnt
+        self.__down_cnt_lock.release()
+        self.__downloads[cnt] = await self.__session.get(
             url=url, headers=headers
         )
-        return self.__download_cnt
+        return cnt
 
     async def download_chunk(self, cnt: int) -> bytes:
         resp = self.__downloads[cnt]
@@ -184,19 +191,15 @@ class AioHTTPClient(BiliAPIClient):
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
-        if self.__need_update_session:
-            await self.__session.close()
-            self.__session = aiohttp.ClientSession(
-                loop=asyncio.get_event_loop(),
-                trust_env=self.__args["trust_env"],
-                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
-            )
-            self.__need_update_session = False
+        await self.__auto_update_session()
+        await self.__ws_cnt_lock.acquire()
         self.__ws_cnt += 1
-        self.__wss[self.__ws_cnt] = await self.__session.ws_connect(
+        cnt = self.__ws_cnt
+        self.__ws_cnt_lock.release()
+        self.__wss[cnt] = await self.__session.ws_connect(
             url=url, params=params, headers=headers
         )
-        return self.__ws_cnt
+        return cnt
 
     async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
         msg = await self.__wss[cnt].receive()

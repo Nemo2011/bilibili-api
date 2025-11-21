@@ -1120,8 +1120,8 @@ class BiliFilterFlags(Enum):
     GOTO = 7
 
 
-CLIENT_FUNC_CNT = 0
-lock = Lock()
+client_func_cnt = 0
+client_lock = Lock()
 
 
 class _BiliAPIClient:
@@ -1138,11 +1138,11 @@ class _BiliAPIClient:
         if not (isfunction(obj) or iscoroutinefunction(obj)):
             return obj
 
-        global CLIENT_FUNC_CNT
-        lock.acquire()
-        CLIENT_FUNC_CNT += 1
-        cnt = copy.deepcopy(CLIENT_FUNC_CNT)
-        lock.release()
+        global client_func_cnt
+        client_lock.acquire()
+        client_func_cnt += 1
+        cnt = client_func_cnt
+        client_lock.release()
 
         def arg_convert(args, kwargs) -> dict:
             ret = kwargs
@@ -1423,6 +1423,9 @@ def get_registered_available_settings() -> Dict[str, List[str]]:
     return client_settings
 
 
+get_client_lock = Lock()
+
+
 def get_client() -> BiliAPIClient:
     """
     在当前事件循环下获取模块正在使用的请求客户端
@@ -1440,6 +1443,7 @@ def get_client() -> BiliAPIClient:
         raise ArgsException("未找到用户指定的请求客户端。")
     loop = asyncio.get_event_loop()
     session = pool.get(loop)
+    get_client_lock.acquire()
     if session is None:
         kwargs = {}
         for piece in client_settings[selected_client]:
@@ -1456,6 +1460,7 @@ def get_client() -> BiliAPIClient:
             except Exception as e:
                 raise e
         lazy_settings[selected_client][loop] = {}
+    get_client_lock.release()
     return session
 
 

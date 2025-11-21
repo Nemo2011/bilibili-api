@@ -4,6 +4,8 @@ bilibili_api.clients.httpx
 HTTPXClient 实现
 """
 
+import asyncio
+import copy
 from typing import AsyncGenerator, Dict, Optional, Union
 
 import httpx  # pylint: disable=E0401
@@ -60,18 +62,16 @@ class HTTPXClient(BiliAPIClient):
         self.__download_iter: Dict[int, AsyncGenerator] = {}
         self.__download_cnt: int = 0
 
+        self.__need_update_session: bool = False
+        self.__session_update_lock = asyncio.Lock()
+        self.__down_cnt_lock = asyncio.Lock()
+
     def get_wrapped_session(self) -> httpx.AsyncClient:
         return self.__session
 
     def set_proxy(self, proxy: str = "") -> None:
         self.__proxy = proxy
-        self.__session = httpx.AsyncClient(
-            timeout=self.__timeout,
-            proxy=self.__proxy if self.__proxy != "" else None,
-            verify=self.__verify_ssl,
-            trust_env=self.__trust_env,
-            http2=self.__http2,
-        )
+        self.__need_update_session = True
 
     def set_timeout(self, timeout: float = 0.0) -> None:
         self.__timeout = timeout
@@ -79,17 +79,25 @@ class HTTPXClient(BiliAPIClient):
 
     def set_verify_ssl(self, verify_ssl: bool = True) -> None:
         self.__verify_ssl = verify_ssl
-        self.__session = httpx.AsyncClient(
-            timeout=self.__timeout,
-            proxy=self.__proxy if self.__proxy != "" else None,
-            verify=self.__verify_ssl,
-            trust_env=self.__trust_env,
-            http2=self.__http2,
-        )
+        self.__need_update_session = True
 
     def set_trust_env(self, trust_env: bool = True) -> None:
         self.__trust_env = trust_env
         self.__session.trust_env = trust_env
+
+    async def __auto_update_session(self) -> None:
+        await self.__session_update_lock.acquire()
+        if self.__need_update_session:
+            await self.__session.aclose()
+            self.__session = httpx.AsyncClient(
+                timeout=self.__timeout,
+                proxy=self.__proxy if self.__proxy != "" else None,
+                verify=self.__verify_ssl,
+                trust_env=self.__trust_env,
+                http2=self.__http2,
+            )
+            self.__need_update_session = False
+        self.__session_update_lock.release()
 
     def set_http2(self, http2: bool = False) -> None:
         """
@@ -118,6 +126,7 @@ class HTTPXClient(BiliAPIClient):
         cookies: dict = {},
         allow_redirects: bool = True,
     ) -> BiliAPIResponse:
+        await self.__auto_update_session()
         if files != {}:
             requests_like_files = {}
             for key, item in files.items():
@@ -153,15 +162,17 @@ class HTTPXClient(BiliAPIClient):
         url: str = "",
         headers: dict = {},
     ) -> int:
+        await self.__auto_update_session()
+        await self.__down_cnt_lock.acquire()
         self.__download_cnt += 1
+        cnt = self.__download_cnt
+        self.__down_cnt_lock.release()
         req = self.__session.build_request(method="GET", url=url, headers=headers)
-        self.__downloads[self.__download_cnt] = await self.__session.send(
+        self.__downloads[cnt] = await self.__session.send(
             req, stream=True, follow_redirects=True
         )
-        self.__download_iter[self.__download_cnt] = self.__downloads[
-            self.__download_cnt
-        ].aiter_bytes(4096)
-        return self.__download_cnt
+        self.__download_iter[cnt] = self.__downloads[cnt].aiter_bytes(4096)
+        return cnt
 
     async def download_chunk(self, cnt: int) -> bytes:
         iter = self.__download_iter[cnt]

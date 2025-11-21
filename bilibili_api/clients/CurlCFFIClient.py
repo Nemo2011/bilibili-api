@@ -5,6 +5,7 @@ CurlCFFIClient 实现
 """
 
 import asyncio
+import copy
 from select import select
 from typing import AsyncGenerator, Dict, Optional, Tuple, Union
 
@@ -65,6 +66,9 @@ class CurlCFFIClient(BiliAPIClient):
         self.__ws_is_closed: Dict[int, bool] = {}
         self.__downloads: Dict[int, requests.Response] = {}
         self.__download_cnt: int = 0
+
+        self.__ws_cnt_lock = asyncio.Lock()
+        self.__down_cnt_lock = asyncio.Lock()
 
     def get_wrapped_session(self) -> requests.AsyncSession:
         return self.__session
@@ -166,11 +170,14 @@ class CurlCFFIClient(BiliAPIClient):
             headers.pop("User-Agent")
         if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
+        await self.__down_cnt_lock.acquire()
         self.__download_cnt += 1
-        self.__downloads[self.__download_cnt] = await self.__session.get(
+        cnt = self.__download_cnt
+        self.__down_cnt_lock.release()
+        self.__downloads[cnt] = await self.__session.get(
             url=url, headers=headers, stream=True
         )
-        return self.__download_cnt
+        return cnt
 
     async def download_chunk(self, cnt: int) -> bytes:
         resp = self.__downloads[cnt]
@@ -193,12 +200,15 @@ class CurlCFFIClient(BiliAPIClient):
             headers.pop("User-Agent")
         if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
+        await self.__ws_cnt_lock.acquire()
         self.__ws_cnt += 1
+        cnt = self.__ws_cnt
+        self.__ws_cnt_lock.release()
         ws = await self.__session.ws_connect(url, params=params, headers=headers)
-        self.__ws[self.__ws_cnt] = ws
-        self.__ws_is_closed[self.__ws_cnt] = False
-        self.__ws_need_close[self.__ws_cnt] = False
-        return self.__ws_cnt
+        self.__ws[cnt] = ws
+        self.__ws_is_closed[cnt] = False
+        self.__ws_need_close[cnt] = False
+        return cnt
 
     async def ws_send(self, cnt: int, data: bytes) -> None:
         if self.__ws_need_close[cnt] or self.__ws_is_closed[cnt]:
