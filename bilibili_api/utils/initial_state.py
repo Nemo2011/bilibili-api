@@ -27,8 +27,14 @@ def find_json(content: str) -> str:
         ("window.__INITIAL_STATE__=", InitialDataType.INITIAL_STATE),
         ('window.__initialState = JSON.parse("', InitialDataType.INITIAL_STATE),
         ("window.__initialState = ", InitialDataType.INITIAL_STATE),
-        ('<script id="__NEXT_DATA__" type="application/json">', InitialDataType.NEXT_DATA),
-        ('<script id="__RENDER_DATA__" type="application/json">', InitialDataType.RENDER_DATA),
+        (
+            '<script id="__NEXT_DATA__" type="application/json">',
+            InitialDataType.NEXT_DATA,
+        ),
+        (
+            '<script id="__RENDER_DATA__" type="application/json">',
+            InitialDataType.RENDER_DATA,
+        ),
         ("<script>window._render_data_ = ", InitialDataType.RENDER_DATA),
     ]
     for pattern, content_type in patterns:

@@ -397,7 +397,7 @@ class VideoMeta:
             Union[int, datetime]
         ] = None,  # 可选，定时发布时间戳（秒）。
         porder: Optional[VideoPorderMeta] = None,  # 可选，商业相关参数。
-        watermark: Optional[bool] = False, # 可选，水印
+        watermark: Optional[bool] = False,  # 可选，水印
     ) -> None:
         """
         基本视频上传参数

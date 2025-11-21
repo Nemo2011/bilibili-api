@@ -510,9 +510,7 @@ class Video:
             params["platform"] = "html5"
             params["high_quality"] = "1"
         return (
-            await Api(**api, credential=self.credential)
-            .update_params(**params)
-            .result
+            await Api(**api, credential=self.credential).update_params(**params).result
         )
 
     async def get_related(self) -> dict:

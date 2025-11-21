@@ -2345,9 +2345,7 @@ class _CookieJsonDecoder(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parse_string = self.cookie_scanstring
-        self.scan_once = scanner.py_make_scanner(
-            self
-        )  # pyright: ignore[reportAttributeAccessIssue]
+        self.scan_once = scanner.py_make_scanner(self)  # pyright: ignore[reportAttributeAccessIssue]
 
     @staticmethod
     def cookie_scanstring(*args, **kwargs):
@@ -2867,9 +2865,7 @@ def __register_builtin_log_filters():
         return BiliFilterFlags.CONTINUE, None
 
     def dwn_close_post(cnt, ins, client, key, ret, params):
-        request_log.dispatch(
-            "DWN_CLOSE", "结束下载", {"id": params["cnt"]}
-        )
+        request_log.dispatch("DWN_CLOSE", "结束下载", {"id": params["cnt"]})
         return BiliFilterFlags.CONTINUE, None
 
     def ws_create_post(cnt, ins, client, key, ret, params):
@@ -2969,12 +2965,15 @@ def __register_global_credential_filter():
                 )
                 and request_settings.get_enable_bili_ticket()
             ):  # need refresh
-                if params.get("url") in [
-                    "https://api.bilibili.com/x/frontend/finger/spi_v2",  # buvid3 / buvid4
-                    "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket",  # bili_ticket
-                    "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi",  # exclimbwuzhi
-                    "https://api.bilibili.com/x/web-interface/nav",  # wbi
-                ]:
+                if (
+                    params.get("url")
+                    in [
+                        "https://api.bilibili.com/x/frontend/finger/spi_v2",  # buvid3 / buvid4
+                        "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket",  # bili_ticket
+                        "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi",  # exclimbwuzhi
+                        "https://api.bilibili.com/x/web-interface/nav",  # wbi
+                    ]
+                ):
                     return False
             return True
 

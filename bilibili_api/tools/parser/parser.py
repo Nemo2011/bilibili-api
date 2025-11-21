@@ -3,7 +3,7 @@ from enum import Enum
 from inspect import isclass
 from inspect import iscoroutinefunction as isAsync
 from inspect import isfunction as isFn
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Union
 
 import bilibili_api
 
@@ -17,7 +17,9 @@ class ParseError(Exception):
     解析错误
     """
 
-    def __init__(self, operations: List[Dict[str, Union[str, List[Any], Dict[str, Any]]]]):
+    def __init__(
+        self, operations: List[Dict[str, Union[str, List[Any], Dict[str, Any]]]]
+    ):
         super().__init__(operations[-1]["sentence"])
         self.operations = operations
 
@@ -79,7 +81,9 @@ async def parse(path: str, params: Optional[Dict[str, str]] = None) -> Any:
             else:
                 kwargs[arg[0]] = await parse(arg[1], params)
 
-        operations.append({"sentence": sentence, "func": func, "args": args, "kwargs": kwargs})
+        operations.append(
+            {"sentence": sentence, "func": func, "args": args, "kwargs": kwargs}
+        )
 
         # 开始转移
         if isinstance(position, dict):

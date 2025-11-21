@@ -31,7 +31,9 @@ async def get_webid(url: str, credential: Credential) -> dict[str, Any]:
     """
     if access_ids.get(url) and last_timestamp[url] > int(time.time()):
         return access_ids[url]
-    script_render_data = (await get_initial_state(url=url, credential=credential, strict=False))[0]
+    script_render_data = (
+        await get_initial_state(url=url, credential=credential, strict=False)
+    )[0]
     if not script_render_data:
         return None
     access_ids[url] = script_render_data["access_id"]
@@ -51,4 +53,6 @@ async def get_user_dynamic_render_data(
     :param uid: 用户ID 示例参数: 208259
     :return: 用户动态页面服务端渲染提取数据结构
     """
-    return await get_webid(f"https://space.bilibili.com/{uid}/dynamic", credential=credential)
+    return await get_webid(
+        f"https://space.bilibili.com/{uid}/dynamic", credential=credential
+    )
