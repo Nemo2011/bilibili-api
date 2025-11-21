@@ -64,6 +64,7 @@ from .exceptions import (
     DynamicExceedImagesException,
     ExClimbWuzhiException,
     GeetestException,
+    InitialStateException,
     LiveException,
     LoginError,
     NetworkException,
@@ -123,7 +124,7 @@ from .utils.picture import Picture
 from .utils.short import get_real_url
 from .utils.sync import sync
 
-BILIBILI_API_VERSION = "17.4.0"
+BILIBILI_API_VERSION = "dev-dyn-fp"
 
 
 def __register_all_clients():
@@ -175,6 +176,7 @@ __all__ = [
     "GeetestMeta",
     "GeetestType",
     "HEADERS",
+    "InitialStateException",
     "LiveException",
     "LoginError",
     "NetworkException",
