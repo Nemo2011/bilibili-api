@@ -2,7 +2,7 @@
 
 import random
 
-from bilibili_api import video, bvid2aid, favorite_list
+from bilibili_api import bvid2aid, favorite_list, video
 
 from . import common
 

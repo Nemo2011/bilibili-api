@@ -17,9 +17,9 @@ from typing import List
 
 from colorama import Fore
 
-from .touch import touch_ivi
-from .extract import extract_ivi
 from .download import download_interactive_video
+from .extract import extract_ivi
+from .touch import touch_ivi
 
 
 def run_args(command: str, args: List[str]):

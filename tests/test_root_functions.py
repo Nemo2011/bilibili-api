@@ -1,6 +1,6 @@
 # bilibili_api.__init__
 
-from bilibili_api import parse_link, get_real_url
+from bilibili_api import get_real_url, parse_link
 
 from .common import get_credential
 

@@ -5,10 +5,10 @@ bilibili_api.black_room
 """
 
 from enum import Enum
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
-from .utils.utils import get_api
 from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 
 class BlackReasonType(Enum):
@@ -338,9 +338,7 @@ async def get_next_jury_case(credential: Credential) -> JuryCase:
     )
 
 
-async def get_jury_case_raw(
-    credential: Credential, pn: int = 1, ps: int = 20
-) -> dict:
+async def get_jury_case_raw(credential: Credential, pn: int = 1, ps: int = 20) -> dict:
     """
     获取仲裁案件列表
 

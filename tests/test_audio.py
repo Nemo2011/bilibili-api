@@ -1,7 +1,7 @@
 # bilibili_api.audio
 
+from bilibili_api.audio import Audio, AudioList, get_hot_song_list, get_user_stat
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException
-from bilibili_api.audio import Audio, AudioList, get_user_stat, get_hot_song_list
 
 from .common import get_credential
 

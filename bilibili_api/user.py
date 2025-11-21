@@ -5,18 +5,14 @@ bilibili_api.user
 """
 
 import json
-import random
-import time
 from enum import Enum
-from typing import List, Union, Tuple
+from typing import List, Tuple, Union
 
-import jwt
-
-from .utils.utils import get_api, join, raise_for_statement
-from .utils.user_render_data import get_user_dynamic_render_data
-from .exceptions import ResponseCodeException
-from .utils.network import Api, HEADERS, Credential
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType
+from .exceptions import ResponseCodeException
+from .utils.network import Api, Credential
+from .utils.user_render_data import get_user_dynamic_render_data
+from .utils.utils import get_api, join, raise_for_statement
 
 API = get_api("user")
 
@@ -728,7 +724,9 @@ class User:
         """
         api = API["info"]["all_followings"]
         params = {"mid": self.__uid}
-        return await Api(**api, credential=self.credential).update_params(**params).result
+        return (
+            await Api(**api, credential=self.credential).update_params(**params).result
+        )
 
     async def get_followers(
         self, pn: int = 1, ps: int = 100, desc: bool = True
@@ -950,7 +948,10 @@ class User:
         channel_data = await self.get_channel_list(pn=pn, ps=20)
         season_list = channel_data["items_lists"]["seasons_list"]
         series_list = channel_data["items_lists"]["series_list"]
-        tot, cur = channel_data["items_lists"]["page"]["total"], channel_data["items_lists"]["page"]["page_size"]
+        tot, cur = (
+            channel_data["items_lists"]["page"]["total"],
+            channel_data["items_lists"]["page"]["page_size"],
+        )
         while cur < tot:
             pn += 1
             channel_data = await self.get_channel_list(pn=pn, ps=20)

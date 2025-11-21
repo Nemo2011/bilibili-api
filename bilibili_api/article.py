@@ -4,30 +4,23 @@ bilibili_api.article
 专栏相关
 """
 
+import html
 import re
-import json
 from copy import copy
 from enum import Enum
-from html import unescape
-from datetime import datetime
+from typing import List, TypeVar, Union, overload
 from urllib.parse import unquote
-from typing import List, Union, TypeVar, overload
 
 import yaml
-from yarl import URL
 from bs4 import BeautifulSoup, element
+from yarl import URL
 
-from .utils.initial_state import get_initial_state
-from .utils.utils import get_api, raise_for_statement
-from .utils.network import Api, Credential
-from .exceptions.NetworkException import ApiException, NetworkException
-from .utils import cache_pool
-
-from . import dynamic
-from . import opus
+from .exceptions.NetworkException import ApiException
 from .note import Note, NoteType
-
-import html
+from .utils import cache_pool
+from .utils.initial_state import get_initial_state
+from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 API = get_api("article")
 
@@ -351,7 +344,9 @@ class Article:
                             node = FontSizeNode()
                             node_list.append(node)
 
-                            node.size = int(re.search(r"font-size-(\d\d)", className)[1])  # type: ignore
+                            node.size = int(
+                                re.search(r"font-size-(\d\d)", className)[1]
+                            )  # type: ignore
                             node.children = await parse(e)
 
                         elif "color" in className:
@@ -665,6 +660,9 @@ class Article:
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     # TODO: 专栏上传/编辑/删除
+
+
+from . import dynamic, opus
 
 
 class Node:

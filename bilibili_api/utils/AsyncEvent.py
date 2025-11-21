@@ -19,7 +19,9 @@ class AsyncEvent:
         self.__handlers = {}
         self.__ignore_events = []
 
-    def add_event_listener(self, name: str, handler: Union[Callable, Coroutine]) -> None:
+    def add_event_listener(
+        self, name: str, handler: Union[Callable, Coroutine]
+    ) -> None:
         """
         注册事件监听器。
 
@@ -52,7 +54,9 @@ class AsyncEvent:
         """
         self.__handlers = {}
 
-    def remove_event_listener(self, name: str, handler: Union[Callable, Coroutine]) -> bool:
+    def remove_event_listener(
+        self, name: str, handler: Union[Callable, Coroutine]
+    ) -> bool:
         """
         移除事件监听函数。
 

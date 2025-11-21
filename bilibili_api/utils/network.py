@@ -2,28 +2,40 @@
 bilibili_api.utils.network
 
 与网络请求相关的模块。能对会话进行管理（复用 TCP 连接）。
+
+现在已经变成核心功能大杂烩了
 """
 
 import asyncio
 import atexit
+import base64
 import binascii
+import copy
 import hashlib
 import hmac
+import inspect
 import io
 import json
 import logging
+import os
 import random
 import re
 import struct
 import time
 import urllib.parse
-import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from email.utils import parsedate_to_datetime
 from enum import Enum
 from functools import reduce
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from inspect import iscoroutinefunction, isfunction
+from json import scanner
+from json.decoder import scanstring
+from threading import Lock
+from typing import Any, Callable, Coroutine, Dict, List, Optional, Tuple, Type, Union
 
+import chompjs
+from bs4 import BeautifulSoup
 from Cryptodome.Cipher import PKCS1_OAEP
 from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
@@ -38,9 +50,10 @@ from ..exceptions import (
     CredentialNoDedeUserIDException,
     CredentialNoSessdataException,
     ExClimbWuzhiException,
+    FilterException,
+    NetworkException,
     ResponseCodeException,
     WbiRetryTimesExceedException,
-    NetworkException,
 )
 from .AsyncEvent import AsyncEvent
 from .utils import get_api, raise_for_statement
@@ -142,6 +155,20 @@ class RequestLog(AsyncEvent):
             elif evt.startswith("DWN_"):
                 dwn_id = real_data.pop("id")
                 self.logger.info(f"DWN #{dwn_id} {desc}: {real_data}")
+            elif evt == "DO_PRE_FILTER":
+                act_id = real_data.pop("id")
+                client = real_data.pop("client")
+                action = real_data.pop("action")
+                self.logger.info(
+                    f"PRE_FILTER [#{act_id} {client}.{action}] {real_data}"
+                )
+            elif evt == "DO_POST_FILTER":
+                act_id = real_data.pop("id")
+                client = real_data.pop("client")
+                action = real_data.pop("action")
+                self.logger.info(
+                    f"POST_FILTER [#{act_id} {client}.{action}] {real_data}"
+                )
             elif evt == "ANTI_SPIDER":
                 self.logger.info(f"{real_data['msg']}")
             else:
@@ -175,6 +202,9 @@ Events:
 - API_RESPONSE: Api 响应。
 - (反爬虫)
 - ANTI_SPIDER: 反爬虫相关信息。
+- (过滤器)
+- DO_PRE_FILTER: 执行前置过滤器。
+- DO_POST_FILTER: 执行后置过滤器
 
 CallbackData: 描述 (str) 数据 (dict)
 
@@ -214,6 +244,8 @@ Events:
 - API_RESPONSE: Api 响应。
 - (反爬虫)
 - ANTI_SPIDER: 反爬虫相关信息。
+- (过滤器)
+- DO_FILTER: 执行过滤器。
 
 CallbackData: 描述 (str) 数据 (dict)
 
@@ -241,6 +273,7 @@ lazy_settings: Dict[str, Dict[asyncio.AbstractEventLoop, Dict[str, Any]]] = {}
 client_settings: Dict[str, list] = {}
 selected_client: str = ""
 
+
 class RequestSettings:
     def __init__(self):
         self.__settings: dict = {
@@ -252,12 +285,17 @@ class RequestSettings:
         self.__wbi_retry_times = 3
         self.__enable_auto_buvid = True
         self.__enable_bili_ticket = False
+        self.__enable_buvid_global_persistence = False
+        self.__enable_bili_ticket_global_persistence = False
+        self.__enable_fpgen = False
+        self.__global_credential = None
+        self.__fpgen_args = {}
 
     def get(self, name: str) -> Any:
         """
         获取某项设置
 
-        不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
+        不可用于 `wbi_retry_times` `enable_***` `fpgen_args` `global_credential`
 
         默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -273,7 +311,7 @@ class RequestSettings:
         """
         设置某项设置
 
-        不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
+        不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
 
         默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -415,6 +453,102 @@ class RequestSettings:
         """
         self.__enable_bili_ticket = enable_bili_ticket
 
+    def get_enable_buvid_global_persistence(self) -> bool:
+        """
+        获取设置的是否使用全局可持久化 buvid
+
+        Returns:
+            bool: 是否使用全局可持久化 buvid. Defalts to False.
+        """
+        return self.__enable_buvid_global_persistence
+
+    def set_enable_buvid_global_persistence(
+        self, enable_buvid_global_persistence: bool
+    ) -> None:
+        """
+        设置是否使用全局可持久化 buvid
+
+        Args:
+            enable_buvid_global_persistence (bool): 是否使用全局可持久化 buvid.
+        """
+        self.__enable_buvid_global_persistence = enable_buvid_global_persistence
+
+    def get_enable_bili_ticket_global_persistence(self) -> bool:
+        """
+        获取设置的是否使用全局可持久化 bili_ticket
+
+        Returns:
+            bool: 是否使用全局可持久化 bili_ticket. Defalts to False.
+        """
+        return self.__enable_bili_ticket_global_persistence
+
+    def set_enable_bili_ticket_global_persistence(
+        self, enable_bili_ticket_global_persistence: bool
+    ) -> None:
+        """
+        设置是否使用全局可持久化 buvid
+
+        Args:
+            enable_bili_ticket_global_persistence (bool): 是否使用全局可持久化 buvid.
+        """
+        self.__enable_bili_ticket_global_persistence = (
+            enable_bili_ticket_global_persistence
+        )
+
+    def get_enable_fpgen(self) -> bool:
+        """
+        获取是否使用 fpgen
+
+        Returns:
+            bool: 是否使用 fpgen. Defaults to False.
+        """
+        return self.__enable_fpgen
+
+    def set_enable_fpgen(self, enable_fpgen: bool) -> None:
+        """
+        设置是否使用 fpgen
+
+        Args:
+            enable_fpgen (bool): 是否使用 fpgen
+        """
+        self.__enable_fpgen = enable_fpgen
+
+    def get_fpgen_args(self) -> dict:
+        """
+        获取调用 fpgen 的参数
+
+        Returns:
+            dict: 调用 fpgen 的参数
+        """
+        return self.__fpgen_args
+
+    def set_fpgen_args(self, fpgen_args: dict) -> None:
+        """
+        设置调用 fpgen 的参数
+
+        Args:
+            fpgen_args (dict): 调用 fpgen 的参数
+        """
+        self.__fpgen_args = fpgen_args
+
+    def get_global_credential(self) -> "Optional[Credential]":
+        """
+        获取全局凭据类
+
+        Returns:
+            Optional[Credential]: 全局凭据类
+        """
+        return self.__global_credential
+
+    def set_global_credential(self, global_credential: "Optional[Credential]") -> None:
+        """
+        设置全局凭据类
+
+        Args:
+            global_credential (Optional[Credential]): 全局凭据类
+        """
+        self.__global_credential = global_credential
+
     def get_all(self) -> dict:
         """
         获取目前所有的设置项
@@ -462,7 +596,7 @@ class BiliAPIResponse:
         """
         return self.raw.decode("utf-8")
 
-    def json(self) -> object:
+    def json(self) -> dict[str, Any]:
         """
         解析 json
 
@@ -732,7 +866,7 @@ class BiliAPIClient(ABC):
             raise NotImplementedError
 
         @abstractmethod
-        async def close(self):
+        async def close(self) -> None:
             """
             关闭请求客户端，即关闭封装的第三方会话对象
             """
@@ -958,6 +1092,238 @@ class BiliAPIClient(ABC):
         raise NotImplementedError
 
 
+__registered_pre = []
+__registered_post = []
+
+
+class BiliFilterFlags(Enum):
+    """
+    过滤器行为枚举
+
+    - CONTINUE: 继续下一个过滤器
+    - SET_PARAMS: 设置函数的参数 (仅后置过滤器)
+    - SET_RETURN: 设置返回值 (仅前置过滤器)
+    - EXECUTE_NOW: 直接运行函数 (仅前置过滤器)
+    - RETURN_NOW: 直接作为函数返回值返回
+    - BACK: 回到上一个过滤器
+    - SKIP: 跳过下一个过滤器
+    - GOTO: 跳到任意一个过滤器 需通过 `(async_)get_registered_(pre|post)_filters` 查询对应过滤器的下标
+    """
+
+    CONTINUE = 0
+    SET_PARAMS = 1
+    SET_RETURN = 2
+    EXECUTE_NOW = 3
+    RETURN_NOW = 4
+    BACK = 5
+    SKIP = 6
+    GOTO = 7
+
+
+client_func_cnt = 0
+client_lock = Lock()
+
+
+class _BiliAPIClient:
+    """
+    BiliAPIClient 包装，用于执行过滤器。
+    """
+
+    def __init__(self, client_name, client, *args, **kwargs):
+        self.client = client
+        self.__client__ = client_name
+
+    def __getattr__(self, key: str) -> Any:
+        obj = getattr(self.client, key)
+        if not (isfunction(obj) or iscoroutinefunction(obj)):
+            return obj
+
+        global client_func_cnt
+        client_lock.acquire()
+        client_func_cnt += 1
+        cnt = client_func_cnt
+        client_lock.release()
+
+        def arg_convert(args, kwargs) -> dict:
+            ret = kwargs
+            args = list(args)
+            sig = inspect.signature(obj)
+            for name, _ in list(sig.parameters.items()):
+                if len(args) == 0:
+                    break
+                ret[name] = args.pop(0)
+            for name, param in list(sig.parameters.items()):
+                if name not in ret.keys():
+                    ret[name] = param.default
+            return ret
+
+        def method_wrapper(method: Callable) -> Callable:
+            def wrapped_method(*args, **kwargs) -> Any:
+                res = arg_convert(args, kwargs)
+                pres = get_registered_pre_filters(
+                    client=self.__client__, func=key, in_priority=True
+                )
+                i = 0
+                while i < len(pres):
+                    pre = pres[i]
+                    log = {
+                        "id": cnt,
+                        "name": pre["name"],
+                        "priority": pre["priority"],
+                        "client": self.__client__,
+                        "action": key,
+                    }
+                    request_log.dispatch("DO_PRE_FILTER", "执行前置过滤器", log)
+                    try:
+                        flag, after_filter = pre["function"](
+                            cnt, self.client, self.__client__, key, kwargs
+                        )
+                    except Exception as e:
+                        raise FilterException("pre", pre["name"], e)
+                    if flag == BiliFilterFlags.SET_PARAMS:
+                        res = after_filter
+                    elif flag == BiliFilterFlags.EXECUTE_NOW:
+                        break
+                    elif flag == BiliFilterFlags.RETURN_NOW:
+                        return after_filter
+                    elif flag == BiliFilterFlags.BACK:
+                        i = max(0, i - 1)
+                    elif flag == BiliFilterFlags.SKIP:
+                        i += 1
+                    elif flag == BiliFilterFlags.GOTO:
+                        i = after_filter - 1
+                    i += 1
+                ret = method(**res)
+                posts = get_registered_post_filters(
+                    client=self.__client__, func=key, in_priority=True
+                )
+                j = 0
+                while j < len(pres):
+                    post = posts[j]
+                    log = {
+                        "id": cnt,
+                        "name": post["name"],
+                        "priority": post["priority"],
+                        "client": self.__client__,
+                        "action": key,
+                    }
+                    request_log.dispatch("DO_POST_FILTER", "执行后置过滤器", log)
+                    try:
+                        flag, after_filter = post["function"](
+                            cnt, self.client, self.__client__, key, ret, kwargs
+                        )
+                    except Exception as e:
+                        raise FilterException("post", post["name"], e)
+                    if flag == BiliFilterFlags.SET_RETURN:
+                        ret = after_filter
+                    elif flag == BiliFilterFlags.RETURN_NOW:
+                        return after_filter
+                    elif flag == BiliFilterFlags.BACK:
+                        j = max(0, j - 1)
+                    elif flag == BiliFilterFlags.SKIP:
+                        j += 1
+                    elif flag == BiliFilterFlags.GOTO:
+                        j = after_filter - 1
+                    j += 1
+                return ret
+
+            return wrapped_method
+
+        def coroutine_wrapper(coroutine: Coroutine) -> Coroutine:
+            async def wrapped_amethod(*args, **kwargs) -> Any:
+                res = arg_convert(args, kwargs)
+                pres = await async_get_registered_pre_filters(
+                    client=self.__client__, func=key, in_priority=True
+                )
+                i = 0
+                while i < len(pres):
+                    pre = pres[i]
+                    log = {
+                        "id": cnt,
+                        "name": pre["name"],
+                        "priority": pre["priority"],
+                        "client": self.__client__,
+                        "action": key,
+                    }
+                    request_log.dispatch("DO_PRE_FILTER", "执行前置过滤器", log)
+                    if pre["function"]:
+                        try:
+                            flag, after_filter = pre["function"](
+                                cnt, self.client, self.__client__, key, kwargs
+                            )
+                        except Exception as e:
+                            raise FilterException("pre", pre["name"], e)
+                    if pre["async_function"]:
+                        try:
+                            flag, after_filter = await pre["async_function"](
+                                cnt, self.client, self.__client__, key, kwargs
+                            )
+                        except Exception as e:
+                            raise FilterException("pre", pre["name"], e)
+                    if flag == BiliFilterFlags.SET_PARAMS:
+                        res = after_filter
+                    elif flag == BiliFilterFlags.EXECUTE_NOW:
+                        break
+                    elif flag == BiliFilterFlags.RETURN_NOW:
+                        return after_filter
+                    elif flag == BiliFilterFlags.BACK:
+                        i = max(0, i - 1)
+                    elif flag == BiliFilterFlags.SKIP:
+                        i += 1
+                    elif flag == BiliFilterFlags.GOTO:
+                        i = after_filter - 1
+                    i += 1
+                ret = await coroutine(**res)
+                posts = await async_get_registered_post_filters(
+                    client=self.__client__, func=key, in_priority=True
+                )
+                j = 0
+                while j < len(posts):
+                    post = posts[j]
+                    log = {
+                        "id": cnt,
+                        "name": post["name"],
+                        "priority": post["priority"],
+                        "client": self.__client__,
+                        "action": key,
+                    }
+                    request_log.dispatch("DO_POST_FILTER", "执行后置过滤器", log)
+                    if post["function"]:
+                        try:
+                            flag, after_filter = post["function"](
+                                cnt, self.client, self.__client__, key, ret, kwargs
+                            )
+                        except Exception as e:
+                            raise FilterException("post", post["name"], e)
+                    if post["async_function"]:
+                        try:
+                            flag, after_filter = await post["async_function"](
+                                cnt, self.client, self.__client__, key, ret, kwargs
+                            )
+                        except Exception as e:
+                            raise FilterException("post", post["name"], e)
+                    if flag == BiliFilterFlags.SET_RETURN:
+                        ret = after_filter
+                    elif flag == BiliFilterFlags.RETURN_NOW:
+                        return after_filter
+                    elif flag == BiliFilterFlags.BACK:
+                        j = max(0, j - 1)
+                    elif flag == BiliFilterFlags.SKIP:
+                        j += 1
+                    elif flag == BiliFilterFlags.GOTO:
+                        j = after_filter - 1
+                    j += 1
+                return ret
+
+            return wrapped_amethod
+
+        if isfunction(obj):
+            return method_wrapper(obj)
+        if iscoroutinefunction(obj):
+            return coroutine_wrapper(obj)
+        return None
+
+
 def register_client(name: str, cls: type, settings: dict = {}) -> None:
     """
     注册请求客户端并切换，可用于用户自定义请求客户端。
@@ -1057,6 +1423,9 @@ def get_registered_available_settings() -> Dict[str, List[str]]:
     return client_settings
 
 
+get_client_lock = Lock()
+
+
 def get_client() -> BiliAPIClient:
     """
     在当前事件循环下获取模块正在使用的请求客户端
@@ -1074,11 +1443,12 @@ def get_client() -> BiliAPIClient:
         raise ArgsException("未找到用户指定的请求客户端。")
     loop = asyncio.get_event_loop()
     session = pool.get(loop)
+    get_client_lock.acquire()
     if session is None:
         kwargs = {}
         for piece in client_settings[selected_client]:
             kwargs[piece] = request_settings.get(piece)
-        session = sessions[selected_client](**kwargs)
+        session = _BiliAPIClient(selected_client, sessions[selected_client](**kwargs))
         session_pool[selected_client][loop] = session
         lazy_settings[selected_client][loop] = {}
     else:
@@ -1090,6 +1460,7 @@ def get_client() -> BiliAPIClient:
             except Exception as e:
                 raise e
         lazy_settings[selected_client][loop] = {}
+    get_client_lock.release()
     return session
 
 
@@ -1116,6 +1487,479 @@ def set_session(session: object) -> None:
         raise ArgsException("未找到用户指定的请求客户端。")
     loop = asyncio.get_event_loop()
     session_pool[selected_client][loop] = sessions[selected_client](session=session)
+
+
+def register_pre_filter(
+    name: str,
+    func: Optional[Callable] = None,
+    async_func: Optional[Coroutine] = None,
+    clients: Optional[List[str]] = None,
+    on: Optional[List[str]] = None,
+    trigger: Optional[Callable] = None,
+    async_trigger: Optional[Coroutine] = None,
+    priority: int = 0,
+) -> None:
+    """
+    注册/修改前置过滤器
+
+    触发方式1: 当请求客户端设置值位于 `clients` 中且执行函数名称位于 `on` 中触发。
+    触发方式2: `trigger(client, on) == True` 或 `await async_trigger(client, on)` 时触发。
+
+    执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
+
+    Args:
+        name          (str)                : 名称，若重复则为修改对应过滤器。
+        func          (Callable, optional) : 执行的函数，提供 5 个参数 `(cnt, BiliAPIClient, client, on, 传入参数字典)`
+        async_func    (Coroutine, optional): 执行的异步函数，提供 5 个参数 `(cnt, BiliAPIClient, client, on, 传入参数字典)`
+        clients       (List[str], optional): 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。
+        on            (List[str], optional): 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。
+        trigger       (Callable, optional) : 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
+        async_trigger (Coroutine, optional): 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
+        priority      (int, optional)      : 优先级，数字越小越优先执行。Defaults to 0.
+    """
+    global __registered_pre
+    raise_for_statement(
+        (clients and on) or (trigger or async_trigger), "至少提供一种触发方式"
+    )
+    raise_for_statement(func or async_func, "至少提供一个函数")
+    filt = {
+        "name": name,
+        "function": func,
+        "async_function": async_func,
+        "clients": clients,
+        "on": on,
+        "trigger": trigger,
+        "async_trigger": async_trigger,
+        "priority": priority,
+    }
+    for i, pre in enumerate(__registered_pre):
+        if pre["name"] == name:
+            __registered_pre[i] = filt
+            return
+    __registered_pre.append(filt)
+
+
+def register_post_filter(
+    name: str,
+    func: Optional[Callable] = None,
+    async_func: Optional[Coroutine] = None,
+    clients: Optional[List[str]] = None,
+    on: Optional[List[str]] = None,
+    trigger: Optional[Callable] = None,
+    async_trigger: Optional[Coroutine] = None,
+    priority: int = 0,
+) -> None:
+    """
+    注册/修改后置过滤器
+
+    触发方式1: 当请求客户端设置值位于 `clients` 中且执行函数名称位于 `on` 中触发。
+    触发方式2: `trigger(client, on) == True` 或 `await async_trigger(client, on)` 时触发。
+
+    执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
+
+    Args:
+        name          (str)                : 名称，若重复则为修改对应过滤器。
+        func          (Callable, optional) : 执行的函数，提供 6 个参数 `(cnt, BiliAPIClient, client, on, 返回值, 传入参数字典)`
+        async_func    (Coroutine, optional): 执行的异步函数，提供 6 个参数 `(cnt, BiliAPIClient, client, on, 返回值, 传入参数字典)`
+        clients       (List[str], optional): 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。
+        on            (List[str], optional): 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。
+        trigger       (Callable, optional) : 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
+        async_trigger (Coroutine, optional): 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
+        priority      (int, optional)      : 优先级，数字越小越优先执行。Defaults to 0.
+    """
+    global __registered_post
+    raise_for_statement(
+        (clients and on) or (trigger or async_trigger), "至少提供一种触发方式"
+    )
+    raise_for_statement(func or async_func, "至少提供一个函数")
+    filt = {
+        "name": name,
+        "function": func,
+        "async_function": async_func,
+        "clients": clients,
+        "on": on,
+        "trigger": trigger,
+        "async_trigger": async_trigger,
+        "priority": priority,
+    }
+    for i, post in enumerate(__registered_post):
+        if post["name"] == name:
+            __registered_post[i] = filt
+            return
+    __registered_post.append(filt)
+
+
+def get_all_registered_pre_filters(in_priority: bool = True) -> List[dict]:
+    """
+    获取所有已注册的前置过滤器
+
+    Args:
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的前置过滤器
+    """
+    if in_priority:
+        return sorted(__registered_pre, key=lambda pre: pre["priority"])
+    return __registered_pre
+
+
+def get_all_registered_post_filters(in_priority: bool = True) -> List[dict]:
+    """
+    获取所有已注册的后置过滤器
+
+    Args:
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的后置过滤器
+    """
+    if in_priority:
+        return sorted(__registered_post, key=lambda post: post["priority"])
+    return __registered_post
+
+
+def get_registered_pre_filters(
+    client: str,
+    func: str,
+    in_priority: bool = True,
+) -> List[dict]:
+    """
+    通过请求客户端及其函数筛选已注册的前置过滤器
+
+    Args:
+        client      (str) : 请求客户端.
+        func        (str) : 执行函数名.
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的前置过滤器
+    """
+    pres = get_all_registered_pre_filters(in_priority=in_priority)
+    ret = []
+    for pre in pres:
+        if (
+            (
+                (pre["on"] and func in pre["on"])
+                and (pre["clients"] and client in pre["clients"])
+            )
+            or (pre["trigger"] and pre["trigger"](client, func))
+        ) and pre["function"]:
+            ret.append(pre)
+    return ret
+
+
+def get_registered_post_filters(
+    client: List[str] = [],
+    func: List[str] = [],
+    in_priority: bool = True,
+) -> List[dict]:
+    """
+    通过请求客户端及其函数筛选已注册的后置过滤器
+
+    Args:
+        client      (str) : 请求客户端.
+        func        (str) : 执行函数名.
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的后置过滤器
+    """
+    posts = get_all_registered_post_filters(in_priority=in_priority)
+    ret = []
+    for post in posts:
+        if (
+            (
+                (post["on"] and func in post["on"])
+                and (post["clients"] and client in post["clients"])
+            )
+            or (post["trigger"] and post["trigger"](client, func))
+        ) and post["function"]:
+            ret.append(post)
+    return ret
+
+
+async def async_get_registered_pre_filters(
+    client: str,
+    func: str,
+    in_priority: bool = True,
+) -> List[dict]:
+    """
+    通过请求客户端及其函数筛选已注册的前置过滤器，支持异步触发器和过滤器。
+
+    Args:
+        client      (str) : 请求客户端.
+        func        (str) : 执行函数名.
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的后置过滤器
+    """
+    pres = __registered_pre
+    if in_priority:
+        pres.sort(key=lambda pre: pre["priority"])
+    ret = []
+    for pre in pres:
+        if (
+            (
+                (pre["on"] and func in pre["on"])
+                and (pre["clients"] and client in pre["clients"])
+            )
+            or (pre["trigger"] and pre["trigger"](client, func))
+            or (pre["async_trigger"] and await pre["async_trigger"](client, func))
+        ) and (pre["function"] or pre["async_function"]):
+            ret.append(pre)
+    return ret
+
+
+async def async_get_registered_post_filters(
+    client: List[str] = [],
+    func: List[str] = [],
+    in_priority: bool = True,
+) -> List[dict]:
+    """
+    通过请求客户端及其函数筛选已注册的后置过滤器，支持异步触发器和过滤器。
+
+    Args:
+        client      (str) : 请求客户端.
+        func        (str) : 执行函数名.
+        in_priority (bool): 是否排序. Defaults to True.
+
+    Returns:
+        List[dict]: 已注册的后置过滤器
+    """
+    posts = __registered_post
+    if in_priority:
+        posts.sort(key=lambda post: post["priority"])
+    ret = []
+    for post in posts:
+        if (
+            (
+                (post["on"] and func in post["on"])
+                and (post["clients"] and client in post["clients"])
+            )
+            or (post["trigger"] and post["trigger"](client, func))
+            or (post["async_trigger"] and await post["async_trigger"](client, func))
+        ) and (post["function"] or post["async_function"]):
+            ret.append(post)
+    return ret
+
+
+def unregister_pre_filter(name: str) -> None:
+    """
+    取消注册前置过滤器
+
+    Args:
+        name (str): 过滤器名称
+    """
+    global __registered_pre
+    for i, pre in enumerate(__registered_pre):
+        if pre["name"] == name:
+            del __registered_pre[i]
+            return
+
+
+def unregister_post_filter(name: str) -> None:
+    """
+    取消注册后置过滤器
+
+    Args:
+        name (str): 过滤器名称
+    """
+    global __registered_post
+    for i, post in enumerate(__registered_post):
+        if post["name"] == name:
+            del __registered_post[i]
+            return
+
+
+def __register_builtin_log_filters():
+    def request_pre(cnt, ins, client, key, params):
+        request_log.dispatch("REQUEST", "发起请求", params)
+        return BiliFilterFlags.CONTINUE, None
+
+    def request_post(cnt, ins, client, key, ret, params):
+        request_log.dispatch(
+            "RESPONSE",
+            "获得响应",
+            {
+                "code": ret.code,
+                "headers": ret.headers,
+                "cookies": ret.cookies,
+                "data": ret.raw,
+                "url": ret.url,
+            },
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def dwn_create_post(cnt, ins, client, key, ret, params):
+        params.update({"id": ret})
+        request_log.dispatch("DWN_CREATE", "开始下载", params)
+        return BiliFilterFlags.CONTINUE, None
+
+    def dwn_chunk_post(cnt, ins, client, key, ret, params):
+        request_log.dispatch(
+            "DWN_PART", "收到部分下载数据", {"id": params["cnt"], "data": ret}
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def dwn_close_post(cnt, ins, client, key, ret, params):
+        request_log.dispatch(
+            "DWN_CLOSE", "结束下载", {"id": params["cnt"]}
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_create_post(cnt, ins, client, key, ret, params):
+        params.update({"id": ret})
+        request_log.dispatch("WS_CREATE", "开始 WebSocket 连接", params)
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_recv_post(cnt, ins, client, key, ret, params):
+        request_log.dispatch(
+            "WS_RECV",
+            "收到 WebSocket 数据",
+            {"id": params["cnt"], "data": ret[0], "flags": ret[1].value},
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_send_pre(cnt, ins, client, key, params):
+        request_log.dispatch(
+            "WS_SEND",
+            "发送 WebSocket 请求",
+            {"id": params["cnt"], "data": params["data"]},
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_close_pre(cnt, ins, client, key, params):
+        request_log.dispatch("WS_CLOSE", "关闭 WebSocket 请求", {"id": params["cnt"]})
+        return BiliFilterFlags.CONTINUE, None
+
+    register_pre_filter(
+        name="__builtin_log_request",
+        func=request_pre,
+        trigger=lambda client, key: key == "request",
+        priority=998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_response",
+        func=request_post,
+        trigger=lambda client, key: key == "request",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_dwn_create",
+        func=dwn_create_post,
+        trigger=lambda client, key: key == "download_create",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_dwn_chunk",
+        func=dwn_chunk_post,
+        trigger=lambda client, key: key == "download_chunk",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_dwn_close",
+        func=dwn_close_post,
+        trigger=lambda client, key: key == "download_close",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_ws_create",
+        func=ws_create_post,
+        trigger=lambda client, key: key == "ws_create",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_ws_recv",
+        func=ws_recv_post,
+        trigger=lambda client, key: key == "ws_recv",
+        priority=-998244353,
+    )
+    register_pre_filter(
+        name="__builtin_log_ws_send",
+        func=ws_send_pre,
+        trigger=lambda client, key: key == "ws_send",
+        priority=998244353,
+    )
+    register_pre_filter(
+        name="__builtin_log_ws_close",
+        func=ws_close_pre,
+        trigger=lambda client, key: key == "ws_close",
+        priority=998244353,
+    )
+
+
+def __register_global_credential_filter():
+    async def add_credential(cnt, ins, client, key, params):
+        gcred = request_settings.get_global_credential()
+        if not gcred:
+            return BiliFilterFlags.CONTINUE, None
+        sig = inspect.signature(getattr(ins, key))
+
+        def check_refreshing_urls(cred: Credential) -> bool:
+            if (cred.buvid3 is None and request_settings.get_enable_auto_buvid()) or (
+                (
+                    cred.bili_ticket is None
+                    or not cred.bili_ticket_expires
+                    or time.time() > cred.bili_ticket_expires
+                )
+                and request_settings.get_enable_bili_ticket()
+            ):  # need refresh
+                if params.get("url") in [
+                    "https://api.bilibili.com/x/frontend/finger/spi_v2",  # buvid3 / buvid4
+                    "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket",  # bili_ticket
+                    "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi",  # exclimbwuzhi
+                    "https://api.bilibili.com/x/web-interface/nav",  # wbi
+                ]:
+                    return False
+            return True
+
+        if "cookies" in sig.parameters.keys():
+            if not check_refreshing_urls(gcred):
+                if not params.get("cookies"):
+                    params["cookies"] = {}
+                params["cookies"] |= gcred.get_core_cookies()
+            else:
+                params["cookies"] = await gcred.get_cookies()
+        return BiliFilterFlags.SET_PARAMS, params
+
+    register_pre_filter(
+        name="__builtin_global_credential",
+        async_func=add_credential,
+        trigger=lambda client, key: True,
+        priority=0,
+    )
+
+
+def __register_data_filter():
+    def create_data(cnt, ins, client, key, params):
+        if not getattr(ins, "data", None):
+            ins.data = {}
+        ins.data[cnt] = {}
+        return BiliFilterFlags.CONTINUE, None
+
+    def clean_data(cnt, ins, client, key, ret, params):
+        del ins.data[cnt]
+        return BiliFilterFlags.CONTINUE, None
+
+    register_pre_filter(
+        name="__builtin_create_data",
+        func=create_data,
+        trigger=lambda client, key: True,
+        priority=-2147483648,
+    )
+    register_post_filter(
+        name="__builtin_clean_data",
+        func=clean_data,
+        trigger=lambda client, key: True,
+        priority=2147483647,
+    )
+
+
+__register_builtin_log_filters()
+__register_global_credential_filter()
+__register_data_filter()
 
 
 @atexit.register
@@ -1145,10 +1989,65 @@ def __clean() -> None:
 ################################################## BEGIN Credential ##################################################
 
 
+def _get_time_milli() -> int:
+    return int(time.time() * 1000)
+
+
+def _gen_b_lsid() -> str:
+    return f"{random.randbytes(4).hex().upper()}_{hex(_get_time_milli())[2:].upper()}"
+
+
+def _gen_uuid_infoc() -> str:
+    def gen_part(x: int) -> str:
+        return "".join([random.choice(mp) for _ in range(x)])
+
+    t = _get_time_milli() % 100000
+    mp = list("123456789ABCDEF") + ["10"]
+    pck = [8, 4, 4, 4, 12]
+
+    return (
+        "-".join([gen_part(length) for length in pck]) + str(t).ljust(5, "0") + "infoc"
+    )
+
+
 class Credential:
     """
     凭据类，用于各种请求操作的验证。
+
+    以下字段获取方式见 https://nemo2011.github.io/bilibili-api/#/get-credential.md
+
+    重要 cookies:
+     - `SESSDATA` (`sessdata`);
+     - `bili_jct`;
+     - `DedeUserId` (`dedeuserid`);
+     - `DedeUserId__ckMd5` (`dedeuserid_ckmd5`);
+     - `sid`
+
+    本地生成 cookies:
+     - `b_nut`;
+     - `b_lsid`;
+     - `uuid_infoc`;
+     - `buvid_fp`
+
+    网络请求生成反爬 cookies:
+     - `buvid3`;
+     - `buvid4`;
+     - `bili_ticket`;
+     - `bili_ticket_expires`
+
+    非 cookies:
+     - `ac_time_value` (存储在 Local Storage 中)
     """
+
+    _refresh_lock: asyncio.Lock = asyncio.Lock()
+
+    b_nut: Union[str, None] = None
+    b_lsid: Union[str, None] = None
+    uuid_infoc: Union[str, None] = None
+    bili_ticket: Union[str, None] = None
+    bili_ticket_expires: Union[int, None] = None
+    buvid_fp: Union[str, None] = None
+    sid: Union[str, None] = None
 
     def __init__(
         self,
@@ -1157,27 +2056,33 @@ class Credential:
         buvid3: Union[str, None] = None,
         buvid4: Union[str, None] = None,
         dedeuserid: Union[str, None] = None,
+        dedeuserid_ckmd5: Union[str, None] = None,
+        sid: Union[str, None] = None,
         ac_time_value: Union[str, None] = None,
-        proxy: Union[str, None] = None,
     ) -> None:
         """
         各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
 
         Args:
-            sessdata   (str | None, optional): 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None.
+            sessdata   (str | None, optional)      : 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None.
 
-            bili_jct   (str | None, optional): 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None.
+            bili_jct   (str | None, optional)      : 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None.
 
-            buvid3     (str | None, optional): 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None.
+            buvid3     (str | None, optional)      : 浏览器 Cookies 中的 buvid3 字段值. Defaults to None.
 
-            buvid4     (str | None, optional): 浏览器 Cookies 中的 BUVID4 字段值. Defaults to None.
+            buvid4     (str | None, optional)      : 浏览器 Cookies 中的 buvid4 字段值. Defaults to None.
 
-            dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
+            dedeuserid (str | None, optional)      : 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
 
-            ac_time_value (str | None, optional): 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None.
+            dedeuserid_ckmd5 (str | None, optional): 浏览器 Cookies 中的 DedeUserID__ckMd5 字段值. Defaults to None.
 
-            proxy (str | None, optional): 凭据类可选择携带的代理. Defaults to None.
+            sid (str | None, optional)             : 浏览器 Cookies 中的 sid 字段值. Defaults to None.
+
+            ac_time_value (str | None, optional)   : 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None.
         """
+        if (buvid3 or buvid4) and not (buvid3 and buvid4):
+            raise ValueError("Buvid3 and buvid4 should be provided at the same time.")
+
         self.sessdata = (
             None
             if sessdata is None
@@ -1187,48 +2092,109 @@ class Credential:
         )
         self.bili_jct = bili_jct
         self.buvid3 = buvid3
+        if self.buvid3 or not request_settings.get_enable_auto_buvid():
+            self.gen_local_cookies()
         self.buvid4 = buvid4
         self.dedeuserid = dedeuserid
+        self.dedeuserid_ckmd5 = dedeuserid_ckmd5
+        self.sid = sid
         self.ac_time_value = ac_time_value
-        self.proxy = proxy
 
-    def get_cookies(self) -> dict:
+        if not (
+            sessdata
+            or bili_jct
+            or buvid3
+            or buvid4
+            or dedeuserid
+            or dedeuserid_ckmd5
+            or sid
+            or ac_time_value
+        ):
+            self.__blank = True
+        else:
+            self.__blank = False
+
+    def gen_local_cookies(self) -> None:
+        self.b_nut = str(int(time.time()))
+        self.b_lsid = _gen_b_lsid()
+        self.uuid_infoc = _gen_uuid_infoc()
+
+    async def get_cookies(self) -> dict[str, str]:
         """
         获取请求 Cookies 字典
 
         Returns:
             dict: 请求 Cookies 字典
         """
-        cookies = {
-            "SESSDATA": self.sessdata if self.sessdata else "",
-            "buvid3": self.buvid3 if self.buvid3 else "",
-            "buvid4": self.buvid4 if self.buvid4 else "",
-            "bili_jct": self.bili_jct if self.bili_jct else "",
-            "ac_time_value": self.ac_time_value if self.ac_time_value else "",
+        if self.__blank:
+            if request_settings.get_enable_auto_buvid():
+                await get_buvid(_credential)
+            if request_settings.get_enable_bili_ticket():
+                await get_bili_ticket(_credential)
+            (
+                self.buvid3,
+                self.buvid4,
+                self.buvid_fp,
+                self.b_lsid,
+                self.b_nut,
+                self.uuid_infoc,
+                self.bili_ticket,
+                self.bili_ticket_expires,
+            ) = (
+                _credential.buvid3,
+                _credential.buvid4,
+                _credential.buvid_fp,
+                _credential.b_lsid,
+                _credential.b_nut,
+                _credential.uuid_infoc,
+                _credential.bili_ticket,
+                _credential.bili_ticket_expires,
+            )
+        else:
+            if self.buvid3 is None and request_settings.get_enable_auto_buvid():
+                await get_buvid(self)
+
+            if request_settings.get_enable_bili_ticket():
+                await get_bili_ticket(self)
+
+        browser_fingerprint = get_browser_fingerprint()
+
+        cookies: dict[str, Union[str, None]] = {
+            "buvid3": self.buvid3,
+            "b_nut": self.b_nut,
+            "b_lsid": self.b_lsid,
+            "_uuid": self.uuid_infoc,
+            "buvid4": self.buvid4,
+            "bili_ticket": self.bili_ticket,
+            "bili_ticket_expires": (
+                str(self.bili_ticket_expires) if self.bili_ticket_expires else None
+            ),
+            "buvid_fp": self.buvid_fp,
+            "SESSDATA": self.sessdata,
+            "bili_jct": self.bili_jct,
+            "DedeUserID": self.dedeuserid,
+            "DedeUserID__ckMd5": self.dedeuserid_ckmd5,
+            "sid": self.sid,
+            "browser_resolution": f"{browser_fingerprint['window']['innerWidth']}-{browser_fingerprint['window']['innerHeight']}",
+            "opus-goback": "1",  # 确保需要旧版的时候可以跳转到旧版页面
         }
-        if self.dedeuserid:
-            cookies.update({"DedeUserID": self.dedeuserid})
 
-        return cookies
+        return dict((k, v) for k, v in cookies.items() if v is not None)
 
-    async def get_buvid_cookies(self) -> dict:
+    def get_core_cookies(self) -> dict:
         """
-        获取请求 Cookies 字典，自动补充 buvid 字段
+        返回部分核心 cookies，需要登录获取，可用于复制 Credential 对象
 
-        Returns:
-            dict: 请求 Cookies 字典
+        包含 SESSDATA, bili_jct, sid, DedeUserID, ac_time_value
         """
-        cookies = {
-            "SESSDATA": self.sessdata if self.sessdata else "",
-            "buvid3": self.buvid3 if self.buvid3 else (await get_buvid())[0],
-            "buvid4": self.buvid4 if self.buvid4 else (await get_buvid())[1],
-            "bili_jct": self.bili_jct if self.bili_jct else "",
-            "ac_time_value": self.ac_time_value if self.ac_time_value else "",
+        return {
+            "SESSDATA": self.sessdata,
+            "bili_jct": self.bili_jct,
+            "DedeUserID": self.dedeuserid,
+            "DedeUserID__ckMd5": self.dedeuserid_ckmd5,
+            "sid": self.sid,
+            "ac_time_value": self.ac_time_value,
         }
-        if self.dedeuserid:
-            cookies.update({"DedeUserID": self.dedeuserid})
-
-        return cookies
 
     def has_dedeuserid(self) -> bool:
         """
@@ -1342,36 +2308,57 @@ class Credential:
         Returns:
             bool: cookies 是否需要刷新
         """
-        return await _check_cookies(self)
+        async with self._refresh_lock:
+            return await _check_cookies(self)
 
     async def refresh(self) -> None:
         """
         刷新 cookies
         """
-        new_cred: Credential = await _refresh_cookies(self)
-        self.sessdata = new_cred.sessdata
-        self.bili_jct = new_cred.bili_jct
-        self.dedeuserid = new_cred.dedeuserid
-        self.ac_time_value = new_cred.ac_time_value
+        async with self._refresh_lock:
+            new_cred: Credential = await _refresh_cookies(self)
+            self.sessdata = new_cred.sessdata
+            self.bili_jct = new_cred.bili_jct
+            self.dedeuserid = new_cred.dedeuserid
+            self.dedeuserid_ckmd5 = new_cred.dedeuserid_ckmd5
+            self.ac_time_value = new_cred.ac_time_value
 
-    @staticmethod
-    def from_cookies(cookies: dict = {}) -> "Credential":
+    @classmethod
+    def from_cookies(
+        cls, cookies: dict, ac_time_value: Union[str, None] = None
+    ) -> "Credential":
         """
         从 cookies 新建 Credential
 
         Args:
-            cookies (dict, optional): Cookies. Defaults to {}.
+            cookies (dict): Cookies.
+            ac_time_value (str, optional): ac_time_value.
 
         Returns:
             Credential: 凭据类
         """
-        c = Credential()
+        c = cls(sessdata="_", bili_jct="_")
         c.sessdata = cookies.get("SESSDATA")
         c.bili_jct = cookies.get("bili_jct")
         c.buvid3 = cookies.get("buvid3")
         c.buvid4 = cookies.get("buvid4")
         c.dedeuserid = cookies.get("DedeUserID")
-        c.ac_time_value = cookies.get("ac_time_value")
+        c.dedeuserid_ckmd5 = cookies.get("DedeUserID__ckMd5")
+        c.ac_time_value = (
+            cookies.get("ac_time_value")
+            if cookies.get("ac_time_value")
+            else ac_time_value
+        )
+        c.b_lsid = cookies.get("b_lsid")
+        c.b_nut = cookies.get("b_nut")
+        c.uuid_infoc = cookies.get("_uuid")
+        c.bili_ticket = cookies.get("bili_ticket")
+        c.bili_ticket_expires = (
+            int(bili_ticket_expires)
+            if (bili_ticket_expires := cookies.get("bili_ticket_expires"))
+            else None
+        )
+        c.buvid_fp = cookies.get("buvid_fp")
         return c
 
     def __str__(self):
@@ -1416,8 +2403,7 @@ JNrRuoEUXpabUzGB8QIDAQAB
 async def _get_refresh_csrf(credential: Credential) -> str:
     correspond_path = _getCorrespondPath()
     api = API["operate"]["get_refresh_csrf"]
-    cookies = credential.get_cookies()
-    cookies["buvid3"] = str(uuid.uuid1())
+    cookies = await credential.get_cookies()
     client = get_client()
     resp = await client.request(
         method="GET",
@@ -1446,8 +2432,7 @@ async def _refresh_cookies(credential: Credential) -> Credential:
         "refresh_token": credential.ac_time_value,
         "source": "main_web",
     }
-    cookies = credential.get_cookies()
-    cookies["buvid3"] = str(uuid.uuid1())
+    cookies = await credential.get_cookies()
     client = get_client()
     resp = await client.request(
         method="POST",
@@ -1462,6 +2447,8 @@ async def _refresh_cookies(credential: Credential) -> Credential:
         sessdata=resp.cookies["SESSDATA"],
         bili_jct=resp.cookies["bili_jct"],
         dedeuserid=resp.cookies["DedeUserID"],
+        dedeuserid_ckmd5=resp.cookies["DedeUserID__ckMd5"],
+        sid=resp.cookies["sid"],
         ac_time_value=resp.json()["data"]["refresh_token"],
     )
     await _confirm_refresh(credential, new_credential)
@@ -1485,87 +2472,55 @@ async def _confirm_refresh(
 ################################################## BEGIN Anti-Spider ##################################################
 
 
-OE = [
-    46,
-    47,
-    18,
-    2,
-    53,
-    8,
-    23,
-    32,
-    15,
-    50,
-    10,
-    31,
-    58,
-    3,
-    45,
-    35,
-    27,
-    43,
-    5,
-    49,
-    33,
-    9,
-    42,
-    19,
-    29,
-    28,
-    14,
-    39,
-    12,
-    38,
-    41,
-    13,
-    37,
-    48,
-    7,
-    16,
-    24,
-    55,
-    40,
-    61,
-    26,
-    17,
-    0,
-    1,
-    60,
-    51,
-    30,
-    4,
-    22,
-    25,
-    54,
-    21,
-    56,
-    59,
-    6,
-    63,
-    57,
-    62,
-    11,
-    36,
-    20,
-    34,
-    44,
-    52,
-]
+OE = list(
+    base64.b64decode(
+        b"Li8SAjUIFyAPMgofOgMtIxsrBTEhCSoTHRwOJwwmKQ0lMAcQGDcoPRoRAAE8Mx4EFhk2FTg7Bj85PgskFCIsNA=="
+    )
+)
 APPKEY = "4409e2ce8ffd12b8"
 APPSEC = "59b43e04ad6965f34319062b478f83dd"
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
-    "Referer": "https://www.bilibili.com",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Referer": "https://www.bilibili.com/",
 }
 API = get_api("credential")
 
+browser_fingerprint = None
 
-async def _get_spi_buvid() -> dict:
+
+def get_browser_fingerprint() -> dict:
+    global browser_fingerprint
+    if browser_fingerprint is None:
+        if request_settings.get_enable_fpgen():
+            import fpgen
+
+            browser_fingerprint = fpgen.generate(**request_settings.get_fpgen_args())
+        else:
+            with open(
+                os.path.join(
+                    os.path.dirname(__file__), "../data/browser_fingerprint.json"
+                ),
+                encoding="utf-8",
+            ) as f:
+                browser_fingerprint = json.load(f)
+    return browser_fingerprint
+
+
+async def _get_spi_buvid() -> tuple[dict, str]:
     api = API["info"]["spi"]
     client = get_client()
+    response = await client.request(
+        method="GET",
+        url=api["url"],
+        headers=HEADERS.copy(),
+    )
+    date = response.headers.get("date", None)
+    if not date:
+        date = response.headers["Date"]
     return (
-        await client.request(method="GET", url=api["url"], headers=HEADERS.copy())
-    ).json()["data"]
+        (response).json()["data"],
+        str(int(parsedate_to_datetime(date).timestamp())),
+    )
 
 
 """
@@ -1573,36 +2528,40 @@ async def _get_spi_buvid() -> dict:
 """
 
 
-async def _active_buvid(buvid3: str, buvid4: str) -> dict:
-    MOD = 1 << 64
+class _CookieJsonDecoder(json.JSONDecoder):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parse_string = self.cookie_scanstring
+        self.scan_once = scanner.py_make_scanner(
+            self
+        )  # pyright: ignore[reportAttributeAccessIssue]
 
-    def get_time_milli() -> int:
-        return int(time.time() * 1000)
+    @staticmethod
+    def cookie_scanstring(*args, **kwargs):
+        (val, end) = scanstring(*args, **kwargs)
+
+        if val.startswith("getCookie"):
+            match = re.match(r"getCookie\('([^']*)'\)", val)
+            if match:
+                _cookie_name = match.group(1)
+                return (None, end)
+
+        return (val, end)
+
+
+async def _gen_buvid_fp(buvid3: str, buvid4: str, credential: Credential) -> None:
+    MOD = 1 << 64
 
     def rotate_left(x: int, k: int) -> int:
         bin_str = bin(x)[2:].rjust(64, "0")
         return int(bin_str[k:] + bin_str[:k], base=2)
 
-    def gen_uuid_infoc() -> str:
-        t = get_time_milli() % 100000
-        mp = list("123456789ABCDEF") + ["10"]
-        pck = [8, 4, 4, 4, 12]
-        gen_part = lambda x: "".join([random.choice(mp) for _ in range(x)])
-        return "-".join([gen_part(l) for l in pck]) + str(t).ljust(5, "0") + "infoc"
-
-    def gen_b_lsid() -> str:
-        ret = ""
-        for _ in range(8):
-            ret += hex(random.randint(0, 15))[2:].upper()
-        ret = f"{ret}_{hex(get_time_milli())[2:].upper()}"
-        return ret
-
     def gen_buvid_fp(key: str, seed: int):
-        source = io.BytesIO(bytes(key, "ascii"))
+        source = io.BytesIO(bytes(key, "utf-8"))
         m = murmur3_x64_128(source, seed)
         return "{}{}".format(hex(m & (MOD - 1))[2:], hex(m >> 64)[2:])
 
-    def murmur3_x64_128(source: io.BufferedIOBase, seed: int) -> str:
+    def murmur3_x64_128(source: io.BufferedIOBase, seed: int) -> int:
         C1 = 0x87C3_7B91_1142_53D5
         C2 = 0x4CF5_AD43_2745_937F
         C3 = 0x52DC_E729
@@ -1610,7 +2569,7 @@ async def _active_buvid(buvid3: str, buvid4: str) -> dict:
         R1, R2, R3, M = 27, 31, 33, 5
         h1, h2 = seed, seed
         processed = 0
-        while 1:
+        while True:
             read = source.read(16)
             processed += len(read)
             if len(read) == 16:
@@ -1680,184 +2639,228 @@ async def _active_buvid(buvid3: str, buvid4: str) -> dict:
         tmp ^= tmp >> R
         return tmp
 
-    def get_payload(uuid: str) -> str:
+    def get_payload(uuid: str, homepage_html: str) -> str:
+        def extract_abtest_dict(html: str) -> dict[str, Any]:
+            soup = BeautifulSoup(html, "html.parser")
+            scripts = soup.find_all("script")
+
+            for script in scripts:
+                js_code = script.string
+                if not js_code or "window.abtest" not in js_code:
+                    continue
+
+                # Isolate the JavaScript object string using a regular expression.
+                # This looks for 'window.abtest = {' and captures everything until the matching '};'
+                match = re.search(r"window\.abtest\s*=\s*({.*?})\n", js_code, re.DOTALL)
+                if not match:
+                    continue
+
+                js_object_string = match.group(1)
+
+                try:
+                    return chompjs.parse_js_object(
+                        js_object_string, loader_kwargs={"cls": _CookieJsonDecoder}
+                    )
+                except Exception as e:
+                    print(f"Error parsing JavaScript object: {e}")
+                    return {}
+
+            return {}
+
+        browser_fingerprint = get_browser_fingerprint()
+        plugins = browser_fingerprint["plugins"]
+        mime_type_suffix: Union[dict[str, str], None] = (
+            dict(
+                (mime_type["type"], mime_type["suffixes"])
+                for mime_type in browser_fingerprint["plugins"]["mimeTypes"]
+            )
+            if plugins
+            else None
+        )
+
+        def get_param(param_id: int) -> Union[str, int, bool]:
+            param = browser_fingerprint["webgl"]["params"].get(str(param_id))
+            return param["value"] if param["value"] is not None else "null"
+
+        a3c1 = [
+            f"extensions:{';'.join(browser_fingerprint['webgl']['supportedExtensions'])}",
+            f"webgl aliased line width range:{(get_param(33902))}",
+            f"webgl aliased point size range:{get_param(33901)}",
+            f"webgl alpha bits:{get_param(3413)}",
+            f"webgl antialiasing:{'yes' if browser_fingerprint['webgl']['contextAttributes']['antialias'] else 'no'}",
+            f"webgl blue bits:{get_param(3412)}",
+            f"webgl depth bits:{get_param(3414)}",
+            f"webgl green bits:{get_param(3411)}",
+            f"webgl max anisotropy:{get_param(34047)}",
+            f"webgl max combined texture image units:{get_param(35661)}",
+            f"webgl max cube map texture size:{get_param(34076)}",
+            f"webgl max fragment uniform vectors:{get_param(36349)}",
+            f"webgl max render buffer size:{get_param(34024)}",
+            f"webgl max texture image units:{get_param(34930)}",
+            f"webgl max texture size:{get_param(3379)}",
+            f"webgl max varying vectors:{get_param(36348)}",
+            f"webgl max vertex attribs:{get_param(34921)}",
+            f"webgl max vertex texture image units:{get_param(35660)}",
+            f"webgl max vertex uniform vectors:{get_param(36347)}",
+            f"webgl max viewport dims:{get_param(3386)}",
+            f"webgl red bits:{get_param(3410)}",
+            f"webgl renderer:{get_param(7937)}",
+            f"webgl shading language version:{get_param(35724)}",
+            f"webgl stencil bits:{get_param(3415)}",
+            f"webgl vendor:{get_param(7936)}",
+            f"webgl version:{get_param(7938)}",
+        ]
+
+        if (
+            "WEBGL_debug_renderer_info"
+            in browser_fingerprint["webgl"]["supportedExtensions"]
+        ):
+            a3c1.append(f"webgl unmasked vendor:{browser_fingerprint['gpu']['vendor']}")
+            a3c1.append(
+                f"webgl unmasked renderer:{browser_fingerprint['gpu']['renderer']}"
+            )
+
+        shader_precisions = browser_fingerprint["webgl"]["shaderPrecisionFormats"]
+        numerics = ["FLOAT", "INT"]
+        shader_map = {"VERTEX": 35633, "FRAGMENT": 35632}
+        precisions = ["HIGH", "MEDIUM", "LOW"]
+        precision_map = {
+            "HIGH_FLOAT": 36338,
+            "MEDIUM_FLOAT": 36337,
+            "LOW_FLOAT": 36336,
+            "HIGH_INT": 36341,
+            "MEDIUM_INT": 36340,
+            "LOW_INT": 36339,
+        }
+
+        for ntype_k in numerics:
+            for stype_k, stype_v in shader_map.items():
+                for ptype_k in precisions:
+                    precision_type = f"{ptype_k}_{ntype_k}"
+                    precision_data = next(
+                        format
+                        for format in shader_precisions
+                        if format["precisionType"] == precision_map[precision_type]
+                        and format["shaderType"] == stype_v
+                    )
+                    for prop in ["precision", "rangeMin", "rangeMax"]:
+                        value = precision_data["r"][prop]
+                        prop_name = prop
+                        if prop != "precision":
+                            prop_name = f"precision {prop}"
+                        a3c1.append(
+                            f"webgl {stype_k.lower()} shader {ptype_k.lower()} {ntype_k.lower()} {prop_name}:{value}"
+                        )
+
+        png_suffix = bytes.fromhex("0000000049454E44AE426082")
+
         content = {
             "3064": 1,
-            "5062": get_time_milli(),
+            "5062": str(_get_time_milli()),
             "03bf": "https%3A%2F%2Fwww.bilibili.com%2F",
-            "39c8": "333.788.fp.risk",
+            "39c8": "333.1007.fp.risk",
             "34f1": "",
             "d402": "",
             "654a": "",
-            "6e7c": "839x959",
+            "6e7c": f"{browser_fingerprint['window']['innerWidth']}x{browser_fingerprint['window']['innerHeight']}",
             "3c43": {
                 "2673": 0,
-                "5766": 24,
+                "5766": browser_fingerprint["screen"]["colorDepth"],
                 "6527": 0,
                 "7003": 1,
                 "807e": 1,
-                "b8ce": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Safari/605.1.15",
+                "b8ce": browser_fingerprint["navigator"]["userAgent"],
                 "641c": 0,
-                "07a4": "en-US",
-                "1c57": "not available",
-                "0bd0": 8,
-                "748e": [900, 1440],
-                "d61f": [875, 1440],
+                "07a4": browser_fingerprint["intl"]["locale"],
+                "1c57": browser_fingerprint["navigator"]["deviceMemory"],
+                "0bd0": browser_fingerprint["navigator"]["hardwareConcurrency"],
+                "748e": [
+                    browser_fingerprint["screen"]["width"],
+                    browser_fingerprint["screen"]["height"],
+                ],
+                "d61f": [
+                    browser_fingerprint["screen"]["width"],
+                    browser_fingerprint["screen"]["height"],
+                ],
                 "fc9d": -480,
                 "6aa9": "Asia/Shanghai",
                 "75b8": 1,
                 "3b21": 1,
                 "8a1c": 0,
                 "d52f": "not available",
-                "adca": "MacIntel",
-                "80c9": [
+                "adca": browser_fingerprint["navigator"]["platform"],
+                "80c9": (
                     [
-                        "PDF Viewer",
-                        "Portable Document Format",
-                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
-                    ],
-                    [
-                        "Chrome PDF Viewer",
-                        "Portable Document Format",
-                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
-                    ],
-                    [
-                        "Chromium PDF Viewer",
-                        "Portable Document Format",
-                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
-                    ],
-                    [
-                        "Microsoft Edge PDF Viewer",
-                        "Portable Document Format",
-                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
-                    ],
-                    [
-                        "WebKit built-in PDF",
-                        "Portable Document Format",
-                        [["application/pdf", "pdf"], ["text/pdf", "pdf"]],
-                    ],
-                ],
-                "13ab": "0dAAAAAASUVORK5CYII=",
-                "bfe9": "QgAAEIQAACEIAABCCQN4FXANGq7S8KTZayAAAAAElFTkSuQmCC",
-                "a3c1": [
-                    "extensions:ANGLE_instanced_arrays;EXT_blend_minmax;EXT_color_buffer_half_float;EXT_float_blend;EXT_frag_depth;EXT_shader_texture_lod;EXT_texture_compression_bptc;EXT_texture_compression_rgtc;EXT_texture_filter_anisotropic;EXT_sRGB;KHR_parallel_shader_compile;OES_element_index_uint;OES_fbo_render_mipmap;OES_standard_derivatives;OES_texture_float;OES_texture_float_linear;OES_texture_half_float;OES_texture_half_float_linear;OES_vertex_array_object;WEBGL_color_buffer_float;WEBGL_compressed_texture_astc;WEBGL_compressed_texture_etc;WEBGL_compressed_texture_etc1;WEBGL_compressed_texture_pvrtc;WEBKIT_WEBGL_compressed_texture_pvrtc;WEBGL_compressed_texture_s3tc;WEBGL_compressed_texture_s3tc_srgb;WEBGL_debug_renderer_info;WEBGL_debug_shaders;WEBGL_depth_texture;WEBGL_draw_buffers;WEBGL_lose_context;WEBGL_multi_draw",
-                    "webgl aliased line width range:[1, 1]",
-                    "webgl aliased point size range:[1, 511]",
-                    "webgl alpha bits:8",
-                    "webgl antialiasing:yes",
-                    "webgl blue bits:8",
-                    "webgl depth bits:24",
-                    "webgl green bits:8",
-                    "webgl max anisotropy:16",
-                    "webgl max combined texture image units:32",
-                    "webgl max cube map texture size:16384",
-                    "webgl max fragment uniform vectors:1024",
-                    "webgl max render buffer size:16384",
-                    "webgl max texture image units:16",
-                    "webgl max texture size:16384",
-                    "webgl max varying vectors:30",
-                    "webgl max vertex attribs:16",
-                    "webgl max vertex texture image units:16",
-                    "webgl max vertex uniform vectors:1024",
-                    "webgl max viewport dims:[16384, 16384]",
-                    "webgl red bits:8",
-                    "webgl renderer:WebKit WebGL",
-                    "webgl shading language version:WebGL GLSL ES 1.0 (1.0)",
-                    "webgl stencil bits:0",
-                    "webgl vendor:WebKit",
-                    "webgl version:WebGL 1.0",
-                    "webgl unmasked vendor:Apple Inc.",
-                    "webgl unmasked renderer:Apple GPU",
-                    "webgl vertex shader high float precision:23",
-                    "webgl vertex shader high float precision rangeMin:127",
-                    "webgl vertex shader high float precision rangeMax:127",
-                    "webgl vertex shader medium float precision:23",
-                    "webgl vertex shader medium float precision rangeMin:127",
-                    "webgl vertex shader medium float precision rangeMax:127",
-                    "webgl vertex shader low float precision:23",
-                    "webgl vertex shader low float precision rangeMin:127",
-                    "webgl vertex shader low float precision rangeMax:127",
-                    "webgl fragment shader high float precision:23",
-                    "webgl fragment shader high float precision rangeMin:127",
-                    "webgl fragment shader high float precision rangeMax:127",
-                    "webgl fragment shader medium float precision:23",
-                    "webgl fragment shader medium float precision rangeMin:127",
-                    "webgl fragment shader medium float precision rangeMax:127",
-                    "webgl fragment shader low float precision:23",
-                    "webgl fragment shader low float precision rangeMin:127",
-                    "webgl fragment shader low float precision rangeMax:127",
-                    "webgl vertex shader high int precision:0",
-                    "webgl vertex shader high int precision rangeMin:31",
-                    "webgl vertex shader high int precision rangeMax:30",
-                    "webgl vertex shader medium int precision:0",
-                    "webgl vertex shader medium int precision rangeMin:31",
-                    "webgl vertex shader medium int precision rangeMax:30",
-                    "webgl vertex shader low int precision:0",
-                    "webgl vertex shader low int precision rangeMin:31",
-                    "webgl vertex shader low int precision rangeMax:30",
-                    "webgl fragment shader high int precision:0",
-                    "webgl fragment shader high int precision rangeMin:31",
-                    "webgl fragment shader high int precision rangeMax:30",
-                    "webgl fragment shader medium int precision:0",
-                    "webgl fragment shader medium int precision rangeMin:31",
-                    "webgl fragment shader medium int precision rangeMax:30",
-                    "webgl fragment shader low int precision:0",
-                    "webgl fragment shader low int precision rangeMin:31",
-                    "webgl fragment shader low int precision rangeMax:30",
-                ],
-                "6bc5": "Apple Inc.~Apple GPU",
+                        [
+                            plugin["name"],
+                            plugin["description"],
+                            [
+                                [mime_type, mime_type_suffix.get(mime_type, "")]
+                                for mime_type in plugin["__mimeTypes"]
+                            ],
+                        ]
+                        for plugin in plugins["plugins"]
+                    ]
+                    if mime_type_suffix
+                    else "not available"
+                ),
+                "13ab": base64.b64encode(
+                    random.randbytes(random.randrange(15, 20)) + png_suffix
+                ).decode(encoding="ascii")[:-20],
+                "bfe9": base64.b64encode(
+                    random.randbytes(random.randrange(40, 50)) + png_suffix
+                ).decode(encoding="ascii")[:-50],
+                "a3c1": a3c1,
+                "6bc5": f"{browser_fingerprint['gpu']['vendor']}~{browser_fingerprint['gpu']['renderer']}",
                 "ed31": 0,
                 "72bd": 0,
                 "097b": 0,
                 "52cd": [0, 0, 0],
-                "a658": [
-                    "Andale Mono",
-                    "Arial",
-                    "Arial Black",
-                    "Arial Hebrew",
-                    "Arial Narrow",
-                    "Arial Rounded MT Bold",
-                    "Arial Unicode MS",
-                    "Comic Sans MS",
-                    "Courier",
-                    "Courier New",
-                    "Geneva",
-                    "Georgia",
-                    "Helvetica",
-                    "Helvetica Neue",
-                    "Impact",
-                    "LUCIDA GRANDE",
-                    "Microsoft Sans Serif",
-                    "Monaco",
-                    "Palatino",
-                    "Tahoma",
-                    "Times",
-                    "Times New Roman",
-                    "Trebuchet MS",
-                    "Verdana",
-                    "Wingdings",
-                    "Wingdings 2",
-                    "Wingdings 3",
-                ],
-                "d02f": "124.04345259929687",
+                "a658": browser_fingerprint["allFonts"],
+                "d02f": str(124.043475 + random.random() / 1e6),
             },
-            "54ef": '{"in_new_ab":true,"ab_version":{"remove_back_version":"REMOVE","login_dialog_version":"V_PLAYER_PLAY_TOAST","open_recommend_blank":"SELF","storage_back_btn":"HIDE","call_pc_app":"FORBID","clean_version_old":"GO_NEW","optimize_fmp_version":"LOADED_METADATA","for_ai_home_version":"V_OTHER","bmg_fallback_version":"DEFAULT","ai_summary_version":"SHOW","weixin_popup_block":"ENABLE","rcmd_tab_version":"DISABLE","in_new_ab":true},"ab_split_num":{"remove_back_version":11,"login_dialog_version":43,"open_recommend_blank":90,"storage_back_btn":87,"call_pc_app":47,"clean_version_old":46,"optimize_fmp_version":28,"for_ai_home_version":38,"bmg_fallback_version":86,"ai_summary_version":466,"weixin_popup_block":45,"rcmd_tab_version":90,"in_new_ab":0},"pageVersion":"new_video","videoGoOldVersion":-1}',
+            "54ef": json.dumps(
+                extract_abtest_dict(homepage_html),
+                ensure_ascii=False,
+                allow_nan=False,
+                separators=(",", ":"),
+            ),
             "8b94": "https%3A%2F%2Fwww.bilibili.com%2F",
             "df35": uuid,
-            "07a4": "en-US",
+            "07a4": browser_fingerprint["intl"]["locale"],
             "5f45": None,
             "db46": 0,
         }
         return json.dumps(
-            {"payload": json.dumps(content, separators=(",", ":"))},
+            {"payload": json.dumps(content, ensure_ascii=False, separators=(",", ":"))},
+            ensure_ascii=False,
             separators=(",", ":"),
         )
 
+    client = get_client()
+    uuid = credential.uuid_infoc
+    headers = HEADERS.copy()
+    homepage_html = await client.request(
+        method="GET",
+        url="https://www.bilibili.com",
+        headers=headers,
+        cookies={
+            "buvid3": buvid3,
+            "buvid4": buvid4,
+            "b_nut": credential.b_nut,
+            "b_lsid": credential.b_lsid,
+            "_uuid": credential.uuid_infoc,
+        },
+    )
+    payload = get_payload(uuid, homepage_html.utf8_text())
+    return gen_buvid_fp(payload, 31), payload
+
+
+async def _active_buvid(
+    buvid3: str, buvid4: str, buvid_fp: str, payload: str, credential: Credential
+) -> str:
     api = API["operate"]["active"]
     client = get_client()
-    uuid = gen_uuid_infoc()
-    payload = get_payload(uuid)
-    buvid_fp = gen_buvid_fp(payload, 31)
     headers = HEADERS.copy()
     headers["Content-Type"] = "application/json"
     resp = await client.request(
@@ -1869,12 +2872,14 @@ async def _active_buvid(buvid3: str, buvid4: str) -> dict:
             "buvid3": buvid3,
             "buvid4": buvid4,
             "buvid_fp": buvid_fp,
-            "_uuid": uuid,
+            "b_nut": credential.b_nut,
+            "b_lsid": credential.b_lsid,
+            "_uuid": credential.uuid_infoc,
         },
     )
     data = resp.json()
     if data["code"] != 0:
-        raise ExClimbWuzhiException(data["code"], data["msg"])
+        raise ExClimbWuzhiException(data["code"], data["message"])
 
 
 async def _get_nav(credential: Optional[Credential] = None) -> dict:
@@ -1886,7 +2891,7 @@ async def _get_nav(credential: Optional[Credential] = None) -> dict:
             method="GET",
             url=api["url"],
             headers=HEADERS.copy(),
-            cookies=credential.get_cookies(),
+            cookies=await credential.get_cookies(),
         )
     ).json()["data"]
 
@@ -1905,25 +2910,57 @@ async def _get_mixin_key(credential: Optional[Credential] = None) -> str:
 
 def _enc_wbi(params: dict, mixin_key: str) -> dict:
     params.pop("w_rid", None)  # 重试时先把原有 w_rid 去除
-    params["wts"] = int(time.time())
-    # web_location 因为没被列入参数可能炸一些接口 比如 video.get_ai_conclusion
-    # 但 video.get_download_url 的 web_location 不是这东西
-    # 因此此处默认提供 1550101，具体哪些一些也不清楚。
-    if not params.get("web_location"):
-        params["web_location"] = 1550101
+    params.pop("wts", None)
+    params["wts"] = round(time.time())
+    # web_location 没被列入参数可能炸一些接口 比如 video.get_ai_conclusion
     Ae = urllib.parse.urlencode(sorted(params.items()))
     params["w_rid"] = hashlib.md5((Ae + mixin_key).encode(encoding="utf-8")).hexdigest()
     return params
 
 
 def _enc_wbi2(params: dict) -> dict:
-    dm_rand = "ABCDEFGHIJK"
+    def encode_to_base64_substring(raw: str) -> str:
+        encoded_bytes = base64.b64encode(raw.encode())
+        encoded_string = encoded_bytes.decode("ascii")
+        return encoded_string[:-2]
+
+    def get_wh(width: int, height: int) -> list[int]:
+        rnd = random.randrange(114)
+        return [2 * width + 2 * height + 3 * rnd, 4 * width - height + rnd, rnd]
+
+    def get_of(scroll_top: int, scroll_left: int) -> list[int]:
+        rnd = random.randrange(514)
+        return [
+            3 * scroll_top + 2 * scroll_left + rnd,
+            4 * scroll_top - 4 * scroll_left + 2 * rnd,
+            rnd,
+        ]
+
+    browser_fingerprint = get_browser_fingerprint()
+    wh_str = ",".join(
+        str(value)
+        for value in get_wh(
+            browser_fingerprint["window"]["innerWidth"],
+            browser_fingerprint["window"]["innerHeight"],
+        )
+    )
+    of_str = ",".join(
+        str(value)
+        for value in get_of(
+            browser_fingerprint["window"]["pageYOffset"],
+            0,
+        )
+    )
     params.update(
         {
             "dm_img_list": "[]",  # 鼠标/键盘操作记录
-            "dm_img_str": "".join(random.sample(dm_rand, 2)),
-            "dm_cover_img_str": "".join(random.sample(dm_rand, 2)),
-            "dm_img_inter": '{"ds":[],"wh":[0,0,0],"of":[0,0,0]}',
+            "dm_img_str": encode_to_base64_substring(
+                browser_fingerprint["webgl"]["params"]["7938"]["value"]
+            ),
+            "dm_cover_img_str": encode_to_base64_substring(
+                browser_fingerprint["gpu"]["renderer"]
+            ),
+            "dm_img_inter": f'{{"ds":[],"wh":[{wh_str}],"of":[{of_str}]}}',
         }
     )
     return params
@@ -1943,31 +2980,41 @@ def _enc_sign(paramsordata: dict) -> dict:
 """
 
 
-async def _get_bili_ticket(credential: Optional[Credential] = None) -> str:
+async def _get_bili_ticket(credential: Credential) -> Optional[tuple[str, int]]:
     def hmac_sha256(key: str, message: str) -> str:
         key = key.encode("utf-8")
         message = message.encode("utf-8")
         hmac_obj = hmac.new(key, message, hashlib.sha256)
         return hmac_obj.digest().hex()
 
-    credential = credential if credential else Credential()
-    o = hmac_sha256("XgwSnGZ1p", f"ts{int(time.time())}")
+    ts = int(time.time())
+    o = hmac_sha256("XgwSnGZ1p", f"ts{ts}")
     api = API["info"]["ticket"]
     params = {
         "key_id": "ec02",
         "hexsign": o,
-        "context[ts]": f"{int(time.time())}",
-        "csrf": "",
+        "context[ts]": f"{ts}",
+        "csrf": credential.bili_jct or "",
     }
     client = get_client()
-    resp = await client.request(
-        method="POST",
-        url=api["url"],
-        params=params,
-        headers=HEADERS.copy(),
-        cookies=credential.get_cookies(),
-    )
-    return resp.json()["data"]["ticket"]
+    resp = (
+        await client.request(
+            method="POST",
+            url=api["url"],
+            params=params,
+            headers=HEADERS.copy(),
+            cookies={
+                "buvid3": credential.buvid3,
+                "b_nut": credential.b_nut,
+                "b_lsid": credential.b_lsid,
+                "_uuid": credential.uuid_infoc,
+                "buvid4": credential.buvid4,
+            },
+        )
+    ).json()
+    if resp["code"] == -111:
+        return None
+    return (resp["data"]["ticket"], resp["data"]["created_at"] + resp["data"]["ttl"])
 
 
 ################################################## END Anti-Spider ##################################################
@@ -1976,29 +3023,8 @@ async def _get_bili_ticket(credential: Optional[Credential] = None) -> str:
 ################################################## BEGIN Api ##################################################
 
 
-__buvid3 = ""
-__buvid4 = ""
-__bili_ticket = ""
-__bili_ticket_expires = 0
-__wbi_mixin_key = ""
-
-
-def refresh_buvid() -> None:
-    """
-    刷新模块自动生成的 buvid3 和 buvid4
-    """
-    global __buvid3, __buvid4
-    __buvid3 = ""
-    __buvid4 = ""
-
-
-def refresh_bili_ticket() -> None:
-    """
-    刷新 bili_ticket
-    """
-    global __bili_ticket, __bili_ticket_expires
-    __bili_ticket = ""
-    __bili_ticket_expires = 0
+__wbi_mixin_key: Optional[str] = None
+_credential = Credential(sessdata="global", bili_jct="global")
 
 
 def recalculate_wbi() -> None:
@@ -2006,33 +3032,77 @@ def recalculate_wbi() -> None:
     重新计算 wbi 的参数
     """
     global __wbi_mixin_key
-    __wbi_mixin_key = ""
+    __wbi_mixin_key = None
 
 
-async def get_buvid() -> Tuple[str, str]:
+async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
     """
-    获取 buvid3 和 buvid4
+    获取 buvid3 和 buvid4，若提供凭据类将自动在 credential 中设置相关字段
+
+    Args:
+        credential (Credential, optional): 凭据. Defaults to None.
 
     Returns:
-        Tuple[str, str]: 第 0 项为 buvid3，第 1 项为 buvid4。
+        Tuple[str, str, str]: 第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
     """
-    global __buvid3, __buvid4
-    if __buvid3 == "" or __buvid4 == "":
-        spi = await _get_spi_buvid()
-        __buvid3 = spi["b_3"]
-        __buvid4 = spi["b_4"]
-        await _active_buvid(__buvid3, __buvid4)
+    global _credential
+    if (
+        request_settings.get_enable_buvid_global_persistence()
+        and credential
+        and credential.sessdata != "global"
+    ):
+        await get_buvid(_credential)
+        (
+            credential.buvid3,
+            credential.buvid4,
+            credential.buvid_fp,
+            credential.b_nut,
+            credential.b_lsid,
+            credential.uuid_infoc,
+        ) = (
+            _credential.buvid3,
+            _credential.buvid4,
+            _credential.buvid_fp,
+            _credential.b_nut,
+            _credential.b_lsid,
+            _credential.uuid_infoc,
+        )
+        return (credential.buvid3, credential.buvid4, credential.buvid_fp)
+    if request_settings.get_enable_buvid_global_persistence() and credential is None:
+        return await get_buvid(_credential)
+    if credential is None:
+        credential = Credential()
+    if credential.buvid3 is None or credential.buvid4 is None:
+        credential.gen_local_cookies()
+        spi, b_nut = await _get_spi_buvid()
+        credential.b_nut = b_nut
+        credential.buvid3 = spi["b_3"]
+        credential.buvid4 = spi["b_4"]
+        credential.buvid_fp, payload = await _gen_buvid_fp(
+            credential.buvid3, credential.buvid4, credential
+        )
+        await _active_buvid(
+            credential.buvid3,
+            credential.buvid4,
+            credential.buvid_fp,
+            payload,
+            credential,
+        )
         request_log.dispatch(
             "ANTI_SPIDER",
             "反爬虫",
-            {"msg": f"激活 buvid3 / buvid4 成功: 3 [{__buvid3}] 4 [{__buvid4}]"},
+            {
+                "msg": f"激活 buvid3 / buvid4 成功: 3 [{credential.buvid3}] 4 [{credential.buvid4}] fp [{credential.buvid_fp}]"
+            },
         )
-    return (__buvid3, __buvid4)
+    return (credential.buvid3, credential.buvid4, credential.buvid_fp)
 
 
-async def get_bili_ticket(credential: Optional[Credential] = None) -> Tuple[str, str]:
+async def get_bili_ticket(
+    credential: Optional[Credential] = None,
+) -> Optional[Tuple[str, str]]:
     """
-    获取 bili_ticket
+    获取 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段
 
     Args:
         credential (Credential, optional): 凭据. Defaults to None.
@@ -2040,18 +3110,42 @@ async def get_bili_ticket(credential: Optional[Credential] = None) -> Tuple[str,
     Returns:
         Tuple[str, str]: bili_ticket, bili_ticket_expires
     """
-    global __bili_ticket, __bili_ticket_expires
-    if time.time() > int(__bili_ticket_expires):
-        refresh_bili_ticket()
-    if __bili_ticket == "":
-        __bili_ticket = await _get_bili_ticket(credential)
-        __bili_ticket_expires = str(int(time.time()) + 3 * 86400)
+    global _credential
+    if (
+        request_settings.get_enable_bili_ticket_global_persistence()
+        and credential
+        and credential.sessdata != "global"
+    ):
+        await get_bili_ticket(_credential)
+        credential.bili_ticket, credential.bili_ticket_expires = (
+            _credential.bili_ticket,
+            _credential.bili_ticket_expires,
+        )
+        return credential.bili_ticket, str(credential.bili_ticket_expires)
+    if (
+        request_settings.get_enable_bili_ticket_global_persistence()
+        and credential is None
+    ):
+        return await get_bili_ticket(_credential)
+    if credential is None:
+        credential = Credential()
+    if (
+        credential.bili_ticket is None
+        or not credential.bili_ticket_expires
+        or time.time() > credential.bili_ticket_expires
+    ):
+        resp = await _get_bili_ticket(credential)
+        if not resp:
+            return None
+        credential.bili_ticket, credential.bili_ticket_expires = resp
         request_log.dispatch(
             "ANTI_SPIDER",
             "反爬虫",
-            {"msg": f"获取 bili_ticket 成功: [{__bili_ticket}]"},
+            {
+                "msg": f"获取 bili_ticket 成功: [{credential.bili_ticket}] expires [{credential.bili_ticket_expires}]"
+            },
         )
-    return __bili_ticket, __bili_ticket_expires
+    return credential.bili_ticket, str(credential.bili_ticket_expires)
 
 
 async def get_wbi_mixin_key(credential: Optional[Credential] = None) -> str:
@@ -2065,7 +3159,7 @@ async def get_wbi_mixin_key(credential: Optional[Credential] = None) -> str:
         str: wbi mixin key
     """
     global __wbi_mixin_key
-    if __wbi_mixin_key == "":
+    if __wbi_mixin_key is None:
         __wbi_mixin_key = await _get_mixin_key(credential)
         request_log.dispatch(
             "ANTI_SPIDER",
@@ -2213,15 +3307,7 @@ class Api:
             self.data["csrf"] = self.credential.bili_jct
             self.data["csrf_token"] = self.credential.bili_jct
         # 处理 cookies
-        cookies = self.credential.get_cookies()
-        if (cookies["buvid3"] == "" or cookies["buvid4"] == "") and request_settings.get_enable_auto_buvid():
-            buvids = await get_buvid()
-            cookies["buvid3"] = buvids[0]
-            cookies["buvid4"] = buvids[1]
-        cookies["opus-goback"] = "1"
-        # bili_ticket
-        if request_settings.get_enable_bili_ticket():
-            cookies["bili_ticket"], cookies["bili_ticket_expires"] = await get_bili_ticket(self.credential)
+        cookies = await self.credential.get_cookies()
         # APP 鉴权
         if self.sign:
             if self.method in ["POST", "DELETE", "PATCH"]:
@@ -2294,43 +3380,43 @@ class Api:
         return real_data
 
     async def _request(
-        self, raw: bool = False, byte: bool = False
-    ) -> Union[int, str, dict, bytes, None]:
+        self, raw: bool = False, byte: bool = False, bili_res: bool = False
+    ) -> Union[int, str, dict, bytes, BiliAPIResponse, None]:
         request_log.dispatch(
             "API_REQUEST",
             "Api 发起请求",
             self.__dict__,
         )
-        legacy_proxy = None
-        if self.credential.proxy:
-            legacy_proxy = request_settings.get_proxy()
-            request_settings.set_proxy(self.credential.proxy)
+
         config: dict = await self._prepare_request()
         client: BiliAPIClient = get_client()
         resp: BiliAPIResponse = await client.request(**config)
         ret: Union[int, str, dict, bytes, None]
+
         if byte:
             ret = resp.raw
+        elif bili_res:
+            ret = resp
         else:
             ret = self._process_response(resp=resp, raw=raw)
+
         request_log.dispatch(
             "API_RESPONSE",
             "Api 获得响应",
             {"result": ret},
         )
-        if self.credential.proxy:
-            request_settings.set_proxy(legacy_proxy)
         return ret
 
     async def request(
-        self, raw: bool = False, byte: bool = False
-    ) -> Union[int, str, dict, bytes, None]:
+        self, raw: bool = False, byte: bool = False, bili_res: bool = False
+    ) -> Union[int, str, dict, bytes, BiliAPIResponse, None]:
         """
         向接口发送请求。
 
         Args:
-            raw  (bool): 是否不提取 data 或 result 字段。 Defaults to False.
-            byte (bool): 是否直接返回字节数据。 Defaults to False.
+            raw      (bool): 是否不提取 data 或 result 字段。 Defaults to False.
+            byte     (bool): 是否直接返回字节数据。 Defaults to False.
+            bili_res (bool): 是否直接返回 BiliAPIResponse 对象。 Defaults to False.
 
         Returns:
             接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
@@ -2346,7 +3432,7 @@ class Api:
                 )
             loop -= 1
             try:
-                return await self._request(raw=raw, byte=byte)
+                return await self._request(raw=raw, byte=byte, bili_res=bili_res)
             except ResponseCodeException as e:
                 # -403 时尝试重新获取 wbi_mixin_key 可能过期了
                 if e.code == -403 and self.wbi:
@@ -2379,17 +3465,40 @@ async def bili_simple_download(url: str, out: str, intro: str):
         out   (str): 输出地址
         intro (str): 下载简述
     """
-    dwn_id = await get_client().download_create(url, HEADERS)
+    dwn_id = await get_client().download_create(url=url, headers=HEADERS)
     bts = 0
-    tot = get_client().download_content_length(dwn_id)
+    tot = get_client().download_content_length(cnt=dwn_id)
     with open(out, "wb") as file:
         while True:
-            bts += file.write(await get_client().download_chunk(dwn_id))
+            bts += file.write(await get_client().download_chunk(cnt=dwn_id))
             print(f"{intro} - {out} [{bts} / {tot}]", end="\r")
             if bts == tot:
                 break
     await get_client().download_close(cnt=dwn_id)
     print()
+
+
+def configure_dynamic_fingerprint(os: str, browser: str, version: int) -> None:
+    """
+    快速设置 curl_cffi + fpgen 浏览器模拟
+
+    Args:
+        os (str): 系统
+        browser (str): 浏览器
+        version (int): 浏览器版本
+    """
+    select_client("curl_cffi")
+    request_settings.set("impersonate", browser.lower() + str(version))
+    fpgen_args = {
+        "strict": True,
+        "browser": browser.title(),
+        "os": os,
+        "languages": ["zh-CN", "zh"],
+        "location": {"country": "CN"},
+        "client": {"browser": {"major": version}},
+    }
+    request_settings.set_enable_fpgen(True)
+    request_settings.set_fpgen_args(fpgen_args)
 
 
 ################################################## END Api ##################################################

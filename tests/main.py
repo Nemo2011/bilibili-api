@@ -17,13 +17,13 @@ Environment:
     BILI_PASSWORD
     BILI_RATELIMIT
 """
+import asyncio
+import datetime
+import getopt
+import importlib
 import os
 import sys
 import time
-import getopt
-import asyncio
-import datetime
-import importlib
 import traceback
 
 from colorama import Fore, Style, init

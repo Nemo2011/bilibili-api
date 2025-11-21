@@ -1,13 +1,13 @@
 import json
 
-import httpx
+from bilibili_api import sync, get_client, Credential
 
-from bilibili_api.utils.network import HEADERS
-
-print(
-    json.dumps(
-        httpx.get("https://api.bilibili.com/x/mv/tag", headers=HEADERS).json(),
-        indent=4,
-        ensure_ascii=False,
+data = sync(
+    get_client().request(
+        url="https://api.bilibili.com/x/mv/tag",
+        method="GET",
+        cookies=sync(Credential().get_cookies()),
     )
-)
+).json()
+
+print(json.dumps(data, indent=4, ensure_ascii=False))

@@ -4,11 +4,10 @@ bilibili_api.audio
 音频相关
 """
 
-from enum import Enum
-from typing import Union, Optional
+from typing import Union
 
-from .utils.utils import get_api
 from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 API = get_api("audio")
 

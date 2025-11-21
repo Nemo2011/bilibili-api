@@ -6,7 +6,7 @@ bilibili_api.utils.short
 
 from typing import Optional
 
-from .network import get_client, Credential
+from .network import Credential, get_client
 
 
 async def get_real_url(short_url: str, credential: Optional[Credential] = None) -> str:

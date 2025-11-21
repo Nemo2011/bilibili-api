@@ -4,16 +4,17 @@ bilibili_api.clients.aiohttp
 AioHTTPClient 实现
 """
 
+import asyncio
+from typing import Dict, Optional, Tuple, Union
+
+import aiohttp  # pylint: disable=E0401
+
 from ..utils.network import (
     BiliAPIClient,
     BiliAPIFile,
     BiliAPIResponse,
     BiliWsMsgType,
-    request_log,
 )
-import aiohttp # pylint: disable=E0401
-from typing import Optional, Dict, Union, Tuple
-import asyncio
 
 
 class AioHTTPClient(BiliAPIClient):
@@ -52,6 +53,10 @@ class AioHTTPClient(BiliAPIClient):
         self.__downloads: Dict[int, aiohttp.ClientResponse] = {}
         self.__download_cnt: int = 0
 
+        self.__session_update_lock = asyncio.Lock()
+        self.__ws_cnt_lock = asyncio.Lock()
+        self.__down_cnt_lock = asyncio.Lock()
+
     def get_wrapped_session(self) -> aiohttp.ClientSession:
         return self.__session
 
@@ -73,6 +78,18 @@ class AioHTTPClient(BiliAPIClient):
         self.__args["trust_env"] = trust_env
         self.__need_update_session = True
 
+    async def __auto_update_session(self) -> None:
+        await self.__session_update_lock.acquire()
+        if self.__need_update_session:
+            await self.__session.close()
+            self.__session = aiohttp.ClientSession(
+                loop=asyncio.get_event_loop(),
+                trust_env=self.__args["trust_env"],
+                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
+            )
+            self.__need_update_session = False
+        self.__session_update_lock.release()
+
     async def request(
         self,
         method: str = "",
@@ -84,28 +101,7 @@ class AioHTTPClient(BiliAPIClient):
         cookies: dict = {},
         allow_redirects: bool = True,
     ) -> BiliAPIResponse:
-        request_log.dispatch(
-            "REQUEST",
-            "发起请求",
-            {
-                "method": method,
-                "url": url,
-                "params": params,
-                "data": data,
-                "files": files,
-                "headers": headers,
-                "cookies": cookies,
-                "allow_redirects": allow_redirects,
-            },
-        )
-        if self.__need_update_session:
-            await self.__session.close()
-            self.__session = aiohttp.ClientSession(
-                loop=asyncio.get_event_loop(),
-                trust_env=self.__args["trust_env"],
-                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
-            )
-            self.__need_update_session = False
+        await self.__auto_update_session()
         if files:
             form = aiohttp.FormData()
             if isinstance(data, str):
@@ -156,17 +152,6 @@ class AioHTTPClient(BiliAPIClient):
             raw=await resp.read(),
             url=str(resp.url),
         )
-        request_log.dispatch(
-            "RESPONSE",
-            "获得响应",
-            {
-                "code": bili_api_resp.code,
-                "headers": bili_api_resp.headers,
-                "cookies": bili_api_resp.cookies,
-                "data": bili_api_resp.raw,
-                "url": bili_api_resp.url,
-            },
-        )
         resp.release()
         await resp.wait_for_close()
         return bili_api_resp
@@ -176,37 +161,19 @@ class AioHTTPClient(BiliAPIClient):
         url: str = "",
         headers: dict = {},
     ) -> int:
-        if self.__need_update_session:
-            await self.__session.close()
-            self.__session = aiohttp.ClientSession(
-                loop=asyncio.get_event_loop(),
-                trust_env=self.__args["trust_env"],
-                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
-            )
-            self.__need_update_session = False
+        await self.__auto_update_session()
+        await self.__down_cnt_lock.acquire()
         self.__download_cnt += 1
-        request_log.dispatch(
-            "DWN_CREATE",
-            "开始下载",
-            {
-                "id": self.__download_cnt,
-                "url": url,
-                "headers": headers,
-            },
-        )
-        self.__downloads[self.__download_cnt] = await self.__session.get(
+        cnt = self.__download_cnt
+        self.__down_cnt_lock.release()
+        self.__downloads[cnt] = await self.__session.get(
             url=url, headers=headers
         )
-        return self.__download_cnt
+        return cnt
 
     async def download_chunk(self, cnt: int) -> bytes:
         resp = self.__downloads[cnt]
         data = await anext(resp.content.iter_chunked(4096))
-        request_log.dispatch(
-            "DWN_PART",
-            "收到部分下载数据",
-            {"id": cnt, "data": data},
-        )
         return data
 
     def download_content_length(self, cnt: int) -> int:
@@ -218,62 +185,28 @@ class AioHTTPClient(BiliAPIClient):
         resp.release()
         await resp.wait_for_close()
         del self.__downloads[cnt]
-        request_log.dispatch(
-            "DWN_CLOSE",
-            "结束下载",
-            {"id": cnt},
-        )
 
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
     ) -> int:
-        if self.__need_update_session:
-            await self.__session.close()
-            self.__session = aiohttp.ClientSession(
-                loop=asyncio.get_event_loop(),
-                trust_env=self.__args["trust_env"],
-                connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
-            )
-            self.__need_update_session = False
+        await self.__auto_update_session()
+        await self.__ws_cnt_lock.acquire()
         self.__ws_cnt += 1
-        request_log.dispatch(
-            "WS_CREATE",
-            "开始 WebSocket 连接",
-            {
-                "id": self.__ws_cnt,
-                "url": url,
-                "params": params,
-                "headers": headers,
-            },
-        )
-        self.__wss[self.__ws_cnt] = await self.__session.ws_connect(
+        cnt = self.__ws_cnt
+        self.__ws_cnt_lock.release()
+        self.__wss[cnt] = await self.__session.ws_connect(
             url=url, params=params, headers=headers
         )
-        return self.__ws_cnt
+        return cnt
 
     async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
         msg = await self.__wss[cnt].receive()
-        request_log.dispatch(
-            "WS_RECV",
-            "收到 WebSocket 数据",
-            {"id": cnt, "data": msg.data, "flags": msg.type.value},
-        )
         return msg.data, BiliWsMsgType(msg.type.value)
 
     async def ws_send(self, cnt: int, data: bytes) -> None:
-        request_log.dispatch(
-            "WS_SEND",
-            "发送 WebSocket 数据",
-            {"id": cnt, "data": data},
-        )
         return await self.__wss[cnt].send_bytes(data)
 
     async def ws_close(self, cnt: int) -> None:
-        request_log.dispatch(
-            "WS_CLOSE",
-            "关闭 WebSocket 请求",
-            {"id": cnt},
-        )
         return await self.__wss[cnt].close()
 
     async def close(self):

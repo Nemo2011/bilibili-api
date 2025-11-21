@@ -7,10 +7,11 @@ bilibili_api.utils.utils
 import json
 import os
 import random
-from typing import List, TypeVar
-from ..exceptions import StatementException
 from datetime import datetime
+from typing import List, TypeVar
 from urllib.parse import quote
+
+from ..exceptions import StatementException
 
 
 def get_api(field: str, *args) -> dict:
@@ -217,7 +218,7 @@ def raise_for_statement(statement: bool, msg: str = "未满足条件") -> None:
 def to_form_urlencoded(data: dict) -> str:
     temp = []
     for [k, v] in data.items():
-        temp.append(f'{k}={quote(str(v)).replace("/", "%2F")}')
+        temp.append(f"{k}={quote(str(v), safe='')}")
 
     return "&".join(temp)
 

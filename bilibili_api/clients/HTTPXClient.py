@@ -4,15 +4,17 @@ bilibili_api.clients.httpx
 HTTPXClient 实现
 """
 
+import asyncio
+from typing import AsyncGenerator, Dict, Optional, Union
+
+import httpx  # pylint: disable=E0401
+
+from ..exceptions import ApiException
 from ..utils.network import (
     BiliAPIClient,
     BiliAPIFile,
     BiliAPIResponse,
-    request_log,
 )
-from ..exceptions import ApiException
-import httpx  # pylint: disable=E0401
-from typing import AsyncGenerator, Optional, Dict, Union
 
 
 class HTTPXClient(BiliAPIClient):
@@ -59,18 +61,16 @@ class HTTPXClient(BiliAPIClient):
         self.__download_iter: Dict[int, AsyncGenerator] = {}
         self.__download_cnt: int = 0
 
+        self.__need_update_session: bool = False
+        self.__session_update_lock = asyncio.Lock()
+        self.__down_cnt_lock = asyncio.Lock()
+
     def get_wrapped_session(self) -> httpx.AsyncClient:
         return self.__session
 
     def set_proxy(self, proxy: str = "") -> None:
         self.__proxy = proxy
-        self.__session = httpx.AsyncClient(
-            timeout=self.__timeout,
-            proxy=self.__proxy if self.__proxy != "" else None,
-            verify=self.__verify_ssl,
-            trust_env=self.__trust_env,
-            http2=self.__http2,
-        )
+        self.__need_update_session = True
 
     def set_timeout(self, timeout: float = 0.0) -> None:
         self.__timeout = timeout
@@ -78,24 +78,32 @@ class HTTPXClient(BiliAPIClient):
 
     def set_verify_ssl(self, verify_ssl: bool = True) -> None:
         self.__verify_ssl = verify_ssl
-        self.__session = httpx.AsyncClient(
-            timeout=self.__timeout,
-            proxy=self.__proxy if self.__proxy != "" else None,
-            verify=self.__verify_ssl,
-            trust_env=self.__trust_env,
-            http2=self.__http2,
-        )
+        self.__need_update_session = True
 
     def set_trust_env(self, trust_env: bool = True) -> None:
         self.__trust_env = trust_env
         self.__session.trust_env = trust_env
+
+    async def __auto_update_session(self) -> None:
+        await self.__session_update_lock.acquire()
+        if self.__need_update_session:
+            await self.__session.aclose()
+            self.__session = httpx.AsyncClient(
+                timeout=self.__timeout,
+                proxy=self.__proxy if self.__proxy != "" else None,
+                verify=self.__verify_ssl,
+                trust_env=self.__trust_env,
+                http2=self.__http2,
+            )
+            self.__need_update_session = False
+        self.__session_update_lock.release()
 
     def set_http2(self, http2: bool = False) -> None:
         """
         设置是否使用 http2.
 
         Args:
-            impersonate (str, optional): 是否使用 http2. Defaults to False.
+            http2 (str, optional): 是否使用 http2. Defaults to False.
         """
         self.__http2 = http2
         self.__session = httpx.AsyncClient(
@@ -117,20 +125,7 @@ class HTTPXClient(BiliAPIClient):
         cookies: dict = {},
         allow_redirects: bool = True,
     ) -> BiliAPIResponse:
-        request_log.dispatch(
-            "REQUEST",
-            "发起请求",
-            {
-                "method": method,
-                "url": url,
-                "params": params,
-                "data": data,
-                "files": files,
-                "headers": headers,
-                "cookies": cookies,
-                "allow_redirects": allow_redirects,
-            },
-        )
+        await self.__auto_update_session()
         if files != {}:
             requests_like_files = {}
             for key, item in files.items():
@@ -159,17 +154,6 @@ class HTTPXClient(BiliAPIClient):
             raw=resp.content,
             url=resp.url,
         )
-        request_log.dispatch(
-            "RESPONSE",
-            "获得响应",
-            {
-                "code": bili_api_resp.code,
-                "headers": bili_api_resp.headers,
-                "cookies": bili_api_resp.cookies,
-                "data": bili_api_resp.raw,
-                "url": bili_api_resp.url,
-            },
-        )
         return bili_api_resp
 
     async def download_create(
@@ -177,33 +161,21 @@ class HTTPXClient(BiliAPIClient):
         url: str = "",
         headers: dict = {},
     ) -> int:
+        await self.__auto_update_session()
+        await self.__down_cnt_lock.acquire()
         self.__download_cnt += 1
-        request_log.dispatch(
-            "DWN_CREATE",
-            "开始下载",
-            {
-                "id": self.__download_cnt,
-                "url": url,
-                "headers": headers,
-            },
-        )
+        cnt = self.__download_cnt
+        self.__down_cnt_lock.release()
         req = self.__session.build_request(method="GET", url=url, headers=headers)
-        self.__downloads[self.__download_cnt] = await self.__session.send(
+        self.__downloads[cnt] = await self.__session.send(
             req, stream=True, follow_redirects=True
         )
-        self.__download_iter[self.__download_cnt] = self.__downloads[
-            self.__download_cnt
-        ].aiter_bytes(4096)
-        return self.__download_cnt
+        self.__download_iter[cnt] = self.__downloads[cnt].aiter_bytes(4096)
+        return cnt
 
     async def download_chunk(self, cnt: int) -> bytes:
         iter = self.__download_iter[cnt]
         data = await anext(iter)
-        request_log.dispatch(
-            "DWN_PART",
-            "收到部分下载数据",
-            {"id": cnt, "data": data},
-        )
         return data
 
     def download_content_length(self, cnt: int) -> int:
@@ -215,11 +187,6 @@ class HTTPXClient(BiliAPIClient):
         await resp.aclose()
         del self.__downloads[cnt]
         del self.__download_iter[cnt]
-        request_log.dispatch(
-            "DWN_CLOSE",
-            "结束下载",
-            {"id": cnt},
-        )
 
     async def ws_create(self, *args, **kwargs) -> None:
         """

@@ -12,14 +12,13 @@ from typing import List, Union, overload
 import yaml
 from yarl import URL
 
-from .utils.initial_state import get_initial_state
-
-from .utils.utils import get_api, raise_for_statement, img_auto_scheme
-from .utils.picture import Picture
-from .exceptions import ApiException, ArgsException
-from .utils.network import Api, Credential
-from .utils import cache_pool
 from . import article
+from .exceptions import ApiException, ArgsException
+from .utils import cache_pool
+from .utils.initial_state import get_initial_state
+from .utils.network import Api, Credential
+from .utils.picture import Picture
+from .utils.utils import get_api, img_auto_scheme, raise_for_statement
 
 API = get_api("note")
 API_ARTICLE = get_api("article")

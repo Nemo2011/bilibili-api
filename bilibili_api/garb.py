@@ -4,10 +4,11 @@ bilibili_api.garb
 装扮/收藏集相关
 """
 
-from .utils.network import Credential, Api
-from .utils.utils import get_api
-from typing import Union, List, Tuple
 from enum import Enum
+from typing import List, Tuple, Union
+
+from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 dlc_lottery_id = {}
 
@@ -64,7 +65,7 @@ async def search_garb_dlc_raw(
         "key_word": keyword,
         "pn": pn,
         "ps": ps,
-        "csrf": credential.get_cookies()["bili_jct"],
+        "csrf": credential.get_core_cookies()["bili_jct"],
     }
     return await Api(**api, credential=credential).update_params(**params).result
 
@@ -119,7 +120,7 @@ class DLC:
             api = API["dlc"]["basic"]
             params = {
                 "act_id": self.__act_id,
-                "csrf": self.credential.get_cookies()["bili_jct"],
+                "csrf": self.credential.get_core_cookies()["bili_jct"],
             }
             self.__basic_info = (
                 await Api(**api, credential=self.credential)
@@ -151,7 +152,7 @@ class DLC:
         params = {
             "act_id": self.__act_id,
             "lottery_id": await self.get_lottery_id(),
-            "csrf": self.credential.get_cookies()["bili_jct"],
+            "csrf": self.credential.get_core_cookies()["bili_jct"],
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -205,7 +206,7 @@ class Garb:
         api = API["garb"]["detail"]
         params = {
             "item_id": self.__item_id,
-            "csrf": self.credential.get_cookies()["bili_jct"],
+            "csrf": self.credential.get_core_cookies()["bili_jct"],
         }
         return (
             await Api(**api, credential=self.credential).update_params(**params).result
@@ -300,7 +301,7 @@ async def get_garb_dlc_items_raw(
         "sort_type": sort.value,
         "pn": pn,
         "ps": ps,
-        "csrf": credential.get_cookies()["bili_jct"],
+        "csrf": credential.get_core_cookies()["bili_jct"],
     }
     params.update(type_.value)
     return await Api(**api, credential=credential).update_params(**params).result

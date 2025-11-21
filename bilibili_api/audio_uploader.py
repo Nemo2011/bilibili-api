@@ -5,23 +5,21 @@ bilibili_api.audio_uploader
 """
 
 import asyncio
-import os
 import json
+import os
 import time
-from enum import Enum
-from typing import List, Union, Optional
 from dataclasses import dataclass, field
+from enum import Enum
+from typing import List, Optional, Union
 
 from . import user
+from .exceptions.ApiException import ApiException
+from .exceptions.NetworkException import NetworkException
+from .utils.AsyncEvent import AsyncEvent
+from .utils.network import HEADERS, Api, Credential, get_client
+from .utils.picture import Picture
 from .utils.upos import UposFile, UposFileUploader
 from .utils.utils import get_api, raise_for_statement
-from .utils.picture import Picture
-from .utils.AsyncEvent import AsyncEvent
-from .exceptions.ApiException import ApiException
-from .utils.network import Api, get_client, HEADERS, Credential
-from .exceptions.NetworkException import NetworkException
-
-from enum import Enum
 
 _API = get_api("audio_uploader")
 
@@ -555,7 +553,7 @@ class AudioUploader(AsyncEvent):
                 "version": "2.6.0",
                 "build": 2060400,
             },
-            cookies=await self.credential.get_buvid_cookies(),
+            cookies=await self.credential.get_cookies(),
             headers=HEADERS.copy(),
         )
         if resp.code >= 400:
@@ -572,7 +570,7 @@ class AudioUploader(AsyncEvent):
             )
             raise ApiException(json.dumps(preupload))
 
-        url = f'https:{preupload["endpoint"]}/{preupload["upos_uri"].removeprefix("upos://")}'
+        url = f"https:{preupload['endpoint']}/{preupload['upos_uri'].removeprefix('upos://')}"
         headers = HEADERS.copy()
         headers["x-upos-auth"] = preupload["auth"]
 

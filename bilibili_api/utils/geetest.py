@@ -4,17 +4,17 @@ bilibili_api.utils.geetest
 极验
 """
 
-from dataclasses import dataclass
+import email.message
+import enum
+import http.server
 import os
 import select
 import threading
-import http.server
-import email.message
-import enum
+from dataclasses import dataclass
 
 from ..exceptions import GeetestException
-from .utils import get_api
 from .network import Api
+from .utils import get_api
 
 API = get_api("login")
 
@@ -26,6 +26,7 @@ class GeetestType(enum.Enum):
     - LOGIN: 登录
     - VERIFY: 登录验证
     """
+
     LOGIN = "password"
     VERIFY = "safecenter"
 
@@ -218,7 +219,9 @@ class Geetest:
                 seccode=self.seccode,
             )
         else:
-            raise GeetestException("未完成验证。请调用 `complete_test` 或来到 `get_geetest_server_url` 页面完成验证码。")
+            raise GeetestException(
+                "未完成验证。请调用 `complete_test` 或来到 `get_geetest_server_url` 页面完成验证码。"
+            )
 
     def complete_test(self, validate: str, seccode: str) -> None:
         """

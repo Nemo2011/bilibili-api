@@ -1,12 +1,18 @@
+"""
+bilibili_api.utils.picture
+
+Picture 类
+"""
+
 import os
 import tempfile
-from typing import Any
 from dataclasses import dataclass
+from typing import Any
 
-from yarl import URL
 from PIL import Image
+from yarl import URL
 
-from .network import Credential, get_client, BiliAPIFile
+from .network import BiliAPIFile, Credential, get_client
 
 
 @dataclass

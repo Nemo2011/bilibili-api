@@ -67,8 +67,10 @@ async def get_initial_state(
             return None, None
         try:
             detected_content = content[pos:].strip().strip("\n").strip("\r")
-            if detected_content.startswith("{\\\""): # 暂时都是字典
-                detected_content = detected_content.replace("\\\"", "\"") # 存在转义且不在正文内
+            if detected_content.startswith('{\\"'):  # 暂时都是字典
+                detected_content = detected_content.replace(
+                    '\\"', '"'
+                )  # 存在转义且不在正文内
             content = json.JSONDecoder().raw_decode(detected_content)[0]
         except json.JSONDecodeError as e:
             raise InitialStateException("信息解析错误")

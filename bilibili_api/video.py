@@ -6,34 +6,34 @@ bilibili_api.video
 注意，同时存在 page_index 和 cid 的参数，两者至少提供一个。
 """
 
-import re
-import os
-import json
-import struct
 import asyncio
-import logging
 import datetime
-from enum import Enum
-from inspect import iscoroutine, isfunction
-from functools import cmp_to_key
+import json
+import logging
+import os
+import re
+import struct
 from dataclasses import dataclass
-from typing import Any, List, Union, Optional, Type
+from enum import Enum
+from functools import cmp_to_key
+from inspect import iscoroutine, isfunction
+from typing import Any, List, Optional, Union
 
 from yarl import URL
 
 from . import user
-from .utils.aid_bvid_transformer import bvid2aid, aid2bvid
-from .utils.utils import get_api, raise_for_statement
+from .exceptions import (
+    ArgsException,
+    DanmakuClosedException,
+    NetworkException,
+    ResponseException,
+)
+from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
 from .utils.AsyncEvent import AsyncEvent
 from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku, SpecialDanmaku
-from .utils.network import Credential, Api, get_client, BiliWsMsgType
-from .exceptions import (
-    ArgsException,
-    NetworkException,
-    ResponseException,
-    DanmakuClosedException,
-)
+from .utils.network import Api, BiliWsMsgType, Credential, get_client
+from .utils.utils import get_api, raise_for_statement
 
 API = get_api("video")
 
@@ -266,21 +266,21 @@ class Video:
                 return True
         return False
 
-    async def turn_to_episode(self) -> "Episode":
+    async def turn_to_episode(self) -> "bangumi.Episode":
         """
         将视频转换为番剧
 
         Returns:
             Episode: 番剧对象
         """
-        from .bangumi import Episode
+        from . import bangumi
 
         raise_for_statement(await self.is_episode(), "视频不属于番剧")
 
         info = await self.__get_info_cached()
         url = URL(info.get("redirect_url"))
         epid = int(url.parts[3][2:])
-        return Episode(epid=epid)
+        return bangumi.Episode(epid=epid)
 
     async def get_detail(self) -> dict:
         """
@@ -504,12 +504,13 @@ class Video:
             "cid": cid,
             "from_client": "BROWSER",
             "web_location": 1315873,
+            "platform": "html5" if html5 else "pc",
         }
         if html5:
             params["platform"] = "html5"
             params["high_quality"] = "1"
         return (
-            await Api(**api, credential=self.credential, wbi=True)
+            await Api(**api, credential=self.credential)
             .update_params(**params)
             .result
         )
@@ -1771,10 +1772,10 @@ class Video:
         return await Api(**api, credential=self.credential).update_data(**datas).result
 
     async def report_watch_history(
-            self,
-            progress: int = 0,
-            page_index: Union[int, None] = 0,
-            cid: Union[int, None] = None
+        self,
+        progress: int = 0,
+        page_index: Union[int, None] = 0,
+        cid: Union[int, None] = None,
     ) -> dict:
         """
         上报观看历史
@@ -1800,7 +1801,11 @@ class Video:
             "progress": progress,
             "csrf": self.credential.bili_jct,
         }
-        return await Api(**api, credential=self.credential).update_data(**data).request(raw=True)
+        return (
+            await Api(**api, credential=self.credential)
+            .update_data(**data)
+            .request(raw=True)
+        )
 
     async def report_start_watching(self, page_index: Union[int, None] = 0) -> dict:
         """
@@ -1828,9 +1833,14 @@ class Video:
             "part": page_index,
             "csrf": self.credential.bili_jct,
         }
-        return await Api(**api, credential=self.credential).update_data(**data).request(raw=True)
+        return (
+            await Api(**api, credential=self.credential)
+            .update_data(**data)
+            .request(raw=True)
+        )
 
-from .bangumi import Episode
+
+from . import bangumi
 
 
 class VideoOnlineMonitor(AsyncEvent):
@@ -1948,7 +1958,7 @@ class VideoOnlineMonitor(AsyncEvent):
         self.logger.info("主动断开连接。")
         self.dispatch("DISCONNECTED")
         await self.__cancel_all_tasks()
-        await self.__client.ws_close(self.__ws)
+        await self.__client.ws_close(cnt=self.__ws)
 
     async def __main(self):
         """
@@ -1976,7 +1986,7 @@ class VideoOnlineMonitor(AsyncEvent):
         # 连接服务器
         self.logger.debug("准备连接服务器...")
         self.__client = get_client()
-        self.__ws = await self.__client.ws_create(uri)
+        self.__ws = await self.__client.ws_create(url=uri)
 
         # 发送认证信息
         self.logger.debug("服务器连接成功，准备发送认证信息...")
@@ -1987,8 +1997,8 @@ class VideoOnlineMonitor(AsyncEvent):
         }
         verify_info = json.dumps(verify_info, separators=(",", ":"))
         await self.__client.ws_send(
-            self.__ws,
-            self.__pack(
+            cnt=self.__ws,
+            data=self.__pack(
                 VideoOnlineMonitor.Datapack.CLIENT_VERIFY, 1, verify_info.encode()
             ),
         )
@@ -1996,7 +2006,7 @@ class VideoOnlineMonitor(AsyncEvent):
         # 循环接收消息
         while True:
             try:
-                data, flag = await self.__client.ws_recv(self.__ws)
+                data, flag = await self.__client.ws_recv(cnt=self.__ws)
             except:
                 self.logger.warning("连接被异常断开")
                 await self.__cancel_all_tasks()
@@ -2027,8 +2037,8 @@ class VideoOnlineMonitor(AsyncEvent):
 
             elif d["type"] == VideoOnlineMonitor.Datapack.SERVER_HEARTBEAT.value:
                 # 心跳包反馈，同时包含在线人数。
-                self.logger.debug(f'收到服务器心跳包反馈，编号：{d["number"]}')
-                self.logger.info(f'实时观看人数：{d["data"]["data"]["room"]["online"]}')
+                self.logger.debug(f"收到服务器心跳包反馈，编号：{d['number']}")
+                self.logger.info(f"实时观看人数：{d['data']['data']['room']['online']}")
                 self.dispatch("ONLINE", d["data"])
 
             elif d["type"] == VideoOnlineMonitor.Datapack.DANMAKU.value:
@@ -2064,8 +2074,8 @@ class VideoOnlineMonitor(AsyncEvent):
         while True:
             self.logger.debug(f"发送心跳包，编号：{index}")
             await self.__client.ws_send(
-                self.__ws,
-                self.__pack(
+                cnt=self.__ws,
+                data=self.__pack(
                     VideoOnlineMonitor.Datapack.CLIENT_HEARTBEAT,
                     index,
                     b"[object Object]",

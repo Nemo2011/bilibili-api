@@ -6,8 +6,8 @@ bilibili_api.homepage
 
 from typing import Union
 
-from .utils.utils import get_api
 from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 API = get_api("homepage")
 
@@ -88,7 +88,9 @@ async def get_favorite_list_and_toview(credential: Credential) -> dict:
     return await Api(**api, credential=credential).result
 
 
-async def get_favorite_list_content(media_id: int, credential: Union[Credential, None] = None) -> dict:
+async def get_favorite_list_content(
+    media_id: int, credential: Union[Credential, None] = None
+) -> dict:
     """
     获取首页右上角视频相关列表（收藏夹+稍后再看）的具体内容
 
@@ -102,9 +104,5 @@ async def get_favorite_list_content(media_id: int, credential: Union[Credential,
         dict: 调用 API 返回的结果
     """
     api = API["list"]["resource"]
-    params = {
-        "web_location": "333.1007",
-        "platform": "web",
-        "media_id": media_id
-    }
+    params = {"web_location": "333.1007", "platform": "web", "media_id": media_id}
     return await Api(**api, credential=credential).update_params(**params).result

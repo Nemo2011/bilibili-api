@@ -28,15 +28,16 @@ from bilibili_api import ...
 - [class BiliAPIResponse()](#class-BiliAPIResponse)
   - [def json()](#def-json)
   - [def utf8\_text()](#def-utf8\_text)
+- [class BiliFilterFlags()](#class-BiliFilterFlags)
 - [class BiliWsMsgType()](#class-BiliWsMsgType)
 - [class CookiesRefreshException()](#class-CookiesRefreshException)
 - [class Credential()](#class-Credential)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
   - [async def check\_refresh()](#async-def-check\_refresh)
   - [async def check\_valid()](#async-def-check\_valid)
-  - [def from\_cookies()](#def-from\_cookies)
-  - [async def get\_buvid\_cookies()](#async-def-get\_buvid\_cookies)
-  - [def get\_cookies()](#def-get\_cookies)
+  - [def gen\_local\_cookies()](#def-gen\_local\_cookies)
+  - [async def get\_cookies()](#async-def-get\_cookies)
+  - [def get\_core\_cookies()](#def-get\_core\_cookies)
   - [def has\_ac\_time\_value()](#def-has\_ac\_time\_value)
   - [def has\_bili\_jct()](#def-has\_bili\_jct)
   - [def has\_buvid3()](#def-has\_buvid3)
@@ -105,6 +106,9 @@ from bilibili_api import ...
 - [def aid2bvid()](#def-aid2bvid)
 - [async def bili\_simple\_download()](#async-def-bili\_simple\_download)
 - [def bvid2aid()](#def-bvid2aid)
+- [def configure\_dynamic\_fingerprint()](#def-configure\_dynamic\_fingerprint)
+- [def get\_all\_registered\_post\_filters()](#def-get\_all\_registered\_post\_filters)
+- [def get\_all\_registered\_pre\_filters()](#def-get\_all\_registered\_pre\_filters)
 - [def get\_available\_settings()](#def-get\_available\_settings)
 - [async def get\_bili\_ticket()](#async-def-get\_bili\_ticket)
 - [async def get\_buvid()](#async-def-get\_buvid)
@@ -112,13 +116,15 @@ from bilibili_api import ...
 - [async def get\_real\_url()](#async-def-get\_real\_url)
 - [def get\_registered\_available\_settings()](#def-get\_registered\_available\_settings)
 - [def get\_registered\_clients()](#def-get\_registered\_clients)
+- [def get\_registered\_post\_filters()](#def-get\_registered\_post\_filters)
+- [def get\_registered\_pre\_filters()](#def-get\_registered\_pre\_filters)
 - [def get\_selected\_client()](#def-get\_selected\_client)
 - [def get\_session()](#def-get\_session)
 - [async def parse\_link()](#async-def-parse\_link)
 - [def recalculate\_wbi()](#def-recalculate\_wbi)
-- [def refresh\_bili\_ticket()](#def-refresh\_bili\_ticket)
-- [def refresh\_buvid()](#def-refresh\_buvid)
 - [def register\_client()](#def-register\_client)
+- [def register\_post\_filter()](#def-register\_post\_filter)
+- [def register\_pre\_filter()](#def-register\_pre\_filter)
 - [var request\_log](#var-request\_log)
   - [def get\_ignore\_events()](#def-get\_ignore\_events)
   - [def get\_on\_events()](#def-get\_on\_events)
@@ -131,6 +137,10 @@ from bilibili_api import ...
   - [def get\_all()](#def-get\_all)
   - [def get\_enable\_auto\_buvid()](#def-get\_enable\_auto\_buvid)
   - [def get\_enable\_bili\_ticket()](#def-get\_enable\_bili\_ticket)
+  - [def get\_enable\_bili\_ticket\_global\_persistence()](#def-get\_enable\_bili\_ticket\_global\_persistence)
+  - [def get\_enable\_buvid\_global\_persistence()](#def-get\_enable\_buvid\_global\_persistence)
+  - [def get\_enable\_fpgen()](#def-get\_enable\_fpgen)
+  - [def get\_fpgen\_args()](#def-get\_fpgen\_args)
   - [def get\_proxy()](#def-get\_proxy)
   - [def get\_timeout()](#def-get\_timeout)
   - [def get\_trust\_env()](#def-get\_trust\_env)
@@ -139,6 +149,10 @@ from bilibili_api import ...
   - [def set()](#def-set)
   - [def set\_enable\_auto\_buvid()](#def-set\_enable\_auto\_buvid)
   - [def set\_enable\_bili\_ticket()](#def-set\_enable\_bili\_ticket)
+  - [def set\_enable\_bili\_ticket\_global\_persistence()](#def-set\_enable\_bili\_ticket\_global\_persistence)
+  - [def set\_enable\_buvid\_global\_persistence()](#def-set\_enable\_buvid\_global\_persistence)
+  - [def set\_enable\_fpgen()](#def-set\_enable\_fpgen)
+  - [def set\_fpgen\_args()](#def-set\_fpgen\_args)
   - [def set\_proxy()](#def-set\_proxy)
   - [def set\_timeout()](#def-set\_timeout)
   - [def set\_trust\_env()](#def-set\_trust\_env)
@@ -148,6 +162,8 @@ from bilibili_api import ...
 - [def set\_session()](#def-set\_session)
 - [def sync()](#def-sync)
 - [def unregister\_client()](#def-unregister\_client)
+- [def unregister\_post\_filter()](#def-unregister\_post\_filter)
+- [def unregister\_pre\_filter()](#def-unregister\_pre\_filter)
 
 ---
 
@@ -497,7 +513,7 @@ class BiliAPIClient(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def close(self):
+    async def close(self) -> None:
         """
         关闭请求客户端，即关闭封装的第三方会话对象
         """
@@ -563,6 +579,26 @@ class BiliAPIClient(ABC):
 
 ---
 
+## class BiliFilterFlags()
+
+**Extend: enum.Enum**
+
+过滤器行为枚举
+
+- CONTINUE: 继续下一个过滤器
+- SET_PARAMS: 设置函数的参数 (仅后置过滤器)
+- SET_RETURN: 设置返回值 (仅前置过滤器)
+- EXECUTE_NOW: 直接运行函数 (仅前置过滤器)
+- RETURN_NOW: 直接作为函数返回值返回
+- BACK: 回到上一个过滤器
+- SKIP: 跳过下一个过滤器
+- GOTO: 跳到任意一个过滤器 需通过 `(async_)get_registered_(pre|post)_filters` 查询对应过滤器的下标
+
+
+
+
+---
+
 ## class BiliWsMsgType()
 
 **Extend: enum.Enum**
@@ -599,6 +635,30 @@ Cookies 刷新错误。
 
 凭据类，用于各种请求操作的验证。
 
+以下字段获取方式见 https://nemo2011.github.io/bilibili-api/#/get-credential.md
+
+重要 cookies:
+ - `SESSDATA` (`sessdata`);
+ - `bili_jct`;
+ - `DedeUserId` (`dedeuserid`);
+ - `DedeUserId__ckMd5` (`dedeuserid_ckmd5`);
+ - `sid`
+
+本地生成 cookies:
+ - `b_nut`;
+ - `b_lsid`;
+ - `uuid_infoc`;
+ - `buvid_fp`
+
+网络请求生成反爬 cookies:
+ - `buvid3`;
+ - `buvid4`;
+ - `bili_ticket`;
+ - `bili_ticket_expires`
+
+非 cookies:
+ - `ac_time_value` (存储在 Local Storage 中)
+
 
 
 
@@ -611,11 +671,12 @@ Cookies 刷新错误。
 | - | - | - |
 | `sessdata` | `str \| None, optional` | 浏览器 Cookies 中的 SESSDATA 字段值. Defaults to None. |
 | `bili_jct` | `str \| None, optional` | 浏览器 Cookies 中的 bili_jct 字段值. Defaults to None. |
-| `buvid3` | `str \| None, optional` | 浏览器 Cookies 中的 BUVID3 字段值. Defaults to None. |
-| `buvid4` | `str \| None, optional` | 浏览器 Cookies 中的 BUVID4 字段值. Defaults to None. |
+| `buvid3` | `str \| None, optional` | 浏览器 Cookies 中的 buvid3 字段值. Defaults to None. |
+| `buvid4` | `str \| None, optional` | 浏览器 Cookies 中的 buvid4 字段值. Defaults to None. |
 | `dedeuserid` | `str \| None, optional` | 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None. |
-| `ac_time_value` | `str \| None, optional` | 浏览器 Cookies 中的 ac_time_value 字段值. Defaults to None. |
-| `proxy` | `str \| None, optional` | 凭据类可选择携带的代理. Defaults to None. |
+| `dedeuserid_ckmd5` | `str \| None, optional` | 浏览器 Cookies 中的 DedeUserID__ckMd5 字段值. Defaults to None. |
+| `sid` | `str \| None, optional` | 浏览器 Cookies 中的 sid 字段值. Defaults to None. |
+| `ac_time_value` | `str \| None, optional` | 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None. |
 
 
 ### async def check_refresh()
@@ -640,40 +701,32 @@ Cookies 刷新错误。
 
 
 
-**@staticmethod** 
-
-### def from_cookies()
-
-从 cookies 新建 Credential
-
-
-| name | type | description |
-| - | - | - |
-| `cookies` | `Dict, optional` | Cookies. Defaults to {}. |
-
-**Returns:** `Credential`:  凭据类
+### def gen_local_cookies()
 
 
 
 
-### async def get_buvid_cookies()
-
-获取请求 Cookies 字典，自动补充 buvid 字段
 
 
 
-**Returns:** `dict`:  请求 Cookies 字典
-
-
-
-
-### def get_cookies()
+### async def get_cookies()
 
 获取请求 Cookies 字典
 
 
 
 **Returns:** `dict`:  请求 Cookies 字典
+
+
+
+
+### def get_core_cookies()
+
+返回部分核心 cookies，需要登录获取，可用于复制 Credential 对象
+
+包含 SESSDATA, bili_jct, sid, DedeUserID, ac_time_value
+
+
 
 
 
@@ -1521,6 +1574,54 @@ BV 号转 AV 号。
 
 ---
 
+## def configure_dynamic_fingerprint()
+
+快速设置 curl_cffi + fpgen 浏览器模拟
+
+
+| name | type | description |
+| - | - | - |
+| `os` | `str` | 系统 |
+| `browser` | `str` | 浏览器 |
+| `version` | `int` | 浏览器版本 |
+
+
+
+
+---
+
+## def get_all_registered_post_filters()
+
+获取所有已注册的后置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `in_priority` | `bool` | 是否排序. Defaults to True. |
+
+**Returns:** `List[dict]`:  已注册的后置过滤器
+
+
+
+
+---
+
+## def get_all_registered_pre_filters()
+
+获取所有已注册的前置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `in_priority` | `bool` | 是否排序. Defaults to True. |
+
+**Returns:** `List[dict]`:  已注册的前置过滤器
+
+
+
+
+---
+
 ## def get_available_settings()
 
 获取当前支持的设置项
@@ -1536,7 +1637,7 @@ BV 号转 AV 号。
 
 ## async def get_bili_ticket()
 
-获取 bili_ticket
+获取 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段
 
 
 | name | type | description |
@@ -1552,11 +1653,14 @@ BV 号转 AV 号。
 
 ## async def get_buvid()
 
-获取 buvid3 和 buvid4
+获取 buvid3 和 buvid4，若提供凭据类将自动在 credential 中设置相关字段
 
 
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential, optional` | 凭据. Defaults to None. |
 
-**Returns:** `Tuple[str, str]`:  第 0 项为 buvid3，第 1 项为 buvid4。
+**Returns:** `Tuple[str, str, str]`:  第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
 
 
 
@@ -1619,6 +1723,42 @@ BV 号转 AV 号。
 
 ---
 
+## def get_registered_post_filters()
+
+通过请求客户端及其函数筛选已注册的后置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `client` | `str` | 请求客户端. |
+| `func` | `str` | 执行函数名. |
+| `in_priority` | `bool` | 是否排序. Defaults to True. |
+
+**Returns:** `List[dict]`:  已注册的后置过滤器
+
+
+
+
+---
+
+## def get_registered_pre_filters()
+
+通过请求客户端及其函数筛选已注册的前置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `client` | `str` | 请求客户端. |
+| `func` | `str` | 执行函数名. |
+| `in_priority` | `bool` | 是否排序. Defaults to True. |
+
+**Returns:** `List[dict]`:  已注册的前置过滤器
+
+
+
+
+---
+
 ## def get_selected_client()
 
 获取用户选择的请求客户端名称和对应的类
@@ -1673,28 +1813,6 @@ BV 号转 AV 号。
 
 ---
 
-## def refresh_bili_ticket()
-
-刷新 bili_ticket
-
-
-
-
-
-
----
-
-## def refresh_buvid()
-
-刷新模块自动生成的 buvid3 和 buvid4
-
-
-
-
-
-
----
-
 ## def register_client()
 
 注册请求客户端并切换，可用于用户自定义请求客户端。
@@ -1705,6 +1823,58 @@ BV 号转 AV 号。
 | `name` | `str` | 请求客户端类型名称，用户自定义命名。 |
 | `cls` | `type` | 基于 BiliAPIClient 重写后的请求客户端类。 |
 | `settings` | `Dict` | 请求客户端在基础设置外的其他设置，键为设置名称，值为设置默认值。Defaults to {}. |
+
+
+
+
+---
+
+## def register_post_filter()
+
+注册/修改后置过滤器
+
+触发方式1: 当请求客户端设置值位于 `clients` 中且执行函数名称位于 `on` 中触发。
+触发方式2: `trigger(client, on) == True` 或 `await async_trigger(client, on)` 时触发。
+
+执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
+
+
+| name | type | description |
+| - | - | - |
+| `name` | `str` | 名称，若重复则为修改对应过滤器。 |
+| `func` | `Callable, optional` | 执行的函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `async_func` | `Coroutine, optional` | 执行的异步函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `clients` | `List[str], optional` | 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。 |
+| `on` | `List[str], optional` | 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。 |
+| `trigger` | `Callable, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
+| `async_trigger` | `Coroutine, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
+| `priority` | `int, optional` | 优先级，数字越小越优先执行。Defaults to 0. |
+
+
+
+
+---
+
+## def register_pre_filter()
+
+注册/修改前置过滤器
+
+触发方式1: 当请求客户端设置值位于 `clients` 中且执行函数名称位于 `on` 中触发。
+触发方式2: `trigger(client, on) == True` 或 `await async_trigger(client, on)` 时触发。
+
+执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
+
+
+| name | type | description |
+| - | - | - |
+| `name` | `str` | 名称，若重复则为修改对应过滤器。 |
+| `func` | `Callable, optional` | 执行的函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `async_func` | `Coroutine, optional` | 执行的异步函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `clients` | `List[str], optional` | 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。 |
+| `on` | `List[str], optional` | 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。 |
+| `trigger` | `Callable, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
+| `async_trigger` | `Coroutine, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
+| `priority` | `int, optional` | 优先级，数字越小越优先执行。Defaults to 0. |
 
 
 
@@ -1741,6 +1911,8 @@ Events:
 - API_RESPONSE: Api 响应。
 - (反爬虫)
 - ANTI_SPIDER: 反爬虫相关信息。
+- (过滤器)
+- DO_FILTER: 执行过滤器。
 
 CallbackData: 描述 (str) 数据 (dict)
 
@@ -1837,7 +2009,7 @@ async def handle(desc: str, data: dict) -> None:
 
 获取某项设置
 
-不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
+不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
 
 默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -1882,6 +2054,50 @@ async def handle(desc: str, data: dict) -> None:
 
 
 **Returns:** `bool`:  是否使用 bili_ticket. Defaults to True.
+
+
+
+
+### def get_enable_bili_ticket_global_persistence()
+
+获取设置的是否使用全局可持久化 bili_ticket
+
+
+
+**Returns:** `bool`:  是否使用全局可持久化 bili_ticket. Defalts to False.
+
+
+
+
+### def get_enable_buvid_global_persistence()
+
+获取设置的是否使用全局可持久化 buvid
+
+
+
+**Returns:** `bool`:  是否使用全局可持久化 buvid. Defalts to False.
+
+
+
+
+### def get_enable_fpgen()
+
+获取是否使用 fpgen
+
+
+
+**Returns:** `bool`:  是否使用 fpgen. Defaults to False.
+
+
+
+
+### def get_fpgen_args()
+
+获取调用 fpgen 的参数
+
+
+
+**Returns:** `dict`:  调用 fpgen 的参数
 
 
 
@@ -1945,7 +2161,7 @@ async def handle(desc: str, data: dict) -> None:
 
 设置某项设置
 
-不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
+不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
 
 默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -1978,6 +2194,54 @@ async def handle(desc: str, data: dict) -> None:
 | name | type | description |
 | - | - | - |
 | `enable_bili_ticket` | `bool` | 是否使用 bili_ticket. |
+
+
+
+
+### def set_enable_bili_ticket_global_persistence()
+
+设置是否使用全局可持久化 buvid
+
+
+| name | type | description |
+| - | - | - |
+| `enable_bili_ticket_global_persistence` | `bool` | 是否使用全局可持久化 buvid. |
+
+
+
+
+### def set_enable_buvid_global_persistence()
+
+设置是否使用全局可持久化 buvid
+
+
+| name | type | description |
+| - | - | - |
+| `enable_buvid_global_persistence` | `bool` | 是否使用全局可持久化 buvid. |
+
+
+
+
+### def set_enable_fpgen()
+
+设置是否使用 fpgen
+
+
+| name | type | description |
+| - | - | - |
+| `enable_fpgen` | `bool` | 是否使用 fpgen |
+
+
+
+
+### def set_fpgen_args()
+
+设置调用 fpgen 的参数
+
+
+| name | type | description |
+| - | - | - |
+| `fpgen_args` | `Dict` | 调用 fpgen 的参数 |
 
 
 
@@ -2096,6 +2360,34 @@ async def handle(desc: str, data: dict) -> None:
 | name | type | description |
 | - | - | - |
 | `name` | `str` | 请求客户端类型名称，用户自定义命名。 |
+
+
+
+
+---
+
+## def unregister_post_filter()
+
+取消注册后置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `name` | `str` | 过滤器名称 |
+
+
+
+
+---
+
+## def unregister_pre_filter()
+
+取消注册前置过滤器
+
+
+| name | type | description |
+| - | - | - |
+| `name` | `str` | 过滤器名称 |
 
 
 

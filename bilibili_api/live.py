@@ -1,33 +1,33 @@
-r"""
+"""
 bilibili_api.live
 
 直播相关
 """
 
-import json
-import time
-import base64
-import struct
 import asyncio
+import base64
+import json
 import logging
+import struct
+import time
 from enum import Enum
 from typing import Any, List, Union
 
 import brotli
 
-from .utils.utils import get_api, raise_for_statement
+from .exceptions.LiveException import LiveException
+from .utils.AsyncEvent import AsyncEvent
+from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku
 from .utils.network import (
-    Credential,
-    Api,
     HEADERS,
-    get_client,
+    Api,
     BiliWsMsgType,
+    Credential,
     get_buvid,
+    get_client,
 )
-from .utils.AsyncEvent import AsyncEvent
-from .exceptions.LiveException import LiveException
-from .utils.BytesReader import BytesReader
+from .utils.utils import get_api, raise_for_statement
 
 API = get_api("live")
 
@@ -1222,6 +1222,7 @@ def parse_online_rank_v3(bt: bytes) -> dict:
             elif t == 8:
                 item["user_info"] = parse_user_info(reader.bytes_string())
         return item
+
     ret = {}
     br = BytesReader(stream=bt)
     while not br.has_end():
@@ -1450,7 +1451,7 @@ class LiveDanmaku(AsyncEvent):
             self.__tasks.pop().cancel()
 
         self.__status = self.STATUS_CLOSED
-        await self.__client.ws_close(self.__ws)  # type: ignore
+        await self.__client.ws_close(cnt=self.__ws)  # type: ignore
 
         self.logger.info("连接已关闭")
 
@@ -1486,7 +1487,7 @@ class LiveDanmaku(AsyncEvent):
         async def on_timeout(ev):
             # 连接超时
             self.err_reason = "心跳响应超时"
-            await self.__client.ws_close(self.__ws)  # type: ignore
+            await self.__client.ws_close(cnt=self.__ws)  # type: ignore
 
         while True:
             self.err_reason = ""
@@ -1508,7 +1509,9 @@ class LiveDanmaku(AsyncEvent):
             self.logger.info(f"正在尝试连接主机： {uri}")
 
             try:
-                self.__ws = await self.__client.ws_create(uri, headers=HEADERS.copy())
+                self.__ws = await self.__client.ws_create(
+                    url=uri, headers=HEADERS.copy()
+                )
 
                 @self.on("VERIFICATION_SUCCESSFUL")
                 async def on_verification_successful(data):
@@ -1523,7 +1526,7 @@ class LiveDanmaku(AsyncEvent):
 
                 while True:
                     try:
-                        data, flag = await self.__client.ws_recv(self.__ws)
+                        data, flag = await self.__client.ws_recv(cnt=self.__ws)
                     except Exception as e:
                         self.__status = self.STATUS_ERROR
                         self.logger.error("出现错误")
@@ -1550,7 +1553,7 @@ class LiveDanmaku(AsyncEvent):
 
             except Exception as e:
                 if self.__ws:
-                    await self.__client.ws_close(self.__ws)
+                    await self.__client.ws_close(cnt=self.__ws)
                 self.logger.warning(e)
                 if retry <= 0 or len(available_hosts) == 0:
                     self.logger.error("无法连接服务器")
@@ -1609,7 +1612,7 @@ class LiveDanmaku(AsyncEvent):
 
                 # DANMU_MSG 事件名特殊：DANMU_MSG:4:0:2:2:2:0，需取出事件名，暂不知格式
                 if callback_info["type"].find("RECALL_DANMU_MSG") > -1:
-                    callback_info["type"]="RECALL_DANMU_MSG"
+                    callback_info["type"] = "RECALL_DANMU_MSG"
                     info["data"]["cmd"] = "RECALL_DANMU_MSG"
                 elif callback_info["type"].find("DANMU_MSG") > -1:
                     callback_info["type"] = "DANMU_MSG"
@@ -1715,9 +1718,11 @@ class LiveDanmaku(AsyncEvent):
                         "utf-8",
                     ),
                 }
-                await Api(**api, credential=self.credential).update_params(
-                    **params
-                ).result
+                await (
+                    Api(**api, credential=self.credential)
+                    .update_params(**params)
+                    .result
+                )
                 self.__heartbeat_timer_web = 60
             await asyncio.sleep(1.0)
             self.__heartbeat_timer_web -= 1
@@ -1734,7 +1739,7 @@ class LiveDanmaku(AsyncEvent):
         while True:
             if self.__heartbeat_timer == 0:
                 self.logger.debug("发送 WebSocket 心跳包")
-                await self.__client.ws_send(self.__ws, HEARTBEAT)
+                await self.__client.ws_send(cnt=self.__ws, data=HEARTBEAT)
             elif self.__heartbeat_timer <= -30:
                 # 视为已异常断开连接，发布 TIMEOUT 事件
                 self.dispatch("TIMEOUT")
@@ -1753,7 +1758,7 @@ class LiveDanmaku(AsyncEvent):
         """
         data = self.__pack(data, protocol_version, datapack_type)
         self.logger.debug(f"发送原始数据：{data}")
-        await self.__client.ws_send(self.__ws, data)
+        await self.__client.ws_send(cnt=self.__ws, data=data)
 
     @staticmethod
     def __pack(data: bytes, protocol_version: int, datapack_type: int) -> bytes:
@@ -2017,9 +2022,7 @@ async def create_live_reserve(
     return await Api(**api, credential=credential).update_data(**data).result
 
 
-async def get_self_live_watching_history(
-    credential: Credential
-) -> dict:
+async def get_self_live_watching_history(credential: Credential) -> dict:
     """
     获取用户直播观看记录
 

@@ -4,29 +4,29 @@ bilibili_api.video_uploader
 视频上传
 """
 
-import os
-import json
-import time
-import base64
-import re
 import asyncio
-from enum import Enum
-from typing import List, Union, Optional
-from copy import copy, deepcopy
-from asyncio.tasks import Task, create_task
+import base64
+import json
+import os
+import re
+import time
 from asyncio.exceptions import CancelledError
+from asyncio.tasks import Task, create_task
+from copy import copy, deepcopy
 from datetime import datetime
+from enum import Enum
+from typing import List, Optional, Union
 
-from .video import Video
-from .topic import Topic
-from .utils.utils import get_api
-from .utils.picture import Picture
-from .utils.AsyncEvent import AsyncEvent
-from .utils.aid_bvid_transformer import bvid2aid
 from .exceptions.ApiException import ApiException
-from .utils.network import Api, get_client, Credential, request_settings
 from .exceptions.NetworkException import NetworkException
 from .exceptions.ResponseCodeException import ResponseCodeException
+from .topic import Topic
+from .utils.aid_bvid_transformer import bvid2aid
+from .utils.AsyncEvent import AsyncEvent
+from .utils.network import Api, Credential, get_client, request_settings
+from .utils.picture import Picture
+from .utils.utils import get_api
+from .video import Video
 
 _API = get_api("video_uploader")
 
@@ -43,7 +43,7 @@ async def upload_cover(cover: Picture, credential: Credential) -> str:
     pic = cover if isinstance(cover, Picture) else Picture().from_file(cover)
     cover = pic.convert_format("png")
     data = {
-        "cover": f'data:image/png;base64,{base64.b64encode(pic.content).decode("utf-8")}'
+        "cover": f"data:image/png;base64,{base64.b64encode(pic.content).decode('utf-8')}"
     }
     return (await Api(**api, credential=credential).update_data(**data).result)["url"]
 
@@ -83,7 +83,7 @@ async def _probe() -> dict:
     # info = await Api(**api).update_params(r="probe").result # 不实时获取线路直接用 LINES_INFO
     min_cost, fastest_line = 30, None
     legacy_timeout = request_settings.get_timeout()
-    request_settings.set_timeout(30) # 测试时设置为 30
+    request_settings.set_timeout(30)  # 测试时设置为 30
     for line in LINES_INFO.values():
         start = time.perf_counter()
         data = bytes(int(1024 * 0.1 * 1024))  # post 0.1MB
@@ -91,7 +91,7 @@ async def _probe() -> dict:
         try:
             await client.request(
                 method="POST",
-                url=f'https:{line["probe_url"]}',
+                url=f"https:{line['probe_url']}",
                 data=data,
             )
             cost_time = time.perf_counter() - start
@@ -658,7 +658,7 @@ class VideoMeta:
         # await self._pre() # 缓存于 bilibili_api\data\video_uploader_meta_pre.json
         error_tags = await self._check_tags()
         if len(error_tags) != 0:
-            raise ValueError(f'以下 tags 不合法: {",".join(error_tags)}')
+            raise ValueError(f"以下 tags 不合法: {','.join(error_tags)}")
 
         if not self._check_tid():
             raise ValueError(f"tid {self.tid} 不合法")
@@ -755,7 +755,9 @@ class VideoUploader(AsyncEvent):
         self.cover = (
             self.meta.cover
             if isinstance(self.meta, VideoMeta)
-            else cover if isinstance(cover, Picture) else Picture().from_file(cover)
+            else cover
+            if isinstance(cover, Picture)
+            else Picture().from_file(cover)
         )
         self.line = line
         self.__task: Union[Task, None] = None
@@ -787,7 +789,7 @@ class VideoUploader(AsyncEvent):
                 "upcdn": self.line["upcdn"],
                 "probe_version": self.line["probe_version"],
             },
-            cookies=await self.credential.get_buvid_cookies(),
+            cookies=await self.credential.get_cookies(),
             headers={
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
                 "Referer": "https://www.bilibili.com",
@@ -1083,14 +1085,14 @@ class VideoUploader(AsyncEvent):
             r"//upos-(sz|cs)-upcdn(bda2|ws|qn)\.bilivideo\.com", preupload["endpoint"]
         ):
             preupload["endpoint"] = re.sub(
-                r"upcdn(bda2|qn|ws)", f'upcdn{line["upcdn"]}', preupload["endpoint"]
+                r"upcdn(bda2|qn|ws)", f"upcdn{line['upcdn']}", preupload["endpoint"]
             )
         return preupload  # tbh not needed since it is ref type
 
     @staticmethod
     def _get_upload_url(preupload: dict) -> str:
         # 上传目标 URL
-        return f'https:{preupload["endpoint"]}/{preupload["upos_uri"].removeprefix("upos://")}'
+        return f"https:{preupload['endpoint']}/{preupload['upos_uri'].removeprefix('upos://')}"
 
     async def _upload_chunk(
         self,
@@ -1254,7 +1256,7 @@ class VideoUploader(AsyncEvent):
         data = resp.json()
 
         if data["OK"] != 1:
-            err = ResponseCodeException(-1, f'提交分 P 失败，原因: {data["message"]}')
+            err = ResponseCodeException(-1, f"提交分 P 失败，原因: {data['message']}")
             self.dispatch(
                 VideoUploaderEvents.PAGE_SUBMIT_FAILED.value,
                 {"page": page, "err": err},

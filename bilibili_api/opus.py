@@ -4,18 +4,17 @@ bilibili_api.opus
 图文相关
 """
 
-import asyncio
-import yaml
-from typing import Dict, List, Optional
-from . import article
-from . import dynamic
-from .utils.network import Api, Credential
-from .utils.utils import get_api, img_auto_scheme
-from .utils import cache_pool
-from .utils.picture import Picture
-from .exceptions import ArgsException
 import html
+from typing import Dict, List, Optional
 
+import yaml
+
+from . import article, dynamic
+from .exceptions import ArgsException
+from .utils import cache_pool
+from .utils.network import Api, Credential
+from .utils.picture import Picture
+from .utils.utils import get_api, img_auto_scheme
 
 API = get_api("opus")
 
@@ -136,7 +135,7 @@ class Opus:
             if module.get("module_content"):
                 content = module
 
-        markdown = f'# {title["module_title"]["text"]}\n\n'
+        markdown = f"# {title['module_title']['text']}\n\n"
 
         for para in content["module_content"]["paragraphs"]:
             para_raw = ""

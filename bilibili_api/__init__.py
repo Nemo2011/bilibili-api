@@ -6,46 +6,50 @@ bilibili_api
  (默认已导入所有子模块，例如 `bilibili_api.video`, `bilibili_api.user`)
 """
 
-from .utils.sync import sync
-from .utils.picture import Picture
-from .utils.short import get_real_url
-from .utils.parse_link import ResourceType, parse_link
-from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
-from .utils.danmaku import DmMode, Danmaku, DmFontSize, SpecialDanmaku
-from .utils.network import (
-    # settings
-    request_settings,
-    # log
-    request_log,
-    # session
-    BiliAPIResponse,
-    BiliWsMsgType,
-    BiliAPIFile,
-    BiliAPIClient,
-    register_client,
-    unregister_client,
-    select_client,
-    get_selected_client,
-    get_available_settings,
-    get_registered_clients,
-    get_registered_available_settings,
-    get_client,
-    get_session,
-    set_session,
-    # anti spider
-    get_buvid,
-    get_bili_ticket,
-    recalculate_wbi,
-    refresh_buvid,
-    refresh_bili_ticket,
-    # credential
-    Credential,
-    # api
-    HEADERS,
-    bili_simple_download,
+from . import (
+    activity,
+    app,
+    article,
+    article_category,
+    ass,
+    audio,
+    audio_uploader,
+    bangumi,
+    black_room,
+    channel_series,
+    cheese,
+    client,
+    comment,
+    creative_center,
+    dynamic,
+    emoji,
+    favorite_list,
+    festival,
+    game,
+    garb,
+    homepage,
+    hot,
+    interactive_video,
+    live,
+    live_area,
+    login_v2,
+    manga,
+    music,
+    note,
+    opus,
+    rank,
+    search,
+    session,
+    show,
+    topic,
+    user,
+    video,
+    video_tag,
+    video_uploader,
+    video_zone,
+    vote,
+    watchroom,
 )
-from .utils.AsyncEvent import AsyncEvent
-from .utils.geetest import Geetest, GeetestMeta, GeetestType
 from .exceptions import (
     ApiException,
     ArgsException,
@@ -69,67 +73,73 @@ from .exceptions import (
     VideoUploadException,
     WbiRetryTimesExceedException,
 )
-from . import (
-    activity,
-    app,
-    article_category,
-    article,
-    ass,
-    audio_uploader,
-    audio,
-    bangumi,
-    black_room,
-    channel_series,
-    cheese,
-    client,
-    comment,
-    creative_center,
-    dynamic,
-    emoji,
-    favorite_list,
-    festival,
-    game,
-    garb,
-    homepage,
-    hot,
-    interactive_video,
-    live_area,
-    live,
-    login_v2,
-    manga,
-    music,
-    note,
-    opus,
-    rank,
-    search,
-    session,
-    show,
-    topic,
-    user,
-    video_tag,
-    video_uploader,
-    video_zone,
-    video,
-    vote,
-    watchroom,
+from .utils.aid_bvid_transformer import aid2bvid, bvid2aid
+from .utils.AsyncEvent import AsyncEvent
+from .utils.danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
+from .utils.geetest import Geetest, GeetestMeta, GeetestType
+from .utils.network import (
+    # api
+    HEADERS,
+    BiliAPIClient,
+    BiliAPIFile,
+    # session
+    BiliAPIResponse,
+    # filter
+    BiliFilterFlags,
+    BiliWsMsgType,
+    # credential
+    Credential,
+    bili_simple_download,
+    configure_dynamic_fingerprint,
+    get_all_registered_post_filters,
+    get_all_registered_pre_filters,
+    get_available_settings,
+    get_bili_ticket,
+    # anti spider
+    get_buvid,
+    get_client,
+    get_registered_available_settings,
+    get_registered_clients,
+    get_registered_post_filters,
+    get_registered_pre_filters,
+    get_selected_client,
+    get_session,
+    recalculate_wbi,
+    register_client,
+    register_post_filter,
+    register_pre_filter,
+    # log
+    request_log,
+    # settings
+    request_settings,
+    select_client,
+    set_session,
+    unregister_client,
+    unregister_post_filter,
+    unregister_pre_filter,
 )
-
+from .utils.parse_link import ResourceType, parse_link
+from .utils.picture import Picture
+from .utils.short import get_real_url
+from .utils.sync import sync
 
 BILIBILI_API_VERSION = "17.4.0"
 
 
 def __register_all_clients():
     import importlib
+
     from .clients import ALL_PROVIDED_CLIENTS
-    for module, client, settings in ALL_PROVIDED_CLIENTS[::-1]:
+
+    for module, client_name, settings in ALL_PROVIDED_CLIENTS[::-1]:
         try:
             importlib.import_module(module)
         except ModuleNotFoundError:
             continue
         client_module = importlib.import_module(
-            name=f".clients.{client}", package="bilibili_api"
+            name=f".clients.{client_name}", package="bilibili_api"
         )
-        client_class = eval(f"client_module.{client}")
+        client_class = eval(f"client_module.{client_name}")
         register_client(module, client_class, settings)
 
 
@@ -138,12 +148,13 @@ __register_all_clients()
 
 __all__ = [
     "ApiException",
-    "AsyncEvent",
     "ArgsException",
+    "AsyncEvent",
     "BILIBILI_API_VERSION",
     "BiliAPIClient",
     "BiliAPIFile",
     "BiliAPIResponse",
+    "BiliFilterFlags",
     "BiliWsMsgType",
     "CookiesRefreshException",
     "Credential",
@@ -175,8 +186,8 @@ __all__ = [
     "StatementException",
     "VideoUploadException",
     "WbiRetryTimesExceedException",
-    "aid2bvid",
     "activity",
+    "aid2bvid",
     "app",
     "article",
     "article_category",
@@ -191,6 +202,7 @@ __all__ = [
     "cheese",
     "client",
     "comment",
+    "configure_dynamic_fingerprint",
     "creative_center",
     "dynamic",
     "emoji",
@@ -198,6 +210,8 @@ __all__ = [
     "festival",
     "game",
     "garb",
+    "get_all_registered_post_filters",
+    "get_all_registered_pre_filters",
     "get_available_settings",
     "get_bili_ticket",
     "get_buvid",
@@ -205,6 +219,8 @@ __all__ = [
     "get_real_url",
     "get_registered_available_settings",
     "get_registered_clients",
+    "get_registered_post_filters",
+    "get_registered_pre_filters",
     "get_selected_client",
     "get_session",
     "homepage",
@@ -220,9 +236,9 @@ __all__ = [
     "parse_link",
     "rank",
     "recalculate_wbi",
-    "refresh_bili_ticket",
-    "refresh_buvid",
     "register_client",
+    "register_post_filter",
+    "register_pre_filter",
     "request_log",
     "request_settings",
     "search",
@@ -233,6 +249,8 @@ __all__ = [
     "sync",
     "topic",
     "unregister_client",
+    "unregister_post_filter",
+    "unregister_pre_filter",
     "user",
     "video",
     "video_tag",

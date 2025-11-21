@@ -4,14 +4,12 @@ bilibili_api.channel_series
 用户合集与列表相关
 """
 
-import json
 from enum import Enum
-from typing import List, Union, Optional
-
-from .utils.utils import get_api, raise_for_statement
-from .utils.network import Api, HEADERS, Credential
+from typing import List, Optional, Union
 
 from . import user
+from .utils.network import Api, Credential
+from .utils.utils import get_api, raise_for_statement
 
 API_USER = get_api("user")
 API = get_api("channel-series")

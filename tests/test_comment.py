@@ -1,7 +1,7 @@
 # bilibili_api.comment
 
-import random
 import asyncio
+import random
 
 from bilibili_api import comment
 from bilibili_api.exceptions.ResponseCodeException import ResponseCodeException

@@ -6,24 +6,23 @@ bilibili_api.interactive_video
 
 # pylint: skip-file
 
-import os
 import copy
 import enum
 import json
-import time
+import os
 import shutil
+import time
 import zipfile
-from urllib import parse
-from random import randint as rand
 from asyncio import CancelledError, create_task
-from typing import List, Tuple, Union, Coroutine
+from random import randint as rand
+from typing import Coroutine, List, Tuple, Union
+from urllib import parse
 
 from .exceptions import ApiException
-
-from .video import Video, VideoDownloadURLDataDetecter
-from .utils.utils import get_api
 from .utils.AsyncEvent import AsyncEvent
-from .utils.network import HEADERS, Api, get_client, get_buvid, Credential
+from .utils.network import HEADERS, Api, Credential, get_buvid, get_client
+from .utils.utils import get_api
+from .video import Video, VideoDownloadURLDataDetecter
 
 API = get_api("interactive_video")
 
@@ -854,12 +853,12 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
 
         bts = 0
-        tot = get_client().download_content_length(dwn_id)
+        tot = get_client().download_content_length(cnt=dwn_id)
         start_time = time.perf_counter()
 
         with open(out, "wb") as f:
             while True:
-                bts += f.write(await get_client().download_chunk(dwn_id))
+                bts += f.write(await get_client().download_chunk(cnt=dwn_id))
                 self.dispatch(
                     "DOWNLOAD_PART",
                     {
@@ -1212,11 +1211,26 @@ class InteractiveVideoDownloader(AsyncEvent):
                     for cur_node_child in cur_node_children:
                         script_label = ""
                         if cur_node_child.get_jumping_condition().get_condition() != "":  # type: ignore
-                            script_label = script_label + "Condition: [" + cur_node_child.get_jumping_condition().get_condition() + "]"  # type: ignore
+                            script_label = (
+                                script_label
+                                + "Condition: ["
+                                + cur_node_child.get_jumping_condition().get_condition()
+                                + "]"
+                            )  # type: ignore
                             if cur_node_child.get_jumping_command().get_command() != "":  # type: ignore
-                                script_label = script_label + "\nNative Command: [" + cur_node_child.get_jumping_command().get_command() + "]"  # type: ignore
+                                script_label = (
+                                    script_label
+                                    + "\nNative Command: ["
+                                    + cur_node_child.get_jumping_command().get_command()
+                                    + "]"
+                                )  # type: ignore
                         elif cur_node_child.get_jumping_command().get_command() != "":  # type: ignore
-                            script_label = script_label + "\nNative Command: [" + cur_node_child.get_jumping_command().get_command() + "]"  # type: ignore
+                            script_label = (
+                                script_label
+                                + "\nNative Command: ["
+                                + cur_node_child.get_jumping_command().get_command()
+                                + "]"
+                            )  # type: ignore
                         scripts.append(
                             {
                                 "from": cur_node.get_node_id(),
@@ -1232,7 +1246,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                     )
         graph_content = "digraph {\nfontname=FangSong\nnode [fontname=FangSong]\n"
         for script in scripts:
-            graph_content += f'\t{script["from"]} -> {script["to"]}'
+            graph_content += f"\t{script['from']} -> {script['to']}"
             if script["label"] != "":
                 graph_content += f' [label="{script["label"]}"]\n'
             else:

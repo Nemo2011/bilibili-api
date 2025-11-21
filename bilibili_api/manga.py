@@ -4,18 +4,12 @@ bilibili_api.manga
 漫画相关操作
 """
 
-import base64
 import datetime
 from enum import Enum
-from urllib.parse import urlparse
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Optional, Union
 
+from bilibili_api.utils.network import Api, Credential
 from bilibili_api.utils.utils import get_api
-from bilibili_api.exceptions import ArgsException
-from bilibili_api.utils.picture import Picture
-from bilibili_api.utils.network import HEADERS, Api, Credential
-
-from Cryptodome.PublicKey import ECC
 
 API = get_api("manga")
 
@@ -29,6 +23,7 @@ class MangaOrderType(Enum):
     - READING: 最近阅读
     - FREE: 等免
     """
+
     FOLLOW = {"order": 1, "wait_free": 0}
     UPDATE = {"order": 2, "wait_free": 0}
     READING = {"order": 3, "wait_free": 0}
@@ -409,7 +404,10 @@ async def set_follow_manga(
 
 
 async def get_followed_manga(
-    pn: int = 1, ps: int = 15, order: MangaOrderType = MangaOrderType.FOLLOW, credential: Optional[Credential] = None
+    pn: int = 1,
+    ps: int = 15,
+    order: MangaOrderType = MangaOrderType.FOLLOW,
+    credential: Optional[Credential] = None,
 ) -> List[Manga]:
     """
     获取追漫列表

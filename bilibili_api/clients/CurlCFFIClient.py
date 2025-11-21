@@ -4,18 +4,18 @@ bilibili_api.clients.curl_cffi
 CurlCFFIClient 实现
 """
 
-from select import select
+import asyncio
+from typing import AsyncGenerator, Dict, Optional, Tuple, Union
+
+import curl_cffi  # pylint: disable=E0401
+from curl_cffi import requests  # pylint: disable=E0401
+
 from ..utils.network import (
     BiliAPIClient,
     BiliAPIFile,
     BiliAPIResponse,
     BiliWsMsgType,
-    request_log,
 )
-from curl_cffi import requests  # pylint: disable=E0401
-import curl_cffi  # pylint: disable=E0401
-from typing import Optional, Dict, Union, Tuple, AsyncGenerator
-import asyncio
 
 
 class CurlCFFIClient(BiliAPIClient):
@@ -65,6 +65,9 @@ class CurlCFFIClient(BiliAPIClient):
         self.__downloads: Dict[int, requests.Response] = {}
         self.__download_cnt: int = 0
 
+        self.__ws_cnt_lock = asyncio.Lock()
+        self.__down_cnt_lock = asyncio.Lock()
+
     def get_wrapped_session(self) -> requests.AsyncSession:
         return self.__session
 
@@ -113,20 +116,7 @@ class CurlCFFIClient(BiliAPIClient):
             headers.pop("User-Agent")
         if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
-        request_log.dispatch(
-            "REQUEST",
-            "发起请求",
-            {
-                "method": method,
-                "url": url,
-                "params": params,
-                "data": data,
-                "files": files,
-                "headers": headers,
-                "cookies": cookies,
-                "allow_redirects": allow_redirects,
-            },
-        )
+
         if files != {}:
             cnt = 1
             multipart = curl_cffi.CurlMime()
@@ -134,7 +124,7 @@ class CurlCFFIClient(BiliAPIClient):
                 multipart.addpart(
                     name=key,
                     content_type=item.mime_type,
-                    filename=f'{cnt}.{item.path.split(".")[1]}',
+                    filename=f"{cnt}.{item.path.split('.')[1]}",
                     local_path=item.path,
                 )
                 cnt += 1
@@ -167,17 +157,6 @@ class CurlCFFIClient(BiliAPIClient):
             url=resp.url,
         )
 
-        request_log.dispatch(
-            "RESPONSE",
-            "获得响应",
-            {
-                "code": bili_api_resp.code,
-                "headers": bili_api_resp.headers,
-                "cookies": bili_api_resp.cookies,
-                "data": bili_api_resp.raw,
-                "url": bili_api_resp.url,
-            },
-        )
         return bili_api_resp
 
     async def download_create(
@@ -189,29 +168,18 @@ class CurlCFFIClient(BiliAPIClient):
             headers.pop("User-Agent")
         if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
+        await self.__down_cnt_lock.acquire()
         self.__download_cnt += 1
-        request_log.dispatch(
-            "DWN_CREATE",
-            "开始下载",
-            {
-                "id": self.__download_cnt,
-                "url": url,
-                "headers": headers,
-            },
-        )
-        self.__downloads[self.__download_cnt] = await self.__session.get(
+        cnt = self.__download_cnt
+        self.__down_cnt_lock.release()
+        self.__downloads[cnt] = await self.__session.get(
             url=url, headers=headers, stream=True
         )
-        return self.__download_cnt
+        return cnt
 
     async def download_chunk(self, cnt: int) -> bytes:
         resp = self.__downloads[cnt]
         data = await anext(resp.aiter_content())
-        request_log.dispatch(
-            "DWN_PART",
-            "收到部分下载数据",
-            {"id": cnt, "data": data},
-        )
         return data
 
     def download_content_length(self, cnt: int) -> int:
@@ -222,11 +190,6 @@ class CurlCFFIClient(BiliAPIClient):
         resp = self.__downloads[cnt]
         await resp.aclose()
         del self.__downloads[cnt]
-        request_log.dispatch(
-            "DWN_CLOSE",
-            "结束下载",
-            {"id": cnt},
-        )
 
     async def ws_create(
         self, url: str = "", params: dict = {}, headers: dict = {}
@@ -235,88 +198,42 @@ class CurlCFFIClient(BiliAPIClient):
             headers.pop("User-Agent")
         if headers.get("user-agent") and self.__session.impersonate != "":
             headers.pop("user-agent")
+        await self.__ws_cnt_lock.acquire()
         self.__ws_cnt += 1
-        request_log.dispatch(
-            "WS_CREATE",
-            "开始 WebSocket 连接",
-            {
-                "id": self.__ws_cnt,
-                "url": url,
-                "params": params,
-                "headers": headers,
-            },
-        )
+        cnt = self.__ws_cnt
+        self.__ws_cnt_lock.release()
         ws = await self.__session.ws_connect(url, params=params, headers=headers)
-        self.__ws[self.__ws_cnt] = ws
-        self.__ws_is_closed[self.__ws_cnt] = False
-        self.__ws_need_close[self.__ws_cnt] = False
-        return self.__ws_cnt
+        self.__ws[cnt] = ws
+        self.__ws_is_closed[cnt] = False
+        self.__ws_need_close[cnt] = False
+        return cnt
 
     async def ws_send(self, cnt: int, data: bytes) -> None:
         if self.__ws_need_close[cnt] or self.__ws_is_closed[cnt]:
             return
-        request_log.dispatch(
-            "WS_SEND",
-            "发送 WebSocket 数据",
-            {"id": cnt, "data": data},
-        )
         ws = self.__ws[cnt]
         await ws.send_binary(data)
 
     async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
         ws = self.__ws[cnt]
-        chunks = []
-        flags = 0
-        sock_fd = ws.curl.getinfo(curl_cffi.CurlInfo.ACTIVESOCKET)
-        if sock_fd == curl_cffi.aio.CURL_SOCKET_BAD:
-            raise curl_cffi.WebSocketError(
-                "Invalid active socket", curl_cffi.CurlECode.NO_CONNECTION_AVAILABLE
-            )
-        while True:
-            if self.__ws_is_closed[cnt]:
+        try:
+            msg, flags = await ws.recv()
+        except curl_cffi.CurlError as e:
+            if e.code == curl_cffi.CurlECode.GOT_NOTHING:
                 return (b"", BiliWsMsgType.CLOSED)
-            if self.__ws_need_close[cnt]:
-                return (b"", BiliWsMsgType.CLOSING)
-            try:
-                loop = self.__session.loop
-                chunk, frame = await loop.run_in_executor(None, ws.curl.ws_recv)
-                flags = frame.flags
-                request_log.dispatch(
-                    "WS_RECV",
-                    "收到 WebSocket 数据",
-                    {"id": cnt, "data": chunk, "flags": flags},
-                )
-                chunks.append(chunk)
-                if frame.bytesleft == 0 and flags & curl_cffi.CurlWsFlag.CONT == 0:
-                    break
-            except curl_cffi.CurlError as e:
-                if e.code == curl_cffi.CurlECode.AGAIN:
-                    _, _, _ = select([sock_fd], [], [], 0.5)
-                elif e.code == curl_cffi.CurlECode.GOT_NOTHING:
-                    return (b"", BiliWsMsgType.CLOSED)
-                else:
-                    raise e
+            else:
+                raise e
         if flags & curl_cffi.CurlWsFlag.CLOSE:
             return (b"", BiliWsMsgType.CLOSE)
-        by = b"".join(chunks)
         if flags & curl_cffi.CurlWsFlag.TEXT:
-            return (by, BiliWsMsgType.TEXT)
+            return (msg, BiliWsMsgType.TEXT)
         if flags & curl_cffi.CurlWsFlag.PING:
-            return (by, BiliWsMsgType.PING)
-        return (by, BiliWsMsgType.BINARY)
+            return (msg, BiliWsMsgType.PING)
+        return (msg, BiliWsMsgType.BINARY)
 
     async def ws_close(self, cnt: int) -> None:
-        if self.__ws_need_close[cnt] or self.__ws_is_closed[cnt]:
-            return
         ws = self.__ws[cnt]
-        self.__ws_need_close[cnt] = True
-        request_log.dispatch(
-            "WS_CLOSE",
-            "关闭 WebSocket 请求",
-            {"id": cnt},
-        )
-        ws.terminate()  # It's better to terminate than close.
-        self.__ws_is_closed[cnt] = True
+        await ws.close()
 
     async def close(self) -> None:
         await self.__session.close()

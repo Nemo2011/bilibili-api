@@ -7,23 +7,19 @@
 
 import os
 import re
-import sys
-import getopt
-
-DEBUG = False
+import codecs
 
 
 def fileopen(input_file):
     encodings = ["utf-32", "utf-16", "utf-8", "cp1252", "gb2312", "gbk", "big5"]
-    tmp = ""
+    tmp = ''
     for enc in encodings:
         try:
             with open(input_file, mode="r", encoding=enc) as fd:
                 tmp = fd.read()
                 break
         except:
-            if DEBUG:
-                print(enc + " failed")
+            # print enc + ' failed'
             continue
     return [tmp, enc]
 
@@ -32,57 +28,56 @@ def srt2ass(input_file, output_file):
     if '.ass' in input_file:
         return input_file
 
+    if not os.path.isfile(input_file):
+        print(input_file + ' not exist')
+        return
+
     src = fileopen(input_file)
     tmp = src[0]
     encoding = src[1]
-    src = ""
-    utf8bom = ""
+    src = ''
+    utf8bom = ''
 
-    if "\ufeff" in tmp:
-        tmp = tmp.replace("\ufeff", "")
-        utf8bom = "\ufeff"
+    if u'\ufeff' in tmp:
+        tmp = tmp.replace(u'\ufeff', '')
+        utf8bom = u'\ufeff'
 
     tmp = tmp.replace("\r", "")
     lines = [x.strip() for x in tmp.split("\n") if x.strip()]
-    subLines = ""
-    tmpLines = ""
+    subLines = ''
+    tmpLines = ''
     lineCount = 0
 
     for ln in range(len(lines)):
         line = lines[ln]
-        if (
-            line.isdigit()
-            and ln + 1 < len(lines)
-            and re.match(r"-?\d\d:\d\d:\d\d", lines[(ln + 1)])
-        ):
+        if line.isdigit() and re.match(r'-?\d\d:\d\d:\d\d', lines[(ln+1)]):
             if tmpLines:
                 subLines += tmpLines + "\n"
-            tmpLines = ""
+            tmpLines = ''
             lineCount = 0
             continue
         else:
-            if re.match(r"-?\d\d:\d\d:\d\d", line):
-                line = line.replace("-0", "0").replace(",", ".")
-                tmpLines += "Dialogue: 0," + line + ",Default,,0,0,0,,"
+            if re.match(r'-?\d\d:\d\d:\d\d', line):
+                line = line.replace('-0', '0')
+                tmpLines += 'Dialogue: 0,' + line + ',SubStyle,,0,0,0,,'
             else:
                 if lineCount < 2:
                     tmpLines += line
                 else:
-                    tmpLines += "\\N" + line
+                    tmpLines += "\n" + line
             lineCount += 1
         ln += 1
 
+
     subLines += tmpLines + "\n"
 
-    subLines = re.sub(r"\d(\d:\d{2}:\d{2}),(\d{2})\d", "\\1.\\2", subLines)
-    subLines = re.sub(r"\s+-->\s+", ",", subLines)
+    subLines = re.sub(r'\d(\d:\d{2}:\d{2}),(\d{2})\d', '\\1.\\2', subLines)
+    subLines = re.sub(r'\s+-->\s+', ',', subLines)
     # replace style
-    subLines = re.sub(r"<([ubi])>", "{\\\\\\g<1>1}", subLines)
-    subLines = re.sub(r"</([ubi])>", "{\\\\\\g<1>0}", subLines)
-    subLines = re.sub(
-        r'<font\s+color="?#(\w{2})(\w{2})(\w{2})"?>', "{\\\\c&H\\3\\2\\1&}", subLines
-    )
-    subLines = re.sub(r"</font>", "", subLines)
+    subLines = re.sub(r'<([ubi])>', "{\\\\\\g<1>1}", subLines)
+    subLines = re.sub(r'</([ubi])>', "{\\\\\\g<1>0}", subLines)
+    subLines = re.sub(r'<font\s+color="?#(\w{2})(\w{2})(\w{2})"?>', "{\\\\c&H\\3\\2\\1&}", subLines)
+    subLines = re.sub(r'</font>', "", subLines)
 
     head_str = """[Script Info]
 ; This is an Advanced Sub Station Alpha v4+ script.
@@ -108,6 +103,6 @@ Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text
     with open(output_file, "w", encoding="utf8") as output:
         output.write(output_str)
 
-    output_file = output_file.replace("\\", "\\\\")
-    output_file = output_file.replace("/", "//")
+    output_file = output_file.replace('\\', '\\\\')
+    output_file = output_file.replace('/', '//')
     return output_file

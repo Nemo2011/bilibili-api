@@ -7,8 +7,8 @@ bilibili_api.video_tag
 from typing import Optional
 
 from .exceptions import *
-from .utils.utils import get_api
 from .utils.network import Api, Credential
+from .utils.utils import get_api
 
 API = get_api("video_tag")
 API_video = get_api("video")

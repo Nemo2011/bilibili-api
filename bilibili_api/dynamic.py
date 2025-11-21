@@ -4,25 +4,22 @@ bilibili_api.dynamic
 动态相关
 """
 
-import os
+import json
 import re
 import sys
-import json
-import asyncio
-from enum import Enum
 from datetime import datetime
-from typing import Any, List, Tuple, Union, Optional
+from enum import Enum
+from typing import Any, List, Optional, Tuple, Union
 
 import yaml
 
-from .utils import utils
-from .utils.picture import Picture
 from . import user, vote
-from .utils.network import Api, Credential
-from .exceptions import ArgsException
 from .article import Article
+from .exceptions import ArgsException
 from .opus import Opus
-from .utils import cache_pool
+from .utils import cache_pool, utils
+from .utils.network import Api, Credential
+from .utils.picture import Picture
 
 API = utils.get_api("dynamic")
 API_opus = utils.get_api("opus")
@@ -98,8 +95,6 @@ async def _uid2name(uid: int, credential: Credential) -> str:
     return uid2uname[uid]
 
 
-
-
 async def _parse_at(text: str, credential: Credential) -> Tuple[str, str, str]:
     """
     解析文本中的@提及，其格式为“@用户名 ”（以空格结尾）或“@用户名:”。
@@ -136,12 +131,14 @@ async def _parse_at(text: str, credential: Credential) -> Tuple[str, str, str]:
         # 完整的匹配字符串即 match.group(0)，例如："@Bilibili :"
         calculated_length = len(match.group(0)) + 1
 
-        ctrl.append({
-            "location": match.start(1),  # '@' 符号的起始索引
-            "type": 1,
-            "length": calculated_length,
-            "data": int(uid)
-        })
+        ctrl.append(
+            {
+                "location": match.start(1),  # '@' 符号的起始索引
+                "type": 1,
+                "length": calculated_length,
+                "data": int(uid),
+            }
+        )
 
     at_uids = ",".join(uid_list)
     return text, at_uids, json.dumps(ctrl, ensure_ascii=False)
@@ -601,7 +598,7 @@ class BuildDynamic:
         return self.options
 
 
-async def send_dynamic(info: BuildDynamic, credential: Credential,web_repost_src=None):
+async def send_dynamic(info: BuildDynamic, credential: Credential, web_repost_src=None):
     """
     发送动态
 
@@ -648,10 +645,10 @@ async def send_dynamic(info: BuildDynamic, credential: Credential,web_repost_src
     else:
         data["dyn_req"]["attach_card"] = None
     if web_repost_src:
-        data['web_repost_src'] = web_repost_src
-        data['dyn_req']['scene']=5
+        data["web_repost_src"] = web_repost_src
+        data["dyn_req"]["scene"] = 5
     params = {"csrf": credential.bili_jct}
-    
+
     send_result = (
         await Api(**api, credential=credential, json_body=True)
         .update_data(**data)

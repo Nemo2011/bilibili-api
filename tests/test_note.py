@@ -1,6 +1,6 @@
 # bilibili_api.note
 
-from bilibili_api import note, bvid2aid
+from bilibili_api import bvid2aid, note
 
 from .common import get_credential
 

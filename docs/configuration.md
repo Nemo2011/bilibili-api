@@ -12,8 +12,6 @@ from bilibili_api import request_settings, request_log
 | timeout | float | `30.0` | ❌ | ✅ | ✅ | ✅ |
 | verify_ssl | bool | `True` | ❌ | ✅ | ✅ | ✅ |
 | trust_env | bool | `True` | ❌ | ✅ | ✅ | ✅ |
-| impersonate | str | ` ` | ❌ | ✅ | ❌ | ❌ |
-| http2 | bool | `False` | ❌ | ✅ | ❌ | ✅ |
 | wbi_retry_times | int | `3` | ✅ | \\ | \\ | \\ |
 | enable_auto_buvid | bool | `True` | ✅ | \\ | \\ | \\ |
 | enable_bili_ticket | bool | `False` | ✅ | \\ | \\ | \\ |
@@ -93,26 +91,15 @@ refresh_buvid() # 刷新 buvid
 
 ## 设置 `bili_ticket` 自动生成
 
-> `bili_ticket` 是访问 B 站时可能需要提供的 cookie 系列，分为 `bili_ticket` 和 `bili_ticket_expires` 字段。提供 `bili_ticket` 有时可以达到一些玄学效果。默认不启用，可以通过此项设置启用。
+> `bili_ticket` 是访问 B 站时可能需要提供的 cookie 系列，分为 `bili_ticket` 和 `bili_ticket_expires` 字段。提供 `bili_ticket` 有时可以达到一些玄学效果。默认启用，可以通过此项设置禁用。
 
-> `bili_ticket` 过期后模块会 **自动重新计算**。手动重新计算可用 `refresh_bili_ticket`
-
-```python
-request_settings.set_enable_bili_ticket(True)
-
-from bilibili_api import refresh_bili_ticket
-refresh_bili_ticket() # 刷新 bili_ticket
-```
+> `bili_ticket` 过期后模块会 **自动重新计算**。
 
 ## 额外设置
 
 针对不同的第三方请求库，模块会有各不相同的额外设置。相关信息见 [模块请求库相关](https://nemo2011.github.io/bilibili-api/#/request_client)。
 
 为了对这些字段进行处理，`request_settings` 提供 `set` 函数。
-
-``` python
-request_settings.set("impersonate", "edge99") # 设置名为 impersonate 的设置为 edge99
-```
 
 `set` 函数同样支持上面出现过的 `proxy` `timeout`。
 

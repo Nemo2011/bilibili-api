@@ -4,24 +4,24 @@ bilibili_api.session
 消息相关
 """
 
-import json
-import time
 import asyncio
-import logging
 import datetime
+import json
+import logging
+import time
 from enum import Enum
-from typing import Union, Optional
+from typing import Optional, Union
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from bilibili_api.exceptions import ApiException
 
-from .video import Video
 from .user import get_self_info
-from .utils.utils import get_api, raise_for_statement
-from .utils.picture import Picture
 from .utils.AsyncEvent import AsyncEvent
 from .utils.network import Api, Credential
+from .utils.picture import Picture
+from .utils.utils import get_api, raise_for_statement
+from .video import Video
 
 API = get_api("session")
 
@@ -174,7 +174,10 @@ async def get_likes(
 
 
 async def get_at(
-    credential: Credential, last_uid: int = None, at_time: int = None, last_id: int = None
+    credential: Credential,
+    last_uid: int = None,
+    at_time: int = None,
+    last_id: int = None,
 ) -> dict:
     """
     获取收到的 AT

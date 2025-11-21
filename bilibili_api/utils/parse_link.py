@@ -5,33 +5,32 @@ bilibili_api.utils.parse_link
 """
 
 from enum import Enum
-from typing import Tuple, Union, Literal
+from typing import Literal, Tuple, Union
 
 from yarl import URL
 
-from ..game import Game
-from ..manga import Manga
-from ..topic import Topic
-from ..video import Video
-from ..exceptions import *
-from .utils import get_api
-from ..live import LiveRoom
-from ..dynamic import Dynamic
-from .short import get_real_url
-from ..note import Note, NoteType
-from ..black_room import BlackRoom
-from .network import Credential, Api
+from ..article import Article, ArticleList
 from ..audio import Audio, AudioList
 from ..bangumi import Bangumi, Episode
-from ..article import Article, ArticleList
+from ..black_room import BlackRoom
 from ..cheese import CheeseList, CheeseVideo
-from ..interactive_video import InteractiveVideo
+from ..dynamic import Dynamic
+from ..exceptions import *
 from ..favorite_list import FavoriteList, FavoriteListType
-from ..user import User, ChannelSeries, ChannelSeriesType, get_self_info
-from ..opus import Opus
+from ..game import Game
 from ..garb import DLC
-
+from ..interactive_video import InteractiveVideo
+from ..live import LiveRoom
+from ..manga import Manga
+from ..note import Note, NoteType
+from ..opus import Opus
+from ..topic import Topic
+from ..user import ChannelSeries, ChannelSeriesType, User, get_self_info
+from ..video import Video
 from .initial_state import get_initial_state
+from .network import Api, Credential
+from .short import get_real_url
+from .utils import get_api
 
 
 class ResourceType(Enum):
@@ -84,7 +83,9 @@ class ResourceType(Enum):
     FAILED = "failed"
 
 
-async def parse_link(url: str, credential: Union[Credential, None] = None) -> Union[
+async def parse_link(
+    url: str, credential: Union[Credential, None] = None
+) -> Union[
     Tuple[Video, Literal[ResourceType.VIDEO]],
     Tuple[InteractiveVideo, Literal[ResourceType.INTERACTIVE_VIDEO]],
     Tuple[Bangumi, Literal[ResourceType.BANGUMI]],
@@ -153,7 +154,8 @@ async def parse_link(url: str, credential: Union[Credential, None] = None) -> Un
                 return (User(info["mid"], credential=credential), ResourceType.USER)
 
         channel = parse_season_series(
-            url, credential  # type: ignore
+            url,
+            credential,  # type: ignore
         )  # 不需要 real_url，提前处理
         if channel != -1:
             return (channel, ResourceType.CHANNEL_SERIES)  # type: ignore
@@ -259,7 +261,9 @@ async def auto_convert_video(
     return (video, ResourceType.VIDEO)
 
 
-async def check_short_name(name: str, credential: Credential) -> Union[
+async def check_short_name(
+    name: str, credential: Credential
+) -> Union[
     Tuple[Video, Literal[ResourceType.VIDEO]],
     Tuple[Episode, Literal[ResourceType.EPISODE]],
     Tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]],
@@ -643,7 +647,11 @@ def parse_note(url: URL, credential: Credential) -> Union[Note, int]:
     if url.host == "www.bilibili.com" and url.parts[1:4] == ("h5", "note-app", "view"):
         if url.query.get("cvid") == None:
             return -1
-        return Note(cvid=int(url.query.get("cvid")), note_type=NoteType.PUBLIC, credential=credential)  # type: ignore
+        return Note(
+            cvid=int(url.query.get("cvid")),
+            note_type=NoteType.PUBLIC,
+            credential=credential,
+        )  # type: ignore
     return -1
 
 
@@ -662,6 +670,10 @@ def parse_opus_dynamic(url: URL, credential: Credential) -> Union[Dynamic, int]:
 
 def parse_garb(url: URL, credential: Credential) -> Union[DLC, int]:
     # https://www.bilibili.com/blackboard/activity-Mz9T5bO5Q3.html?id=154&type=dlc&f_source=ogv&from=video.task
-    if url.host == "www.bilibili.com" and url.parts[:3] == ("/", "blackboard", "activity-Mz9T5bO5Q3.html"):
+    if url.host == "www.bilibili.com" and url.parts[:3] == (
+        "/",
+        "blackboard",
+        "activity-Mz9T5bO5Q3.html",
+    ):
         return DLC(act_id=int(url.query["id"]), credential=credential)
     return -1

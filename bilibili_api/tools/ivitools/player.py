@@ -1,16 +1,16 @@
-import os
-import sys
 import copy
 import enum
 import json
-import time
+import os
 import random
 import shutil
+import sys
+import time
 import zipfile
 from random import random as rand
 from typing import List, Tuple, Union
 
-from PyQt6 import QtGui, QtCore, QtWidgets, QtMultimedia, QtMultimediaWidgets
+from PyQt6 import QtCore, QtGui, QtMultimedia, QtMultimediaWidgets, QtWidgets
 
 
 class InteractiveVariable:
@@ -722,8 +722,12 @@ class MPlayer(object):
         self.stop_playing()
         self.pp.setText("Pause")
         self.has_end = False
-        if self.horizontalSlider.value() != 0: # I don't know why but without it the application will be blocked
-            self.mediaplayer = QtMultimedia.QMediaPlayer()  # Clear the multimedia source
+        if (
+            self.horizontalSlider.value() != 0
+        ):  # I don't know why but without it the application will be blocked
+            self.mediaplayer = (
+                QtMultimedia.QMediaPlayer()
+            )  # Clear the multimedia source
             self.mediaplayer.setAudioOutput(QtMultimedia.QAudioOutput())
         self.videoplayer = QtMultimedia.QMediaPlayer()
         self.videoplayer.setVideoOutput(self.player)
