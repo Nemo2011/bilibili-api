@@ -1253,13 +1253,15 @@ class _BiliAPIClient:
                             )
                         except Exception as e:
                             raise FilterException("pre", pre["name"], e)
-                    if pre["async_function"]:
+                    elif pre["async_function"]:
                         try:
                             flag, after_filter = await pre["async_function"](
                                 cnt, self.client, self.__client__, key, kwargs
                             )
                         except Exception as e:
                             raise FilterException("pre", pre["name"], e)
+                    else:
+                        flag, after_filter = BiliFilterFlags.CONTINUE, None
                     if flag == BiliFilterFlags.SET_PARAMS:
                         res = after_filter
                     elif flag == BiliFilterFlags.EXECUTE_NOW:
@@ -1771,195 +1773,6 @@ def unregister_post_filter(name: str) -> None:
         if post["name"] == name:
             del __registered_post[i]
             return
-
-
-def __register_builtin_log_filters():
-    def request_pre(cnt, ins, client, key, params):
-        request_log.dispatch("REQUEST", "发起请求", params)
-        return BiliFilterFlags.CONTINUE, None
-
-    def request_post(cnt, ins, client, key, ret, params):
-        request_log.dispatch(
-            "RESPONSE",
-            "获得响应",
-            {
-                "code": ret.code,
-                "headers": ret.headers,
-                "cookies": ret.cookies,
-                "data": ret.raw,
-                "url": ret.url,
-            },
-        )
-        return BiliFilterFlags.CONTINUE, None
-
-    def dwn_create_post(cnt, ins, client, key, ret, params):
-        params.update({"id": ret})
-        request_log.dispatch("DWN_CREATE", "开始下载", params)
-        return BiliFilterFlags.CONTINUE, None
-
-    def dwn_chunk_post(cnt, ins, client, key, ret, params):
-        request_log.dispatch(
-            "DWN_PART", "收到部分下载数据", {"id": params["cnt"], "data": ret}
-        )
-        return BiliFilterFlags.CONTINUE, None
-
-    def dwn_close_post(cnt, ins, client, key, ret, params):
-        request_log.dispatch(
-            "DWN_CLOSE", "结束下载", {"id": params["cnt"]}
-        )
-        return BiliFilterFlags.CONTINUE, None
-
-    def ws_create_post(cnt, ins, client, key, ret, params):
-        params.update({"id": ret})
-        request_log.dispatch("WS_CREATE", "开始 WebSocket 连接", params)
-        return BiliFilterFlags.CONTINUE, None
-
-    def ws_recv_post(cnt, ins, client, key, ret, params):
-        request_log.dispatch(
-            "WS_RECV",
-            "收到 WebSocket 数据",
-            {"id": params["cnt"], "data": ret[0], "flags": ret[1].value},
-        )
-        return BiliFilterFlags.CONTINUE, None
-
-    def ws_send_pre(cnt, ins, client, key, params):
-        request_log.dispatch(
-            "WS_SEND",
-            "发送 WebSocket 请求",
-            {"id": params["cnt"], "data": params["data"]},
-        )
-        return BiliFilterFlags.CONTINUE, None
-
-    def ws_close_pre(cnt, ins, client, key, params):
-        request_log.dispatch("WS_CLOSE", "关闭 WebSocket 请求", {"id": params["cnt"]})
-        return BiliFilterFlags.CONTINUE, None
-
-    register_pre_filter(
-        name="__builtin_log_request",
-        func=request_pre,
-        trigger=lambda client, key: key == "request",
-        priority=998244353,
-    )
-    register_post_filter(
-        name="__builtin_log_response",
-        func=request_post,
-        trigger=lambda client, key: key == "request",
-        priority=-998244353,
-    )
-    register_post_filter(
-        name="__builtin_log_dwn_create",
-        func=dwn_create_post,
-        trigger=lambda client, key: key == "download_create",
-        priority=-998244353,
-    )
-    register_post_filter(
-        name="__builtin_log_dwn_chunk",
-        func=dwn_chunk_post,
-        trigger=lambda client, key: key == "download_chunk",
-        priority=-998244353,
-    )
-    register_post_filter(
-        name="__builtin_log_dwn_close",
-        func=dwn_close_post,
-        trigger=lambda client, key: key == "download_close",
-        priority=-998244353,
-    )
-    register_post_filter(
-        name="__builtin_log_ws_create",
-        func=ws_create_post,
-        trigger=lambda client, key: key == "ws_create",
-        priority=-998244353,
-    )
-    register_post_filter(
-        name="__builtin_log_ws_recv",
-        func=ws_recv_post,
-        trigger=lambda client, key: key == "ws_recv",
-        priority=-998244353,
-    )
-    register_pre_filter(
-        name="__builtin_log_ws_send",
-        func=ws_send_pre,
-        trigger=lambda client, key: key == "ws_send",
-        priority=998244353,
-    )
-    register_pre_filter(
-        name="__builtin_log_ws_close",
-        func=ws_close_pre,
-        trigger=lambda client, key: key == "ws_close",
-        priority=998244353,
-    )
-
-
-def __register_global_credential_filter():
-    async def add_credential(cnt, ins, client, key, params):
-        gcred = request_settings.get_global_credential()
-        if not gcred:
-            return BiliFilterFlags.CONTINUE, None
-        sig = inspect.signature(getattr(ins, key))
-
-        def check_refreshing_urls(cred: Credential) -> bool:
-            if (cred.buvid3 is None and request_settings.get_enable_auto_buvid()) or (
-                (
-                    cred.bili_ticket is None
-                    or not cred.bili_ticket_expires
-                    or time.time() > cred.bili_ticket_expires
-                )
-                and request_settings.get_enable_bili_ticket()
-            ):  # need refresh
-                if params.get("url") in [
-                    "https://api.bilibili.com/x/frontend/finger/spi_v2",  # buvid3 / buvid4
-                    "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket",  # bili_ticket
-                    "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi",  # exclimbwuzhi
-                    "https://api.bilibili.com/x/web-interface/nav",  # wbi
-                ]:
-                    return False
-            return True
-
-        if "cookies" in sig.parameters.keys():
-            if not check_refreshing_urls(gcred):
-                if not params.get("cookies"):
-                    params["cookies"] = {}
-                params["cookies"] |= gcred.get_core_cookies()
-            else:
-                params["cookies"] = await gcred.get_cookies()
-        return BiliFilterFlags.SET_PARAMS, params
-
-    register_pre_filter(
-        name="__builtin_global_credential",
-        async_func=add_credential,
-        trigger=lambda client, key: True,
-        priority=0,
-    )
-
-
-def __register_data_filter():
-    def create_data(cnt, ins, client, key, params):
-        if not getattr(ins, "data", None):
-            ins.data = {}
-        ins.data[cnt] = {}
-        return BiliFilterFlags.CONTINUE, None
-
-    def clean_data(cnt, ins, client, key, ret, params):
-        del ins.data[cnt]
-        return BiliFilterFlags.CONTINUE, None
-
-    register_pre_filter(
-        name="__builtin_create_data",
-        func=create_data,
-        trigger=lambda client, key: True,
-        priority=-2147483648,
-    )
-    register_post_filter(
-        name="__builtin_clean_data",
-        func=clean_data,
-        trigger=lambda client, key: True,
-        priority=2147483647,
-    )
-
-
-__register_builtin_log_filters()
-__register_global_credential_filter()
-__register_data_filter()
 
 
 @atexit.register
@@ -3018,6 +2831,201 @@ async def _get_bili_ticket(credential: Credential) -> Optional[tuple[str, int]]:
 
 
 ################################################## END Anti-Spider ##################################################
+
+
+################################################## BEGIN Builtin-Filters ##################################################
+
+
+def __register_builtin_log_filters():
+    def request_pre(cnt, ins, client, key, params):
+        request_log.dispatch("REQUEST", "发起请求", params)
+        return BiliFilterFlags.CONTINUE, None
+
+    def request_post(cnt, ins, client, key, ret, params):
+        request_log.dispatch(
+            "RESPONSE",
+            "获得响应",
+            {
+                "code": ret.code,
+                "headers": ret.headers,
+                "cookies": ret.cookies,
+                "data": ret.raw,
+                "url": ret.url,
+            },
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def dwn_create_post(cnt, ins, client, key, ret, params):
+        params.update({"id": ret})
+        request_log.dispatch("DWN_CREATE", "开始下载", params)
+        return BiliFilterFlags.CONTINUE, None
+
+    def dwn_chunk_post(cnt, ins, client, key, ret, params):
+        request_log.dispatch(
+            "DWN_PART", "收到部分下载数据", {"id": params["cnt"], "data": ret}
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def dwn_close_post(cnt, ins, client, key, ret, params):
+        request_log.dispatch(
+            "DWN_CLOSE", "结束下载", {"id": params["cnt"]}
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_create_post(cnt, ins, client, key, ret, params):
+        params.update({"id": ret})
+        request_log.dispatch("WS_CREATE", "开始 WebSocket 连接", params)
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_recv_post(cnt, ins, client, key, ret, params):
+        request_log.dispatch(
+            "WS_RECV",
+            "收到 WebSocket 数据",
+            {"id": params["cnt"], "data": ret[0], "flags": ret[1].value},
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_send_pre(cnt, ins, client, key, params):
+        request_log.dispatch(
+            "WS_SEND",
+            "发送 WebSocket 请求",
+            {"id": params["cnt"], "data": params["data"]},
+        )
+        return BiliFilterFlags.CONTINUE, None
+
+    def ws_close_pre(cnt, ins, client, key, params):
+        request_log.dispatch("WS_CLOSE", "关闭 WebSocket 请求", {"id": params["cnt"]})
+        return BiliFilterFlags.CONTINUE, None
+
+    register_pre_filter(
+        name="__builtin_log_request",
+        func=request_pre,
+        trigger=lambda client, key: key == "request",
+        priority=998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_response",
+        func=request_post,
+        trigger=lambda client, key: key == "request",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_dwn_create",
+        func=dwn_create_post,
+        trigger=lambda client, key: key == "download_create",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_dwn_chunk",
+        func=dwn_chunk_post,
+        trigger=lambda client, key: key == "download_chunk",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_dwn_close",
+        func=dwn_close_post,
+        trigger=lambda client, key: key == "download_close",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_ws_create",
+        func=ws_create_post,
+        trigger=lambda client, key: key == "ws_create",
+        priority=-998244353,
+    )
+    register_post_filter(
+        name="__builtin_log_ws_recv",
+        func=ws_recv_post,
+        trigger=lambda client, key: key == "ws_recv",
+        priority=-998244353,
+    )
+    register_pre_filter(
+        name="__builtin_log_ws_send",
+        func=ws_send_pre,
+        trigger=lambda client, key: key == "ws_send",
+        priority=998244353,
+    )
+    register_pre_filter(
+        name="__builtin_log_ws_close",
+        func=ws_close_pre,
+        trigger=lambda client, key: key == "ws_close",
+        priority=998244353,
+    )
+
+
+def __register_global_credential_filter():
+    async def add_credential(cnt, ins, client, key, params):
+        gcred = request_settings.get_global_credential()
+        if not gcred:
+            return BiliFilterFlags.CONTINUE, None
+        sig = inspect.signature(getattr(ins, key))
+
+        def check_refreshing_urls(cred: Credential) -> bool:
+            if (cred.buvid3 is None and request_settings.get_enable_auto_buvid()) or (
+                (
+                    cred.bili_ticket is None
+                    or not cred.bili_ticket_expires
+                    or time.time() > cred.bili_ticket_expires
+                )
+                and request_settings.get_enable_bili_ticket()
+            ):  # need refresh
+                if params.get("url") in [
+                    "https://api.bilibili.com/x/frontend/finger/spi_v2",  # buvid3 / buvid4
+                    "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket",  # bili_ticket
+                    "https://api.bilibili.com/x/internal/gaia-gateway/ExClimbWuzhi",  # exclimbwuzhi
+                    "https://api.bilibili.com/x/web-interface/nav",  # wbi
+                ]:
+                    return False
+            return True
+
+        if "cookies" in sig.parameters.keys():
+            if not check_refreshing_urls(gcred):
+                if not params.get("cookies"):
+                    params["cookies"] = {}
+                params["cookies"] |= gcred.get_core_cookies()
+            else:
+                params["cookies"] = await gcred.get_cookies()
+        return BiliFilterFlags.SET_PARAMS, params
+
+    register_pre_filter(
+        name="__builtin_global_credential",
+        async_func=add_credential,
+        trigger=lambda client, key: True,
+        priority=0,
+    )
+
+
+def __register_data_filter():
+    def create_data(cnt, ins, client, key, params):
+        if not getattr(ins, "data", None):
+            ins.data = {}
+        ins.data[cnt] = {}
+        return BiliFilterFlags.CONTINUE, None
+
+    def clean_data(cnt, ins, client, key, ret, params):
+        del ins.data[cnt]
+        return BiliFilterFlags.CONTINUE, None
+
+    register_pre_filter(
+        name="__builtin_create_data",
+        func=create_data,
+        trigger=lambda client, key: True,
+        priority=-2147483648,
+    )
+    register_post_filter(
+        name="__builtin_clean_data",
+        func=clean_data,
+        trigger=lambda client, key: True,
+        priority=2147483647,
+    )
+
+
+__register_builtin_log_filters()
+__register_global_credential_filter()
+__register_data_filter()
+
+
+################################################## END Builtin-Filters ##################################################
 
 
 ################################################## BEGIN Api ##################################################

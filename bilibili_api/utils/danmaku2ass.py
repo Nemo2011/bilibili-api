@@ -16,6 +16,8 @@ gDefaultSizeWidth = 320
 gDefaultSizeHeight = 240
 #settings end
 
+# pylint: skip-file # This line is added by bilibili-api.
+
 import argparse
 import calendar
 import gettext
