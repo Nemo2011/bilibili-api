@@ -367,6 +367,7 @@ class VideoMeta:
     neutral_mark: Optional[str] = None  # 可选，创作者声明。
     delay_time: Optional[Union[int, datetime]] = None  # 可选，定时发布时间戳（秒）。
     porder: Optional[VideoPorderMeta] = None  # 可选，商业相关参数。
+    watermark: Optional[bool] = False  # 可选，水印
 
     __credential: Credential
     __pre_info = dict
@@ -449,7 +450,7 @@ class VideoMeta:
 
             porder (Optional[VideoPorderMeta]): 商业相关参数，可选
 
-            watermark (Optional[bool]): 是否添加水印，可选
+            watermark (Optional[bool]): 是否添加水印，可选，默认为没有水印
         """
         if isinstance(tid, int):
             self.tid = tid
@@ -520,7 +521,7 @@ class VideoMeta:
         elif isinstance(delay_time, datetime):
             self.delay_time = int(delay_time.timestamp())
         self.porder = porder if isinstance(porder, dict) else None
-        self.watermark = {"state": watermark}
+        self.watermark = watermark
 
     def __dict__(self) -> dict:
         meta = {
@@ -561,7 +562,7 @@ class VideoMeta:
             "up_close_danmu": self.up_close_danmu,
             "web_os": 1,  # const 1
             "source": self.source,
-            "watermark": self.watermark,
+            "watermark": {"state": 1 if self.watermark else 0},
         }
         for k in copy(meta).keys():
             if meta[k] is None:
