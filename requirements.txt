@@ -1,0 +1,12 @@
+beautifulsoup4
+colorama
+lxml
+pyyaml
+brotli
+qrcode
+APScheduler
+pillow
+yarl
+pycryptodomex
+qrcode_terminal
+PyJWT
