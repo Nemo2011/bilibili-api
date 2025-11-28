@@ -43,7 +43,7 @@ ivitools touch [IVI]"
         download_interactive_video(args[0], args[1])
     elif command == "play":
         try:
-            import PyQt6
+            import PyQt6 # noqa: F401
         except ImportError:
             warnings.warn(
                 "IVITools Built-in Player require PyQt6 but IVITools can't find it. \nYou can install it by `pip3 install PyQt6`. "

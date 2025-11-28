@@ -6,13 +6,12 @@ dynamic = ["version"]
 license = { text = "GPL-3.0-or-later" }
 description = "The fork of module bilibili-api. 哔哩哔哩的各种 API 调用便捷整合（视频、动态、直播等），另外附加一些常用的功能。"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["bilibili", "api", "spider"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Natural Language :: Chinese (Simplified)",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -93,6 +92,7 @@ select = [
 ignore = [
     "E402",   # module-import-not-at-top-of-file
     "E501",   # line-too-long
+    "T201",   # print
     "UP037",  # quoted-annotation
     "RUF001", # ambiguous-unicode-character-string
     "RUF002", # ambiguous-unicode-character-docstring

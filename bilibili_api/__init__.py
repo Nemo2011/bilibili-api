@@ -137,7 +137,7 @@ def __register_all_clients():
             importlib.import_module(module)
         except ModuleNotFoundError:
             continue
-        client_module = importlib.import_module(
+        client_module = importlib.import_module( # noqa: F841
             name=f".clients.{client_name}", package="bilibili_api"
         )
         client_class = eval(f"client_module.{client_name}")
@@ -151,7 +151,6 @@ __all__ = [
     "ApiException",
     "ArgsException",
     "AsyncEvent",
-    "BILIBILI_API_VERSION",
     "BiliAPIClient",
     "BiliAPIFile",
     "BiliAPIResponse",
