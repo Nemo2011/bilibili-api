@@ -92,11 +92,13 @@ select = [
 ]
 ignore = [
     "E402",   # module-import-not-at-top-of-file
+    "E501",   # line-too-long
     "UP037",  # quoted-annotation
     "RUF001", # ambiguous-unicode-character-string
     "RUF002", # ambiguous-unicode-character-docstring
     "RUF003", # ambiguous-unicode-character-comment
 ]
+exclude = ["bilibili_api/utils/danmaku2ass.py"]
 
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
