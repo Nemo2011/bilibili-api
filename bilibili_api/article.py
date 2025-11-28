@@ -4,15 +4,15 @@ bilibili_api.article
 专栏相关
 """
 
-import html
-import re
 from copy import copy
 from enum import Enum
+import html
+import re
 from typing import List, TypeVar, Union, overload
 from urllib.parse import unquote
 
-import yaml
 from bs4 import BeautifulSoup, element
+import yaml
 from yarl import URL
 
 from .exceptions.NetworkException import ApiException

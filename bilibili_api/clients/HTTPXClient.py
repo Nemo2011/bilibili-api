@@ -5,7 +5,8 @@ HTTPXClient 实现
 """
 
 import asyncio
-from typing import AsyncGenerator, Dict, Optional, Union
+from collections.abc import AsyncGenerator
+from typing import Dict, Optional, Union
 
 import httpx  # pylint: disable=E0401
 

@@ -4,10 +4,10 @@ bilibili_api.utils.utils
 通用工具库。
 """
 
+from datetime import datetime
 import json
 import os
 import random
-from datetime import datetime
 from typing import List, TypeVar
 from urllib.parse import quote
 

@@ -5,7 +5,7 @@ CurlCFFIClient 实现
 """
 
 import asyncio
-from typing import AsyncGenerator, Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import curl_cffi  # pylint: disable=E0401
 from curl_cffi import requests  # pylint: disable=E0401

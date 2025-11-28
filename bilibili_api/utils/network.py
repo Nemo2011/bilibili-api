@@ -6,36 +6,36 @@ bilibili_api.utils.network
 现在已经变成核心功能大杂烩了
 """
 
+from abc import ABC, abstractmethod
 import asyncio
 import atexit
 import base64
 import binascii
-import copy
+from collections.abc import Coroutine
+from dataclasses import dataclass, field
+from email.utils import parsedate_to_datetime
+from enum import Enum
+from functools import reduce
 import hashlib
 import hmac
 import inspect
+from inspect import iscoroutinefunction, isfunction
 import io
 import json
+from json import scanner
+from json.decoder import scanstring
 import logging
 import os
 import random
 import re
 import struct
-import time
-import urllib.parse
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from email.utils import parsedate_to_datetime
-from enum import Enum
-from functools import reduce
-from inspect import iscoroutinefunction, isfunction
-from json import scanner
-from json.decoder import scanstring
 from threading import Lock
-from typing import Any, Callable, Coroutine, Dict, List, Optional, Tuple, Type, Union
+import time
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
+import urllib.parse
 
-import chompjs
 from bs4 import BeautifulSoup
+import chompjs
 from Cryptodome.Cipher import PKCS1_OAEP
 from Cryptodome.Hash import SHA256
 from Cryptodome.PublicKey import RSA
@@ -147,7 +147,7 @@ class RequestLog(AsyncEvent):
         if (
             self.__on
             and evt in self.get_on_events()
-            and not evt in self.get_ignore_events()
+            and evt not in self.get_ignore_events()
         ):
             if evt.startswith("WS_"):
                 ws_id = real_data.pop("id")
@@ -2370,7 +2370,7 @@ async def _gen_buvid_fp(buvid3: str, buvid4: str, credential: Credential) -> Non
     def gen_buvid_fp(key: str, seed: int):
         source = io.BytesIO(bytes(key, "utf-8"))
         m = murmur3_x64_128(source, seed)
-        return "{}{}".format(hex(m & (MOD - 1))[2:], hex(m >> 64)[2:])
+        return f"{hex(m & (MOD - 1))[2:]}{hex(m >> 64)[2:]}"
 
     def murmur3_x64_128(source: io.BufferedIOBase, seed: int) -> int:
         C1 = 0x87C3_7B91_1142_53D5
@@ -3227,10 +3227,10 @@ class Api:
         self.method = self.method.upper()
         self.original_data = self.data.copy()
         self.original_params = self.params.copy()
-        self.data = {k: "" for k in self.data.keys()}
-        self.params = {k: "" for k in self.params.keys()}
-        self.files = {k: "" for k in self.files.keys()}
-        self.headers = {k: "" for k in self.headers.keys()}
+        self.data = dict.fromkeys(self.data.keys(), "")
+        self.params = dict.fromkeys(self.params.keys(), "")
+        self.files = dict.fromkeys(self.files.keys(), "")
+        self.headers = dict.fromkeys(self.headers.keys(), "")
         self.credential = self.credential if self.credential else Credential()
 
     def update_data(self, **kwargs) -> "Api":

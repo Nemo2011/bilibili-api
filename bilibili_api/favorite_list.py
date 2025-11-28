@@ -520,7 +520,7 @@ async def copy_video_favorite_list_content(
         "src_media_id": media_id_from,
         "tar_media_id": media_id_to,
         "mid": self_info["mid"],
-        "resources": ",".join(map(lambda x: f"{str(x)}:2", aids)),
+        "resources": ",".join(map(lambda x: f"{x!s}:2", aids)),
     }
 
     return await Api(**api, credential=credential).update_data(**data).result
@@ -551,7 +551,7 @@ async def move_video_favorite_list_content(
     data = {
         "src_media_id": media_id_from,
         "tar_media_id": media_id_to,
-        "resources": ",".join(map(lambda x: f"{str(x)}:2", aids)),
+        "resources": ",".join(map(lambda x: f"{x!s}:2", aids)),
     }
 
     return await Api(**api, credential=credential).update_data(**data).result
@@ -579,7 +579,7 @@ async def delete_video_favorite_list_content(
 
     data = {
         "media_id": media_id,
-        "resources": ",".join(map(lambda x: f"{str(x)}:2", aids)),
+        "resources": ",".join(map(lambda x: f"{x!s}:2", aids)),
     }
 
     return await Api(**api, credential=credential).update_data(**data).result

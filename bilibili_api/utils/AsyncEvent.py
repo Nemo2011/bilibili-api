@@ -5,7 +5,8 @@ bilibili_api.utils.AsyncEvent
 """
 
 import asyncio
-from typing import Callable, Coroutine, Union
+from collections.abc import Coroutine
+from typing import Callable, Union
 
 
 class AsyncEvent:

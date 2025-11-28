@@ -4,12 +4,11 @@ ivitools.download
 下载互动视频
 """
 
-import asyncio
 import os
 
 from colorama import Fore
 
-from bilibili_api import HEADERS, interactive_video, sync, video
+from bilibili_api import interactive_video, sync, video
 
 
 def download_interactive_video(bvid: str, out: str):

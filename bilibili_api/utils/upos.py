@@ -3,9 +3,9 @@ bilibili_api.utils.upos
 """
 
 import asyncio
+from asyncio.tasks import create_task
 import json
 import os
-from asyncio.tasks import create_task
 
 from ..exceptions.NetworkException import NetworkException
 from ..exceptions.ResponseCodeException import ResponseCodeException

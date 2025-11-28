@@ -6,10 +6,10 @@ bilibili_api.session
 
 import asyncio
 import datetime
+from enum import Enum
 import json
 import logging
 import time
-from enum import Enum
 from typing import Optional, Union
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler

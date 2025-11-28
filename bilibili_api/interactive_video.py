@@ -6,17 +6,18 @@ bilibili_api.interactive_video
 
 # pylint: skip-file
 
+from asyncio import CancelledError, create_task
+from collections.abc import Coroutine
 import copy
 import enum
 import json
 import os
+from random import randint as rand
 import shutil
 import time
-import zipfile
-from asyncio import CancelledError, create_task
-from random import randint as rand
-from typing import Coroutine, List, Tuple, Union
+from typing import List, Tuple, Union
 from urllib import parse
+import zipfile
 
 from .exceptions import ApiException
 from .utils.AsyncEvent import AsyncEvent
@@ -948,7 +949,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                         },
                     )
                     break
-                except Exception as e:
+                except Exception:
                     retry -= 1
                     if retry < 0:
                         raise ApiException("重试达到最大次数")
@@ -1006,7 +1007,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         cid_set = set()
         for key, item in edges_info.items():
             cid = item["cid"]
-            if not cid in cid_set:
+            if cid not in cid_set:
                 self.dispatch("PREPARE_DOWNLOAD", {"cid": item["cid"]})
                 cid_set.add(cid)
                 url = await self.__video.get_download_url(cid=cid)
@@ -1104,7 +1105,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                         {"title": node["title"], "node_id": now_node.get_node_id()},
                     )
                     break
-                except Exception as e:
+                except Exception:
                     retry -= 1
                     if retry < 0:
                         raise ApiException("重试达到最大次数")
@@ -1133,7 +1134,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         cid_set = set()
         for key, item in edges_info.items():
             cid = item["cid"]
-            if not cid in cid_set:
+            if cid not in cid_set:
                 self.dispatch("PREPARE_DOWNLOAD", {"cid": item["cid"]})
                 cid_set.add(cid)
                 url = await self.__video.get_download_url(cid=cid)
@@ -1337,7 +1338,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                         {"title": node["title"], "node_id": now_node.get_node_id()},
                     )
                     break
-                except Exception as e:
+                except Exception:
                     retry -= 1
                     if retry < 0:
                         raise ApiException("重试达到最大次数")
@@ -1395,7 +1396,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         cid_set = set()
         for key, item in edges_info.items():
             cid = item["cid"]
-            if not cid in cid_set:
+            if cid not in cid_set:
                 self.dispatch("PREPARE_DOWNLOAD", {"cid": item["cid"]})
                 cid_set.add(cid)
                 url = await self.__video.get_download_url(cid=cid)

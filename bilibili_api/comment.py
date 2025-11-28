@@ -16,8 +16,8 @@ bilibili_api.comment
 + 活动: {16279} `await get_activity_aid()`
 """
 
-import json
 from enum import Enum
+import json
 from typing import List, Optional, Union
 
 from .dynamic import upload_image

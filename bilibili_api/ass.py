@@ -19,7 +19,7 @@ from .video import Video
 
 
 def _json2srt(input_path: str, output_path: str):
-    data = json.load(open(input_path, "r"))
+    data = json.load(open(input_path))
     with open(output_path, "w+", encoding="utf-8") as file:
         for cnt, comment in enumerate(data["body"]):
             file.write(

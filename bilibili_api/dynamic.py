@@ -4,11 +4,11 @@ bilibili_api.dynamic
 动态相关
 """
 
+from datetime import datetime
+from enum import Enum
 import json
 import re
 import sys
-from datetime import datetime
-from enum import Enum
 from typing import Any, List, Optional, Tuple, Union
 
 import yaml

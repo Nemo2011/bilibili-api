@@ -5,11 +5,11 @@ bilibili_api.audio_uploader
 """
 
 import asyncio
+from dataclasses import dataclass, field
+from enum import Enum
 import json
 import os
 import time
-from dataclasses import dataclass, field
-from enum import Enum
 from typing import List, Optional, Union
 
 from . import user

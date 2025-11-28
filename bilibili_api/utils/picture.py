@@ -4,9 +4,9 @@ bilibili_api.utils.picture
 Picture 类
 """
 
+from dataclasses import dataclass
 import os
 import tempfile
-from dataclasses import dataclass
 from typing import Any
 
 from PIL import Image

@@ -5,16 +5,16 @@ bilibili_api.video_uploader
 """
 
 import asyncio
+from asyncio.exceptions import CancelledError
+from asyncio.tasks import Task, create_task
 import base64
+from copy import copy, deepcopy
+from datetime import datetime
+from enum import Enum
 import json
 import os
 import re
 import time
-from asyncio.exceptions import CancelledError
-from asyncio.tasks import Task, create_task
-from copy import copy, deepcopy
-from datetime import datetime
-from enum import Enum
 from typing import List, Optional, Union
 
 from .exceptions.ApiException import ApiException

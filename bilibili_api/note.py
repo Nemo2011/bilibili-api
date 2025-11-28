@@ -4,9 +4,9 @@ bilibili_api.note
 笔记相关
 """
 
-import json
 from enum import Enum
 from html import unescape
+import json
 from typing import List, Union, overload
 
 import yaml
@@ -388,7 +388,7 @@ class Note:
         for node in self.__children:
             try:
                 markdown_text = node.markdown()
-            except Exception as e:
+            except Exception:
                 pass
             else:
                 content += markdown_text

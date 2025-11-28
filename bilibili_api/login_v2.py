@@ -12,11 +12,11 @@ import tempfile
 import time
 from typing import Dict, List, Union
 
+from Cryptodome.Cipher import PKCS1_v1_5
+from Cryptodome.PublicKey import RSA
 import qrcode
 import qrcode_terminal
 import yarl
-from Cryptodome.Cipher import PKCS1_v1_5
-from Cryptodome.PublicKey import RSA
 
 from .exceptions import GeetestException, LoginError
 from .utils.geetest import Geetest, GeetestType

@@ -4,8 +4,8 @@ bilibili_api.game
 游戏相关
 """
 
-import re
 from enum import Enum
+import re
 from typing import Union
 
 from .exceptions import ApiException
@@ -225,7 +225,7 @@ async def game_name2id(game_name: str) -> str:
                 method="GET",
             ).request(raw=True)
         )[3][0].lstrip("https://wiki.biligame.com/wiki/")
-    except IndexError as e:
+    except IndexError:
         raise ApiException("未找到游戏")
     wiki_page_content = (
         await Api(

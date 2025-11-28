@@ -145,10 +145,10 @@ async def parse_link(
             return obj  # type: ignore
 
         # 过滤 https://space.bilibili.com/
-        if url.host == "space.bilibili.com" and url.path == "/" or url.path == "":  # type: ignore
+        if (url.host == "space.bilibili.com" and url.path == "/") or url.path == "":  # type: ignore
             try:
                 info = await get_self_info(credential)
-            except Exception as e:
+            except Exception:
                 return (-1, ResourceType.FAILED)
             else:
                 return (User(info["mid"], credential=credential), ResourceType.USER)

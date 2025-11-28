@@ -4,8 +4,8 @@ bilibili_api.utils.Danmaku
 弹幕类。
 """
 
-import time
 from enum import Enum
+import time
 from typing import Union
 
 from .utils import crack_uid as _crack_uid

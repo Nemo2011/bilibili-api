@@ -4,8 +4,8 @@ bilibili_api.user
 用户相关
 """
 
-import json
 from enum import Enum
+import json
 from typing import List, Tuple, Union
 
 from .channel_series import ChannelOrder, ChannelSeries, ChannelSeriesType

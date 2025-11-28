@@ -14,4 +14,4 @@ class WbiRetryTimesExceedException(ApiException):
 
     def __init__(self):
         super().__init__()
-        self.msg = f"Wbi 重试达到最大次数"
+        self.msg = "Wbi 重试达到最大次数"

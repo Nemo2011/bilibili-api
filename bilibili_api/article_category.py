@@ -5,9 +5,9 @@ bilibili_api.article_category
 """
 
 import copy
+from enum import Enum
 import json
 import os
-from enum import Enum
 from typing import List, Optional, Tuple
 
 from .utils.network import Api

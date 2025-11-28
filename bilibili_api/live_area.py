@@ -5,15 +5,12 @@ bilibili_api.live_area
 """
 
 import copy
-import json
-import os
-from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
 
 from .exceptions import ApiException
-from .utils.user_render_data import get_webid
 from .live import get_area_info
 from .utils.network import Api, Credential
+from .utils.user_render_data import get_webid
 from .utils.utils import get_api
 
 API = get_api("live-area")

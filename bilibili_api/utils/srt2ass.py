@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # python-srt2ass: https://github.com/ewwink/python-srt2ass
 # by: ewwink
@@ -7,7 +6,6 @@
 
 import os
 import re
-import codecs
 
 
 def fileopen(input_file):
@@ -15,7 +13,7 @@ def fileopen(input_file):
     tmp = ""
     for enc in encodings:
         try:
-            with open(input_file, mode="r", encoding=enc) as fd:
+            with open(input_file, encoding=enc) as fd:
                 tmp = fd.read()
                 break
         except:

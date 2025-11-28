@@ -7,16 +7,16 @@ bilibili_api.video
 """
 
 import asyncio
+from dataclasses import dataclass
 import datetime
+from enum import Enum
+from functools import cmp_to_key
+from inspect import iscoroutine, isfunction
 import json
 import logging
 import os
 import re
 import struct
-from dataclasses import dataclass
-from enum import Enum
-from functools import cmp_to_key
-from inspect import iscoroutine, isfunction
 from typing import Any, List, Optional, Union
 
 from yarl import URL
@@ -1972,7 +1972,7 @@ class VideoOnlineMonitor(AsyncEvent):
         bvid = self.__video.get_bvid()
         self.__bvid = await bvid if iscoroutine(bvid) else bvid
         self.logger.debug(f"准备连接：{self.__bvid}")
-        self.logger.debug(f"获取服务器信息中...")
+        self.logger.debug("获取服务器信息中...")
 
         api = API["info"]["video_online_broadcast_servers"]
         resp = await Api(**api, credential=self.credential).result
@@ -2437,14 +2437,14 @@ class VideoDownloadURLDataDetecter:
                 if (
                     video_stream_quality != VideoQuality.DOLBY
                     and video_stream_quality != VideoQuality.HDR
-                    and (not video_stream_quality in video_accepted_qualities)
+                    and (video_stream_quality not in video_accepted_qualities)
                 ):
                     continue
                 video_stream_codecs = None
                 for val in VideoCodecs:
                     if val.value in video_data["codecs"]:
                         video_stream_codecs = val
-                if (not video_stream_codecs in codecs) and (
+                if (video_stream_codecs not in codecs) and (
                     video_stream_codecs != None
                 ):
                     continue
@@ -2465,7 +2465,7 @@ class VideoDownloadURLDataDetecter:
                         continue
                     if audio_stream_quality.value < audio_min_quality.value:
                         continue
-                    if not audio_stream_quality in audio_accepted_qualities:
+                    if audio_stream_quality not in audio_accepted_qualities:
                         continue
                     audio_stream = AudioStreamDownloadURL(
                         url=audio_stream_url, audio_quality=audio_stream_quality

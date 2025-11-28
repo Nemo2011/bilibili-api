@@ -148,6 +148,7 @@ __register_all_clients()
 
 
 __all__ = [
+    "HEADERS",
     "ApiException",
     "ArgsException",
     "AsyncEvent",
@@ -174,7 +175,6 @@ __all__ = [
     "GeetestException",
     "GeetestMeta",
     "GeetestType",
-    "HEADERS",
     "InitialStateException",
     "LiveException",
     "LoginError",

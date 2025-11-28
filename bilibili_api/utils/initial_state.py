@@ -4,8 +4,8 @@ bilibili_api.utils.initial_state
 用于获取页码的初始化信息
 """
 
-import json
 from enum import Enum
+import json
 from typing import Tuple
 
 from ..exceptions import InitialStateException
@@ -78,6 +78,6 @@ async def get_initial_state(
                     '\\"', '"'
                 )  # 存在转义且不在正文内
             content = json.JSONDecoder().raw_decode(detected_content)[0]
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             raise InitialStateException("信息解析错误")
         return content, content_type

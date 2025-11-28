@@ -6,8 +6,8 @@ bilibili_api.watchroom
 注意，此类操作务必传入 `Credential` 并且要求传入 `buvid3` 否则可能无法鉴权
 """
 
-import time
 from enum import Enum
+import time
 from typing import Dict, List, Union
 
 from .utils.network import Api, Credential

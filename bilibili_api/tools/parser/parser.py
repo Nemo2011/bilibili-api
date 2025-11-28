@@ -1,6 +1,6 @@
-import re
 from enum import Enum
 from inspect import isclass, iscoroutinefunction, isfunction, ismethod
+import re
 from typing import Any, Dict, List, Optional, Union
 
 import bilibili_api

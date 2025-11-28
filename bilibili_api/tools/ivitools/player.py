@@ -3,12 +3,12 @@ import enum
 import json
 import os
 import random
+from random import random as rand
 import shutil
 import sys
 import time
-import zipfile
-from random import random as rand
 from typing import List, Tuple, Union
+import zipfile
 
 from PyQt6 import QtCore, QtGui, QtMultimedia, QtMultimediaWidgets, QtWidgets
 
@@ -269,7 +269,7 @@ class ButtonLabel(QtWidgets.QLabel):
         return self
 
 
-class MPlayer(object):
+class MPlayer:
     def setup(self, Form):
         # UI
         Form.setObjectName("Form")
@@ -681,19 +681,19 @@ class MPlayer(object):
         self.node.setText("(当前节点: 视频主节点)")
         self.info.setText(
             bilivideo_parser.decode(
-                open(self.temp_dir + "bilivideo.json", "r", encoding="utf-8").read()
+                open(self.temp_dir + "bilivideo.json", encoding="utf-8").read()
             )["title"]
             + "("
             + bilivideo_parser.decode(
-                open(self.temp_dir + "bilivideo.json", "r", encoding="utf-8").read()
+                open(self.temp_dir + "bilivideo.json", encoding="utf-8").read()
             )["bvid"]
             + ")"
         )
         self.graph = json.load(
-            open(self.temp_dir + "ivideo.json", "r", encoding="utf-8")
+            open(self.temp_dir + "ivideo.json", encoding="utf-8")
         )
         self.current_node = bilivideo_parser.decode(
-            open(self.temp_dir + "bilivideo.json", "r", encoding="utf-8").read()
+            open(self.temp_dir + "bilivideo.json", encoding="utf-8").read()
         )["root_id"]
         variables = self.graph[str(self.current_node)]["vars"]
         for var in variables:

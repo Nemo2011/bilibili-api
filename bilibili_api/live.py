@@ -6,11 +6,11 @@ bilibili_api.live
 
 import asyncio
 import base64
+from enum import Enum
 import json
 import logging
 import struct
 import time
-from enum import Enum
 from typing import Any, List, Union
 
 import brotli
@@ -1527,7 +1527,7 @@ class LiveDanmaku(AsyncEvent):
                 while True:
                     try:
                         data, flag = await self.__client.ws_recv(cnt=self.__ws)
-                    except Exception as e:
+                    except Exception:
                         self.__status = self.STATUS_ERROR
                         self.logger.error("出现错误")
                         break
@@ -1713,7 +1713,7 @@ class LiveDanmaku(AsyncEvent):
                     "pf": "web",
                     "hb": str(
                         base64.b64encode(
-                            f"60|{self.__room_real_id}|1|0".encode("utf-8")
+                            f"60|{self.__room_real_id}|1|0".encode()
                         ),
                         "utf-8",
                     ),
