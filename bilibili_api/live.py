@@ -1712,9 +1712,7 @@ class LiveDanmaku(AsyncEvent):
                 params = {
                     "pf": "web",
                     "hb": str(
-                        base64.b64encode(
-                            f"60|{self.__room_real_id}|1|0".encode()
-                        ),
+                        base64.b64encode(f"60|{self.__room_real_id}|1|0".encode()),
                         "utf-8",
                     ),
                 }

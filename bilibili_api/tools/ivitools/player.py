@@ -689,9 +689,7 @@ class MPlayer:
             )["bvid"]
             + ")"
         )
-        self.graph = json.load(
-            open(self.temp_dir + "ivideo.json", encoding="utf-8")
-        )
+        self.graph = json.load(open(self.temp_dir + "ivideo.json", encoding="utf-8"))
         self.current_node = bilivideo_parser.decode(
             open(self.temp_dir + "bilivideo.json", encoding="utf-8").read()
         )["root_id"]
