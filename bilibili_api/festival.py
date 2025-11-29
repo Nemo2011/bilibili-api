@@ -4,7 +4,6 @@ bilibili_api.festival
 节日专门页相关
 """
 
-
 from .utils.initial_state import get_initial_state
 from .utils.network import Credential
 

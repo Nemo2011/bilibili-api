@@ -4,7 +4,6 @@ bilibili_api.utils.short
 一个很简单的处理短链接的模块，主要是读取跳转链接。
 """
 
-
 from .network import Credential, get_client
 
 

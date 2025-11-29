@@ -15,9 +15,7 @@ class ParseError(Exception):
     解析错误
     """
 
-    def __init__(
-        self, operations: list[dict[str, str | list[Any] | dict[str, Any]]]
-    ):
+    def __init__(self, operations: list[dict[str, str | list[Any] | dict[str, Any]]]):
         super().__init__(operations[-1]["sentence"])
         self.operations = operations
 

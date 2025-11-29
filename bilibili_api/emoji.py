@@ -4,7 +4,6 @@ bilibili_api.emoji
 表情包相关
 """
 
-
 from .utils.network import Api, Credential
 from .utils.utils import get_api
 

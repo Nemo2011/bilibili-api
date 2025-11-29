@@ -85,7 +85,28 @@ class ResourceType(Enum):
 
 async def parse_link(
     url: str, credential: Credential | None = None
-) -> tuple[Video, Literal[ResourceType.VIDEO]] | tuple[InteractiveVideo, Literal[ResourceType.INTERACTIVE_VIDEO]] | tuple[Bangumi, Literal[ResourceType.BANGUMI]] | tuple[Episode, Literal[ResourceType.EPISODE]] | tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]] | tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]] | tuple[Audio, Literal[ResourceType.AUDIO]] | tuple[AudioList, Literal[ResourceType.AUDIO_LIST]] | tuple[Article, Literal[ResourceType.ARTICLE]] | tuple[User, Literal[ResourceType.USER]] | tuple[LiveRoom, Literal[ResourceType.LIVE]] | tuple[ChannelSeries, Literal[ResourceType.CHANNEL_SERIES]] | tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]] | tuple[Dynamic, Literal[ResourceType.DYNAMIC]] | tuple[BlackRoom, Literal[ResourceType.BLACK_ROOM]] | tuple[Game, Literal[ResourceType.GAME]] | tuple[Topic, Literal[ResourceType.TOPIC]] | tuple[Manga, Literal[ResourceType.MANGA]] | tuple[Note, Literal[ResourceType.NOTE]] | tuple[Literal[-1], Literal[ResourceType.FAILED]]:
+) -> (
+    tuple[Video, Literal[ResourceType.VIDEO]]
+    | tuple[InteractiveVideo, Literal[ResourceType.INTERACTIVE_VIDEO]]
+    | tuple[Bangumi, Literal[ResourceType.BANGUMI]]
+    | tuple[Episode, Literal[ResourceType.EPISODE]]
+    | tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]]
+    | tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]]
+    | tuple[Audio, Literal[ResourceType.AUDIO]]
+    | tuple[AudioList, Literal[ResourceType.AUDIO_LIST]]
+    | tuple[Article, Literal[ResourceType.ARTICLE]]
+    | tuple[User, Literal[ResourceType.USER]]
+    | tuple[LiveRoom, Literal[ResourceType.LIVE]]
+    | tuple[ChannelSeries, Literal[ResourceType.CHANNEL_SERIES]]
+    | tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]]
+    | tuple[Dynamic, Literal[ResourceType.DYNAMIC]]
+    | tuple[BlackRoom, Literal[ResourceType.BLACK_ROOM]]
+    | tuple[Game, Literal[ResourceType.GAME]]
+    | tuple[Topic, Literal[ResourceType.TOPIC]]
+    | tuple[Manga, Literal[ResourceType.MANGA]]
+    | tuple[Note, Literal[ResourceType.NOTE]]
+    | tuple[Literal[-1], Literal[ResourceType.FAILED]]
+):
     """
     调用 yarl 解析 bilibili url 的函数。
 
@@ -242,7 +263,18 @@ async def auto_convert_video(
 
 async def check_short_name(
     name: str, credential: Credential
-) -> tuple[Video, Literal[ResourceType.VIDEO]] | tuple[Episode, Literal[ResourceType.EPISODE]] | tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]] | tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]] | tuple[User, Literal[ResourceType.USER]] | tuple[Article, Literal[ResourceType.ARTICLE]] | tuple[Audio, Literal[ResourceType.AUDIO]] | tuple[AudioList, Literal[ResourceType.AUDIO_LIST]] | tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]] | Literal[-1]:
+) -> (
+    tuple[Video, Literal[ResourceType.VIDEO]]
+    | tuple[Episode, Literal[ResourceType.EPISODE]]
+    | tuple[CheeseVideo, Literal[ResourceType.CHEESE_VIDEO]]
+    | tuple[FavoriteList, Literal[ResourceType.FAVORITE_LIST]]
+    | tuple[User, Literal[ResourceType.USER]]
+    | tuple[Article, Literal[ResourceType.ARTICLE]]
+    | tuple[Audio, Literal[ResourceType.AUDIO]]
+    | tuple[AudioList, Literal[ResourceType.AUDIO_LIST]]
+    | tuple[ArticleList, Literal[ResourceType.ARTICLE_LIST]]
+    | Literal[-1]
+):
     """
     解析:
       - mlxxxxxxxxxx
@@ -343,9 +375,7 @@ def parse_favorite_list(url: URL, credential: Credential) -> FavoriteList | int:
     return -1
 
 
-async def parse_cheese_video(
-    url: URL, credential: Credential
-) -> CheeseVideo | int:
+async def parse_cheese_video(url: URL, credential: Credential) -> CheeseVideo | int:
     """
     解析课程视频,如果不是返回 -1，否则返回对应类
     """
@@ -466,7 +496,9 @@ def parse_season_series(url: URL, credential: Credential) -> ChannelSeries | int
 
 async def parse_space_favorite_list(
     url: URL, credential: Credential
-) -> tuple[FavoriteList, ResourceType] | tuple[ChannelSeries, ResourceType] | Literal[-1]:
+) -> (
+    tuple[FavoriteList, ResourceType] | tuple[ChannelSeries, ResourceType] | Literal[-1]
+):
     if url.host == "space.bilibili.com":
         uid = url.parts[1]  # 获取 uid
         if len(url.parts) >= 3:  # path 存在 favlist

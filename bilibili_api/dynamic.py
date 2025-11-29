@@ -723,9 +723,7 @@ class Dynamic:
         credential (Credential): 凭据类
     """
 
-    def __init__(
-        self, dynamic_id: int, credential: Credential | None = None
-    ) -> None:
+    def __init__(self, dynamic_id: int, credential: Credential | None = None) -> None:
         """
         Args:
             dynamic_id (int)                        : 动态 ID
@@ -1172,9 +1170,7 @@ async def get_new_dynamic_users(credential: Credential | None = None) -> dict:
     return await Api(**api, credential=credential).result
 
 
-async def get_live_users(
-    size: int = 10, credential: Credential | None = None
-) -> dict:
+async def get_live_users(size: int = 10, credential: Credential | None = None) -> dict:
     """
     获取正在直播的关注者
 

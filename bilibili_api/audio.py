@@ -4,7 +4,6 @@ bilibili_api.audio
 音频相关
 """
 
-
 from .utils.network import Api, Credential
 from .utils.utils import get_api
 
@@ -195,9 +194,7 @@ async def get_user_stat(uid: int, credential: Credential | None = None) -> dict:
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-async def get_hot_song_list(
-    pn: int = 1, credential: Credential | None = None
-) -> dict:
+async def get_hot_song_list(pn: int = 1, credential: Credential | None = None) -> dict:
     """
     获取热门歌单
 

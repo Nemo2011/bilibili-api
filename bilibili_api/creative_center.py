@@ -856,9 +856,7 @@ async def get_danmakus(
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-async def del_danmaku(
-    credential: Credential, oid: int, dmids: int | list[int]
-) -> dict:
+async def del_danmaku(credential: Credential, oid: int, dmids: int | list[int]) -> dict:
     """
     删除弹幕
 

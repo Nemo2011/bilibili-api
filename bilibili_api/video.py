@@ -99,48 +99,70 @@ class VideoAppealReasonType:
 
     def ILLEGAL():
         return 2
+
     def PRON():
         return 3
+
     def VULGAR():
         return 4
+
     def GAMBLED_SCAMS():
         return 5
+
     def VIOLENT():
         return 6
+
     def PERSONAL_ATTACK():
         return 7
+
     def BAD_FOR_YOUNGS():
         return 10000
+
     def CLICKBAIT():
         return 10013
+
     def POLITICAL_RUMORS():
         return 10014
+
     def SOCIAL_RUMORS():
         return 10015
+
     def UNREAL_EVENT():
         return 10017
+
     def OTHER():
         return 1
+
     def LEAD_WAR():
         return 9
+
     def CANNOT_CHARGE():
         return 10
+
     def ILLEGAL_POPULARIZE():
         return 10018
+
     def ILLEGAL_OTHER():
         return 10019
+
     def DANGEROUS():
         return 10020
+
     def OTHER_NEW():
         return 10022
+
     def COOPERATE_INFRINGEMENT():
         return 10023
+
     def INFRINGEMENT():
         return 10024
+
     def VIDEO_INFRINGEMENT():
         return 10026
+
     def DISCOMFORT():
         return 10021
+
     def ILLEGAL_URL():
         return 10025
 
@@ -2383,7 +2405,10 @@ class VideoDownloadURLDataDetecter:
         no_hdr: bool = False,
         no_hires: bool = False,
     ) -> list[
-        VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | MP4StreamDownloadURL
+        VideoStreamDownloadURL
+        | AudioStreamDownloadURL
+        | FLVStreamDownloadURL
+        | MP4StreamDownloadURL
     ]:
         """
         解析数据
@@ -2530,7 +2555,10 @@ class VideoDownloadURLDataDetecter:
         no_hdr: bool = False,
         no_hires: bool = False,
     ) -> list[
-        VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | MP4StreamDownloadURL
+        VideoStreamDownloadURL
+        | AudioStreamDownloadURL
+        | FLVStreamDownloadURL
+        | MP4StreamDownloadURL
     ]:
         """
         提取出分辨率、音质等信息最好的音视频流。

@@ -112,9 +112,7 @@ class LiveRoom:
         room_display_id (int)       : 房间展示 id
     """
 
-    def __init__(
-        self, room_display_id: int, credential: Credential | None = None
-    ):
+    def __init__(self, room_display_id: int, credential: Credential | None = None):
         """
         Args:
             room_display_id (int)                 : 房间展示 ID（即 URL 中的 ID）
@@ -570,7 +568,9 @@ class LiveRoom:
             data["reply_mid"] = reply_mid
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def send_emoticon(self, emoticon: Danmaku, room_id: int | None = None) -> dict:
+    async def send_emoticon(
+        self, emoticon: Danmaku, room_id: int | None = None
+    ) -> dict:
         """
         直播间发送表情包
 

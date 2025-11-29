@@ -1319,9 +1319,7 @@ class VideoUploader(AsyncEvent):
         self.dispatch(VideoUploaderEvents.ABORTED.value, None)
 
 
-async def get_missions(
-    tid: int = 0, credential: Credential | None = None
-) -> dict:
+async def get_missions(tid: int = 0, credential: Credential | None = None) -> dict:
     """
     获取活动信息
 
