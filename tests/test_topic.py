@@ -24,6 +24,7 @@ async def test_c_Topic_like():
         else:
             return e.raw
 
+
 async def test_d_Topic_set_favorite():
     await t.set_favorite(status=False)
     return await t.set_favorite(status=True)

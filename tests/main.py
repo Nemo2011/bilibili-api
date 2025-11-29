@@ -17,6 +17,7 @@ Environment:
     BILI_PASSWORD
     BILI_RATELIMIT
 """
+
 import asyncio
 import datetime
 import getopt
@@ -44,6 +45,7 @@ RATELIMIT = (
 )
 
 request_settings.set_timeout(100)
+
 
 async def test(module):
     print(Fore.YELLOW + f"::group::=========== 开始测试 {module.__name__} ===========")
@@ -105,7 +107,10 @@ async def test(module):
             result["failed"] += 1
             return result
 
-    print(Fore.YELLOW + f"=========== 结束测试 {module.__name__} ===========\n::endgroup::")
+    print(
+        Fore.YELLOW
+        + f"=========== 结束测试 {module.__name__} ===========\n::endgroup::"
+    )
     return result
 
 

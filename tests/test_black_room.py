@@ -10,6 +10,7 @@ case_id = "AC2Pfk6Phllf"
 
 credential = common.get_credential()
 
+
 async def test_a_get_list():
     return await black_room.get_blocked_list(type_=black_room.BlackType.VIDEO)
 
