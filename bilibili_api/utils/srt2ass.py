@@ -26,7 +26,8 @@ def fileopen(input_file):
             continue
     return [tmp, enc]
 
-def srt2ass_cover_by_str(srt_string: str):
+# 修复命名问题
+def srt2ass_from_string(srt_string: str):
     utf8bom = ""
 
     if "\ufeff" in srt_string:
@@ -92,7 +93,26 @@ Style: TopRight,Arial,30,&H00FFFFFF,&H000000FF,&H00282828,&H00000000,0,0,0,0,100
 [Events]
 Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text"""
 
-    output_str = head_str + "\n" + subLines
+    output_str = utf8bom + head_str + "\n" + subLines
     #    output_str = output_str.encode(encoding)
 
     return output_str
+
+
+def srt2ass(input_file, output_file):
+    if '.ass' in input_file:
+        return input_file
+
+    src = fileopen(input_file)
+    tmp = src[0]
+    # encoding = src[1]
+    
+    output_str = srt2ass_from_string(tmp)   
+    #    output_str = output_str.encode(encoding)
+
+    with open(output_file, "w", encoding="utf8") as output:
+        output.write(output_str)
+
+    output_file = output_file.replace("\\", "\\\\")
+    output_file = output_file.replace("/", "//")
+    return output_file
