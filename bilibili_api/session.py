@@ -582,7 +582,7 @@ class Session(AsyncEvent):
 
         await self.run(exclude_self)
         while self.get_status() < 2:
-            await asyncio.sleep(1)
+            pass
 
         if self.get_status() == 2:
             self.__status = 3
