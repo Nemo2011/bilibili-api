@@ -4,7 +4,6 @@ bilibili_api.homepage
 主页相关操作。
 """
 
-from typing import Union
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api
@@ -25,7 +24,7 @@ async def get_top_photo() -> dict:
     return await Api(**api).update_params(**params).result
 
 
-async def get_links(credential: Union[Credential, None] = None) -> dict:
+async def get_links(credential: Credential | None = None) -> dict:
     """
     获取主页左面的链接。
     可能和个人喜好有关。
@@ -41,7 +40,7 @@ async def get_links(credential: Union[Credential, None] = None) -> dict:
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-async def get_popularize(credential: Union[Credential, None] = None) -> dict:
+async def get_popularize(credential: Credential | None = None) -> dict:
     """
     获取推广的项目。
     (有视频有广告)
@@ -57,7 +56,7 @@ async def get_popularize(credential: Union[Credential, None] = None) -> dict:
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-async def get_videos(credential: Union[Credential, None] = None) -> dict:
+async def get_videos(credential: Credential | None = None) -> dict:
     """
     获取首页推荐的视频。
 
@@ -89,7 +88,7 @@ async def get_favorite_list_and_toview(credential: Credential) -> dict:
 
 
 async def get_favorite_list_content(
-    media_id: int, credential: Union[Credential, None] = None
+    media_id: int, credential: Credential | None = None
 ) -> dict:
     """
     获取首页右上角视频相关列表（收藏夹+稍后再看）的具体内容

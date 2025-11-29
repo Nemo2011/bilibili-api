@@ -6,7 +6,6 @@ bilibili_api.game
 
 from enum import Enum
 import re
-from typing import Union
 
 from .exceptions import ApiException
 from .utils.network import Api, Credential
@@ -23,7 +22,7 @@ class Game:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, game_id: int, credential: Union[None, Credential] = None):
+    def __init__(self, game_id: int, credential: None | Credential = None):
         """
         Args:
             game_id    (int)       : 游戏 id

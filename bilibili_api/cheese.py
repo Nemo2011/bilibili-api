@@ -14,7 +14,7 @@ bilibili_api.cheese
 
 import datetime
 import json
-from typing import Any, List, Union
+from typing import Any
 
 from .exceptions import DanmakuClosedException, NetworkException, ResponseException
 from .exceptions.ArgsException import ArgsException
@@ -42,7 +42,7 @@ class CheeseList:
         self,
         season_id: int = -1,
         ep_id: int = -1,
-        credential: Union[Credential, None] = None,
+        credential: Credential | None = None,
     ):
         """
         Args:
@@ -126,7 +126,7 @@ class CheeseList:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_list(self) -> List["CheeseVideo"]:
+    async def get_list(self) -> list["CheeseVideo"]:
         """
         获取教程所有视频
 
@@ -158,7 +158,7 @@ class CheeseVideo:
         cheese     (CheeseList): 所属的课程
     """
 
-    def __init__(self, epid, credential: Union[Credential, None] = None):
+    def __init__(self, epid, credential: Credential | None = None):
         """
         Args:
             epid      (int)       : 单集 ep_id
@@ -498,10 +498,10 @@ class CheeseVideo:
 
     async def get_danmakus(
         self,
-        date: Union[datetime.date, None] = None,
-        from_seg: Union[int, None] = None,
-        to_seg: Union[int, None] = None,
-    ) -> List[Danmaku]:
+        date: datetime.date | None = None,
+        from_seg: int | None = None,
+        to_seg: int | None = None,
+    ) -> list[Danmaku]:
         """
         获取弹幕。
 
@@ -534,9 +534,9 @@ class CheeseVideo:
             from_seg = to_seg = 0
         else:
             api = API_video["danmaku"]["get_danmaku"]
-            if from_seg == None:
+            if from_seg is None:
                 from_seg = 0
-            if to_seg == None:
+            if to_seg is None:
                 to_seg = self.get_meta()["duration"] // 360 + 1
 
         danmakus = []
@@ -650,7 +650,7 @@ class CheeseVideo:
             .request(raw=True)
         )
 
-    async def send_danmaku(self, danmaku: Union[Danmaku, None] = None):
+    async def send_danmaku(self, danmaku: Danmaku | None = None):
         """
         发送弹幕。
 
@@ -776,7 +776,7 @@ class CheeseVideo:
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def set_favorite(
-        self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
+        self, add_media_ids: list[int] = [], del_media_ids: list[int] = []
     ):
         """
         设置视频收藏状况。
@@ -801,8 +801,8 @@ class CheeseVideo:
         data = {
             "rid": await self.get_aid(),
             "type": 2,
-            "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
-            "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
+            "add_media_ids": ",".join(str(x) for x in add_media_ids),
+            "del_media_ids": ",".join(str(x) for x in del_media_ids),
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 

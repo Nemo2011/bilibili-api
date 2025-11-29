@@ -6,7 +6,6 @@ bilibili_api.manga
 
 import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Union
 
 from bilibili_api.utils.network import Api, Credential
 from bilibili_api.utils.utils import get_api
@@ -143,7 +142,7 @@ class Manga:
         credential (Credential): 凭据类。
     """
 
-    def __init__(self, manga_id: int, credential: Optional[Credential] = None):
+    def __init__(self, manga_id: int, credential: Credential | None = None):
         """
         Args:
             manga_id   (int)              : 漫画 id
@@ -153,7 +152,7 @@ class Manga:
         credential = credential if credential else Credential()
         self.__manga_id = manga_id
         self.credential: Credential = credential
-        self.__info: Optional[Dict] = None
+        self.__info: dict | None = None
 
     def get_manga_id(self) -> int:
         """
@@ -369,7 +368,7 @@ class Manga:
 
 
 async def set_follow_manga(
-    manga: Manga, status: bool = True, credential: Optional[Credential] = None
+    manga: Manga, status: bool = True, credential: Credential | None = None
 ) -> dict:
     """
     设置追漫
@@ -381,14 +380,14 @@ async def set_follow_manga(
 
         credential (Credential): 凭据类。
     """
-    if credential == None:
+    if credential is None:
         if manga.credential.has_sessdata() and manga.credential.has_bili_jct():
             credential = manga.credential
         else:
             credential = Credential()
     credential.raise_for_no_sessdata()
     credential.raise_for_no_bili_jct()
-    if status == True:
+    if status:
         api = API["operate"]["add_favorite"]
     else:
         api = API["operate"]["del_favorite"]
@@ -407,8 +406,8 @@ async def get_followed_manga(
     pn: int = 1,
     ps: int = 15,
     order: MangaOrderType = MangaOrderType.FOLLOW,
-    credential: Optional[Credential] = None,
-) -> List[Manga]:
+    credential: Credential | None = None,
+) -> list[Manga]:
     """
     获取追漫列表
 
@@ -531,11 +530,11 @@ async def get_followed_manga(
 
 
 async def get_manga_update(
-    date: Union[str, datetime.datetime] = datetime.datetime.now(),
+    date: str | datetime.datetime = datetime.datetime.now(),
     pn: int = 1,
     ps: int = 8,
     credential: Credential = None,
-) -> List[Manga]:
+) -> list[Manga]:
     """
     获取更新推荐的漫画
 
@@ -567,8 +566,8 @@ async def get_manga_update(
 
 
 async def get_manga_home_recommend(
-    pn: int = 1, seed: Optional[str] = "0", credential: Credential = None
-) -> List[Manga]:
+    pn: int = 1, seed: str | None = "0", credential: Credential = None
+) -> list[Manga]:
     """
     获取首页推荐的漫画
 

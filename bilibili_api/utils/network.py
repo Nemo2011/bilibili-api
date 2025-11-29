@@ -11,7 +11,7 @@ import asyncio
 import atexit
 import base64
 import binascii
-from collections.abc import Coroutine
+from collections.abc import Callable, Coroutine
 from dataclasses import dataclass, field
 from email.utils import parsedate_to_datetime
 from enum import Enum
@@ -31,7 +31,7 @@ import re
 import struct
 from threading import Lock
 import time
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
+from typing import Any
 import urllib.parse
 
 from bs4 import BeautifulSoup
@@ -75,7 +75,7 @@ class RequestLog(AsyncEvent):
             )
             self.logger.addHandler(handler)
         self.__on = False
-        self.__on_events: List[str] = [
+        self.__on_events: list[str] = [
             "API_REQUEST",
             "API_RESPONSE",
             "ANTI_SPIDER",
@@ -84,10 +84,10 @@ class RequestLog(AsyncEvent):
             "WS_SEND",
             "WS_CLOSE",
         ]
-        self.__ignore_events: List[str] = []
+        self.__ignore_events: list[str] = []
         self.add_event_listener("__ALL__", self.__handle_events)
 
-    def get_on_events(self) -> List[str]:
+    def get_on_events(self) -> list[str]:
         """
         获取日志输出支持的事件类型
 
@@ -96,7 +96,7 @@ class RequestLog(AsyncEvent):
         """
         return self.__on_events
 
-    def set_on_events(self, events: List[str]) -> None:
+    def set_on_events(self, events: list[str]) -> None:
         """
         设置日志输出支持的事件类型
 
@@ -105,7 +105,7 @@ class RequestLog(AsyncEvent):
         """
         self.__on_events = events
 
-    def get_ignore_events(self) -> List[str]:
+    def get_ignore_events(self) -> list[str]:
         """
         获取日志输出排除的事件类型
 
@@ -114,7 +114,7 @@ class RequestLog(AsyncEvent):
         """
         return self.__ignore_events
 
-    def set_ignore_events(self, events: List[str]) -> None:
+    def set_ignore_events(self, events: list[str]) -> None:
         """
         设置日志输出排除的事件类型
 
@@ -267,10 +267,10 @@ async def handle(desc: str, data: dict) -> None:
 ################################################## BEGIN Session Management ##################################################
 
 
-sessions: Dict[str, Type["BiliAPIClient"]] = {}
-session_pool: Dict[str, Dict[asyncio.AbstractEventLoop, "BiliAPIClient"]] = {}
-lazy_settings: Dict[str, Dict[asyncio.AbstractEventLoop, Dict[str, Any]]] = {}
-client_settings: Dict[str, list] = {}
+sessions: dict[str, type["BiliAPIClient"]] = {}
+session_pool: dict[str, dict[asyncio.AbstractEventLoop, "BiliAPIClient"]] = {}
+lazy_settings: dict[str, dict[asyncio.AbstractEventLoop, dict[str, Any]]] = {}
+client_settings: dict[str, list] = {}
 selected_client: str = ""
 
 
@@ -531,7 +531,7 @@ class RequestSettings:
         """
         self.__fpgen_args = fpgen_args
 
-    def get_global_credential(self) -> "Optional[Credential]":
+    def get_global_credential(self) -> "Credential | None":
         """
         获取全局凭据类
 
@@ -540,7 +540,7 @@ class RequestSettings:
         """
         return self.__global_credential
 
-    def set_global_credential(self, global_credential: "Optional[Credential]") -> None:
+    def set_global_credential(self, global_credential: "Credential | None") -> None:
         """
         设置全局凭据类
 
@@ -881,7 +881,7 @@ class BiliAPIClient(ABC):
         timeout: float = 0.0,
         verify_ssl: bool = True,
         trust_env: bool = True,
-        session: Optional[object] = None,
+        session: object | None = None,
     ) -> None:
         """
         Args:
@@ -951,8 +951,8 @@ class BiliAPIClient(ABC):
         method: str = "",
         url: str = "",
         params: dict = {},
-        data: Union[dict, str, bytes] = {},
-        files: Dict[str, BiliAPIFile] = {},
+        data: dict | str | bytes = {},
+        files: dict[str, BiliAPIFile] = {},
         headers: dict = {},
         cookies: dict = {},
         allow_redirects: bool = True,
@@ -1060,7 +1060,7 @@ class BiliAPIClient(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
+    async def ws_recv(self, cnt: int) -> tuple[bytes, BiliWsMsgType]:
         """
         接受 WebSocket 数据
 
@@ -1377,7 +1377,7 @@ def select_client(name: str) -> None:
     selected_client = name
 
 
-def get_selected_client() -> Tuple[str, Type[BiliAPIClient]]:
+def get_selected_client() -> tuple[str, type[BiliAPIClient]]:
     """
     获取用户选择的请求客户端名称和对应的类
 
@@ -1391,7 +1391,7 @@ def get_selected_client() -> Tuple[str, Type[BiliAPIClient]]:
     return selected_client, sessions[selected_client]
 
 
-def get_available_settings() -> List[str]:
+def get_available_settings() -> list[str]:
     """
     获取当前支持的设置项
 
@@ -1405,7 +1405,7 @@ def get_available_settings() -> List[str]:
     return client_settings[selected_client]
 
 
-def get_registered_clients() -> Dict[str, Type[BiliAPIClient]]:
+def get_registered_clients() -> dict[str, type[BiliAPIClient]]:
     """
     获取所有注册过的 BiliAPIClient
 
@@ -1415,7 +1415,7 @@ def get_registered_clients() -> Dict[str, Type[BiliAPIClient]]:
     return sessions
 
 
-def get_registered_available_settings() -> Dict[str, List[str]]:
+def get_registered_available_settings() -> dict[str, list[str]]:
     """
     获取所有注册过的 BiliAPIClient 所支持的设置项
 
@@ -1493,12 +1493,12 @@ def set_session(session: object) -> None:
 
 def register_pre_filter(
     name: str,
-    func: Optional[Callable] = None,
-    async_func: Optional[Coroutine] = None,
-    clients: Optional[List[str]] = None,
-    on: Optional[List[str]] = None,
-    trigger: Optional[Callable] = None,
-    async_trigger: Optional[Coroutine] = None,
+    func: Callable | None = None,
+    async_func: Coroutine | None = None,
+    clients: list[str] | None = None,
+    on: list[str] | None = None,
+    trigger: Callable | None = None,
+    async_trigger: Coroutine | None = None,
     priority: int = 0,
 ) -> None:
     """
@@ -1543,12 +1543,12 @@ def register_pre_filter(
 
 def register_post_filter(
     name: str,
-    func: Optional[Callable] = None,
-    async_func: Optional[Coroutine] = None,
-    clients: Optional[List[str]] = None,
-    on: Optional[List[str]] = None,
-    trigger: Optional[Callable] = None,
-    async_trigger: Optional[Coroutine] = None,
+    func: Callable | None = None,
+    async_func: Coroutine | None = None,
+    clients: list[str] | None = None,
+    on: list[str] | None = None,
+    trigger: Callable | None = None,
+    async_trigger: Coroutine | None = None,
     priority: int = 0,
 ) -> None:
     """
@@ -1591,7 +1591,7 @@ def register_post_filter(
     __registered_post.append(filt)
 
 
-def get_all_registered_pre_filters(in_priority: bool = True) -> List[dict]:
+def get_all_registered_pre_filters(in_priority: bool = True) -> list[dict]:
     """
     获取所有已注册的前置过滤器
 
@@ -1606,7 +1606,7 @@ def get_all_registered_pre_filters(in_priority: bool = True) -> List[dict]:
     return __registered_pre
 
 
-def get_all_registered_post_filters(in_priority: bool = True) -> List[dict]:
+def get_all_registered_post_filters(in_priority: bool = True) -> list[dict]:
     """
     获取所有已注册的后置过滤器
 
@@ -1625,7 +1625,7 @@ def get_registered_pre_filters(
     client: str,
     func: str,
     in_priority: bool = True,
-) -> List[dict]:
+) -> list[dict]:
     """
     通过请求客户端及其函数筛选已注册的前置过滤器
 
@@ -1652,10 +1652,10 @@ def get_registered_pre_filters(
 
 
 def get_registered_post_filters(
-    client: List[str] = [],
-    func: List[str] = [],
+    client: list[str] = [],
+    func: list[str] = [],
     in_priority: bool = True,
-) -> List[dict]:
+) -> list[dict]:
     """
     通过请求客户端及其函数筛选已注册的后置过滤器
 
@@ -1685,7 +1685,7 @@ async def async_get_registered_pre_filters(
     client: str,
     func: str,
     in_priority: bool = True,
-) -> List[dict]:
+) -> list[dict]:
     """
     通过请求客户端及其函数筛选已注册的前置过滤器，支持异步触发器和过滤器。
 
@@ -1715,10 +1715,10 @@ async def async_get_registered_pre_filters(
 
 
 async def async_get_registered_post_filters(
-    client: List[str] = [],
-    func: List[str] = [],
+    client: list[str] = [],
+    func: list[str] = [],
     in_priority: bool = True,
-) -> List[dict]:
+) -> list[dict]:
     """
     通过请求客户端及其函数筛选已注册的后置过滤器，支持异步触发器和过滤器。
 
@@ -1815,7 +1815,7 @@ def _gen_uuid_infoc() -> str:
         return "".join([random.choice(mp) for _ in range(x)])
 
     t = _get_time_milli() % 100000
-    mp = list("123456789ABCDEF") + ["10"]
+    mp = [*list("123456789ABCDEF"), "10"]
     pck = [8, 4, 4, 4, 12]
 
     return (
@@ -1854,24 +1854,24 @@ class Credential:
 
     _refresh_lock: asyncio.Lock = asyncio.Lock()
 
-    b_nut: Union[str, None] = None
-    b_lsid: Union[str, None] = None
-    uuid_infoc: Union[str, None] = None
-    bili_ticket: Union[str, None] = None
-    bili_ticket_expires: Union[int, None] = None
-    buvid_fp: Union[str, None] = None
-    sid: Union[str, None] = None
+    b_nut: str | None = None
+    b_lsid: str | None = None
+    uuid_infoc: str | None = None
+    bili_ticket: str | None = None
+    bili_ticket_expires: int | None = None
+    buvid_fp: str | None = None
+    sid: str | None = None
 
     def __init__(
         self,
-        sessdata: Union[str, None] = None,
-        bili_jct: Union[str, None] = None,
-        buvid3: Union[str, None] = None,
-        buvid4: Union[str, None] = None,
-        dedeuserid: Union[str, None] = None,
-        dedeuserid_ckmd5: Union[str, None] = None,
-        sid: Union[str, None] = None,
-        ac_time_value: Union[str, None] = None,
+        sessdata: str | None = None,
+        bili_jct: str | None = None,
+        buvid3: str | None = None,
+        buvid4: str | None = None,
+        dedeuserid: str | None = None,
+        dedeuserid_ckmd5: str | None = None,
+        sid: str | None = None,
+        ac_time_value: str | None = None,
     ) -> None:
         """
         各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/get-credential.md
@@ -1972,7 +1972,7 @@ class Credential:
 
         browser_fingerprint = get_browser_fingerprint()
 
-        cookies: dict[str, Union[str, None]] = {
+        cookies: dict[str, str | None] = {
             "buvid3": self.buvid3,
             "b_nut": self.b_nut,
             "b_lsid": self.b_lsid,
@@ -1992,7 +1992,7 @@ class Credential:
             "opus-goback": "1",  # 确保需要旧版的时候可以跳转到旧版页面
         }
 
-        return dict((k, v) for k, v in cookies.items() if v is not None)
+        return {k: v for k, v in cookies.items() if v is not None}
 
     def get_core_cookies(self) -> dict:
         """
@@ -2138,7 +2138,7 @@ class Credential:
 
     @classmethod
     def from_cookies(
-        cls, cookies: dict, ac_time_value: Union[str, None] = None
+        cls, cookies: dict, ac_time_value: str | None = None
     ) -> "Credential":
         """
         从 cookies 新建 Credential
@@ -2480,16 +2480,16 @@ async def _gen_buvid_fp(buvid3: str, buvid4: str, credential: Credential) -> Non
 
         browser_fingerprint = get_browser_fingerprint()
         plugins = browser_fingerprint["plugins"]
-        mime_type_suffix: Union[dict[str, str], None] = (
-            dict(
-                (mime_type["type"], mime_type["suffixes"])
+        mime_type_suffix: dict[str, str] | None = (
+            {
+                mime_type["type"]: mime_type["suffixes"]
                 for mime_type in browser_fingerprint["plugins"]["mimeTypes"]
-            )
+            }
             if plugins
             else None
         )
 
-        def get_param(param_id: int) -> Union[str, int, bool]:
+        def get_param(param_id: int) -> str | int | bool:
             param = browser_fingerprint["webgl"]["params"].get(str(param_id))
             return param["value"] if param["value"] is not None else "null"
 
@@ -2693,7 +2693,7 @@ async def _active_buvid(
         raise ExClimbWuzhiException(data["code"], data["message"])
 
 
-async def _get_nav(credential: Optional[Credential] = None) -> dict:
+async def _get_nav(credential: Credential | None = None) -> dict:
     credential = credential if credential else Credential()
     api = API["info"]["valid"]
     client = get_client()
@@ -2707,9 +2707,9 @@ async def _get_nav(credential: Optional[Credential] = None) -> dict:
     ).json()["data"]
 
 
-async def _get_mixin_key(credential: Optional[Credential] = None) -> str:
+async def _get_mixin_key(credential: Credential | None = None) -> str:
     data = await _get_nav(credential=credential)
-    wbi_img: Dict[str, str] = data["wbi_img"]
+    wbi_img: dict[str, str] = data["wbi_img"]
 
     def split(key):
         return wbi_img.get(key).split("/")[-1].split(".")[0]
@@ -2791,7 +2791,7 @@ def _enc_sign(paramsordata: dict) -> dict:
 """
 
 
-async def _get_bili_ticket(credential: Credential) -> Optional[tuple[str, int]]:
+async def _get_bili_ticket(credential: Credential) -> tuple[str, int] | None:
     def hmac_sha256(key: str, message: str) -> str:
         key = key.encode("utf-8")
         message = message.encode("utf-8")
@@ -3030,7 +3030,7 @@ __register_data_filter()
 ################################################## BEGIN Api ##################################################
 
 
-__wbi_mixin_key: Optional[str] = None
+__wbi_mixin_key: str | None = None
 _credential = Credential(sessdata="global", bili_jct="global")
 
 
@@ -3042,7 +3042,7 @@ def recalculate_wbi() -> None:
     __wbi_mixin_key = None
 
 
-async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
+async def get_buvid(credential: Credential | None = None) -> tuple[str, str]:
     """
     获取 buvid3 和 buvid4，若提供凭据类将自动在 credential 中设置相关字段
 
@@ -3106,8 +3106,8 @@ async def get_buvid(credential: Optional[Credential] = None) -> Tuple[str, str]:
 
 
 async def get_bili_ticket(
-    credential: Optional[Credential] = None,
-) -> Optional[Tuple[str, str]]:
+    credential: Credential | None = None,
+) -> tuple[str, str] | None:
     """
     获取 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段
 
@@ -3155,7 +3155,7 @@ async def get_bili_ticket(
     return credential.bili_ticket, str(credential.bili_ticket_expires)
 
 
-async def get_wbi_mixin_key(credential: Optional[Credential] = None) -> str:
+async def get_wbi_mixin_key(credential: Credential | None = None) -> str:
     """
     获取 wbi mixin key
 
@@ -3219,7 +3219,7 @@ class Api:
     sign: bool = False
     data: dict = field(default_factory=dict)
     params: dict = field(default_factory=dict)
-    files: Dict[str, BiliAPIFile] = field(default_factory=dict)
+    files: dict[str, BiliAPIFile] = field(default_factory=dict)
     headers: dict = field(default_factory=dict)
     credential: Credential = field(default_factory=Credential)
 
@@ -3279,12 +3279,12 @@ class Api:
         for key, value in self.params.items():
             if isinstance(value, bool):
                 new_params[key] = int(value)
-            elif value != None:
+            elif value is not None:
                 new_params[key] = value
         for key, value in self.data.items():
             if isinstance(value, bool):
                 new_params[key] = int(value)
-            elif value != None:
+            elif value is not None:
                 new_data[key] = value
         self.params, self.data = new_params, new_data
         # 如果接口需要 Credential 且未传入 sessdata 鉴权则报错
@@ -3340,7 +3340,7 @@ class Api:
 
     def _process_response(
         self, resp: BiliAPIResponse, raw: bool = False
-    ) -> Union[int, str, dict, None]:
+    ) -> int | str | dict | None:
         # 检查状态码
         if resp.code != 200:
             raise NetworkException(resp.code, resp.utf8_text())
@@ -3388,7 +3388,7 @@ class Api:
 
     async def _request(
         self, raw: bool = False, byte: bool = False, bili_res: bool = False
-    ) -> Union[int, str, dict, bytes, BiliAPIResponse, None]:
+    ) -> int | str | dict | bytes | BiliAPIResponse | None:
         request_log.dispatch(
             "API_REQUEST",
             "Api 发起请求",
@@ -3398,7 +3398,7 @@ class Api:
         config: dict = await self._prepare_request()
         client: BiliAPIClient = get_client()
         resp: BiliAPIResponse = await client.request(**config)
-        ret: Union[int, str, dict, bytes, None]
+        ret: int | str | dict | bytes | None
 
         if byte:
             ret = resp.raw
@@ -3416,7 +3416,7 @@ class Api:
 
     async def request(
         self, raw: bool = False, byte: bool = False, bili_res: bool = False
-    ) -> Union[int, str, dict, bytes, BiliAPIResponse, None]:
+    ) -> int | str | dict | bytes | BiliAPIResponse | None:
         """
         向接口发送请求。
 
@@ -3452,7 +3452,7 @@ class Api:
         raise WbiRetryTimesExceedException()
 
     @property
-    async def result(self) -> Union[int, str, dict, bytes, None]:
+    async def result(self) -> int | str | dict | bytes | None:
         """
         获取请求结果
         """

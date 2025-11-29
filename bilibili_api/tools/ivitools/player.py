@@ -7,7 +7,6 @@ from random import random as rand
 import shutil
 import sys
 import time
-from typing import List, Tuple, Union
 import zipfile
 
 from PyQt6 import QtCore, QtGui, QtMultimedia, QtMultimediaWidgets, QtWidgets
@@ -109,7 +108,7 @@ class InteractiveButton:
         text: str,
         x: int,
         y: int,
-        align: Union[InteractiveButtonAlign, int] = InteractiveButtonAlign.DEFAULT,
+        align: InteractiveButtonAlign | int = InteractiveButtonAlign.DEFAULT,
     ):
         """
         Args:
@@ -130,7 +129,7 @@ class InteractiveButton:
     def get_align(self) -> int:
         return self.__align  # type: ignore
 
-    def get_pos(self) -> Tuple[int, int]:
+    def get_pos(self) -> tuple[int, int]:
         return self.__pos
 
     def __str__(self):
@@ -142,7 +141,7 @@ class InteractiveJumpingCondition:
     节点跳转的公式，只有公式成立才会跳转
     """
 
-    def __init__(self, var: List[InteractiveVariable] = [], condition: str = "True"):
+    def __init__(self, var: list[InteractiveVariable] = [], condition: str = "True"):
         """
         Args:
             var       (List[InteractiveVariable]): 所有变量
@@ -183,7 +182,7 @@ class InteractiveJumpingCommand:
     节点跳转对变量的操作
     """
 
-    def __init__(self, var: List[InteractiveVariable] = [], command: str = ""):
+    def __init__(self, var: list[InteractiveVariable] = [], command: str = ""):
         """
         Args:
             var       (List[InteractiveVariable]): 所有变量
@@ -192,7 +191,7 @@ class InteractiveJumpingCommand:
         self.__vars = var
         self.__command = command
 
-    def run_command(self) -> List["InteractiveVariable"]:
+    def run_command(self) -> list["InteractiveVariable"]:
         """
         执行操作
 
@@ -360,11 +359,11 @@ class MPlayer:
 
         # InteractiveVariables
         self.current_node = 0
-        self.variables: List[InteractiveVariable] = []
+        self.variables: list[InteractiveVariable] = []
         self.state_log = []
         self.graph = None
-        self.choice_buttons: List[Button] = []
-        self.choice_labels: List[ButtonLabel] = []
+        self.choice_buttons: list[Button] = []
+        self.choice_labels: list[ButtonLabel] = []
 
         # Video Play Variables & Functions
         self.temp_dir = ""
@@ -434,7 +433,7 @@ class MPlayer:
                                     )
                                 )
                                 # 生成 ButtonLabel 对象
-                                if child["pos"][0] == None:
+                                if child["pos"][0] is None:
                                     if idx != 0:
                                         previous_info = children[idx - 1]
                                         curtext, previoustext = (

@@ -58,7 +58,7 @@ class DocHandler(http.server.BaseHTTPRequestHandler):
         else:
             content_type = "text/html"
         self.send_response(200)
-        self.send_header("Content-Type", "%s; charset=UTF-8" % content_type)
+        self.send_header("Content-Type", f"{content_type}; charset=UTF-8")
         self.end_headers()
         self.wfile.write(self.urlhandler(self.path, content_type).encode("utf-8"))  # type: ignore
 
@@ -77,7 +77,7 @@ class DocServer(http.server.HTTPServer):
 
     def serve_until_quit(self):
         while not self.quit:
-            rd, wr, ex = select.select([self.socket.fileno()], [], [], 1)
+            rd, _wr, _ex = select.select([self.socket.fileno()], [], [], 1)
             if rd:
                 self.handle_request()
         self.server_close()
@@ -118,7 +118,7 @@ class ServerThread(threading.Thread):
 
     def stop(self):
         """Stop the server and this thread nicely"""
-        if self.docserver != None:
+        if self.docserver is not None:
             self.docserver.quit = True
             self.join()
             # explicitly break a reference cycle: DocServer.callback
@@ -183,7 +183,7 @@ class Geetest:
         Returns:
             bool: 是否有创建的测试
         """
-        return self.key != None
+        return self.key is not None
 
     def get_info(self) -> GeetestMeta:
         """

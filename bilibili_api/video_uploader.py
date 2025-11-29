@@ -15,7 +15,6 @@ import json
 import os
 import re
 import time
-from typing import List, Optional, Union
 
 from .exceptions.ApiException import ApiException
 from .exceptions.NetworkException import NetworkException
@@ -130,7 +129,7 @@ class VideoUploaderPage:
         self.title: str = title
         self.description: str = description
 
-        self.cached_size: Union[int, None] = None
+        self.cached_size: int | None = None
 
     def get_size(self) -> int:
         """
@@ -211,7 +210,7 @@ class VideoUploaderEvents(Enum):
     FAILED = "FAILED"
 
 
-async def get_available_topics(tid: int, credential: Credential) -> List[dict]:
+async def get_available_topics(tid: int, credential: Credential) -> list[dict]:
     """
     获取可用 topic 列表
     """
@@ -313,19 +312,19 @@ class VideoPorderMeta:
     """
 
     flow_id: int
-    industry_id: Optional[int] = None
-    official: Optional[int] = None
-    brand_name: Optional[str] = None
-    show_types: List[VideoPorderShowType] = []
+    industry_id: int | None = None
+    official: int | None = None
+    brand_name: str | None = None
+    show_types: list[VideoPorderShowType] = []
 
     __info: dict = None
 
     def __init__(
         self,
         porden_type: VideoPorderType = VideoPorderType.FIREWORK,
-        industry_type: Optional[VideoPorderIndustry] = None,
-        brand_name: Optional[str] = None,
-        show_types: List[VideoPorderShowType] = [],
+        industry_type: VideoPorderIndustry | None = None,
+        brand_name: str | None = None,
+        show_types: list[VideoPorderShowType] = [],
     ):
         self.flow_id = 1
         self.__info = porden_type.value
@@ -349,25 +348,25 @@ class VideoMeta:
     title: str  # 视频标题
     desc: str  # 视频简介。
     cover: Picture  # 封面 URL
-    tags: Union[List[str], str]  # 视频标签。使用英文半角逗号分隔的标签组。
-    topic_id: Optional[int] = None  # 可选，话题 ID。
-    mission_id: Optional[int] = None  # 可选，任务 ID。
+    tags: list[str] | str  # 视频标签。使用英文半角逗号分隔的标签组。
+    topic_id: int | None = None  # 可选，话题 ID。
+    mission_id: int | None = None  # 可选，任务 ID。
     original: bool = True  # 可选，是否为原创视频。
-    source: Optional[str] = None  # 可选，视频来源。
-    recreate: Optional[bool] = False  # 可选，是否允许重新上传。
-    no_reprint: Optional[bool] = False  # 可选，是否禁止转载。
-    open_elec: Optional[bool] = False  # 可选，是否展示充电信息。
-    up_selection_reply: Optional[bool] = False  # 可选，是否开启评论精选。
-    up_close_danmu: Optional[bool] = False  # 可选，是否关闭弹幕。
-    up_close_reply: Optional[bool] = False  # 可选，是否关闭评论。
-    lossless_music: Optional[bool] = False  # 可选，是否启用无损音乐。
-    dolby: Optional[bool] = False  # 可选，是否启用杜比音效。
-    subtitle: Optional[dict] = None  # 可选，字幕设置。
-    dynamic: Optional[str] = None  # 可选，动态信息。
-    neutral_mark: Optional[str] = None  # 可选，创作者声明。
-    delay_time: Optional[Union[int, datetime]] = None  # 可选，定时发布时间戳（秒）。
-    porder: Optional[VideoPorderMeta] = None  # 可选，商业相关参数。
-    watermark: Optional[bool] = False  # 可选，水印
+    source: str | None = None  # 可选，视频来源。
+    recreate: bool | None = False  # 可选，是否允许重新上传。
+    no_reprint: bool | None = False  # 可选，是否禁止转载。
+    open_elec: bool | None = False  # 可选，是否展示充电信息。
+    up_selection_reply: bool | None = False  # 可选，是否开启评论精选。
+    up_close_danmu: bool | None = False  # 可选，是否关闭弹幕。
+    up_close_reply: bool | None = False  # 可选，是否关闭评论。
+    lossless_music: bool | None = False  # 可选，是否启用无损音乐。
+    dolby: bool | None = False  # 可选，是否启用杜比音效。
+    subtitle: dict | None = None  # 可选，字幕设置。
+    dynamic: str | None = None  # 可选，动态信息。
+    neutral_mark: str | None = None  # 可选，创作者声明。
+    delay_time: int | datetime | None = None  # 可选，定时发布时间戳（秒）。
+    porder: VideoPorderMeta | None = None  # 可选，商业相关参数。
+    watermark: bool | None = False  # 可选，水印
 
     __credential: Credential
     __pre_info = dict
@@ -377,28 +376,26 @@ class VideoMeta:
         tid: int,  # 分区 ID。可以使用 channel 模块进行查询。
         title: str,  # 视频标题
         desc: str,  # 视频简介。
-        cover: Union[Picture, str],  # 封面 URL
-        tags: Union[List[str], str],  # 视频标签。使用英文半角逗号分隔的标签组。
-        topic: Optional[Union[int, Topic]] = None,  # 可选，话题 ID。
-        mission_id: Optional[int] = None,  # 可选，任务 ID。
+        cover: Picture | str,  # 封面 URL
+        tags: list[str] | str,  # 视频标签。使用英文半角逗号分隔的标签组。
+        topic: int | Topic | None = None,  # 可选，话题 ID。
+        mission_id: int | None = None,  # 可选，任务 ID。
         original: bool = True,  # 可选，是否为原创视频。
-        source: Optional[str] = None,  # 可选，视频来源。
-        recreate: Optional[bool] = False,  # 可选，是否允许重新上传。
-        no_reprint: Optional[bool] = False,  # 可选，是否禁止转载。
-        open_elec: Optional[bool] = False,  # 可选，是否展示充电信息。
-        up_selection_reply: Optional[bool] = False,  # 可选，是否开启评论精选。
-        up_close_danmu: Optional[bool] = False,  # 可选，是否关闭弹幕。
-        up_close_reply: Optional[bool] = False,  # 可选，是否关闭评论。
-        lossless_music: Optional[bool] = False,  # 可选，是否启用无损音乐。
-        dolby: Optional[bool] = False,  # 可选，是否启用杜比音效。
-        subtitle: Optional[dict] = None,  # 可选，字幕设置。
-        dynamic: Optional[str] = None,  # 可选，动态信息。
-        neutral_mark: Optional[str] = None,  # 可选，中性化标签。
-        delay_time: Optional[
-            Union[int, datetime]
-        ] = None,  # 可选，定时发布时间戳（秒）。
-        porder: Optional[VideoPorderMeta] = None,  # 可选，商业相关参数。
-        watermark: Optional[bool] = False,  # 可选，水印
+        source: str | None = None,  # 可选，视频来源。
+        recreate: bool | None = False,  # 可选，是否允许重新上传。
+        no_reprint: bool | None = False,  # 可选，是否禁止转载。
+        open_elec: bool | None = False,  # 可选，是否展示充电信息。
+        up_selection_reply: bool | None = False,  # 可选，是否开启评论精选。
+        up_close_danmu: bool | None = False,  # 可选，是否关闭弹幕。
+        up_close_reply: bool | None = False,  # 可选，是否关闭评论。
+        lossless_music: bool | None = False,  # 可选，是否启用无损音乐。
+        dolby: bool | None = False,  # 可选，是否启用杜比音效。
+        subtitle: dict | None = None,  # 可选，字幕设置。
+        dynamic: str | None = None,  # 可选，动态信息。
+        neutral_mark: str | None = None,  # 可选，中性化标签。
+        delay_time: int | datetime | None = None,  # 可选，定时发布时间戳（秒）。
+        porder: VideoPorderMeta | None = None,  # 可选，商业相关参数。
+        watermark: bool | None = False,  # 可选，水印
     ) -> None:
         """
         基本视频上传参数
@@ -621,7 +618,7 @@ class VideoMeta:
             .result
         )["code"] == 0
 
-    async def _check_tags(self) -> List[str]:
+    async def _check_tags(self) -> list[str]:
         """
         检查所有 tag 是否合法
         """
@@ -631,7 +628,7 @@ class VideoMeta:
             if await self._check_tag_name(tag, self.__credential)
         ]
 
-    async def _check_topic_to_mission(self) -> Union[int, bool]:
+    async def _check_topic_to_mission(self) -> int | bool:
         """
         检查 topic -> mission 是否存在
         """
@@ -701,11 +698,11 @@ class VideoUploader(AsyncEvent):
 
     def __init__(
         self,
-        pages: List[VideoUploaderPage],
-        meta: Union[VideoMeta, dict],
+        pages: list[VideoUploaderPage],
+        meta: VideoMeta | dict,
         credential: Credential,
-        cover: Optional[Union[str, Picture]] = "",
-        line: Optional[Lines] = None,
+        cover: str | Picture | None = "",
+        line: Lines | None = None,
     ):
         """
         Args:
@@ -761,7 +758,7 @@ class VideoUploader(AsyncEvent):
             else Picture().from_file(cover)
         )
         self.line = line
-        self.__task: Union[Task, None] = None
+        self.__task: Task | None = None
 
     async def _preupload(self, page: VideoUploaderPage) -> dict:
         """
@@ -1080,7 +1077,7 @@ class VideoUploader(AsyncEvent):
         return data
 
     @staticmethod
-    def _switch_upload_endpoint(preupload: dict, line: dict = None) -> dict:
+    def _switch_upload_endpoint(preupload: dict, line: dict | None = None) -> dict:
         # 替换线路 endpoint
         if line is not None and re.match(
             r"//upos-(sz|cs)-upcdn(bda2|ws|qn)\.bilivideo\.com", preupload["endpoint"]
@@ -1218,9 +1215,7 @@ class VideoUploader(AsyncEvent):
         self.dispatch(VideoUploaderEvents.PRE_PAGE_SUBMIT.value, {"page": page})
 
         data = {
-            "parts": list(
-                map(lambda x: {"partNumber": x, "eTag": "etag"}, range(1, chunks + 1))
-            )
+            "parts": [{"partNumber": x, "eTag": "etag"} for x in range(1, chunks + 1)]
         }
 
         params = {
@@ -1325,7 +1320,7 @@ class VideoUploader(AsyncEvent):
 
 
 async def get_missions(
-    tid: int = 0, credential: Union[Credential, None] = None
+    tid: int = 0, credential: Credential | None = None
 ) -> dict:
     """
     获取活动信息
@@ -1398,8 +1393,8 @@ class VideoEditor(AsyncEvent):
         self,
         bvid: str,
         meta: dict,
-        cover: Union[str, Picture] = "",
-        credential: Union[Credential, None] = None,
+        cover: str | Picture = "",
+        credential: Credential | None = None,
     ):
         """
         meta 参数示例: (保留 video, cover, tid, aid 字段)
@@ -1442,7 +1437,7 @@ class VideoEditor(AsyncEvent):
         self.cover_path = cover
         self.__old_configs = {}
         self.meta["aid"] = bvid2aid(bvid)
-        self.__task: Union[Task, None] = None
+        self.__task: Task | None = None
 
     async def _fetch_configs(self):
         """

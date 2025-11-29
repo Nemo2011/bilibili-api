@@ -5,7 +5,6 @@ bilibili_api.channel_series
 """
 
 from enum import Enum
-from typing import List, Optional, Union
 
 from . import user
 from .utils.network import Api, Credential
@@ -59,7 +58,7 @@ class ChannelSeries:
         uid: int = -1,
         type_: ChannelSeriesType = ChannelSeriesType.SERIES,
         id_: int = -1,
-        credential: Union[Credential, None] = None,
+        credential: Credential | None = None,
     ):
         """
         Args:
@@ -73,7 +72,7 @@ class ChannelSeries:
         """
         global channel_meta_cache
         raise_for_statement(id_ != -1)
-        raise_for_statement(type_ != None)
+        raise_for_statement(type_ is not None)
         from .user import User
 
         self.__uid = uid
@@ -170,10 +169,10 @@ class ChannelSeries:
 
 async def create_channel_series(
     name: str,
-    aids: List[int] = [],
-    keywords: List[str] = [],
+    aids: list[int] = [],
+    keywords: list[str] = [],
     description: str = "",
-    credential: Union[Credential, None] = None,
+    credential: Credential | None = None,
 ) -> dict:
     """
     新建一个视频列表 (旧版合集)
@@ -201,7 +200,7 @@ async def create_channel_series(
     info = await get_self_info(credential)
     data = {
         "mid": info["mid"],
-        "aids": ",".join(map(lambda x: str(x), aids)),
+        "aids": ",".join(str(x) for x in aids),
         "name": name,
         "keywords": ",".join(keywords),
         "description": description,
@@ -241,13 +240,13 @@ async def del_channel_series(series_id: int, credential: Credential) -> dict:
     data = {
         "mid": self_uid,
         "series_id": series_id,
-        "aids": ",".join(map(lambda x: str(x), aids)),
+        "aids": ",".join(str(x) for x in aids),
     }
     return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def add_aids_to_series(
-    series_id: int, aids: List[int], credential: Credential
+    series_id: int, aids: list[int], credential: Credential
 ) -> dict:
     """
     添加视频至视频列表(旧版合集)
@@ -271,13 +270,13 @@ async def add_aids_to_series(
     data = {
         "mid": self_info["mid"],
         "series_id": series_id,
-        "aids": ",".join(map(lambda x: str(x), aids)),
+        "aids": ",".join(str(x) for x in aids),
     }
     return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def del_aids_from_series(
-    series_id: int, aids: List[int], credential: Credential
+    series_id: int, aids: list[int], credential: Credential
 ) -> dict:
     """
     从视频列表(旧版合集)删除视频
@@ -301,13 +300,13 @@ async def del_aids_from_series(
     data = {
         "mid": self_info["mid"],
         "series_id": series_id,
-        "aids": ",".join(map(lambda x: str(x), aids)),
+        "aids": ",".join(str(x) for x in aids),
     }
     return await Api(**api, credential=credential).update_data(**data).result
 
 
 async def set_follow_channel_season(
-    season_id: int, status: bool = True, credential: Optional[Credential] = None
+    season_id: int, status: bool = True, credential: Credential | None = None
 ) -> dict:
     """
     设置是否订阅合集(新版)

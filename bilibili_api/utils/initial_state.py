@@ -6,7 +6,6 @@ bilibili_api.utils.initial_state
 
 from enum import Enum
 import json
-from typing import Tuple
 
 from ..exceptions import InitialStateException
 from .network import Api, Credential
@@ -47,7 +46,7 @@ def find_json(content: str) -> str:
 
 async def get_initial_state(
     url: str, credential: Credential = Credential(), strict: bool = True
-) -> Tuple[dict, InitialDataType]:
+) -> tuple[dict, InitialDataType]:
     """
     异步获取初始化信息
 

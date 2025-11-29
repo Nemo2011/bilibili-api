@@ -12,7 +12,6 @@ __author__ = "Nemo2011 <yimoxia@outlook.com>"
 __license__ = "GPLv3+"
 
 import sys
-from typing import List
 import warnings
 
 from colorama import Fore
@@ -22,7 +21,7 @@ from .extract import extract_ivi
 from .touch import touch_ivi
 
 
-def run_args(command: str, args: List[str]):
+def run_args(command: str, args: list[str]):
     if command == "help":
         print(
             "IVITools - A Simple IVI file manager & toolbox. \n\

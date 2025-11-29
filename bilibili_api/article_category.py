@@ -8,7 +8,6 @@ import copy
 from enum import Enum
 import json
 import os
-from typing import List, Optional, Tuple
 
 from .utils.network import Api
 from .utils.utils import get_api
@@ -34,7 +33,7 @@ class ArticleOrder(Enum):
     FAVORITES = 4
 
 
-def get_category_info_by_id(id: int) -> Tuple[Optional[dict], Optional[dict]]:
+def get_category_info_by_id(id: int) -> tuple[dict | None, dict | None]:
     """
     获取专栏分类信息
 
@@ -60,7 +59,7 @@ def get_category_info_by_id(id: int) -> Tuple[Optional[dict], Optional[dict]]:
         return None, None
 
 
-def get_category_info_by_name(name: str) -> Tuple[Optional[dict], Optional[dict]]:
+def get_category_info_by_name(name: str) -> tuple[dict | None, dict | None]:
     """
     获取专栏分类信息
 
@@ -86,7 +85,7 @@ def get_category_info_by_name(name: str) -> Tuple[Optional[dict], Optional[dict]
         return None, None
 
 
-def get_categories_list() -> List[dict]:
+def get_categories_list() -> list[dict]:
     """
     获取所有的分类的数据
 

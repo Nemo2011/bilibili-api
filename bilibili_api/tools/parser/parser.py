@@ -1,7 +1,7 @@
 from enum import Enum
 from inspect import isclass, iscoroutinefunction, isfunction, ismethod
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import bilibili_api
 
@@ -16,13 +16,13 @@ class ParseError(Exception):
     """
 
     def __init__(
-        self, operations: List[Dict[str, Union[str, List[Any], Dict[str, Any]]]]
+        self, operations: list[dict[str, str | list[Any] | dict[str, Any]]]
     ):
         super().__init__(operations[-1]["sentence"])
         self.operations = operations
 
 
-async def parse(path: str, params: Optional[Dict[str, str]] = None) -> Any:
+async def parse(path: str, params: dict[str, str] | None = None) -> Any:
     """
     解析字符串
 
@@ -58,12 +58,12 @@ async def parse(path: str, params: Optional[Dict[str, str]] = None) -> Any:
     # 当前解析到的位置
     position: Any = bilibili_api  # 起始点
     # 操作集
-    operations: List[Dict[str, Union[str, List[Any], Dict[str, Any]]]] = []
+    operations: list[dict[str, str | list[Any] | dict[str, Any]]] = []
     # 遍历指令
     for sentence in SENTENCES.findall(path):
         # 分解执行的函数名、参数、指名参数
         func: str = FUNC.findall(sentence)[0]
-        flags: List[str] = ARGS.findall(sentence)
+        flags: list[str] = ARGS.findall(sentence)
         args, kwargs = [], {}
 
         for flag in flags:

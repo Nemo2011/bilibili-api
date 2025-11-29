@@ -7,7 +7,6 @@ bilibili_api.ass
 import json
 import os
 from tempfile import gettempdir
-from typing import Optional, Union
 
 from .bangumi import Episode
 from .cheese import CheeseVideo
@@ -100,13 +99,13 @@ def _export_ass_from_json(file_local, output_local) -> None:
 
 
 async def make_ass_file_subtitle(
-    obj: Union[Video, Episode],
-    page_index: Optional[int] = 0,
-    cid: Optional[int] = None,
-    out: Optional[str] = "test.ass",
-    lan_name: Optional[str] = "中文（自动生成）",
-    lan_code: Optional[str] = "ai-zh",
-    credential: Optional[Credential] = None,
+    obj: Video | Episode,
+    page_index: int | None = 0,
+    cid: int | None = None,
+    out: str | None = "test.ass",
+    lan_name: str | None = "中文（自动生成）",
+    lan_code: str | None = "ai-zh",
+    credential: Credential | None = None,
 ) -> None:
     """
     生成视频字幕文件
@@ -138,8 +137,8 @@ async def make_ass_file_subtitle(
     if isinstance(obj, Episode):
         info = await obj.get_player_info(cid=await obj.get_cid(), epid=obj.get_epid())
     else:
-        if cid == None:
-            if page_index == None:
+        if cid is None:
+            if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
             cid = await obj.get_cid(page_index=page_index)
         info = await obj.get_player_info(cid=cid)
@@ -159,10 +158,10 @@ async def make_ass_file_subtitle(
 
 
 async def make_ass_file_danmakus_protobuf(
-    obj: Union[Video, Episode, CheeseVideo],
+    obj: Video | Episode | CheeseVideo,
     page: int = 0,
     out="test.ass",
-    cid: Union[int, None] = None,
+    cid: int | None = None,
     date=None,
     font_name="Simsun",
     font_size=25.0,
@@ -246,10 +245,10 @@ async def make_ass_file_danmakus_protobuf(
 
 
 async def make_ass_file_danmakus_xml(
-    obj: Union[Video, Episode, CheeseVideo],
+    obj: Video | Episode | CheeseVideo,
     page: int = 0,
     out="test.ass",
-    cid: Union[int, None] = None,
+    cid: int | None = None,
     font_name="Simsun",
     font_size=25.0,
     alpha=1,

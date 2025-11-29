@@ -4,7 +4,6 @@ bilibili_api.emoji
 表情包相关
 """
 
-from typing import List, Union
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api
@@ -31,7 +30,7 @@ async def get_emoji_list(
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-async def get_emoji_detail(id: Union[int, List[int]], business: str = "reply") -> dict:
+async def get_emoji_detail(id: int | list[int], business: str = "reply") -> dict:
     """
     获取表情包详情
 

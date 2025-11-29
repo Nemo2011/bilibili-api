@@ -8,7 +8,6 @@ import copy
 import enum
 import json
 import os
-from typing import Dict, List, Tuple, Union
 
 from .exceptions import ArgsException
 from .utils.network import Api, Credential
@@ -17,7 +16,7 @@ from .utils.utils import get_api
 API = get_api("video_zone")
 
 
-def get_zone_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, None]]:
+def get_zone_info_by_tid(tid: int) -> tuple[dict | None, dict | None]:
     """
     根据 tid 获取分区信息。
 
@@ -49,7 +48,7 @@ def get_zone_info_by_tid(tid: int) -> Tuple[Union[dict, None], Union[dict, None]
         return None, None
 
 
-def get_zone_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, None]]:
+def get_zone_info_by_name(name: str) -> tuple[dict | None, dict | None]:
     """
     根据分区名称获取分区信息。
 
@@ -76,7 +75,7 @@ def get_zone_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, Non
 
 
 async def get_zone_top10(
-    tid: int, day: int = 7, credential: Union[Credential, None] = None
+    tid: int, day: int = 7, credential: Credential | None = None
 ) -> dict:
     """
     获取分区前十排行榜。
@@ -101,7 +100,7 @@ async def get_zone_top10(
     return await Api(**api, credential=credential).update_params(**params).result
 
 
-def get_zone_list() -> List[Dict]:
+def get_zone_list() -> list[dict]:
     """
     获取所有分区的数据
 
@@ -141,7 +140,7 @@ def get_zone_list_sub() -> dict:
 
 
 async def get_zone_videos_count_today(
-    credential: Union[Credential, None] = None,
+    credential: Credential | None = None,
 ) -> dict:
     """
     获取每个分区当日最新投稿数量
@@ -176,7 +175,7 @@ async def get_zone_new_videos(tid: int, page_num: int = 1, page_size: int = 10) 
     return await Api(**api).update_params(**params).result
 
 
-async def get_zone_hot_tags(tid: int) -> List[dict]:
+async def get_zone_hot_tags(tid: int) -> list[dict]:
     """
     获取分区热门标签
 

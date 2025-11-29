@@ -4,7 +4,6 @@ bilibili_api.video_tag
 视频标签相关，部分的标签的 id 与同名的频道的 id 一模一样。
 """
 
-from typing import Optional
 
 from .exceptions import *
 from .utils.network import Api, Credential
@@ -21,9 +20,9 @@ class Tag:
 
     def __init__(
         self,
-        tag_name: Optional[str] = None,
-        tag_id: Optional[int] = None,
-        credential: Optional[Credential] = None,
+        tag_name: str | None = None,
+        tag_id: int | None = None,
+        credential: Credential | None = None,
     ):
         """
         Args:

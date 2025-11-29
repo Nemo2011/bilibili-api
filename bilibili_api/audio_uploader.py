@@ -10,7 +10,6 @@ from enum import Enum
 import json
 import os
 import time
-from typing import List, Optional, Union
 
 from . import user
 from .exceptions.ApiException import ApiException
@@ -440,31 +439,31 @@ class SongMeta:
 
     title: str
     desc: str
-    tags: Union[List[str], str]
+    tags: list[str] | str
     content_type: SongCategories.ContentType
-    song_type: Union[SongCategories.SongType, SongCategories.AudioType]
+    song_type: SongCategories.SongType | SongCategories.AudioType
     creation_type: SongCategories.CreationType
-    language: Optional[SongCategories.Language] = None
-    theme: Optional[SongCategories.Theme] = None
-    style: Optional[SongCategories.Style] = None
-    singer: Optional[List[AuthorInfo]] = field(default_factory=list)
-    player: Optional[List[AuthorInfo]] = field(default_factory=list)
-    sound_source: Optional[List[AuthorInfo]] = field(default_factory=list)
-    tuning: Optional[List[AuthorInfo]] = field(default_factory=list)
-    lyricist: Optional[List[AuthorInfo]] = field(default_factory=list)
-    arranger: Optional[List[AuthorInfo]] = field(default_factory=list)
-    composer: Optional[List[AuthorInfo]] = field(default_factory=list)
-    mixer: Optional[List[AuthorInfo]] = field(default_factory=list)
-    cover_maker: Optional[List[AuthorInfo]] = field(default_factory=list)
-    instrument: Optional[List[str]] = field(default_factory=list)
-    origin_url: Optional[str] = None
-    origin_title: Optional[str] = None
-    cover: Optional[Picture] = None
-    aid: Optional[int] = None
-    cid: Optional[int] = None
-    tid: Optional[int] = None
-    lrc: Optional[str] = None
-    compilation_id: Optional[int] = None
+    language: SongCategories.Language | None = None
+    theme: SongCategories.Theme | None = None
+    style: SongCategories.Style | None = None
+    singer: list[AuthorInfo] | None = field(default_factory=list)
+    player: list[AuthorInfo] | None = field(default_factory=list)
+    sound_source: list[AuthorInfo] | None = field(default_factory=list)
+    tuning: list[AuthorInfo] | None = field(default_factory=list)
+    lyricist: list[AuthorInfo] | None = field(default_factory=list)
+    arranger: list[AuthorInfo] | None = field(default_factory=list)
+    composer: list[AuthorInfo] | None = field(default_factory=list)
+    mixer: list[AuthorInfo] | None = field(default_factory=list)
+    cover_maker: list[AuthorInfo] | None = field(default_factory=list)
+    instrument: list[str] | None = field(default_factory=list)
+    origin_url: str | None = None
+    origin_title: str | None = None
+    cover: Picture | None = None
+    aid: int | None = None
+    cid: int | None = None
+    tid: int | None = None
+    lrc: str | None = None
+    compilation_id: int | None = None
     is_bgm: bool = True
 
 
@@ -741,7 +740,7 @@ class AudioUploader(AsyncEvent):
                 },  # 上传者
             ],
             "song_tags": [{"tagName": tag_name} for tag_name in self.meta.tags],
-            "create_time": "%.3f" % time.time(),
+            "create_time": f"{time.time():.3f}",
             "activity_id": 0,
             "is_bgm": 1 if self.meta.is_bgm else 0,
             "source": 0,
@@ -796,7 +795,7 @@ async def upload_lrc(lrc: str, song_id: int, credential: Credential) -> str:
     return await Api(**api, credential=credential).update_data(**data).result
 
 
-async def get_upinfo(param: Union[int, str], credential: Credential) -> List[dict]:
+async def get_upinfo(param: int | str, credential: Credential) -> list[dict]:
     """
     获取 UP 信息
 

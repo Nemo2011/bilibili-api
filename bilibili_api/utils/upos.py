@@ -201,9 +201,7 @@ class UposFileUploader:
         """
 
         data = {
-            "parts": list(
-                map(lambda x: {"partNumber": x, "eTag": "etag"}, range(1, chunks + 1))
-            )
+            "parts": [{"partNumber": x, "eTag": "etag"} for x in range(1, chunks + 1)]
         }
 
         params = {

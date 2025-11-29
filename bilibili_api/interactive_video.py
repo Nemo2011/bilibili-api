@@ -15,7 +15,6 @@ import os
 from random import randint as rand
 import shutil
 import time
-from typing import List, Tuple, Union
 from urllib import parse
 import zipfile
 
@@ -172,7 +171,7 @@ class InteractiveButton:
         text: str,
         x: int,
         y: int,
-        align: Union[InteractiveButtonAlign, int] = InteractiveButtonAlign.DEFAULT,
+        align: InteractiveButtonAlign | int = InteractiveButtonAlign.DEFAULT,
     ):
         """
         Args:
@@ -208,7 +207,7 @@ class InteractiveButton:
         """
         return self.__align  # type: ignore
 
-    def get_pos(self) -> Tuple[int, int]:
+    def get_pos(self) -> tuple[int, int]:
         """
         获取按钮位置
 
@@ -226,7 +225,7 @@ class InteractiveJumpingCondition:
     节点跳转的公式，只有公式成立才会跳转
     """
 
-    def __init__(self, var: List[InteractiveVariable] = [], condition: str = "True"):
+    def __init__(self, var: list[InteractiveVariable] = [], condition: str = "True"):
         """
         Args:
             var       (List[InteractiveVariable]): 所有变量
@@ -236,7 +235,7 @@ class InteractiveJumpingCondition:
         self.__vars = var
         self.__command = condition
 
-    def get_vars(self) -> List[InteractiveVariable]:
+    def get_vars(self) -> list[InteractiveVariable]:
         """
         获取公式中的变量
 
@@ -286,7 +285,7 @@ class InteractiveJumpingCommand:
     节点跳转对变量的操作
     """
 
-    def __init__(self, var: List[InteractiveVariable] = [], command: str = ""):
+    def __init__(self, var: list[InteractiveVariable] = [], command: str = ""):
         """
         Args:
             var       (List[InteractiveVariable]): 所有变量
@@ -296,7 +295,7 @@ class InteractiveJumpingCommand:
         self.__vars = var
         self.__command = command
 
-    def get_vars(self) -> List[InteractiveVariable]:
+    def get_vars(self) -> list[InteractiveVariable]:
         """
         获取公式中的变量
 
@@ -314,7 +313,7 @@ class InteractiveJumpingCommand:
         """
         return self.__command
 
-    def run_command(self) -> List["InteractiveVariable"]:
+    def run_command(self) -> list["InteractiveVariable"]:
         """
         执行操作
 
@@ -353,8 +352,8 @@ class InteractiveNode:
         video: "InteractiveVideo",
         node_id: int,
         cid: int,
-        vars: List[InteractiveVariable],
-        button: Union[InteractiveButton, None] = None,
+        vars: list[InteractiveVariable],
+        button: InteractiveButton | None = None,
         condition: InteractiveJumpingCondition = InteractiveJumpingCondition(),
         native_command: InteractiveJumpingCommand = InteractiveJumpingCommand(),
         is_default: bool = False,
@@ -402,7 +401,7 @@ class InteractiveNode:
         """
         return self.__command
 
-    def get_vars(self) -> List[InteractiveVariable]:
+    def get_vars(self) -> list[InteractiveVariable]:
         """
         获取节点的所有变量
 
@@ -411,7 +410,7 @@ class InteractiveNode:
         """
         return self.__vars
 
-    async def get_children(self) -> List["InteractiveNode"]:
+    async def get_children(self) -> list["InteractiveNode"]:
         """
         获取节点的所有子节点
 
@@ -420,7 +419,7 @@ class InteractiveNode:
         """
         edge_info = await self.__get_cached_edge_info()
         nodes = []
-        if edge_info["edges"].get("questions") == None:
+        if edge_info["edges"].get("questions") is None:
             return []
         for node in edge_info["edges"]["questions"][0]["choices"]:
             node_id = node["id"]
@@ -501,7 +500,7 @@ class InteractiveNode:
         Returns:
             InteractiveButton: 所对应的按钮
         """
-        if self.__button == None:
+        if self.__button is None:
             return InteractiveButton("", -1, -1)
         return self.__button
 
@@ -606,7 +605,7 @@ class InteractiveGraph:
         )
         return self.__node
 
-    async def get_children(self) -> List["InteractiveNode"]:
+    async def get_children(self) -> list["InteractiveNode"]:
         """
         获取子节点
 
@@ -689,7 +688,7 @@ class InteractiveVideo(Video):
             self.__version = resp["interaction"]["graph_version"]
         return self.__version
 
-    async def get_edge_info(self, edge_id: Union[int, None] = None):
+    async def get_edge_info(self, edge_id: int | None = None):
         """
         获取剧情图节点信息
 
@@ -807,7 +806,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         self,
         video: InteractiveVideo,
         out: str,
-        self_download_func: Coroutine = None,
+        self_download_func: Coroutine | None = None,
         downloader_mode: InteractiveVideoDownloaderMode = InteractiveVideoDownloaderMode.IVI,
         stream_detecting_params: dict = {},
         fetching_nodes_retry_times: int = 3,
@@ -911,7 +910,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         edges_info = {}
 
         # 使用队列来遍历剧情图，初始为 None 是为了从初始顶点开始
-        queue: List[InteractiveNode] = [
+        queue: list[InteractiveNode] = [
             await (await self.__video.get_graph()).get_root_node()
         ]
 
@@ -1072,7 +1071,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         edges_info = {}
 
         # 使用队列来遍历剧情图，初始为 None 是为了从初始顶点开始
-        queue: List[InteractiveNode] = [
+        queue: list[InteractiveNode] = [
             await (await self.__video.get_graph()).get_root_node()
         ]
 
@@ -1159,7 +1158,7 @@ class InteractiveVideoDownloader(AsyncEvent):
 
         class node_info:
             node_id: int
-            subs: List[int]
+            subs: list[int]
             cid: int
             title: str
 
@@ -1178,11 +1177,11 @@ class InteractiveVideoDownloader(AsyncEvent):
             def __gt__(self, info: "node_info"):
                 return self.cid > info.cid
 
-        fetched_nodes_info: List[node_info] = []
+        fetched_nodes_info: list[node_info] = []
         node_info_dict = {}
         scripts = []
         graph = await self.__video.get_graph()
-        queue: List[InteractiveNode] = [await graph.get_root_node()]
+        queue: list[InteractiveNode] = [await graph.get_root_node()]
         while queue:
             queue_backup = copy.copy(queue)
             queue = []
@@ -1304,7 +1303,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         edges_info = {}
 
         # 使用队列来遍历剧情图，初始为 None 是为了从初始顶点开始
-        queue: List[InteractiveNode] = [
+        queue: list[InteractiveNode] = [
             await (await self.__video.get_graph()).get_root_node()
         ]
 

@@ -8,7 +8,6 @@ from dataclasses import dataclass, field
 import json
 import random
 import time
-from typing import List
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api, get_deviceid
@@ -56,7 +55,7 @@ class Session:
     id: int
     start_time: int
     formatted_time: str
-    ticket_list: List[Ticket] = field(default_factory=list)
+    ticket_list: list[Ticket] = field(default_factory=list)
 
 
 @dataclass
@@ -126,7 +125,7 @@ async def get_project_info(project_id: int) -> dict:
     return await Api(**api).update_params(id=project_id).result
 
 
-async def get_available_sessions(project_id: int) -> List[Session]:
+async def get_available_sessions(project_id: int) -> list[Session]:
     """
     返回该项目的所有可用场次
 
@@ -171,7 +170,7 @@ async def get_all_buyer_info(credential: Credential) -> dict:
     return await Api(**api, credential=credential).result
 
 
-async def get_all_buyer_info_obj(credential: Credential) -> List[BuyerInfo]:
+async def get_all_buyer_info_obj(credential: Credential) -> list[BuyerInfo]:
     """
     以BuyerInfo对象返回账号的全部身份信息
 

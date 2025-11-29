@@ -5,8 +5,7 @@ bilibili_api.utils.AsyncEvent
 """
 
 import asyncio
-from collections.abc import Coroutine
-from typing import Callable, Union
+from collections.abc import Callable, Coroutine
 
 
 class AsyncEvent:
@@ -21,7 +20,7 @@ class AsyncEvent:
         self.__ignore_events = []
 
     def add_event_listener(
-        self, name: str, handler: Union[Callable, Coroutine]
+        self, name: str, handler: Callable | Coroutine
     ) -> None:
         """
         注册事件监听器。
@@ -43,7 +42,7 @@ class AsyncEvent:
             event_name (str): 事件名。
         """
 
-        def decorator(func: Union[Callable, Coroutine]):
+        def decorator(func: Callable | Coroutine):
             self.add_event_listener(event_name, func)
             return func
 
@@ -56,7 +55,7 @@ class AsyncEvent:
         self.__handlers = {}
 
     def remove_event_listener(
-        self, name: str, handler: Union[Callable, Coroutine]
+        self, name: str, handler: Callable | Coroutine
     ) -> bool:
         """
         移除事件监听函数。

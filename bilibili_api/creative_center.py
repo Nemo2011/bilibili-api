@@ -8,7 +8,6 @@ bilibili_api.creative_center
 
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional, Union
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api
@@ -547,7 +546,7 @@ async def get_video_upload_manager_info(
     pn: int = 1,
     ps: int = 10,
     order: UploadManagerOrder = UploadManagerOrder.CLICK,
-    tid: Union[VideoZoneTypes, None, int] = None,
+    tid: VideoZoneTypes | None | int = None,
     status: UploadManagerStatus = UploadManagerStatus.ALL,
 ) -> dict:
     """
@@ -635,8 +634,8 @@ https://member.bilibili.com/platform/comment
 
 async def get_comments(
     credential: Credential,
-    oid: Optional[int] = None,
-    keyword: Optional[str] = None,
+    oid: int | None = None,
+    keyword: str | None = None,
     archive_type: ArchiveType = ArchiveType.VIDEO,
     order: CommentManagerOrder = CommentManagerOrder.RECENTLY,
     filter: int = -1,
@@ -690,8 +689,8 @@ async def get_comments(
 
 async def del_comments(
     credential: Credential,
-    oid: Union[int, List[int]],
-    rpid: Union[int, List[int]],
+    oid: int | list[int],
+    rpid: int | list[int],
     archive_type: ArchiveType = ArchiveType.VIDEO,
 ):
     """
@@ -755,14 +754,14 @@ async def get_danmakus(
     oid: int,
     select_type: DanmakuType = DanmakuType.ALL,
     archive_type: ArchiveType = ArchiveType.VIDEO,
-    mids: Optional[Union[int, List[int]]] = None,
-    keyword: Optional[str] = None,
-    progress_from: Optional[int] = None,
-    progress_to: Optional[int] = None,
-    ctime_from: Optional[datetime] = None,
-    ctime_to: Optional[datetime] = None,
-    modes: Optional[Union[DanmakuMode, List[DanmakuMode]]] = None,
-    pools: Optional[Union[DanmakuPool, List[DanmakuPool]]] = None,
+    mids: int | list[int] | None = None,
+    keyword: str | None = None,
+    progress_from: int | None = None,
+    progress_to: int | None = None,
+    ctime_from: datetime | None = None,
+    ctime_to: datetime | None = None,
+    modes: DanmakuMode | list[DanmakuMode] | None = None,
+    pools: DanmakuPool | list[DanmakuPool] | None = None,
     attrs=None,  # 未知参数，我在高级筛选里面找不到
     order: DanmakuOrder = DanmakuOrder.CTIME,
     sort: DanmakuSort = DanmakuSort.DESC,
@@ -858,7 +857,7 @@ async def get_danmakus(
 
 
 async def del_danmaku(
-    credential: Credential, oid: int, dmids: Union[int, List[int]]
+    credential: Credential, oid: int, dmids: int | list[int]
 ) -> dict:
     """
     删除弹幕
@@ -877,8 +876,8 @@ async def del_danmaku(
 async def edit_danmaku_state(
     credential: Credential,
     oid: int,
-    dmids: Union[int, List[int]],
-    state: Optional[int] = None,
+    dmids: int | list[int],
+    state: int | None = None,
 ) -> dict:
     """
     操作弹幕状态
@@ -907,7 +906,7 @@ async def edit_danmaku_state(
 async def edit_danmaku_pool(
     credential: Credential,
     oid: int,
-    dmids: Union[int, List[int]],
+    dmids: int | list[int],
     is_subtitle: bool = True,
 ) -> dict:
     """

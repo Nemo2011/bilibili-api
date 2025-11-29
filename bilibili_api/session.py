@@ -10,7 +10,6 @@ from enum import Enum
 import json
 import logging
 import time
-from typing import Optional, Union
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -131,8 +130,8 @@ async def get_session_detail(
 
 async def get_replies(
     credential: Credential,
-    last_reply_id: Optional[int] = None,
-    reply_time: Optional[int] = None,
+    last_reply_id: int | None = None,
+    reply_time: int | None = None,
 ) -> dict:
     """
     获取收到的回复
@@ -153,7 +152,7 @@ async def get_replies(
 
 
 async def get_likes(
-    credential: Credential, last_id: int = None, like_time: int = None
+    credential: Credential, last_id: int | None = None, like_time: int | None = None
 ) -> dict:
     """
     获取收到的赞
@@ -175,9 +174,9 @@ async def get_likes(
 
 async def get_at(
     credential: Credential,
-    last_uid: int = None,
-    at_time: int = None,
-    last_id: int = None,
+    last_uid: int | None = None,
+    at_time: int | None = None,
+    last_id: int | None = None,
 ) -> dict:
     """
     获取收到的 AT
@@ -287,7 +286,7 @@ class Event:
     msg_type: int
     msg_key: int
     timestamp: int
-    content: Union[str, int, Picture, Video]
+    content: str | int | Picture | Video
 
     def __init__(self, data: dict, self_uid: int):
         """
@@ -363,7 +362,7 @@ async def send_msg(
     credential: Credential,
     receiver_id: int,
     msg_type: EventType,
-    content: Union[str, Picture],
+    content: str | Picture,
 ) -> dict:
     """
     给用户发送私聊信息。目前仅支持纯文本。
@@ -453,7 +452,7 @@ class Session(AsyncEvent):
         self.maxTs = int(time.time() * 1000000)
 
         # 会话UID为键 会话中最大Seqno为值
-        self.maxSeqno = dict()
+        self.maxSeqno = {}
 
         # 凭证
         self.credential: Credential = credential
@@ -462,7 +461,7 @@ class Session(AsyncEvent):
         self.sched = AsyncIOScheduler(timezone="Asia/Shanghai")
 
         # 已接收的所有事件 用于撤回时找回
-        self.events = dict()
+        self.events = {}
 
         # logging
         self.logger = logging.getLogger("Session")
@@ -588,7 +587,7 @@ class Session(AsyncEvent):
         if self.get_status() == 2:
             self.__status = 3
 
-    async def reply(self, event: Event, content: Union[str, Picture]) -> dict:  # type: ignore
+    async def reply(self, event: Event, content: str | Picture) -> dict:  # type: ignore
         """
         快速回复消息
 

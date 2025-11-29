@@ -7,7 +7,6 @@ bilibili_api.vote
 """
 
 from enum import Enum
-from typing import Optional, Union
 
 from .utils.network import Api, Credential
 from .utils.picture import Picture
@@ -37,7 +36,7 @@ class VoteChoices:
         self.choices = []
 
     def add_choice(
-        self, desc: str, image: Optional[Union[str, Picture]] = None
+        self, desc: str, image: str | Picture | None = None
     ) -> "VoteChoices":
         """
         往 VoteChoices 添加选项
@@ -87,7 +86,7 @@ class Vote:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, vote_id: int, credential: Optional[Credential] = None) -> None:
+    def __init__(self, vote_id: int, credential: Credential | None = None) -> None:
         """
         Args:
             vote_id (int): vote_id, 获取：https://nemo2011.github.io/bilibili-api/#/vote_id
@@ -96,7 +95,7 @@ class Vote:
         """
         self.__vote_id = vote_id
         self.credential: Credential = credential if credential else Credential()
-        self.title: Optional[str] = None
+        self.title: str | None = None
 
     def get_vote_id(self) -> int:
         """
@@ -138,7 +137,7 @@ class Vote:
         choice_cnt: int,
         duration: int,
         choices: VoteChoices,
-        desc: Optional[str] = None,
+        desc: str | None = None,
     ) -> dict:
         """
         更新投票内容
@@ -186,7 +185,7 @@ async def create_vote(
     duration: int,
     choices: VoteChoices,
     credential: Credential,
-    desc: Optional[str] = None,
+    desc: str | None = None,
 ) -> Vote:
     """
     创建投票

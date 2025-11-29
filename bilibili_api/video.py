@@ -17,7 +17,7 @@ import logging
 import os
 import re
 import struct
-from typing import Any, List, Optional, Union
+from typing import Any
 
 from yarl import URL
 
@@ -97,29 +97,52 @@ class VideoAppealReasonType:
     - ILLEGAL_URL(): 违法信息外链
     """
 
-    ILLEGAL = lambda: 2
-    PRON = lambda: 3
-    VULGAR = lambda: 4
-    GAMBLED_SCAMS = lambda: 5
-    VIOLENT = lambda: 6
-    PERSONAL_ATTACK = lambda: 7
-    BAD_FOR_YOUNGS = lambda: 10000
-    CLICKBAIT = lambda: 10013
-    POLITICAL_RUMORS = lambda: 10014
-    SOCIAL_RUMORS = lambda: 10015
-    UNREAL_EVENT = lambda: 10017
-    OTHER = lambda: 1
-    LEAD_WAR = lambda: 9
-    CANNOT_CHARGE = lambda: 10
-    ILLEGAL_POPULARIZE = lambda: 10018
-    ILLEGAL_OTHER = lambda: 10019
-    DANGEROUS = lambda: 10020
-    OTHER_NEW = lambda: 10022
-    COOPERATE_INFRINGEMENT = lambda: 10023
-    INFRINGEMENT = lambda: 10024
-    VIDEO_INFRINGEMENT = lambda: 10026
-    DISCOMFORT = lambda: 10021
-    ILLEGAL_URL = lambda: 10025
+    def ILLEGAL():
+        return 2
+    def PRON():
+        return 3
+    def VULGAR():
+        return 4
+    def GAMBLED_SCAMS():
+        return 5
+    def VIOLENT():
+        return 6
+    def PERSONAL_ATTACK():
+        return 7
+    def BAD_FOR_YOUNGS():
+        return 10000
+    def CLICKBAIT():
+        return 10013
+    def POLITICAL_RUMORS():
+        return 10014
+    def SOCIAL_RUMORS():
+        return 10015
+    def UNREAL_EVENT():
+        return 10017
+    def OTHER():
+        return 1
+    def LEAD_WAR():
+        return 9
+    def CANNOT_CHARGE():
+        return 10
+    def ILLEGAL_POPULARIZE():
+        return 10018
+    def ILLEGAL_OTHER():
+        return 10019
+    def DANGEROUS():
+        return 10020
+    def OTHER_NEW():
+        return 10022
+    def COOPERATE_INFRINGEMENT():
+        return 10023
+    def INFRINGEMENT():
+        return 10024
+    def VIDEO_INFRINGEMENT():
+        return 10026
+    def DISCOMFORT():
+        return 10021
+    def ILLEGAL_URL():
+        return 10025
 
     @staticmethod
     def PLAGIARISM(bvid: str):
@@ -149,9 +172,9 @@ class Video:
 
     def __init__(
         self,
-        bvid: Union[None, str] = None,
-        aid: Union[None, int] = None,
-        credential: Union[None, Credential] = None,
+        bvid: None | str = None,
+        aid: None | int = None,
+        credential: None | Credential = None,
     ):
         """
         Args:
@@ -174,7 +197,7 @@ class Video:
         self.credential: Credential = Credential() if credential is None else credential
 
         # 用于存储视频信息，避免接口依赖视频信息时重复调用
-        self.__info: Union[dict, None] = None
+        self.__info: dict | None = None
 
     def set_bvid(self, bvid: str) -> None:
         """
@@ -334,8 +357,8 @@ class Video:
         return info["owner"]["mid"]
 
     async def get_tags(
-        self, page_index: Union[int, None] = 0, cid: Union[int, None] = None
-    ) -> List[dict]:
+        self, page_index: int | None = 0, cid: int | None = None
+    ) -> list[dict]:
         """
         获取视频标签。
 
@@ -347,8 +370,8 @@ class Video:
         Returns:
             List[dict]: 调用 API 返回的结果。
         """
-        if cid == None:
-            if page_index == None:
+        if cid is None:
+            if page_index is None:
                 raise ArgsException("page_index 和 cid 至少提供一个。")
 
             cid = await self.get_cid(page_index=page_index)
@@ -381,7 +404,7 @@ class Video:
             await Api(**api, credential=self.credential).update_params(**params).result
         )
 
-    async def get_pages(self) -> List[dict]:
+    async def get_pages(self) -> list[dict]:
         """
         获取分 P 信息。
 
@@ -419,7 +442,7 @@ class Video:
 
     async def get_video_snapshot(
         self,
-        cid: Union[int, None] = None,
+        cid: int | None = None,
         json_index: bool = False,
         pvideo: bool = True,
     ) -> dict:
@@ -464,8 +487,8 @@ class Video:
 
     async def get_download_url(
         self,
-        page_index: Union[int, None] = None,
-        cid: Union[int, None] = None,
+        page_index: int | None = None,
+        cid: int | None = None,
         html5: bool = False,
     ) -> dict:
         """
@@ -634,9 +657,9 @@ class Video:
 
     async def get_ai_conclusion(
         self,
-        cid: Optional[int] = None,
-        page_index: Optional[int] = None,
-        up_mid: Optional[int] = None,
+        cid: int | None = None,
+        page_index: int | None = None,
+        up_mid: int | None = None,
     ) -> dict:
         """
         获取稿件 AI 总结结果。
@@ -672,7 +695,7 @@ class Video:
         )
 
     async def get_danmaku_view(
-        self, page_index: Union[int, None] = None, cid: Union[int, None] = None
+        self, page_index: int | None = None, cid: int | None = None
     ) -> dict:
         """
         获取弹幕设置、特殊弹幕、弹幕数量、弹幕分段等信息。
@@ -887,11 +910,11 @@ class Video:
     async def get_danmakus(
         self,
         page_index: int = 0,
-        date: Union[datetime.date, None] = None,
-        cid: Union[int, None] = None,
-        from_seg: Union[int, None] = None,
-        to_seg: Union[int, None] = None,
-    ) -> List[Danmaku]:
+        date: datetime.date | None = None,
+        cid: int | None = None,
+        from_seg: int | None = None,
+        to_seg: int | None = None,
+    ) -> list[Danmaku]:
         """
         获取弹幕。
 
@@ -933,9 +956,9 @@ class Video:
             from_seg = to_seg = 0
         else:
             api = API["danmaku"]["get_danmaku"]
-            if from_seg == None:
+            if from_seg is None:
                 from_seg = 0
-            if to_seg == None:
+            if to_seg is None:
                 info = await self.__get_info_cached()
                 for p in info["pages"]:
                     if p["cid"] == cid:
@@ -1037,8 +1060,8 @@ class Video:
         return danmakus
 
     async def get_special_dms(
-        self, page_index: int = 0, cid: Union[int, None] = None
-    ) -> List[SpecialDanmaku]:
+        self, page_index: int = 0, cid: int | None = None
+    ) -> list[SpecialDanmaku]:
         """
         获取特殊弹幕
 
@@ -1059,7 +1082,7 @@ class Video:
         view = await self.get_danmaku_view(cid=cid)
         if not view.get("special_dms"):
             return []
-        dms: List[SpecialDanmaku] = []
+        dms: list[SpecialDanmaku] = []
         for special_dms in view["special_dms"]:
             dm_content = await Api(
                 url=special_dms, method="GET", credential=self.credential
@@ -1099,10 +1122,10 @@ class Video:
 
     async def get_history_danmaku_index(
         self,
-        page_index: Union[int, None] = None,
-        date: Union[datetime.date, None] = None,
-        cid: Union[int, None] = None,
-    ) -> Union[None, List[str]]:
+        page_index: int | None = None,
+        date: datetime.date | None = None,
+        cid: int | None = None,
+    ) -> None | list[str]:
         """
         获取特定月份存在历史弹幕的日期。
 
@@ -1135,9 +1158,9 @@ class Video:
 
     async def has_liked_danmakus(
         self,
-        page_index: Union[int, None] = None,
-        ids: Union[List[int], None] = None,
-        cid: Union[int, None] = None,
+        page_index: int | None = None,
+        ids: list[int] | None = None,
+        cid: int | None = None,
     ) -> dict:
         """
         是否已点赞弹幕。
@@ -1171,9 +1194,9 @@ class Video:
 
     async def send_danmaku(
         self,
-        page_index: Union[int, None] = None,
-        danmaku: Union[Danmaku, None] = None,
-        cid: Union[int, None] = None,
+        page_index: int | None = None,
+        danmaku: Danmaku | None = None,
+        cid: int | None = None,
     ) -> dict:
         """
         发送弹幕。
@@ -1223,7 +1246,7 @@ class Video:
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_danmaku_xml(
-        self, page_index: Union[int, None] = None, cid: Union[int, None] = None
+        self, page_index: int | None = None, cid: int | None = None
     ) -> str:
         """
         获取所有弹幕的 xml 源文件（非装填）
@@ -1246,10 +1269,10 @@ class Video:
 
     async def like_danmaku(
         self,
-        page_index: Union[int, None] = None,
-        dmid: Union[int, None] = None,
-        status: Union[bool, None] = True,
-        cid: Union[int, None] = None,
+        page_index: int | None = None,
+        dmid: int | None = None,
+        status: bool | None = True,
+        cid: int | None = None,
     ) -> dict:
         """
         点赞弹幕。
@@ -1289,7 +1312,7 @@ class Video:
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_online(
-        self, cid: Optional[int] = None, page_index: Optional[int] = 0
+        self, cid: int | None = None, page_index: int | None = 0
     ) -> dict:
         """
         获取实时在线人数
@@ -1311,10 +1334,10 @@ class Video:
 
     async def operate_danmaku(
         self,
-        page_index: Union[int, None] = None,
-        dmids: Union[List[int], None] = None,
-        cid: Union[int, None] = None,
-        type_: Union[DanmakuOperatorType, None] = None,
+        page_index: int | None = None,
+        dmids: list[int] | None = None,
+        cid: int | None = None,
+        type_: DanmakuOperatorType | None = None,
     ) -> dict:
         """
         操作弹幕
@@ -1351,7 +1374,7 @@ class Video:
 
         data = {
             "type": 1,
-            "dmids": ",".join(map(lambda x: str(x), dmids)),
+            "dmids": ",".join(str(x) for x in dmids),
             "oid": cid,
             "state": type_.value,
         }
@@ -1494,7 +1517,7 @@ class Video:
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def set_favorite(
-        self, add_media_ids: List[int] = [], del_media_ids: List[int] = []
+        self, add_media_ids: list[int] = [], del_media_ids: list[int] = []
     ) -> dict:
         """
         设置视频收藏状况。
@@ -1521,14 +1544,14 @@ class Video:
         data = {
             "rid": await self.__get_aid(),
             "type": 2,
-            "add_media_ids": ",".join(map(lambda x: str(x), add_media_ids)),
-            "del_media_ids": ",".join(map(lambda x: str(x), del_media_ids)),
+            "add_media_ids": ",".join(str(x) for x in add_media_ids),
+            "del_media_ids": ",".join(str(x) for x in del_media_ids),
         }
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_subtitle(
         self,
-        cid: Union[int, None] = None,
+        cid: int | None = None,
     ) -> dict:
         """
         获取字幕信息
@@ -1546,8 +1569,8 @@ class Video:
 
     async def get_player_info(
         self,
-        cid: Union[int, None] = None,
-        epid: Union[int, None] = None,
+        cid: int | None = None,
+        epid: int | None = None,
     ) -> dict:
         """
         获取视频上一次播放的记录，字幕和地区信息。需要分集的 cid, 返回数据中含有json字幕的链接
@@ -1584,8 +1607,8 @@ class Video:
         data: dict,
         submit: bool,
         sign: bool,
-        page_index: Union[int, None] = None,
-        cid: Union[int, None] = None,
+        page_index: int | None = None,
+        cid: int | None = None,
     ) -> dict:
         """
         上传字幕
@@ -1683,9 +1706,9 @@ class Video:
 
     async def recall_danmaku(
         self,
-        page_index: Union[int, None] = None,
+        page_index: int | None = None,
         dmid: int = 0,
-        cid: Union[int, None] = None,
+        cid: int | None = None,
     ) -> dict:
         """
         撤回弹幕
@@ -1714,7 +1737,7 @@ class Video:
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def get_pbp(
-        self, page_index: Union[int, None] = None, cid: Union[int, None] = None
+        self, page_index: int | None = None, cid: int | None = None
     ) -> dict:
         """
         获取高能进度条
@@ -1772,8 +1795,8 @@ class Video:
     async def report_watch_history(
         self,
         progress: int = 0,
-        page_index: Union[int, None] = 0,
-        cid: Union[int, None] = None,
+        page_index: int | None = 0,
+        cid: int | None = None,
     ) -> dict:
         """
         上报观看历史
@@ -1805,7 +1828,7 @@ class Video:
             .request(raw=True)
         )
 
-    async def report_start_watching(self, page_index: Union[int, None] = 0) -> dict:
+    async def report_start_watching(self, page_index: int | None = 0) -> dict:
         """
         上报开始观看
         该接口亦被用于计算播放量, 播放量更新不是实时的
@@ -1899,10 +1922,10 @@ class VideoOnlineMonitor(AsyncEvent):
 
     def __init__(
         self,
-        bvid: Union[str, None] = None,
-        aid: Union[int, None] = None,
+        bvid: str | None = None,
+        aid: int | None = None,
         page_index: int = 0,
-        credential: Union[Credential, None] = None,
+        credential: Credential | None = None,
         debug: bool = False,
     ):
         """
@@ -2016,7 +2039,7 @@ class VideoOnlineMonitor(AsyncEvent):
             elif flag == BiliWsMsgType.CLOSED:
                 break
 
-    async def __handle_data(self, data: List[dict]):
+    async def __handle_data(self, data: list[dict]):
         """
         处理数据。
 
@@ -2344,28 +2367,23 @@ class VideoDownloadURLDataDetecter:
         audio_max_quality: AudioQuality = AudioQuality._192K,
         video_min_quality: VideoQuality = VideoQuality._360P,
         audio_min_quality: AudioQuality = AudioQuality._64K,
-        video_accepted_qualities: List[VideoQuality] = [
+        video_accepted_qualities: list[VideoQuality] = [
             item
             for _, item in VideoQuality.__dict__.items()
             if isinstance(item, VideoQuality)
         ],
-        audio_accepted_qualities: List[AudioQuality] = [
+        audio_accepted_qualities: list[AudioQuality] = [
             item
             for _, item in AudioQuality.__dict__.items()
             if isinstance(item, AudioQuality)
         ],
-        codecs: List[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
+        codecs: list[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
         no_dolby_video: bool = False,
         no_dolby_audio: bool = False,
         no_hdr: bool = False,
         no_hires: bool = False,
-    ) -> List[
-        Union[
-            VideoStreamDownloadURL,
-            AudioStreamDownloadURL,
-            FLVStreamDownloadURL,
-            MP4StreamDownloadURL,
-        ]
+    ) -> list[
+        VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | MP4StreamDownloadURL
     ]:
         """
         解析数据
@@ -2445,7 +2463,7 @@ class VideoDownloadURLDataDetecter:
                     if val.value in video_data["codecs"]:
                         video_stream_codecs = val
                 if (video_stream_codecs not in codecs) and (
-                    video_stream_codecs != None
+                    video_stream_codecs is not None
                 ):
                     continue
                 video_stream = VideoStreamDownloadURL(
@@ -2496,28 +2514,23 @@ class VideoDownloadURLDataDetecter:
         audio_max_quality: AudioQuality = AudioQuality._192K,
         video_min_quality: VideoQuality = VideoQuality._360P,
         audio_min_quality: AudioQuality = AudioQuality._64K,
-        video_accepted_qualities: List[VideoQuality] = [
+        video_accepted_qualities: list[VideoQuality] = [
             item
             for _, item in VideoQuality.__dict__.items()
             if isinstance(item, VideoQuality)
         ],
-        audio_accepted_qualities: List[AudioQuality] = [
+        audio_accepted_qualities: list[AudioQuality] = [
             item
             for _, item in AudioQuality.__dict__.items()
             if isinstance(item, AudioQuality)
         ],
-        codecs: List[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
+        codecs: list[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
         no_dolby_video: bool = False,
         no_dolby_audio: bool = False,
         no_hdr: bool = False,
         no_hires: bool = False,
-    ) -> List[
-        Union[
-            VideoStreamDownloadURL,
-            AudioStreamDownloadURL,
-            FLVStreamDownloadURL,
-            MP4StreamDownloadURL,
-        ]
+    ) -> list[
+        VideoStreamDownloadURL | AudioStreamDownloadURL | FLVStreamDownloadURL | MP4StreamDownloadURL
     ]:
         """
         提取出分辨率、音质等信息最好的音视频流。

@@ -18,7 +18,6 @@ bilibili_api.comment
 
 from enum import Enum
 import json
-from typing import List, Optional, Union
 
 from .dynamic import upload_image
 from .exceptions.ArgsException import ArgsException
@@ -126,7 +125,7 @@ class Comment:
         oid: int,
         type_: CommentResourceType,
         rpid: int,
-        credential: Union[Credential, None] = None,
+        credential: Credential | None = None,
     ):
         """
         Args:
@@ -292,7 +291,7 @@ class Comment:
         )
 
     async def report(
-        self, report_reason: ReportReason, content: Optional[str] = None
+        self, report_reason: ReportReason, content: str | None = None
     ) -> dict:
         """
         举报评论
@@ -346,10 +345,10 @@ async def send_comment(
     text: str,
     oid: int,
     type_: CommentResourceType,
-    root: Union[int, None] = None,
-    parent: Union[int, None] = None,
-    credential: Union[None, Credential] = None,
-    pic: Union[Picture, List[Picture], None] = None,
+    root: int | None = None,
+    parent: int | None = None,
+    credential: None | Credential = None,
+    pic: Picture | list[Picture] | None = None,
 ) -> dict:
     """
     通用发送评论 API。
@@ -435,7 +434,7 @@ async def get_comments(
     type_: CommentResourceType,
     page_index: int = 1,
     order: OrderType = OrderType.TIME,
-    credential: Union[Credential, None] = None,
+    credential: Credential | None = None,
 ) -> dict:
     """
     获取资源评论列表。
@@ -469,7 +468,7 @@ async def get_comments_lazy(
     type_: CommentResourceType,
     offset: str = "",
     order: OrderType = OrderType.TIME,
-    credential: Union[Credential, None] = None,
+    credential: Credential | None = None,
 ) -> dict:
     """
     新版获取资源评论列表。

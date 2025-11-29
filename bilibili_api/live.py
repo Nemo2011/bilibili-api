@@ -11,7 +11,7 @@ import json
 import logging
 import struct
 import time
-from typing import Any, List, Union
+from typing import Any
 
 import brotli
 
@@ -113,7 +113,7 @@ class LiveRoom:
     """
 
     def __init__(
-        self, room_display_id: int, credential: Union[Credential, None] = None
+        self, room_display_id: int, credential: Credential | None = None
     ):
         """
         Args:
@@ -263,8 +263,8 @@ class LiveRoom:
     async def get_fan_model(
         self,
         page_num: int = 1,
-        target_id: Union[int, None] = None,
-        roomId: Union[int, None] = None,
+        target_id: int | None = None,
+        roomId: int | None = None,
     ) -> dict:
         """
         获取自己的粉丝勋章信息
@@ -538,7 +538,7 @@ class LiveRoom:
         return await Api(**api, credential=self.credential).update_data(**data).result
 
     async def send_danmaku(
-        self, danmaku: Danmaku, room_id: int = None, reply_mid: int = None
+        self, danmaku: Danmaku, room_id: int | None = None, reply_mid: int | None = None
     ) -> dict:
         """
         直播间发送弹幕
@@ -570,7 +570,7 @@ class LiveRoom:
             data["reply_mid"] = reply_mid
         return await Api(**api, credential=self.credential).update_data(**data).result
 
-    async def send_emoticon(self, emoticon: Danmaku, room_id: int = None) -> dict:
+    async def send_emoticon(self, emoticon: Danmaku, room_id: int | None = None) -> dict:
         """
         直播间发送表情包
 
@@ -1356,7 +1356,7 @@ class LiveDanmaku(AsyncEvent):
         self,
         room_display_id: int,
         debug: bool = False,
-        credential: Union[Credential, None] = None,
+        credential: Credential | None = None,
         max_retry: int = 5,
         retry_after: float = 1,
         max_retry_for_credential: int = 5,
@@ -1479,7 +1479,7 @@ class LiveDanmaku(AsyncEvent):
         # 连接直播间
         self.logger.debug("准备连接直播间")
         self.__client = get_client()
-        available_hosts: List[dict] = conf["host_list"][::-1]
+        available_hosts: list[dict] = conf["host_list"][::-1]
         retry = self.max_retry
         host = None
 
@@ -1779,7 +1779,7 @@ class LiveDanmaku(AsyncEvent):
         return bytes(sendData)
 
     @staticmethod
-    def __unpack(data: bytes) -> List[Any]:
+    def __unpack(data: bytes) -> list[Any]:
         """
         解包数据
         """
@@ -1856,7 +1856,7 @@ async def get_self_live_info(credential: Credential) -> dict:
 
 
 async def get_self_dahanghai_info(
-    page: int = 1, page_size: int = 10, credential: Union[Credential, None] = None
+    page: int = 1, page_size: int = 10, credential: Credential | None = None
 ) -> dict:
     """
     获取自己开通的大航海信息
@@ -1903,9 +1903,9 @@ async def get_self_bag(credential: Credential) -> dict:
 
 
 async def get_gift_config(
-    room_id: Union[int, None] = None,
-    area_id: Union[int, None] = None,
-    area_parent_id: Union[int, None] = None,
+    room_id: int | None = None,
+    area_id: int | None = None,
+    area_parent_id: int | None = None,
 ):
     """
     获取所有礼物的信息，包括礼物 id、名称、价格、等级等。
@@ -1945,7 +1945,7 @@ async def get_area_info() -> dict:
 
 
 async def get_live_followers_info(
-    need_recommend: bool = True, credential: Union[Credential, None] = None
+    need_recommend: bool = True, credential: Credential | None = None
 ) -> dict:
     """
     获取关注列表中正在直播的直播间信息，包括房间直播热度，房间名称及标题，清晰度，是否官方认证等信息。
@@ -1967,7 +1967,7 @@ async def get_live_followers_info(
 
 
 async def get_unlive_followers_info(
-    page: int = 1, page_size: int = 30, credential: Union[Credential, None] = None
+    page: int = 1, page_size: int = 30, credential: Credential | None = None
 ) -> dict:
     """
     获取关注列表中未在直播的直播间信息，包括上次开播时间，上次开播的类别，直播间公告，是否有录播等。

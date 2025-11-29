@@ -7,7 +7,6 @@ bilibili_api.music
 """
 
 from enum import Enum
-from typing import Optional
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api
@@ -105,7 +104,7 @@ class MusicIndexTags:
         OTHER = 23
 
 
-async def get_homepage_recommend(credential: Optional[Credential] = None):
+async def get_homepage_recommend(credential: Credential | None = None):
     """
     获取音频首页推荐
 

@@ -5,7 +5,6 @@ bilibili_api.app
 """
 
 import time
-from typing import Union
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api
@@ -20,7 +19,7 @@ async def get_loading_images(
     width: int = 1080,
     build: int = 999999999,
     birth: str = "",
-    credential: Union[Credential, None] = None,
+    credential: Credential | None = None,
 ):
     """
     获取开屏启动画面
@@ -62,7 +61,7 @@ async def get_loading_images_special(
     platform: str = "android",
     height: int = 1920,
     width: int = 1080,
-    credential: Union[Credential, None] = None,
+    credential: Credential | None = None,
 ):
     """
     获取特殊开屏启动画面

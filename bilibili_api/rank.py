@@ -5,7 +5,6 @@ bilibili_api.rank
 """
 
 from enum import Enum
-from typing import Union
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api
@@ -372,7 +371,7 @@ async def get_live_user_medal_rank(pn: int = 1, ps: int = 20) -> dict:
 
 
 async def subscribe_music_rank(
-    status: bool = True, credential: Union[Credential, None] = None
+    status: bool = True, credential: Credential | None = None
 ) -> dict:
     """
     设置关注全站音乐榜

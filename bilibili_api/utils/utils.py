@@ -8,7 +8,7 @@ from datetime import datetime
 import json
 import os
 import random
-from typing import List, TypeVar
+from typing import TypeVar
 from urllib.parse import quote
 
 from ..exceptions import StatementException
@@ -151,13 +151,13 @@ def join(seperator: str, array: list):
     Returns:
         str: 连接结果
     """
-    return seperator.join(map(lambda x: str(x), array))
+    return seperator.join(str(x) for x in array)
 
 
-ChunkT = TypeVar("ChunkT", List, List)
+ChunkT = TypeVar("ChunkT", list, list)
 
 
-def chunk(arr: ChunkT, size: int) -> List[ChunkT]:
+def chunk(arr: ChunkT, size: int) -> list[ChunkT]:
     if size <= 0:
         raise Exception('Parameter "size" must greater than 0')
 

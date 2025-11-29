@@ -8,7 +8,7 @@ bilibili_api.watchroom
 
 from enum import Enum
 import time
-from typing import Dict, List, Union
+from typing import Union
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api
@@ -16,7 +16,7 @@ from .utils.utils import get_api
 API = get_api("watchroom")
 
 
-watch_room_bangumi_cache: Dict[int, List[int]] = {}
+watch_room_bangumi_cache: dict[int, list[int]] = {}
 
 
 class SeasonType(Enum):
@@ -76,8 +76,8 @@ class Message:
     消息集合
     """
 
-    def __init__(self, *messages: Union[MessageSegment, str]):
-        self.msg_list: List[MessageSegment] = []
+    def __init__(self, *messages: MessageSegment | str):
+        self.msg_list: list[MessageSegment] = []
         for msg in messages:
             if isinstance(msg, str):
                 self.msg_list.append(MessageSegment(msg))
@@ -231,7 +231,7 @@ class WatchRoom:
             .result
         )
 
-    async def progress(self, progress: int = None, status: int = 1) -> None:
+    async def progress(self, progress: int | None = None, status: int = 1) -> None:
         """
         设置播放状态，包括暂停与进度条
 
@@ -296,7 +296,7 @@ class WatchRoom:
         data = {
             "room_id": self.get_room_id(),
             "content_type": 0,
-            "content": '{"text":"%s"}' % msg,
+            "content": f'{{"text":"{msg}"}}',
             "req_id": int(time.time()) * 1000,
             "platform": "web",
             "csrf": self.credential.bili_jct,

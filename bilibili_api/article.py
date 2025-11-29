@@ -8,7 +8,7 @@ from copy import copy
 from enum import Enum
 import html
 import re
-from typing import List, TypeVar, Union, overload
+from typing import TypeVar, overload
 from urllib.parse import unquote
 
 from bs4 import BeautifulSoup, element
@@ -101,7 +101,7 @@ class ArticleList:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, rlid: int, credential: Union[Credential, None] = None):
+    def __init__(self, rlid: int, credential: Credential | None = None):
         """
         Args:
             rlid       (int)                        : 文集 id
@@ -142,14 +142,14 @@ class Article:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, cvid: int, credential: Union[Credential, None] = None):
+    def __init__(self, cvid: int, credential: Credential | None = None):
         """
         Args:
             cvid       (int)                        : cv 号
 
             credential (Credential | None, optional): 凭据. Defaults to None.
         """
-        self.__children: List[Node] = []
+        self.__children: list[Node] = []
         self.credential: Credential = (
             credential if credential is not None else Credential()
         )
@@ -266,7 +266,7 @@ class Article:
         return {
             "type": "Article",
             "meta": self.__meta,
-            "children": list(map(lambda x: x.json(), self.__children)),
+            "children": [x.json() for x in self.__children],
         }
 
     async def fetch_content(self) -> None:
@@ -375,7 +375,7 @@ class Article:
 
                         if "img-box" in className:
                             img_el: BeautifulSoup = e.find("img")  # type: ignore
-                            if img_el == None:
+                            if img_el is None:
                                 pass
                             elif "class" in img_el.attrs:
                                 className = img_el.attrs["class"]
@@ -690,7 +690,7 @@ class ParagraphNode(Node):
     def json(self):
         return {
             "type": "ParagraphNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -707,7 +707,7 @@ class HeadingNode(Node):
     def json(self):
         return {
             "type": "HeadingNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -725,7 +725,7 @@ class BlockquoteNode(Node):
     def json(self):
         return {
             "type": "BlockquoteNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -742,7 +742,7 @@ class ItalicNode(Node):
     def json(self):
         return {
             "type": "ItalicNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -759,7 +759,7 @@ class BoldNode(Node):
     def json(self):
         return {
             "type": "BoldNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -776,7 +776,7 @@ class DelNode(Node):
     def json(self):
         return {
             "type": "DelNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -793,7 +793,7 @@ class UnderlineNode(Node):
     def json(self):
         return {
             "type": "UnderlineNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -807,7 +807,7 @@ class UlNode(Node):
     def json(self):
         return {
             "type": "UlNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -824,7 +824,7 @@ class OlNode(Node):
     def json(self):
         return {
             "type": "OlNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -838,7 +838,7 @@ class LiNode(Node):
     def json(self):
         return {
             "type": "LiNode",
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -854,7 +854,7 @@ class ColorNode(Node):
         return {
             "type": "ColorNode",
             "color": self.color,
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 
@@ -870,7 +870,7 @@ class FontSizeNode(Node):
         return {
             "type": "FontSizeNode",
             "size": self.size,
-            "children": list(map(lambda x: x.json(), self.children)),
+            "children": [x.json() for x in self.children],
         }
 
 

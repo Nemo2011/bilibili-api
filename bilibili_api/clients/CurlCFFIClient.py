@@ -5,7 +5,6 @@ CurlCFFIClient 实现
 """
 
 import asyncio
-from typing import Dict, Optional, Tuple, Union
 
 import curl_cffi  # pylint: disable=E0401
 from curl_cffi import requests  # pylint: disable=E0401
@@ -31,7 +30,7 @@ class CurlCFFIClient(BiliAPIClient):
         trust_env: bool = True,
         impersonate: str = "",
         http2: bool = False,
-        session: Optional[requests.AsyncSession] = None,
+        session: requests.AsyncSession | None = None,
     ) -> None:
         """
         Args:
@@ -58,11 +57,9 @@ class CurlCFFIClient(BiliAPIClient):
                 impersonate=impersonate,
                 http_version=(curl_cffi.CurlHttpVersion.V2_0 if http2 else None),
             )
-        self.__ws: Dict[int, requests.AsyncWebSocket] = {}
+        self.__ws: dict[int, requests.AsyncWebSocket] = {}
         self.__ws_cnt: int = 0
-        self.__ws_need_close: Dict[int, bool] = {}
-        self.__ws_is_closed: Dict[int, bool] = {}
-        self.__downloads: Dict[int, requests.Response] = {}
+        self.__downloads: dict[int, requests.Response] = {}
         self.__download_cnt: int = 0
 
         self.__ws_cnt_lock = asyncio.Lock()
@@ -106,8 +103,8 @@ class CurlCFFIClient(BiliAPIClient):
         method: str = "",
         url: str = "",
         params: dict = {},
-        data: Union[dict, str, bytes] = {},
-        files: Dict[str, BiliAPIFile] = {},
+        data: dict | str | bytes = {},
+        files: dict[str, BiliAPIFile] = {},
         headers: dict = {},
         cookies: dict = {},
         allow_redirects: bool = True,
@@ -204,17 +201,13 @@ class CurlCFFIClient(BiliAPIClient):
         self.__ws_cnt_lock.release()
         ws = await self.__session.ws_connect(url, params=params, headers=headers)
         self.__ws[cnt] = ws
-        self.__ws_is_closed[cnt] = False
-        self.__ws_need_close[cnt] = False
         return cnt
 
     async def ws_send(self, cnt: int, data: bytes) -> None:
-        if self.__ws_need_close[cnt] or self.__ws_is_closed[cnt]:
-            return
         ws = self.__ws[cnt]
         await ws.send_binary(data)
 
-    async def ws_recv(self, cnt: int) -> Tuple[bytes, BiliWsMsgType]:
+    async def ws_recv(self, cnt: int) -> tuple[bytes, BiliWsMsgType]:
         ws = self.__ws[cnt]
         try:
             msg, flags = await ws.recv()

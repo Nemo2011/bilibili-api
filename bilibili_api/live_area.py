@@ -5,7 +5,6 @@ bilibili_api.live_area
 """
 
 import copy
-from typing import Dict, List, Optional, Tuple, Union
 
 from .exceptions import ApiException
 from .live import get_area_info
@@ -31,7 +30,7 @@ async def fetch_live_area_data() -> None:
     live_area_data = await get_area_info()
 
 
-def get_area_info_by_id(id: int) -> Tuple[Union[dict, None], Union[dict, None]]:
+def get_area_info_by_id(id: int) -> tuple[dict | None, dict | None]:
     """
     根据 id 获取分区信息。
 
@@ -63,7 +62,7 @@ def get_area_info_by_id(id: int) -> Tuple[Union[dict, None], Union[dict, None]]:
         return None, None
 
 
-def get_area_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, None]]:
+def get_area_info_by_name(name: str) -> tuple[dict | None, dict | None]:
     """
     根据频道名称获取频道信息。
 
@@ -89,7 +88,7 @@ def get_area_info_by_name(name: str) -> Tuple[Union[dict, None], Union[dict, Non
         return None, None
 
 
-def get_area_list() -> List[Dict]:
+def get_area_list() -> list[dict]:
     """
     获取所有分区的数据
 
@@ -132,7 +131,7 @@ async def get_list_by_area(
     area_id: int,
     page: int = 1,
     order: str = "",
-    credential: Optional[Credential] = None,
+    credential: Credential | None = None,
 ) -> dict:
     """
     根据分区获取直播间列表
@@ -152,7 +151,7 @@ async def get_list_by_area(
     credential = credential if credential else Credential()
     api = API["info"]["list"]
     parent_area_id = get_area_info_by_id(area_id)[0]["id"]
-    area_id = 0 if (get_area_info_by_id(area_id)[1] == None) else area_id
+    area_id = 0 if (get_area_info_by_id(area_id)[1] is None) else area_id
     params = {
         "platform": "web",
         "parent_area_id": parent_area_id,

@@ -4,7 +4,6 @@ bilibili_api.audio
 音频相关
 """
 
-from typing import Union
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api
@@ -20,7 +19,7 @@ class Audio:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, auid: int, credential: Union[Credential, None] = None):
+    def __init__(self, auid: int, credential: Credential | None = None):
         """
         Args:
             auid       (int)                        : 音频 AU 号
@@ -109,7 +108,7 @@ class AudioList:
         credential (Credential): 凭据类
     """
 
-    def __init__(self, amid: int, credential: Union[Credential, None] = None):
+    def __init__(self, amid: int, credential: Credential | None = None):
         """
         Args:
             amid       (int)                        : 歌单 ID
@@ -178,7 +177,7 @@ class AudioList:
     # TODO: 歌单编辑
 
 
-async def get_user_stat(uid: int, credential: Union[Credential, None] = None) -> dict:
+async def get_user_stat(uid: int, credential: Credential | None = None) -> dict:
     """
     获取用户数据（收听数，粉丝数等）
 
@@ -197,7 +196,7 @@ async def get_user_stat(uid: int, credential: Union[Credential, None] = None) ->
 
 
 async def get_hot_song_list(
-    pn: int = 1, credential: Union[Credential, None] = None
+    pn: int = 1, credential: Credential | None = None
 ) -> dict:
     """
     获取热门歌单

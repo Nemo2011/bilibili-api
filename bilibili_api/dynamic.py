@@ -9,7 +9,7 @@ from enum import Enum
 import json
 import re
 import sys
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any
 
 import yaml
 
@@ -95,7 +95,7 @@ async def _uid2name(uid: int, credential: Credential) -> str:
     return uid2uname[uid]
 
 
-async def _parse_at(text: str, credential: Credential) -> Tuple[str, str, str]:
+async def _parse_at(text: str, credential: Credential) -> tuple[str, str, str]:
     """
     解析文本中的@提及，其格式为“@用户名 ”（以空格结尾）或“@用户名:”。
 
@@ -169,7 +169,7 @@ async def _get_text_data(text: str, credential: Credential) -> dict:
 
 
 async def upload_image(
-    image: Picture, credential: Credential, data: dict = None
+    image: Picture, credential: Credential, data: dict | None = None
 ) -> dict:
     """
     上传动态图片
@@ -223,11 +223,11 @@ class BuildDynamic:
         构建动态内容
         """
         self.contents: list = []
-        self.pics: List[Picture] = []
-        self.attach_card: Optional[dict] = None
-        self.topic: Optional[dict] = None
+        self.pics: list[Picture] = []
+        self.attach_card: dict | None = None
+        self.topic: dict | None = None
         self.options: dict = {}
-        self.time: Optional[datetime] = None
+        self.time: datetime | None = None
 
     @staticmethod
     def empty():
@@ -239,11 +239,11 @@ class BuildDynamic:
     @staticmethod
     def create_by_args(
         text: str = "",
-        pics: List[Picture] = [],
+        pics: list[Picture] = [],
         topic_id: int = -1,
         vote_id: int = -1,
         live_reserve_id: int = -1,
-        send_time: Union[datetime, None] = None,
+        send_time: datetime | None = None,
     ):
         """
         通过参数构建动态
@@ -270,7 +270,7 @@ class BuildDynamic:
             dyn.add_vote(vote.Vote(vote_id=vote_id))
         if live_reserve_id != -1:
             dyn.set_attach_card(live_reserve_id)
-        if send_time != None:
+        if send_time is not None:
             dyn.set_send_time(send_time)
         return dyn
 
@@ -335,7 +335,7 @@ class BuildDynamic:
         )
         return self
 
-    def add_image(self, image: Union[List[Picture], Picture]) -> "BuildDynamic":
+    def add_image(self, image: list[Picture] | Picture) -> "BuildDynamic":
         """
         添加图片
 
@@ -355,7 +355,7 @@ class BuildDynamic:
             text (str): 文本内容
         """
 
-        def _get_ats(text: str) -> List:
+        def _get_ats(text: str) -> list:
             text += " "
             pattern = re.compile(r"(?<=@).*?(?=\s)")
             match_result = re.finditer(pattern, text)
@@ -379,7 +379,7 @@ class BuildDynamic:
                 )
             return data
 
-        def _get_emojis(text: str) -> List:
+        def _get_emojis(text: str) -> list:
             pattern = re.compile(r"(?<=\[).*?(?=\])")
             match_result = re.finditer(pattern, text)
             emotes = []
@@ -404,8 +404,8 @@ class BuildDynamic:
 
         all_at_and_emoji = _get_ats(text) + _get_emojis(text)
 
-        def split_text_to_plain_at_and_emoji(text: str, at_and_emoji: List):
-            def base_split(texts: List[str], at_and_emoji: List, last_length: int):
+        def split_text_to_plain_at_and_emoji(text: str, at_and_emoji: list):
+            def base_split(texts: list[str], at_and_emoji: list, last_length: int):
                 if len(at_and_emoji) == 0:
                     return texts
                 last_piece_of_text = texts.pop(-1)
@@ -570,7 +570,7 @@ class BuildDynamic:
         """
         return self.pics
 
-    def get_attach_card(self) -> Optional[dict]:
+    def get_attach_card(self) -> dict | None:
         """
         获取动态预约
 
@@ -579,7 +579,7 @@ class BuildDynamic:
         """
         return self.attach_card
 
-    def get_topic(self) -> Optional[dict]:
+    def get_topic(self) -> dict | None:
         """
         获取动态话题
 
@@ -724,7 +724,7 @@ class Dynamic:
     """
 
     def __init__(
-        self, dynamic_id: int, credential: Union[Credential, None] = None
+        self, dynamic_id: int, credential: Credential | None = None
     ) -> None:
         """
         Args:
@@ -917,8 +917,6 @@ class Dynamic:
                     ret += f"{text} "
             ret += "\n\n"
             for pic in pics:
-                width = pic["width"]
-                height = pic["height"]
                 url = pic["url"]
                 if url.startswith("//"):
                     url = f"https:{url}"
@@ -1158,7 +1156,7 @@ class Dynamic:
         )
 
 
-async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> dict:
+async def get_new_dynamic_users(credential: Credential | None = None) -> dict:
     """
     获取更新动态的关注者
 
@@ -1175,7 +1173,7 @@ async def get_new_dynamic_users(credential: Union[Credential, None] = None) -> d
 
 
 async def get_live_users(
-    size: int = 10, credential: Union[Credential, None] = None
+    size: int = 10, credential: Credential | None = None
 ) -> dict:
     """
     获取正在直播的关注者
@@ -1211,11 +1209,11 @@ async def get_dynamic_page_UPs_info(credential: Credential) -> dict:
 
 async def get_dynamic_page_info(
     credential: Credential,
-    _type: Optional[DynamicType] = None,
-    host_mid: Optional[int] = None,
+    _type: DynamicType | None = None,
+    host_mid: int | None = None,
     features: str = "itemOpusStyle",
     pn: int = 1,
-    offset: Optional[int] = None,
+    offset: int | None = None,
 ) -> dict:
     """
     获取动态页动态信息
@@ -1262,12 +1260,12 @@ async def get_dynamic_page_info(
 
 async def get_dynamic_page_list(
     credential: Credential,
-    _type: Optional[DynamicType] = None,
-    host_mid: Optional[int] = None,
+    _type: DynamicType | None = None,
+    host_mid: int | None = None,
     features: str = "itemOpusStyle",
     pn: int = 1,
-    offset: Optional[int] = None,
-) -> List[Dynamic]:
+    offset: int | None = None,
+) -> list[Dynamic]:
     """
     获取动态页动态列表
 
