@@ -222,6 +222,7 @@ class HTTPXClient(BiliAPIClient):
 
     async def close(self) -> None:
         await self.__session.aclose()
+        del self.__session
 
     get_wrapped_session.__doc__ = BiliAPIClient.get_wrapped_session.__doc__
     set_proxy.__doc__ = BiliAPIClient.set_proxy.__doc__

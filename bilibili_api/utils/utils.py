@@ -70,7 +70,7 @@ def crack_uid(crc32: str):
     __create_table()
 
     def __crc32(input_):
-        if type(input_) != str:
+        if not isinstance(input_, str):
             input_ = str(input_)
         crcstart = 0xFFFFFFFF
         len_ = len(input_)
@@ -80,7 +80,7 @@ def crack_uid(crc32: str):
         return crcstart
 
     def __crc32lastindex(input_):
-        if type(input_) != str:
+        if not isinstance(input_, str):
             input_ = str(input_)
         crcstart = 0xFFFFFFFF
         len_ = len(input_)

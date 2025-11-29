@@ -242,7 +242,7 @@ class Article:
         for node in self.__children:
             try:
                 markdown_text = node.markdown()
-            except:
+            except Exception:
                 continue
             else:
                 content += markdown_text
@@ -284,7 +284,7 @@ class Article:
             node_list = []
 
             for e in el.contents:  # type: ignore
-                if type(e) == element.NavigableString:
+                if isinstance(e, element.NavigableString):
                     # 文本节点
                     node = TextNode(e)  # type: ignore
                     node_list.append(node)

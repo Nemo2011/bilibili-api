@@ -1780,20 +1780,19 @@ def __clean() -> None:
     """
     程序退出清理操作。
     """
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        return
+    global session_pool
 
-    async def __clean_task():
-        for _, pool in session_pool.items():
-            for _, client in pool.items():
-                await client.close()
+    loops: set[asyncio.AbstractEventLoop] = set()
+    tasks: set[asyncio.Task] = set()
 
-    if loop.is_closed():
-        loop.run_until_complete(__clean_task())
-    else:
-        loop.create_task(__clean_task())
+    for _, pool in session_pool.items():
+        for loop, client in list(pool.items()):
+            if not loop.is_closed():
+                loops.add(loop)
+                task = loop.create_task(client.close())
+                tasks.add(task)
+                task.add_done_callback(tasks.discard)
+                task.add_done_callback(pool.pop(loop))
 
 
 ################################################## END Session Management ##################################################

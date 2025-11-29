@@ -14,10 +14,10 @@ from typing import Any, TypeVar
 T = TypeVar("T")
 
 
-def __ensure_event_loop() -> None:
+def __ensure_event_loop() -> asyncio.AbstractEventLoop:
     try:
         asyncio.get_event_loop()
-    except:
+    except Exception:
         asyncio.set_event_loop(asyncio.new_event_loop())
     return asyncio.get_event_loop()
 

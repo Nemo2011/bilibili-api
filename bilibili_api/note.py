@@ -218,7 +218,7 @@ class Note:
         result = []
         content = (await self.__get_info_cached())["content"]
         for line in content:
-            if type(line["insert"]) == dict:
+            if isinstance(line["insert"], dict):
                 if "imageUpload" in line["insert"]:
                     img_info = line["insert"]["imageUpload"]
                     result.append(img_info)

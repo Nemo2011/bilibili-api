@@ -225,11 +225,12 @@ class CurlCFFIClient(BiliAPIClient):
         return (msg, BiliWsMsgType.BINARY)
 
     async def ws_close(self, cnt: int) -> None:
-        ws = self.__ws[cnt]
-        await ws.close()
+        await self.__ws[cnt].close()
+        del self.__ws[cnt]
 
     async def close(self) -> None:
         await self.__session.close()
+        del self.__session
 
     get_wrapped_session.__doc__ = BiliAPIClient.get_wrapped_session.__doc__
     set_proxy.__doc__ = BiliAPIClient.set_proxy.__doc__

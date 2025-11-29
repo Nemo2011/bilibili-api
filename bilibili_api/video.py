@@ -2050,7 +2050,7 @@ class VideoOnlineMonitor(AsyncEvent):
         while True:
             try:
                 data, flag = await self.__client.ws_recv(cnt=self.__ws)
-            except:
+            except Exception:
                 self.logger.warning("连接被异常断开")
                 await self.__cancel_all_tasks()
                 self.dispatch("ERROR", "")

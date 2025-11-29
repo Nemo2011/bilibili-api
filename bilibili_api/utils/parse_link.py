@@ -15,7 +15,6 @@ from ..bangumi import Bangumi, Episode
 from ..black_room import BlackRoom
 from ..cheese import CheeseList, CheeseVideo
 from ..dynamic import Dynamic
-from ..exceptions import *
 from ..favorite_list import FavoriteList, FavoriteListType
 from ..game import Game
 from ..garb import DLC
@@ -448,7 +447,7 @@ def parse_season_series(url: URL, credential: Credential) -> ChannelSeries | int
         if len(url.parts) >= 2:  # path 存在 uid
             try:
                 uid = int(url.parts[1])
-            except:
+            except Exception:
                 pass  # uid 无效
             else:
                 if len(url.parts) >= 4:  # path 存在 collectiondetail 或者 seriesdetail
@@ -529,7 +528,7 @@ async def parse_space_favorite_list(
                     try:  # 尝试转换为 int 类型并设置 fid_is_int
                         fid = int(fid)  # type: ignore
                         fid_is_int = True
-                    except:
+                    except Exception:
                         fid_is_int = False
                     if ctype is None and fid_is_int:
                         # 我的视频收藏夹

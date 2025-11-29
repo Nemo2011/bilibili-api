@@ -15,6 +15,7 @@ import json
 import os
 import re
 import time
+from typing import Any, ClassVar
 
 from .exceptions.ApiException import ApiException
 from .exceptions.NetworkException import NetworkException
@@ -222,7 +223,7 @@ async def get_available_topics(tid: int, credential: Credential) -> list[dict]:
     ]
 
 
-class VideoPorderType:
+class VideoPorderType(Enum):
     """
     视频商业类型
 
@@ -230,8 +231,8 @@ class VideoPorderType:
     + OTHER: 其他
     """
 
-    FIREWORK = {"flow_id": 1}
-    OTHER = {
+    FIREWORK: ClassVar[dict[str, Any]] = {"flow_id": 1}
+    OTHER: ClassVar[dict[str, Any]] = {
         "flow_id": 1,
         "industry_id": None,
         "official": None,
@@ -311,24 +312,24 @@ class VideoPorderMeta:
     视频商业相关参数
     """
 
-    flow_id: int
-    industry_id: int | None = None
-    official: int | None = None
-    brand_name: str | None = None
-    show_types: list[VideoPorderShowType] = []
-
     __info: dict = None
 
     def __init__(
         self,
-        porden_type: VideoPorderType = VideoPorderType.FIREWORK,
+        porder_type: VideoPorderType = VideoPorderType.FIREWORK,
         industry_type: VideoPorderIndustry | None = None,
         brand_name: str | None = None,
         show_types: list[VideoPorderShowType] = [],
     ):
-        self.flow_id = 1
-        self.__info = porden_type.value
-        if porden_type == VideoPorderType.OTHER:
+        """
+        Args:
+            porder_type (VideoPorderType, optional): 商业平台类型. Defaults to VideoPorderType.FIREWORK.
+            industry_type (VideoPorderIndustry | None, optional): 商单行业，非花火填写. Defaults to None.
+            brand_name (str | None, optional): 品牌名，非花火填写. Defaults to None.
+            show_types (list[VideoPorderShowType], optional): 商单形式，非花火填写. Defaults to [].
+        """
+        self.__info = porder_type.value
+        if porder_type == VideoPorderType.OTHER:
             self.__info["industry"] = industry_type.value
             self.__info["brand_name"] = brand_name
             self.__info["show_types"] = ",".join(

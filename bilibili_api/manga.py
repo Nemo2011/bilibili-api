@@ -6,6 +6,7 @@ bilibili_api.manga
 
 import datetime
 from enum import Enum
+from typing import ClassVar
 
 from bilibili_api.utils.network import Api, Credential
 from bilibili_api.utils.utils import get_api
@@ -23,10 +24,10 @@ class MangaOrderType(Enum):
     - FREE: 等免
     """
 
-    FOLLOW = {"order": 1, "wait_free": 0}
-    UPDATE = {"order": 2, "wait_free": 0}
-    READING = {"order": 3, "wait_free": 0}
-    FREE = {"order": 3, "wait_free": 1}
+    FOLLOW: ClassVar[dict[str, int]] = {"order": 1, "wait_free": 0}
+    UPDATE: ClassVar[dict[str, int]] = {"order": 2, "wait_free": 0}
+    READING: ClassVar[dict[str, int]] = {"order": 3, "wait_free": 0}
+    FREE: ClassVar[dict[str, int]] = {"order": 3, "wait_free": 1}
 
 
 class MangaIndexFilter:

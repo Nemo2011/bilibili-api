@@ -7,6 +7,8 @@ bilibili_api.utils.AsyncEvent
 import asyncio
 from collections.abc import Callable, Coroutine
 
+tasks = set()
+
 
 class AsyncEvent:
     """
@@ -104,7 +106,9 @@ class AsyncEvent:
             for callableorcoroutine in self.__handlers[name]:
                 obj = callableorcoroutine(*args, **kwargs)
                 if isinstance(obj, Coroutine):
-                    asyncio.create_task(obj)
+                    task = asyncio.create_task(obj)
+                    tasks.add(task)
+                    task.add_done_callback(tasks.discard)
 
         if name != "__ALL__":
             kwargs.update({"name": name, "data": args})

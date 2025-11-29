@@ -5,6 +5,7 @@ bilibili_api.rank
 """
 
 from enum import Enum
+from typing import ClassVar
 
 from .utils.network import Api, Credential
 from .utils.utils import get_api
@@ -67,31 +68,86 @@ class RankType(Enum):
     - Rookie: 新人
     """
 
-    All = {"api_type": "x", "rid": 0, "type": "all"}
-    Bangumi = {"api_type": "pgc", "season_type": 1}
-    GuochuangAnime = {"api_type": "pgc", "season_type": 4}
-    Guochuang = {"api_type": "x", "rid": 168, "type": "all"}
-    Documentary = {"api_type": "pgc", "season_type": 3}
-    Douga = {"api_type": "x", "rid": 1005, "type": "all"}
-    Music = {"api_type": "x", "rid": 1003, "type": "all"}
-    Dance = {"api_type": "x", "rid": 1004, "type": "all"}
-    Game = {"api_type": "x", "rid": 1008, "type": "all"}
-    Knowledge = {"api_type": "x", "rid": 1010, "type": "all"}
-    Technology = {"api_type": "x", "rid": 1012, "type": "all"}
-    Sports = {"api_type": "x", "rid": 1018, "type": "all"}
-    Car = {"api_type": "x", "rid": 1013, "type": "all"}
-    Life = {"api_type": "x", "rid": 160, "type": "all"}
-    Food = {"api_type": "x", "rid": 1020, "type": "all"}
-    Animal = {"api_type": "x", "rid": 1024, "type": "all"}
-    Kichiku = {"api_type": "x", "rid": 1007, "type": "all"}
-    Fashion = {"api_type": "x", "rid": 1014, "type": "all"}
-    Ent = {"api_type": "x", "rid": 1002, "type": "all"}
-    Cinephile = {"api_type": "x", "rid": 1001, "type": "all"}
-    Movie = {"api_type": "pgc", "season_type": 2}
-    TV = {"api_type": "pgc", "season_type": 5}
-    Variety = {"api_type": "pgc", "season_type": 7}
-    Original = {"api_type": "x", "rid": 0, "type": "origin"}
-    Rookie = {"api_type": "x", "rid": 0, "type": "rookie"}
+    All: ClassVar[dict[str, str | int]] = {"api_type": "x", "rid": 0, "type": "all"}
+    Bangumi: ClassVar[dict[str, str | int]] = {"api_type": "pgc", "season_type": 1}
+    GuochuangAnime: ClassVar[dict[str, str | int]] = {
+        "api_type": "pgc",
+        "season_type": 4,
+    }
+    Guochuang: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 168,
+        "type": "all",
+    }
+    Documentary: ClassVar[dict[str, str | int]] = {"api_type": "pgc", "season_type": 3}
+    Douga: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1005,
+        "type": "all",
+    }
+    Music: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1003,
+        "type": "all",
+    }
+    Dance: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1004,
+        "type": "all",
+    }
+    Game: ClassVar[dict[str, str | int]] = {"api_type": "x", "rid": 1008, "type": "all"}
+    Knowledge: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1010,
+        "type": "all",
+    }
+    Technology: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1012,
+        "type": "all",
+    }
+    Sports: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1018,
+        "type": "all",
+    }
+    Car: ClassVar[dict[str, str | int]] = {"api_type": "x", "rid": 1013, "type": "all"}
+    Life: ClassVar[dict[str, str | int]] = {"api_type": "x", "rid": 160, "type": "all"}
+    Food: ClassVar[dict[str, str | int]] = {"api_type": "x", "rid": 1020, "type": "all"}
+    Animal: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1024,
+        "type": "all",
+    }
+    Kichiku: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1007,
+        "type": "all",
+    }
+    Fashion: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1014,
+        "type": "all",
+    }
+    Ent: ClassVar[dict[str, str | int]] = {"api_type": "x", "rid": 1002, "type": "all"}
+    Cinephile: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 1001,
+        "type": "all",
+    }
+    Movie: ClassVar[dict[str, str | int]] = {"api_type": "pgc", "season_type": 2}
+    TV: ClassVar[dict[str, str | int]] = {"api_type": "pgc", "season_type": 5}
+    Variety: ClassVar[dict[str, str | int]] = {"api_type": "pgc", "season_type": 7}
+    Original: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 0,
+        "type": "origin",
+    }
+    Rookie: ClassVar[dict[str, str | int]] = {
+        "api_type": "x",
+        "rid": 0,
+        "type": "rookie",
+    }
 
 
 class VIPRankType(Enum):

@@ -1627,7 +1627,7 @@ class LiveDanmaku(AsyncEvent):
                     pb_decode_status = ""
                     try:
                         pb_decoded = parse_interact_word_v2(pb_unbase64)
-                    except:
+                    except Exception:
                         pb_decode_status = "error"
                     else:
                         pb_decode_status = "success"
@@ -1644,7 +1644,7 @@ class LiveDanmaku(AsyncEvent):
                     pb_decode_status = ""
                     try:
                         pb_decoded = parse_online_rank_v3(pb_unbase64)
-                    except:
+                    except Exception:
                         pb_decode_status = "error"
                     else:
                         pb_decode_status = "success"

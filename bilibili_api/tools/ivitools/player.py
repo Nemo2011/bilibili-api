@@ -670,7 +670,7 @@ class MPlayer:
         curtime = str(time.time())
         try:
             os.mkdir(".mplayer")
-        except:
+        except Exception:
             pass
         os.mkdir(".mplayer/" + curtime)
         self.temp_dir = ".mplayer/" + curtime + "/"
@@ -736,7 +736,7 @@ class MPlayer:
                 break
         try:
             os.rmdir(".mplayer")
-        except:
+        except Exception:
             # Not empty
             pass
         self.temp_dir = ""

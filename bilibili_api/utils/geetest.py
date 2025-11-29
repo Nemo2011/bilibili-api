@@ -114,7 +114,7 @@ class ServerThread(threading.Thread):
         self.serving = True
         self.host = server.host
         self.port = server.server_port
-        self.url = "http://%s:%d/" % (self.host, self.port)
+        self.url = f"http://{self.host}:{self.port}/"
 
     def stop(self):
         """Stop the server and this thread nicely"""

@@ -873,10 +873,9 @@ class Dynamic:
                             and module["major"][key].get("title") is not None
                         ):
                             cover = module["major"][key].get("cover")
+                            jump_url = module["major"][key].get("jump_url")
                             if jump_url.startswith("//"):
-                                jump_url = "https:" + module["major"][key].get(
-                                    "jump_url"
-                                )
+                                jump_url = "https:" + jump_url
                             title = module["major"][key].get("title")
                             return f"# {title}\n\n![]({cover})\n\n<{jump_url}>\n"
             ret = "" if title is None else "# " + title + "\n\n"

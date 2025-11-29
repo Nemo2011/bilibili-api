@@ -204,10 +204,12 @@ class AioHTTPClient(BiliAPIClient):
         return await self.__wss[cnt].send_bytes(data)
 
     async def ws_close(self, cnt: int) -> None:
-        return await self.__wss[cnt].close()
+        await self.__wss[cnt].close()
+        del self.__wss[cnt]
 
     async def close(self):
         await self.__session.close()
+        del self.__session
 
     __init__.__doc__ = BiliAPIClient.__init__.__doc__
     get_wrapped_session.__doc__ = BiliAPIClient.get_wrapped_session.__doc__
