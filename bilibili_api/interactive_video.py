@@ -18,6 +18,8 @@ import time
 from urllib import parse
 import zipfile
 
+import anyio
+
 from .exceptions import ApiException
 from .utils.AsyncEvent import AsyncEvent
 from .utils.network import Api, Credential, get_bili_headers, get_buvid, get_client
@@ -856,9 +858,9 @@ class InteractiveVideoDownloader(AsyncEvent):
         tot = get_client().download_content_length(cnt=dwn_id)
         start_time = time.perf_counter()
 
-        with open(out, "wb") as f:
+        async with await anyio.open_file(out, "wb") as f:
             while True:
-                bts += f.write(await get_client().download_chunk(cnt=dwn_id))
+                bts += await f.write(await get_client().download_chunk(cnt=dwn_id))
                 self.dispatch(
                     "DOWNLOAD_PART",
                     {

@@ -8,8 +8,6 @@ CONSOLE_COLORS = {
   'RESET': '\x1b[0m'
 }
 
-os.system("python scripts/format.py")
-
 code = os.system("python scripts/lint.py")
 
 if code != 0:

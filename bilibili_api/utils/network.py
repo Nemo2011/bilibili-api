@@ -34,6 +34,7 @@ import time
 from typing import Any
 import urllib.parse
 
+import anyio
 from bs4 import BeautifulSoup
 import chompjs
 from Cryptodome.Cipher import PKCS1_OAEP
@@ -3464,7 +3465,7 @@ class Api:
         return await self.request()
 
 
-async def bili_simple_download(url: str, out: str, intro: str):
+async def bili_simple_download(url: str, out: str, intro: str = "bili-simple-download"):
     """
     适用于下载 bilibili 链接的简易终端下载函数
 
@@ -3480,9 +3481,9 @@ async def bili_simple_download(url: str, out: str, intro: str):
     dwn_id = await get_client().download_create(url=url, headers=get_bili_headers())
     bts = 0
     tot = get_client().download_content_length(cnt=dwn_id)
-    with open(out, "wb") as file:
+    async with await anyio.open_file(out, "wb") as file:
         while True:
-            bts += file.write(await get_client().download_chunk(cnt=dwn_id))
+            bts += await file.write(await get_client().download_chunk(cnt=dwn_id))
             print(f"{intro} - {out} [{bts} / {tot}]", end="\r")
             if bts == tot:
                 break
