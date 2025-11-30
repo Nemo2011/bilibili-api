@@ -2334,6 +2334,14 @@ def get_browser_fingerprint() -> dict:
 
 
 def get_bili_headers() -> dict:
+    """
+    获取可供访问 bilibili 链接的伪装请求头。
+
+    部分请求头取自 fpgen 生成的浏览器指纹信息。
+
+    Returns:
+        dict: 请求头
+    """
     fp = get_browser_fingerprint()
     headers = HEADERS.copy()
     for k, v in fp["headers"].items():

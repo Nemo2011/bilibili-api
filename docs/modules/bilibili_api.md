@@ -1652,8 +1652,13 @@ BV 号转 AV 号。
 
 ## def get_bili_headers()
 
+获取可供访问 bilibili 链接的伪装请求头。
+
+部分请求头取自 fpgen 生成的浏览器指纹信息。
 
 
+
+**Returns:** `dict`:  请求头
 
 
 
