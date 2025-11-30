@@ -17,6 +17,8 @@ import re
 import time
 from typing import Any, ClassVar
 
+import anyio
+
 from .exceptions.ApiException import ApiException
 from .exceptions.NetworkException import NetworkException
 from .exceptions.ResponseCodeException import ResponseCodeException
@@ -1123,10 +1125,9 @@ class VideoUploader(AsyncEvent):
         self.dispatch(VideoUploaderEvents.PRE_CHUNK.value, chunk_event_callback_data)
         session = get_client()
 
-        stream = open(page.path, "rb")
-        stream.seek(offset)
-        chunk = stream.read(preupload["chunk_size"])
-        stream.close()
+        async with await anyio.open_file(page.path, "rb") as stream:
+            await stream.seek(offset)
+            chunk = await stream.read(preupload["chunk_size"])
 
         # 上传目标 URL
         preupload = self._switch_upload_endpoint(preupload, self.line)

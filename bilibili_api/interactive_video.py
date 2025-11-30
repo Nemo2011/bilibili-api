@@ -6,6 +6,7 @@ bilibili_api.interactive_video
 
 # pylint: skip-file
 
+import asyncio
 from asyncio import CancelledError, create_task
 from collections.abc import Coroutine
 import copy
@@ -988,22 +989,23 @@ class InteractiveVideoDownloader(AsyncEvent):
                 # # 所有可达顶点 ID 入队
                 queue.insert(0, n)
 
-        json.dump(
-            edges_info,
-            open(tmp_dir_name + "/ivideo.json", "w+", encoding="utf-8"),
-            indent=2,
-        )
-        json.dump(
-            {
-                "bvid": self.__video.get_bvid(),
-                "title": (await self.__video.get_info())["title"],
-                "root_id": (
-                    await (await self.__video.get_graph()).get_root_node()
-                ).get_node_id(),
-            },
-            open(tmp_dir_name + "/bilivideo.json", "w+", encoding="utf-8"),
-            indent=2,
-        )
+        async with await anyio.open_file(
+            tmp_dir_name + "/ivideo.json", "w+", encoding="utf-8"
+        ) as f:
+            f.write(json.dumps(edges_info, indent=2))
+
+        bvideo_info = {
+            "bvid": self.__video.get_bvid(),
+            "title": (await self.__video.get_info())["title"],
+            "root_id": (
+                await (await self.__video.get_graph()).get_root_node()
+            ).get_node_id(),
+        }
+
+        async with await anyio.open_file(
+            tmp_dir_name + "/bilivideo.json", "w+", encoding="utf-8"
+        ) as f:
+            f.write(json.dumps(bvideo_info, indent=2))
 
         cid_set = set()
         for key, item in edges_info.items():
@@ -1025,17 +1027,27 @@ class InteractiveVideoDownloader(AsyncEvent):
                 )  # type: ignore
 
         self.dispatch("PACKAGING")
-        zip = zipfile.ZipFile(
-            open(self.__out + ".ivi", "wb+"), mode="w", compression=zipfile.ZIP_DEFLATED
-        )  # outFullName为压缩文件的完整路径
-        for path, dirnames, filenames in os.walk(tmp_dir_name):
-            # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
-            fpath = path.replace(tmp_dir_name, "")
 
-            for filename in filenames:
-                zip.write(os.path.join(path, filename), os.path.join(fpath, filename))
-        zip.close()
-        shutil.rmtree(tmp_dir_name)
+        def package_zip():
+            zip = zipfile.ZipFile(
+                open(self.__out + ".ivi", "wb+"),
+                mode="w",
+                compression=zipfile.ZIP_DEFLATED,
+            )  # outFullName为压缩文件的完整路径
+            for path, dirnames, filenames in os.walk(tmp_dir_name):
+                # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
+                fpath = path.replace(tmp_dir_name, "")
+
+                for filename in filenames:
+                    zip.write(
+                        os.path.join(path, filename), os.path.join(fpath, filename)
+                    )
+            zip.close()
+            shutil.rmtree(tmp_dir_name)
+
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, package_zip)
+
         self.dispatch("SUCCESS")
 
     async def __node_videos_main(self) -> None:
@@ -1271,8 +1283,10 @@ class InteractiveVideoDownloader(AsyncEvent):
             vars_string += f"[{var.get_id()} -> {var.get_name()} = {var.get_value()}, {var_attribute}]\n"
         graph_content += f'\tlabel="{vars_string}"'
         graph_content += "}"
-        with open(self.__out, "w+", encoding="utf-8") as dot_file:
-            dot_file.write(graph_content)
+        async with await anyio.open_file(
+            self.__out, "w+", encoding="utf-8"
+        ) as dot_file:
+            await dot_file.write(graph_content)
         self.dispatch("SUCCESS")
 
     async def __no_packaging_main(self) -> None:
@@ -1377,22 +1391,23 @@ class InteractiveVideoDownloader(AsyncEvent):
                 # # 所有可达顶点 ID 入队
                 queue.insert(0, n)
 
-        json.dump(
-            edges_info,
-            open(tmp_dir_name + "/ivideo.json", "w+", encoding="utf-8"),
-            indent=2,
-        )
-        json.dump(
-            {
-                "bvid": self.__video.get_bvid(),
-                "title": (await self.__video.get_info())["title"],
-                "root_id": (
-                    await (await self.__video.get_graph()).get_root_node()
-                ).get_node_id(),
-            },
-            open(tmp_dir_name + "/bilivideo.json", "w+", encoding="utf-8"),
-            indent=2,
-        )
+        async with await anyio.open_file(
+            tmp_dir_name + "/ivideo.json", "w+", encoding="utf-8"
+        ) as f:
+            f.write(json.dumps(edges_info, indent=2))
+
+        bvideo_info = {
+            "bvid": self.__video.get_bvid(),
+            "title": (await self.__video.get_info())["title"],
+            "root_id": (
+                await (await self.__video.get_graph()).get_root_node()
+            ).get_node_id(),
+        }
+
+        async with await anyio.open_file(
+            tmp_dir_name + "/bilivideo.json", "w+", encoding="utf-8"
+        ) as f:
+            f.write(json.dumps(bvideo_info, indent=2))
 
         cid_set = set()
         for key, item in edges_info.items():

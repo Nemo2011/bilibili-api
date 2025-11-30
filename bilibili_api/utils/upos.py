@@ -7,6 +7,8 @@ from asyncio.tasks import create_task
 import json
 import os
 
+import anyio
+
 from ..exceptions.NetworkException import NetworkException
 from ..exceptions.ResponseCodeException import ResponseCodeException
 from .network import BiliAPIClient, get_client
@@ -135,10 +137,9 @@ class UposFileUploader:
             "total_chunk_count": total_chunk_count,
         }
 
-        stream = open(self.file.path, "rb")
-        stream.seek(offset)
-        chunk = stream.read(self.preupload["chunk_size"])
-        stream.close()
+        async with await anyio.open_file(self.file.path, mode="rb") as stream:
+            await stream.seek(offset)
+            chunk = await stream.read(self.preupload["chunk_size"])
 
         err_return = {
             "ok": False,

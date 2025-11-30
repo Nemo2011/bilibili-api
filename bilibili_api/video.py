@@ -19,6 +19,7 @@ import re
 import struct
 from typing import Any
 
+import anyio
 from yarl import URL
 
 from . import user
@@ -1684,11 +1685,11 @@ class Video:
         api = API["operate"]["submit_subtitle"]
 
         # lan check，应该是这里面的语言代码
-        with open(
+        async with await anyio.open_file(
             os.path.join(os.path.dirname(__file__), "data/subtitle_lan.json"),
             encoding="utf-8",
         ) as f:
-            subtitle_lans = json.load(f)
+            subtitle_lans = json.loads(await f.read())
             for lan_template in subtitle_lans:
                 if lan_template["lan"] == lan:
                     break
