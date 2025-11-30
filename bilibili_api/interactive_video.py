@@ -992,7 +992,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         async with await anyio.open_file(
             tmp_dir_name + "/ivideo.json", "w+", encoding="utf-8"
         ) as f:
-            f.write(json.dumps(edges_info, indent=2))
+            await f.write(json.dumps(edges_info, indent=2))
 
         bvideo_info = {
             "bvid": self.__video.get_bvid(),
@@ -1005,7 +1005,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         async with await anyio.open_file(
             tmp_dir_name + "/bilivideo.json", "w+", encoding="utf-8"
         ) as f:
-            f.write(json.dumps(bvideo_info, indent=2))
+            await f.write(json.dumps(bvideo_info, indent=2))
 
         cid_set = set()
         for key, item in edges_info.items():
@@ -1394,7 +1394,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         async with await anyio.open_file(
             tmp_dir_name + "/ivideo.json", "w+", encoding="utf-8"
         ) as f:
-            f.write(json.dumps(edges_info, indent=2))
+            await f.write(json.dumps(edges_info, indent=2))
 
         bvideo_info = {
             "bvid": self.__video.get_bvid(),
@@ -1407,7 +1407,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         async with await anyio.open_file(
             tmp_dir_name + "/bilivideo.json", "w+", encoding="utf-8"
         ) as f:
-            f.write(json.dumps(bvideo_info, indent=2))
+            await f.write(json.dumps(bvideo_info, indent=2))
 
         cid_set = set()
         for key, item in edges_info.items():
