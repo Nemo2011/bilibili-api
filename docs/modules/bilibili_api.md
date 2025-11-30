@@ -82,6 +82,7 @@ from bilibili_api import ...
 - [class GeetestMeta()](#class-GeetestMeta)
 - [class GeetestType()](#class-GeetestType)
 - [var HEADERS](#var-HEADERS)
+- [class InitialStateException()](#class-InitialStateException)
 - [class LiveException()](#class-LiveException)
 - [class LoginError()](#class-LoginError)
 - [class NetworkException()](#class-NetworkException)
@@ -110,6 +111,7 @@ from bilibili_api import ...
 - [def get\_all\_registered\_post\_filters()](#def-get\_all\_registered\_post\_filters)
 - [def get\_all\_registered\_pre\_filters()](#def-get\_all\_registered\_pre\_filters)
 - [def get\_available\_settings()](#def-get\_available\_settings)
+- [def get\_bili\_headers()](#def-get\_bili\_headers)
 - [async def get\_bili\_ticket()](#async-def-get\_bili\_ticket)
 - [async def get\_buvid()](#async-def-get\_buvid)
 - [def get\_client()](#def-get\_client)
@@ -141,6 +143,7 @@ from bilibili_api import ...
   - [def get\_enable\_buvid\_global\_persistence()](#def-get\_enable\_buvid\_global\_persistence)
   - [def get\_enable\_fpgen()](#def-get\_enable\_fpgen)
   - [def get\_fpgen\_args()](#def-get\_fpgen\_args)
+  - [def get\_global\_credential()](#def-get\_global\_credential)
   - [def get\_proxy()](#def-get\_proxy)
   - [def get\_timeout()](#def-get\_timeout)
   - [def get\_trust\_env()](#def-get\_trust\_env)
@@ -153,6 +156,7 @@ from bilibili_api import ...
   - [def set\_enable\_buvid\_global\_persistence()](#def-set\_enable\_buvid\_global\_persistence)
   - [def set\_enable\_fpgen()](#def-set\_enable\_fpgen)
   - [def set\_fpgen\_args()](#def-set\_fpgen\_args)
+  - [def set\_global\_credential()](#def-set\_global\_credential)
   - [def set\_proxy()](#def-set\_proxy)
   - [def set\_timeout()](#def-set\_timeout)
   - [def set\_trust\_env()](#def-set\_trust\_env)
@@ -1231,6 +1235,17 @@ NOTE: `gt`, `challenge`, `token` 为验证码基本字段。`seccode`, `validate
 
 ---
 
+## class InitialStateException()
+
+**Extend: bilibili_api.exceptions.ApiException.ApiException**
+
+获取初始化信息错误。
+
+
+
+
+---
+
 ## class LiveException()
 
 **Extend: bilibili_api.exceptions.ApiException.ApiException**
@@ -1635,6 +1650,16 @@ BV 号转 AV 号。
 
 ---
 
+## def get_bili_headers()
+
+
+
+
+
+
+
+---
+
 ## async def get_bili_ticket()
 
 获取 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段
@@ -1838,12 +1863,16 @@ BV 号转 AV 号。
 
 执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
 
+BiliAPIClient 对象存在 `data` 字段，可用于过滤器间数据传递，访问时使用 `ins.data[cnt]`。
+
+所有当前函数执行的过滤器为 `ins.data[cnt]["post_filters"]`。
+
 
 | name | type | description |
 | - | - | - |
 | `name` | `str` | 名称，若重复则为修改对应过滤器。 |
-| `func` | `Callable, optional` | 执行的函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
-| `async_func` | `Coroutine, optional` | 执行的异步函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `func` | `Callable, optional` | 执行的函数，提供 6 个参数 `(cnt, BiliAPIClient, client, on, 返回值, 传入参数字典)` `(cnt, ins, client, on, ret, params)` |
+| `async_func` | `Coroutine, optional` | 执行的异步函数，提供 6 个参数 `(cnt, BiliAPIClient, client, on, 返回值, 传入参数字典)` `(cnt, ins, client, on, ret, params)` |
 | `clients` | `List[str], optional` | 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。 |
 | `on` | `List[str], optional` | 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。 |
 | `trigger` | `Callable, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
@@ -1864,12 +1893,16 @@ BV 号转 AV 号。
 
 执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
 
+BiliAPIClient 对象存在 `data` 字段，可用于过滤器间数据传递，访问时使用 `ins.data[cnt]`。
+
+所有当前函数执行的过滤器为 `ins.data[cnt]["pre_filters"]`。
+
 
 | name | type | description |
 | - | - | - |
 | `name` | `str` | 名称，若重复则为修改对应过滤器。 |
-| `func` | `Callable, optional` | 执行的函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
-| `async_func` | `Coroutine, optional` | 执行的异步函数，提供 3 个参数 `(BiliAPIClient, 执行函数名, 传入参数字典)` |
+| `func` | `Callable, optional` | 执行的函数，提供 5 个参数 `(cnt, BiliAPIClient, client, on, 传入参数字典)` `(cnt, ins, client, on, params)` |
+| `async_func` | `Coroutine, optional` | 执行的异步函数，提供 5 个参数 `(cnt, BiliAPIClient, client, on, 传入参数字典)` `(cnt, ins, client, on, params)` |
 | `clients` | `List[str], optional` | 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。 |
 | `on` | `List[str], optional` | 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。 |
 | `trigger` | `Callable, optional` | 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。 |
@@ -2009,7 +2042,7 @@ async def handle(desc: str, data: dict) -> None:
 
 获取某项设置
 
-不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
+不可用于 `wbi_retry_times` `enable_***` `fpgen_args` `global_credential`
 
 默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -2098,6 +2131,17 @@ async def handle(desc: str, data: dict) -> None:
 
 
 **Returns:** `dict`:  调用 fpgen 的参数
+
+
+
+
+### def get_global_credential()
+
+获取全局凭据类
+
+
+
+**Returns:** `Optional[Credential]`:  全局凭据类
 
 
 
@@ -2242,6 +2286,18 @@ async def handle(desc: str, data: dict) -> None:
 | name | type | description |
 | - | - | - |
 | `fpgen_args` | `Dict` | 调用 fpgen 的参数 |
+
+
+
+
+### def set_global_credential()
+
+设置全局凭据类
+
+
+| name | type | description |
+| - | - | - |
+| `global_credential` | `Optional[Credential]` | 全局凭据类 |
 
 
 

@@ -190,7 +190,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 | `neutral_mark` | `Optional[str]` | 创作者声明，可选 |
 | `delay_time` | `Optional[Union[int, datetime]]` | 定时发布时间，可选 |
 | `porder` | `Optional[VideoPorderMeta]` | 商业相关参数，可选 |
-| `watermark` | `Optional[bool]` | 是否添加水印，可选 |
+| `watermark` | `Optional[bool]` | 是否添加水印，可选，默认为没有水印 |
 
 
 ### async def verify()
@@ -245,7 +245,12 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 ### def \_\_init\_\_()
 
 
-
+| name | type | description |
+| - | - | - |
+| `porder_type` | `VideoPorderType, optional` | 商业平台类型. Defaults to VideoPorderType.FIREWORK. |
+| `industry_type` | `VideoPorderIndustry \| None, optional` | 商单行业，非花火填写. Defaults to None. |
+| `brand_name` | `str \| None, optional` | 品牌名，非花火填写. Defaults to None. |
+| `show_types` | `List[VideoPorderShowType], optional` | 商单形式，非花火填写. Defaults to []. |
 
 
 ---
@@ -273,6 +278,8 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 ---
 
 ## class VideoPorderType()
+
+**Extend: enum.Enum**
 
 视频商业类型
 

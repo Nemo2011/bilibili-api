@@ -20,10 +20,10 @@ from .utils.AsyncEvent import AsyncEvent
 from .utils.BytesReader import BytesReader
 from .utils.danmaku import Danmaku
 from .utils.network import (
-    HEADERS,
     Api,
     BiliWsMsgType,
     Credential,
+    get_bili_headers,
     get_buvid,
     get_client,
 )
@@ -1510,7 +1510,7 @@ class LiveDanmaku(AsyncEvent):
 
             try:
                 self.__ws = await self.__client.ws_create(
-                    url=uri, headers=HEADERS.copy()
+                    url=uri, headers=get_bili_headers()
                 )
 
                 @self.on("VERIFICATION_SUCCESSFUL")

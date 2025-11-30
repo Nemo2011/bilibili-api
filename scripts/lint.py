@@ -1,4 +1,4 @@
 import os
 
 # Check the code.
-exit(os.system("pylint -E ./bilibili_api"))
+exit(os.system("ruff check bilibili_api/*"))

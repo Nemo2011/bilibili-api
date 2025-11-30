@@ -15,7 +15,7 @@ from . import user
 from .exceptions.ApiException import ApiException
 from .exceptions.NetworkException import NetworkException
 from .utils.AsyncEvent import AsyncEvent
-from .utils.network import HEADERS, Api, Credential, get_client
+from .utils.network import Api, Credential, get_bili_headers, get_client
 from .utils.picture import Picture
 from .utils.upos import UposFile, UposFileUploader
 from .utils.utils import get_api, raise_for_statement
@@ -553,7 +553,7 @@ class AudioUploader(AsyncEvent):
                 "build": 2060400,
             },
             cookies=await self.credential.get_cookies(),
-            headers=HEADERS.copy(),
+            headers=get_bili_headers(),
         )
         if resp.code >= 400:
             self.dispatch(
@@ -570,7 +570,7 @@ class AudioUploader(AsyncEvent):
             raise ApiException(json.dumps(preupload))
 
         url = f"https:{preupload['endpoint']}/{preupload['upos_uri'].removeprefix('upos://')}"
-        headers = HEADERS.copy()
+        headers = get_bili_headers()
         headers["x-upos-auth"] = preupload["auth"]
 
         # 获取 upload_id

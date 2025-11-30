@@ -20,7 +20,7 @@ import zipfile
 
 from .exceptions import ApiException
 from .utils.AsyncEvent import AsyncEvent
-from .utils.network import HEADERS, Api, Credential, get_buvid, get_client
+from .utils.network import Api, Credential, get_bili_headers, get_buvid, get_client
 from .utils.utils import get_api
 from .video import Video, VideoDownloadURLDataDetecter
 
@@ -827,7 +827,7 @@ class InteractiveVideoDownloader(AsyncEvent):
 
         `self_download_func` 函数应接受两个参数（第一个是下载 URL，第二个是输出地址（精确至文件名））
 
-        为保证视频能被成功下载，请在自定义下载函数请求的时候加入 `bilibili_api.HEADERS` 头部。
+        为保证视频能被成功下载，请在自定义下载函数请求的时候加入 `bilibili_api.get_bili_headers()` 头部。
         """
         super().__init__()
         self.__video = video
@@ -841,7 +841,7 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.__fetching_nodes_retry_times = fetching_nodes_retry_times
 
     async def __download(self, url: str, out: str) -> None:
-        dwn_id = await get_client().download_create(url=url, headers=HEADERS)
+        dwn_id = await get_client().download_create(url=url, headers=get_bili_headers())
 
         if os.path.exists(out):
             os.remove(out)

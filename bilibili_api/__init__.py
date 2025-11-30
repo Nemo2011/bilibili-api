@@ -94,8 +94,9 @@ from .utils.network import (
     get_all_registered_post_filters,
     get_all_registered_pre_filters,
     get_available_settings,
-    get_bili_ticket,
     # anti spider
+    get_bili_headers,
+    get_bili_ticket,
     get_buvid,
     get_client,
     get_registered_available_settings,
@@ -212,6 +213,7 @@ __all__ = [
     "get_all_registered_post_filters",
     "get_all_registered_pre_filters",
     "get_available_settings",
+    "get_bili_headers",
     "get_bili_ticket",
     "get_buvid",
     "get_client",

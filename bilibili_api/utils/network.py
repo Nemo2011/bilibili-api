@@ -1132,6 +1132,7 @@ class _BiliAPIClient:
     def __init__(self, client_name, client, *args, **kwargs):
         self.client = client
         self.__client__ = client_name
+        self.client.data = {}
 
     def __getattr__(self, key: str) -> Any:
         obj = getattr(self.client, key)
@@ -1159,10 +1160,12 @@ class _BiliAPIClient:
 
         def method_wrapper(method: Callable) -> Callable:
             def wrapped_method(*args, **kwargs) -> Any:
+                self.client.data[cnt] = {}
                 res = arg_convert(args, kwargs)
                 pres = get_registered_pre_filters(
                     client=self.__client__, func=key, in_priority=True
                 )
+                self.client.data[cnt]["pre_filters"] = pres
                 i = 0
                 while i < len(pres):
                     pre = pres[i]
@@ -1197,6 +1200,7 @@ class _BiliAPIClient:
                 posts = get_registered_post_filters(
                     client=self.__client__, func=key, in_priority=True
                 )
+                self.client.data[cnt]["post_filters"] = posts
                 j = 0
                 while j < len(pres):
                     post = posts[j]
@@ -1231,10 +1235,12 @@ class _BiliAPIClient:
 
         def coroutine_wrapper(coroutine: Coroutine) -> Coroutine:
             async def wrapped_amethod(*args, **kwargs) -> Any:
+                self.client.data[cnt] = {}
                 res = arg_convert(args, kwargs)
                 pres = await async_get_registered_pre_filters(
                     client=self.__client__, func=key, in_priority=True
                 )
+                self.client.data[cnt]["pre_filters"] = pres
                 i = 0
                 while i < len(pres):
                     pre = pres[i]
@@ -1279,6 +1285,7 @@ class _BiliAPIClient:
                 posts = await async_get_registered_post_filters(
                     client=self.__client__, func=key, in_priority=True
                 )
+                self.client.data[cnt]["post_filters"] = posts
                 j = 0
                 while j < len(posts):
                     post = posts[j]
@@ -1509,10 +1516,14 @@ def register_pre_filter(
 
     执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
 
+    BiliAPIClient 对象存在 `data` 字段，可用于过滤器间数据传递，访问时使用 `ins.data[cnt]`。
+
+    所有当前函数执行的过滤器为 `ins.data[cnt]["pre_filters"]`。
+
     Args:
         name          (str)                : 名称，若重复则为修改对应过滤器。
-        func          (Callable, optional) : 执行的函数，提供 5 个参数 `(cnt, BiliAPIClient, client, on, 传入参数字典)`
-        async_func    (Coroutine, optional): 执行的异步函数，提供 5 个参数 `(cnt, BiliAPIClient, client, on, 传入参数字典)`
+        func          (Callable, optional) : 执行的函数，提供 5 个参数 `(cnt, BiliAPIClient, client, on, 传入参数字典)` `(cnt, ins, client, on, params)`
+        async_func    (Coroutine, optional): 执行的异步函数，提供 5 个参数 `(cnt, BiliAPIClient, client, on, 传入参数字典)` `(cnt, ins, client, on, params)`
         clients       (List[str], optional): 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。
         on            (List[str], optional): 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。
         trigger       (Callable, optional) : 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
@@ -1559,10 +1570,14 @@ def register_post_filter(
 
     执行函数需返回一个元组，第一项为 BiliAPIFlags，第二项为配合 BiliAPIFlags 的值。
 
+    BiliAPIClient 对象存在 `data` 字段，可用于过滤器间数据传递，访问时使用 `ins.data[cnt]`。
+
+    所有当前函数执行的过滤器为 `ins.data[cnt]["post_filters"]`。
+
     Args:
         name          (str)                : 名称，若重复则为修改对应过滤器。
-        func          (Callable, optional) : 执行的函数，提供 6 个参数 `(cnt, BiliAPIClient, client, on, 返回值, 传入参数字典)`
-        async_func    (Coroutine, optional): 执行的异步函数，提供 6 个参数 `(cnt, BiliAPIClient, client, on, 返回值, 传入参数字典)`
+        func          (Callable, optional) : 执行的函数，提供 6 个参数 `(cnt, BiliAPIClient, client, on, 返回值, 传入参数字典)` `(cnt, ins, client, on, ret, params)`
+        async_func    (Coroutine, optional): 执行的异步函数，提供 6 个参数 `(cnt, BiliAPIClient, client, on, 返回值, 传入参数字典)` `(cnt, ins, client, on, ret, params)`
         clients       (List[str], optional): 当请求客户端设置值在此列表中将触发过滤器。与 `on` 配合使用。
         on            (List[str], optional): 当客户端执行函数名称在此列表中将触发过滤器。与 `client` 配合使用。
         trigger       (Callable, optional) : 接受两个参数 `(请求客户端设置值, 执行函数名称)`。若返回 `True` 则触发过滤器。
@@ -2221,7 +2236,7 @@ async def _get_refresh_csrf(credential: Credential) -> str:
         method="GET",
         url=api["url"].replace("{correspondPath}", correspond_path),
         cookies=cookies,
-        headers=HEADERS.copy(),
+        headers=get_bili_headers(),
     )
     if resp.code == 404:
         raise CookiesRefreshException("correspondPath 过期或错误。")
@@ -2251,7 +2266,7 @@ async def _refresh_cookies(credential: Credential) -> Credential:
         url=api["url"],
         cookies=cookies,
         data=data,
-        headers=HEADERS.copy(),
+        headers=get_bili_headers(),
     )
     if resp.code != 200 or resp.json()["code"] != 0:
         raise CookiesRefreshException("刷新 Cookies 失败")
@@ -2318,13 +2333,22 @@ def get_browser_fingerprint() -> dict:
     return browser_fingerprint
 
 
+def get_bili_headers() -> dict:
+    fp = get_browser_fingerprint()
+    headers = HEADERS.copy()
+    for k, v in fp["headers"].items():
+        if v:
+            headers[k.title()] = v[0] if v and isinstance(v, list) else str(v)
+    return headers
+
+
 async def _get_spi_buvid() -> tuple[dict, str]:
     api = API["info"]["spi"]
     client = get_client()
     response = await client.request(
         method="GET",
         url=api["url"],
-        headers=HEADERS.copy(),
+        headers=get_bili_headers(),
     )
     date = response.headers.get("date", None)
     if not date:
@@ -2649,7 +2673,7 @@ async def _gen_buvid_fp(buvid3: str, buvid4: str, credential: Credential) -> Non
 
     client = get_client()
     uuid = credential.uuid_infoc
-    headers = HEADERS.copy()
+    headers = get_bili_headers()
     homepage_html = await client.request(
         method="GET",
         url="https://www.bilibili.com",
@@ -2671,7 +2695,7 @@ async def _active_buvid(
 ) -> str:
     api = API["operate"]["active"]
     client = get_client()
-    headers = HEADERS.copy()
+    headers = get_bili_headers()
     headers["Content-Type"] = "application/json"
     resp = await client.request(
         method="POST",
@@ -2700,7 +2724,7 @@ async def _get_nav(credential: Credential | None = None) -> dict:
         await client.request(
             method="GET",
             url=api["url"],
-            headers=HEADERS.copy(),
+            headers=get_bili_headers(),
             cookies=await credential.get_cookies(),
         )
     ).json()["data"]
@@ -2812,7 +2836,7 @@ async def _get_bili_ticket(credential: Credential) -> tuple[str, int] | None:
             method="POST",
             url=api["url"],
             params=params,
-            headers=HEADERS.copy(),
+            headers=get_bili_headers(),
             cookies={
                 "buvid3": credential.buvid3,
                 "b_nut": credential.b_nut,
@@ -2993,34 +3017,8 @@ def __register_global_credential_filter():
     )
 
 
-def __register_data_filter():
-    def create_data(cnt, ins, client, key, params):
-        if not getattr(ins, "data", None):
-            ins.data = {}
-        ins.data[cnt] = {}
-        return BiliFilterFlags.CONTINUE, None
-
-    def clean_data(cnt, ins, client, key, ret, params):
-        del ins.data[cnt]
-        return BiliFilterFlags.CONTINUE, None
-
-    register_pre_filter(
-        name="__builtin_create_data",
-        func=create_data,
-        trigger=lambda client, key: True,
-        priority=-2147483648,
-    )
-    register_post_filter(
-        name="__builtin_clean_data",
-        func=clean_data,
-        trigger=lambda client, key: True,
-        priority=2147483647,
-    )
-
-
 __register_builtin_log_filters()
 __register_global_credential_filter()
-__register_data_filter()
 
 
 ################################################## END Builtin-Filters ##################################################
@@ -3328,7 +3326,7 @@ class Api:
             "data": self.data,
             "files": self.files,
             "cookies": cookies,
-            "headers": HEADERS.copy() if len(self.headers) == 0 else self.headers,
+            "headers": get_bili_headers() | self.headers,
         }
         # json_body
         if self.json_body:
@@ -3471,7 +3469,7 @@ async def bili_simple_download(url: str, out: str, intro: str):
         out   (str): 输出地址
         intro (str): 下载简述
     """
-    dwn_id = await get_client().download_create(url=url, headers=HEADERS)
+    dwn_id = await get_client().download_create(url=url, headers=get_bili_headers())
     bts = 0
     tot = get_client().download_content_length(cnt=dwn_id)
     with open(out, "wb") as file:
