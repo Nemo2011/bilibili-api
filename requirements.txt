@@ -10,3 +10,4 @@ yarl
 pycryptodomex
 qrcode_terminal
 PyJWT
+anyio

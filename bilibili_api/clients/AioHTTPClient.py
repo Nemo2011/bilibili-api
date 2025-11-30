@@ -6,7 +6,8 @@ AioHTTPClient 实现
 
 import asyncio
 
-import aiohttp  # pylint: disable=E0401
+import aiohttp
+import anyio  # pylint: disable=E0401
 
 from ..utils.network import (
     BiliAPIClient,
@@ -108,9 +109,11 @@ class AioHTTPClient(BiliAPIClient):
             for key, value in data.items():
                 form.add_field(name=key, value=value)
             for key, value in files.items():
+                async with await anyio.open_file(value.path, "rb") as f:
+                    content = await f.read()
                 form.add_field(
                     name=key,
-                    value=open(value.path, "rb").read(),
+                    value=content,
                     content_type=value.mime_type,
                     filename=value.path.split("/")[-1],
                 )
