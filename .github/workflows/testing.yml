@@ -11,7 +11,7 @@ on:
     - cron: '0 4 * * 6'
 
 jobs:
-  test-3_9:
+  test-3_10:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
@@ -30,7 +30,7 @@ jobs:
         env:
           BILI_SESSDATA: ${{ secrets.BILI_SESSDATA }}
           BILI_CSRF: ${{ secrets.BILI_CSRF }}
-          BILI_RATELIMIT: 1.5 # WTF? 1 秒间隔每次 action 测试必须有两个函数 timeout
+          BILI_RATELIMIT: 1.5
           BILI_BUVID3: ${{ secrets.BILI_BUVID3 }}
           BILI_PHONE: ${{ secrets.BILI_PHONE }}
           BILI_PASSWORD: ${{ secrets.BILI_PASSWORD }}
