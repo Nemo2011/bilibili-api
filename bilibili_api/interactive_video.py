@@ -627,6 +627,8 @@ class InteractiveVideo(Video):
         super().__init__(bvid, aid, credential)
         self.__graph = None
         self.__version = None
+        self.__edge_infos = {}
+        self.__root_node = None
 
     async def up_get_ivideo_pages(self) -> dict:
         """
@@ -701,6 +703,11 @@ class InteractiveVideo(Video):
         Returns:
             dict: 调用 API 返回的结果
         """
+        if edge_id is None and self.__root_node:
+            edge_id = self.__root_node
+        if self.__edge_infos.get(edge_id):
+            return self.__edge_infos[edge_id]
+
         aid = self.get_aid()
         credential = self.credential if self.credential is not None else Credential()
 
@@ -712,12 +719,17 @@ class InteractiveVideo(Video):
             "screen": 0,
             "platform": "pc",
             "choices": "",
-            "buvid": (await get_buvid())[0],
+            "buvid": (await credential.get_cookies())["buvid3"],
         }
         if edge_id is not None:
             params["edge_id"] = edge_id
 
-        return await Api(**api, credential=credential).update_params(**params).result
+        ret = await Api(**api, credential=credential).update_params(**params).result
+        if edge_id is not None:
+            self.__root_node = edge_id
+            edge_id = ret["edge_id"]
+        self.__edge_infos[edge_id] = ret
+        return ret
 
     async def mark_score(self, score: int = 5):
         """
