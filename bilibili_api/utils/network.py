@@ -3478,16 +3478,17 @@ async def bili_simple_download(url: str, out: str, intro: str = "bili-simple-dow
         out   (str): 输出地址
         intro (str): 下载简述
     """
-    dwn_id = await get_client().download_create(url=url, headers=get_bili_headers())
+    client = get_client()
+    dwn_id = await client.download_create(url=url, headers=get_bili_headers())
     bts = 0
-    tot = get_client().download_content_length(cnt=dwn_id)
+    tot = client.download_content_length(cnt=dwn_id)
     async with await anyio.open_file(out, "wb") as file:
         while True:
-            bts += await file.write(await get_client().download_chunk(cnt=dwn_id))
+            bts += await file.write(await client.download_chunk(cnt=dwn_id))
             print(f"{intro} - {out} [{bts} / {tot}]", end="\r")
             if bts == tot:
                 break
-    await get_client().download_close(cnt=dwn_id)
+    await client.download_close(cnt=dwn_id)
     print()
 
 

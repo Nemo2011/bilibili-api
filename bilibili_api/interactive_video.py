@@ -856,7 +856,9 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.__fetching_nodes_retry_times = fetching_nodes_retry_times
 
     async def __download(self, url: str, out: str) -> None:
-        dwn_id = await get_client().download_create(url=url, headers=get_bili_headers())
+        client = get_client()
+
+        dwn_id = await client.download_create(url=url, headers=get_bili_headers())
 
         if os.path.exists(out):
             os.remove(out)
@@ -868,12 +870,12 @@ class InteractiveVideoDownloader(AsyncEvent):
         self.dispatch("DOWNLOAD_START", {"url": url, "out": out})
 
         bts = 0
-        tot = get_client().download_content_length(cnt=dwn_id)
+        tot = client.download_content_length(cnt=dwn_id)
         start_time = time.perf_counter()
 
         async with await anyio.open_file(out, "wb") as f:
             while True:
-                bts += await f.write(await get_client().download_chunk(cnt=dwn_id))
+                bts += await f.write(await client.download_chunk(cnt=dwn_id))
                 self.dispatch(
                     "DOWNLOAD_PART",
                     {
@@ -885,7 +887,7 @@ class InteractiveVideoDownloader(AsyncEvent):
                 if bts == tot:
                     break
 
-        await get_client().download_close(cnt=dwn_id)
+        await client.download_close(cnt=dwn_id)
 
         self.dispatch("DOWNLOAD_SUCCESS")
 
