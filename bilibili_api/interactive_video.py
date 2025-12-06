@@ -23,7 +23,7 @@ import anyio
 
 from .exceptions import ApiException
 from .utils.AsyncEvent import AsyncEvent
-from .utils.network import Api, Credential, get_bili_headers, get_buvid, get_client
+from .utils.network import Api, Credential, get_bili_headers, get_client
 from .utils.utils import get_api
 from .video import Video, VideoDownloadURLDataDetecter
 
