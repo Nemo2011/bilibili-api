@@ -12,7 +12,6 @@ import getopt
 
 DEBUG = False
 
-
 def fileopen(input_file):
     encodings = ["utf-32", "utf-16", "utf-8", "cp1252", "gb2312", "gbk", "big5"]
     tmp = ""
@@ -27,23 +26,15 @@ def fileopen(input_file):
             continue
     return [tmp, enc]
 
-
-def srt2ass(input_file, output_file):
-    if '.ass' in input_file:
-        return input_file
-
-    src = fileopen(input_file)
-    tmp = src[0]
-    encoding = src[1]
-    src = ""
+# 修复命名问题
+def srt2ass_from_string(srt_string: str):
     utf8bom = ""
 
-    if "\ufeff" in tmp:
-        tmp = tmp.replace("\ufeff", "")
+    if "\ufeff" in srt_string:
+        srt_string = srt_string.replace("\ufeff", "")
         utf8bom = "\ufeff"
-
-    tmp = tmp.replace("\r", "")
-    lines = [x.strip() for x in tmp.split("\n") if x.strip()]
+        
+    lines = [x.strip() for x in srt_string.split("\n") if x.strip()]
     subLines = ""
     tmpLines = ""
     lineCount = 0
@@ -103,6 +94,20 @@ Style: TopRight,Arial,30,&H00FFFFFF,&H000000FF,&H00282828,&H00000000,0,0,0,0,100
 Format: Layer, Start, End, Style, Actor, MarginL, MarginR, MarginV, Effect, Text"""
 
     output_str = utf8bom + head_str + "\n" + subLines
+    #    output_str = output_str.encode(encoding)
+
+    return output_str
+
+
+def srt2ass(input_file, output_file):
+    if '.ass' in input_file:
+        return input_file
+
+    src = fileopen(input_file)
+    tmp = src[0]
+    # encoding = src[1]
+    
+    output_str = srt2ass_from_string(tmp)   
     #    output_str = output_str.encode(encoding)
 
     with open(output_file, "w", encoding="utf8") as output:
