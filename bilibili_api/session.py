@@ -26,7 +26,7 @@ API = get_api("session")
 
 
 async def fetch_session_msgs(
-    talker_id: int, credential: Credential, session_type: int = 1, begin_seqno: int = 0
+    talker_id: int, credential: Credential, session_type: int = 1, begin_seqno: int = 0,
 ) -> dict:
     """
     获取指定用户的近三十条消息
@@ -48,6 +48,7 @@ async def fetch_session_msgs(
     params = {
         "talker_id": talker_id,
         "session_type": session_type,
+        "size": 30,
         "begin_seqno": begin_seqno,
     }
     api = API["session"]["fetch"]
@@ -397,7 +398,8 @@ async def send_msg(
         real_content = str(content)
     elif msg_type == EventType.PICTURE or msg_type == EventType.GROUPS_PICTURE:
         raise_for_statement(isinstance(content, Picture), "TypeError")
-        await content.upload_file(credential=credential, data={"biz": "im"})
+        if content.url.startswith("file://") or content.url.startswith("bytes://"):
+            await content.upload(credential=credential)
         real_content = json.dumps(
             {
                 "url": content.url,
@@ -520,7 +522,7 @@ class Session(AsyncEvent):
             max_instances=3,
             next_run_time=datetime.datetime.now(),
         )
-        async def qurey():
+        async def query():
             js: dict = await new_sessions(self.credential, self.maxTs)
             if js.get("session_list") is None:
                 return
@@ -581,8 +583,8 @@ class Session(AsyncEvent):
         """
 
         await self.run(exclude_self)
-        while self.get_status() < 2:
-            pass
+        while self.get_status() < 2:  # noqa: ASYNC110
+            await asyncio.sleep(1)
 
         if self.get_status() == 2:
             self.__status = 3
