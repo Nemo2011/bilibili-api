@@ -3,6 +3,7 @@
       "fetch": {
         "url": "https://api.vc.bilibili.com/svr_sync/v1/svr_sync/fetch_session_msgs",
         "method": "GET",
+        "wbi": true,
         "verify": true,
         "params": {
           "talker_id": "int: 私聊时为用户UID 应援团时为团号",
