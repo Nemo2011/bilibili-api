@@ -513,7 +513,7 @@ class LiveRoom:
             "room_id": self.room_display_id,
             "tuid": uid,
             "mobile_app": "web",
-            "type": "1",
+            "type": "2" if hour == 0 else "1",
             "hour": hour,
             "visit_id": "",
         }
