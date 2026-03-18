@@ -2476,7 +2476,7 @@ class VideoDownloadURLDataDetecter:
                     codecs=video_data["codecs"],
                     frame_rate=float(video_data["frame_rate"]),
                     scale=(video_data["width"], video_data["height"]),
-                    sar=tuple([int(x) for x in video_data["sar"].split(":")]),
+                    sar=tuple([int(x) for x in video_data["sar"].split(":")] if ":" in video_data["sar"] else (1, 1)),
                     mime_type=video_data["mime_type"],
                     segment_base_initialization=video_data["segment_base"]["initialization"],
                     segment_base_index_range=video_data["segment_base"]["index_range"]
