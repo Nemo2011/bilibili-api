@@ -2505,11 +2505,10 @@ class VideoDownloadURLDataDetecter:
                     frame_rate=float(video_data["frame_rate"]),
                     scale=(video_data["width"], video_data["height"]),
                     sar=tuple(
-                        [
-                            0 if x == "N/A" else int(x)
-                            for x in video_data["sar"].split(":")
-                        ]
-                    ),  # type: ignore
+                        [int(x) for x in video_data["sar"].split(":")] # type: ignore
+                        if ":" in video_data["sar"]
+                        else (1, 1)
+                    ),
                     mime_type=video_data["mime_type"],
                     segment_base_initialization=video_data["segment_base"][
                         "initialization"
@@ -2555,11 +2554,15 @@ class VideoDownloadURLDataDetecter:
                 for a_hls_info in a_hls:
                     a_id2link[hls2norm[a_hls_info["id"]]] = a_hls_info["stream_url"]
                 for i in range(len(streams)):
-                    if isinstance(streams[i], VideoStreamDownloadURL) and v_id2link.get(streams[i].video_quality.value):
+                    if isinstance(streams[i], VideoStreamDownloadURL) and v_id2link.get(
+                        streams[i].video_quality.value
+                    ):
                         streams[i].url = v_id2link[streams[i].video_quality.value]
                         streams[i].backup_url = []
                         streams[i].hls = True
-                    if isinstance(streams[i], AudioStreamDownloadURL) and a_id2link.get(streams[i].audio_quality.value):
+                    if isinstance(streams[i], AudioStreamDownloadURL) and a_id2link.get(
+                        streams[i].audio_quality.value
+                    ):
                         streams[i].url = a_id2link[streams[i].audio_quality.value]
                         streams[i].backup_url = []
                         streams[i].hls = True
