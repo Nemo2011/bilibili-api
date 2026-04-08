@@ -1549,16 +1549,18 @@ class LiveDanmaku(AsyncEvent):
                     break
 
             except Exception as e:
+                self.logger.warning(e)
+                self.__status = self.STATUS_ERROR
+
                 if self.__ws:
                     await self.__client.ws_close(self.__ws)
-                self.logger.warning(e)
+
                 if retry <= 0 or len(available_hosts) == 0:
                     self.logger.error("无法连接服务器")
                     self.err_reason = "无法连接服务器"
                     break
 
                 self.logger.warning(f"将在 {self.retry_after} 秒后重新连接...")
-                self.__status = self.STATUS_ERROR
                 retry -= 1
                 await asyncio.sleep(self.retry_after)
 
