@@ -32,3 +32,4 @@ virtualenv/
 .mypy_cache/
 # sh
 env.sh
+.ace-tool/

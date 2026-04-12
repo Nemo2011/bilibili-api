@@ -39,6 +39,7 @@
     + [opus.py - 图文](/examples/opus.md)
     + [rank.py - 排行](/examples/rank.md)
     + [search.py - 搜索](/examples/search.md)
+    + [workflow - 搜索 query 到视频字幕](/examples/search_to_subtitle.md)
     + [session.py - 会话](/examples/session.md)
     + [show.py - 展出](/examples/show.md)
     + [topic.py - 话题](/examples/topic.md)
