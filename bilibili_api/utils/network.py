@@ -1216,7 +1216,9 @@ class Credential:
         for key, value in self.__dict__.items():
             if key not in cookies and value is not None:
                 cookies[key] = value
-
+        if cookies.get("proxy"):
+            # 从 cookies 中剔除 proxy 字段，否则在发出请求时 cookie 会带上 proxy ，如果 proxy 不为空。
+            cookies.pop("proxy")
         return cookies
 
     async def get_buvid_cookies(self) -> dict:
