@@ -4,12 +4,12 @@ bilibili_api.article
 专栏相关
 """
 
+import asyncio
 import re
 import json
 from copy import copy
 from enum import Enum
 from html import unescape
-from datetime import datetime
 from urllib.parse import unquote
 from typing import List, Union, TypeVar, overload
 
@@ -17,10 +17,10 @@ import yaml
 from yarl import URL
 from bs4 import BeautifulSoup, element
 
-from .utils.initial_state import get_initial_state
 from .utils.utils import get_api, raise_for_statement
-from .utils.network import Api, Credential
+from .utils.network import Api, Credential, HEADERS, get_client
 from .exceptions.NetworkException import ApiException, NetworkException
+from .exceptions import ResponseCodeException
 from .utils import cache_pool
 
 from . import dynamic
@@ -30,6 +30,9 @@ from .note import Note, NoteType
 import html
 
 API = get_api("article")
+ARTICLE_HEADERS = {**HEADERS, "Origin": "https://www.bilibili.com"}
+ARTICLE_DETAIL_RETRY_INTERVAL = 1.5
+ARTICLE_DETAIL_MAX_RETRIES = 5
 
 # 文章颜色表
 ARTICLE_COLOR_MAP = {
@@ -276,69 +279,50 @@ class Article:
             "children": list(map(lambda x: x.json(), self.__children)),
         }
 
-    async def fetch_content(self) -> None:
-        """
-        获取并解析专栏内容
-
-        该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
-        """
-
-        resp = await self.get_all()
-
-        document = BeautifulSoup(f"<div>{resp['readInfo']['content']}</div>", "lxml")
+    async def __parse_html_content(self, html_content: str) -> list["Node"]:
+        document = BeautifulSoup(f"<div>{html_content}</div>", "lxml")
 
         async def parse(el: BeautifulSoup):
             node_list = []
 
             for e in el.contents:  # type: ignore
                 if type(e) == element.NavigableString:
-                    # 文本节点
                     node = TextNode(e)  # type: ignore
                     node_list.append(node)
                     continue
 
                 e: BeautifulSoup = e
                 if e.name == "p":
-                    # 段落
                     node = ParagraphNode()
                     node_list.append(node)
 
                     if "style" in e.attrs:
                         if "text-align: center" in e.attrs["style"]:
                             node.align = "center"
-
                         elif "text-align: right" in e.attrs["style"]:
                             node.align = "right"
-
                         else:
                             node.align = "left"
 
                     node.children = await parse(e)
 
                 elif e.name == "h1":
-                    # 标题
                     node = HeadingNode()
                     node_list.append(node)
-
                     node.children = await parse(e)
 
                 elif e.name == "strong":
-                    # 粗体
                     node = BoldNode()
                     node_list.append(node)
-
                     node.children = await parse(e)
 
                 elif e.name == "span":
-                    # 各种样式
                     if "style" in e.attrs:
                         style = e.attrs["style"]
 
                         if "text-decoration: line-through" in style:
-                            # 删除线
                             node = DelNode()
                             node_list.append(node)
-
                             node.children = await parse(e)
                         if e.text != "":
                             node_list += await parse(e)
@@ -347,29 +331,22 @@ class Article:
                         className = e.attrs["class"][0]
 
                         if "font-size" in className:
-                            # 字体大小
                             node = FontSizeNode()
                             node_list.append(node)
-
                             node.size = int(re.search(r"font-size-(\d\d)", className)[1])  # type: ignore
                             node.children = await parse(e)
 
                         elif "color" in className:
-                            # 字体颜色
                             node = ColorNode()
                             node_list.append(node)
-
                             color_text = re.search("color-(.*);?", className)[1]  # type: ignore
                             node.color = ARTICLE_COLOR_MAP[color_text]
-
                             node.children = await parse(e)
                         else:
                             if e.text != "":
                                 node_list += await parse(e)
 
                 elif e.name == "blockquote":
-                    # 引用块
-                    # print(e.text)
                     node = BlockquoteNode()
                     node_list.append(node)
                     node.children = await parse(e)
@@ -386,93 +363,67 @@ class Article:
                                 className = img_el.attrs["class"]
 
                                 if "cut-off" in className:
-                                    # 分割线
                                     node = SeparatorNode()
                                     node_list.append(node)
 
                                 if "aid" in img_el.attrs:
-                                    # 各种卡片
                                     aid = img_el.attrs["aid"]
 
                                     if "video-card" in className:
-                                        # 视频卡片，考虑有两列视频
                                         for a in aid.split(","):
                                             node = VideoCardNode()
                                             node_list.append(node)
-
                                             node.aid = int(a)
 
                                     elif "article-card" in className:
-                                        # 文章卡片
                                         node = ArticleCardNode()
                                         node_list.append(node)
-
                                         node.cvid = int(aid)
 
                                     elif "fanju-card" in className:
-                                        # 番剧卡片
                                         node = BangumiCardNode()
                                         node_list.append(node)
-
                                         node.epid = int(aid[2:])
 
                                     elif "music-card" in className:
-                                        # 音乐卡片
                                         node = MusicCardNode()
                                         node_list.append(node)
-
                                         node.auid = int(aid[2:])
 
                                     elif "shop-card" in className:
-                                        # 会员购卡片
                                         node = ShopCardNode()
                                         node_list.append(node)
-
                                         node.pwid = int(aid[2:])
 
                                     elif "caricature-card" in className:
-                                        # 漫画卡片，考虑有两列
-
                                         for i in aid.split(","):
                                             node = ComicCardNode()
                                             node_list.append(node)
-
                                             node.mcid = int(i)
 
                                     elif "live-card" in className:
-                                        # 直播卡片
                                         node = LiveCardNode()
                                         node_list.append(node)
-
                                         node.room_id = int(aid)
 
                                 if "seamless" in className:
-                                    # 图片节点
                                     node = ImageNode()
                                     node_list.append(node)
-
                                     node.url = e.find("img").attrs["data-src"]  # type: ignore
 
                                     figcaption_el: BeautifulSoup = e.find("figcaption")  # type: ignore
-
-                                    if figcaption_el:
-                                        if figcaption_el.contents:
-                                            node.alt = figcaption_el.contents[0]  # type: ignore
+                                    if figcaption_el and figcaption_el.contents:
+                                        node.alt = figcaption_el.contents[0]  # type: ignore
                             else:
-                                # 图片节点
                                 node = ImageNode()
                                 node_list.append(node)
-
                                 node.url = e.find("img").attrs["data-src"]  # type: ignore
 
                                 figcaption_el: BeautifulSoup = e.find("figcaption")  # type: ignore
-
-                                if figcaption_el:
-                                    if figcaption_el.contents:
-                                        node.alt = figcaption_el.contents[0]  # type: ignore
+                                if figcaption_el and figcaption_el.contents:
+                                    node.alt = figcaption_el.contents[0]  # type: ignore
 
                         elif "code-box" in className:
-                            # 代码块
                             node = CodeNode()
                             node_list.append(node)
 
@@ -481,28 +432,21 @@ class Article:
                             node.code = unquote(pre_el.attrs["codecontent"])
 
                 elif e.name == "ol":
-                    # 有序列表
                     node = OlNode()
                     node_list.append(node)
-
                     node.children = await parse(e)
 
                 elif e.name == "li":
-                    # 列表元素
                     node = LiNode()
                     node_list.append(node)
-
                     node.children = await parse(e)
 
                 elif e.name == "ul":
-                    # 无序列表
                     node = UlNode()
                     node_list.append(node)
-
                     node.children = await parse(e)
 
                 elif e.name == "a":
-                    # 超链接
                     if len(e.contents) == 0:
                         from .utils.parse_link import ResourceType, parse_link
 
@@ -523,26 +467,20 @@ class Article:
                             node = ArticleCardNode()
                             node.cvid = parse_link_res[0].get_cvid()
                             node_list.append(node)
-                        else:
-                            # XXX: 暂不支持其他的站内链接
-                            pass
                     else:
                         node = AnchorNode()
                         node_list.append(node)
-
                         node.url = e.attrs["href"]
                         node.text = e.contents[0]  # type: ignore
 
                 elif e.name == "img":
                     className = e.attrs.get("class")
 
-                    if "latex" in className:
-                        # 公式
+                    if className and "latex" in className:
                         node = LatexNode()
                         node.code = unquote(e["alt"])  # type: ignore
                         node_list.append(node)
                     else:
-                        # 图片
                         node = ImageNode()
                         node.url = e.attrs.get("data-src")  # type: ignore
                         node_list.append(node)
@@ -552,11 +490,123 @@ class Article:
 
             return node_list
 
-        # 文章元数据
-        self.__meta = copy(resp["readInfo"])
-        del self.__meta["content"]
+        return await parse(document.find("div"))
 
-        self.__children = await parse(document.find("div"))
+    def __parse_opus_text_nodes(self, nodes: list[dict]) -> list["Node"]:
+        children: list["Node"] = []
+        for node in nodes:
+            word = node.get("word")
+            if not isinstance(word, dict):
+                continue
+            text = word.get("words", "")
+            if not text:
+                continue
+            style = word.get("style", {}) or {}
+            text_node = TextNode(text)
+            if style.get("bold"):
+                bold_node = BoldNode()
+                bold_node.children = [text_node]
+                children.append(bold_node)
+            else:
+                children.append(text_node)
+        return children
+
+    def __parse_opus_content(self, opus_content: dict) -> list["Node"]:
+        node_list: list["Node"] = []
+        for paragraph in opus_content.get("paragraphs", []):
+            para_type = paragraph.get("para_type")
+
+            if para_type == 1 and isinstance(paragraph.get("text"), dict):
+                node = ParagraphNode()
+                node.children = self.__parse_opus_text_nodes(
+                    paragraph["text"].get("nodes", [])
+                )
+                node_list.append(node)
+                continue
+
+            if para_type == 2 and isinstance(paragraph.get("pic"), dict):
+                for pic in paragraph["pic"].get("pics", []):
+                    img_node = ImageNode()
+                    img_node.url = pic.get("url", "")
+                    node_list.append(img_node)
+                continue
+
+        return node_list
+
+    def __build_plain_text_nodes(self, content: str) -> list["Node"]:
+        node_list: list["Node"] = []
+        for line in content.splitlines():
+            text = line.strip()
+            if not text:
+                continue
+            node = ParagraphNode()
+            node.children = [TextNode(text)]
+            node_list.append(node)
+        return node_list
+
+    def __build_meta(self, detail: dict) -> dict:
+        meta = copy(detail)
+        for key in ("content", "content_pic_list", "opus"):
+            meta.pop(key, None)
+        return meta
+
+    def __build_read_info(self, detail: dict) -> dict:
+        read_info = copy(detail)
+        read_info.setdefault("author_name", detail.get("author", {}).get("name", ""))
+        return read_info
+
+    async def __request_article_api(self, api_name: str) -> dict:
+        api = API["info"][api_name]
+        params = {"id": self.__cvid}
+        client = get_client()
+        last_error = None
+
+        for attempt in range(ARTICLE_DETAIL_MAX_RETRIES):
+            resp = await client.request(
+                method=api["method"],
+                url=api["url"],
+                params=params,
+                headers=ARTICLE_HEADERS.copy(),
+            )
+            if resp.code != 200:
+                raise NetworkException(resp.code, resp.utf8_text())
+
+            payload = json.loads(resp.utf8_text())
+            code = payload.get("code")
+            if code == 0:
+                return payload.get("data") or payload.get("result")
+
+            msg = payload.get("msg") or payload.get("message") or "接口未返回错误信息"
+            last_error = ResponseCodeException(code if code is not None else -1, msg, payload)
+            if code == -509 and attempt < ARTICLE_DETAIL_MAX_RETRIES - 1:
+                await asyncio.sleep(ARTICLE_DETAIL_RETRY_INTERVAL * (attempt + 1))
+                continue
+            raise last_error
+
+        if last_error is not None:
+            raise last_error
+        raise ApiException("专栏接口请求失败")
+
+    async def fetch_content(self) -> None:
+        """
+        获取并解析专栏内容
+
+        该返回不会返回任何值，调用该方法后请再调用 `self.markdown()` 或 `self.json()` 来获取你需要的值。
+        """
+        detail = await self.get_detail()
+        self.__meta = self.__build_meta(detail)
+
+        opus = detail.get("opus") or {}
+        opus_content = opus.get("content") or {}
+        if isinstance(opus_content, dict) and opus_content.get("paragraphs"):
+            self.__children = self.__parse_opus_content(opus_content)
+        else:
+            content = detail.get("content", "")
+            if "<" in content and ">" in content:
+                self.__children = await self.__parse_html_content(content)
+            else:
+                self.__children = self.__build_plain_text_nodes(content)
+
         self.__has_parsed = True
 
     async def get_info(self) -> dict:
@@ -580,12 +630,7 @@ class Article:
         Returns:
             dict: 调用 API 返回的结果
         """
-
-        api = API["info"]["detail"]
-        params = {"id": self.__cvid}
-        return (
-            await Api(**api, credential=self.credential).update_params(**params).result
-        )
+        return await self.__request_article_api("detail")
 
     async def get_all(self) -> dict:
         """
@@ -595,20 +640,30 @@ class Article:
             dict: 调用 API 返回的结果
         """
         if not self.__get_all_data:
-            self.__get_all_data = {"readInfo": await self.get_detail()}
-            cache_pool.article2dynamic[self.__cvid] = self.__get_all_data["readInfo"][
-                "dyn_id_str"
-            ]
-            cache_pool.dynamic2article[cache_pool.article2dynamic[self.__cvid]] = (
-                self.__cvid
+            detail = await self.get_detail()
+            read_info = self.__build_read_info(detail)
+            self.__get_all_data = {
+                "readInfo": read_info,
+                "detail": detail,
+            }
+
+            dyn_id = read_info.get("dyn_id_str") or (detail.get("opus") or {}).get(
+                "opus_id"
             )
-            cache_pool.dynamic_is_article[cache_pool.article2dynamic[self.__cvid]] = (
-                True
-            )
-            cache_pool.dynamic_is_opus[cache_pool.article2dynamic[self.__cvid]] = True
-            cache_pool.article_is_note[self.get_cvid()] = self.__get_all_data[
-                "readInfo"
-            ]["category"]["id"] in [41, 42]
+            if dyn_id is not None:
+                cache_pool.article2dynamic[self.__cvid] = str(dyn_id)
+                cache_pool.dynamic2article[cache_pool.article2dynamic[self.__cvid]] = (
+                    self.__cvid
+                )
+                cache_pool.dynamic_is_article[cache_pool.article2dynamic[self.__cvid]] = (
+                    True
+                )
+                cache_pool.dynamic_is_opus[cache_pool.article2dynamic[self.__cvid]] = (
+                    True
+                )
+
+            category_id = (read_info.get("category") or {}).get("id")
+            cache_pool.article_is_note[self.get_cvid()] = category_id in [41, 42]
         return self.__get_all_data
 
     async def set_like(self, status: bool = True) -> dict:
