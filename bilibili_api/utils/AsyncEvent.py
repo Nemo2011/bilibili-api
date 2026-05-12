@@ -18,6 +18,7 @@ class AsyncEvent:
     def __init__(self):
         self.__handlers = {}
         self.__ignore_events = []
+        self.__tasks = set()
 
     def add_event_listener(self, name: str, handler: Union[Callable, Coroutine]) -> None:
         """
@@ -86,6 +87,21 @@ class AsyncEvent:
         """
         self.__ignore_events = []
 
+    def __on_task_done(self, task: asyncio.Task) -> None:
+        """
+        asyncio.Task完成后的回调函数
+        1、立刻从self.__tasks中移除任务
+        2、如果任务抛出异常，装模做样处理下异常，避免Task exception was never retrieved
+        """
+        self.__tasks.discard(task)
+
+        if task.cancelled(): return
+
+        try:
+            _ = task.exception()
+        except Exception:
+            pass
+
     def dispatch(self, name: str, *args, **kwargs) -> None:
         """
         异步发布事件。
@@ -104,7 +120,9 @@ class AsyncEvent:
             for callableorcoroutine in self.__handlers[name]:
                 obj = callableorcoroutine(*args, **kwargs)
                 if isinstance(obj, Coroutine):
-                    asyncio.create_task(obj)
+                    task = asyncio.create_task(obj)
+                    task.add_done_callback(self.__on_task_done)
+                    self.__tasks.add(task) # 保持对task的引用状态
 
         if name != "__ALL__":
             kwargs.update({"name": name, "data": args})
