@@ -481,7 +481,7 @@ class QrCodeLogin:
                 .update_params(**params)
                 .request(bili_res=True)
             )
-            code = events.json()["code"]
+            code = events.json()["data"]["code"]
             if code == 86101:
                 return QrCodeLoginEvents.SCAN
             elif code == 86090:
