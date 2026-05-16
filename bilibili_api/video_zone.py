@@ -146,7 +146,7 @@ def get_zone_name_by_tid_v2(tid_v2: int) -> str | None:
             if tid_v2 == int(sub_ch.get("tid", -1)):
                 main_name = main_ch.get("name", "")
                 sub_name = sub_ch.get("name", "")
-                return "%s-%s" % (main_name, sub_name)
+                return f"{main_name}-{sub_name}"
     return None
 
 

@@ -13,6 +13,8 @@ from urllib.parse import quote
 
 from ..exceptions import StatementException
 
+get_data_cache = {}
+
 
 def get_api(field: str, *args) -> dict:
     """
@@ -49,11 +51,15 @@ def get_data(route: str) -> dict | list:
     Returns:
         dict | list: 数据
     """
+    global get_data_cache
+    if get_data_cache.get(route):
+        return get_data_cache[route]
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", route))
     if os.path.exists(path):
         with open(path, encoding="utf8") as f:
             data = json.load(f)
-            return data
+        get_data_cache[route] = data
+        return data
     else:
         return {}
 
