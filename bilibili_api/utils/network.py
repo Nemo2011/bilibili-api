@@ -9,6 +9,7 @@ import atexit
 import binascii
 import hashlib
 import hmac
+import http.cookiejar
 import io
 import json
 import logging
@@ -22,6 +23,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import reduce
+from os import PathLike
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from Cryptodome.Cipher import PKCS1_OAEP
@@ -1392,6 +1394,32 @@ class Credential:
             ]:
                 setattr(c, key, value)
         return c
+
+    @staticmethod
+    def from_cookie_file(path: Union[str, PathLike]) -> "Credential":
+        """
+        从 Netscape cookies.txt 文件中新建 Credential，仅保留 Bilibili 域名的 Cookie。
+
+        Args:
+            path (str | os.PathLike): Netscape HTTP Cookie File 路径。
+
+        Returns:
+            Credential: 凭据类
+        """
+        jar = http.cookiejar.MozillaCookieJar(str(path))
+        jar.load(ignore_discard=True, ignore_expires=True)
+
+        now = time.time()
+        cookies = {}
+        for cookie in jar:
+            domain = cookie.domain.lower().lstrip(".")
+            if domain != "bilibili.com" and not domain.endswith(".bilibili.com"):
+                continue
+            if cookie.expires not in (None, 0) and cookie.expires < now:
+                continue
+            cookies[cookie.name] = cookie.value
+
+        return Credential.from_cookies(cookies)
 
     def __str__(self):
         return f"SESSDATA: {self.sessdata}; bili_jct: {self.bili_jct}; buvid3: {self.buvid3}; buvid4: {self.buvid4}; DedeUserID: {self.dedeuserid}; ac_time_value: {self.ac_time_value}"

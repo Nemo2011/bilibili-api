@@ -10,6 +10,16 @@ credential = Credential(sessdata="你的 SESSDATA", bili_jct="你的 bili_jct", 
 
 `sessdata` `bili_jct` `buvid3` 和 `dedeuserid` 这四个参数的值均在浏览器的 Cookies 里头，下面说明获取方法。
 
+也可以从 Chrome / yt-dlp 等工具导出的 Netscape cookies.txt 文件中读取 B 站相关 Cookie：
+
+```python
+from bilibili_api import Credential
+
+credential = Credential.from_cookie_file("yt-dlp-cookies.txt")
+```
+
+此方法会自动过滤文件中的其他域名，只保留 `bilibili.com` 及其子域名的 Cookie。如果文件中只有 `buvid3`、`b_nut`、`sid` 等非登录 Cookie，会返回一个不完整的 `Credential`；访问需要登录态的接口时仍会因为缺少 `SESSDATA` 或 `bili_jct` 抛出对应异常。
+
 ## 火狐浏览器（Firefox）
 
 1. 按 **F12** 打开开发者工具。
