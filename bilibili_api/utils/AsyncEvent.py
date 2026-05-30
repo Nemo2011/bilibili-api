@@ -5,6 +5,7 @@ bilibili_api.utils.AsyncEvent
 """
 
 import asyncio
+import logging
 from typing import Callable, Coroutine, Union
 
 
@@ -97,8 +98,12 @@ class AsyncEvent:
 
         if task.cancelled(): return
 
+        logger: logging.Logger | None = getattr(self, "logger", None)
+
         try:
-            _ = task.exception()
+            e = task.exception()
+            if e and logger:
+                logger.error(f"dispatched task raised an exception: {e}")
         except Exception:
             pass
 
