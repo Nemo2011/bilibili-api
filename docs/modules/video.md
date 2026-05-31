@@ -1015,6 +1015,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 - HEV: HEVC(H.265)
 - AVC: AVC(H.264)
 - AV1: AV1
+- UNKNOWN: 未知
 
 
 
