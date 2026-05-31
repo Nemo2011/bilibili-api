@@ -512,14 +512,10 @@ class QrCodeLogin:
             elif code == 86038:
                 return QrCodeLoginEvents.TIMEOUT
             else:
-                self.__credential = Credential(
-                    sessdata=str(events.cookies["SESSDATA"]),
-                    bili_jct=str(events.cookies["bili_jct"]),
-                    dedeuserid=str(events.cookies["DedeUserID"]),
-                    dedeuserid_ckmd5=str(events.cookies["DedeUserID__ckMd5"]),
-                    sid=str(events.cookies["sid"]),
-                    ac_time_value=events.json()["data"]["refresh_token"],
-                )
+                kwargs = {"ac_time_value": events.json()["data"]["refresh_token"]}
+                for cookie in events.json()["data"]["cookie_info"]["cookies"]:
+                    kwargs[cookie["name"].lower().replace("__", "_")] = cookie["value"]
+                self.__credential = Credential(**kwargs)
                 return QrCodeLoginEvents.DONE
 
 
