@@ -2462,10 +2462,12 @@ class VideoDownloadURLDataDetecter:
                 ):
                     continue
                 video_stream_codecs = VideoCodecs.UNKNOWN
-                for val in VideoCodecs:
+                for val in codecs:
                     for key in val.value:
                         if key in video_data["codecs"]:
                             video_stream_codecs = val
+                if VideoCodecs.UNKNOWN not in codecs and video_stream_codecs == VideoCodecs.UNKNOWN:
+                    continue
                 video_stream = VideoStreamDownloadURL(
                     url=video_stream_url,
                     video_quality=video_stream_quality,
@@ -2551,7 +2553,7 @@ class VideoDownloadURLDataDetecter:
             for _, item in AudioQuality.__dict__.items()
             if isinstance(item, AudioQuality)
         ],
-        codecs: List[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
+        codecs: List[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV, VideoCodecs.UNKNOWN],
         no_dolby_video: bool = False,
         no_dolby_audio: bool = False,
         no_hdr: bool = False,
