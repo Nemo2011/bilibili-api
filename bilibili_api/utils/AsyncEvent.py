@@ -5,6 +5,7 @@ bilibili_api.utils.AsyncEvent
 """
 
 import asyncio
+import logging
 from typing import Callable, Coroutine, Union
 
 
@@ -18,6 +19,7 @@ class AsyncEvent:
     def __init__(self):
         self.__handlers = {}
         self.__ignore_events = []
+        self.__tasks = set()
 
     def add_event_listener(self, name: str, handler: Union[Callable, Coroutine]) -> None:
         """
@@ -86,6 +88,31 @@ class AsyncEvent:
         """
         self.__ignore_events = []
 
+    def __on_task_done(self, task: asyncio.Task) -> None:
+        """
+        asyncio.Task完成后的回调函数
+        1、立刻从self.__tasks中移除任务
+        2、如果任务抛出异常，分发特殊异常事件，避免Task exception was never retrieved
+        """
+        self.__tasks.discard(task)
+
+        if task.cancelled(): return
+
+        logger: logging.Logger | None = getattr(self, "logger", None)
+        event_name = getattr(task, "event_name", None)
+
+        try:
+            e = task.exception()
+            if e:
+                if event_name != "__TASK_EXCEPTION__":
+                    # dispatch一个__TASK_EXCEPTION__事件使用户可以订阅
+                    self.dispatch("__TASK_EXCEPTION__", e)
+                if logger and hasattr(logger, "error"):
+                    logger.error(f"dispatched task raised an exception: {e}")
+        except Exception as ee:
+            if logger and hasattr(logger, "error"):
+                logger.error(f"an error occurred while handling task exception: {ee}", exc_info=ee)
+
     def dispatch(self, name: str, *args, **kwargs) -> None:
         """
         异步发布事件。
@@ -104,8 +131,12 @@ class AsyncEvent:
             for callableorcoroutine in self.__handlers[name]:
                 obj = callableorcoroutine(*args, **kwargs)
                 if isinstance(obj, Coroutine):
-                    asyncio.create_task(obj)
+                    task = asyncio.create_task(obj)
+                    setattr(task, "event_name", name) # 通过检查event_name避免异常被循环dispatch
+                    task.add_done_callback(self.__on_task_done)
+                    self.__tasks.add(task) # 保持对task的引用状态
 
-        if name != "__ALL__":
+        # __ALL__事件应排除__TASK_EXCEPTION__以保证不破坏旧代码行为
+        if name != "__ALL__" and name != "__TASK_EXCEPTION__":
             kwargs.update({"name": name, "data": args})
             self.dispatch("__ALL__", kwargs)
