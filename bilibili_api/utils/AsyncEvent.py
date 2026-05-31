@@ -6,7 +6,6 @@ bilibili_api.utils.AsyncEvent
 
 import asyncio
 from collections.abc import Callable, Coroutine
-import logging
 
 tasks = set()
 
@@ -19,6 +18,8 @@ class AsyncEvent:
     """
 
     def __init__(self):
+        """ """
+        # don't remove this empty docstring
         self.__handlers = {}
         self.__ignore_events = []
 
@@ -27,8 +28,8 @@ class AsyncEvent:
         注册事件监听器。
 
         Args:
-            name    (str)              :            事件名。
-            handler (Union[Callable, Coroutine]):   回调函数。
+            name (str): 事件名。
+            handler (Callable | Coroutine): 回调函数。
         """
         name = name.upper()
         if name not in self.__handlers:
@@ -41,6 +42,9 @@ class AsyncEvent:
 
         Args:
             event_name (str): 事件名。
+
+        Returns:
+            Callable: 传入函数的参数字典
         """
 
         def decorator(func: Callable | Coroutine):
@@ -60,8 +64,8 @@ class AsyncEvent:
         移除事件监听函数。
 
         Args:
-            name                  (str):            事件名。
-            handler (Union[Callable, Coroutine]):   要移除的函数。
+            name (str): 事件名。
+            handler (Callable | Coroutine): 要移除的函数。
 
         Returns:
             bool: 是否移除成功。
@@ -100,22 +104,14 @@ class AsyncEvent:
         if task.cancelled():
             return
 
-        logger: logging.Logger | None = getattr(self, "logger", None)
         event_name = getattr(task, "event_name", None)
 
         try:
             e = task.exception()
-            if e:
-                if event_name != "__TASK_EXCEPTION__":
-                    self.dispatch("__TASK_EXCEPTION__", e)
-                if logger and hasattr(logger, "error"):
-                    logger.error(f"dispatched task raised an exception: {e}")
-        except Exception as ee:
-            if logger and hasattr(logger, "error"):
-                logger.error(
-                    f"an error occurred while handling task exception: {ee}",
-                    exc_info=ee,
-                )
+            if e and event_name != "__TASK_EXCEPTION__":
+                self.dispatch("__TASK_EXCEPTION__", e)
+        except Exception:
+            pass
 
     def dispatch(self, name: str, *args, **kwargs) -> None:
         """
