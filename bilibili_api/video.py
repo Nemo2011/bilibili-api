@@ -2217,11 +2217,13 @@ class VideoCodecs(Enum):
     - HEV: HEVC(H.265)
     - AVC: AVC(H.264)
     - AV1: AV1
+    - UNKNOWN: 未知
     """
 
-    HEV = "hev"
-    AVC = "avc"
-    AV1 = "av01"
+    HEV = ("hev", "hvc")
+    AVC = ("avc",)
+    AV1 = ("av01", "av1")
+    UNKNOWN = ()
 
 
 class AudioQuality(Enum):
@@ -2415,7 +2417,7 @@ class VideoDownloadURLDataDetecter:
             for _, item in AudioQuality.__dict__.items()
             if isinstance(item, AudioQuality)
         ],
-        codecs: list[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV],
+        codecs: list[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV, VideoCodecs.UNKNOWN],
         no_dolby_video: bool = False,
         no_dolby_audio: bool = False,
         no_hdr: bool = False,
@@ -2487,18 +2489,15 @@ class VideoDownloadURLDataDetecter:
                     and (video_stream_quality not in video_accepted_qualities)
                 ):
                     continue
-                video_stream_codecs = None
+                video_stream_codecs = VideoCodecs.UNKNOWN
                 for val in VideoCodecs:
-                    if val.value in video_data["codecs"]:
-                        video_stream_codecs = val
-                if (video_stream_codecs not in codecs) and (
-                    video_stream_codecs is not None
-                ):
-                    continue
+                    for key in val.value:
+                        if key in video_data["codecs"]:
+                            video_stream_codecs = val
                 video_stream = VideoStreamDownloadURL(
                     url=video_stream_url,
                     video_quality=video_stream_quality,
-                    video_codecs=video_stream_codecs,  # type: ignore
+                    video_codecs=video_stream_codecs,
                     backup_url=video_data["backup_url"],
                     bandwidth=video_data["bandwidth"],
                     codecs=video_data["codecs"],
