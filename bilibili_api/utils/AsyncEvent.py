@@ -6,7 +6,7 @@ bilibili_api.utils.AsyncEvent
 
 import asyncio
 from collections.abc import Callable, Coroutine
-from typing import Any
+import logging
 
 tasks = set()
 
@@ -18,9 +18,7 @@ class AsyncEvent:
     特殊事件：__ALL__ 所有事件均触发
     """
 
-    def __init__(self) -> None:
-        """ """
-        # don't remove this empty docstring
+    def __init__(self):
         self.__handlers = {}
         self.__ignore_events = []
 
@@ -29,8 +27,8 @@ class AsyncEvent:
         注册事件监听器。
 
         Args:
-            name (str): 事件名。
-            handler (Callable | Coroutine): 回调函数。
+            name    (str)              :            事件名。
+            handler (Union[Callable, Coroutine]):   回调函数。
         """
         name = name.upper()
         if name not in self.__handlers:
@@ -43,9 +41,6 @@ class AsyncEvent:
 
         Args:
             event_name (str): 事件名。
-
-        Returns:
-            Callable: 传入函数的参数字典
         """
 
         def decorator(func: Callable | Coroutine):
@@ -65,8 +60,8 @@ class AsyncEvent:
         移除事件监听函数。
 
         Args:
-            name (str): 事件名。
-            handler (Callable | Coroutine): 要移除的函数。
+            name                  (str):            事件名。
+            handler (Union[Callable, Coroutine]):   要移除的函数。
 
         Returns:
             bool: 是否移除成功。
@@ -94,7 +89,35 @@ class AsyncEvent:
         """
         self.__ignore_events = []
 
-    def dispatch(self, name: str, *args: Any, **kwargs: Any) -> None:
+    def __on_task_done(self, task: asyncio.Task) -> None:
+        """
+        asyncio.Task 完成后的回调函数
+
+        如果任务抛出异常，分发特殊异常事件，避免 `Task exception was never retrieved`
+        """
+        tasks.discard(task)
+
+        if task.cancelled():
+            return
+
+        logger: logging.Logger | None = getattr(self, "logger", None)
+        event_name = getattr(task, "event_name", None)
+
+        try:
+            e = task.exception()
+            if e:
+                if event_name != "__TASK_EXCEPTION__":
+                    self.dispatch("__TASK_EXCEPTION__", e)
+                if logger and hasattr(logger, "error"):
+                    logger.error(f"dispatched task raised an exception: {e}")
+        except Exception as ee:
+            if logger and hasattr(logger, "error"):
+                logger.error(
+                    f"an error occurred while handling task exception: {ee}",
+                    exc_info=ee,
+                )
+
+    def dispatch(self, name: str, *args, **kwargs) -> None:
         """
         异步发布事件。
 
@@ -104,7 +127,7 @@ class AsyncEvent:
             kwargs (Any): 要传递给函数的参数。 **kwargs 传递。
         """
         if len(args) == 0 and len(kwargs.keys()) == 0:
-            args = [{}]  # type: ignore
+            args = [{}]
         if name.upper() in self.__ignore_events:
             return
 
@@ -114,9 +137,10 @@ class AsyncEvent:
                 obj = callableorcoroutine(*args, **kwargs)
                 if isinstance(obj, Coroutine):
                     task = asyncio.create_task(obj)
+                    setattr(task, "event_name", name)
+                    task.add_done_callback(self.__on_task_done)
                     tasks.add(task)
-                    task.add_done_callback(tasks.discard)
 
-        if name != "__ALL__":
+        if name != "__ALL__" and name != "__TASK_EXCEPTION__":
             kwargs.update({"name": name, "data": args})
             self.dispatch("__ALL__", kwargs)
