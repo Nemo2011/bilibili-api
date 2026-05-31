@@ -92,20 +92,26 @@ class AsyncEvent:
         """
         asyncio.Task完成后的回调函数
         1、立刻从self.__tasks中移除任务
-        2、如果任务抛出异常，装模做样处理下异常，避免Task exception was never retrieved
+        2、如果任务抛出异常，分发特殊异常事件，避免Task exception was never retrieved
         """
         self.__tasks.discard(task)
 
         if task.cancelled(): return
 
         logger: logging.Logger | None = getattr(self, "logger", None)
+        event_name = getattr(task, "event_name", None)
 
         try:
             e = task.exception()
-            if e and logger:
-                logger.error(f"dispatched task raised an exception: {e}")
-        except Exception:
-            pass
+            if e:
+                if event_name != "__TASK_EXCEPTION__":
+                    # dispatch一个__TASK_EXCEPTION__事件使用户可以订阅
+                    self.dispatch("__TASK_EXCEPTION__", e)
+                if logger and hasattr(logger, "error"):
+                    logger.error(f"dispatched task raised an exception: {e}")
+        except Exception as ee:
+            if logger and hasattr(logger, "error"):
+                logger.error(f"an error occurred while handling task exception: {ee}", exc_info=ee)
 
     def dispatch(self, name: str, *args, **kwargs) -> None:
         """
@@ -126,9 +132,11 @@ class AsyncEvent:
                 obj = callableorcoroutine(*args, **kwargs)
                 if isinstance(obj, Coroutine):
                     task = asyncio.create_task(obj)
+                    setattr(task, "event_name", name) # 通过检查event_name避免异常被循环dispatch
                     task.add_done_callback(self.__on_task_done)
                     self.__tasks.add(task) # 保持对task的引用状态
 
-        if name != "__ALL__":
+        # __ALL__事件应排除__TASK_EXCEPTION__以保证不破坏旧代码行为
+        if name != "__ALL__" and name != "__TASK_EXCEPTION__":
             kwargs.update({"name": name, "data": args})
             self.dispatch("__ALL__", kwargs)
