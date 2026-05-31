@@ -11,19 +11,16 @@ from bilibili_api import video_zone
 ```
 
 - [class VideoZoneTypes()](#class-VideoZoneTypes)
-- [def get\_sub\_zone\_by\_main\_tid\_v2()](#def-get\_sub\_zone\_by\_main\_tid\_v2)
-- [def get\_tid\_v2\_by\_zone\_name()](#def-get\_tid\_v2\_by\_zone\_name)
 - [async def get\_zone\_hot\_tags()](#async-def-get\_zone\_hot\_tags)
 - [def get\_zone\_info\_by\_name()](#def-get\_zone\_info\_by\_name)
+- [def get\_zone\_info\_by\_name\_v2()](#def-get\_zone\_info\_by\_name\_v2)
 - [def get\_zone\_info\_by\_tid()](#def-get\_zone\_info\_by\_tid)
 - [def get\_zone\_info\_by\_tid\_v2()](#def-get\_zone\_info\_by\_tid\_v2)
 - [def get\_zone\_list()](#def-get\_zone\_list)
 - [def get\_zone\_list\_sub()](#def-get\_zone\_list\_sub)
 - [def get\_zone\_list\_sub\_v2()](#def-get\_zone\_list\_sub\_v2)
-- [def get\_zone\_name\_by\_tid\_v2()](#def-get\_zone\_name\_by\_tid\_v2)
 - [async def get\_zone\_new\_videos()](#async-def-get\_zone\_new\_videos)
 - [async def get\_zone\_top10()](#async-def-get\_zone\_top10)
-- [def get\_zone\_url\_by\_tid\_v2()](#def-get\_zone\_url\_by\_tid\_v2)
 - [async def get\_zone\_videos\_count\_today()](#async-def-get\_zone\_videos\_count\_today)
 
 ---
@@ -180,38 +177,6 @@ from bilibili_api import video_zone
 
 ---
 
-## def get_sub_zone_by_main_tid_v2()
-
-提供主分区 tid_v2 获取所有子分区信息。
-
-
-| name | type | description |
-| - | - | - |
-| `tid_v2` | `int` | 主分区 tid_v2。 |
-
-**Returns:** `list[dict] | None`:  子分区列表，没有时返回 None。
-
-
-
-
----
-
-## def get_tid_v2_by_zone_name()
-
-提供分区名获取 tid_v2。
-
-
-| name | type | description |
-| - | - | - |
-| `name` | `str` | 分区名。 |
-
-**Returns:** `int | None`:  tid_v2，没有时返回 None。
-
-
-
-
----
-
 ## async def get_zone_hot_tags()
 
 获取分区热门标签
@@ -236,6 +201,22 @@ from bilibili_api import video_zone
 | name | type | description |
 | - | - | - |
 | `name` | `str` | 频道的名称。 |
+
+**Returns:** `tuple[dict | None, dict | None]`:  第一个是主分区，第二个是子分区，没有时返回 None。
+
+
+
+
+---
+
+## def get_zone_info_by_name_v2()
+
+根据分区名称获取分区信息 (tid_v2)。
+
+
+| name | type | description |
+| - | - | - |
+| `name` | `str` | 分区名。 |
 
 **Returns:** `tuple[dict | None, dict | None]`:  第一个是主分区，第二个是子分区，没有时返回 None。
 
@@ -317,22 +298,6 @@ from bilibili_api import video_zone
 
 ---
 
-## def get_zone_name_by_tid_v2()
-
-提供 tid_v2 获取分区名。
-
-
-| name | type | description |
-| - | - | - |
-| `tid_v2` | `int` | 分区 tid_v2。 |
-
-**Returns:** `str | None`:  主分区名(-子分区名)，查不到返回 None。
-
-
-
-
----
-
 ## async def get_zone_new_videos()
 
 获取分区最新投稿
@@ -363,22 +328,6 @@ from bilibili_api import video_zone
 | `credential` | `Credential \| None, optional` | Credential 类. Defaults to None. |
 
 **Returns:** `dict`:  前 10 的视频信息。
-
-
-
-
----
-
-## def get_zone_url_by_tid_v2()
-
-提供 tid_v2 获取所在分区 url。
-
-
-| name | type | description |
-| - | - | - |
-| `tid_v2` | `int` | 分区 tid_v2。 |
-
-**Returns:** `str | None`:  分区 url，没有时返回 None。
 
 
 

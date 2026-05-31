@@ -88,24 +88,6 @@ def get_zone_list_sub_v2() -> list[dict]:
     return get_data("video_zone_v2.json")  # type: ignore
 
 
-def get_sub_zone_by_main_tid_v2(tid_v2: int) -> list[dict] | None:
-    """
-    提供主分区 tid_v2 获取所有子分区信息。
-
-    Args:
-        tid_v2 (int): 主分区 tid_v2。
-
-    Returns:
-        list[dict] | None: 子分区列表，没有时返回 None。
-    """
-    channel = get_zone_list_sub_v2()
-
-    for main_ch in channel:
-        if tid_v2 == int(main_ch.get("tid", -1)):
-            return main_ch.get("sub", None)
-    return None
-
-
 def get_zone_info_by_tid_v2(tid_v2: int) -> tuple[dict | None, dict | None]:
     """
     提供 tid_v2 查找所在分区信息。
@@ -127,69 +109,25 @@ def get_zone_info_by_tid_v2(tid_v2: int) -> tuple[dict | None, dict | None]:
     return None, None
 
 
-def get_zone_name_by_tid_v2(tid_v2: int) -> str | None:
+def get_zone_info_by_name_v2(name: str) -> tuple[dict | None, dict | None]:
     """
-    提供 tid_v2 获取分区名。
-
-    Args:
-        tid_v2 (int): 分区 tid_v2。
-
-    Returns:
-        str | None: 主分区名(-子分区名)，查不到返回 None。
-    """
-    channel = get_zone_list_sub_v2()
-
-    for main_ch in channel:
-        if tid_v2 == int(main_ch.get("tid", -1)):
-            return main_ch.get("name", None)
-        for sub_ch in main_ch.get("sub", []):
-            if tid_v2 == int(sub_ch.get("tid", -1)):
-                main_name = main_ch.get("name", "")
-                sub_name = sub_ch.get("name", "")
-                return f"{main_name}-{sub_name}"
-    return None
-
-
-def get_zone_url_by_tid_v2(tid_v2: int) -> str | None:
-    """
-    提供 tid_v2 获取所在分区 url。
-
-    Args:
-        tid_v2 (int): 分区 tid_v2。
-
-    Returns:
-        str | None: 分区 url，没有时返回 None。
-    """
-    channel = get_zone_list_sub_v2()
-
-    for main_ch in channel:
-        if tid_v2 == int(main_ch.get("tid", -1)):
-            return main_ch.get("url", None)
-        for sub_ch in main_ch.get("sub", []):
-            if tid_v2 == int(sub_ch.get("tid", -1)):
-                return main_ch.get("url", None)
-    return None
-
-
-def get_tid_v2_by_zone_name(name: str) -> int | None:
-    """
-    提供分区名获取 tid_v2。
+    根据分区名称获取分区信息 (tid_v2)。
 
     Args:
         name (str): 分区名。
 
     Returns:
-        int | None: tid_v2，没有时返回 None。
+        tuple[dict | None, dict | None]: 第一个是主分区，第二个是子分区，没有时返回 None。
     """
     channel = get_zone_list_sub_v2()
 
     for main_ch in channel:
         if name == main_ch.get("name", ""):
-            return int(main_ch.get("tid", -1))
+            return main_ch, None
         for sub_ch in main_ch.get("sub", []):
             if name == sub_ch.get("name", ""):
-                return int(sub_ch.get("tid", -1))
-    return None
+                return main_ch, sub_ch
+    return None, None
 
 
 async def get_zone_top10(
