@@ -461,7 +461,7 @@ from bilibili_api import bangumi
 
 
 
-**Returns:** `tuple[dict, utils.initial_state.InitialDataType]`:  前半部分为数据，后半部分为数据类型（__INITIAL_STATE__ 或 __NEXT_DATA）
+**Returns:** `tuple[dict, utils.initial_state.InitialDataType]`:  前半部分为数据，后半部分为数据类型（\_\_INITIAL_STATE\_\_ 或 \_\_NEXT_DATA\_\_）
 
 
 

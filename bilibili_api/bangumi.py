@@ -1468,7 +1468,7 @@ class Episode(Video):
         获取番剧单集信息
 
         Returns:
-            tuple[dict, utils.initial_state.InitialDataType]: 前半部分为数据，后半部分为数据类型（__INITIAL_STATE__ 或 __NEXT_DATA）
+            tuple[dict, utils.initial_state.InitialDataType]: 前半部分为数据，后半部分为数据类型（\\_\\_INITIAL_STATE\\_\\_ 或 \\_\\_NEXT_DATA\\_\\_）
         """
         if self.__ep_info_html:
             return self.__ep_info_html
