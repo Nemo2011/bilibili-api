@@ -2417,7 +2417,12 @@ class VideoDownloadURLDataDetecter:
             for _, item in AudioQuality.__dict__.items()
             if isinstance(item, AudioQuality)
         ],
-        codecs: list[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV, VideoCodecs.UNKNOWN],
+        codecs: list[VideoCodecs] = [
+            VideoCodecs.AV1,
+            VideoCodecs.AVC,
+            VideoCodecs.HEV,
+            VideoCodecs.UNKNOWN,
+        ],
         no_dolby_video: bool = False,
         no_dolby_audio: bool = False,
         no_hdr: bool = False,
@@ -2494,7 +2499,10 @@ class VideoDownloadURLDataDetecter:
                     for key in val.value:
                         if key in video_data["codecs"]:
                             video_stream_codecs = val
-                if VideoCodecs.UNKNOWN not in codecs and video_stream_codecs == VideoCodecs.UNKNOWN:
+                if (
+                    VideoCodecs.UNKNOWN not in codecs
+                    and video_stream_codecs == VideoCodecs.UNKNOWN
+                ):
                     continue
                 video_stream = VideoStreamDownloadURL(
                     url=video_stream_url,
@@ -2506,7 +2514,7 @@ class VideoDownloadURLDataDetecter:
                     frame_rate=float(video_data["frame_rate"]),
                     scale=(video_data["width"], video_data["height"]),
                     sar=tuple(
-                        [int(x) for x in video_data["sar"].split(":")] # type: ignore
+                        [int(x) for x in video_data["sar"].split(":")]  # type: ignore
                         if ":" in video_data["sar"]
                         else (1, 1)
                     ),
@@ -2624,7 +2632,12 @@ class VideoDownloadURLDataDetecter:
             for _, item in AudioQuality.__dict__.items()
             if isinstance(item, AudioQuality)
         ],
-        codecs: list[VideoCodecs] = [VideoCodecs.AV1, VideoCodecs.AVC, VideoCodecs.HEV, VideoCodecs.UNKNOWN],
+        codecs: list[VideoCodecs] = [
+            VideoCodecs.AV1,
+            VideoCodecs.AVC,
+            VideoCodecs.HEV,
+            VideoCodecs.UNKNOWN,
+        ],
         no_dolby_video: bool = False,
         no_dolby_audio: bool = False,
         no_hdr: bool = False,

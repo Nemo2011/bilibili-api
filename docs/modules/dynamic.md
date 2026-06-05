@@ -775,7 +775,6 @@ scene 参数
 | - | - | - |
 | `info` | `dynamic.BuildDynamic` | 动态内容 |
 | `credential` | `Credential` | 凭据 |
-| `web_repost_src` | `str \| None, optional` | 动态转发源. Defaults to None. |
 
 **Returns:** `dict`:  调用 API 返回的结果
 
