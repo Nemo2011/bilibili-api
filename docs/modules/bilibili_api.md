@@ -33,6 +33,7 @@ from bilibili_api import ...
 - [class CookiesRefreshException()](#class-CookiesRefreshException)
 - [class Credential()](#class-Credential)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
+  - [def check\_blank()](#def-check\_blank)
   - [async def check\_refresh()](#async-def-check\_refresh)
   - [async def check\_valid()](#async-def-check\_valid)
   - [async def get\_cookies()](#async-def-get\_cookies)
@@ -43,6 +44,8 @@ from bilibili_api import ...
   - [def has\_buvid4()](#def-has\_buvid4)
   - [def has\_dedeuserid()](#def-has\_dedeuserid)
   - [def has\_sessdata()](#def-has\_sessdata)
+  - [def is\_bili\_ticket\_valid()](#def-is\_bili\_ticket\_valid)
+  - [def is\_buvid\_generated()](#def-is\_buvid\_generated)
   - [def raise\_for\_no\_ac\_time\_value()](#def-raise\_for\_no\_ac\_time\_value)
   - [def raise\_for\_no\_bili\_jct()](#def-raise\_for\_no\_bili\_jct)
   - [def raise\_for\_no\_buvid3()](#def-raise\_for\_no\_buvid3)
@@ -108,12 +111,12 @@ from bilibili_api import ...
 - [async def bili\_simple\_download()](#async-def-bili\_simple\_download)
 - [def bvid2aid()](#def-bvid2aid)
 - [def configure\_dynamic\_fingerprint()](#def-configure\_dynamic\_fingerprint)
+- [async def ensure\_bili\_ticket()](#async-def-ensure\_bili\_ticket)
+- [async def ensure\_buvid()](#async-def-ensure\_buvid)
 - [def get\_all\_registered\_post\_filters()](#def-get\_all\_registered\_post\_filters)
 - [def get\_all\_registered\_pre\_filters()](#def-get\_all\_registered\_pre\_filters)
 - [def get\_available\_settings()](#def-get\_available\_settings)
 - [def get\_bili\_headers()](#def-get\_bili\_headers)
-- [async def get\_bili\_ticket()](#async-def-get\_bili\_ticket)
-- [async def get\_buvid()](#async-def-get\_buvid)
 - [def get\_client()](#def-get\_client)
 - [async def get\_real\_url()](#async-def-get\_real\_url)
 - [def get\_registered\_available\_settings()](#def-get\_registered\_available\_settings)
@@ -122,6 +125,8 @@ from bilibili_api import ...
 - [def get\_registered\_pre\_filters()](#def-get\_registered\_pre\_filters)
 - [def get\_selected\_client()](#def-get\_selected\_client)
 - [def get\_session()](#def-get\_session)
+- [async def obtain\_bili\_ticket()](#async-def-obtain\_bili\_ticket)
+- [async def obtain\_buvid()](#async-def-obtain\_buvid)
 - [async def parse\_link()](#async-def-parse\_link)
 - [def recalculate\_wbi()](#def-recalculate\_wbi)
 - [def register\_client()](#def-register\_client)
@@ -683,8 +688,21 @@ Cookies 刷新错误。
 | `dedeuserid` | `str \| None, optional` | 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None. |
 | `dedeuserid_ckmd5` | `str \| None, optional` | 浏览器 Cookies 中的 DedeUserID__ckMd5 字段值. Defaults to None. |
 | `sid` | `str \| None, optional` | 浏览器 Cookies 中的 sid 字段值. Defaults to None. |
+| `bili_ticket` | `str \| None, optional` | 浏览器 Cookies 中的 bili_ticket 字段值. Defaults to None. |
+| `bili_ticket_expires` | `str \| None, optional` | 浏览器 Cookies 中的 bili_ticket_expires 字段值. Defaults to None. |
 | `ac_time_value` | `str \| None, optional` | 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None. |
 | `kwargs` | `Any` | 其他用户可自行添加的 cookies。通过 **kwargs 传入。 |
+
+
+### def check_blank()
+
+检查是否为空白凭据类 (`Credential()`)
+
+
+
+**Returns:** `bool`:  是否为空白凭据类
+
+
 
 
 ### async def check_refresh()
@@ -728,7 +746,7 @@ Cookies 刷新错误。
 
 
 
-**Returns:** `dict`:  核心 cookies
+**Returns:** `dic[str, str | None]`:  核心 cookies
 
 
 
@@ -795,6 +813,28 @@ Cookies 刷新错误。
 
 
 **Returns:** `bool`:  是否提供 sessdata。
+
+
+
+
+### def is_bili_ticket_valid()
+
+bili_ticket 是否可用
+
+
+
+**Returns:** `bool`:  bili_ticket 是否可用
+
+
+
+
+### def is_buvid_generated()
+
+buvid3 / buvid4 是否已生成
+
+
+
+**Returns:** `bool`:  buvid3 / buvid4 是否已生成
 
 
 
@@ -1633,6 +1673,42 @@ BV 号转 AV 号。
 
 ---
 
+## async def ensure_bili_ticket()
+
+确保 bili_ticket 可用，自动刷新 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段。
+
+若不提供凭据类则将返回全局生成的 bili_ticket。
+
+
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential \| None, optional` | 凭据. Defaults to None. |
+
+**Returns:** `tuple[str, str]`:  bili_ticket, bili_ticket_expires
+
+
+
+
+---
+
+## async def ensure_buvid()
+
+确认凭据类的 buvid3 与 buvid4，若未提供则生成新 buvid3 与 buvid4 并设置相关字段。
+
+若不提供凭据类则将返回全局生成的 buvid3 与 buvid4。
+
+
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential \| None, optional` | 凭据类. Defaults to None. |
+
+**Returns:** `tuple[str, str, str]`:  第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
+
+
+
+
+---
+
 ## def get_all_registered_post_filters()
 
 获取所有已注册的后置过滤器
@@ -1690,38 +1766,6 @@ BV 号转 AV 号。
 | `fpgen_fp` | `bool, optional` | 是否使用 fpgen 生成的浏览器指纹信息. Defaults to True. |
 
 **Returns:** `dict`:  请求头
-
-
-
-
----
-
-## async def get_bili_ticket()
-
-获取 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段
-
-
-| name | type | description |
-| - | - | - |
-| `credential` | `Credential \| None, optional` | 凭据. Defaults to None. |
-
-**Returns:** `tuple[str, str] | None`:  bili_ticket, bili_ticket_expires
-
-
-
-
----
-
-## async def get_buvid()
-
-获取 buvid3 和 buvid4，若提供凭据类将自动在 credential 中设置相关字段
-
-
-| name | type | description |
-| - | - | - |
-| `credential` | `Credential \| None, optional` | 凭据. Defaults to None. |
-
-**Returns:** `tuple[str, str, str]`:  第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
 
 
 
@@ -1840,6 +1884,42 @@ BV 号转 AV 号。
 
 
 **Returns:** `object`:  会话对象
+
+
+
+
+---
+
+## async def obtain_bili_ticket()
+
+获取新的 bili_ticket，若已有将覆盖原有的 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段。
+
+若不提供凭据类则将刷新全局 bili_ticket 并返回。
+
+
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential \| None, optional` | 凭据. Defaults to None. |
+
+**Returns:** `tuple[str, str]`:  bili_ticket, bili_ticket_expires
+
+
+
+
+---
+
+## async def obtain_buvid()
+
+获取新的 buvid3 与 buvid4，若已有 buvid3 或 buvid4 则将覆盖原来的值。
+
+若不提供凭据类则将刷新全局 buvid3 与 buvid4 并返回。
+
+
+| name | type | description |
+| - | - | - |
+| `credential` | `Credential \| None, optional` | 凭据类. Defaults to None. |
+
+**Returns:** `tuple[str, str, str]`:  第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
 
 
 

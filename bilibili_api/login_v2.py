@@ -19,7 +19,7 @@ import yarl
 
 from .exceptions import GeetestException, LoginError
 from .utils.geetest import Geetest, GeetestType
-from .utils.network import Api, Credential, get_buvid, get_client
+from .utils.network import Api, Credential, ensure_buvid, get_client
 from .utils.picture import Picture
 from .utils.utils import get_api, get_data, raise_for_statement, to_form_urlencoded
 
@@ -77,7 +77,7 @@ async def login_with_password(
         url=login_api["url"],
         data=data,
         headers=headers,
-        cookies={"buvid3": (await get_buvid())[0]},
+        cookies={"buvid3": (await ensure_buvid())[0]},
     )
     login_data = resp.json()
     if login_data["code"] == 0:
@@ -278,7 +278,7 @@ async def send_sms(phonenumber: PhoneNumber, geetest: Geetest) -> str:
         url=api["url"],
         data=data,
         headers=headers,
-        cookies={"buvid3": (await get_buvid())[0]},
+        cookies={"buvid3": (await ensure_buvid())[0]},
     )
     return_data = res.json()
     if return_data["code"] == 0:
@@ -321,7 +321,7 @@ async def login_with_sms(
         url=api["url"],
         data=data,
         headers=headers,
-        cookies={"buvid3": (await get_buvid())[0]},
+        cookies={"buvid3": (await ensure_buvid())[0]},
     )
     return_data = res.json()
     if return_data["code"] == 0 and return_data["data"]["status"] != 5:

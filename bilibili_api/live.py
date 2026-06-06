@@ -23,8 +23,8 @@ from .utils.network import (
     Api,
     BiliWsMsgType,
     Credential,
+    ensure_buvid,
     get_bili_headers,
-    get_buvid,
     get_client,
 )
 from .utils.utils import get_api
@@ -1676,7 +1676,7 @@ class LiveDanmaku(AsyncEvent):
             "key": token,
         }
         if not self.credential.has_buvid3():
-            verifyData["buvid"] = (await get_buvid())[0]
+            verifyData["buvid"] = (await ensure_buvid())[0]
         data = json.dumps(verifyData, separators=(",", ":")).encode()
         await self.__send(
             data, self.PROTOCOL_VERSION_HEARTBEAT, self.DATAPACK_TYPE_VERIFY

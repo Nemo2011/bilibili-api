@@ -1874,10 +1874,7 @@ class Credential:
     b_nut: str | None = None
     b_lsid: str | None = None
     uuid_infoc: str | None = None
-    bili_ticket: str | None = None
-    bili_ticket_expires: int | None = None
     buvid_fp: str | None = None
-    sid: str | None = None
 
     def __init__(
         self,
@@ -1888,6 +1885,8 @@ class Credential:
         dedeuserid: str | None = None,
         dedeuserid_ckmd5: str | None = None,
         sid: str | None = None,
+        bili_ticket: str | None = None,
+        bili_ticket_expires: str | None = None,
         ac_time_value: str | None = None,
         **kwargs: Any,
     ) -> None:
@@ -1902,12 +1901,12 @@ class Credential:
             dedeuserid (str | None, optional): 浏览器 Cookies 中的 DedeUserID 字段值. Defaults to None.
             dedeuserid_ckmd5 (str | None, optional): 浏览器 Cookies 中的 DedeUserID__ckMd5 字段值. Defaults to None.
             sid (str | None, optional): 浏览器 Cookies 中的 sid 字段值. Defaults to None.
+            bili_ticket (str | None, optional): 浏览器 Cookies 中的 bili_ticket 字段值. Defaults to None.
+            bili_ticket_expires (str | None, optional): 浏览器 Cookies 中的 bili_ticket_expires 字段值. Defaults to None.
             ac_time_value (str | None, optional): 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None.
             kwargs (Any): 其他用户可自行添加的 cookies。通过 **kwargs 传入。
         """
-        if (buvid3 or buvid4) and not (buvid3 and buvid4):
-            raise ValueError("Buvid3 and buvid4 should be provided at the same time.")
-
+        # core cookies
         self.sessdata = (
             None
             if sessdata is None
@@ -1916,35 +1915,80 @@ class Credential:
             )
         )
         self.bili_jct = bili_jct
-        self.buvid3 = buvid3
-        if self.buvid3 or not request_settings.get_enable_auto_buvid():
-            self._gen_local_cookies()
-        self.buvid4 = buvid4
         self.dedeuserid = dedeuserid
         self.dedeuserid_ckmd5 = dedeuserid_ckmd5
         self.sid = sid
         self.ac_time_value = ac_time_value
 
-        if not (
-            sessdata
-            or bili_jct
-            or buvid3
-            or buvid4
-            or dedeuserid
-            or dedeuserid_ckmd5
-            or sid
-            or ac_time_value
+        # buvid3 & buvid4
+        if (buvid3 or buvid4) and not (buvid3 and buvid4):
+            raise ArgsException("buvid3 与 buvid4 需配合食用。")
+
+        self.buvid3 = buvid3
+        self.buvid4 = buvid4
+
+        if self.is_buvid_generated():
+            self._gen_local_cookies()
+
+        # bili_ticket
+        if (bili_ticket or bili_ticket_expires) and not (
+            bili_ticket and bili_ticket_expires
         ):
-            self.__blank = True
-        else:
-            self.__blank = False
+            raise ArgsException("bili_ticket 与 bili_ticket_expires 需配合食用")
+
+        if bili_ticket_expires and not bili_ticket_expires.isnumeric():
+            raise ArgsException("bili_ticket_expires 应为整数时间戳")
+
+        self.bili_ticket = bili_ticket
+        self.bili_ticket_expires = bili_ticket_expires
 
         self.extra_cookies = {k: str(v) for k, v in kwargs.items()}
 
     def _gen_local_cookies(self) -> None:
+        """
+        生成部分用于 buvid 激活的本地 cookies
+        """
         self.b_nut = str(int(time.time()))
         self.b_lsid = _gen_b_lsid()
         self.uuid_infoc = _gen_uuid_infoc()
+
+    def check_blank(self) -> bool:
+        """
+        检查是否为空白凭据类 (`Credential()`)
+
+        Returns:
+            bool: 是否为空白凭据类
+        """
+        return (
+            self.sessdata is None
+            and self.bili_jct is None
+            and self.dedeuserid is None
+            and self.dedeuserid_ckmd5 is None
+            and self.sid is None
+            and self.ac_time_value is None
+        )
+
+    def is_buvid_generated(self) -> bool:
+        """
+        buvid3 / buvid4 是否已生成
+
+        Returns:
+            bool: buvid3 / buvid4 是否已生成
+        """
+        return bool(self.buvid3 and self.buvid4)
+
+    def is_bili_ticket_valid(self) -> bool:
+        """
+        bili_ticket 是否可用
+
+        Returns:
+            bool: bili_ticket 是否可用
+        """
+        return bool(
+            self.bili_ticket
+            and self.bili_ticket_expires
+            and time.time() <= int(self.bili_ticket_expires)
+        )
 
     async def get_cookies(self) -> dict[str, str]:
         """
@@ -1953,11 +1997,13 @@ class Credential:
         Returns:
             dict[str, str]: 请求 Cookies 字典
         """
-        if self.__blank:
-            if request_settings.get_enable_auto_buvid():
-                await get_buvid(_credential)
-            if request_settings.get_enable_bili_ticket():
-                await get_bili_ticket(_credential)
+        # buvid ensuring
+        if request_settings.get_enable_auto_buvid():
+            await ensure_buvid(self)
+        elif self.check_blank() or (
+            request_settings.get_enable_buvid_global_persistence()
+            and not isinstance(self, GlobalCredential)
+        ):
             (
                 self.buvid3,
                 self.buvid4,
@@ -1965,8 +2011,6 @@ class Credential:
                 self.b_lsid,
                 self.b_nut,
                 self.uuid_infoc,
-                self.bili_ticket,
-                self.bili_ticket_expires,
             ) = (
                 _credential.buvid3,
                 _credential.buvid4,
@@ -1974,15 +2018,21 @@ class Credential:
                 _credential.b_lsid,
                 _credential.b_nut,
                 _credential.uuid_infoc,
+            )
+        # bili_ticket ensuring
+        if request_settings.get_enable_bili_ticket():
+            await ensure_bili_ticket(self)
+        elif self.check_blank() or (
+            request_settings.get_enable_bili_ticket_global_persistence()
+            and not isinstance(self, GlobalCredential)
+        ):
+            (
+                self.bili_ticket,
+                self.bili_ticket_expires,
+            ) = (
                 _credential.bili_ticket,
                 _credential.bili_ticket_expires,
             )
-        else:
-            if self.buvid3 is None and request_settings.get_enable_auto_buvid():
-                await get_buvid(self)
-
-            if request_settings.get_enable_bili_ticket():
-                await get_bili_ticket(self)
 
         browser_fingerprint = get_browser_fingerprint()
 
@@ -1993,9 +2043,7 @@ class Credential:
             "_uuid": self.uuid_infoc,
             "buvid4": self.buvid4,
             "bili_ticket": self.bili_ticket,
-            "bili_ticket_expires": (
-                str(self.bili_ticket_expires) if self.bili_ticket_expires else None
-            ),
+            "bili_ticket_expires": self.bili_ticket_expires,
             "buvid_fp": self.buvid_fp,
             "SESSDATA": self.sessdata,
             "bili_jct": self.bili_jct,
@@ -2011,14 +2059,14 @@ class Credential:
 
         return cookies
 
-    def get_core_cookies(self) -> dict:
+    def get_core_cookies(self) -> dict[str, str | None]:
         """
         返回部分核心 cookies，需要登录获取，可用于复制 Credential 对象
 
         包含 SESSDATA, bili_jct, sid, DedeUserID, ac_time_value
 
         Returns:
-            dict: 核心 cookies
+            dic[str, str | None]: 核心 cookies
         """
         return {
             "SESSDATA": self.sessdata,
@@ -2187,11 +2235,7 @@ class Credential:
         c.b_nut = cookies.get("b_nut")
         c.uuid_infoc = cookies.get("_uuid")
         c.bili_ticket = cookies.get("bili_ticket")
-        c.bili_ticket_expires = (
-            int(bili_ticket_expires)
-            if (bili_ticket_expires := cookies.get("bili_ticket_expires"))
-            else None
-        )
+        c.bili_ticket_expires = cookies.get("bili_ticket")
         c.buvid_fp = cookies.get("buvid_fp")
 
         for key, value in cookies.items():
@@ -2204,11 +2248,13 @@ class Credential:
                 "DedeUserID__ckMd5",
                 "ac_time_value",
                 "b_lsid",
-                "b_nut,_uuid",
+                "b_nut",
+                "_uuid",
                 "bili_ticket",
-                "bili_ticket_expiresbuvid_fp",
+                "bili_ticket_expires",
+                "buvid_fp",
             ]:
-                setattr(c, key, value)
+                c.extra_cookies[key] = value
 
         return c
 
@@ -2856,7 +2902,7 @@ def _enc_sign(paramsordata: dict) -> dict:
 """
 
 
-async def _get_bili_ticket(credential: Credential) -> tuple[str, int] | None:
+async def _get_bili_ticket(credential: Credential) -> tuple[str, int]:
     def hmac_sha256(key: str, message: str) -> str:
         hmac_obj = hmac.new(
             key.encode("utf-8"), message.encode("utf-8"), hashlib.sha256
@@ -2888,8 +2934,10 @@ async def _get_bili_ticket(credential: Credential) -> tuple[str, int] | None:
             },
         )
     ).json()
-    if resp["code"] == -111:
-        return None
+    if resp["code"] != 0:
+        raise ResponseCodeException(
+            resp["code"], resp.get("message", "获取 bili_ticket 失败。")
+        )
     return (resp["data"]["ticket"], resp["data"]["created_at"] + resp["data"]["ttl"])
 
 
@@ -3022,12 +3070,11 @@ def __register_global_credential_filter():
         sig = inspect.signature(getattr(ins, key))
 
         def check_refreshing_urls(cred: Credential) -> bool:
-            if (cred.buvid3 is None and request_settings.get_enable_auto_buvid()) or (
-                (
-                    cred.bili_ticket is None
-                    or not cred.bili_ticket_expires
-                    or time.time() > cred.bili_ticket_expires
-                )
+            if (
+                not cred.is_buvid_generated()
+                and request_settings.get_enable_auto_buvid()
+            ) or (
+                not cred.is_bili_ticket_valid()
                 and request_settings.get_enable_bili_ticket()
             ):  # need refresh
                 if (
@@ -3070,7 +3117,18 @@ __register_global_credential_filter()
 
 
 __wbi_mixin_key: str | None = None
-_credential = Credential(sessdata="global", bili_jct="global")
+
+
+class GlobalCredential(Credential):
+    """
+    全局凭据类，用于储存全局使用的反爬虫字段
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+_credential = GlobalCredential(sessdata="ujimatsu", bili_jct="chiya")
 
 
 def recalculate_wbi() -> None:
@@ -3081,117 +3139,195 @@ def recalculate_wbi() -> None:
     __wbi_mixin_key = None
 
 
-async def get_buvid(credential: Credential | None = None) -> tuple[str, str, str]:
+async def ensure_buvid(credential: Credential | None = None) -> tuple[str, str, str]:
     """
-    获取 buvid3 和 buvid4，若提供凭据类将自动在 credential 中设置相关字段
+    确认凭据类的 buvid3 与 buvid4，若未提供则生成新 buvid3 与 buvid4 并设置相关字段。
+
+    若不提供凭据类则将返回全局生成的 buvid3 与 buvid4。
 
     Args:
-        credential (Credential | None, optional): 凭据. Defaults to None.
+        credential (Credential | None, optional): 凭据类. Defaults to None.
 
     Returns:
         tuple[str, str, str]: 第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
     """
     global _credential
-    if (
+
+    credential = credential if credential else Credential()
+
+    if credential.check_blank() or (
         request_settings.get_enable_buvid_global_persistence()
-        and credential
-        and credential.sessdata != "global"
+        and not isinstance(credential, GlobalCredential)
     ):
-        await get_buvid(_credential)
+        await ensure_buvid(_credential)
         (
             credential.buvid3,
             credential.buvid4,
             credential.buvid_fp,
-            credential.b_nut,
             credential.b_lsid,
+            credential.b_nut,
             credential.uuid_infoc,
         ) = (
             _credential.buvid3,
             _credential.buvid4,
             _credential.buvid_fp,
-            _credential.b_nut,
             _credential.b_lsid,
+            _credential.b_nut,
             _credential.uuid_infoc,
         )
+
+    if credential.is_buvid_generated():
         return (credential.buvid3, credential.buvid4, credential.buvid_fp)  # type: ignore
-    if request_settings.get_enable_buvid_global_persistence() and credential is None:
-        return await get_buvid(_credential)
-    if credential is None:
-        credential = Credential()
-    if credential.buvid3 is None or credential.buvid4 is None:
-        credential._gen_local_cookies()
-        spi, b_nut = await _get_spi_buvid()
-        credential.b_nut = b_nut
-        credential.buvid3 = spi["b_3"]
-        credential.buvid4 = spi["b_4"]
-        credential.buvid_fp, payload = await _gen_buvid_fp(
-            credential.buvid3, credential.buvid4, credential
-        )
-        await _active_buvid(
+
+    return await obtain_buvid(credential)
+
+
+async def obtain_buvid(credential: Credential | None = None) -> tuple[str, str, str]:
+    """
+    获取新的 buvid3 与 buvid4，若已有 buvid3 或 buvid4 则将覆盖原来的值。
+
+    若不提供凭据类则将刷新全局 buvid3 与 buvid4 并返回。
+
+    Args:
+        credential (Credential | None, optional): 凭据类. Defaults to None.
+
+    Returns:
+        tuple[str, str, str]: 第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
+    """
+    global _credential
+
+    credential = credential if credential else Credential()
+
+    if credential.check_blank() or (
+        request_settings.get_enable_buvid_global_persistence()
+        and not isinstance(credential, GlobalCredential)
+    ):
+        await obtain_buvid(_credential)
+        (
             credential.buvid3,
             credential.buvid4,
             credential.buvid_fp,
-            payload,
-            credential,
+            credential.b_lsid,
+            credential.b_nut,
+            credential.uuid_infoc,
+        ) = (
+            _credential.buvid3,
+            _credential.buvid4,
+            _credential.buvid_fp,
+            _credential.b_lsid,
+            _credential.b_nut,
+            _credential.uuid_infoc,
         )
-        request_log.dispatch(
-            "ANTI_SPIDER",
-            "反爬虫",
-            {
-                "msg": f"激活 buvid3 / buvid4 成功: 3 [{credential.buvid3}] 4 [{credential.buvid4}] fp [{credential.buvid_fp}]"
-            },
-        )
+
+    if credential.is_buvid_generated():
+        return (credential.buvid3, credential.buvid4, credential.buvid_fp)  # type: ignore
+
+    credential._gen_local_cookies()
+    spi, b_nut = await _get_spi_buvid()
+    credential.b_nut = b_nut
+    credential.buvid3 = spi["b_3"]
+    credential.buvid4 = spi["b_4"]
+    credential.buvid_fp, payload = await _gen_buvid_fp(
+        credential.buvid3, credential.buvid4, credential
+    )
+    await _active_buvid(
+        credential.buvid3,
+        credential.buvid4,
+        credential.buvid_fp,
+        payload,
+        credential,
+    )
+    request_log.dispatch(
+        "ANTI_SPIDER",
+        "反爬虫",
+        {
+            "msg": f"激活 buvid3 / buvid4 成功: 3 [{credential.buvid3}] 4 [{credential.buvid4}] fp [{credential.buvid_fp}]"
+        },
+    )
     return (credential.buvid3, credential.buvid4, credential.buvid_fp)  # type: ignore
 
 
-async def get_bili_ticket(
+async def ensure_bili_ticket(
     credential: Credential | None = None,
-) -> tuple[str, str] | None:
+) -> tuple[str, str]:
     """
-    获取 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段
+    确保 bili_ticket 可用，自动刷新 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段。
+
+    若不提供凭据类则将返回全局生成的 bili_ticket。
 
     Args:
         credential (Credential | None, optional): 凭据. Defaults to None.
 
     Returns:
-        tuple[str, str] | None: bili_ticket, bili_ticket_expires
+        tuple[str, str]: bili_ticket, bili_ticket_expires
     """
     global _credential
-    if (
+
+    credential = credential if credential else Credential()
+
+    if credential.check_blank() or (
         request_settings.get_enable_bili_ticket_global_persistence()
-        and credential
-        and credential.sessdata != "global"
+        and not isinstance(credential, GlobalCredential)
     ):
-        await get_bili_ticket(_credential)
-        credential.bili_ticket, credential.bili_ticket_expires = (
+        await ensure_bili_ticket(_credential)
+        (
+            credential.bili_ticket,
+            credential.bili_ticket_expires,
+        ) = (
             _credential.bili_ticket,
             _credential.bili_ticket_expires,
         )
-        return credential.bili_ticket, str(credential.bili_ticket_expires)  # type: ignore
-    if (
+
+    if credential.is_bili_ticket_valid():
+        return credential.bili_ticket, credential.bili_ticket_expires  # type: ignore
+
+    return await obtain_bili_ticket(credential)
+
+
+async def obtain_bili_ticket(
+    credential: Credential | None = None,
+) -> tuple[str, str]:
+    """
+    获取新的 bili_ticket，若已有将覆盖原有的 bili_ticket，若提供凭据类将自动在 credential 中设置相关字段。
+
+    若不提供凭据类则将刷新全局 bili_ticket 并返回。
+
+    Args:
+        credential (Credential | None, optional): 凭据. Defaults to None.
+
+    Returns:
+        tuple[str, str]: bili_ticket, bili_ticket_expires
+    """
+    global _credential
+
+    credential = credential if credential else Credential()
+
+    if credential.check_blank() or (
         request_settings.get_enable_bili_ticket_global_persistence()
-        and credential is None
+        and not isinstance(credential, GlobalCredential)
     ):
-        return await get_bili_ticket(_credential)
-    if credential is None:
-        credential = Credential()
-    if (
-        credential.bili_ticket is None
-        or not credential.bili_ticket_expires
-        or time.time() > credential.bili_ticket_expires
-    ):
-        resp = await _get_bili_ticket(credential)
-        if not resp:
-            return None
-        credential.bili_ticket, credential.bili_ticket_expires = resp
-        request_log.dispatch(
-            "ANTI_SPIDER",
-            "反爬虫",
-            {
-                "msg": f"获取 bili_ticket 成功: [{credential.bili_ticket}] expires [{credential.bili_ticket_expires}]"
-            },
+        await obtain_bili_ticket(_credential)
+        (
+            credential.bili_ticket,
+            credential.bili_ticket_expires,
+        ) = (
+            _credential.bili_ticket,
+            _credential.bili_ticket_expires,
         )
-    return credential.bili_ticket, str(credential.bili_ticket_expires)
+
+    if credential.is_bili_ticket_valid():
+        return credential.bili_ticket, credential.bili_ticket_expires  # type: ignore
+
+    resp = await _get_bili_ticket(credential)
+    credential.bili_ticket, credential.bili_ticket_expires = resp[0], str(resp[1])
+    request_log.dispatch(
+        "ANTI_SPIDER",
+        "反爬虫",
+        {
+            "msg": f"获取 bili_ticket 成功: [{credential.bili_ticket}] expires [{credential.bili_ticket_expires}]"
+        },
+    )
+    return credential.bili_ticket, credential.bili_ticket_expires
 
 
 async def get_wbi_mixin_key(credential: Credential | None = None) -> str:
