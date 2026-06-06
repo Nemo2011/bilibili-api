@@ -108,10 +108,16 @@ class AsyncEvent:
 
         try:
             e = task.exception()
-            if e and event_name != "__TASK_EXCEPTION__":
-                self.dispatch("__TASK_EXCEPTION__", e)
         except Exception:
-            pass
+            return
+
+        if e is None:
+            return
+
+        if event_name != "__TASK_EXCEPTION__":
+            self.dispatch("__TASK_EXCEPTION__", e)
+        else:
+            raise e
 
     def dispatch(self, name: str, *args, **kwargs) -> None:
         """
