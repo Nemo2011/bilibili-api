@@ -36,6 +36,8 @@ from bilibili_api import ...
   - [def check\_blank()](#def-check\_blank)
   - [async def check\_refresh()](#async-def-check\_refresh)
   - [async def check\_valid()](#async-def-check\_valid)
+  - [def clear\_bili\_ticket()](#def-clear\_bili\_ticket)
+  - [def clear\_buvid()](#def-clear\_buvid)
   - [async def get\_cookies()](#async-def-get\_cookies)
   - [def get\_core\_cookies()](#def-get\_core\_cookies)
   - [def has\_ac\_time\_value()](#def-has\_ac\_time\_value)
@@ -723,6 +725,24 @@ Cookies 刷新错误。
 
 
 **Returns:** `bool`:  cookies 是否有效
+
+
+
+
+### def clear_bili_ticket()
+
+清除 bili_ticket。若未开启全局可持久化则将生成新的 bili_ticket，否则将与全局 bili_ticket 同步。
+
+
+
+
+
+
+### def clear_buvid()
+
+清除 buvid。若未开启全局可持久化则将生成新的 buvid，否则将与全局 buvid 同步。
+
+
 
 
 

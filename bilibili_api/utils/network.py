@@ -1990,6 +1990,20 @@ class Credential:
             and time.time() <= int(self.bili_ticket_expires)
         )
 
+    def clear_buvid(self) -> None:
+        """
+        清除 buvid。若未开启全局可持久化则将生成新的 buvid，否则将与全局 buvid 同步。
+        """
+        self.buvid3 = None
+        self.buvid4 = None
+
+    def clear_bili_ticket(self) -> None:
+        """
+        清除 bili_ticket。若未开启全局可持久化则将生成新的 bili_ticket，否则将与全局 bili_ticket 同步。
+        """
+        self.bili_ticket = None
+        self.bili_ticket_expires = None
+
     async def get_cookies(self) -> dict[str, str]:
         """
         获取请求 Cookies 字典
@@ -2001,8 +2015,8 @@ class Credential:
         if request_settings.get_enable_auto_buvid():
             await ensure_buvid(self)
         elif self.check_blank() or (
-            request_settings.get_enable_buvid_global_persistence()
-            and not isinstance(self, GlobalCredential)
+            not self.is_buvid_generated()
+            and request_settings.get_enable_buvid_global_persistence()
         ):
             (
                 self.buvid3,
@@ -2023,8 +2037,8 @@ class Credential:
         if request_settings.get_enable_bili_ticket():
             await ensure_bili_ticket(self)
         elif self.check_blank() or (
-            request_settings.get_enable_bili_ticket_global_persistence()
-            and not isinstance(self, GlobalCredential)
+            not self.is_bili_ticket_valid()
+            and request_settings.get_enable_bili_ticket_global_persistence()
         ):
             (
                 self.bili_ticket,
@@ -3113,10 +3127,14 @@ __register_global_credential_filter()
 ################################################## END Builtin-Filters ##################################################
 
 
-################################################## BEGIN Api ##################################################
+################################################## BEGIN Credential-AntiSpider ##################################################
 
-
-__wbi_mixin_key: str | None = None
+# Credential 维护 buvid / bili_ticket 遵循以下规则：
+# 1、blank 总是与 global 保持一致 (get_cookies / ensure / obtain)
+# 2、normal 第一次赋值 buvid / bili_ticket 后非必要不变更 (除 bili_ticket 刷新)
+# 3、ensure 需要保证 buvid / bili_ticket 可用，尽量避免修改 credential 与 obtain
+# 4、obtain 总是发起网络请求获取新的 buvid / bili_ticket
+# 5、get_cookies 正常情况调用 ensure，在禁用 buvid 与 bili_ticket 时只同步不请求。
 
 
 class GlobalCredential(Credential):
@@ -3151,14 +3169,16 @@ async def ensure_buvid(credential: Credential | None = None) -> tuple[str, str, 
     Returns:
         tuple[str, str, str]: 第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
     """
-    global _credential
-
     credential = credential if credential else Credential()
+
+    if credential.is_buvid_generated() and not credential.check_blank():
+        return (credential.buvid3, credential.buvid4, credential.buvid_fp)  # type: ignore
 
     if credential.check_blank() or (
         request_settings.get_enable_buvid_global_persistence()
         and not isinstance(credential, GlobalCredential)
     ):
+        global _credential
         await ensure_buvid(_credential)
         (
             credential.buvid3,
@@ -3175,8 +3195,6 @@ async def ensure_buvid(credential: Credential | None = None) -> tuple[str, str, 
             _credential.b_nut,
             _credential.uuid_infoc,
         )
-
-    if credential.is_buvid_generated():
         return (credential.buvid3, credential.buvid4, credential.buvid_fp)  # type: ignore
 
     return await obtain_buvid(credential)
@@ -3194,14 +3212,13 @@ async def obtain_buvid(credential: Credential | None = None) -> tuple[str, str, 
     Returns:
         tuple[str, str, str]: 第 0 项为 buvid3，第 1 项为 buvid4，第 2 项为 buvid_fp。
     """
-    global _credential
-
     credential = credential if credential else Credential()
 
     if credential.check_blank() or (
         request_settings.get_enable_buvid_global_persistence()
         and not isinstance(credential, GlobalCredential)
     ):
+        global _credential
         await obtain_buvid(_credential)
         (
             credential.buvid3,
@@ -3218,8 +3235,6 @@ async def obtain_buvid(credential: Credential | None = None) -> tuple[str, str, 
             _credential.b_nut,
             _credential.uuid_infoc,
         )
-
-    if credential.is_buvid_generated():
         return (credential.buvid3, credential.buvid4, credential.buvid_fp)  # type: ignore
 
     credential._gen_local_cookies()
@@ -3261,14 +3276,16 @@ async def ensure_bili_ticket(
     Returns:
         tuple[str, str]: bili_ticket, bili_ticket_expires
     """
-    global _credential
-
     credential = credential if credential else Credential()
+
+    if credential.is_bili_ticket_valid() and not credential.check_blank():
+        return credential.bili_ticket, credential.bili_ticket_expires  # type: ignore
 
     if credential.check_blank() or (
         request_settings.get_enable_bili_ticket_global_persistence()
         and not isinstance(credential, GlobalCredential)
     ):
+        global _credential
         await ensure_bili_ticket(_credential)
         (
             credential.bili_ticket,
@@ -3277,8 +3294,6 @@ async def ensure_bili_ticket(
             _credential.bili_ticket,
             _credential.bili_ticket_expires,
         )
-
-    if credential.is_bili_ticket_valid():
         return credential.bili_ticket, credential.bili_ticket_expires  # type: ignore
 
     return await obtain_bili_ticket(credential)
@@ -3298,14 +3313,13 @@ async def obtain_bili_ticket(
     Returns:
         tuple[str, str]: bili_ticket, bili_ticket_expires
     """
-    global _credential
-
     credential = credential if credential else Credential()
 
     if credential.check_blank() or (
         request_settings.get_enable_bili_ticket_global_persistence()
         and not isinstance(credential, GlobalCredential)
     ):
+        global _credential
         await obtain_bili_ticket(_credential)
         (
             credential.bili_ticket,
@@ -3314,8 +3328,6 @@ async def obtain_bili_ticket(
             _credential.bili_ticket,
             _credential.bili_ticket_expires,
         )
-
-    if credential.is_bili_ticket_valid():
         return credential.bili_ticket, credential.bili_ticket_expires  # type: ignore
 
     resp = await _get_bili_ticket(credential)
@@ -3328,6 +3340,15 @@ async def obtain_bili_ticket(
         },
     )
     return credential.bili_ticket, credential.bili_ticket_expires
+
+
+################################################## END Credential-AntiSpider ##################################################
+
+
+################################################## BEGIN Api ##################################################
+
+
+__wbi_mixin_key: str | None = None
 
 
 async def get_wbi_mixin_key(credential: Credential | None = None) -> str:
