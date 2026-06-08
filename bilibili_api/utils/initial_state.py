@@ -7,6 +7,7 @@ bilibili_api.utils.initial_state
 import json
 from enum import Enum
 from typing import Tuple
+from urllib.parse import unquote
 
 from ..exceptions import InitialStateException
 from .network import Api, Credential
@@ -39,6 +40,23 @@ def find_json(content: str) -> str:
     return -1, None
 
 
+def _parse_detected_content(detected_content: str) -> dict:
+    """
+    解析检测出的 JSON 内容，兼容 percent-encoding 场景。
+    """
+    decoder = json.JSONDecoder()
+
+    # 常见场景：内容直接就是 JSON 或 JSON 后跟脚本标签。
+    try:
+        return decoder.raw_decode(detected_content)[0]
+    except json.JSONDecodeError:
+        pass
+
+    # fallback：部分页面会把 JSON 做 percent-encoding 后塞进 script 标签。
+    decoded_content = unquote(detected_content)
+    return decoder.raw_decode(decoded_content)[0]
+
+
 async def get_initial_state(
     url: str, credential: Credential = Credential(), strict: bool = True
 ) -> Tuple[dict, InitialDataType]:
@@ -69,7 +87,7 @@ async def get_initial_state(
             detected_content = content[pos:].strip().strip("\n").strip("\r")
             if detected_content.startswith("{\\\""): # 暂时都是字典
                 detected_content = detected_content.replace("\\\"", "\"") # 存在转义且不在正文内
-            content = json.JSONDecoder().raw_decode(detected_content)[0]
+            content = _parse_detected_content(detected_content)
         except json.JSONDecodeError as e:
-            raise InitialStateException("信息解析错误")
+            raise InitialStateException("信息解析错误") from e
         return content, content_type
