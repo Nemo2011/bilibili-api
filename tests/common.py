@@ -17,8 +17,8 @@ def get_credential():
     BILI_BUVID4 = os.getenv("BILI_BUVID4")
     BILI_DEDEUSERID = os.getenv("BILI_DEDEUSERID")
 
-    if not BILI_SESSDATA or not BILI_CSRF or not BILI_DEDEUSERID:
-        raise Exception("缺少环境变量")
+    # if not BILI_SESSDATA or not BILI_CSRF or not BILI_DEDEUSERID:
+    #     raise Exception("缺少环境变量")
 
     _credential_instance = Credential(
         BILI_SESSDATA, BILI_CSRF, BILI_BUVID3, BILI_BUVID4, BILI_DEDEUSERID
