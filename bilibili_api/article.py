@@ -455,7 +455,7 @@ class Article:
                                 node = ImageNode()
                                 node_list.append(node)
 
-                                node.url = e.find("img").attrs["data-src"]  # type: ignore
+                                node.url = e.find("img").attrs["src"]  # type: ignore
 
                                 figcaption_el: BeautifulSoup = e.find("figcaption")  # type: ignore
 
