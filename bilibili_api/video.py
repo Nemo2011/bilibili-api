@@ -101,73 +101,96 @@ class VideoAppealReasonType:
     - ILLEGAL_URL(): 违法信息外链
     """
 
-    def ILLEGAL():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def ILLEGAL():
         return 2
 
-    def PRON():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def PRON():
         return 3
 
-    def VULGAR():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def VULGAR():
         return 4
 
-    def GAMBLED_SCAMS():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def GAMBLED_SCAMS():
         return 5
 
-    def VIOLENT():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def VIOLENT():
         return 6
 
-    def PERSONAL_ATTACK():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def PERSONAL_ATTACK():
         return 7
 
-    def BAD_FOR_YOUNGS():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def BAD_FOR_YOUNGS():
         return 10000
 
-    def CLICKBAIT():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def CLICKBAIT():
         return 10013
 
-    def POLITICAL_RUMORS():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def POLITICAL_RUMORS():
         return 10014
 
-    def SOCIAL_RUMORS():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def SOCIAL_RUMORS():
         return 10015
 
-    def UNREAL_EVENT():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def UNREAL_EVENT():
         return 10017
 
-    def OTHER():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def OTHER():
         return 1
 
-    def LEAD_WAR():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def LEAD_WAR():
         return 9
 
-    def CANNOT_CHARGE():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def CANNOT_CHARGE():
         return 10
 
-    def ILLEGAL_POPULARIZE():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def ILLEGAL_POPULARIZE():
         return 10018
 
-    def ILLEGAL_OTHER():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def ILLEGAL_OTHER():
         return 10019
 
-    def DANGEROUS():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def DANGEROUS():
         return 10020
 
-    def OTHER_NEW():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def OTHER_NEW():
         return 10022
 
-    def COOPERATE_INFRINGEMENT():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def COOPERATE_INFRINGEMENT():
         return 10023
 
-    def INFRINGEMENT():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def INFRINGEMENT():
         return 10024
 
-    def VIDEO_INFRINGEMENT():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def VIDEO_INFRINGEMENT():
         return 10026
 
-    def DISCOMFORT():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def DISCOMFORT():
         return 10021
 
-    def ILLEGAL_URL():  # pyright: ignore[reportSelfClsParameterName]
+    @staticmethod
+    def ILLEGAL_URL():
         return 10025
 
     @staticmethod
