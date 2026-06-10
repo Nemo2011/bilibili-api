@@ -131,16 +131,25 @@ class HTTPXClient(BiliAPIClient):
                 "allow_redirects": allow_redirects,
             },
         )
+        # BiliAPIFile 转 httpx 多部分上传元组 (filename, content, mime)。
+        # 旧实现构造了 requests_like_files 却没用上，把 BiliAPIFile 原样传给 httpx
+        # 会炸 AttributeError: 'BiliAPIFile' object has no attribute 'read'。
+        httpx_files = None
         if files != {}:
-            requests_like_files = {}
+            httpx_files = {}
             for key, item in files.items():
-                requests_like_files[key] = open(item.path)
+                with open(item.path, "rb") as f:
+                    httpx_files[key] = (
+                        item.path.split("/")[-1],
+                        f.read(),
+                        item.mime_type,
+                    )
         resp: httpx.Response = await self.__session.request(
             method=method,
             url=url,
             params=params,
             data=data,
-            files=files,
+            files=httpx_files,
             headers=headers,
             cookies=cookies,
             follow_redirects=allow_redirects,
