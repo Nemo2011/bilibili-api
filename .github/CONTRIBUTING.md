@@ -2,27 +2,34 @@
 
 请在发起 PR 前仔细阅读本贡献指南，否则你的 PR 可能不会被合并。
 
-# 开发流程
+指南中重要内容均已**加粗**。
 
-1. 使用 `git clone git@github.com:nemo2011/bilibili-api.git` 将本仓库拉取到本地。
-2. 使用 `cd bilibili-api` 切换到仓库位置。
-3. 使用 `pip3 install -r requirements.txt` 安装相关依赖。
-4. **使用 `python install.py` 进行初始化**，该项非常重要，将会初始化 Git Hooks。
-5. 使用 `git checkout dev && git checkout -b {分支名}` 从 dev 分支切换到一个新的分支再进行编码。
-6. 开发完毕后，使用 `git push -u origin {分支名}` 将分支推送到你 fork 的仓库。
-7. **向 `dev` 分支**发起 [Pull Requests](https://github.com/nemo2011/bilibili-api/pulls)。
+# 0、贡献文档
 
-# 代码风格、格式规范
+首先，`API 文档` 部分均由自动化脚本生成，如果有错别字/事实性错误，还请修改**代码中的注释字符串(`docstring`)**。再在根目录下运行 `python3 scripts/doc_gen.py` 自动生成对应文档。
 
-代码风格遵循 [Google Python Style](https://google.github.io/styleguide/pyguide.html)（[中文版](https://google-styleguide.readthedocs.io/zh_CN/latest/google-python-styleguide/contents.html)）
+> 1、自动生成文档的脚本建议在 `Python >= 3.13` 下运行。  2、亦可提出 `issues`，模块维护者确认后便会直接修改相关文档。
 
-代码格式请遵循 [PEP8]，可以用自动格式化工具(推荐 `black`)
+除此之外部分，均可直接对文档进行修改。模块鼓励新的 `API 示例`，欢迎丰富模块的使用示例。
 
-请务必严格遵循该规范，特别是命名、空格的正确使用。在提交前，会自动运行代码检查工具，检查代码中存在的明显问题。
+# 1、开发流程
 
-另外就是，文档中的英文和中文混用时，英文与中文之间需要使用半角空格隔开，例如：
+1. 使用 `git clone git@github.com:nemo2011/bilibili-api.git` 将本仓库拉取到本地。再 `cd bilibili-api` 切换工作目录。
+2. 项目依赖使用 `pip` 管理。通过 `pip3 install -r requirements.txt` 安装相关依赖。
+3. **使用 `python install.py` 进行初始化**，该项非常重要，将会初始化 Git Hooks 并安装开发依赖项。
+4. 使用 `git checkout dev && git checkout -b {分支名}` 从 dev 分支切换到一个新的分支再进行编码。
+5. 开发完毕后，使用 `git push -u origin {分支名}` 将分支推送到你 fork 的仓库。
+6. **向 `dev` 分支**发起 [Pull Requests](https://github.com/nemo2011/bilibili-api/pulls)。
 
-```
+# 2、代码风格与规范
+
+代码格式遵循 [PEP8](https://peps.python.org/pep-0008/)，可运行 `scripts/format.py` **使用 `ruff` 进行自动格式化工具。**
+
+代码风格请与模块现有代码保持一致，例如模块中现有函数均为**下划线命名**。
+
+另外，文档中的**英文和中文混用**时，英文与中文之间需要使用**半角空格隔开**，例如：
+
+``` plaintext
 # Wrong
 
 Python是世界上最好的语言。
@@ -32,21 +39,23 @@ Python是世界上最好的语言。
 Python 是世界上最好的语言。
 ```
 
-# 提交规范
+同时，为防止明显错误代码出现，完成代码更改后请运行 `scripts/lint.py` **使用 `ruff` 和 `pyright` 自动检查代码**。
+
+# 3、提交规范
 
 ## 提交描述
 
-本项目采用 [Conventional Commits](https://www.conventionalcommits.org/zh-hans/v1.0.0/) 规范，请严格遵守。
+本项目采用**约定式提交** ([Conventional Commits](https://www.conventionalcommits.org/zh-hans/v1.0.0/)) 规范，请严格遵守。
 
-在提交前会自动检测是否符合该规范，如果不符合将会拒绝提交，**请勿强行提交**。
+在提交前 GitHooks 会自动检测是否符合该规范，如果不符合将会拒绝提交，**请勿强行提交**。
 
 ## 提交内容
 
-建议尽量将一个大提交拆分为几个小提交，比如如果同时修复了一个 bug 和增加了一个新功能，应该拆开为两次提交。
+**尽量将一个大提交拆分为几个小提交**，比如如果同时修复了一个 bug 和增加了一个新功能，应该拆开为两次提交。
 
 如果你有破坏性修改（修改方法名、增加方法必需参数等），请在提交信息中的尾注部分写上 `BREAKING CHANGE: 说明`。例如：
 
-```
+``` plaintext
 fix: 给 method() 增加了一个必需参数
 
 可选的其他描述...
@@ -56,26 +65,19 @@ BREAKING CHANGE: 给 method() 增加了一个必需参数
 
 或者是在第一行冒号前加一个英文感叹号也行：
 
-```
+``` plaintext
 fix!: 给 method() 增加了一个必需参数
 
 可选的其他描述...
 ```
 
-非必要尽量不要有破坏性修改，比如如果只是新增一个参数，可以考虑一下这个参数是不是能设置个默认值。
+**非必要尽量不要有破坏性修改**，比如如果只是新增一个参数，可以考虑一下这个参数是不是能设置个默认值。
 
-
-# 开发规范
+# 4、开发建议
 
 1. 尽量复用现有代码。
 2. 请务必不要忘记注释（包括函数注释、参数类型注释、返回值注释）。
-3. 请保证您的代码可以在 CPython3.9 环境下运行，不要使用新版本 Python 的新增功能。
-4. 新功能增加后在根目录下运行 `python3 scripts/doc_gen.py` 自动生成对应文档。
+3. 请保证您的代码可以在 **CPython3.10** 环境下运行，不要使用新版本 Python 的新增功能。
+4. 新功能增加后可在根目录下运行 `python3 scripts/doc_gen.py` 自动生成对应文档。
 
-> 文档生成效果直接取决于编写的注释的规范性，请注意。
-
-# 附录
-
-附 1：Git 使用参考
-
-[Pro Git](https://progit.cn/)
+> 文档生成效果直接取决于编写的注释的规范性
