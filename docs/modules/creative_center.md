@@ -59,7 +59,7 @@ from bilibili_api import creative_center
 
 ## class ArchiveType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 评论管理中的稿件类型。
 
@@ -74,7 +74,7 @@ from bilibili_api import creative_center
 
 ## class ArticleInfoType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 文章统计信息的类型。
 
@@ -92,7 +92,7 @@ from bilibili_api import creative_center
 
 ## class CommentManagerOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 评论管理中的排序字段。
 
@@ -107,7 +107,7 @@ from bilibili_api import creative_center
 
 ## class Copyright()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 稿件播放完成率对比的版权类型。
 
@@ -122,7 +122,7 @@ from bilibili_api import creative_center
 
 ## class DanmakuMode()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 弹幕模式。
 
@@ -141,7 +141,7 @@ from bilibili_api import creative_center
 
 ## class DanmakuOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 弹幕排序依据
 
@@ -155,7 +155,7 @@ from bilibili_api import creative_center
 
 ## class DanmakuPool()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 子弹幕池类型。
 
@@ -170,7 +170,7 @@ from bilibili_api import creative_center
 
 ## class DanmakuSort()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 弹幕排序顺序
 
@@ -184,7 +184,7 @@ from bilibili_api import creative_center
 
 ## class DanmakuType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 弹幕筛选类型
 
@@ -198,7 +198,7 @@ from bilibili_api import creative_center
 
 ## class FanGraphPeriod()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 粉丝统计图表的时间段。
 
@@ -214,7 +214,7 @@ from bilibili_api import creative_center
 
 ## class FanGraphType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 粉丝统计图表的类型。
 
@@ -230,7 +230,7 @@ from bilibili_api import creative_center
 
 ## class GraphPeriod()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 统计图表的时间段。
 
@@ -247,7 +247,7 @@ from bilibili_api import creative_center
 
 ## class GraphType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 统计图表的类型。
 
@@ -269,7 +269,7 @@ from bilibili_api import creative_center
 
 ## class UploadManagerArticleStatus()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 内容管理文章状态字段。
 
@@ -285,7 +285,7 @@ from bilibili_api import creative_center
 
 ## class UploadManagerOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 内容管理排序字段。
 
@@ -302,7 +302,7 @@ from bilibili_api import creative_center
 
 ## class UploadManagerSort()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 内容管理文章排序字段。
 
@@ -319,7 +319,7 @@ from bilibili_api import creative_center
 
 ## class UploadManagerStatus()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 内容管理稿件状态字段。
 

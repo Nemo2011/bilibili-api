@@ -94,7 +94,7 @@ from bilibili_api import user
 
 ## class AlbumType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 相册类型
 
@@ -110,7 +110,7 @@ from bilibili_api import user
 
 ## class ArticleListOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 文集排序顺序。
 
@@ -124,7 +124,7 @@ from bilibili_api import user
 
 ## class ArticleOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 专栏排序顺序。
 
@@ -139,7 +139,7 @@ from bilibili_api import user
 
 ## class AudioOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 音频排序顺序。
 
@@ -154,7 +154,7 @@ from bilibili_api import user
 
 ## class BangumiFollowStatus()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 番剧追番状态类型。
 
@@ -170,7 +170,7 @@ from bilibili_api import user
 
 ## class BangumiType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 番剧类型。
 
@@ -184,7 +184,7 @@ from bilibili_api import user
 
 ## class HistoryBusinessType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 历史记录 Business 分类
 
@@ -201,7 +201,7 @@ from bilibili_api import user
 
 ## class HistoryType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 历史记录分类
 
@@ -217,7 +217,7 @@ from bilibili_api import user
 
 ## class MedialistOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 medialist排序顺序。
 
@@ -232,7 +232,7 @@ medialist排序顺序。
 
 ## class OpusType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 图文类型
 
@@ -247,7 +247,7 @@ medialist排序顺序。
 
 ## class OrderType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 排序字段
 
@@ -261,7 +261,7 @@ medialist排序顺序。
 
 ## class RelationType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 用户关系操作类型。
 
@@ -848,7 +848,7 @@ medialist排序顺序。
 
 ## class VideoOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 视频排序顺序。
 

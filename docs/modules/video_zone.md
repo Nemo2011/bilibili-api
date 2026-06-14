@@ -27,7 +27,7 @@ from bilibili_api import video_zone
 
 ## class VideoZoneTypes()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 所有分区枚举
 

@@ -480,8 +480,6 @@ for module in all_funcs:
         print("PROCESS", func[1])
         if func[4] == 2:
             file.write("---\n\n")
-        if func[3].startswith("@"):
-            file.write(f"**{func[3]}** \n\n")
         if (
             func[3] == "@dataclasses.dataclass"
             or func[1].count("exceptions") == 1
@@ -493,6 +491,8 @@ for module in all_funcs:
         file.write(
             "#" * func[4] + f" {func[2]} {func[0]}{['()', ''][func[2] == 'var']}\n\n"
         )
+        if func[3].startswith("@"):
+            file.write(f"> `{func[3]}` \n\n")
         if func[0] == "HEADERS":
             continue
         doc = eval(f"{func[1]}.__doc__")
@@ -500,7 +500,7 @@ for module in all_funcs:
             doc = ""
         if func[2] == "class" or func[2] == "var":
             if not func[3].startswith("@") and func[3] != "builtins.object":
-                file.write(f"**Extend: {func[3]}**\n\n")
+                file.write(f"> Extend: `{func[3]}`\n\n")
             if func[0] in ["request_log", "BiliAPIClient"]:
                 for line in doc.split("\n"):
                     if doc.startswith("\n    "):

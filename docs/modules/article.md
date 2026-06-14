@@ -273,7 +273,7 @@ from bilibili_api import article
 
 ## class ArticleRankingType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 专栏排行榜类型枚举。
 

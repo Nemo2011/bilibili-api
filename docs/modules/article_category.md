@@ -21,7 +21,7 @@ from bilibili_api import article_category
 
 ## class ArticleOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 专栏排序方式.
 

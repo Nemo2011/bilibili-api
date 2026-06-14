@@ -31,7 +31,7 @@ from bilibili_api import search
 
 ## class CategoryTypeArticle()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 文章分类
 + All 全部
@@ -50,7 +50,7 @@ from bilibili_api import search
 
 ## class CategoryTypePhoto()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 相册分类
 + All 全部
@@ -64,7 +64,7 @@ from bilibili_api import search
 
 ## class OrderArticle()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 文章的排序类型
 + TOTALRANK : 综合排序
@@ -80,7 +80,7 @@ from bilibili_api import search
 
 ## class OrderCheese()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 课程搜索排序类型
 
@@ -96,7 +96,7 @@ from bilibili_api import search
 
 ## class OrderLiveRoom()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 直播间搜索类型
 + NEWLIVE 最新开播
@@ -109,7 +109,7 @@ from bilibili_api import search
 
 ## class OrderUser()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 搜索用户的排序类型
 + FANS : 按照粉丝数量排序
@@ -122,7 +122,7 @@ from bilibili_api import search
 
 ## class OrderVideo()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 视频搜索类型
 + TOTALRANK : 综合排序
@@ -141,7 +141,7 @@ Ps: Api 中 的 order_sort 字段决定顺序还是倒序
 
 ## class SearchObjectType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 搜索对象。
 + VIDEO : 视频

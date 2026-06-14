@@ -94,7 +94,7 @@ from bilibili_api import music
 
 ### class Genre()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 - ALL: 全部
 - POPULAR: 流行
@@ -125,7 +125,7 @@ from bilibili_api import music
 
 ### class Lang()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 - ALL: 全部
 - CHINESE: 华语
@@ -141,7 +141,7 @@ from bilibili_api import music
 
 ## class MusicOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 音乐排序类型
 

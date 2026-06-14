@@ -128,7 +128,7 @@ from bilibili_api import interactive_video
 
 ## class InteractiveButtonAlign()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 按钮的文字在按钮中的位置
 
@@ -470,7 +470,7 @@ o----|xxx| (TEXT_RIGHT)
 
 ## class InteractiveNodeJumpingType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 对下一节点的跳转的方式
 
@@ -570,7 +570,7 @@ o----|xxx| (TEXT_RIGHT)
 
 ## class InteractiveVideo()
 
-**Extend: bilibili_api.video.Video**
+> Extend: `bilibili_api.video.Video`
 
 互动视频类
 
@@ -677,7 +677,7 @@ o----|xxx| (TEXT_RIGHT)
 
 ## class InteractiveVideoDownloader()
 
-**Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
+> Extend: `bilibili_api.utils.AsyncEvent.AsyncEvent`
 
 互动视频下载类
 
@@ -721,7 +721,7 @@ o----|xxx| (TEXT_RIGHT)
 
 ## class InteractiveVideoDownloaderEvents()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 互动视频下载器事件枚举
 
@@ -745,7 +745,7 @@ o----|xxx| (TEXT_RIGHT)
 
 ## class InteractiveVideoDownloaderMode()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 互动视频下载模式
 

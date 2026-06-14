@@ -36,7 +36,7 @@ from bilibili_api import rank
 
 ## class LiveEnergyRankType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 直播超能用户榜类型
 
@@ -50,7 +50,7 @@ from bilibili_api import rank
 
 ## class LiveRankType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 直播通用榜类型
 
@@ -67,7 +67,7 @@ from bilibili_api import rank
 
 ## class MangeRankType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 漫画排行榜类型
 
@@ -87,7 +87,7 @@ from bilibili_api import rank
 
 ## class RankAPIType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 排行榜 API 接口类型
 
@@ -101,7 +101,7 @@ from bilibili_api import rank
 
 ## class RankDayType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 RankAPIType.PGC 排行榜时间类型
 
@@ -115,7 +115,7 @@ RankAPIType.PGC 排行榜时间类型
 
 ## class RankType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 排行榜类型
 
@@ -152,7 +152,7 @@ RankAPIType.PGC 排行榜时间类型
 
 ## class VIPRankType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 大会员中心热播榜单类型，即 rank_id
 

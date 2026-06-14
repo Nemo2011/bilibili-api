@@ -34,7 +34,7 @@ from bilibili_api import black_room
 
 ## class BlackFrom()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 违规来源
 
@@ -49,7 +49,7 @@ from bilibili_api import black_room
 
 ## class BlackReasonType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 违规原因类型枚举 (英语翻译错误请忽略/提 issue/发起 PR)
 
@@ -158,7 +158,7 @@ from bilibili_api import black_room
 
 ## class BlackType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 违规类型枚举
 
@@ -241,7 +241,7 @@ from bilibili_api import black_room
 
 ## class JuryVoteOpinion()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 仲裁投票类型枚举，选择对应案件类型的观点
 

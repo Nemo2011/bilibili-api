@@ -23,9 +23,9 @@ from bilibili_api import show
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class BuyerInfo()
+
+> `@dataclasses.dataclass` 
 
 购买人信息
 
@@ -64,9 +64,9 @@ isBuyerValid (bool): 购买人是否合法。Defaults to True.
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class OrderTicket()
+
+> `@dataclasses.dataclass` 
 
 购票类
 
@@ -104,9 +104,9 @@ isBuyerValid (bool): 购买人是否合法。Defaults to True.
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class Session()
+
+> `@dataclasses.dataclass` 
 
 场次对象
 
@@ -123,9 +123,9 @@ ticket_list (list[Ticket]): 存放Ticket对象的list
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class Ticket()
+
+> `@dataclasses.dataclass` 
 
 票对象
 

@@ -177,9 +177,9 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
-**@staticmethod** 
-
 ### def create_by_args()
+
+> `@staticmethod` 
 
 通过参数构建动态
 
@@ -198,9 +198,9 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 
 
-**@staticmethod** 
-
 ### def empty()
+
+> `@staticmethod` 
 
 新建空的动态以链式逐步构建
 
@@ -589,7 +589,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 ## class DynamicContentType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 动态内容类型
 
@@ -605,7 +605,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 ## class DynamicType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 动态类型
 
@@ -621,7 +621,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 ## class SendDynamicType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 发送动态类型
 scene 参数

@@ -115,7 +115,7 @@ from bilibili_api import game
 
 ## class GameRankType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 游戏排行榜类型枚举
 

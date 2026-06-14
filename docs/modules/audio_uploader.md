@@ -41,7 +41,7 @@ from bilibili_api import audio_uploader
 
 ## class AudioUploader()
 
-**Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
+> Extend: `bilibili_api.utils.AsyncEvent.AsyncEvent`
 
 音频上传
 
@@ -84,7 +84,7 @@ from bilibili_api import audio_uploader
 
 ## class AudioUploaderEvents()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 上传事件枚举
 
@@ -109,9 +109,9 @@ Events:
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class AuthorInfo()
+
+> `@dataclasses.dataclass` 
 
 AuthorInfo(name: str, uid: int = 0)
 
@@ -128,7 +128,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class AudioType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 声音类型
 
@@ -142,7 +142,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class ContentType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 内容类型
 
@@ -154,7 +154,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class CreationType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 创作类型
 
@@ -167,7 +167,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class Language()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 语种
 
@@ -183,7 +183,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class SongType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 声音类型
 
@@ -197,7 +197,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class Style()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 风格
 
@@ -233,7 +233,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class Theme()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 主题来源
 
@@ -258,7 +258,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class AudioType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 有声节目类型
 
@@ -271,7 +271,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class ContentType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 内容类型
 
@@ -283,7 +283,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class CreationType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 创作类型
 
@@ -296,7 +296,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class Language()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 语言
 
@@ -312,7 +312,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class SongType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 声音类型
 
@@ -326,7 +326,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class Style()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 音乐风格
 
@@ -361,7 +361,7 @@ AuthorInfo(name: str, uid: int = 0)
 
 ### class Theme()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 主题
 
@@ -377,9 +377,9 @@ AuthorInfo(name: str, uid: int = 0)
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class SongMeta()
+
+> `@dataclasses.dataclass` 
 
 content_type (SongCategories.ContentType): 内容类型
 

@@ -79,7 +79,7 @@ from bilibili_api import watchroom
 
 ## class MessageType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 消息类型
 
@@ -93,7 +93,7 @@ from bilibili_api import watchroom
 
 ## class SeasonType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 季度类型
 

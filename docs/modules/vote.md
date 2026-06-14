@@ -159,7 +159,7 @@ from bilibili_api import vote
 
 ## class VoteType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 投票类型枚举类
 

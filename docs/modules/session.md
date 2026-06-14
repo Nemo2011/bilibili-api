@@ -66,7 +66,7 @@ from bilibili_api import session
 
 ## class EventType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 事件类型
 
@@ -86,7 +86,7 @@ from bilibili_api import session
 
 ## class Session()
 
-**Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
+> Extend: `bilibili_api.utils.AsyncEvent.AsyncEvent`
 
 会话类，用来开启消息监听。
 

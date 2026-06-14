@@ -167,7 +167,7 @@ from bilibili_api import garb
 
 ## class GarbSortType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 收藏集/装扮排序方式
 
@@ -182,7 +182,7 @@ from bilibili_api import garb
 
 ## class GarbType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 收藏集/装扮类型
 

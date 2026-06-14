@@ -250,7 +250,7 @@ from bilibili_api import note
 
 ## class NoteType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 笔记类型
 

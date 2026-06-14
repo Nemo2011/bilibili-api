@@ -208,7 +208,7 @@ from bilibili_api import login_v2
 
 ## class QrCodeLoginChannel()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 二维码登录渠道
 
@@ -222,7 +222,7 @@ from bilibili_api import login_v2
 
 ## class QrCodeLoginEvents()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 二维码登录状态枚举
 

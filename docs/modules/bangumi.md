@@ -276,7 +276,7 @@ from bilibili_api import bangumi
 
 ## class BangumiCommentOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 短评 / 长评 排序方式
 
@@ -290,7 +290,7 @@ from bilibili_api import bangumi
 
 ## class BangumiType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 番剧类型
 
@@ -305,7 +305,7 @@ from bilibili_api import bangumi
 
 ## class Episode()
 
-**Extend: bilibili_api.video.Video**
+> Extend: `bilibili_api.video.Video`
 
 番剧剧集类
 
@@ -627,7 +627,7 @@ from bilibili_api import bangumi
 
 ### class Area()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 地区
 
@@ -655,7 +655,7 @@ from bilibili_api import bangumi
 
 ### class Copyright()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 版权方
 
@@ -668,7 +668,7 @@ from bilibili_api import bangumi
 
 ### class Finish_Status()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 完结状态
 
@@ -681,7 +681,7 @@ from bilibili_api import bangumi
 
 ### class Order()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 排序字段
 
@@ -698,7 +698,7 @@ from bilibili_api import bangumi
 
 ### class Payment()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 观看条件
 
@@ -712,7 +712,7 @@ from bilibili_api import bangumi
 
 ### class Producer()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 制作方
 
@@ -743,7 +743,7 @@ from bilibili_api import bangumi
 
 ### class Season()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 季度
 
@@ -758,7 +758,7 @@ from bilibili_api import bangumi
 
 ### class Sort()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 排序方式
 
@@ -770,7 +770,7 @@ from bilibili_api import bangumi
 
 ### class Spoken_Language()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 配音
 
@@ -790,7 +790,7 @@ from bilibili_api import bangumi
 
 #### class Anime()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 番剧风格
 
@@ -839,7 +839,7 @@ from bilibili_api import bangumi
 
 #### class Documentary()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 纪录片风格
 
@@ -868,7 +868,7 @@ from bilibili_api import bangumi
 
 #### class GuoChuang()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 国创风格
 
@@ -918,7 +918,7 @@ from bilibili_api import bangumi
 
 #### class Movie()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 电影风格
 
@@ -951,7 +951,7 @@ from bilibili_api import bangumi
 
 #### class TV()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 电视剧风格
 
@@ -986,7 +986,7 @@ from bilibili_api import bangumi
 
 #### class Variety()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 综艺风格
 
@@ -1014,7 +1014,7 @@ from bilibili_api import bangumi
 
 ### class Type()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 索引类型
 
@@ -1030,7 +1030,7 @@ from bilibili_api import bangumi
 
 ### class Version()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 番剧版本
 
@@ -1042,9 +1042,9 @@ from bilibili_api import bangumi
 
 
 
-**@staticmethod** 
-
 ### def make_time_filter()
+
+> `@staticmethod` 
 
 生成番剧索引所需的时间条件
 

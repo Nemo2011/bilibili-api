@@ -152,7 +152,7 @@ from bilibili_api import favorite_list
 
 ## class FavoriteListContentOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 收藏夹列表内容排序方式枚举。
 
@@ -167,7 +167,7 @@ from bilibili_api import favorite_list
 
 ## class FavoriteListType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 收藏夹类型枚举
 
@@ -182,7 +182,7 @@ from bilibili_api import favorite_list
 
 ## class SearchFavoriteListMode()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 收藏夹搜索模式枚举
 

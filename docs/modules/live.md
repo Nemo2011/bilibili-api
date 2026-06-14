@@ -69,7 +69,7 @@ from bilibili_api import live
 
 ## class LiveCodec()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 直播源视频编码
 
@@ -85,7 +85,7 @@ from bilibili_api import live
 
 ## class LiveDanmaku()
 
-**Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
+> Extend: `bilibili_api.utils.AsyncEvent.AsyncEvent`
 
 Websocket 实时获取直播弹幕
 
@@ -239,7 +239,7 @@ Events:
 
 ## class LiveFormat()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 直播源容器格式
 
@@ -256,7 +256,7 @@ Events:
 
 ## class LiveProtocol()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 直播源流协议。
 
@@ -729,7 +729,7 @@ Events:
 
 ## class ScreenResolution()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 直播源清晰度。
 

@@ -200,7 +200,7 @@ Error Code:
 
 ## class CommentResourceType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 资源类型枚举。
 
@@ -222,7 +222,7 @@ Error Code:
 
 ## class OrderType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 评论排序方式枚举。
 
@@ -236,7 +236,7 @@ Error Code:
 
 ## class ReportReason()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 举报类型枚举
 

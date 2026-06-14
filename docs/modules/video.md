@@ -117,7 +117,7 @@ from bilibili_api import video
 
 ## class AudioQuality()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 视频的音频流清晰度枚举
 
@@ -132,9 +132,9 @@ from bilibili_api import video
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class AudioStreamDownloadURL()
+
+> `@dataclasses.dataclass` 
 
 (@dataclass)
 
@@ -158,7 +158,7 @@ from bilibili_api import video
 
 ## class DanmakuOperatorType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 弹幕操作枚举
 
@@ -171,9 +171,9 @@ from bilibili_api import video
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class FLVStreamDownloadURL()
+
+> `@dataclasses.dataclass` 
 
 (@dataclass)
 
@@ -187,9 +187,9 @@ FLV 视频流
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class MP4StreamDownloadURL()
+
+> `@dataclasses.dataclass` 
 
 (@dataclass)
 
@@ -995,169 +995,169 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
-**@staticmethod** 
-
 ### def BAD_FOR_YOUNGS()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def CANNOT_CHARGE()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def CLICKBAIT()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def COOPERATE_INFRINGEMENT()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def DANGEROUS()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def DISCOMFORT()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def GAMBLED_SCAMS()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def ILLEGAL()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def ILLEGAL_OTHER()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def ILLEGAL_POPULARIZE()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def ILLEGAL_URL()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def INFRINGEMENT()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def LEAD_WAR()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def OTHER()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def OTHER_NEW()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def PERSONAL_ATTACK()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def PLAGIARISM()
+
+> `@staticmethod` 
 
 与站内其他视频撞车
 
@@ -1171,39 +1171,39 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
-**@staticmethod** 
-
 ### def POLITICAL_RUMORS()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def PRON()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def SOCIAL_RUMORS()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def UNREAL_COPYRIGHT()
+
+> `@staticmethod` 
 
 转载/自制类型错误
 
@@ -1217,39 +1217,39 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 
 
-**@staticmethod** 
-
 ### def UNREAL_EVENT()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def VIDEO_INFRINGEMENT()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def VIOLENT()
 
+> `@staticmethod` 
 
 
 
 
 
 
-**@staticmethod** 
 
 ### def VULGAR()
+
+> `@staticmethod` 
 
 
 
@@ -1261,7 +1261,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 ## class VideoCodecs()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 视频的视频流编码枚举
 
@@ -1388,7 +1388,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 ## class VideoOnlineMonitor()
 
-**Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
+> Extend: `bilibili_api.utils.AsyncEvent.AsyncEvent`
 
 视频在线人数实时监测。
 
@@ -1463,7 +1463,7 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 ## class VideoQuality()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 视频的视频流分辨率枚举
 
@@ -1484,9 +1484,9 @@ CONNECTED:  成功连接。 CallbackData: None。
 
 ---
 
-**@dataclasses.dataclass** 
-
 ## class VideoStreamDownloadURL()
+
+> `@dataclasses.dataclass` 
 
 (@dataclass)
 

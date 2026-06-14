@@ -68,7 +68,7 @@ from bilibili_api import manga
 
 ### class Area()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 漫画索引筛选器的地区枚举类。
 
@@ -83,7 +83,7 @@ from bilibili_api import manga
 
 ### class Order()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 漫画索引筛选器的排序枚举类。
 
@@ -96,7 +96,7 @@ from bilibili_api import manga
 
 ### class Payment()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 漫画索引筛选器的付费枚举类。
 
@@ -110,7 +110,7 @@ from bilibili_api import manga
 
 ### class Status()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 漫画索引筛选器的状态枚举类。
 
@@ -123,7 +123,7 @@ from bilibili_api import manga
 
 ### class Style()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 漫画索引筛选器的风格枚举类。
 
@@ -152,7 +152,7 @@ from bilibili_api import manga
 
 ## class MangaOrderType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 漫画排序方式
 

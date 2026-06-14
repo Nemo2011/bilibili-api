@@ -114,7 +114,7 @@ from bilibili_api import topic
 
 ## class TopicCardsSortBy()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 话题下内容排序方式
 

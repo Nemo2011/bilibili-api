@@ -29,7 +29,7 @@ from bilibili_api import channel_series
 
 ## class ChannelOrder()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 合集视频排序顺序。
 + DEFAULT: 默认排序
@@ -129,7 +129,7 @@ from bilibili_api import channel_series
 
 ## class ChannelSeriesType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 合集与列表类型
 

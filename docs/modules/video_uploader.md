@@ -40,7 +40,7 @@ from bilibili_api import video_uploader
 
 ## class Lines()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 可选线路
 
@@ -58,7 +58,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 
 ## class VideoEditor()
 
-**Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
+> Extend: `bilibili_api.utils.AsyncEvent.AsyncEvent`
 
 视频稿件编辑
 
@@ -130,7 +130,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 
 ## class VideoEditorEvents()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 视频稿件编辑事件枚举
 
@@ -215,7 +215,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 
 ## class VideoPorderIndustry()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 商单行业
 
@@ -262,7 +262,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 
 ## class VideoPorderShowType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 商单形式
 
@@ -284,7 +284,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 
 ## class VideoPorderType()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 视频商业类型
 
@@ -298,7 +298,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 
 ## class VideoUploader()
 
-**Extend: bilibili_api.utils.AsyncEvent.AsyncEvent**
+> Extend: `bilibili_api.utils.AsyncEvent.AsyncEvent`
 
 视频上传
 
@@ -376,7 +376,7 @@ meta 保留字段：videos, cover
 
 ## class VideoUploaderEvents()
 
-**Extend: enum.Enum**
+> Extend: `enum.Enum`
 
 上传事件枚举
 
