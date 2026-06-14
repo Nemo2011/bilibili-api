@@ -673,12 +673,25 @@ Cookies 刷新错误。
 非 cookies:
  - `ac_time_value` (存储在 Local Storage 中)
 
+维护 buvid / bili_ticket 遵循以下规则：
+1. `global` 为模块初始化时定义的独一无二的凭据类。
+2. `blank` 为 `get_core_cookies` 字段全为 `None` 的凭据类，即 `Credential()`。可通过 `check_blank()` 检查凭据类是否为 `blank`。
+3. 其余凭据类均为 `normal`，即使传入 `sessdata="", bili_jct=""` 亦视为 `normal`。
+4. `get_xxx` 函数拆分为 `ensure_xxx` 和 `obtain_xxx`，接受凭据类传入。
+1. `ensure` 保证 `buvid` / `bili_ticket` 存在且可用，只有凭据类中的 `buvid` 和 `bili_ticket` 不可用才进行 `obtain`。`ensure` 在已有 cookies 情况下不会修改 cookies。
+2. `obtain` 总是发起网络请求获取新的 `buvid` / `bili_ticket`。
+5. `blank` 或在 `global_persistence` 下，凭据类进行 `ensure` 或 `obtain` 将先 `ensure global` 或 `obtain global`，再复制 `global` 相关字段，称此复制过程为同步。
+6. `get_cookies` 中直接调用 `ensure`，不会直接调用 `obtain`。在禁用 `buvid` 与 `bili_ticket` 自动获取时只同步不请求。
+7. `ensure` 与 `obtain` 若没有传入凭据类，将创建一个新的 `blank` 作为凭据类带入。因此获取 `global` 字段直接不带参调用 `ensure`，更新 `global` 字段直接不带参调用 `obtain`。
+
 
 
 
 ### def \_\_init\_\_()
 
 各字段获取方式查看：https://nemo2011.github.io/bilibili-api/#/common/credential?id=获取-credential-类所需信息
+
+buvid3 和 buvid4 建议配合食用，bili_ticket 和 bili_ticket_expires 亦建议配合食用。
 
 
 | name | type | description |
@@ -749,7 +762,7 @@ Cookies 刷新错误。
 
 ### async def get_cookies()
 
-获取请求 Cookies 字典
+获取请求 Cookies 字典，同时处理 buvid / bili_ticket。
 
 
 

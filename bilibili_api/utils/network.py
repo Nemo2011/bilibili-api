@@ -1867,6 +1867,17 @@ class Credential:
 
     非 cookies:
      - `ac_time_value` (存储在 Local Storage 中)
+
+    维护 buvid / bili_ticket 遵循以下规则：
+    1. `global` 为模块初始化时定义的独一无二的凭据类。
+    2. `blank` 为 `get_core_cookies` 字段全为 `None` 的凭据类，即 `Credential()`。可通过 `check_blank()` 检查凭据类是否为 `blank`。
+    3. 其余凭据类均为 `normal`，即使传入 `sessdata="", bili_jct=""` 亦视为 `normal`。
+    4. `get_xxx` 函数拆分为 `ensure_xxx` 和 `obtain_xxx`，接受凭据类传入。
+        1. `ensure` 保证 `buvid` / `bili_ticket` 存在且可用，只有凭据类中的 `buvid` 和 `bili_ticket` 不可用才进行 `obtain`。`ensure` 在已有 cookies 情况下不会修改 cookies。
+        2. `obtain` 总是发起网络请求获取新的 `buvid` / `bili_ticket`。
+    5. `blank` 或在 `global_persistence` 下，凭据类进行 `ensure` 或 `obtain` 将先 `ensure global` 或 `obtain global`，再复制 `global` 相关字段，称此复制过程为同步。
+    6. `get_cookies` 中直接调用 `ensure`，不会直接调用 `obtain`。在禁用 `buvid` 与 `bili_ticket` 自动获取时只同步不请求。
+    7. `ensure` 与 `obtain` 若没有传入凭据类，将创建一个新的 `blank` 作为凭据类带入。因此获取 `global` 字段直接不带参调用 `ensure`，更新 `global` 字段直接不带参调用 `obtain`。
     """
 
     _refresh_lock: asyncio.Lock = asyncio.Lock()
@@ -1905,6 +1916,8 @@ class Credential:
             bili_ticket_expires (str | None, optional): 浏览器 Cookies 中的 bili_ticket_expires 字段值. Defaults to None.
             ac_time_value (str | None, optional): 浏览器 localStorage 中的 ac_time_value 字段值. Defaults to None.
             kwargs (Any): 其他用户可自行添加的 cookies。通过 **kwargs 传入。
+
+        buvid3 和 buvid4 建议配合食用，bili_ticket 和 bili_ticket_expires 亦建议配合食用。
         """
         # core cookies
         self.sessdata = (
@@ -1921,21 +1934,12 @@ class Credential:
         self.ac_time_value = ac_time_value
 
         # buvid3 & buvid4
-        if (buvid3 or buvid4) and not (buvid3 and buvid4):
-            raise ArgsException("buvid3 与 buvid4 需配合食用。")
-
         self.buvid3 = buvid3
         self.buvid4 = buvid4
 
-        if self.is_buvid_generated():
-            self._gen_local_cookies()
+        self._gen_local_cookies()
 
         # bili_ticket
-        if (bili_ticket or bili_ticket_expires) and not (
-            bili_ticket and bili_ticket_expires
-        ):
-            raise ArgsException("bili_ticket 与 bili_ticket_expires 需配合食用")
-
         if bili_ticket_expires and not bili_ticket_expires.isnumeric():
             raise ArgsException("bili_ticket_expires 应为整数时间戳")
 
@@ -1984,6 +1988,8 @@ class Credential:
         Returns:
             bool: bili_ticket 是否可用
         """
+        if self.bili_ticket_expires and not self.bili_ticket_expires.isnumeric():
+            raise ArgsException("bili_ticket_expires 应为整数时间戳")
         return bool(
             self.bili_ticket
             and self.bili_ticket_expires
@@ -2006,7 +2012,7 @@ class Credential:
 
     async def get_cookies(self) -> dict[str, str]:
         """
-        获取请求 Cookies 字典
+        获取请求 Cookies 字典，同时处理 buvid / bili_ticket。
 
         Returns:
             dict[str, str]: 请求 Cookies 字典
@@ -3130,11 +3136,15 @@ __register_global_credential_filter()
 ################################################## BEGIN Credential-AntiSpider ##################################################
 
 # Credential 维护 buvid / bili_ticket 遵循以下规则：
-# 1、blank 总是与 global 保持一致 (get_cookies / ensure / obtain)
-# 2、normal 第一次赋值 buvid / bili_ticket 后非必要不变更 (除 bili_ticket 刷新)
-# 3、ensure 需要保证 buvid / bili_ticket 可用，尽量避免修改 credential 与 obtain
-# 4、obtain 总是发起网络请求获取新的 buvid / bili_ticket
-# 5、get_cookies 正常情况调用 ensure，在禁用 buvid 与 bili_ticket 时只同步不请求。
+# 1. `global` 为模块初始化时定义的独一无二的凭据类。
+# 2. `blank` 为 `get_core_cookies` 字段全为 `None` 的凭据类，即 `Credential()`。可通过 `check_blank()` 检查凭据类是否为 `blank`。
+# 3. 其余凭据类均为 `normal`，即使传入 `sessdata="", bili_jct=""` 亦视为 `normal`。
+# 4. `get_xxx` 函数拆分为 `ensure_xxx` 和 `obtain_xxx`，接受凭据类传入。
+#     1. `ensure` 保证 `buvid` / `bili_ticket` 存在且可用，只有凭据类中的 `buvid` 和 `bili_ticket` 不可用才进行 `obtain`。`ensure` 在已有 cookies 情况下不会修改 cookies。
+#     2. `obtain` 总是发起网络请求获取新的 `buvid` / `bili_ticket`。
+# 5. `blank` 或在 `global_persistence` 下，凭据类进行 `ensure` 或 `obtain` 将先 `ensure global` 或 `obtain global`，再复制 `global` 相关字段，称此复制过程为同步。
+# 6. `get_cookies` 中直接调用 `ensure`，不会直接调用 `obtain`。在禁用 `buvid` 与 `bili_ticket` 自动获取时只同步不请求。
+# 7. `ensure` 与 `obtain` 若没有传入凭据类，将创建一个新的 `blank` 作为凭据类带入。因此获取 `global` 字段直接不带参调用 `ensure`，更新 `global` 字段直接不带参调用 `obtain`。
 
 
 class GlobalCredential(Credential):
@@ -3171,7 +3181,7 @@ async def ensure_buvid(credential: Credential | None = None) -> tuple[str, str, 
     """
     credential = credential if credential else Credential()
 
-    if credential.is_buvid_generated() and not credential.check_blank():
+    if credential.is_buvid_generated():
         return (credential.buvid3, credential.buvid4, credential.buvid_fp)  # type: ignore
 
     if credential.check_blank() or (
@@ -3278,7 +3288,7 @@ async def ensure_bili_ticket(
     """
     credential = credential if credential else Credential()
 
-    if credential.is_bili_ticket_valid() and not credential.check_blank():
+    if credential.is_bili_ticket_valid():
         return credential.bili_ticket, credential.bili_ticket_expires  # type: ignore
 
     if credential.check_blank() or (

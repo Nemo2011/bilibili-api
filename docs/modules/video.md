@@ -72,8 +72,31 @@ from bilibili_api import video
   - [async def triple()](#async-def-triple)
   - [async def turn\_to\_episode()](#async-def-turn\_to\_episode)
 - [class VideoAppealReasonType()](#class-VideoAppealReasonType)
+  - [def BAD\_FOR\_YOUNGS()](#def-BAD\_FOR\_YOUNGS)
+  - [def CANNOT\_CHARGE()](#def-CANNOT\_CHARGE)
+  - [def CLICKBAIT()](#def-CLICKBAIT)
+  - [def COOPERATE\_INFRINGEMENT()](#def-COOPERATE\_INFRINGEMENT)
+  - [def DANGEROUS()](#def-DANGEROUS)
+  - [def DISCOMFORT()](#def-DISCOMFORT)
+  - [def GAMBLED\_SCAMS()](#def-GAMBLED\_SCAMS)
+  - [def ILLEGAL()](#def-ILLEGAL)
+  - [def ILLEGAL\_OTHER()](#def-ILLEGAL\_OTHER)
+  - [def ILLEGAL\_POPULARIZE()](#def-ILLEGAL\_POPULARIZE)
+  - [def ILLEGAL\_URL()](#def-ILLEGAL\_URL)
+  - [def INFRINGEMENT()](#def-INFRINGEMENT)
+  - [def LEAD\_WAR()](#def-LEAD\_WAR)
+  - [def OTHER()](#def-OTHER)
+  - [def OTHER\_NEW()](#def-OTHER\_NEW)
+  - [def PERSONAL\_ATTACK()](#def-PERSONAL\_ATTACK)
   - [def PLAGIARISM()](#def-PLAGIARISM)
+  - [def POLITICAL\_RUMORS()](#def-POLITICAL\_RUMORS)
+  - [def PRON()](#def-PRON)
+  - [def SOCIAL\_RUMORS()](#def-SOCIAL\_RUMORS)
   - [def UNREAL\_COPYRIGHT()](#def-UNREAL\_COPYRIGHT)
+  - [def UNREAL\_EVENT()](#def-UNREAL\_EVENT)
+  - [def VIDEO\_INFRINGEMENT()](#def-VIDEO\_INFRINGEMENT)
+  - [def VIOLENT()](#def-VIOLENT)
+  - [def VULGAR()](#def-VULGAR)
 - [class VideoCodecs()](#class-VideoCodecs)
 - [class VideoDownloadURLDataDetecter()](#class-VideoDownloadURLDataDetecter)
   - [def \_\_init\_\_()](#def-\_\_init\_\_)
@@ -974,6 +997,166 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 **@staticmethod** 
 
+### def BAD_FOR_YOUNGS()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def CANNOT_CHARGE()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def CLICKBAIT()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def COOPERATE_INFRINGEMENT()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def DANGEROUS()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def DISCOMFORT()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def GAMBLED_SCAMS()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def ILLEGAL()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def ILLEGAL_OTHER()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def ILLEGAL_POPULARIZE()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def ILLEGAL_URL()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def INFRINGEMENT()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def LEAD_WAR()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def OTHER()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def OTHER_NEW()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def PERSONAL_ATTACK()
+
+
+
+
+
+
+
+**@staticmethod** 
+
 ### def PLAGIARISM()
 
 与站内其他视频撞车
@@ -990,6 +1173,36 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 **@staticmethod** 
 
+### def POLITICAL_RUMORS()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def PRON()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def SOCIAL_RUMORS()
+
+
+
+
+
+
+
+**@staticmethod** 
+
 ### def UNREAL_COPYRIGHT()
 
 转载/自制类型错误
@@ -1000,6 +1213,46 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | `source` | `str` | 原创视频出处 |
 
 **Returns:** `dict`:  传入函数的参数字典
+
+
+
+
+**@staticmethod** 
+
+### def UNREAL_EVENT()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def VIDEO_INFRINGEMENT()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def VIOLENT()
+
+
+
+
+
+
+
+**@staticmethod** 
+
+### def VULGAR()
+
+
+
 
 
 
