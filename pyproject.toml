@@ -92,14 +92,15 @@ select = [
   "RUF",   # Ruff-specific rules
 ]
 ignore = [
-  "E402",   # module-import-not-at-top-of-file
-  "E501",   # line-too-long
-  "E741",   # ambiguous-variable-name
-  "UP037",  # quoted-annotation
-  "TID252", # relative-imports
-  "RUF001", # ambiguous-unicode-character-string
-  "RUF002", # ambiguous-unicode-character-docstring
-  "RUF003", # ambiguous-unicode-character-comment
+  "E402",     # module-import-not-at-top-of-file
+  "E501",     # line-too-long
+  "E741",     # ambiguous-variable-name
+  "UP037",    # quoted-annotation
+  "TID252",   # relative-imports
+  "RUF001",   # ambiguous-unicode-character-string
+  "RUF002",   # ambiguous-unicode-character-docstring
+  "RUF003",   # ambiguous-unicode-character-comment
+  "ASYNC240", # blocking-path-method-in-async-function
 ]
 
 [tool.ruff.lint.isort]

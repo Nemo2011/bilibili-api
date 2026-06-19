@@ -48,7 +48,7 @@ class AioHTTPClient(BiliAPIClient):
                 trust_env=self.__args["trust_env"],
                 connector=aiohttp.TCPConnector(verify_ssl=self.__args["verify_ssl"]),
             )
-        self.__wss: dict[int, aiohttp.ClientWebSocketResponse] = {}
+        self.__wss: dict[int, aiohttp.ClientWebSocketResponse[bool]] = {}
         self.__ws_cnt: int = 0
         self.__downloads: dict[int, aiohttp.ClientResponse] = {}
         self.__download_cnt: int = 0
