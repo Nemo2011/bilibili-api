@@ -171,7 +171,7 @@
       "method": "GET",
       "verify": true,
       "wbi": true,
-      "wbi2": true,
+      "dm": true,
       "data": {
         "aid": "int: av 号。与 bvid 任选其一",
         "cid": "int: 分 P id",

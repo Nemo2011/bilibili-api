@@ -1937,7 +1937,7 @@ def _enc_wbi(params: dict, mixin_key: str) -> dict:
     return params
 
 
-def _enc_wbi2(params: dict) -> dict:
+def _enc_dm(params: dict) -> dict:
     dm_rand = "ABCDEFGHIJK"
     params.update(
         {
@@ -2099,7 +2099,7 @@ async def get_wbi_mixin_key(credential: Optional[Credential] = None) -> str:
 @dataclass
 class Api:
     """
-    用于请求的 Api 类
+    用于请求的 Api 类，几乎所有 http 请求皆由此发出。
 
     Args:
         url (str): 请求地址
@@ -2108,9 +2108,9 @@ class Api:
 
         comment (str, optional): 注释. Defaults to "".
 
-        wbi (bool, optional): 是否使用 wbi 鉴权. Defaults to False.
+        wbi (bool, optional): 是否使用 wbi 鉴权 (`w_rid` / `wts`). Defaults to False.
 
-        wbi2 (bool, optional): 是否使用参数进一步的 wbi 鉴权. Defaults to False.
+        dm (bool, optional): 是否使用参数进一步的 wbi 鉴权 (`dm_xxx`)，有关鼠标/键盘操作记录. Defaults to False.
 
         verify (bool, optional): 是否验证凭据. Defaults to False.
 
@@ -2120,9 +2120,15 @@ class Api:
 
         ignore_code (bool, optional): 是否忽略返回值 code 的检验. Defaults to False.
 
+        sign (bool, optional): 是否使用 APP 鉴权. Defaults to False.
+
         data (dict, optional): 请求载荷. Defaults to {}.
 
         params (dict, optional): 请求参数. Defaults to {}.
+
+        files (dict[str, BiliAPIFile], optional): 附带文件. Defaults to {}.
+
+        headers (dict, optional): 自定义的请求头. Defaults to {}.
 
         credential (Credential, optional): 凭据. Defaults to Credential().
     """
@@ -2131,7 +2137,7 @@ class Api:
     method: str
     comment: str = ""
     wbi: bool = False
-    wbi2: bool = False
+    dm: bool = False
     verify: bool = False
     no_csrf: bool = False
     json_body: bool = False
@@ -2218,8 +2224,8 @@ class Api:
             self.params["callback"] = "callback"
         # 鼠标移动 wbi 风控 (这东西不放在前面工作不了)
         # (https://github.com/Nemo2011/bilibili-api/issues/595)
-        if self.wbi2:
-            self.params = _enc_wbi2(self.params)
+        if self.dm:
+            self.params = _enc_dm(self.params)
         # 普遍存在的 wbi 鉴权
         if self.wbi:
             self.params = _enc_wbi(
@@ -2354,7 +2360,7 @@ class Api:
             byte (bool): 是否直接返回字节数据。 Defaults to False.
 
         Returns:
-            接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
+            int | str | dict | bytes | None: 接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
         """
         times = request_settings.get_wbi_retry_times()
         loop = times

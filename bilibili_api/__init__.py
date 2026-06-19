@@ -41,6 +41,7 @@ from .utils.network import (
     # credential
     Credential,
     # api
+    Api,
     HEADERS,
     bili_simple_download,
 )
@@ -137,6 +138,7 @@ __register_all_clients()
 
 
 __all__ = [
+    "Api",
     "ApiException",
     "AsyncEvent",
     "ArgsException",

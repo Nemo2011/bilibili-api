@@ -46,7 +46,7 @@
       "method": "GET",
       "verify": false,
       "wbi": true,
-      "wbi2": true,
+      "dm": true,
       "params": {
         "mid": "int: uid",
         "w_webid": "str: w_webid"
@@ -134,7 +134,7 @@
       "method": "GET",
       "verify": false,
       "wbi": true,
-      "wbi2": true,
+      "dm": true,
       "params": {
         "mid": "int: uid",
         "ps": "const int: 30",
@@ -237,7 +237,7 @@
       "method": "GET",
       "verify": false,
       "wbi": true,
-      "wbi2": true,
+      "dm": true,
       "params": {
         "host_mid": "int: uid",
         "offset": "int: 动态偏移用，第一页为 0",
@@ -258,7 +258,7 @@
       "method": "GET",
       "verify": true,
       "wbi": false,
-      "wbi2": false,
+      "dm": false,
       "params": {
         "up_mid": "int: uid",
         "anchor": "int: 动态偏移用，第一页为 0",
@@ -275,7 +275,7 @@
       "method": "GET",
       "verify": true,
       "wbi": false,
-      "wbi2": false,
+      "dm": false,
       "params": {
         "qa_id": "int: 问答 ID",
         "t": "int: 时间戳，单位毫秒"
