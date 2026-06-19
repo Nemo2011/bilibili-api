@@ -120,7 +120,7 @@ from .utils.picture import Picture
 from .utils.short import get_real_url
 from .utils.sync import sync
 
-BILIBILI_API_VERSION = "18.0.0.a0"
+BILIBILI_API_VERSION = "18.0.0.a1"
 
 
 def __register_all_clients():
