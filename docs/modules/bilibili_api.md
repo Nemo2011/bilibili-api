@@ -12,6 +12,12 @@ bilibili_api
 from bilibili_api import ...
 ```
 
+- [class Api()](#class-Api)
+  - [async def request()](#async-def-request)
+  - [def update\_data()](#def-update\_data)
+  - [def update\_files()](#def-update\_files)
+  - [def update\_headers()](#def-update\_headers)
+  - [def update\_params()](#def-update\_params)
 - [class ApiException()](#class-ApiException)
 - [class ArgsException()](#class-ArgsException)
 - [class AsyncEvent()](#class-AsyncEvent)
@@ -175,6 +181,94 @@ from bilibili_api import ...
 - [def unregister\_client()](#def-unregister\_client)
 - [def unregister\_post\_filter()](#def-unregister\_post\_filter)
 - [def unregister\_pre\_filter()](#def-unregister\_pre\_filter)
+
+---
+
+## class Api()
+
+> `@dataclasses.dataclass` 
+
+用于请求的 Api 类，几乎所有 http 请求皆由此发出。
+
+
+| name | type | description |
+| - | - | - |
+| `url` | `str` | 请求地址 |
+| `method` | `str` | 请求方法 |
+| `comment` | `str, optional` | 注释. Defaults to "". |
+| `wbi` | `bool, optional` | 是否使用 wbi 鉴权 (`w_rid` / `wts`). Defaults to False. |
+| `dm` | `bool, optional` | 是否使用参数进一步的 wbi 鉴权 (`dm_xxx`)，有关鼠标/键盘操作记录. Defaults to False. |
+| `verify` | `bool, optional` | 是否验证凭据. Defaults to False. |
+| `no_csrf` | `bool, optional` | 是否不使用 csrf. Defaults to False. |
+| `json_body` | `bool, optional` | 是否使用 json 作为载荷. Defaults to False. |
+| `ignore_code` | `bool, optional` | 是否忽略返回值 code 的检验. Defaults to False. |
+| `sign` | `bool, optional` | 是否使用 APP 鉴权. Defaults to False. |
+| `data` | `Dict, optional` | 请求载荷. Defaults to {}. |
+| `params` | `Dict, optional` | 请求参数. Defaults to {}. |
+| `files` | `Dict[str, BiliAPIFile], optional` | 附带文件. Defaults to {}. |
+| `headers` | `Dict, optional` | 自定义的请求头. Defaults to {}. |
+| `credential` | `Credential, optional` | 凭据. Defaults to Credential(). |
+
+
+### async def request()
+
+向接口发送请求。
+
+
+| name | type | description |
+| - | - | - |
+| `raw` | `bool, optional` | 是否不提取 data 或 result 字段。 Defaults to False. |
+| `byte` | `bool, optional` | 是否直接返回字节数据。 Defaults to False. |
+| `bili_res` | `bool, optional` | 是否直接返回 BiliAPIResponse 对象。 Defaults to False. |
+
+**Returns:** `int | str | dict | bytes | None`:  接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
+
+
+
+
+### def update_data()
+
+更新 data
+
+
+
+**Returns:** `Api`:  返回自身
+
+
+
+
+### def update_files()
+
+更新 files
+
+
+
+**Returns:** `Api`:  返回自身
+
+
+
+
+### def update_headers()
+
+更新 headers
+
+
+
+**Returns:** `Api`:  返回自身
+
+
+
+
+### def update_params()
+
+更新 params
+
+
+
+**Returns:** `Api`:  返回自身
+
+
+
 
 ---
 

@@ -25,7 +25,7 @@
       "method": "GET",
       "verify": false,
       "wbi": true,
-      "wbi2": true,
+      "dm": true,
       "params": {
         "aid": "int: av 号",
         "bvid": "string: BV 号",
@@ -99,7 +99,7 @@
       "method": "GET",
       "verify": false,
       "wbi": true,
-      "wbi2": true,
+      "dm": true,
       "params": {
         "avid": "int: av 号",
         "cid": "int: 分 P 编号",
@@ -175,7 +175,7 @@
       "method": "GET",
       "verify": false,
       "wbi": true,
-      "wbi2": true,
+      "dm": true,
       "data": {
         "aid": "int: av 号。与 bvid 任选其一",
         "cid": "int: 分 P id",

@@ -79,6 +79,7 @@ from .utils.AsyncEvent import AsyncEvent
 from .utils.danmaku import Danmaku, DmFontSize, DmMode, SpecialDanmaku
 from .utils.geetest import Geetest, GeetestMeta, GeetestType
 from .utils.network import (
+    Api,
     BiliAPIClient,
     BiliAPIFile,
     BiliAPIResponse,
@@ -144,6 +145,7 @@ __register_all_clients()
 
 __all__ = [
     "BILIBILI_API_VERSION",
+    "Api",
     "ApiException",
     "ArgsException",
     "AsyncEvent",
