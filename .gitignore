@@ -1,4 +1,4 @@
-# Python binariees
+# Python binaries
 __pycache__/
 # MacOS
 .DS_Store
@@ -28,7 +28,7 @@ virtualenv/
 # IDE
 .idea/
 .vscode
-# Doc Generater
+# Doc Generator
 .doc_cache/
 .mypy_cache/
 # sh
