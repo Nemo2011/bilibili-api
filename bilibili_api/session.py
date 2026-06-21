@@ -29,16 +29,20 @@ async def fetch_session_msgs(
     talker_id: int,
     credential: Credential,
     session_type: int = 1,
-    begin_seqno: int = 0,
+    begin_seqno: int | None = None,
+    end_seqno: int | None = None,
+    size: int = 30,
 ) -> dict:
     """
     获取指定用户的近三十条消息
 
     Args:
-        talker_id (int): 用户 UID
-        credential (Credential): Credential
+        talker_id    (int): 用户 UID
+        credential   (Credential): Credential
         session_type (int, optional): 会话类型 1 私聊 2 应援团. Defaults to 1.
-        begin_seqno (int, optional): 起始 Seqno. Defaults to 0.
+        begin_seqno  (int | None, optional): 起始 Seqno，即最旧的消息，返回结果不包含此消息。Defaults to None.
+        end_seqno    (int | None, optional): 终止 Seqno，即最新的消息，返回结果不包含此消息。Defaults to None.
+        size         (int, optional): 每次获取页数大小. Defaults to 30.
 
     Returns:
         dict: 调用 API 返回结果
@@ -48,8 +52,9 @@ async def fetch_session_msgs(
     params = {
         "talker_id": talker_id,
         "session_type": session_type,
-        "size": 30,
-        "begin_seqno": begin_seqno,
+        "size": size,
+        "begin_seqno": begin_seqno if begin_seqno else "",
+        "end_seqno": end_seqno if end_seqno else "",
     }
     api = API["session"]["fetch"]
 

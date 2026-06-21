@@ -187,7 +187,9 @@ from bilibili_api import session
 | `talker_id` | `int` | 用户 UID |
 | `credential` | `Credential` | Credential |
 | `session_type` | `int, optional` | 会话类型 1 私聊 2 应援团. Defaults to 1. |
-| `begin_seqno` | `int, optional` | 起始 Seqno. Defaults to 0. |
+| `begin_seqno` | `int \| None, optional` | 起始 Seqno，即最旧的消息，返回结果不包含此消息。Defaults to None. |
+| `end_seqno` | `int \| None, optional` | 终止 Seqno，即最新的消息，返回结果不包含此消息。Defaults to None. |
+| `size` | `int, optional` | 每次获取页数大小. Defaults to 30. |
 
 **Returns:** `dict`:  调用 API 返回结果
 
