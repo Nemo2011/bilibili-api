@@ -275,14 +275,8 @@ client_settings: dict[str, list] = {}
 selected_client: str = ""
 
 
-class RequestSettings:
+class BiliSettings:
     def __init__(self):
-        self.__settings: dict = {
-            "proxy": "",
-            "timeout": 30.0,
-            "verify_ssl": True,
-            "trust_env": True,
-        }
         self.__wbi_retry_times = 3
         self.__enable_auto_buvid = True
         self.__enable_bili_ticket = False
@@ -291,114 +285,6 @@ class RequestSettings:
         self.__enable_fpgen = False
         self.__global_credential = None
         self.__fpgen_args = {}
-
-    def get(self, name: str) -> Any:
-        """
-        获取某项设置
-
-        不可用于 `wbi_retry_times` `enable_***` `fpgen_args` `global_credential`
-
-        默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
-
-        Args:
-            name (str): 设置名称
-
-        Returns:
-            Any: 设置的值
-        """
-        return self.__settings[name]
-
-    def set(self, name: str, value: Any) -> None:
-        """
-        设置某项设置
-
-        不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
-
-        默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
-
-        Args:
-            name (str): 设置名称
-            value (Any): 设置的值
-        """
-        if value == self.__settings.get(name):
-            return
-        global lazy_settings
-        self.__settings[name] = value
-        for _, pool in lazy_settings.items():
-            for _, client in pool.items():
-                client[name] = value
-
-    def get_proxy(self) -> str:
-        """
-        获取设置的代理
-
-        Returns:
-            str: 代理地址. Defaults to "".
-        """
-        return self.get("proxy")
-
-    def set_proxy(self, proxy: str) -> None:
-        """
-        修改设置的代理
-
-        Args:
-            proxy (str): 代理地址
-        """
-        self.set("proxy", proxy)
-
-    def get_timeout(self) -> float:
-        """
-        获取设置的 web 请求超时时间
-
-        Returns:
-            float: 超时时间. Defaults to 5.0.
-        """
-        return self.get("timeout")
-
-    def set_timeout(self, timeout: float) -> None:
-        """
-        修改设置的 web 请求超时时间
-
-        Args:
-            timeout (float): 超时时间
-        """
-        self.set("timeout", timeout)
-
-    def get_verify_ssl(self) -> bool:
-        """
-        获取设置的是否验证 SSL
-
-        Returns:
-            bool: 是否验证 SSL. Defaults to True.
-        """
-        return self.get("verify_ssl")
-
-    def set_verify_ssl(self, verify_ssl: bool) -> None:
-        """
-        修改设置的是否验证 SSL
-
-        Args:
-            verify_ssl (bool): 是否验证 SSL
-        """
-        self.set("verify_ssl", verify_ssl)
-
-    def get_trust_env(self) -> bool:
-        """
-        获取设置的 `trust_env`
-
-        Returns:
-            bool: `trust_env`. Defaults to True.
-        """
-        return self.get("trust_env")
-
-    def set_trust_env(self, trust_env: bool) -> None:
-        """
-        修改设置的 `trust_env`
-
-        Args:
-            trust_env (bool): `trust_env`
-        """
-        self.set("trust_env", trust_env)
 
     def get_wbi_retry_times(self) -> int:
         """
@@ -441,7 +327,7 @@ class RequestSettings:
         获取设置的是否使用 bili_ticket
 
         Returns:
-            bool: 是否使用 bili_ticket. Defaults to True.
+            bool: 是否使用 bili_ticket. Defaults to False.
         """
         return self.__enable_bili_ticket
 
@@ -550,11 +436,123 @@ class RequestSettings:
         """
         self.__global_credential = global_credential
 
+
+class RequestSettings:
+    def __init__(self):
+        self.__settings: dict = {
+            "proxy": "",
+            "timeout": 30.0,
+            "verify_ssl": True,
+            "trust_env": True,
+        }
+
+    def get(self, name: str) -> Any:
+        """
+        获取某项设置
+
+        默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
+
+        Args:
+            name (str): 设置名称
+
+        Returns:
+            Any: 设置的值
+        """
+        return self.__settings[name]
+
+    def set(self, name: str, value: Any) -> None:
+        """
+        设置某项设置
+
+        默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
+
+        Args:
+            name (str): 设置名称
+            value (Any): 设置的值
+        """
+        if value == self.__settings.get(name):
+            return
+        global lazy_settings
+        self.__settings[name] = value
+        for _, pool in lazy_settings.items():
+            for _, client in pool.items():
+                client[name] = value
+
+    def get_proxy(self) -> str:
+        """
+        获取设置的代理
+
+        Returns:
+            str: 代理地址. Defaults to "".
+        """
+        return self.get("proxy")
+
+    def set_proxy(self, proxy: str) -> None:
+        """
+        修改设置的代理
+
+        Args:
+            proxy (str): 代理地址
+        """
+        self.set("proxy", proxy)
+
+    def get_timeout(self) -> float:
+        """
+        获取设置的 web 请求超时时间
+
+        Returns:
+            float: 超时时间. Defaults to 5.0.
+        """
+        return self.get("timeout")
+
+    def set_timeout(self, timeout: float) -> None:
+        """
+        修改设置的 web 请求超时时间
+
+        Args:
+            timeout (float): 超时时间
+        """
+        self.set("timeout", timeout)
+
+    def get_verify_ssl(self) -> bool:
+        """
+        获取设置的是否验证 SSL
+
+        Returns:
+            bool: 是否验证 SSL. Defaults to True.
+        """
+        return self.get("verify_ssl")
+
+    def set_verify_ssl(self, verify_ssl: bool) -> None:
+        """
+        修改设置的是否验证 SSL
+
+        Args:
+            verify_ssl (bool): 是否验证 SSL
+        """
+        self.set("verify_ssl", verify_ssl)
+
+    def get_trust_env(self) -> bool:
+        """
+        获取设置的 `trust_env`
+
+        Returns:
+            bool: `trust_env`. Defaults to True.
+        """
+        return self.get("trust_env")
+
+    def set_trust_env(self, trust_env: bool) -> None:
+        """
+        修改设置的 `trust_env`
+
+        Args:
+            trust_env (bool): `trust_env`
+        """
+        self.set("trust_env", trust_env)
+
     def get_all(self) -> dict:
         """
         获取目前所有的设置项
-
-        不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
 
         Returns:
             dict: 所有的设置项
@@ -562,8 +560,50 @@ class RequestSettings:
         return self.__settings
 
 
+bili_settings = BiliSettings()
+"""
+模块通用设置
+
+| configuration | type | default | description |
+| ------------- | ---- | ------- | ----------- |
+| `wbi_retry_times` | `int` | `3` | WBI 重试次数 |
+| `enable_auto_buvid` | `bool` | `True` | 允许模块自动请求生成 buvid |
+| `enable_bili_ticket` | `bool` | `False` | 允许模块自动请求生成 bili_ticket |
+| `enable_buvid_global_persistence` | `bool` | `False` | 允许模块使用统一的全局 buvid |
+| `enable_bili_ticket_global_persistence` | `bool` | `False` | 允许模块使用统一的全局 bili_ticket |
+| `enable_fpgen` | `bool` | `False` | 是否启用 `fpgen` 进行指纹伪装 |
+| `fpgen_args` | `dict` | `{}` | 传入 `fpgen.generate` 的 keyword args 参数 |
+| `global_credential` | `Credential | None` | 全局凭据类，所有请求都将传入此凭据类的 cookies |
+"""
+bili_settings.__doc__ = """
+模块通用设置
+
+| configuration | type | default | description |
+| ------------- | ---- | ------- | ----------- |
+| `wbi_retry_times` | `int` | `3` | WBI 重试次数 |
+| `enable_auto_buvid` | `bool` | `True` | 允许模块自动请求生成 buvid |
+| `enable_bili_ticket` | `bool` | `False` | 允许模块自动请求生成 bili_ticket |
+| `enable_buvid_global_persistence` | `bool` | `False` | 允许模块使用统一的全局 buvid |
+| `enable_bili_ticket_global_persistence` | `bool` | `False` | 允许模块使用统一的全局 bili_ticket |
+| `enable_fpgen` | `bool` | `False` | 是否启用 `fpgen` 进行指纹伪装 |
+| `fpgen_args` | `dict` | `{}` | 传入 `fpgen.generate` 的 keyword args 参数 |
+| `global_credential` | `Credential | None` | 全局凭据类，所有请求都将传入此凭据类的 cookies |
+"""
+
+
 request_settings = RequestSettings()
-"请求参数设置"
+"""
+请求参数设置
+
+| name | type | default | curl_cffi | aiohttp | httpx |
+| ---- | ---- | ------- | --------- | ------- | ----- |
+| proxy | str | ` ` |  ✅ | ✅ | ✅ |
+| timeout | float | `30.0` | ✅ | ✅ | ✅ |
+| verify_ssl | bool | `True` | ✅ | ✅ | ✅ |
+| trust_env | bool | `True` | ✅ | ✅ | ✅ |
+| http2 | bool | `False` | ✅ | ❌ | ✅ |
+| impersonate | str | ` ` | ✅ | ❌ | ❌ |
+"""
 request_settings.__doc__ = "请求参数设置"
 
 DEFAULT_SETTINGS = ["proxy", "timeout", "verify_ssl", "trust_env"]
@@ -2018,11 +2058,11 @@ class Credential:
             dict[str, str]: 请求 Cookies 字典
         """
         # buvid ensuring
-        if request_settings.get_enable_auto_buvid():
+        if bili_settings.get_enable_auto_buvid():
             await ensure_buvid(self)
         elif self.check_blank() or (
             not self.is_buvid_generated()
-            and request_settings.get_enable_buvid_global_persistence()
+            and bili_settings.get_enable_buvid_global_persistence()
         ):
             (
                 self.buvid3,
@@ -2040,11 +2080,11 @@ class Credential:
                 _credential.uuid_infoc,
             )
         # bili_ticket ensuring
-        if request_settings.get_enable_bili_ticket():
+        if bili_settings.get_enable_bili_ticket():
             await ensure_bili_ticket(self)
         elif self.check_blank() or (
             not self.is_bili_ticket_valid()
-            and request_settings.get_enable_bili_ticket_global_persistence()
+            and bili_settings.get_enable_bili_ticket_global_persistence()
         ):
             (
                 self.bili_ticket,
@@ -2408,10 +2448,10 @@ browser_fingerprint = None
 def get_browser_fingerprint() -> dict:
     global browser_fingerprint
     if browser_fingerprint is None:
-        if request_settings.get_enable_fpgen():
+        if bili_settings.get_enable_fpgen():
             import fpgen
 
-            browser_fingerprint = fpgen.generate(**request_settings.get_fpgen_args())
+            browser_fingerprint = fpgen.generate(**bili_settings.get_fpgen_args())
         else:
             with open(
                 os.path.abspath(
@@ -3084,18 +3124,17 @@ def __register_builtin_log_filters():
 
 def __register_global_credential_filter():
     async def add_credential(cnt, ins, client, key, params):
-        gcred = request_settings.get_global_credential()
+        gcred = bili_settings.get_global_credential()
         if not gcred:
             return BiliFilterFlags.CONTINUE, None
         sig = inspect.signature(getattr(ins, key))
 
         def check_refreshing_urls(cred: Credential) -> bool:
             if (
-                not cred.is_buvid_generated()
-                and request_settings.get_enable_auto_buvid()
+                not cred.is_buvid_generated() and bili_settings.get_enable_auto_buvid()
             ) or (
                 not cred.is_bili_ticket_valid()
-                and request_settings.get_enable_bili_ticket()
+                and bili_settings.get_enable_bili_ticket()
             ):  # need refresh
                 if (
                     params.get("url")
@@ -3185,7 +3224,7 @@ async def ensure_buvid(credential: Credential | None = None) -> tuple[str, str, 
         return (credential.buvid3, credential.buvid4, credential.buvid_fp)  # type: ignore
 
     if credential.check_blank() or (
-        request_settings.get_enable_buvid_global_persistence()
+        bili_settings.get_enable_buvid_global_persistence()
         and not isinstance(credential, GlobalCredential)
     ):
         global _credential
@@ -3225,7 +3264,7 @@ async def obtain_buvid(credential: Credential | None = None) -> tuple[str, str, 
     credential = credential if credential else Credential()
 
     if credential.check_blank() or (
-        request_settings.get_enable_buvid_global_persistence()
+        bili_settings.get_enable_buvid_global_persistence()
         and not isinstance(credential, GlobalCredential)
     ):
         global _credential
@@ -3292,7 +3331,7 @@ async def ensure_bili_ticket(
         return credential.bili_ticket, credential.bili_ticket_expires  # type: ignore
 
     if credential.check_blank() or (
-        request_settings.get_enable_bili_ticket_global_persistence()
+        bili_settings.get_enable_bili_ticket_global_persistence()
         and not isinstance(credential, GlobalCredential)
     ):
         global _credential
@@ -3326,7 +3365,7 @@ async def obtain_bili_ticket(
     credential = credential if credential else Credential()
 
     if credential.check_blank() or (
-        request_settings.get_enable_bili_ticket_global_persistence()
+        bili_settings.get_enable_bili_ticket_global_persistence()
         and not isinstance(credential, GlobalCredential)
     ):
         global _credential
@@ -3642,7 +3681,7 @@ class Api:
         Returns:
             int | str | dict | bytes | None: 接口未返回数据时，返回 None，否则返回该接口提供的 data 或 result 字段的数据。
         """
-        times = request_settings.get_wbi_retry_times()
+        times = bili_settings.get_wbi_retry_times()
         loop = times
         while loop != 0:
             if loop != times:
@@ -3721,8 +3760,8 @@ def configure_dynamic_fingerprint(os: str, browser: str, version: int) -> None:
         "location": {"country": "CN"},
         "client": {"browser": {"major": version}},
     }
-    request_settings.set_enable_fpgen(True)
-    request_settings.set_fpgen_args(fpgen_args)
+    bili_settings.set_enable_fpgen(True)
+    bili_settings.set_fpgen_args(fpgen_args)
 
 
 ################################################## END Api ##################################################

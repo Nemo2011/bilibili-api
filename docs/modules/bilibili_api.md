@@ -116,6 +116,23 @@ from bilibili_api import ...
 - [class VideoUploadException()](#class-VideoUploadException)
 - [class WbiRetryTimesExceedException()](#class-WbiRetryTimesExceedException)
 - [def aid2bvid()](#def-aid2bvid)
+- [var bili\_settings](#var-bili\_settings)
+  - [def get\_enable\_auto\_buvid()](#def-get\_enable\_auto\_buvid)
+  - [def get\_enable\_bili\_ticket()](#def-get\_enable\_bili\_ticket)
+  - [def get\_enable\_bili\_ticket\_global\_persistence()](#def-get\_enable\_bili\_ticket\_global\_persistence)
+  - [def get\_enable\_buvid\_global\_persistence()](#def-get\_enable\_buvid\_global\_persistence)
+  - [def get\_enable\_fpgen()](#def-get\_enable\_fpgen)
+  - [def get\_fpgen\_args()](#def-get\_fpgen\_args)
+  - [def get\_global\_credential()](#def-get\_global\_credential)
+  - [def get\_wbi\_retry\_times()](#def-get\_wbi\_retry\_times)
+  - [def set\_enable\_auto\_buvid()](#def-set\_enable\_auto\_buvid)
+  - [def set\_enable\_bili\_ticket()](#def-set\_enable\_bili\_ticket)
+  - [def set\_enable\_bili\_ticket\_global\_persistence()](#def-set\_enable\_bili\_ticket\_global\_persistence)
+  - [def set\_enable\_buvid\_global\_persistence()](#def-set\_enable\_buvid\_global\_persistence)
+  - [def set\_enable\_fpgen()](#def-set\_enable\_fpgen)
+  - [def set\_fpgen\_args()](#def-set\_fpgen\_args)
+  - [def set\_global\_credential()](#def-set\_global\_credential)
+  - [def set\_wbi\_retry\_times()](#def-set\_wbi\_retry\_times)
 - [async def bili\_simple\_download()](#async-def-bili\_simple\_download)
 - [def bvid2aid()](#def-bvid2aid)
 - [def configure\_dynamic\_fingerprint()](#def-configure\_dynamic\_fingerprint)
@@ -150,31 +167,15 @@ from bilibili_api import ...
 - [var request\_settings](#var-request\_settings)
   - [def get()](#def-get)
   - [def get\_all()](#def-get\_all)
-  - [def get\_enable\_auto\_buvid()](#def-get\_enable\_auto\_buvid)
-  - [def get\_enable\_bili\_ticket()](#def-get\_enable\_bili\_ticket)
-  - [def get\_enable\_bili\_ticket\_global\_persistence()](#def-get\_enable\_bili\_ticket\_global\_persistence)
-  - [def get\_enable\_buvid\_global\_persistence()](#def-get\_enable\_buvid\_global\_persistence)
-  - [def get\_enable\_fpgen()](#def-get\_enable\_fpgen)
-  - [def get\_fpgen\_args()](#def-get\_fpgen\_args)
-  - [def get\_global\_credential()](#def-get\_global\_credential)
   - [def get\_proxy()](#def-get\_proxy)
   - [def get\_timeout()](#def-get\_timeout)
   - [def get\_trust\_env()](#def-get\_trust\_env)
   - [def get\_verify\_ssl()](#def-get\_verify\_ssl)
-  - [def get\_wbi\_retry\_times()](#def-get\_wbi\_retry\_times)
   - [def set()](#def-set)
-  - [def set\_enable\_auto\_buvid()](#def-set\_enable\_auto\_buvid)
-  - [def set\_enable\_bili\_ticket()](#def-set\_enable\_bili\_ticket)
-  - [def set\_enable\_bili\_ticket\_global\_persistence()](#def-set\_enable\_bili\_ticket\_global\_persistence)
-  - [def set\_enable\_buvid\_global\_persistence()](#def-set\_enable\_buvid\_global\_persistence)
-  - [def set\_enable\_fpgen()](#def-set\_enable\_fpgen)
-  - [def set\_fpgen\_args()](#def-set\_fpgen\_args)
-  - [def set\_global\_credential()](#def-set\_global\_credential)
   - [def set\_proxy()](#def-set\_proxy)
   - [def set\_timeout()](#def-set\_timeout)
   - [def set\_trust\_env()](#def-set\_trust\_env)
   - [def set\_verify\_ssl()](#def-set\_verify\_ssl)
-  - [def set\_wbi\_retry\_times()](#def-set\_wbi\_retry\_times)
 - [def select\_client()](#def-select\_client)
 - [def set\_session()](#def-set\_session)
 - [def sync()](#def-sync)
@@ -1748,6 +1749,210 @@ AV 号转 BV 号。
 
 ---
 
+## var bili_settings
+
+模块通用设置
+
+| configuration | type | default | description |
+| ------------- | ---- | ------- | ----------- |
+| `wbi_retry_times` | `int` | `3` | WBI 重试次数 |
+| `enable_auto_buvid` | `bool` | `True` | 允许模块自动请求生成 buvid |
+| `enable_bili_ticket` | `bool` | `False` | 允许模块自动请求生成 bili_ticket |
+| `enable_buvid_global_persistence` | `bool` | `False` | 允许模块使用统一的全局 buvid |
+| `enable_bili_ticket_global_persistence` | `bool` | `False` | 允许模块使用统一的全局 bili_ticket |
+| `enable_fpgen` | `bool` | `False` | 是否启用 `fpgen` 进行指纹伪装 |
+| `fpgen_args` | `dict` | `{}` | 传入 `fpgen.generate` 的 keyword args 参数 |
+| `global_credential` | `Credential | None` | 全局凭据类，所有请求都将传入此凭据类的 cookies |
+
+
+
+
+### def get_enable_auto_buvid()
+
+获取设置的是否自动生成 buvid
+
+
+
+**Returns:** `bool`:  是否自动生成 buvid. Defaults to True.
+
+
+
+
+### def get_enable_bili_ticket()
+
+获取设置的是否使用 bili_ticket
+
+
+
+**Returns:** `bool`:  是否使用 bili_ticket. Defaults to False.
+
+
+
+
+### def get_enable_bili_ticket_global_persistence()
+
+获取设置的是否使用全局可持久化 bili_ticket
+
+
+
+**Returns:** `bool`:  是否使用全局可持久化 bili_ticket. Defaults to False.
+
+
+
+
+### def get_enable_buvid_global_persistence()
+
+获取设置的是否使用全局可持久化 buvid
+
+
+
+**Returns:** `bool`:  是否使用全局可持久化 buvid. Defaults to False.
+
+
+
+
+### def get_enable_fpgen()
+
+获取是否使用 fpgen
+
+
+
+**Returns:** `bool`:  是否使用 fpgen. Defaults to False.
+
+
+
+
+### def get_fpgen_args()
+
+获取调用 fpgen 的参数
+
+
+
+**Returns:** `dict`:  调用 fpgen 的参数
+
+
+
+
+### def get_global_credential()
+
+获取全局凭据类
+
+
+
+**Returns:** `Credential | None`:  全局凭据类
+
+
+
+
+### def get_wbi_retry_times()
+
+获取设置的 wbi 重试次数
+
+
+
+**Returns:** `int`:  wbi 重试次数. Defaults to 3.
+
+
+
+
+### def set_enable_auto_buvid()
+
+设置是否自动生成 buvid
+
+
+| name | type | description |
+| - | - | - |
+| `enable_auto_buvid` | `bool` | 是否自动生成 buvid. |
+
+
+
+
+### def set_enable_bili_ticket()
+
+设置是否使用 bili_ticket
+
+
+| name | type | description |
+| - | - | - |
+| `enable_bili_ticket` | `bool` | 是否使用 bili_ticket. |
+
+
+
+
+### def set_enable_bili_ticket_global_persistence()
+
+设置是否使用全局可持久化 buvid
+
+
+| name | type | description |
+| - | - | - |
+| `enable_bili_ticket_global_persistence` | `bool` | 是否使用全局可持久化 buvid. |
+
+
+
+
+### def set_enable_buvid_global_persistence()
+
+设置是否使用全局可持久化 buvid
+
+
+| name | type | description |
+| - | - | - |
+| `enable_buvid_global_persistence` | `bool` | 是否使用全局可持久化 buvid. |
+
+
+
+
+### def set_enable_fpgen()
+
+设置是否使用 fpgen
+
+
+| name | type | description |
+| - | - | - |
+| `enable_fpgen` | `bool` | 是否使用 fpgen |
+
+
+
+
+### def set_fpgen_args()
+
+设置调用 fpgen 的参数
+
+
+| name | type | description |
+| - | - | - |
+| `fpgen_args` | `dict` | 调用 fpgen 的参数 |
+
+
+
+
+### def set_global_credential()
+
+设置全局凭据类
+
+
+| name | type | description |
+| - | - | - |
+| `global_credential` | `Credential \| None` | 全局凭据类 |
+
+
+
+
+### def set_wbi_retry_times()
+
+修改设置的 wbi 重试次数
+
+
+| name | type | description |
+| - | - | - |
+| `wbi_retry_times` | `int` | wbi 重试次数. |
+
+
+
+
+---
+
 ## async def bili_simple_download()
 
 适用于下载 bilibili 链接的简易终端下载函数
@@ -2285,8 +2490,6 @@ async def handle(desc: str, data: dict) -> None:
 
 获取某项设置
 
-不可用于 `wbi_retry_times` `enable_***` `fpgen_args` `global_credential`
-
 默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
 
@@ -2303,88 +2506,9 @@ async def handle(desc: str, data: dict) -> None:
 
 获取目前所有的设置项
 
-不可用于 `wbi_retry_times` `enable_auto_buvid` `enable_bili_ticket`
-
 
 
 **Returns:** `dict`:  所有的设置项
-
-
-
-
-### def get_enable_auto_buvid()
-
-获取设置的是否自动生成 buvid
-
-
-
-**Returns:** `bool`:  是否自动生成 buvid. Defaults to True.
-
-
-
-
-### def get_enable_bili_ticket()
-
-获取设置的是否使用 bili_ticket
-
-
-
-**Returns:** `bool`:  是否使用 bili_ticket. Defaults to True.
-
-
-
-
-### def get_enable_bili_ticket_global_persistence()
-
-获取设置的是否使用全局可持久化 bili_ticket
-
-
-
-**Returns:** `bool`:  是否使用全局可持久化 bili_ticket. Defaults to False.
-
-
-
-
-### def get_enable_buvid_global_persistence()
-
-获取设置的是否使用全局可持久化 buvid
-
-
-
-**Returns:** `bool`:  是否使用全局可持久化 buvid. Defaults to False.
-
-
-
-
-### def get_enable_fpgen()
-
-获取是否使用 fpgen
-
-
-
-**Returns:** `bool`:  是否使用 fpgen. Defaults to False.
-
-
-
-
-### def get_fpgen_args()
-
-获取调用 fpgen 的参数
-
-
-
-**Returns:** `dict`:  调用 fpgen 的参数
-
-
-
-
-### def get_global_credential()
-
-获取全局凭据类
-
-
-
-**Returns:** `Credential | None`:  全局凭据类
 
 
 
@@ -2433,22 +2557,9 @@ async def handle(desc: str, data: dict) -> None:
 
 
 
-### def get_wbi_retry_times()
-
-获取设置的 wbi 重试次数
-
-
-
-**Returns:** `int`:  wbi 重试次数. Defaults to 3.
-
-
-
-
 ### def set()
 
 设置某项设置
-
-不可用于 `wbi_retry_times` `enable_***` `fpgen_args`
 
 默认设置名称：`proxy` `timeout` `verify_ssl` `trust_env`
 
@@ -2457,90 +2568,6 @@ async def handle(desc: str, data: dict) -> None:
 | - | - | - |
 | `name` | `str` | 设置名称 |
 | `value` | `Any` | 设置的值 |
-
-
-
-
-### def set_enable_auto_buvid()
-
-设置是否自动生成 buvid
-
-
-| name | type | description |
-| - | - | - |
-| `enable_auto_buvid` | `bool` | 是否自动生成 buvid. |
-
-
-
-
-### def set_enable_bili_ticket()
-
-设置是否使用 bili_ticket
-
-
-| name | type | description |
-| - | - | - |
-| `enable_bili_ticket` | `bool` | 是否使用 bili_ticket. |
-
-
-
-
-### def set_enable_bili_ticket_global_persistence()
-
-设置是否使用全局可持久化 buvid
-
-
-| name | type | description |
-| - | - | - |
-| `enable_bili_ticket_global_persistence` | `bool` | 是否使用全局可持久化 buvid. |
-
-
-
-
-### def set_enable_buvid_global_persistence()
-
-设置是否使用全局可持久化 buvid
-
-
-| name | type | description |
-| - | - | - |
-| `enable_buvid_global_persistence` | `bool` | 是否使用全局可持久化 buvid. |
-
-
-
-
-### def set_enable_fpgen()
-
-设置是否使用 fpgen
-
-
-| name | type | description |
-| - | - | - |
-| `enable_fpgen` | `bool` | 是否使用 fpgen |
-
-
-
-
-### def set_fpgen_args()
-
-设置调用 fpgen 的参数
-
-
-| name | type | description |
-| - | - | - |
-| `fpgen_args` | `dict` | 调用 fpgen 的参数 |
-
-
-
-
-### def set_global_credential()
-
-设置全局凭据类
-
-
-| name | type | description |
-| - | - | - |
-| `global_credential` | `Credential \| None` | 全局凭据类 |
 
 
 
@@ -2589,18 +2616,6 @@ async def handle(desc: str, data: dict) -> None:
 | name | type | description |
 | - | - | - |
 | `verify_ssl` | `bool` | 是否验证 SSL |
-
-
-
-
-### def set_wbi_retry_times()
-
-修改设置的 wbi 重试次数
-
-
-| name | type | description |
-| - | - | - |
-| `wbi_retry_times` | `int` | wbi 重试次数. |
 
 
 

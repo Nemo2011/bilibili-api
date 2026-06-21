@@ -161,7 +161,7 @@ def parse(data: dict, indent: int = 0, root: bool = False):
     if data["node"][".class"] == "TypeInfo":
         if data["node"]["defn"]["name"] in ignored_classes:
             return
-        if not data["node"]["defn"]["name"].startswith("Request"):
+        if not data["node"]["defn"]["name"].startswith("Request") and not data["node"]["defn"]["name"] == "BiliSettings":
             funcs.append(
                 [
                     data["node"]["defn"]["name"],
@@ -320,6 +320,30 @@ for key in data["names"].keys():
                 )["names"]["RequestSettings"],
                 2,
             )
+        elif key == "bili_settings":
+            funcs.append(
+                (
+                    "bili_settings",
+                    "bilibili_api.bili_settings",
+                    "var",
+                    "builtins.object",
+                    2,
+                )
+            )
+            parse(
+                json.load(
+                    open(
+                        os.path.join(
+                            ".mypy_cache",
+                            f"{sys.version_info.major}.{sys.version_info.minor}",
+                            "bilibili_api",
+                            "utils",
+                            "network.data.json",
+                        )
+                    )
+                )["names"]["BiliSettings"],
+                2,
+            )
         elif key == "HEADERS":
             funcs.append(
                 ("HEADERS", "bilibili_api.HEADERS", "var", "builtins.object", 2)
@@ -462,9 +486,10 @@ for module in all_funcs:
             func[3] == "@dataclasses.dataclass"
             or func[1].count("exceptions") == 1
             or func[0].startswith("request_")
+            or func[0].startswith("bili_settings")
         ):
             last_data_class = idx
-        npy313 = func[0].replace('_', '\\_')
+        npy313 = func[0].replace("_", "\\_")
         file.write(
             "  " * (func[4] - 2)
             + f"- [{func[2]} {npy313}{['()', ''][func[2] == 'var']}](#{func[2].replace(' ', '-')}-{npy313})\n"
@@ -484,6 +509,7 @@ for module in all_funcs:
             func[3] == "@dataclasses.dataclass"
             or func[1].count("exceptions") == 1
             or func[0].startswith("request_")
+            or func[0].startswith("bili_settings")
         ):
             last_data_class = idx
         if func[0] == "__init__":
