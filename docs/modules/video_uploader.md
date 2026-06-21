@@ -66,7 +66,7 @@ bupfetch 模式下 kodo 目前弃用 `{'error': 'no such bucket'}`
 | name | type | description |
 | - | - | - |
 | `bvid` | `str` | 稿件 BVID |
-| `meta` | `Dict` | 视频信息 |
+| `meta` | `dict` | 视频信息 |
 | `cover_path` | `str` | 封面路径. Defaults to None(不更换封面). |
 | `credential` | `Credential` | 凭据类. Defaults to None. |
 
@@ -101,7 +101,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 | name | type | description |
 | - | - | - |
 | `bvid` | `str` | 稿件 BVID |
-| `meta` | `Dict` | 视频信息 |
+| `meta` | `dict` | 视频信息 |
 | `cover` | `str \| Picture, optional` | 封面地址. Defaults to ''. |
 | `credential` | `Credential \| None, optional` | 凭据类. Defaults to None. |
 
@@ -172,7 +172,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 | `title` | `str` | 视频标题，最多 80 字 |
 | `desc` | `str` | 视频简介，最多 2000 字 |
 | `cover` | `Picture \| str` | 封面，可以传入路径 |
-| `tags` | `List[str] \| str` | 标签列表，传入 List 或者传入 str 以 "," 为分隔符，至少 1 个 Tag，最多 10 个 |
+| `tags` | `list[str] \| str` | 标签列表，传入 List 或者传入 str 以 "," 为分隔符，至少 1 个 Tag，最多 10 个 |
 | `topic` | `int \| topic.Topic \| None, optional` | 活动主题，应该从 video_uploader.get_available_topics(tid) 获取，可选. Defaults to None. |
 | `mission_id` | `int \| None, optional` | 任务 id，与 topic 一同获取传入. Defaults to None. |
 | `original` | `bool, optional` | 是否原创，默认原创. Defaults to True. |
@@ -185,7 +185,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 | `up_close_reply` | `bool \| None, optional` | 是否关闭评论. 可选，默认为开启评论. Defaults to False. |
 | `lossless_music` | `bool \| None, optional` | 是否开启无损音乐. 可选，默认为关闭无损音乐. Defaults to False. |
 | `dolby` | `bool \| None, optional` | 是否开启杜比音效. 可选，默认为关闭杜比音效. Defaults to False. |
-| `subtitle` | `Dict \| None, optional` | 字幕信息，可选. Defaults to None. |
+| `subtitle` | `dict \| None, optional` | 字幕信息，可选. Defaults to None. |
 | `dynamic` | `str \| None, optional` | 粉丝动态，可选，最多 233 字. Defaults to None. |
 | `neutral_mark` | `str \| None, optional` | 创作者声明，可选. Defaults to None. |
 | `delay_time` | `int \| datetime.datetime \| None, optional` | 定时发布时间，可选. Defaults to None. |
@@ -255,7 +255,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 | `porder_type` | `VideoPorderType, optional` | 商业平台类型. Defaults to VideoPorderType.FIREWORK |
 | `industry_type` | `video_uploader.VideoPorderIndustry \| None, optional` | 商单行业，非花火填写. Defaults to None. |
 | `brand_name` | `str \| None, optional` | 品牌名，非花火填写. Defaults to None. |
-| `show_types` | `List[video_uploader.VideoPorderShowType], optional` | 商单形式，非花火填写. Defaults to []. |
+| `show_types` | `list[video_uploader.VideoPorderShowType], optional` | 商单形式，非花火填写. Defaults to []. |
 
 
 ---
@@ -306,7 +306,7 @@ meta 参数示例: (保留 video, cover, tid, aid 字段)
 | name | type | description |
 | - | - | - |
 | `pages` | `List[VideoUploaderPage]` | 分 P 列表 |
-| `meta` | `VideoMeta, Dict` | 视频信息 |
+| `meta` | `VideoMeta, dict` | 视频信息 |
 | `credential` | `Credential` | 凭据 |
 | `cover_path` | `str` | 封面路径 |
 | `line` | `Lines, Optional` | 线路. Defaults to None. 不选择则自动测速选择 |
@@ -345,8 +345,8 @@ meta 保留字段：videos, cover
 
 | name | type | description |
 | - | - | - |
-| `pages` | `List[video_uploader.VideoUploaderPage]` | 分 P 列表 |
-| `meta` | `video_uploader.VideoMeta \| Dict` | 视频信息 |
+| `pages` | `list[video_uploader.VideoUploaderPage]` | 分 P 列表 |
+| `meta` | `video_uploader.VideoMeta \| dict` | 视频信息 |
 | `credential` | `Credential` | 凭据 |
 | `cover` | `str \| Picture \| None, optional` | 封面路径或者封面对象. Defaults to ''. |
 | `line` | `video_uploader.Lines \| None, optional` | 线路.  不选择则自动测速选择. Defaults to None. |

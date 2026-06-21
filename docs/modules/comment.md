@@ -329,7 +329,7 @@ Error Code:
 | `root` | `int \| None, optional` | 根评论 ID,. Defaults to None. |
 | `parent` | `int \| None, optional` | 父评论 ID,. Defaults to None. |
 | `credential` | `None \| Credential, optional` | 凭据. Defaults to None. |
-| `pic` | `Picture \| List[Picture] \| None, optional` | 图片,. Defaults to None. |
+| `pic` | `Picture \| list[Picture] \| None, optional` | 图片,. Defaults to None. |
 
 **Returns:** `dict`:  调用 API 返回的结果
 

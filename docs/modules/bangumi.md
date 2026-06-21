@@ -560,8 +560,8 @@ from bilibili_api import bangumi
 
 | name | type | description |
 | - | - | - |
-| `add_media_ids` | `List[int], optional` | 要添加到的收藏夹 ID. Defaults to []. |
-| `del_media_ids` | `List[int], optional` | 要移出的收藏夹 ID. Defaults to []. |
+| `add_media_ids` | `list[int], optional` | 要添加到的收藏夹 ID. Defaults to []. |
+| `del_media_ids` | `list[int], optional` | 要移出的收藏夹 ID. Defaults to []. |
 
 **Returns:** `dict`:  调用 API 返回结果。
 
@@ -596,7 +596,7 @@ from bilibili_api import bangumi
 | name | type | description |
 | - | - | - |
 | `lan` | `str` | 字幕语言代码，参考 https |
-| `data` | `Dict` | 字幕数据 |
+| `data` | `dict` | 字幕数据 |
 | `submit` | `bool` | 是否提交，不提交为草稿 |
 | `sign` | `bool` | 是否署名 |
 

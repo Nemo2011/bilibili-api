@@ -560,7 +560,7 @@ medialist排序顺序。
 | `ps` | `int, optional` | 每一页的视频数.  Max 100. Defaults to 20. |
 | `direction` | `bool, optional` | 相对于给定oid的查询方向 True 向列表末尾方向 False 向列表开头方向. Defaults to False. |
 | `desc` | `bool, optional` | 倒序排序. Defaults to True. |
-| `sort_field` | `MediaListOrder, optional` | 用于排序的栏  1 发布时间，2 播放量，3 收藏量. Defaults to MedialistOrder.PUBDATE. |
+| `sort_field` | `MedialistOrder, optional` | 用于排序的栏  1 发布时间，2 播放量，3 收藏量. Defaults to MedialistOrder.PUBDATE. |
 | `tid` | `int, optional` | 分区 ID.  1 部分（未知）. Defaults to 0. |
 | `with_current` | `bool, optional` | 返回的列表中是否包含给定oid自身. Defaults to False. |
 
@@ -1231,7 +1231,7 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 | name | type | description |
 | - | - | - |
-| `names` | `str \| List[str]` | 用户名 |
+| `names` | `str \| list[str]` | 用户名 |
 | `credential` | `Credential \| None, optional` | 凭据类. Defaults to None. |
 
 **Returns:** `dict`:  调用 API 返回的结果
@@ -1266,8 +1266,8 @@ max、business、view_at 参数用于历史记录列表的 IFS (无限滚动)，
 
 | name | type | description |
 | - | - | - |
-| `uids` | `List[int]` | 要设置的用户 UID 列表，必须已关注。 |
-| `group_ids` | `List[int]` | 要复制到的分组列表 |
+| `uids` | `list[int]` | 要设置的用户 UID 列表，必须已关注。 |
+| `group_ids` | `list[int]` | 要复制到的分组列表 |
 | `credential` | `Credential` | Credential |
 
 **Returns:** `dict`:  API 调用结果

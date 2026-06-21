@@ -50,7 +50,7 @@ from bilibili_api import channel_series
 | `id` | `int` | 合集与列表的 id, season_id 或 series_id. |
 | `is_new` | `int` | 是否为新版合集. 1 为是, 0 为否. |
 | `owner` | `User` | 合集列表对应用户. |
-| `meta` | `Dict` | 合集与列表基本信息. |
+| `meta` | `dict` | 合集与列表基本信息. |
 | `credential` | `Credential` | 凭据类. Defaults to None. |
 
 
@@ -151,7 +151,7 @@ from bilibili_api import channel_series
 | name | type | description |
 | - | - | - |
 | `series_id` | `int` | 旧版合集 id。 |
-| `aids` | `List[int]` | 视频 aid 列表。 |
+| `aids` | `list[int]` | 视频 aid 列表。 |
 | `credential` | `Credential` | 凭据类。 |
 
 **Returns:** `dict`:  调用 API 返回的结果
@@ -169,8 +169,8 @@ from bilibili_api import channel_series
 | name | type | description |
 | - | - | - |
 | `name` | `str` | 列表名称。 |
-| `aids` | `List[int], optional` | 要加入列表的视频的 aid 列表. Defaults to []. |
-| `keywords` | `List[str], optional` | 列表的关键词. Defaults to []. |
+| `aids` | `list[int], optional` | 要加入列表的视频的 aid 列表. Defaults to []. |
+| `keywords` | `list[str], optional` | 列表的关键词. Defaults to []. |
 | `description` | `str, optional` | 列表的描述. Defaults to ''. |
 | `credential` | `Credential \| None, optional` | 凭据类. Defaults to None. |
 
@@ -189,7 +189,7 @@ from bilibili_api import channel_series
 | name | type | description |
 | - | - | - |
 | `series_id` | `int` | 旧版合集 id。 |
-| `aids` | `List[int]` | 视频 aid 列表。 |
+| `aids` | `list[int]` | 视频 aid 列表。 |
 | `credential` | `Credential` | 凭据类。 |
 
 **Returns:** `dict`:  调用 API 返回的结果

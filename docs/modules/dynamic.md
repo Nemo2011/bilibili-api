@@ -128,7 +128,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 
 | name | type | description |
 | - | - | - |
-| `image` | `List[Picture] \| Picture` | 图片类 |
+| `image` | `list[Picture] \| Picture` | 图片类 |
 
 **Returns:** `BuildDynamic`:  `self`
 
@@ -187,7 +187,7 @@ BuildDynamic.create_by_args(text="114514", topic_id=114514)
 | name | type | description |
 | - | - | - |
 | `text` | `str, optional` | 动态文字. Defaults to ''. |
-| `pics` | `List[Picture], optional` | 动态图片列表. Defaults to []. |
+| `pics` | `list[Picture], optional` | 动态图片列表. Defaults to []. |
 | `topic_id` | `int, optional` | 动态话题 id. Defaults to -1. |
 | `vote_id` | `int, optional` | 动态中的投票的 id. 将放在整个动态的最后面. Defaults to -1. |
 | `live_reserve_id` | `int, optional` | 直播预约 oid. 通过 `live.create_live_reserve` 获取. Defaults to -1. |
@@ -809,7 +809,7 @@ scene 参数
 | - | - | - |
 | `image` | `Picture` | 图片流. 有格式要求. |
 | `credential` | `Credential` | 凭据 |
-| `data` | `Dict \| None, optional` | 自定义请求体. Defaults to None. |
+| `data` | `dict \| None, optional` | 自定义请求体. Defaults to None. |
 
 **Returns:** `dict`:  调用 API 返回的结果
 

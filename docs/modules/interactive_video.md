@@ -171,7 +171,7 @@ o----|xxx| (TEXT_RIGHT)
 | name | type | description |
 | - | - | - |
 | `video` | `InteractiveVideo` | 互动视频类 |
-| `skin` | `Dict` | 样式 |
+| `skin` | `dict` | 样式 |
 | `root_cid` | `int` | 根节点 CID |
 
 
@@ -233,7 +233,7 @@ o----|xxx| (TEXT_RIGHT)
 
 | name | type | description |
 | - | - | - |
-| `var` | `List[interactive_video.InteractiveVariable], optional` | 所有变量. Defaults to []. |
+| `var` | `list[interactive_video.InteractiveVariable], optional` | 所有变量. Defaults to []. |
 | `command` | `str, optional` | 公式. Defaults to ''. |
 
 
@@ -284,7 +284,7 @@ o----|xxx| (TEXT_RIGHT)
 
 | name | type | description |
 | - | - | - |
-| `var` | `List[interactive_video.InteractiveVariable], optional` | 所有变量. Defaults to []. |
+| `var` | `list[interactive_video.InteractiveVariable], optional` | 所有变量. Defaults to []. |
 | `condition` | `str, optional` | 公式. Defaults to 'True'. |
 
 
@@ -338,7 +338,7 @@ o----|xxx| (TEXT_RIGHT)
 | `video` | `InteractiveVideo` | 视频类 |
 | `node_id` | `int` | 节点 id |
 | `cid` | `int` | CID |
-| `vars` | `List[interactive_video.InteractiveVariable]` | 变量 |
+| `vars` | `list[interactive_video.InteractiveVariable]` | 变量 |
 | `button` | `interactive_video.InteractiveButton \| None, optional` | 对应的按钮. Defaults to None. |
 | `condition` | `interactive_video.InteractiveJumpingCondition, optional` | 跳转公式. Defaults to <bilibili_api.interactive_video.InteractiveJumpingCondition object at 0x1055e34d0>. |
 | `native_command` | `interactive_video.InteractiveJumpingCommand, optional` | 跳转时变量操作. Defaults to <bilibili_api.interactive_video.InteractiveJumpingCommand object at 0x1055e3770>. |
@@ -695,7 +695,7 @@ o----|xxx| (TEXT_RIGHT)
 | `out` | `str` | 输出文件地址 (如果模式为 NODE_VIDEOS/NO_PACKAGING 则此参数表示所有节点视频的存放目录) |
 | `self_download_func` | `Coroutine \| None, optional` | 自定义下载函数（需 async 函数）. Defaults to None. |
 | `downloader_mode` | `InteractiveVideoDownloaderMode, optional` | 下载模式. Defaults to InteractiveVideoDownloaderMode.IVI. |
-| `stream_detecting_params` | `Dict, optional` | `VideoDownloadURLDataDetecter` 提取最佳流时传入的参数，可控制视频及音频品质. Defaults to {}. |
+| `stream_detecting_params` | `dict, optional` | `VideoDownloadURLDataDetecter` 提取最佳流时传入的参数，可控制视频及音频品质. Defaults to {}. |
 | `fetching_nodes_retry_times` | `int, optional` | 获取节点时的最大重试次数. Defaults to 3. |
 
 

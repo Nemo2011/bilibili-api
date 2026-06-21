@@ -58,7 +58,7 @@ from bilibili_api import session
 
 | name | type | description |
 | - | - | - |
-| `data` | `Dict` | 接收到的事件详细信息 |
+| `data` | `dict` | 接收到的事件详细信息 |
 | `self_uid` | `int` | 用户自身 UID |
 
 

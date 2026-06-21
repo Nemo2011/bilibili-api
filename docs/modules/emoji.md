@@ -58,7 +58,7 @@ from bilibili_api import emoji
 
 | name | type | description |
 | - | - | - |
-| `id` | `int \| List[int]` | 表情包 id，可通过 `get_emoji_list` 或 `get_all_emoji` 查询。 |
+| `id` | `int \| list[int]` | 表情包 id，可通过 `get_emoji_list` 或 `get_all_emoji` 查询。 |
 | `business` | `str, optional` | 使用场景, reply / dynamic. Defaults to 'reply'. |
 
 **Returns:** `dict`:  调用 API 返回的结果

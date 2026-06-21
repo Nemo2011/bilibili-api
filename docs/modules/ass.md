@@ -47,7 +47,7 @@ from bilibili_api import ass
 
 | name | type | description |
 | - | - | - |
-| `json_lan_list` | `List[Dict]` | 字幕可选语言 |
+| `json_lan_list` | `list[dict]` | 字幕可选语言 |
 | `obj` | `video.Video \| bangumi.Episode` | 对象 |
 | `lan_set` | `str \| None, optional` | 设置默认字幕语言,如果为None,则自动获取可获取语言. Defaults to None. |
 

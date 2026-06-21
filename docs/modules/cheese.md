@@ -413,8 +413,8 @@ from bilibili_api import cheese
 
 | name | type | description |
 | - | - | - |
-| `add_media_ids` | `List[int], optional` | 要添加到的收藏夹 ID. Defaults to []. |
-| `del_media_ids` | `List[int], optional` | 要移出的收藏夹 ID. Defaults to []. |
+| `add_media_ids` | `list[int], optional` | 要添加到的收藏夹 ID. Defaults to []. |
+| `del_media_ids` | `list[int], optional` | 要移出的收藏夹 ID. Defaults to []. |
 
 **Returns:** `dict`:  调用 API 返回结果。
 

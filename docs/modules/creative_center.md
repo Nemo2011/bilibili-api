@@ -343,8 +343,8 @@ from bilibili_api import creative_center
 | name | type | description |
 | - | - | - |
 | `credential` | `Credential` | Credential 凭据。 |
-| `oid` | `int \| List[int]` | 指定稿件 |
-| `rpid` | `int \| List[int]` | 指定评论 |
+| `oid` | `int \| list[int]` | 指定稿件 |
+| `rpid` | `int \| list[int]` | 指定评论 |
 | `archive_type` | `ArchiveType, optional` | 稿件类型. Defaults to ArchiveType.VIDEO. |
 
 
@@ -361,7 +361,7 @@ from bilibili_api import creative_center
 | - | - | - |
 | `credential` | `Credential` | 凭据类。 |
 | `oid` | `int` | 稿件 oid |
-| `dmids` | `int \| List[int]` | 弹幕 id，可以传入列表和 int |
+| `dmids` | `int \| list[int]` | 弹幕 id，可以传入列表和 int |
 
 **Returns:** `dict`:  调用 API 返回的结果
 
@@ -379,7 +379,7 @@ from bilibili_api import creative_center
 | - | - | - |
 | `credential` | `Credential` | 凭据类。 |
 | `oid` | `int` | 稿件 oid |
-| `dmids` | `int \| List[int]` | 弹幕 id，可以传入列表和 int |
+| `dmids` | `int \| list[int]` | 弹幕 id，可以传入列表和 int |
 | `is_subtitle` | `bool, optional` | 是否为字幕. Defaults to True. |
 
 **Returns:** `dict`:  API 返回信息
@@ -398,7 +398,7 @@ from bilibili_api import creative_center
 | - | - | - |
 | `credential` | `Credential` | 凭据类。 |
 | `oid` | `int` | 稿件 oid |
-| `dmids` | `int \| List[int]` | 弹幕 id，可以传入列表和 int |
+| `dmids` | `int \| list[int]` | 弹幕 id，可以传入列表和 int |
 | `state` | `int \| None, optional` | 弹幕状态 1 删除 2 保护 3 取消保护. Defaults to None. |
 
 **Returns:** `dict`:  API 返回信息
@@ -592,14 +592,14 @@ from bilibili_api import creative_center
 | `oid` | `int` | 稿件oid，用逗号分隔 |
 | `select_type` | `DanmakuType, optional` | 弹幕类型. Defaults to DanmakuType.ALL. |
 | `archive_type` | `ArchiveType, optional` | 稿件类型. Defaults to ArchiveType.VIDEO. |
-| `mids` | `int \| List[int] \| None, optional` | 用户mids，用逗号分隔或者直接 int. Defaults to None. |
+| `mids` | `int \| list[int] \| None, optional` | 用户mids，用逗号分隔或者直接 int. Defaults to None. |
 | `keyword` | `str \| None, optional` | 关键词. Defaults to None. |
 | `progress_from` | `int \| None, optional` | 进度开始. Defaults to None. |
 | `progress_to` | `int \| None, optional` | 进度结束. Defaults to None. |
 | `ctime_from` | `datetime.datetime \| None, optional` | 创建时间起始. Defaults to None. |
 | `ctime_to` | `datetime.datetime \| None, optional` | 创建时间结束. Defaults to None. |
-| `modes` | `creative_center.DanmakuMode \| List[creative_center.DanmakuMode] \| None, optional` | 弹幕模式. Defaults to None. |
-| `pools` | `creative_center.DanmakuPool \| List[creative_center.DanmakuPool] \| None, optional` | 弹幕池. Defaults to None. |
+| `modes` | `creative_center.DanmakuMode \| list[creative_center.DanmakuMode] \| None, optional` | 弹幕模式. Defaults to None. |
+| `pools` | `creative_center.DanmakuPool \| list[creative_center.DanmakuPool] \| None, optional` | 弹幕池. Defaults to None. |
 | `attrs` | `Any, optional` | 弹幕属性，未知参数. Defaults to None. |
 | `order` | `DanmakuOrder, optional` | 排序字段. Defaults to DanmakuOrder.CTIME. |
 | `sort` | `DanmakuSort, optional` | 排序方式. Defaults to DanmakuSort.DESC. |

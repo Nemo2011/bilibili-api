@@ -220,7 +220,7 @@ from bilibili_api import favorite_list
 | - | - | - |
 | `media_id_from` | `int` | 要复制的源收藏夹 ID。 |
 | `media_id_to` | `int` | 目标收藏夹 ID。 |
-| `aids` | `List[int]` | 被复制的视频 ID 列表。 |
+| `aids` | `list[int]` | 被复制的视频 ID 列表。 |
 | `credential` | `Credential` | 凭据 |
 
 **Returns:** `dict`:  调用 API 返回的结果
@@ -256,7 +256,7 @@ from bilibili_api import favorite_list
 
 | name | type | description |
 | - | - | - |
-| `media_ids` | `List[int]` | 收藏夹 ID 列表。 |
+| `media_ids` | `list[int]` | 收藏夹 ID 列表。 |
 | `credential` | `Credential` | Credential. |
 
 **Returns:** `dict`:  调用 API 返回的结果
@@ -274,7 +274,7 @@ from bilibili_api import favorite_list
 | name | type | description |
 | - | - | - |
 | `media_id` | `int` | 收藏夹 ID。 |
-| `aids` | `List[int]` | 被删除的视频 ID 列表。 |
+| `aids` | `list[int]` | 被删除的视频 ID 列表。 |
 | `credential` | `Credential` | 凭据 |
 
 **Returns:** `dict`:  API 调用结果。
@@ -442,7 +442,7 @@ mode 参数见 SearchFavoriteListMode 枚举。
 | - | - | - |
 | `media_id_from` | `int` | 要移动的源收藏夹 ID。 |
 | `media_id_to` | `int` | 目标收藏夹 ID。 |
-| `aids` | `List[int]` | 被移动的视频 ID 列表。 |
+| `aids` | `list[int]` | 被移动的视频 ID 列表。 |
 | `credential` | `Credential` | 凭据 |
 
 **Returns:** `dict`:  调用 API 返回的结果

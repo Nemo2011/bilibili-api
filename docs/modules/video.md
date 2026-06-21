@@ -145,7 +145,7 @@ from bilibili_api import video
 | - | - | - |
 | `url` | `str` | 音频流 url |
 | `audio_quality` | `AudioQuality` | 音频流清晰度 |
-| `backup_url` | `List[str]` | 备用链接 |
+| `backup_url` | `list[str]` | 备用链接 |
 | `bandwidth` | `int` | 码率 |
 | `codecs` | `str` | 视频流详细编码 |
 | `mime_type` | `str` | MIME 类型 |
@@ -688,7 +688,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | name | type | description |
 | - | - | - |
 | `page_index` | `int \| None, optional` | 分 P 号，从 0 开始. Defaults to None. |
-| `ids` | `List[int] \| None, optional` | 要查询的弹幕 ID 列表. Defaults to None. |
+| `ids` | `list[int] \| None, optional` | 要查询的弹幕 ID 列表. Defaults to None. |
 | `cid` | `int \| None, optional` | 分 P 的 ID. Defaults to None. |
 
 **Returns:** `dict`:  调用 API 返回的结果。
@@ -757,7 +757,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | name | type | description |
 | - | - | - |
 | `page_index` | `int \| None, optional` | 分 P 号，从 0 开始. Defaults to None. |
-| `dmids` | `List[int] \| None, optional` | 弹幕 ID 列表. Defaults to None. |
+| `dmids` | `list[int] \| None, optional` | 弹幕 ID 列表. Defaults to None. |
 | `cid` | `int \| None, optional` | 分 P 的 ID. Defaults to None. |
 | `type_` | `video.DanmakuOperatorType \| None, optional` | 操作类型. Defaults to None. |
 
@@ -878,8 +878,8 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 | name | type | description |
 | - | - | - |
-| `add_media_ids` | `List[int], optional` | 要添加到的收藏夹 ID. Defaults to []. |
-| `del_media_ids` | `List[int], optional` | 要移出的收藏夹 ID. Defaults to []. |
+| `add_media_ids` | `list[int], optional` | 要添加到的收藏夹 ID. Defaults to []. |
+| `del_media_ids` | `list[int], optional` | 要移出的收藏夹 ID. Defaults to []. |
 
 **Returns:** `dict`:  调用 API 返回结果。
 
@@ -925,7 +925,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | name | type | description |
 | - | - | - |
 | `lan` | `str` | 字幕语言代码，参考 https |
-| `data` | `Dict` | 字幕数据 |
+| `data` | `dict` | 字幕数据 |
 | `submit` | `bool` | 是否提交，不提交为草稿 |
 | `sign` | `bool` | 是否署名 |
 | `page_index` | `int \| None, optional` | 分 P 索引. Defaults to None. |
@@ -1296,7 +1296,7 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 
 | name | type | description |
 | - | - | - |
-| `data` | `Dict` | `Video.get_download_url` 返回的结果 |
+| `data` | `dict` | `Video.get_download_url` 返回的结果 |
 
 
 ### def check_flv_mp4_stream()
@@ -1332,9 +1332,9 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | `audio_max_quality` | `AudioQuality, optional` | 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K. |
 | `video_min_quality` | `VideoQuality, optional` | 设置提取的视频流清晰度最小值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._360P. |
 | `audio_min_quality` | `AudioQuality, optional` | 设置提取的音频流清晰度最小值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._64K. |
-| `video_accepted_qualities` | `List[video.VideoQuality], optional` | 设置允许的所有视频流清晰度. Defaults to ALL. |
-| `audio_accepted_qualities` | `List[video.AudioQuality], optional` | 设置允许的所有音频清晰度. Defaults to ALL. |
-| `codecs` | `List[video.VideoCodecs], optional` | 设置所有允许提取出来的视频编码. 此项不会忽略 HDR/杜比. Defaults to ALL. |
+| `video_accepted_qualities` | `list[video.VideoQuality], optional` | 设置允许的所有视频流清晰度. Defaults to ALL. |
+| `audio_accepted_qualities` | `list[video.AudioQuality], optional` | 设置允许的所有音频清晰度. Defaults to ALL. |
+| `codecs` | `list[video.VideoCodecs], optional` | 设置所有允许提取出来的视频编码. 此项不会忽略 HDR/杜比. Defaults to ALL. |
 | `no_dolby_video` | `bool, optional` | 是否禁止提取杜比视界视频流. Defaults to False. |
 | `no_dolby_audio` | `bool, optional` | 是否禁止提取杜比全景声音频流. Defaults to False. |
 | `no_hdr` | `bool, optional` | 是否禁止提取 HDR 视频流. Defaults to False. |
@@ -1369,9 +1369,9 @@ page_index 和 cid 至少提供其中一个，其中 cid 优先级最高
 | `audio_max_quality` | `AudioQuality, optional` | 设置提取的音频流清晰度最大值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._192K. |
 | `video_min_quality` | `VideoQuality, optional` | 设置提取的视频流清晰度最小值，设置此参数绝对不会禁止 HDR/杜比. Defaults to VideoQuality._360P. |
 | `audio_min_quality` | `AudioQuality, optional` | 设置提取的音频流清晰度最小值. 设置此参数绝对不会禁止 Hi-Res/杜比. Defaults to AudioQuality._64K. |
-| `video_accepted_qualities` | `List[video.VideoQuality], optional` | 设置允许的所有视频流清晰度. Defaults to [VideoQuality._360P |
-| `audio_accepted_qualities` | `List[video.AudioQuality], optional` | 设置允许的所有音频清晰度. Defaults to [AudioQuality._64K |
-| `codecs` | `List[video.VideoCodecs], optional` | 设置所有允许提取出来的视频编码. 在数组中越靠前的编码选择优先级越高. 此项不会忽略 HDR/杜比. Defaults to [VideoCodecs.AV1 |
+| `video_accepted_qualities` | `list[video.VideoQuality], optional` | 设置允许的所有视频流清晰度. Defaults to [VideoQuality._360P |
+| `audio_accepted_qualities` | `list[video.AudioQuality], optional` | 设置允许的所有音频清晰度. Defaults to [AudioQuality._64K |
+| `codecs` | `list[video.VideoCodecs], optional` | 设置所有允许提取出来的视频编码. 在数组中越靠前的编码选择优先级越高. 此项不会忽略 HDR/杜比. Defaults to [VideoCodecs.AV1 |
 | `no_dolby_video` | `bool, optional` | 是否禁止提取杜比视界视频流. Defaults to False. |
 | `no_dolby_audio` | `bool, optional` | 是否禁止提取杜比全景声音频流. Defaults to False. |
 | `no_hdr` | `bool, optional` | 是否禁止提取 HDR 视频流. Defaults to False. |
@@ -1498,12 +1498,12 @@ CONNECTED:  成功连接。 CallbackData: None。
 | `url` | `str` | 视频流 url |
 | `video_quality` | `VideoQuality` | 视频流清晰度 |
 | `video_codecs` | `VideoCodecs` | 视频流编码 |
-| `backup_url` | `List[str]` | 备用链接 |
+| `backup_url` | `list[str]` | 备用链接 |
 | `bandwidth` | `int` | 码率 |
 | `codecs` | `str` | 视频流详细编码 |
 | `frame_rate` | `float` | 帧率 |
-| `scale` | `Tuple[int, int]` | 画面尺寸 |
-| `sar` | `Tuple[int, int]` | 采样纵横比 |
+| `scale` | `tuple[int, int]` | 画面尺寸 |
+| `sar` | `tuple[int, int]` | 采样纵横比 |
 | `mime_type` | `str` | MIME 类型 |
 | `segment_base_initialization` | `str` | SegmentBase.Initialization |
 | `segment_base_index_range` | `str` | SegmentBase.indexRange |
