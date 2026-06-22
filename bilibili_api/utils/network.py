@@ -265,15 +265,7 @@ async def handle(desc: str, data: dict) -> None:
 ################################################## END Logger ##################################################
 
 
-################################################## BEGIN Session Management ##################################################
-
-
-sessions: dict[str, type["BiliAPIClient"]] = {}
-session_pool: dict[str, dict[asyncio.AbstractEventLoop, "_BiliAPIClient"]] = {}
-lazy_settings: dict[str, dict[asyncio.AbstractEventLoop, dict[str, Any]]] = {}
-client_settings: dict[str, list] = {}
-selected_client: str = ""
-
+################################################## BEGIN Settings ##################################################
 
 class BiliSettings:
     def __init__(self):
@@ -607,6 +599,12 @@ request_settings = RequestSettings()
 request_settings.__doc__ = "请求参数设置"
 
 DEFAULT_SETTINGS = ["proxy", "timeout", "verify_ssl", "trust_env"]
+
+
+################################################## END Settings ##################################################
+
+
+################################################## BEGIN BiliAPIClient ##################################################
 
 
 @dataclass
@@ -1161,6 +1159,12 @@ class BiliFilterFlags(Enum):
     GOTO = 7
 
 
+################################################## END BiliAPIClient ##################################################
+
+
+################################################## BEGIN Session Management ##################################################
+
+
 client_func_cnt = 0
 client_lock = Lock()
 
@@ -1372,6 +1376,13 @@ class _BiliAPIClient:
         if iscoroutinefunction(obj):
             return coroutine_wrapper(obj)
         return None
+
+
+sessions: dict[str, type["BiliAPIClient"]] = {}
+session_pool: dict[str, dict[asyncio.AbstractEventLoop, "_BiliAPIClient"]] = {}
+lazy_settings: dict[str, dict[asyncio.AbstractEventLoop, dict[str, Any]]] = {}
+client_settings: dict[str, list] = {}
+selected_client: str = ""
 
 
 def register_client(name: str, cls: type, settings: dict = {}) -> None:
