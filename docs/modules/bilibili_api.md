@@ -748,6 +748,21 @@ Cookies 刷新错误。
 
 
 
+**@staticmethod**
+
+### def from_cookie_file()
+
+从 Netscape cookies.txt 文件中新建 Credential，仅保留 Bilibili 域名的 Cookie。
+
+
+| name | type | description |
+| - | - | - |
+| `path` | `str \| os.PathLike` | Netscape HTTP Cookie File 路径。 |
+
+**Returns:** `Credential`:  凭据类
+
+
+
 
 ### async def get_buvid_cookies()
 
