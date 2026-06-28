@@ -1183,8 +1183,14 @@ class BiliAPIClient(ABC):
         raise NotImplementedError
 
 
-__registered_pre = []
-__registered_post = []
+################################################## END BiliAPIClient ##################################################
+
+
+################################################## BEGIN Session Management ##################################################
+
+
+client_func_cnt = 0
+client_lock = Lock()
 
 
 class BiliFilterFlags(Enum):
@@ -1209,16 +1215,6 @@ class BiliFilterFlags(Enum):
     BACK = 5
     SKIP = 6
     GOTO = 7
-
-
-################################################## END BiliAPIClient ##################################################
-
-
-################################################## BEGIN Session Management ##################################################
-
-
-client_func_cnt = 0
-client_lock = Lock()
 
 
 class BiliFilterData:
@@ -1318,27 +1314,32 @@ class BiliFilterArgs:
 
     Attributes:
         client (str): 当前选择的的客户端
+        instance (str): 请求所属的实例
         func (str): 当前调用的函数
         params (dict): 调用函数的参数
         ret (Any): 函数运行返回结果 (可能)
         ins (BiliAPIClient): 调用的 BiliAPIClient 实例
         cnt (int): 过滤器执行编号，一个编号对应一次函数调用
         data (FilterData): 用于数据交换的 FilterData 实例
+        settings (dict): 请求客户端相关设置
     """
 
     client: str
+    instance: str
     func: str
     params: dict
     ret: Any
     ins: BiliAPIClient
     cnt: int
     data: BiliFilterData
+    settings: dict
 
 
 class BiliFilterReturn:
     """
     用于结束过滤器返回结果的工具类
     """
+
     @staticmethod
     def continue_exec() -> tuple[BiliFilterFlags, None]:
         """
@@ -1470,9 +1471,14 @@ class _BiliAPIClient:
     """
 
     def __init__(
-        self, client_name: str, client_settings: RequestSettings, client_session: Any
+        self,
+        client_name: str,
+        client_instance: str,
+        client_settings: RequestSettings,
+        client_session: Any,
     ) -> None:
         self.__client__: str = client_name
+        self.__instance__: str = client_instance
         if client_session:
             self.client = sessions[self.__client__](session=client_session)
         else:
@@ -1507,6 +1513,9 @@ class _BiliAPIClient:
         if not (isfunction(obj) or iscoroutinefunction(obj)):
             return obj
 
+        if key.startswith("_"):
+            return obj
+
         if key.startswith("set_"):
             return lambda arg: self.__force_settings.set(key.lstrip("set_"), arg)
 
@@ -1537,12 +1546,14 @@ class _BiliAPIClient:
                 ins = self._get_bili_api_client()
                 filter_args = BiliFilterArgs(
                     client=self.__client__,
+                    instance=self.__instance__,
                     func=key,
                     params=res.copy(),
                     ret=None,
                     ins=ins,
                     cnt=cnt,
                     data=self.__data,
+                    settings=self.__base_settings.get_all(),
                 )
                 pres = get_registered_pre_filters(in_priority=True)
                 i = 0
@@ -1612,12 +1623,14 @@ class _BiliAPIClient:
                 ins = self._get_bili_api_client()
                 filter_args = BiliFilterArgs(
                     client=self.__client__,
+                    instance=self.__instance__,
                     func=key,
                     params=res.copy(),
                     ret=None,
                     ins=ins,
                     cnt=cnt,
                     data=self.__data,
+                    settings=self.__base_settings.get_all(),
                 )
                 pres = get_registered_pre_filters(in_priority=True)
                 i = 0
@@ -1706,11 +1719,106 @@ class _BiliAPIClient:
         return None
 
 
+class _BiliAPIClientGroup:
+    """
+    helper class to sync settings among clients in different event loops
+    """
+
+    def __init__(self, client: str, name: str) -> None:
+        self.__session_pool: dict[asyncio.AbstractEventLoop, "_BiliAPIClient"] = {}
+        self.__set_session_pool: dict[asyncio.AbstractEventLoop, "_BiliAPIClient"] = {}
+        self.__base_settings = RequestSettings()
+        self.__force_settings = RequestSettings()
+        self.__client__ = client
+        self.__instance__ = name
+
+    def ensure_client(
+        self, loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+    ) -> _BiliAPIClient:
+        client = self.__session_pool.get(loop)
+        if client is None:
+            settings = RequestSettings()
+            settings.sets(DEFAULT_SETTINGS)
+            settings.sets(optional_settings[self.__client__])
+            settings.sets(self.__base_settings.get_all())
+            client = _BiliAPIClient(self.__client__, self.__instance__, settings, None)
+            client._get_force_settings().sets(self.__force_settings.get_all())
+            self.__session_pool[loop] = client
+        return client
+
+    def set_session(
+        self, session: Any, loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+    ) -> None:
+        settings = RequestSettings()
+        settings.sets(self.__base_settings.get_all())
+        client = _BiliAPIClient(self.__client__, self.__instance__, settings, session)
+        client._get_force_settings().sets(self.__force_settings.get_all())
+        self.__set_session_pool[loop] = client
+
+    def unset_session(
+        self, loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+    ) -> None:
+        if not self.__set_session_pool.get(loop):
+            return
+        del self.__set_session_pool[loop]
+
+    def get_client(self) -> _BiliAPIClient:
+        loop = asyncio.get_event_loop()
+        if self.__set_session_pool.get(loop):
+            client = self.__set_session_pool[loop]
+        else:
+            client = self.ensure_client(loop)
+        client._get_base_settings().sets(self.__base_settings.get_all())
+        client._get_force_settings().sets(self.__force_settings.get_all())
+        return client
+
+    def get_settings(self) -> dict:
+        ret = DEFAULT_SETTINGS | optional_settings[self.__client__]
+        ret |= self.__base_settings.get_all()
+        return ret
+
+    def gets(self) -> dict:
+        return self.__base_settings.get_all()
+
+    def force_gets(self) -> dict:
+        return self.__force_settings.get_all()
+
+    def sets(self, settings: dict) -> None:
+        self.__base_settings.sets(settings)
+
+    def force_sets(self, settings: dict) -> None:
+        self.__force_settings.sets(settings)
+
+    def clean(self) -> None:
+        loops: set[asyncio.AbstractEventLoop] = set()
+        tasks: set[asyncio.Task] = set()
+
+        def close(pool: dict[asyncio.AbstractEventLoop, _BiliAPIClient]):
+            for loop, client in pool.items():
+                if not loop.is_closed():
+                    loops.add(loop)
+                    task = loop.create_task(client.close())
+                    tasks.add(task)
+                    task.add_done_callback(tasks.discard)
+                    task.add_done_callback(
+                        lambda *args, **kwargs: self.__session_pool.pop(loop)
+                    )
+
+        close(self.__session_pool)
+        close(self.__set_session_pool)
+
+
 sessions: dict[str, type["BiliAPIClient"]] = {}
-session_pool: dict[str, dict[asyncio.AbstractEventLoop, "_BiliAPIClient"]] = {}
 client_settings: dict[str, list] = {}
 optional_settings: dict[str, dict] = {}
 selected_client: str = ""
+client_groups: dict[str, dict[str, _BiliAPIClientGroup]] = {}
+selected_instance: str = ""
+__registered_pre = []
+__registered_post = []
+
+
+##### client #####
 
 
 def register_client(name: str, cls: type, settings: dict = {}) -> None:
@@ -1722,16 +1830,17 @@ def register_client(name: str, cls: type, settings: dict = {}) -> None:
         cls (type): 基于 BiliAPIClient 重写后的请求客户端类。
         settings (dict, optional): 请求客户端在基础设置外的其他设置，键为设置名称，值为设置默认值. Defaults to {}.
     """
-    global sessions, session_pool
+    global sessions, client_groups
     raise_for_statement(
         issubclass(cls, BiliAPIClient), "传入的类型需要继承 BiliAPIClient"
     )
     sessions[name] = cls
-    session_pool[name] = {}
+    client_groups[name] = {}
     select_client(name)
     client_settings[name] = list(DEFAULT_SETTINGS.keys())
     client_settings[name] += list(settings.keys())
     optional_settings[name] = settings
+    new_instance("default", name)
 
 
 def unregister_client(name: str) -> None:
@@ -1741,10 +1850,10 @@ def unregister_client(name: str) -> None:
     Args:
         name (str): 请求客户端类型名称，用户自定义命名。
     """
-    global sessions, session_pool
+    global sessions, client_groups
     try:
         sessions.pop(name)
-        session_pool.pop(name)
+        client_groups.pop(name)
     except KeyError:
         raise ArgsException("未找到指定请求客户端。")
 
@@ -1776,20 +1885,6 @@ def get_selected_client() -> tuple[str, type[BiliAPIClient]]:
     return selected_client, sessions[selected_client]
 
 
-def get_available_settings() -> list[str]:
-    """
-    获取当前支持的设置项
-
-    Returns:
-        list[str]: 支持的设置项名称
-    """
-    if selected_client == "":
-        raise ArgsException(
-            "尚未安装第三方请求库或未注册自定义第三方请求库。\n$ pip3 install (curl_cffi|httpx|aiohttp)"
-        )
-    return client_settings[selected_client]
-
-
 def get_registered_clients() -> dict[str, type[BiliAPIClient]]:
     """
     获取所有注册过的 BiliAPIClient
@@ -1798,6 +1893,104 @@ def get_registered_clients() -> dict[str, type[BiliAPIClient]]:
         dict[str, type[BiliAPIClient]]: 注册过的 BiliAPIClient
     """
     return sessions
+
+
+##### instance #####
+
+
+def new_instance(name: str, client: str | None = None) -> None:
+    """
+    创建新的请求客户端实例并选择
+
+    Args:
+        name (str): 名称
+        client (str | None, optional): BiliAPIClient 类型. Defaults to None.
+    """
+    client = client if client else get_selected_client()[0]
+    global client_groups
+    client_groups[client][name] = _BiliAPIClientGroup(client, name)
+    select_instance(name)
+
+
+def remove_instance(name: str, client: str | None = None) -> None:
+    """
+    移除请求客户端实例
+
+    Args:
+        name (str): 名称
+        client (str | None, optional): BiliAPIClient 类型. Defaults to None.
+    """
+    client = client if client else get_selected_client()[0]
+    global client_groups
+    try:
+        client_groups[client].pop(name)
+    except KeyError:
+        raise ArgsException("未找到指定请求客户端实例。")
+
+
+def select_instance(name: str) -> None:
+    """
+    选择请求客户端实例
+
+    Args:
+        name (str): 名称
+    """
+    global selected_instance
+    selected_instance = name
+
+
+def get_selected_instance() -> str:
+    """
+    获取选择的请求客户端实例
+
+    Returns:
+        str: 选择的请求客户端实例
+    """
+    return selected_instance
+
+
+def get_instances(client: str | None = None) -> list[str]:
+    """
+    获取已创建的请求客户端实例
+
+    Args:
+        client (str | None, optional): 请求客户端类型. Defaults to None.
+
+    Returns:
+        list[str]: 请求客户端实例名称列表
+    """
+    client = client if client else get_selected_client()[0]
+    return list(client_groups[client].keys())
+
+
+def get_exist_instances(client: str | None = None) -> dict[str, list[str]]:
+    """
+    获取已创建的请求客户端实例
+
+    Args:
+        client (str | None, optional): 请求客户端类型. Defaults to None.
+
+    Returns:
+        list[str]: 请求客户端实例名称列表
+    """
+    return {k: list(v.keys()) for k, v in client_groups.items()}
+
+
+##### settings #####
+
+
+def get_available_settings(client: str | None = None) -> list[str]:
+    """
+    获取支持的设置项
+
+    Args:
+        client (str | None, optional): 请求客户端类型. Defaults to None.
+
+    Returns:
+        list[str]: 支持的设置项名称
+    """
+    client = client if client else get_selected_client()[0]
+    return client_settings[selected_client]
 
 
 def get_registered_available_settings() -> dict[str, list[str]]:
@@ -1810,77 +2003,136 @@ def get_registered_available_settings() -> dict[str, list[str]]:
     return client_settings
 
 
-def get_client() -> BiliAPIClient:
+def get_settings(
+    client: str | None = None, instance: str | None = None
+) -> RequestSettings:
     """
-    在当前事件循环下获取模块正在使用的请求客户端
+    获取模块正在使用的请求客户端的设置
+
+    Args:
+        client (str | None, optional): 请求客户端类型. Defaults to None.
+        instance (str | None, optional): 请求客户端实例名称. Defaults to None.
 
     Returns:
         BiliAPIClient: 请求客户端
     """
-    if selected_client == "":
-        raise ArgsException(
-            "尚未安装第三方请求库或未注册自定义第三方请求库。\n$ pip3 install (curl_cffi|httpx|aiohttp)"
-        )
-    global session_pool
-    pool = session_pool.get(selected_client)
-    if pool is None:
-        raise ArgsException("未找到用户指定的请求客户端。")
-    loop = asyncio.get_event_loop()
-    session = pool.get(loop)
-    if session is None:
-        client_settings = RequestSettings()
-        client_settings.sets(DEFAULT_SETTINGS)
-        client_settings.sets(optional_settings[selected_client])
-        session = _BiliAPIClient(selected_client, client_settings, None)
-        session_pool[selected_client][loop] = session
-    return session  # type: ignore
+    client = client if client else get_selected_client()[0]
+    instance = instance if instance else get_selected_instance()
+    try:
+        group = client_groups[client][instance]
+    except KeyError:
+        raise Exception("未找到对应请求客户端实例")
+    return group.get_client()._get_base_settings()
 
 
-def get_session() -> object:
+def get_force_settings(
+    client: str | None = None, instance: str | None = None
+) -> RequestSettings:
+    """
+    获取模块正在使用的请求客户端的强制设置
+
+    Args:
+        client (str | None, optional): 请求客户端类型. Defaults to None.
+        instance (str | None, optional): 请求客户端实例名称. Defaults to None.
+
+    Returns:
+        BiliAPIClient: 请求客户端
+    """
+    client = client if client else get_selected_client()[0]
+    instance = instance if instance else get_selected_instance()
+    try:
+        group = client_groups[client][instance]
+    except KeyError:
+        raise Exception("未找到对应请求客户端实例")
+    return group.get_client()._get_force_settings()
+
+
+##### get_client() / get_session() / set_session() / unset_session() #####
+
+
+def get_client(client: str | None = None, instance: str | None = None) -> BiliAPIClient:
+    """
+    获取模块正在使用的请求客户端
+
+    Args:
+        client (str | None, optional): 请求客户端类型. Defaults to None.
+        instance (str | None, optional): 请求客户端实例名称. Defaults to None.
+
+    Returns:
+        BiliAPIClient: 请求客户端
+    """
+    client = client if client else get_selected_client()[0]
+    instance = instance if instance else get_selected_instance()
+    try:
+        group = client_groups[client][instance]
+    except KeyError:
+        raise Exception("未找到对应请求客户端实例")
+    return group.get_client()  # type: ignore
+
+
+def get_session(client: str | None = None, instance: str | None = None) -> object:
     """
     在当前事件循环下获取请求客户端的会话对象。
+
+    Args:
+        client (str | None, optional): 请求客户端类型. Defaults to None.
+        instance (str | None, optional): 请求客户端实例名称. Defaults to None.
 
     Returns:
         object: 会话对象
     """
-    return get_client().get_wrapped_session()
+    client = client if client else get_selected_client()[0]
+    instance = instance if instance else get_selected_instance()
+    return get_client(client, instance).get_wrapped_session()
 
 
-def set_session(session: object) -> None:
+def set_session(
+    session: object,
+    loop: asyncio.AbstractEventLoop = asyncio.get_event_loop(),
+    client: str | None = None,
+    instance: str | None = None,
+) -> None:
     """
-    在当前事件循环下设置请求客户端的会话对象。
+    设置请求客户端的会话对象。
 
     Args:
         session (object): 会话对象
+        loop (asyncio.AbstractEventLoop): 事件循环. Defaults to `asyncio.get_event_loop()`
+        client (str | None, optional): 请求客户端类型. Defaults to None.
+        instance (str | None, optional): 请求客户端实例名称. Defaults to None.
     """
-    global session_pool
-    pool = session_pool.get(selected_client)
-    if not pool:
-        raise ArgsException("未找到用户指定的请求客户端。")
-    loop = asyncio.get_event_loop()
-    session_pool[selected_client][loop] = _BiliAPIClient(
-        selected_client, RequestSettings(), session
-    )
+    client = client if client else get_selected_client()[0]
+    instance = instance if instance else get_selected_instance()
+    try:
+        group = client_groups[client][instance]
+    except KeyError:
+        raise Exception("未找到对应请求客户端实例")
+    group.set_session(session, loop)
 
 
-def get_settings() -> RequestSettings:
+def unset_session(
+    loop: asyncio.AbstractEventLoop = asyncio.get_event_loop(),
+    client: str | None = None,
+    instance: str | None = None,
+) -> None:
     """
-    获取当前所选客户端的设置
+    取消设置请求客户端的会话对象。
 
-    Returns:
-        RequestSettings: 设置
+    Args:
+        loop (asyncio.AbstractEventLoop): 事件循环. Defaults to `asyncio.get_event_loop()`
+        client (str | None, optional): 请求客户端类型. Defaults to None.
+        instance (str | None, optional): 请求客户端实例名称. Defaults to None.
     """
-    return get_client()._get_base_settings()  # type: ignore
+    client = client if client else get_selected_client()[0]
+    instance = instance if instance else get_selected_instance()
+    try:
+        group = client_groups[client][instance]
+    except KeyError:
+        raise Exception("未找到对应请求客户端实例")
+    group.unset_session(loop)
 
 
-def get_force_settings() -> RequestSettings:
-    """
-    获取当前所选客户端的强制设置
-
-    Returns:
-        RequestSettings: 强制设置
-    """
-    return get_client()._get_force_settings()  # type: ignore
+##### filter #####
 
 
 def register_pre_filter(
@@ -2014,19 +2266,9 @@ def __clean() -> None:
     """
     程序退出清理操作。
     """
-    global session_pool
-
-    loops: set[asyncio.AbstractEventLoop] = set()
-    tasks: set[asyncio.Task] = set()
-
-    for _, pool in session_pool.items():
-        for loop, client in list(pool.items()):
-            if not loop.is_closed():
-                loops.add(loop)
-                task = loop.create_task(client.close())
-                tasks.add(task)
-                task.add_done_callback(tasks.discard)
-                task.add_done_callback(lambda *args, **kwargs: pool.pop(loop))
+    for _, instances in client_groups.items():
+        for _, instance in instances.items():
+            instance.clean()
 
 
 ################################################## END Session Management ##################################################
@@ -3187,17 +3429,21 @@ def __register_builtin_log_filters():
     def log_pre(args: BiliFilterArgs):
         match args.func:
             case "request":
-                request_log.dispatch("REQUEST", f"[{args.cnt}] 发起请求", args.params)
+                request_log.dispatch(
+                    "REQUEST",
+                    f"#{args.cnt} [{args.client}/{args.instance}] 发起请求",
+                    args.params,
+                )
             case "ws_send":
                 request_log.dispatch(
                     "WS_SEND",
-                    f"[{args.cnt}] 发送 WebSocket 请求",
+                    f"#{args.cnt} [{args.client}/{args.instance}] 发送 WebSocket 请求",
                     {"id": args.params["cnt"], "data": args.params["data"]},
                 )
             case "ws_close":
                 request_log.dispatch(
                     "WS_CLOSE",
-                    f"[{args.cnt}] 关闭 WebSocket 请求",
+                    f"#{args.cnt} [{args.client}/{args.instance}] 关闭 WebSocket 请求",
                     {"id": args.params["cnt"]},
                 )
         return BiliFilterReturn.continue_exec()
@@ -3207,7 +3453,7 @@ def __register_builtin_log_filters():
             case "request":
                 request_log.dispatch(
                     "RESPONSE",
-                    f"[{args.cnt}] 获得响应",
+                    f"#{args.cnt} [{args.client}/{args.instance}] 获得响应",
                     {
                         "code": args.ret.code,
                         "headers": args.ret.headers,
@@ -3219,27 +3465,33 @@ def __register_builtin_log_filters():
             case "download_create":
                 args.params.update({"id": args.ret})
                 request_log.dispatch(
-                    "DWN_CREATE", f"[{args.cnt}] 开始下载", args.params
+                    "DWN_CREATE",
+                    f"#{args.cnt} [{args.client}/{args.instance}] 开始下载",
+                    args.params,
                 )
             case "download_chunk":
                 request_log.dispatch(
                     "DWN_PART",
-                    f"[{args.cnt}] 收到部分下载数据",
+                    f"#{args.cnt} [{args.client}/{args.instance}] 收到部分下载数据",
                     {"id": args.params["cnt"], "data": args.ret},
                 )
             case "download_close":
                 request_log.dispatch(
-                    "DWN_CLOSE", f"[{args.cnt}] 结束下载", {"id": args.params["cnt"]}
+                    "DWN_CLOSE",
+                    f"#{args.cnt} [{args.client}/{args.instance}] 结束下载",
+                    {"id": args.params["cnt"]},
                 )
             case "ws_create":
                 args.params.update({"id": args.ret})
                 request_log.dispatch(
-                    "WS_CREATE", f"[{args.cnt}] 开始 WebSocket 连接", args.params
+                    "WS_CREATE",
+                    f"#{args.cnt} [{args.client}/{args.instance}] 开始 WebSocket 连接",
+                    args.params,
                 )
             case "ws_recv":
                 request_log.dispatch(
                     "WS_RECV",
-                    f"[{args.cnt}] 收到 WebSocket 数据",
+                    f"#{args.cnt} [{args.client}/{args.instance}] 收到 WebSocket 数据",
                     {
                         "id": args.params["cnt"],
                         "data": args.ret[0],
